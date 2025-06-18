@@ -77,7 +77,7 @@ router.get('/', async (req, res) => {
       }
     }
     
-    // Add Tournament Director filtering
+    // Add Tournament Director filtering (only for Tournament Directors, not super admins)
     console.log('[Events Router] User object:', {
       id: (req as any).user?.id,
       isTournamentDirector: (req as any).user?.isTournamentDirector,
@@ -85,17 +85,22 @@ router.get('/', async (req, res) => {
       isAdmin: (req as any).user?.isAdmin
     });
     
-    if ((req as any).user?.isTournamentDirector && (req as any).user?.assignedEvents) {
-      const assignedEventIds = (req as any).user.assignedEvents.map((id: string) => parseInt(id));
+    // Only apply Tournament Director filtering if user is a Tournament Director but NOT a super admin
+    if ((req as any).user?.isTournamentDirector && !(req as any).user?.isAdmin) {
+      const assignedEventIds = (req as any).user.assignedEvents?.map((id: string) => parseInt(id)) || [];
       console.log('[Events Router] Filtering for Tournament Director - assigned event IDs:', assignedEventIds);
       if (assignedEventIds.length > 0) {
         whereConditions.push(inArray(events.id, assignedEventIds));
         console.log('[Events Router] Added tournament director filter to where conditions');
       } else {
         console.log('[Events Router] No assigned events found, Tournament Director will see no events');
+        // If Tournament Director has no assigned events, they should see nothing
+        whereConditions.push(inArray(events.id, [-1])); // No events will match ID -1
       }
+    } else if ((req as any).user?.isAdmin) {
+      console.log('[Events Router] Super admin - showing all events (no filtering)');
     } else {
-      console.log('[Events Router] Not filtering - user is not Tournament Director or no assigned events');
+      console.log('[Events Router] Not filtering - user is not Tournament Director');
     }
     
     // Apply where conditions to main query
