@@ -19,27 +19,41 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: '2023-10-16',
 });
 
-// Application fee percentage (platform takes 3% of each transaction)
-const APPLICATION_FEE_RATE = 0.03;
+import { calculateEventFees, formatFeeCalculation } from "../services/fee-calculator";
+
+// Note: Fee calculation is now handled by the fee-calculator service
+// This supports configurable platform fees and volume discounts
 
 /**
  * Processes a destination charge for a team registration
- * Routes payment to the tournament's Connect account
+ * Routes payment to the tournament's Connect account with precise fee distribution
  */
 export async function processDestinationCharge(
   teamId: number,
   eventId: string,
   paymentMethodId: string,
-  totalAmountCents: number,
+  tournamentCostCents: number,
   connectAccountId: string
 ) {
   try {
-    // Calculate application fee (platform commission)
-    const applicationFeeAmount = Math.round(totalAmountCents * APPLICATION_FEE_RATE);
+    // Calculate comprehensive fee breakdown using the enhanced calculator
+    const feeCalculation = await calculateEventFees(eventId, tournamentCostCents);
+    
+    console.log('Fee calculation for team registration:', {
+      teamId,
+      eventId,
+      tournamentCost: `$${(tournamentCostCents / 100).toFixed(2)}`,
+      breakdown: formatFeeCalculation(feeCalculation)
+    });
+    
+    // Validate calculation is balanced
+    if (!feeCalculation.isBalanced) {
+      throw new Error(`Fee calculation is not balanced: ${feeCalculation.totalAccounted} vs ${feeCalculation.totalChargedAmount}`);
+    }
     
     // Create payment intent with destination charge
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: totalAmountCents,
+      amount: feeCalculation.totalChargedAmount, // Total amount including platform fee
       currency: 'usd',
       payment_method: paymentMethodId,
       confirmation_method: 'manual',
@@ -47,30 +61,37 @@ export async function processDestinationCharge(
       on_behalf_of: connectAccountId,
       transfer_data: {
         destination: connectAccountId,
+        amount: feeCalculation.tournamentReceives, // Tournament gets their base amount
       },
-      application_fee_amount: applicationFeeAmount,
+      application_fee_amount: feeCalculation.platformFeeAmount, // MatchPro gets platform fee
       metadata: {
         teamId: teamId.toString(),
         eventId: eventId,
         connectAccountId: connectAccountId,
-        type: 'team_registration'
+        type: 'team_registration',
+        tournamentCost: tournamentCostCents.toString(),
+        platformFeeRate: feeCalculation.platformFeeRate.toString(),
+        stripeFeeAmount: feeCalculation.stripeFeeAmount.toString()
       }
     });
 
-    // Record transaction in database
+    // Record comprehensive transaction in database with detailed fee breakdown
     await db.insert(paymentTransactions).values({
       teamId: teamId,
       eventId: eventId,
-      stripePaymentIntentId: paymentIntent.id,
-      amount: totalAmountCents,
-      currency: 'usd',
+      paymentIntentId: paymentIntent.id,
+      transactionType: 'payment',
+      amount: feeCalculation.totalChargedAmount,
+      stripeFee: feeCalculation.stripeFeeAmount,
+      netAmount: feeCalculation.tournamentReceives,
       status: paymentIntent.status,
-      connectAccountId: connectAccountId,
-      applicationFeeAmount: applicationFeeAmount,
-      transferId: paymentIntent.transfer_data?.destination || null,
-      processingFees: applicationFeeAmount,
-      netAmount: totalAmountCents - applicationFeeAmount,
-      transactionType: 'team_registration',
+      metadata: {
+        tournamentCost: tournamentCostCents,
+        platformFeeRate: feeCalculation.platformFeeRate,
+        platformFeeAmount: feeCalculation.platformFeeAmount,
+        connectAccountId: connectAccountId,
+        feeCalculationBreakdown: feeCalculation
+      },
       createdAt: new Date()
     });
 
@@ -86,8 +107,14 @@ export async function processDestinationCharge(
     return {
       success: true,
       paymentIntent: paymentIntent,
-      applicationFee: applicationFeeAmount,
-      netToTournament: totalAmountCents - applicationFeeAmount
+      feeCalculation: feeCalculation,
+      breakdown: {
+        totalCharged: feeCalculation.totalChargedAmount,
+        tournamentReceives: feeCalculation.tournamentReceives,
+        platformFeeAmount: feeCalculation.platformFeeAmount,
+        stripeFeeAmount: feeCalculation.stripeFeeAmount,
+        matchproReceives: feeCalculation.matchproReceives
+      }
     };
 
   } catch (error) {
