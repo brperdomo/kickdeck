@@ -15,6 +15,7 @@ interface PaymentSummary {
   totalRevenue: number;
   totalPlatformFees: number;
   totalNetAmount: number;
+  platformFeeRate: number;
   successfulPayments: number;
   pendingPayments: number;
   dailyBreakdown: Array<{
@@ -132,7 +133,9 @@ export function PaymentReportsView({ eventId }: PaymentReportsViewProps) {
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Platform Fees</p>
                 <p className="text-2xl font-bold">${summary?.totalPlatformFees?.toFixed(2) || '0.00'}</p>
-                <p className="text-xs text-gray-500">4% of revenue</p>
+                <p className="text-xs text-gray-500">
+                  {summary?.platformFeeRate ? `${(summary.platformFeeRate * 100).toFixed(1)}% of revenue` : 'Platform fee'}
+                </p>
               </div>
             </div>
           </CardContent>
