@@ -40,7 +40,7 @@ export function registerPaymentReportRoutes(app: Application) {
       
       paidTeams.forEach((team: any) => {
         const fee = parseFloat(team.registrationFee || '0');
-        const platformFee = Math.round(fee * 0.03 * 100) / 100; // 3% platform fee
+        const platformFee = Math.round(fee * 0.04 * 100) / 100; // 4% platform fee
         const netAmount = fee - platformFee;
 
         summary.totalRevenue += fee;
@@ -120,7 +120,7 @@ export function registerPaymentReportRoutes(app: Application) {
           'Age Group',
           'Contact Email',
           'Registration Fee',
-          'Platform Fee (3%)',
+          'Platform Fee (4%)',
           'Net Amount',
           'Payment Status',
           'Payment Intent ID'
@@ -128,7 +128,7 @@ export function registerPaymentReportRoutes(app: Application) {
 
         const csvRows = paidTeams.map(team => {
           const fee = parseFloat(String(team.registrationFee || '0'));
-          const platformFee = Math.round(fee * 0.03 * 100) / 100;
+          const platformFee = Math.round(fee * 0.04 * 100) / 100;
           const netAmount = fee - platformFee;
 
           return [
