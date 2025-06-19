@@ -33,9 +33,9 @@ export function registerRegistrationAnalyticsRoutes(app: Application) {
       `);
       const fees = feesResult.rows as any[];
 
-      // Calculate status breakdown
+      // Calculate status breakdown - map actual statuses to expected categories
       const statusBreakdown = {
-        pending: allTeams.filter(t => t.status === 'pending').length,
+        pending: allTeams.filter(t => t.status === 'pending' || t.status === 'registered').length,
         approved: allTeams.filter(t => t.status === 'approved').length,
         rejected: allTeams.filter(t => t.status === 'rejected').length,
         waitlisted: allTeams.filter(t => t.status === 'waitlisted').length
@@ -58,22 +58,23 @@ export function registerRegistrationAnalyticsRoutes(app: Application) {
 
       // Calculate breakdown for each team
       for (const team of allTeams) {
-        const teamFee = parseFloat(String(team.total_amount || team.registration_fee || '0'));
+        const teamFeeCents = parseFloat(String(team.total_amount || team.registration_fee || '0'));
+        const teamFee = teamFeeCents / 100; // Convert cents to dollars
         
         if (teamFee > 0) {
-          // Use fee calculator for accurate breakdown
-          const feeBreakdown = calculateFeeBreakdown(teamFee, totalEventVolume);
+          // Use fee calculator for accurate breakdown (expects cents)
+          const feeBreakdown = calculateFeeBreakdown(teamFeeCents, totalEventVolume);
           
-          totalRegistrationFees += feeBreakdown.tournamentCost;
-          totalPlatformFees += feeBreakdown.platformFeeAmount;
-          totalStripeFees += feeBreakdown.stripeFeeAmount;
+          totalRegistrationFees += feeBreakdown.tournamentCost / 100; // Convert to dollars
+          totalPlatformFees += feeBreakdown.platformFeeAmount / 100; // Convert to dollars
+          totalStripeFees += feeBreakdown.stripeFeeAmount / 100; // Convert to dollars
 
-          // Calculate revenue categories
+          // Calculate revenue categories based on actual status
           if (team.status === 'approved' && team.payment_intent_id) {
             alreadyCollected += teamFee;
           } else if (team.status === 'approved' && team.setup_intent_id) {
             pendingCollection += teamFee;
-          } else if (team.status === 'pending' || team.status === 'waitlisted') {
+          } else if (team.status === 'pending' || team.status === 'registered' || team.status === 'waitlisted') {
             potentialRevenue += teamFee;
           }
           
@@ -100,7 +101,8 @@ export function registerRegistrationAnalyticsRoutes(app: Application) {
             acc[date] = { date, registrations: 0, expectedValue: 0 };
           }
           acc[date].registrations += 1;
-          const teamFee = parseFloat(String(team.total_amount || team.registration_fee || '0'));
+          const teamFeeCents = parseFloat(String(team.total_amount || team.registration_fee || '0'));
+          const teamFee = teamFeeCents / 100; // Convert cents to dollars
           acc[date].expectedValue += teamFee;
           return acc;
         }, {});
