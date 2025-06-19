@@ -15,6 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { 
   DollarSign, 
   Users, 
@@ -26,7 +27,9 @@ import {
   Calendar,
   CreditCard,
   BarChart3,
-  Download
+  Download,
+  ChevronDown,
+  ChevronRight
 } from "lucide-react";
 
 interface RegistrationAnalyticsProps {
@@ -326,17 +329,55 @@ export function RegistrationAnalytics({ eventId }: RegistrationAnalyticsProps) {
             <CardContent>
               <div className="space-y-3">
                 {analytics.dailyTrend.slice(0, 10).map((day, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <div className="text-sm font-medium text-gray-900">
-                        {new Date(day.date).toLocaleDateString()}
-                      </div>
-                      <Badge variant="outline">{day.registrations} teams</Badge>
+                  <Collapsible key={index}>
+                    <div className="bg-gray-50 rounded-lg">
+                      <CollapsibleTrigger className="w-full p-3 flex items-center justify-between hover:bg-gray-100 transition-colors">
+                        <div className="flex items-center gap-3">
+                          <ChevronRight className="h-4 w-4 transition-transform group-data-[state=open]:rotate-90" />
+                          <div className="text-sm font-medium text-gray-900">
+                            {new Date(day.date).toLocaleDateString()}
+                          </div>
+                          <Badge variant="outline">{day.registrations} teams</Badge>
+                        </div>
+                        <div className="text-sm font-medium text-green-600">
+                          ${day.expectedValue.toFixed(2)}
+                        </div>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent className="px-3 pb-3">
+                        <div className="mt-2 space-y-2 border-t pt-2">
+                          {day.teams?.map((team, teamIndex) => (
+                            <div key={teamIndex} className="flex items-center justify-between text-xs bg-white p-2 rounded border">
+                              <div className="flex items-center gap-2">
+                                <span className="font-medium text-gray-700">{team.name}</span>
+                                <Badge 
+                                  variant={team.status === 'registered' ? 'secondary' : 'outline'}
+                                  className="text-xs"
+                                >
+                                  {team.status}
+                                </Badge>
+                                {team.hasPaymentMethod && (
+                                  <Badge variant="outline" className="text-xs bg-green-50 text-green-700">
+                                    Card Saved
+                                  </Badge>
+                                )}
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="text-gray-500">
+                                  {new Date(team.registrationTime).toLocaleTimeString([], { 
+                                    hour: '2-digit', 
+                                    minute: '2-digit' 
+                                  })}
+                                </span>
+                                <span className="font-medium text-green-600">
+                                  ${team.amount.toFixed(2)}
+                                </span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </CollapsibleContent>
                     </div>
-                    <div className="text-sm font-medium text-green-600">
-                      ${day.expectedValue.toFixed(2)}
-                    </div>
-                  </div>
+                  </Collapsible>
                 ))}
               </div>
             </CardContent>

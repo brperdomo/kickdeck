@@ -90,7 +90,7 @@ export function registerRegistrationAnalyticsRoutes(app: Application) {
         readyToCharge: allTeams.filter(t => (t.status === 'registered' || t.status === 'pending') && t.setup_intent_id && !t.payment_intent_id).length
       };
 
-      // Simplified daily trend calculation from teams data
+      // Enhanced daily trend calculation with team details
       const dailyRegistrationTrend = allTeams
         .filter((team: any) => team.created_at)
         .map((team: any) => ({
@@ -99,12 +99,28 @@ export function registerRegistrationAnalyticsRoutes(app: Application) {
         }))
         .reduce((acc: any, { date, team }) => {
           if (!acc[date]) {
-            acc[date] = { date, registrations: 0, expectedValue: 0 };
+            acc[date] = { 
+              date, 
+              registrations: 0, 
+              expectedValue: 0,
+              teams: []
+            };
           }
           acc[date].registrations += 1;
           const teamFeeCents = parseFloat(String(team.total_amount || team.registration_fee || '0'));
           const teamFee = teamFeeCents / 100; // Convert cents to dollars
           acc[date].expectedValue += teamFee;
+          
+          // Add team details to the daily breakdown
+          acc[date].teams.push({
+            id: team.id,
+            name: team.name,
+            status: team.status,
+            amount: teamFee,
+            hasPaymentMethod: !!team.setup_intent_id,
+            registrationTime: team.created_at
+          });
+          
           return acc;
         }, {});
 
