@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, ExternalLink, AlertCircle, CheckCircle, Clock, XCircle, Shield, Info, BarChart3 } from "lucide-react";
+import { Loader2, ExternalLink, AlertCircle, CheckCircle, Clock, XCircle, Shield, Info, BarChart3, Users } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useForm } from "react-hook-form";
@@ -891,6 +891,10 @@ export function StripeConnectBankingView({ eventId }: StripeConnectBankingViewPr
         </CardContent>
       </Card>
           </div>
+        </TabsContent>
+
+        <TabsContent value="analytics" className="space-y-6 mt-6">
+          <RegistrationAnalytics eventId={eventId} />
         </TabsContent>
 
         <TabsContent value="reports" className="space-y-6 mt-6">
