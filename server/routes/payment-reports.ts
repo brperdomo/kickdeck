@@ -3,6 +3,7 @@ import { db } from '@db';
 import { teams } from '@db/schema';
 import { eq, and, isNotNull } from 'drizzle-orm';
 import { isAdmin } from '../middleware/auth';
+import { calculateFeeBreakdown, getPlatformFeeRate } from '../services/fee-calculator';
 
 export function registerPaymentReportRoutes(app: Application) {
   
@@ -30,17 +31,27 @@ export function registerPaymentReportRoutes(app: Application) {
         totalRevenue: 0,
         totalPlatformFees: 0,
         totalNetAmount: 0,
+        platformFeeRate: 0.04, // Will be calculated based on actual volume
         successfulPayments: paidTeams.length,
         pendingPayments: allTeams.filter(t => t.status === 'pending').length,
         failedPayments: allTeams.filter(t => t.status === 'rejected').length,
         dailyBreakdown: [] as any[]
       };
 
+      // Calculate total event volume for proper fee tier calculation
+      const totalEventVolume = paidTeams.reduce((total, team) => {
+        return total + (parseFloat(String(team.registrationFee || '0')) * 100); // Convert to cents
+      }, 0);
+
       const dailyMap = new Map();
       
       paidTeams.forEach((team: any) => {
-        const fee = parseFloat(team.registrationFee || '0');
-        const platformFee = Math.round(fee * 0.04 * 100) / 100; // 4% platform fee
+        const fee = parseFloat(String(team.registrationFee || '0'));
+        const feeInCents = Math.round(fee * 100);
+        
+        // Use proper fee calculation with volume-based rates
+        const feeCalculation = calculateFeeBreakdown(feeInCents, totalEventVolume);
+        const platformFee = feeCalculation.platformFeeAmount / 100; // Convert back to dollars
         const netAmount = fee - platformFee;
 
         summary.totalRevenue += fee;
@@ -66,6 +77,11 @@ export function registerPaymentReportRoutes(app: Application) {
         dayData.netAmount += netAmount;
         dayData.transactions += 1;
       });
+
+      // Calculate the actual average platform fee rate for display
+      if (summary.totalRevenue > 0) {
+        summary.platformFeeRate = summary.totalPlatformFees / summary.totalRevenue;
+      }
 
       summary.dailyBreakdown = Array.from(dailyMap.values()).sort((a, b) => 
         new Date(b.date).getTime() - new Date(a.date).getTime()
@@ -126,19 +142,29 @@ export function registerPaymentReportRoutes(app: Application) {
           'Payment Intent ID'
         ].join(',');
 
+        // Calculate total volume for proper fee rates
+        const totalVolume = paidTeams.reduce((total, team) => {
+          return total + (parseFloat(String(team.registrationFee || '0')) * 100);
+        }, 0);
+
         const csvRows = paidTeams.map(team => {
           const fee = parseFloat(String(team.registrationFee || '0'));
-          const platformFee = Math.round(fee * 0.04 * 100) / 100;
+          const feeInCents = Math.round(fee * 100);
+          
+          // Use proper fee calculation with volume-based rates
+          const feeCalculation = calculateFeeBreakdown(feeInCents, totalVolume);
+          const platformFee = feeCalculation.platformFeeAmount / 100;
+          const platformFeeRate = (feeCalculation.platformFeeRate * 100).toFixed(1);
           const netAmount = fee - platformFee;
 
           return [
             String(team.createdAt || ''),
             `"${team.name || ''}"`,
             `"${team.clubName || ''}"`,
-            `"${team.ageGroupName || ''}"`,
+            `"Age Group ${team.ageGroupId || ''}"`,
             `"${team.submitterEmail || ''}"`,
             fee.toFixed(2),
-            platformFee.toFixed(2),
+            `${platformFee.toFixed(2)} (${platformFeeRate}%)`,
             netAmount.toFixed(2),
             team.status || '',
             team.paymentIntentId || ''
