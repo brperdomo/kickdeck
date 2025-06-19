@@ -134,8 +134,8 @@ export function registerRegistrationAnalyticsRoutes(app: Application) {
           totalPlatformFees,
           totalStripeFees,
           breakdown: {
-            approved: alreadyCollected + pendingCollection,
-            pending: potentialRevenue,
+            approved: alreadyCollected,
+            pending: pendingCollection + potentialRevenue,
             rejected: 0
           }
         },
