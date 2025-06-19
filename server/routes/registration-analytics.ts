@@ -22,16 +22,17 @@ export function registerRegistrationAnalyticsRoutes(app: Application) {
 
       console.log(`Generating registration analytics for event ${eventId}`);
 
-      // Get all teams for the event with detailed information
-      const allTeams = await db.query.teams.findMany({
-        where: eq(teams.eventId, eventId),
-        orderBy: (teams, { desc }) => [desc(teams.createdAt)]
-      });
+      // Get all teams for the event with detailed information using raw SQL
+      const allTeamsResult = await db.execute(sql`
+        SELECT * FROM teams WHERE event_id = ${eventId} ORDER BY created_at DESC
+      `);
+      const allTeams = allTeamsResult.rows;
 
-      // Get event fees for calculation
-      const fees = await db.query.eventFees.findMany({
-        where: eq(eventFees.eventId, parseInt(eventId))
-      });
+      // Get event fees for calculation using raw SQL
+      const feesResult = await db.execute(sql`
+        SELECT * FROM event_fees WHERE event_id = ${parseInt(eventId)}
+      `);
+      const fees = feesResult.rows;
 
       // Calculate status breakdown
       const statusBreakdown = {
@@ -103,20 +104,7 @@ export function registerRegistrationAnalyticsRoutes(app: Application) {
         readyToCharge: allTeams.filter(t => t.status === 'approved' && t.setupIntentId && !t.paymentIntentId).length
       };
 
-      // Daily registration trend (last 30 days)
-      const dailyTrend = await db.execute(sql`
-        SELECT 
-          DATE(created_at) as date,
-          COUNT(*) as registrations,
-          SUM(COALESCE(total_amount, registration_fee, 0)) as expected_value,
-          status
-        FROM teams 
-        WHERE event_id = ${eventId}
-        AND created_at >= CURRENT_DATE - INTERVAL '30 days'
-        GROUP BY DATE(created_at), status
-        ORDER BY date DESC
-        LIMIT 30
-      `);
+      // Simplified daily trend calculation from teams data - removing problematic SQL query
 
       // Simplified daily trend calculation from teams data
       const dailyRegistrationTrend = allTeams
@@ -187,10 +175,7 @@ export function registerRegistrationAnalyticsRoutes(app: Application) {
       const format = req.query.format || 'csv';
 
       // Get all teams with comprehensive data
-      const allTeams = await db.query.teams.findMany({
-        where: eq(teams.eventId, eventId),
-        orderBy: (teams, { desc }) => [desc(teams.createdAt)]
-      });
+      const allTeams = await db.select().from(teams).where(eq(teams.eventId, eventId));
 
       if (format === 'csv') {
         const csvHeaders = [
