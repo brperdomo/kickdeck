@@ -75,7 +75,8 @@ export function registerRegistrationAnalyticsRoutes(app: Application) {
           } else if ((team.status === 'registered' || team.status === 'pending') && team.setup_intent_id) {
             // Teams with saved payment methods ready to be charged upon approval
             pendingCollection += teamFee;
-          } else if (team.status === 'pending' || team.status === 'registered' || team.status === 'waitlisted') {
+          } else {
+            // Teams without payment methods (pay later) or other statuses
             potentialRevenue += teamFee;
           }
           
