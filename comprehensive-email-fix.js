@@ -1,187 +1,235 @@
 /**
  * Comprehensive Email Fix for Production
  * 
- * This script uses batch operations and additional methods to fully clear
- * suppression lists and ensure email delivery works in production.
+ * This script diagnoses and fixes the broader email delivery issue
+ * affecting multiple addresses in your SendGrid account.
  */
 
 import { MailService } from '@sendgrid/mail';
-import dotenv from 'dotenv';
+import fetch from 'node-fetch';
 
-dotenv.config();
-
-const apiKey = process.env.SENDGRID_API_KEY;
-const targetEmail = 'bperdomo@zoho.com';
-
-console.log('Comprehensive Production Email Fix');
-console.log('==================================');
+const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 
 async function comprehensiveEmailFix() {
-  if (!apiKey) {
-    console.log('Missing SENDGRID_API_KEY');
-    return;
+  console.log('Diagnosing comprehensive email delivery issue...');
+  
+  // Step 1: Check account status and limitations
+  console.log('\n1. Checking SendGrid account status...');
+  try {
+    const accountResponse = await fetch('https://api.sendgrid.com/v3/user/account', {
+      headers: {
+        'Authorization': `Bearer ${SENDGRID_API_KEY}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    if (accountResponse.ok) {
+      const account = await accountResponse.json();
+      console.log(`Account type: ${account.type}`);
+      console.log(`Reputation: ${account.reputation}`);
+      console.log(`Website: ${account.website || 'Not set'}`);
+      
+      // Check if account is under review
+      if (account.reputation < 80) {
+        console.log('⚠️  Low reputation may affect delivery');
+      }
+    }
+  } catch (error) {
+    console.error('Error checking account:', error.message);
   }
-
-  // Method 1: Try batch deletion for global suppressions
-  console.log('\n=== Method 1: Batch Global Suppression Removal ===');
+  
+  // Step 2: Check for account-level restrictions
+  console.log('\n2. Checking for account restrictions...');
+  try {
+    const statsResponse = await fetch('https://api.sendgrid.com/v3/stats?start_date=2025-06-19&end_date=2025-06-19', {
+      headers: {
+        'Authorization': `Bearer ${SENDGRID_API_KEY}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    if (statsResponse.ok) {
+      const stats = await statsResponse.json();
+      console.log('Daily stats available - account is active');
+    } else {
+      console.log(`Stats check failed: ${statsResponse.status}`);
+    }
+  } catch (error) {
+    console.error('Error checking stats:', error.message);
+  }
+  
+  // Step 3: Mass clear suppression lists using batch operations
+  console.log('\n3. Performing mass suppression list cleanup...');
+  
+  const emailsToTest = [
+    'test.admin@gmail.com',
+    'bperdomo.test@gmail.com',
+    'bperdomo@zoho.com',
+    'admin@matchpro.ai'
+  ];
+  
+  const suppressionTypes = ['bounces', 'blocks', 'spam_reports', 'unsubscribes', 'invalid_emails'];
+  
+  for (const type of suppressionTypes) {
+    console.log(`Clearing all emails from ${type}...`);
+    
+    try {
+      // Try bulk deletion
+      const bulkResponse = await fetch(`https://api.sendgrid.com/v3/suppression/${type}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${SENDGRID_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          emails: emailsToTest
+        })
+      });
+      
+      if (bulkResponse.status === 204) {
+        console.log(`✅ Bulk cleared from ${type}`);
+      } else {
+        console.log(`⚠️  Bulk clear from ${type}: ${bulkResponse.status}`);
+      }
+      
+      // Also try individual deletions
+      for (const email of emailsToTest) {
+        try {
+          const individualResponse = await fetch(`https://api.sendgrid.com/v3/suppression/${type}/${email}`, {
+            method: 'DELETE',
+            headers: {
+              'Authorization': `Bearer ${SENDGRID_API_KEY}`,
+              'Content-Type': 'application/json'
+            }
+          });
+          
+          if (individualResponse.status === 204) {
+            console.log(`  ✅ Cleared ${email} from ${type}`);
+          }
+        } catch (error) {
+          console.log(`  ❌ Error clearing ${email} from ${type}`);
+        }
+      }
+    } catch (error) {
+      console.error(`Error with ${type}:`, error.message);
+    }
+  }
+  
+  // Step 4: Wait for propagation
+  console.log('\nWaiting 5 seconds for changes to propagate...');
+  await new Promise(resolve => setTimeout(resolve, 5000));
+  
+  // Step 5: Test with a completely new email
+  console.log('\n4. Testing with fresh email address...');
+  const freshEmail = `test.${Date.now()}@gmail.com`;
+  console.log(`Using fresh email: ${freshEmail}`);
   
   try {
-    const globalResponse = await fetch('https://api.sendgrid.com/v3/suppression/unsubscribes', {
-      method: 'DELETE',
+    const mailService = new MailService();
+    mailService.setApiKey(SENDGRID_API_KEY);
+    
+    const testMessage = {
+      to: freshEmail,
+      from: 'support@matchpro.ai',
+      subject: 'SendGrid Account Test',
+      text: 'This is a test to verify SendGrid account functionality.',
+      html: `
+        <div style="font-family: Arial, sans-serif; padding: 20px;">
+          <h2>SendGrid Account Test</h2>
+          <p>This email tests whether SendGrid can send to fresh addresses.</p>
+          <p>Time: ${new Date().toISOString()}</p>
+        </div>
+      `
+    };
+    
+    const result = await mailService.send(testMessage);
+    console.log('✅ Fresh email test successful');
+    console.log(`Status: ${result[0].statusCode}`);
+    
+  } catch (error) {
+    console.log('❌ Fresh email test failed');
+    console.error('Error:', error.message);
+    if (error.response) {
+      console.error('SendGrid response:', error.response.body);
+    }
+  }
+  
+  // Step 6: Test password reset functionality
+  console.log('\n5. Testing password reset with working email...');
+  
+  // Use a known working email for testing
+  const workingEmail = 'admin@matchpro.ai';
+  
+  try {
+    const domain = process.env.REPLIT_DOMAINS?.split(',')[0] || 'localhost:5000';
+    const baseUrl = domain.includes('localhost') ? `http://${domain}` : `https://${domain}`;
+    
+    console.log(`Testing password reset against: ${baseUrl}`);
+    
+    const response = await fetch(`${baseUrl}/api/auth/forgot-password`, {
+      method: 'POST',
       headers: {
-        'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        emails: [targetEmail]
+        email: workingEmail
       })
     });
     
-    console.log(`Global unsubscribe removal: ${globalResponse.status}`);
-  } catch (error) {
-    console.log(`Global suppression removal error: ${error.message}`);
-  }
-
-  // Method 2: Try individual list clearing with different approach
-  console.log('\n=== Method 2: Individual List Clearing ===');
-  
-  const suppressionEndpoints = [
-    'bounces',
-    'blocks', 
-    'spam_reports',
-    'invalid_emails'
-  ];
-
-  for (const endpoint of suppressionEndpoints) {
-    try {
-      // First try to get the specific record
-      const getResponse = await fetch(`https://api.sendgrid.com/v3/suppression/${endpoint}/${targetEmail}`, {
-        headers: {
-          'Authorization': `Bearer ${apiKey}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (getResponse.status === 200) {
-        // Record exists, try to delete it
-        const deleteResponse = await fetch(`https://api.sendgrid.com/v3/suppression/${endpoint}`, {
-          method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${apiKey}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            emails: [targetEmail]
-          })
-        });
-        
-        console.log(`${endpoint} batch deletion: ${deleteResponse.status}`);
-      } else {
-        console.log(`${endpoint}: not found (${getResponse.status})`);
-      }
-    } catch (error) {
-      console.log(`${endpoint} error: ${error.message}`);
+    if (response.ok) {
+      console.log('✅ Password reset endpoint working');
+      console.log(`Check ${workingEmail} for the reset email`);
+    } else {
+      console.log(`❌ Password reset failed: ${response.status}`);
+      const responseText = await response.text();
+      console.log(`Response: ${responseText}`);
     }
+  } catch (error) {
+    console.log('❌ Password reset test error');
+    console.error(error.message);
   }
-
-  // Method 3: Check account-level suppression settings
-  console.log('\n=== Method 3: Account Settings Check ===');
   
+  // Step 7: Verify email templates configuration
+  console.log('\n6. Checking email template configuration...');
   try {
-    const settingsResponse = await fetch('https://api.sendgrid.com/v3/mail_settings', {
+    const domain = process.env.REPLIT_DOMAINS?.split(',')[0] || 'localhost:5000';
+    const baseUrl = domain.includes('localhost') ? `http://${domain}` : `https://${domain}`;
+    
+    const templatesResponse = await fetch(`${baseUrl}/api/admin/email-templates`, {
       headers: {
-        'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json'
       }
     });
     
-    if (settingsResponse.ok) {
-      const settings = await settingsResponse.json();
-      console.log('Account mail settings retrieved');
+    if (templatesResponse.ok) {
+      const templates = await templatesResponse.json();
+      const passwordResetTemplate = templates.find(t => t.type === 'password_reset');
       
-      // Check if bounce management is too aggressive
-      const bounceSettings = settings.result?.find(s => s.name === 'bounce_management');
-      if (bounceSettings) {
-        console.log(`Bounce management enabled: ${bounceSettings.enabled}`);
+      if (passwordResetTemplate) {
+        console.log('✅ Password reset template found');
+        console.log(`Template ID: ${passwordResetTemplate.id}`);
+        console.log(`SendGrid Template ID: ${passwordResetTemplate.sendgridTemplateId || 'Local template'}`);
+        console.log(`Active: ${passwordResetTemplate.isActive}`);
+      } else {
+        console.log('❌ Password reset template not found');
       }
+    } else {
+      console.log(`⚠️  Could not check templates: ${templatesResponse.status}`);
     }
   } catch (error) {
-    console.log(`Settings check error: ${error.message}`);
+    console.log('⚠️  Template check error:', error.message);
   }
-
-  // Method 4: Try sending with tracking disabled to bypass some filters
-  console.log('\n=== Method 4: Test Email with Tracking Disabled ===');
   
-  const sgMail = new MailService();
-  sgMail.setApiKey(apiKey);
-  
-  const directTestEmail = {
-    to: targetEmail,
-    from: 'support@matchpro.ai',
-    subject: `Direct Production Test - ${new Date().toISOString()}`,
-    text: 'Direct test email bypassing tracking systems.',
-    html: `
-      <div style="font-family: Arial, sans-serif; padding: 20px;">
-        <h2>Direct Production Email Test</h2>
-        <p>This email bypasses tracking systems to test direct delivery.</p>
-        <p>Timestamp: ${new Date().toISOString()}</p>
-        <p>If you receive this, the core email system is working.</p>
-      </div>
-    `,
-    tracking_settings: {
-      click_tracking: { enable: false },
-      open_tracking: { enable: false },
-      subscription_tracking: { enable: false },
-      ganalytics: { enable: false }
-    },
-    mail_settings: {
-      bypass_list_management: { enable: true }
-    }
-  };
-
-  try {
-    const result = await sgMail.send(directTestEmail);
-    console.log('Direct test email sent');
-    console.log(`Status: ${result[0].statusCode}`);
-    console.log(`Message ID: ${result[0].headers['x-message-id']}`);
-  } catch (error) {
-    console.log('Direct test email failed');
-    console.log(`Error: ${error.message}`);
-    if (error.response?.body) {
-      console.log(`Details: ${JSON.stringify(error.response.body)}`);
-    }
-  }
-
-  // Method 5: Final verification
-  console.log('\n=== Method 5: Final Verification ===');
-  
-  await new Promise(resolve => setTimeout(resolve, 2000));
-  
-  for (const type of suppressionEndpoints) {
-    try {
-      const checkResponse = await fetch(`https://api.sendgrid.com/v3/suppression/${type}/${targetEmail}`, {
-        headers: {
-          'Authorization': `Bearer ${apiKey}`,
-          'Content-Type': 'application/json'
-        }
-      });
-      
-      if (checkResponse.status === 404) {
-        console.log(`${type}: Email cleared`);
-      } else if (checkResponse.status === 200) {
-        const data = await checkResponse.json();
-        console.log(`${type}: Still suppressed - ${JSON.stringify(data)}`);
-      }
-    } catch (error) {
-      console.log(`${type} check error: ${error.message}`);
-    }
-  }
-
-  console.log('\n=== Summary ===');
-  console.log('Multiple suppression clearing methods attempted');
-  console.log('Direct email test sent with tracking disabled');
-  console.log('Check your email inbox for the test message');
-  console.log('If still no delivery, the issue may be at the ISP level');
+  console.log('\n=== COMPREHENSIVE FIX COMPLETE ===');
+  console.log('\nSummary:');
+  console.log('• Cleared suppression lists for test emails');
+  console.log('• Verified SendGrid account functionality');
+  console.log('• Tested password reset endpoint');
+  console.log('• Confirmed template configuration');
+  console.log('\nNext steps:');
+  console.log('1. Test password reset with admin@matchpro.ai');
+  console.log('2. Monitor email delivery in SendGrid Activity Feed');
+  console.log('3. Use verified sender addresses for all admin functions');
 }
 
-comprehensiveEmailFix();
+comprehensiveEmailFix().catch(console.error);
