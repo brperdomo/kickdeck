@@ -21,7 +21,7 @@ async function checkWelcomeTemplate() {
     
     // Check for welcome email template
     const welcomeQuery = `
-      SELECT id, name, type, subject, "isActive", "sendgridTemplateId", "senderEmail", "senderName"
+      SELECT id, name, type, subject, is_active, sendgrid_template_id, sender_email, sender_name
       FROM email_templates 
       WHERE type = 'welcome'
     `;
@@ -34,16 +34,16 @@ async function checkWelcomeTemplate() {
         console.log(`   ID: ${template.id}`);
         console.log(`   Name: ${template.name}`);
         console.log(`   Subject: ${template.subject}`);
-        console.log(`   Active: ${template.isActive}`);
-        console.log(`   SendGrid Template ID: ${template.sendgridTemplateId || 'None (local template)'}`);
-        console.log(`   Sender: ${template.senderName} <${template.senderEmail}>`);
+        console.log(`   Active: ${template.is_active}`);
+        console.log(`   SendGrid Template ID: ${template.sendgrid_template_id || 'None (local template)'}`);
+        console.log(`   Sender: ${template.sender_name} <${template.sender_email}>`);
       });
     } else {
       console.log('❌ Welcome email template not found');
       
       // Check what templates do exist
       const allTemplatesQuery = `
-        SELECT type, name, "isActive" 
+        SELECT type, name, is_active 
         FROM email_templates 
         ORDER BY type
       `;
@@ -51,16 +51,16 @@ async function checkWelcomeTemplate() {
       const allTemplatesResult = await client.query(allTemplatesQuery);
       console.log('\nAvailable email templates:');
       allTemplatesResult.rows.forEach(template => {
-        console.log(`   ${template.type}: ${template.name} (Active: ${template.isActive})`);
+        console.log(`   ${template.type}: ${template.name} (Active: ${template.is_active})`);
       });
     }
     
     // Check email provider settings
     console.log('\nChecking email provider settings...');
     const providerQuery = `
-      SELECT id, "providerType", "providerName", "isActive", "isDefault"
+      SELECT id, provider_type, provider_name, is_active, is_default
       FROM email_provider_settings
-      WHERE "isActive" = true
+      WHERE is_active = true
     `;
     
     const providerResult = await client.query(providerQuery);
@@ -68,7 +68,7 @@ async function checkWelcomeTemplate() {
     if (providerResult.rows.length > 0) {
       console.log('✅ Active email providers:');
       providerResult.rows.forEach(provider => {
-        console.log(`   ${provider.providerType}: ${provider.providerName} (Default: ${provider.isDefault})`);
+        console.log(`   ${provider.provider_type}: ${provider.provider_name} (Default: ${provider.is_default})`);
       });
     } else {
       console.log('❌ No active email providers found');
