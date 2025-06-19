@@ -69,10 +69,11 @@ export function registerRegistrationAnalyticsRoutes(app: Application) {
           totalPlatformFees += feeBreakdown.platformFeeAmount / 100; // Convert to dollars
           totalStripeFees += feeBreakdown.stripeFeeAmount / 100; // Convert to dollars
 
-          // Calculate revenue categories based on actual status
+          // Calculate revenue categories based on actual status and payment state
           if (team.status === 'approved' && team.payment_intent_id) {
             alreadyCollected += teamFee;
-          } else if (team.status === 'approved' && team.setup_intent_id) {
+          } else if ((team.status === 'registered' || team.status === 'pending') && team.setup_intent_id) {
+            // Teams with saved payment methods ready to be charged upon approval
             pendingCollection += teamFee;
           } else if (team.status === 'pending' || team.status === 'registered' || team.status === 'waitlisted') {
             potentialRevenue += teamFee;
@@ -86,7 +87,7 @@ export function registerRegistrationAnalyticsRoutes(app: Application) {
       const paymentMethodAnalysis = {
         cardsSaved: allTeams.filter(t => t.setup_intent_id && !t.payment_intent_id && t.status !== 'rejected').length,
         payLaterSelected: allTeams.filter(t => !t.setup_intent_id && !t.payment_intent_id && t.status !== 'rejected').length,
-        readyToCharge: allTeams.filter(t => t.status === 'approved' && t.setup_intent_id && !t.payment_intent_id).length
+        readyToCharge: allTeams.filter(t => (t.status === 'registered' || t.status === 'pending') && t.setup_intent_id && !t.payment_intent_id).length
       };
 
       // Simplified daily trend calculation from teams data
