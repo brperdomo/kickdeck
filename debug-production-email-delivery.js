@@ -1,185 +1,199 @@
 /**
  * Debug Production Email Delivery Issue
  * 
- * This script tests various aspects of email delivery to identify
- * why production emails return success but aren't delivered.
+ * This script investigates why emails show success but aren't delivered in production.
+ * We'll check SendGrid activity, configuration differences, and test direct sending.
  */
 
 import { MailService } from '@sendgrid/mail';
-import dotenv from 'dotenv';
+import fetch from 'node-fetch';
 
-dotenv.config();
+const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 
-const apiKey = process.env.SENDGRID_API_KEY;
-
-if (!apiKey) {
-  console.error('❌ SENDGRID_API_KEY not found in environment variables');
-  process.exit(1);
-}
-
-const mailService = new MailService();
-mailService.setApiKey(apiKey);
-
-async function checkEmailDelivery() {
-  console.log('🔍 Production Email Delivery Diagnostic');
-  console.log('==========================================\n');
-
-  // Test 1: Check API key validity
-  console.log('=== Test 1: API Key Validation ===');
+async function debugProductionEmailDelivery() {
+  console.log('Debugging production email delivery issue...');
+  console.log(`Environment: ${process.env.NODE_ENV}`);
+  console.log(`SendGrid API Key: ${SENDGRID_API_KEY ? SENDGRID_API_KEY.substring(0, 10) + '...' : 'Missing'}`);
+  
+  // Step 1: Check recent SendGrid activity
+  console.log('\n1. Checking SendGrid email activity...');
   try {
-    const response = await fetch('https://api.sendgrid.com/v3/user/account', {
+    const activityResponse = await fetch('https://api.sendgrid.com/v3/messages?limit=10', {
       headers: {
-        'Authorization': `Bearer ${apiKey}`,
+        'Authorization': `Bearer ${SENDGRID_API_KEY}`,
         'Content-Type': 'application/json'
       }
     });
     
-    if (response.ok) {
-      const account = await response.json();
-      console.log('✅ API Key Valid');
-      console.log(`Account Type: ${account.type}`);
-      console.log(`Reputation: ${account.reputation}`);
+    if (activityResponse.ok) {
+      const activity = await activityResponse.json();
+      console.log(`Found ${activity.messages?.length || 0} recent messages`);
+      
+      if (activity.messages && activity.messages.length > 0) {
+        console.log('Recent emails:');
+        activity.messages.slice(0, 5).forEach(msg => {
+          console.log(`  - To: ${msg.to_email} | Status: ${msg.status} | Subject: ${msg.subject?.substring(0, 50)}`);
+        });
+        
+        // Check for our test emails
+        const testEmails = activity.messages.filter(msg => 
+          msg.to_email.includes('matchproteam.testinator.com')
+        );
+        
+        if (testEmails.length > 0) {
+          console.log('\nTest emails found in activity:');
+          testEmails.forEach(msg => {
+            console.log(`  - ${msg.to_email}: ${msg.status} (${msg.last_event_time})`);
+          });
+        } else {
+          console.log('❌ No test emails found in SendGrid activity');
+        }
+      }
     } else {
-      console.log('❌ API Key Invalid');
-      return;
+      console.log(`❌ Could not fetch activity: ${activityResponse.status}`);
     }
   } catch (error) {
-    console.error('❌ API Key Check Failed:', error.message);
-    return;
+    console.log(`❌ Activity check error: ${error.message}`);
   }
-
-  // Test 2: Check sender verification
-  console.log('\n=== Test 2: Sender Verification ===');
+  
+  // Step 2: Test direct SendGrid email sending
+  console.log('\n2. Testing direct SendGrid email sending...');
+  const testEmail = 'directtest@matchproteam.testinator.com';
+  
   try {
-    const response = await fetch('https://api.sendgrid.com/v3/verified_senders', {
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json'
-      }
-    });
+    const mailService = new MailService();
+    mailService.setApiKey(SENDGRID_API_KEY);
     
-    if (response.ok) {
-      const data = await response.json();
-      console.log('✅ Verified Senders:');
-      data.results.forEach(sender => {
-        console.log(`  - ${sender.from_email} (${sender.from_name}) - ${sender.verified ? '✅ Verified' : '❌ Unverified'}`);
-      });
-    }
-  } catch (error) {
-    console.error('❌ Sender Check Failed:', error.message);
-  }
-
-  // Test 3: Check recent activity
-  console.log('\n=== Test 3: Recent Activity ===');
-  try {
-    const today = new Date().toISOString().split('T')[0];
-    const response = await fetch(`https://api.sendgrid.com/v3/stats?start_date=${today}`, {
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json'
-      }
-    });
-    
-    if (response.ok) {
-      const stats = await response.json();
-      console.log('✅ Today\'s Stats:');
-      if (stats.length > 0) {
-        const todayStats = stats[0].stats[0].metrics;
-        console.log(`  Requests: ${todayStats.requests}`);
-        console.log(`  Delivered: ${todayStats.delivered}`);
-        console.log(`  Bounces: ${todayStats.bounces}`);
-        console.log(`  Blocks: ${todayStats.blocks}`);
-        console.log(`  Spam Reports: ${todayStats.spam_reports}`);
-      } else {
-        console.log('  No activity today');
-      }
-    }
-  } catch (error) {
-    console.error('❌ Stats Check Failed:', error.message);
-  }
-
-  // Test 4: Send test email with detailed tracking
-  console.log('\n=== Test 4: Detailed Test Email ===');
-  try {
-    const testEmail = {
-      to: 'bperdomo@zoho.com',
+    const directMessage = {
+      to: testEmail,
       from: 'support@matchpro.ai',
-      subject: `Production Email Test - ${new Date().toISOString()}`,
-      text: 'This is a test email to debug production delivery issues.',
+      subject: 'Direct SendGrid Test - Production Debug',
+      text: 'This is a direct test to verify SendGrid is actually sending emails.',
       html: `
-        <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #ddd;">
-          <h2 style="color: #333;">Production Email Delivery Test</h2>
-          <p>This email was sent from production to test delivery.</p>
-          <p><strong>Timestamp:</strong> ${new Date().toISOString()}</p>
-          <p><strong>Environment:</strong> Production</p>
-          <p><strong>API Key Last 4:</strong> ...${apiKey.slice(-4)}</p>
-          <div style="background: #f5f5f5; padding: 10px; margin: 10px 0; border-radius: 4px;">
-            <p><strong>If you receive this email:</strong></p>
-            <ul>
-              <li>Production email delivery is working</li>
-              <li>The issue may be with specific templates or timing</li>
-            </ul>
-          </div>
-          <div style="background: #fff3cd; padding: 10px; margin: 10px 0; border-radius: 4px;">
-            <p><strong>If you don't receive this email:</strong></p>
-            <ul>
-              <li>Check spam/junk folders</li>
-              <li>Verify email provider settings</li>
-              <li>Check SendGrid reputation</li>
-            </ul>
-          </div>
+        <div style="font-family: Arial, sans-serif; padding: 20px; border: 2px solid red;">
+          <h2 style="color: red;">Direct SendGrid Test</h2>
+          <p>This email was sent directly via SendGrid API to debug production email delivery.</p>
+          <p><strong>Time:</strong> ${new Date().toISOString()}</p>
+          <p><strong>Environment:</strong> ${process.env.NODE_ENV}</p>
+          <p>If you receive this email, SendGrid is working correctly.</p>
         </div>
-      `,
-      tracking_settings: {
-        click_tracking: { enable: true },
-        open_tracking: { enable: true },
-        subscription_tracking: { enable: false },
-        ganalytics: { enable: false }
-      },
-      mail_settings: {
-        spam_check: { enable: true }
+      `
+    };
+    
+    const result = await mailService.send(directMessage);
+    console.log('✅ Direct email sent successfully');
+    console.log(`   Status: ${result[0].statusCode}`);
+    console.log(`   Message ID: ${result[0].headers['x-message-id']}`);
+    
+    // Store the message ID to check later
+    const messageId = result[0].headers['x-message-id'];
+    
+    // Wait and check if it appears in activity
+    console.log('\nWaiting 10 seconds to check activity...');
+    await new Promise(resolve => setTimeout(resolve, 10000));
+    
+    try {
+      const activityCheck = await fetch('https://api.sendgrid.com/v3/messages', {
+        headers: {
+          'Authorization': `Bearer ${SENDGRID_API_KEY}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (activityCheck.ok) {
+        const recentActivity = await activityCheck.json();
+        const ourEmail = recentActivity.messages?.find(msg => 
+          msg.msg_id === messageId || msg.to_email === testEmail
+        );
+        
+        if (ourEmail) {
+          console.log('✅ Direct email found in SendGrid activity');
+          console.log(`   Status: ${ourEmail.status}`);
+          console.log(`   Events: ${JSON.stringify(ourEmail.events || [])}`);
+        } else {
+          console.log('❌ Direct email not found in SendGrid activity');
+        }
+      }
+    } catch (error) {
+      console.log(`⚠️  Could not check activity: ${error.message}`);
+    }
+    
+  } catch (error) {
+    console.log('❌ Direct email failed');
+    console.error('Error:', error.message);
+    if (error.response) {
+      console.error('SendGrid response:', error.response.body);
+    }
+  }
+  
+  // Step 3: Test dynamic template specifically
+  console.log('\n3. Testing dynamic template directly...');
+  try {
+    const templateMessage = {
+      to: 'templatetest@matchproteam.testinator.com',
+      from: 'support@matchpro.ai',
+      templateId: 'd-6064756d74914ec79b3a3586f6713424', // Welcome template ID
+      dynamicTemplateData: {
+        firstName: 'Template',
+        lastName: 'Test',
+        email: 'templatetest@matchproteam.testinator.com',
+        username: 'templatetest'
       }
     };
-
-    const response = await mailService.send(testEmail);
-    console.log('✅ Test Email Sent Successfully');
-    console.log(`Status: ${response[0].statusCode}`);
-    console.log(`Message ID: ${response[0].headers['x-message-id']}`);
     
-    // Wait a moment and check delivery status
-    console.log('\nWaiting 5 seconds to check delivery status...');
-    await new Promise(resolve => setTimeout(resolve, 5000));
+    const mailService = new MailService();
+    mailService.setApiKey(SENDGRID_API_KEY);
+    
+    const templateResult = await mailService.send(templateMessage);
+    console.log('✅ Dynamic template email sent');
+    console.log(`   Status: ${templateResult[0].statusCode}`);
+    console.log(`   Message ID: ${templateResult[0].headers['x-message-id']}`);
     
   } catch (error) {
-    console.error('❌ Test Email Failed:', error);
+    console.log('❌ Dynamic template failed');
+    console.error('Error:', error.message);
     if (error.response) {
-      console.error('Response body:', error.response.body);
+      console.error('SendGrid response:', error.response.body);
     }
   }
-
-  // Test 5: Check for bounces and suppressions
-  console.log('\n=== Test 5: Suppression Check ===');
-  try {
-    const response = await fetch('https://api.sendgrid.com/v3/suppression/bounces/bperdomo@zoho.com', {
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json'
+  
+  // Step 4: Check suppression lists for test emails
+  console.log('\n4. Checking suppression lists for test emails...');
+  const testEmails = [
+    'hello@matchproteam.testinator.com',
+    'goodbye@matchproteam.testinator.com'
+  ];
+  
+  const suppressionTypes = ['bounces', 'blocks', 'spam_reports', 'unsubscribes', 'invalid_emails'];
+  
+  for (const email of testEmails) {
+    console.log(`\nChecking ${email}:`);
+    for (const type of suppressionTypes) {
+      try {
+        const response = await fetch(`https://api.sendgrid.com/v3/suppression/${type}/${email}`, {
+          headers: {
+            'Authorization': `Bearer ${SENDGRID_API_KEY}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (response.status === 200) {
+          console.log(`  ❌ In ${type} suppression list`);
+        } else if (response.status === 404) {
+          console.log(`  ✅ Clean from ${type}`);
+        }
+      } catch (error) {
+        console.log(`  ⚠️  Error checking ${type}`);
       }
-    });
-    
-    if (response.status === 404) {
-      console.log('✅ Email not in bounce list');
-    } else if (response.ok) {
-      const bounceData = await response.json();
-      console.log('❌ Email found in bounce list:', bounceData);
     }
-  } catch (error) {
-    console.log('✅ No suppression issues found');
   }
-
-  console.log('\n==========================================');
-  console.log('Diagnostic Complete');
-  console.log('==========================================');
+  
+  console.log('\n=== PRODUCTION EMAIL DEBUG COMPLETE ===');
+  console.log('Key findings:');
+  console.log('1. Check if emails appear in SendGrid Activity Feed');
+  console.log('2. Verify direct emails vs dynamic template emails');
+  console.log('3. Confirm suppression list status');
+  console.log('4. Compare with development environment behavior');
 }
 
-checkEmailDelivery().catch(console.error);
+debugProductionEmailDelivery().catch(console.error);
