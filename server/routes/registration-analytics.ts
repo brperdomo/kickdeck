@@ -7,8 +7,7 @@
 
 import { Application } from 'express';
 import { db } from '@db';
-import { teams, eventFees } from '@db/schema';
-import { eq, and, sql } from 'drizzle-orm';
+import { sql } from 'drizzle-orm';
 import { isAdmin } from '../middleware/auth';
 import { calculateFeeBreakdown } from '../services/fee-calculator';
 
@@ -26,13 +25,13 @@ export function registerRegistrationAnalyticsRoutes(app: Application) {
       const allTeamsResult = await db.execute(sql`
         SELECT * FROM teams WHERE event_id = ${eventId} ORDER BY created_at DESC
       `);
-      const allTeams = allTeamsResult.rows;
+      const allTeams = allTeamsResult.rows as any[];
 
       // Get event fees for calculation using raw SQL
       const feesResult = await db.execute(sql`
         SELECT * FROM event_fees WHERE event_id = ${parseInt(eventId)}
       `);
-      const fees = feesResult.rows;
+      const fees = feesResult.rows as any[];
 
       // Calculate status breakdown
       const statusBreakdown = {
@@ -53,240 +52,152 @@ export function registerRegistrationAnalyticsRoutes(app: Application) {
 
       // Calculate total event volume for proper fee tier calculation
       const totalEventVolume = allTeams.reduce((total, team) => {
-        const teamFee = parseFloat(String(team.totalAmount || team.registrationFee || '0'));
-        return total + (teamFee * 100); // Convert to cents
+        const teamFee = parseFloat(String(team.total_amount || team.registration_fee || '0'));
+        return total + teamFee;
       }, 0);
 
-      allTeams.forEach((team) => {
-        const teamFee = parseFloat(String(team.totalAmount || team.registrationFee || '0'));
-        const teamFeeInCents = Math.round(teamFee * 100);
+      // Calculate breakdown for each team
+      for (const team of allTeams) {
+        const teamFee = parseFloat(String(team.total_amount || team.registration_fee || '0'));
         
-        if (teamFeeInCents > 0) {
-          // Use proper fee calculation with volume-based rates
-          const feeCalculation = calculateFeeBreakdown(teamFeeInCents, totalEventVolume);
+        if (teamFee > 0) {
+          // Use fee calculator for accurate breakdown
+          const feeBreakdown = calculateFeeBreakdown(teamFee, totalEventVolume);
+          
+          totalRegistrationFees += feeBreakdown.registrationFee;
+          totalPlatformFees += feeBreakdown.platformFee;
+          totalStripeFees += feeBreakdown.stripeFee;
+
+          // Calculate revenue categories
+          if (team.status === 'approved' && team.payment_intent_id) {
+            alreadyCollected += teamFee;
+          } else if (team.status === 'approved' && team.setup_intent_id) {
+            pendingCollection += teamFee;
+          } else if (team.status === 'pending' || team.status === 'waitlisted') {
+            potentialRevenue += teamFee;
+          }
           
           totalExpectedRevenue += teamFee;
-          totalRegistrationFees += teamFee;
-          totalPlatformFees += (feeCalculation.platformFeeAmount / 100);
-          totalStripeFees += (feeCalculation.stripeFeeAmount / 100);
-
-          // Categorize by status for revenue projections
-          switch (team.status) {
-            case 'approved':
-              if (team.paymentIntentId) {
-                alreadyCollected += teamFee;
-              } else {
-                pendingCollection += teamFee;
-              }
-              break;
-            case 'pending':
-              if (team.setupIntentId || team.paymentIntentId) {
-                pendingCollection += teamFee; // Cards saved, ready to charge
-              } else {
-                potentialRevenue += teamFee; // Pay later option
-              }
-              break;
-            case 'waitlisted':
-              potentialRevenue += teamFee;
-              break;
-            // Rejected teams don't contribute to revenue projections
-          }
         }
-      });
+      }
 
-      const netRevenue = totalRegistrationFees - totalPlatformFees - totalStripeFees;
-      const averageRegistrationValue = allTeams.length > 0 ? totalExpectedRevenue / allTeams.length : 0;
-
-      // Payment method analysis
-      const paymentMethodStats = {
-        cardsSaved: allTeams.filter(t => t.setupIntentId && !t.paymentIntentId).length,
-        payLaterSelected: allTeams.filter(t => !t.setupIntentId && !t.paymentIntentId && t.status !== 'rejected').length,
-        readyToCharge: allTeams.filter(t => t.status === 'approved' && t.setupIntentId && !t.paymentIntentId).length
+      // Calculate payment method analysis
+      const paymentMethodAnalysis = {
+        cardsSaved: allTeams.filter(t => t.setup_intent_id && !t.payment_intent_id && t.status !== 'rejected').length,
+        payLaterSelected: allTeams.filter(t => !t.setup_intent_id && !t.payment_intent_id && t.status !== 'rejected').length,
+        readyToCharge: allTeams.filter(t => t.status === 'approved' && t.setup_intent_id && !t.payment_intent_id).length
       };
-
-      // Simplified daily trend calculation from teams data - removing problematic SQL query
 
       // Simplified daily trend calculation from teams data
       const dailyRegistrationTrend = allTeams
-        .filter(team => team.createdAt)
-        .reduce((acc: any[], team) => {
-          const date = new Date(team.createdAt).toISOString().split('T')[0];
-          const existing = acc.find(d => d.date === date);
-          const value = parseFloat(String(team.totalAmount || team.registrationFee || '0'));
-          
-          if (existing) {
-            existing.registrations += 1;
-            existing.expectedValue += value;
-          } else {
-            acc.push({
-              date,
-              registrations: 1,
-              expectedValue: value,
-              status: team.status
-            });
+        .filter((team: any) => team.created_at)
+        .map((team: any) => ({
+          date: new Date(team.created_at as string).toISOString().split('T')[0],
+          team: team
+        }))
+        .reduce((acc: any, { date, team }) => {
+          if (!acc[date]) {
+            acc[date] = { date, registrations: 0, expectedValue: 0 };
           }
+          acc[date].registrations += 1;
+          const teamFee = parseFloat(String(team.total_amount || team.registration_fee || '0'));
+          acc[date].expectedValue += teamFee;
           return acc;
-        }, [])
-        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-        .slice(0, 30);
+        }, {});
 
-      const analytics = {
-        totalRegistrations: allTeams.length,
-        statusBreakdown,
-        revenueProjections: {
+      const dailyTrend = Object.values(dailyRegistrationTrend)
+        .sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        .slice(0, parseInt(period as string));
+
+      // Calculate action items
+      const actionItems = {
+        pendingApprovals: statusBreakdown.pending,
+        waitlistedTeams: statusBreakdown.waitlisted,
+        cardsReadyToCharge: paymentMethodAnalysis.readyToCharge,
+        totalActionItems: statusBreakdown.pending + statusBreakdown.waitlisted
+      };
+
+      res.json({
+        summary: {
+          totalRegistrations: allTeams.length,
+          statusBreakdown,
           totalExpectedRevenue,
           alreadyCollected,
           pendingCollection,
-          potentialRevenue,
-          averageRegistrationValue
+          potentialRevenue
         },
-        feeBreakdown: {
+        revenue: {
           totalRegistrationFees,
           totalPlatformFees,
           totalStripeFees,
-          netRevenue
+          breakdown: {
+            approved: alreadyCollected + pendingCollection,
+            pending: potentialRevenue,
+            rejected: 0
+          }
         },
-        paymentMethodStats,
-        dailyRegistrationTrend,
-        generatedAt: new Date().toISOString()
-      };
-
-      console.log(`Registration analytics generated for event ${eventId}:`, {
-        totalRegistrations: analytics.totalRegistrations,
-        expectedRevenue: analytics.revenueProjections.totalExpectedRevenue,
-        statusBreakdown: analytics.statusBreakdown
+        paymentMethods: paymentMethodAnalysis,
+        dailyTrend,
+        actionItems
       });
-
-      res.json(analytics);
 
     } catch (error) {
       console.error('Error generating registration analytics:', error);
-      res.status(500).json({ 
-        error: 'Failed to generate registration analytics',
-        details: error instanceof Error ? error.message : 'Unknown error'
-      });
+      res.status(500).json({ error: 'Failed to generate registration analytics' });
     }
   });
 
-  // Export registration analytics data
+  // Export registration data
   app.get("/api/events/:eventId/registration-analytics/export", isAdmin, async (req, res) => {
     try {
       const { eventId } = req.params;
       const format = req.query.format || 'csv';
 
-      // Get all teams with comprehensive data
-      const allTeams = await db.select().from(teams).where(eq(teams.eventId, eventId));
+      // Get all teams with comprehensive data using raw SQL
+      const allTeamsResult = await db.execute(sql`
+        SELECT * FROM teams WHERE event_id = ${eventId} ORDER BY created_at DESC
+      `);
+      const allTeams = allTeamsResult.rows as any[];
 
       if (format === 'csv') {
         const csvHeaders = [
           'Registration Date',
-          'Team Name',
-          'Club Name',
-          'Age Group',
-          'Contact Email',
-          'Manager Name',
+          'Team Name', 
           'Status',
           'Registration Fee',
-          'Platform Fee',
-          'Expected Total',
-          'Payment Method',
           'Payment Status',
-          'Setup Intent ID',
-          'Payment Intent ID'
-        ].join(',');
+          'Payment Method',
+          'Card Last 4',
+          'Submitter Email',
+          'Club Name'
+        ];
 
-        // Calculate total volume for proper fee rates
-        const totalVolume = allTeams.reduce((total, team) => {
-          const fee = parseFloat(String(team.totalAmount || team.registrationFee || '0'));
-          return total + (fee * 100);
-        }, 0);
+        const csvData = allTeams.map((team: any) => [
+          team.created_at ? new Date(team.created_at).toLocaleDateString() : '',
+          team.name || '',
+          team.status || '',
+          team.total_amount || team.registration_fee || '0',
+          team.payment_intent_id ? 'Paid' : team.setup_intent_id ? 'Card Saved' : 'Pay Later',
+          team.setup_intent_id || team.payment_intent_id ? 'Card' : 'Pay Later',
+          team.card_last_four || '',
+          team.submitter_email || '',
+          team.club_name || ''
+        ]);
 
-        const csvRows = allTeams.map(team => {
-          const fee = parseFloat(String(team.totalAmount || team.registrationFee || '0'));
-          const feeInCents = Math.round(fee * 100);
-          
-          // Use proper fee calculation with volume-based rates
-          const feeCalculation = feeInCents > 0 ? calculateFeeBreakdown(feeInCents, totalVolume) : null;
-          const platformFee = feeCalculation ? feeCalculation.platformFeeAmount / 100 : 0;
-          const expectedTotal = fee + platformFee;
-
-          const paymentMethod = team.setupIntentId ? 'Card Saved' : 
-                              team.paymentIntentId ? 'Card Charged' : 'Pay Later';
-          
-          const paymentStatus = team.paymentIntentId ? 'Completed' :
-                              team.setupIntentId ? 'Ready to Charge' : 'Pending';
-
-          return [
-            String(team.createdAt || ''),
-            `"${team.name || ''}"`,
-            `"${team.clubName || ''}"`,
-            `"Age Group ${team.ageGroupId || ''}"`,
-            `"${team.submitterEmail || ''}"`,
-            `"${team.managerName || ''}"`,
-            team.status || '',
-            fee.toFixed(2),
-            platformFee.toFixed(2),
-            expectedTotal.toFixed(2),
-            paymentMethod,
-            paymentStatus,
-            team.setupIntentId || '',
-            team.paymentIntentId || ''
-          ].join(',');
-        });
-
-        const csvContent = [csvHeaders, ...csvRows].join('\n');
+        const csvContent = [csvHeaders, ...csvData]
+          .map(row => row.map(field => `"${String(field).replace(/"/g, '""')}"`).join(','))
+          .join('\n');
 
         res.setHeader('Content-Type', 'text/csv');
-        res.setHeader('Content-Disposition', `attachment; filename="registration-analytics-${eventId}-${new Date().toISOString().split('T')[0]}.csv"`);
+        res.setHeader('Content-Disposition', `attachment; filename="registration-analytics-${eventId}.csv"`);
         res.send(csvContent);
       } else {
-        res.status(400).json({ error: 'Unsupported export format' });
+        res.json(allTeams);
       }
+
     } catch (error) {
       console.error('Error exporting registration analytics:', error);
       res.status(500).json({ error: 'Failed to export registration analytics' });
-    }
-  });
-
-  // Get detailed registration breakdown by status
-  app.get("/api/events/:eventId/registration-analytics/status/:status", isAdmin, async (req, res) => {
-    try {
-      const { eventId, status } = req.params;
-      
-      const statusTeams = await db.query.teams.findMany({
-        where: and(
-          eq(teams.eventId, eventId),
-          eq(teams.status, status)
-        ),
-        orderBy: (teams, { desc }) => [desc(teams.createdAt)]
-      });
-
-      // Calculate revenue impact for this status
-      const totalValue = statusTeams.reduce((total, team) => {
-        const fee = parseFloat(String(team.totalAmount || team.registrationFee || '0'));
-        return total + fee;
-      }, 0);
-
-      res.json({
-        status,
-        count: statusTeams.length,
-        totalValue,
-        teams: statusTeams.map(team => ({
-          id: team.id,
-          name: team.name,
-          clubName: team.clubName,
-          registrationFee: team.totalAmount || team.registrationFee,
-          submitterEmail: team.submitterEmail,
-          managerName: team.managerName,
-          createdAt: team.createdAt,
-          hasPaymentMethod: !!team.setupIntentId,
-          paymentCompleted: !!team.paymentIntentId
-        }))
-      });
-
-    } catch (error) {
-      console.error('Error fetching status breakdown:', error);
-      res.status(500).json({ error: 'Failed to fetch status breakdown' });
     }
   });
 }
