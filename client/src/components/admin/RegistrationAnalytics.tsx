@@ -41,47 +41,78 @@ interface RegistrationSummary {
     rejected: number;
     waitlisted: number;
   };
-  revenueProjections: {
-    totalExpectedRevenue: number;
-    alreadyCollected: number;
-    pendingCollection: number;
-    potentialRevenue: number; // pending + waitlisted
-    averageRegistrationValue: number;
-  };
+  totalExpectedRevenue: number;
+  alreadyCollected: number;
+  pendingCollection: number;
+  potentialRevenue: number;
   feeBreakdown: {
     totalRegistrationFees: number;
     totalPlatformFees: number;
     totalStripeFees: number;
-    netRevenue: number;
   };
-  paymentMethodStats: {
+  paymentMethodAnalysis: {
     cardsSaved: number;
     payLaterSelected: number;
     readyToCharge: number;
   };
-  dailyRegistrationTrend: Array<{
+  dailyTrend: Array<{
     date: string;
     registrations: number;
     expectedValue: number;
-    status: string;
   }>;
+  actionItems: {
+    pendingApprovals: number;
+    waitlistedTeams: number;
+    cardsReadyToCharge: number;
+    totalActionItems: number;
+  };
+}
+
+interface AnalyticsData {
+  summary: RegistrationSummary;
+  revenue: {
+    totalRegistrationFees: number;
+    totalPlatformFees: number;
+    totalStripeFees: number;
+    breakdown: {
+      approved: number;
+      pending: number;
+      rejected: number;
+    };
+  };
+  paymentMethods: {
+    cardsSaved: number;
+    payLaterSelected: number;
+    readyToCharge: number;
+  };
+  dailyTrend: Array<{
+    date: string;
+    registrations: number;
+    expectedValue: number;
+  }>;
+  actionItems: {
+    pendingApprovals: number;
+    waitlistedTeams: number;
+    cardsReadyToCharge: number;
+    totalActionItems: number;
+  };
 }
 
 export function RegistrationAnalytics({ eventId }: RegistrationAnalyticsProps) {
-  const [selectedPeriod, setSelectedPeriod] = useState('30');
+  const [period, setPeriod] = useState<string>("30");
 
-  // Fetch comprehensive registration analytics
-  const { data: analytics, isLoading, error } = useQuery<RegistrationSummary>({
-    queryKey: ['registration-analytics', eventId, selectedPeriod],
+  const { data: analytics, isLoading, error } = useQuery<AnalyticsData>({
+    queryKey: ['registration-analytics', eventId, period],
     queryFn: async () => {
-      const response = await fetch(`/api/events/${eventId}/registration-analytics?period=${selectedPeriod}`);
-      if (!response.ok) throw new Error('Failed to fetch registration analytics');
+      const response = await fetch(`/api/events/${eventId}/registration-analytics?period=${period}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch registration analytics');
+      }
       return response.json();
     },
-    refetchInterval: 30000 // Refresh every 30 seconds for live updates
   });
 
-  const handleExportAnalytics = async (format: string = 'csv') => {
+  const handleExport = async (format: string = 'csv') => {
     try {
       const response = await fetch(`/api/events/${eventId}/registration-analytics/export?format=${format}`);
       if (!response.ok) throw new Error('Export failed');
@@ -89,12 +120,12 @@ export function RegistrationAnalytics({ eventId }: RegistrationAnalyticsProps) {
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
+      a.style.display = 'none';
       a.href = url;
-      a.download = `registration-analytics-${eventId}-${new Date().toISOString().split('T')[0]}.${format}`;
+      a.download = `registration-analytics-${eventId}.${format}`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
     } catch (error) {
       console.error('Export failed:', error);
     }
@@ -102,67 +133,67 @@ export function RegistrationAnalytics({ eventId }: RegistrationAnalyticsProps) {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center p-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[1, 2, 3, 4].map((i) => (
+            <Card key={i} className="animate-pulse">
+              <CardContent className="p-6">
+                <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
+                <div className="h-8 bg-gray-200 rounded w-3/4"></div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="p-4 bg-destructive/10 text-destructive rounded-lg">
-        <p>Failed to load registration analytics: {error.message}</p>
-      </div>
+      <Card className="border-red-200 bg-red-50">
+        <CardContent className="p-6">
+          <div className="flex items-center text-red-600">
+            <AlertCircle className="h-5 w-5 mr-2" />
+            <p>Failed to load registration analytics. Please try again.</p>
+          </div>
+        </CardContent>
+      </Card>
     );
   }
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'approved':
-        return <CheckCircle className="h-4 w-4 text-green-500" />;
-      case 'pending':
-        return <Clock className="h-4 w-4 text-yellow-500" />;
-      case 'rejected':
-        return <XCircle className="h-4 w-4 text-red-500" />;
-      case 'waitlisted':
-        return <AlertCircle className="h-4 w-4 text-blue-500" />;
-      default:
-        return <Users className="h-4 w-4 text-gray-400" />;
-    }
-  };
+  if (!analytics) return null;
 
-  const statusConfig = [
-    { key: 'pending', label: 'Pending Approval', color: 'bg-yellow-100 text-yellow-800', icon: 'pending' },
-    { key: 'approved', label: 'Approved & Paid', color: 'bg-green-100 text-green-800', icon: 'approved' },
-    { key: 'rejected', label: 'Rejected', color: 'bg-red-100 text-red-800', icon: 'rejected' },
-    { key: 'waitlisted', label: 'Waitlisted', color: 'bg-blue-100 text-blue-800', icon: 'waitlisted' }
-  ];
+  const totalRegistrations = analytics.summary.totalRegistrations;
+  const statusBreakdown = analytics.summary.statusBreakdown;
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      {/* Header with Export */}
+      <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold">Registration Analytics & Revenue Projections</h3>
-          <p className="text-sm text-muted-foreground">
-            Live insights into all registrations and expected revenue
-          </p>
+          <h2 className="text-2xl font-bold text-gray-900">Registration Analytics</h2>
+          <p className="text-gray-600">Comprehensive registration insights and revenue projections</p>
         </div>
-        <Button onClick={() => handleExportAnalytics('csv')} variant="outline" size="sm">
-          <Download className="mr-2 h-4 w-4" />
-          Export Analytics
+        <Button 
+          onClick={() => handleExport('csv')} 
+          variant="outline"
+          className="gap-2"
+        >
+          <Download className="h-4 w-4" />
+          Export CSV
         </Button>
       </div>
 
-      {/* Key Metrics Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      {/* Key Metrics Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card className="border-blue-200 bg-blue-50/30">
           <CardContent className="p-6">
             <div className="flex items-center">
               <Users className="h-8 w-8 text-blue-600" />
               <div className="ml-4">
                 <p className="text-sm font-medium text-blue-700">Total Registrations</p>
-                <p className="text-2xl font-bold text-blue-900">{analytics?.totalRegistrations || 0}</p>
-                <p className="text-xs text-blue-600">All submitted forms</p>
+                <p className="text-2xl font-bold text-blue-900">{totalRegistrations}</p>
+                <p className="text-xs text-blue-600">All submitted teams</p>
               </div>
             </div>
           </CardContent>
@@ -175,7 +206,7 @@ export function RegistrationAnalytics({ eventId }: RegistrationAnalyticsProps) {
               <div className="ml-4">
                 <p className="text-sm font-medium text-green-700">Expected Revenue</p>
                 <p className="text-2xl font-bold text-green-900">
-                  ${analytics?.revenueProjections.totalExpectedRevenue?.toFixed(2) || '0.00'}
+                  ${analytics?.summary.totalExpectedRevenue?.toFixed(2) || '0.00'}
                 </p>
                 <p className="text-xs text-green-600">All registrations if approved</p>
               </div>
@@ -190,7 +221,7 @@ export function RegistrationAnalytics({ eventId }: RegistrationAnalyticsProps) {
               <div className="ml-4">
                 <p className="text-sm font-medium text-yellow-700">Ready to Charge</p>
                 <p className="text-2xl font-bold text-yellow-900">
-                  ${analytics?.revenueProjections.pendingCollection?.toFixed(2) || '0.00'}
+                  ${analytics?.summary.pendingCollection?.toFixed(2) || '0.00'}
                 </p>
                 <p className="text-xs text-yellow-600">Cards saved, pending approval</p>
               </div>
@@ -205,7 +236,7 @@ export function RegistrationAnalytics({ eventId }: RegistrationAnalyticsProps) {
               <div className="ml-4">
                 <p className="text-sm font-medium text-purple-700">Average Value</p>
                 <p className="text-2xl font-bold text-purple-900">
-                  ${analytics?.revenueProjections.averageRegistrationValue?.toFixed(2) || '0.00'}
+                  ${totalRegistrations > 0 ? (analytics?.summary.totalExpectedRevenue / totalRegistrations).toFixed(2) : '0.00'}
                 </p>
                 <p className="text-xs text-purple-600">Per registration</p>
               </div>
@@ -217,9 +248,9 @@ export function RegistrationAnalytics({ eventId }: RegistrationAnalyticsProps) {
       <Tabs defaultValue="overview" className="w-full">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="revenue">Revenue Breakdown</TabsTrigger>
-          <TabsTrigger value="status">Status Tracking</TabsTrigger>
-          <TabsTrigger value="payments">Payment Methods</TabsTrigger>
+          <TabsTrigger value="revenue">Revenue</TabsTrigger>
+          <TabsTrigger value="payment">Payment Methods</TabsTrigger>
+          <TabsTrigger value="actions">Action Items</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
@@ -231,26 +262,55 @@ export function RegistrationAnalytics({ eventId }: RegistrationAnalyticsProps) {
                 Registration Status Breakdown
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {statusConfig.map((status) => {
-                  const count = analytics?.statusBreakdown[status.key as keyof typeof analytics.statusBreakdown] || 0;
-                  const percentage = analytics?.totalRegistrations ? (count / analytics.totalRegistrations * 100) : 0;
-                  
-                  return (
-                    <div key={status.key} className="text-center">
-                      <div className="flex items-center justify-center mb-2">
-                        {getStatusIcon(status.icon)}
-                        <span className="ml-2 text-sm font-medium">{status.label}</span>
-                      </div>
-                      <div className="text-3xl font-bold mb-1">{count}</div>
-                      <Badge variant="secondary" className={status.color}>
-                        {percentage.toFixed(1)}%
-                      </Badge>
-                      <Progress value={percentage} className="mt-2 h-2" />
-                    </div>
-                  );
-                })}
+                <div className="text-center p-4 bg-orange-50 rounded-lg border border-orange-200">
+                  <Clock className="h-8 w-8 text-orange-600 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-orange-900">{statusBreakdown.pending}</p>
+                  <p className="text-sm text-orange-700">Pending Approval</p>
+                  <div className="mt-2">
+                    <Progress 
+                      value={totalRegistrations > 0 ? (statusBreakdown.pending / totalRegistrations) * 100 : 0} 
+                      className="h-2"
+                    />
+                  </div>
+                </div>
+
+                <div className="text-center p-4 bg-green-50 rounded-lg border border-green-200">
+                  <CheckCircle className="h-8 w-8 text-green-600 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-green-900">{statusBreakdown.approved}</p>
+                  <p className="text-sm text-green-700">Approved</p>
+                  <div className="mt-2">
+                    <Progress 
+                      value={totalRegistrations > 0 ? (statusBreakdown.approved / totalRegistrations) * 100 : 0} 
+                      className="h-2"
+                    />
+                  </div>
+                </div>
+
+                <div className="text-center p-4 bg-blue-50 rounded-lg border border-blue-200">
+                  <AlertCircle className="h-8 w-8 text-blue-600 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-blue-900">{statusBreakdown.waitlisted}</p>
+                  <p className="text-sm text-blue-700">Waitlisted</p>
+                  <div className="mt-2">
+                    <Progress 
+                      value={totalRegistrations > 0 ? (statusBreakdown.waitlisted / totalRegistrations) * 100 : 0} 
+                      className="h-2"
+                    />
+                  </div>
+                </div>
+
+                <div className="text-center p-4 bg-red-50 rounded-lg border border-red-200">
+                  <XCircle className="h-8 w-8 text-red-600 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-red-900">{statusBreakdown.rejected}</p>
+                  <p className="text-sm text-red-700">Rejected</p>
+                  <div className="mt-2">
+                    <Progress 
+                      value={totalRegistrations > 0 ? (statusBreakdown.rejected / totalRegistrations) * 100 : 0} 
+                      className="h-2"
+                    />
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -260,205 +320,183 @@ export function RegistrationAnalytics({ eventId }: RegistrationAnalyticsProps) {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Calendar className="h-5 w-5" />
-                Recent Registration Activity
+                Daily Registration Trend (Last {period} days)
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {analytics?.dailyRegistrationTrend && analytics.dailyRegistrationTrend.length > 0 ? (
-                <div className="space-y-3">
-                  {analytics.dailyRegistrationTrend.slice(0, 7).map((day, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                      <div className="flex items-center space-x-4">
-                        <span className="font-medium">{new Date(day.date).toLocaleDateString()}</span>
-                        <Badge variant="outline">{day.registrations} new</Badge>
-                        <Badge variant="secondary">{day.status}</Badge>
+              <div className="space-y-3">
+                {analytics.dailyTrend.slice(0, 10).map((day, index) => (
+                  <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <div className="text-sm font-medium text-gray-900">
+                        {new Date(day.date).toLocaleDateString()}
                       </div>
-                      <div className="text-right">
-                        <div className="font-bold">${day.expectedValue.toFixed(2)}</div>
-                        <div className="text-sm text-gray-600">Expected value</div>
-                      </div>
+                      <Badge variant="outline">{day.registrations} teams</Badge>
                     </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-8 text-gray-500">
-                  No recent registration activity
-                </div>
-              )}
+                    <div className="text-sm font-medium text-green-600">
+                      ${day.expectedValue.toFixed(2)}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
 
         <TabsContent value="revenue" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Revenue Projection Analysis</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <h4 className="font-medium text-gray-800">Revenue Timeline</h4>
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
-                      <span className="text-sm font-medium text-green-800">Already Collected</span>
-                      <span className="font-bold text-green-900">
-                        ${analytics?.revenueProjections.alreadyCollected?.toFixed(2) || '0.00'}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center p-3 bg-yellow-50 rounded-lg">
-                      <span className="text-sm font-medium text-yellow-800">Pending Collection</span>
-                      <span className="font-bold text-yellow-900">
-                        ${analytics?.revenueProjections.pendingCollection?.toFixed(2) || '0.00'}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
-                      <span className="text-sm font-medium text-blue-800">Potential (Waitlisted)</span>
-                      <span className="font-bold text-blue-900">
-                        ${analytics?.revenueProjections.potentialRevenue?.toFixed(2) || '0.00'}
-                      </span>
-                    </div>
-                  </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Revenue Breakdown</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-600">Already Collected</span>
+                  <span className="font-medium">${analytics?.summary.alreadyCollected?.toFixed(2) || '0.00'}</span>
                 </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-600">Ready to Charge</span>
+                  <span className="font-medium">${analytics?.summary.pendingCollection?.toFixed(2) || '0.00'}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-600">Potential Revenue</span>
+                  <span className="font-medium">${analytics?.summary.potentialRevenue?.toFixed(2) || '0.00'}</span>
+                </div>
+                <hr />
+                <div className="flex justify-between font-bold">
+                  <span>Total Expected</span>
+                  <span>${analytics?.summary.totalExpectedRevenue?.toFixed(2) || '0.00'}</span>
+                </div>
+              </CardContent>
+            </Card>
 
-                <div className="space-y-4">
-                  <h4 className="font-medium text-gray-800">Fee Breakdown</h4>
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                      <span className="text-sm font-medium">Registration Fees</span>
-                      <span className="font-bold">
-                        ${analytics?.feeBreakdown.totalRegistrationFees?.toFixed(2) || '0.00'}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                      <span className="text-sm font-medium">Platform Fees</span>
-                      <span className="font-bold">
-                        ${analytics?.feeBreakdown.totalPlatformFees?.toFixed(2) || '0.00'}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                      <span className="text-sm font-medium">Stripe Processing</span>
-                      <span className="font-bold">
-                        ${analytics?.feeBreakdown.totalStripeFees?.toFixed(2) || '0.00'}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg border-2 border-green-200">
-                      <span className="text-sm font-medium text-green-800">Net Revenue (You Receive)</span>
-                      <span className="font-bold text-green-900">
-                        ${analytics?.feeBreakdown.netRevenue?.toFixed(2) || '0.00'}
-                      </span>
-                    </div>
-                  </div>
+            <Card>
+              <CardHeader>
+                <CardTitle>Fee Structure</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-600">Registration Fees</span>
+                  <span className="font-medium">${analytics?.revenue.totalRegistrationFees?.toFixed(2) || '0.00'}</span>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-600">Platform Fees</span>
+                  <span className="font-medium">${analytics?.revenue.totalPlatformFees?.toFixed(2) || '0.00'}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-600">Stripe Fees</span>
+                  <span className="font-medium">${analytics?.revenue.totalStripeFees?.toFixed(2) || '0.00'}</span>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Revenue by Status</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-600">Approved Teams</span>
+                  <span className="font-medium">${analytics?.revenue.breakdown.approved?.toFixed(2) || '0.00'}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-600">Pending Teams</span>
+                  <span className="font-medium">${analytics?.revenue.breakdown.pending?.toFixed(2) || '0.00'}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-600">Rejected Teams</span>
+                  <span className="font-medium">${analytics?.revenue.breakdown.rejected?.toFixed(2) || '0.00'}</span>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
 
-        <TabsContent value="status" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Action Items & Status Management</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {analytics?.statusBreakdown?.pending && analytics.statusBreakdown.pending > 0 && (
-                  <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Clock className="h-5 w-5 text-yellow-600" />
-                      <span className="font-medium text-yellow-800">
-                        {analytics.statusBreakdown.pending} registrations awaiting your approval
-                      </span>
-                    </div>
-                    <p className="text-sm text-yellow-700 mb-3">
-                      These teams have submitted their registration and are ready for review. 
-                      Approving them will trigger payment collection.
-                    </p>
-                    <Button size="sm" className="bg-yellow-600 hover:bg-yellow-700">
-                      Review Pending Registrations
-                    </Button>
-                  </div>
-                )}
+        <TabsContent value="payment" className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Card className="border-green-200 bg-green-50/30">
+              <CardContent className="p-6 text-center">
+                <CreditCard className="h-12 w-12 text-green-600 mx-auto mb-4" />
+                <p className="text-2xl font-bold text-green-900">{analytics?.paymentMethods.cardsSaved || 0}</p>
+                <p className="text-sm text-green-700">Cards Saved</p>
+                <p className="text-xs text-green-600 mt-1">Ready for charging when approved</p>
+              </CardContent>
+            </Card>
 
-                {analytics?.statusBreakdown?.waitlisted && analytics.statusBreakdown.waitlisted > 0 && (
-                  <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                    <div className="flex items-center gap-2 mb-2">
-                      <AlertCircle className="h-5 w-5 text-blue-600" />
-                      <span className="font-medium text-blue-800">
-                        {analytics.statusBreakdown.waitlisted} teams on waitlist
-                      </span>
-                    </div>
-                    <p className="text-sm text-blue-700 mb-3">
-                      These teams are waiting for spots to open up. You can move them to approved 
-                      status when capacity becomes available.
-                    </p>
-                    <Button size="sm" variant="outline" className="border-blue-600 text-blue-600">
-                      Manage Waitlist
-                    </Button>
-                  </div>
-                )}
+            <Card className="border-blue-200 bg-blue-50/30">
+              <CardContent className="p-6 text-center">
+                <Clock className="h-12 w-12 text-blue-600 mx-auto mb-4" />
+                <p className="text-2xl font-bold text-blue-900">{analytics?.paymentMethods.payLaterSelected || 0}</p>
+                <p className="text-sm text-blue-700">Pay Later Selected</p>
+                <p className="text-xs text-blue-600 mt-1">Will need to collect payment manually</p>
+              </CardContent>
+            </Card>
 
-                <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-                  <div className="flex items-center gap-2 mb-2">
-                    <CheckCircle className="h-5 w-5 text-green-600" />
-                    <span className="font-medium text-green-800">
-                      {analytics?.statusBreakdown.approved || 0} teams approved and paid
-                    </span>
-                  </div>
-                  <p className="text-sm text-green-700">
-                    These registrations are complete and payments have been processed successfully.
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+            <Card className="border-yellow-200 bg-yellow-50/30">
+              <CardContent className="p-6 text-center">
+                <DollarSign className="h-12 w-12 text-yellow-600 mx-auto mb-4" />
+                <p className="text-2xl font-bold text-yellow-900">{analytics?.paymentMethods.readyToCharge || 0}</p>
+                <p className="text-sm text-yellow-700">Ready to Charge</p>
+                <p className="text-xs text-yellow-600 mt-1">Approved teams with saved cards</p>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
 
-        <TabsContent value="payments" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Payment Method Analysis</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="text-center p-4 bg-green-50 rounded-lg">
-                  <CreditCard className="h-8 w-8 text-green-600 mx-auto mb-2" />
-                  <div className="text-2xl font-bold text-green-900">
-                    {analytics?.paymentMethodStats.cardsSaved || 0}
+        <TabsContent value="actions" className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-orange-700">Pending Actions</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between p-3 bg-orange-50 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <Clock className="h-5 w-5 text-orange-600" />
+                    <span className="text-sm font-medium">Teams Awaiting Approval</span>
                   </div>
-                  <div className="text-sm text-green-700">Cards Saved</div>
-                  <div className="text-xs text-green-600 mt-1">Ready to charge on approval</div>
+                  <Badge variant="secondary">{analytics?.actionItems.pendingApprovals || 0}</Badge>
+                </div>
+                
+                <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <AlertCircle className="h-5 w-5 text-blue-600" />
+                    <span className="text-sm font-medium">Waitlisted Teams</span>
+                  </div>
+                  <Badge variant="secondary">{analytics?.actionItems.waitlistedTeams || 0}</Badge>
                 </div>
 
-                <div className="text-center p-4 bg-yellow-50 rounded-lg">
-                  <Clock className="h-8 w-8 text-yellow-600 mx-auto mb-2" />
-                  <div className="text-2xl font-bold text-yellow-900">
-                    {analytics?.paymentMethodStats.payLaterSelected || 0}
+                <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <CreditCard className="h-5 w-5 text-green-600" />
+                    <span className="text-sm font-medium">Cards Ready to Charge</span>
                   </div>
-                  <div className="text-sm text-yellow-700">Pay Later</div>
-                  <div className="text-xs text-yellow-600 mt-1">Will need payment collection</div>
+                  <Badge variant="secondary">{analytics?.actionItems.cardsReadyToCharge || 0}</Badge>
                 </div>
+              </CardContent>
+            </Card>
 
-                <div className="text-center p-4 bg-blue-50 rounded-lg">
-                  <TrendingUp className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-                  <div className="text-2xl font-bold text-blue-900">
-                    {analytics?.paymentMethodStats.readyToCharge || 0}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-green-700">Summary</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="text-center p-6 bg-green-50 rounded-lg">
+                  <p className="text-3xl font-bold text-green-900">{analytics?.actionItems.totalActionItems || 0}</p>
+                  <p className="text-sm text-green-700 mt-1">Total Action Items</p>
+                  <p className="text-xs text-green-600 mt-2">Teams requiring your attention</p>
+                </div>
+                
+                {(analytics?.actionItems.totalActionItems || 0) > 0 && (
+                  <div className="text-sm text-gray-600 space-y-2">
+                    <p>• Review and approve/reject pending registrations</p>
+                    <p>• Consider moving waitlisted teams to approved</p>
+                    <p>• Charge approved teams with saved payment methods</p>
                   </div>
-                  <div className="text-sm text-blue-700">Ready to Charge</div>
-                  <div className="text-xs text-blue-600 mt-1">Approved with saved cards</div>
-                </div>
-              </div>
-
-              <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-                <h4 className="font-medium text-gray-800 mb-2">Payment Collection Strategy</h4>
-                <ul className="text-sm text-gray-600 space-y-1">
-                  <li>• Approve registrations with saved cards for immediate collection</li>
-                  <li>• Contact "Pay Later" teams to collect payment before final approval</li>
-                  <li>• Monitor waitlisted teams for potential capacity openings</li>
-                  <li>• Track rejected registrations for event planning improvements</li>
-                </ul>
-              </div>
-            </CardContent>
-          </Card>
+                )}
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
       </Tabs>
     </div>

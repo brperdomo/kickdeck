@@ -64,9 +64,9 @@ export function registerRegistrationAnalyticsRoutes(app: Application) {
           // Use fee calculator for accurate breakdown
           const feeBreakdown = calculateFeeBreakdown(teamFee, totalEventVolume);
           
-          totalRegistrationFees += feeBreakdown.registrationFee;
-          totalPlatformFees += feeBreakdown.platformFee;
-          totalStripeFees += feeBreakdown.stripeFee;
+          totalRegistrationFees += feeBreakdown.tournamentCost;
+          totalPlatformFees += feeBreakdown.platformFeeAmount;
+          totalStripeFees += feeBreakdown.stripeFeeAmount;
 
           // Calculate revenue categories
           if (team.status === 'approved' && team.payment_intent_id) {
