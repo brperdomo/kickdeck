@@ -46,6 +46,7 @@ import { registerStripeConnectRoutes } from "./routes/stripe-connect";
 import { registerPaymentReportRoutes } from "./routes/payment-reports";
 import { registerConnectPaymentRoutes } from "./routes/stripe-connect-payments";
 import { registerFeeCalculatorRoutes } from "./routes/admin/fee-calculator-router";
+import { registerRegistrationAnalyticsRoutes } from "./routes/registration-analytics";
 import tournamentDirectorRoutes from "./routes/tournament-director-routes";
 import { 
   getEnhancedEventFinancialReport, 
@@ -8645,6 +8646,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
     try {
       registerStripeConnectRoutes(app);
       registerPaymentReportRoutes(app);
+      registerRegistrationAnalyticsRoutes(app);
       console.log('Stripe Connect routes registered successfully');
     } catch (error) {
       console.error('Error registering Stripe Connect routes:', error);

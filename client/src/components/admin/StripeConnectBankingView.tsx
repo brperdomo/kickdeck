@@ -14,6 +14,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { PaymentReportsView } from "./PaymentReportsView";
+import { RegistrationAnalytics } from "./RegistrationAnalytics";
 
 interface StripeConnectBankingViewProps {
   eventId: string;
@@ -334,10 +335,14 @@ export function StripeConnectBankingView({ eventId }: StripeConnectBankingViewPr
       </div>
 
       <Tabs defaultValue="setup" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="setup" className="flex items-center gap-2">
             <Shield className="h-4 w-4" />
             Banking Setup
+          </TabsTrigger>
+          <TabsTrigger value="analytics" className="flex items-center gap-2">
+            <Users className="h-4 w-4" />
+            Registration Analytics
           </TabsTrigger>
           <TabsTrigger value="reports" className="flex items-center gap-2">
             <BarChart3 className="h-4 w-4" />
