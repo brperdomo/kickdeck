@@ -4224,6 +4224,38 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                                   </td>
                                 </tr>
                               ))}
+                              
+                              {/* Show coupon discount row if applied */}
+                              {appliedCoupon && (
+                                <tr className="border-t border-green-200 bg-green-50">
+                                  <td className="px-4 py-3">
+                                    <div className="flex items-center">
+                                      <p className="font-medium text-green-800">Discount: {appliedCoupon.code}</p>
+                                    </div>
+                                  </td>
+                                  <td className="px-4 py-3 text-sm">
+                                    <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
+                                      {appliedCoupon.discountType === 'fixed' ? 'Fixed Amount' : 'Percentage'}
+                                    </span>
+                                  </td>
+                                  <td className="px-4 py-3 text-right font-medium text-green-800">
+                                    -{(() => {
+                                      let subtotal = selectedFee ? selectedFee.amount : 0;
+                                      requiredFees.forEach((fee) => {
+                                        subtotal += fee.amount;
+                                      });
+                                      
+                                      if (appliedCoupon.discountType === 'fixed') {
+                                        const discountAmount = Math.min(appliedCoupon.amount * 100, subtotal);
+                                        return `$${(discountAmount / 100).toFixed(2)}`;
+                                      } else {
+                                        const discountAmount = Math.round(subtotal * (appliedCoupon.amount / 100));
+                                        return `$${(discountAmount / 100).toFixed(2)}`;
+                                      }
+                                    })()}
+                                  </td>
+                                </tr>
+                              )}
                             </tbody>
                             <tfoot className="bg-gray-50 font-medium">
                               <tr>
@@ -4464,10 +4496,20 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                                 <div className="flex justify-between text-sm text-green-600">
                                   <span>Discount ({appliedCoupon.code})</span>
                                   <span>
-                                    -{appliedCoupon.discountType === 'fixed' 
-                                      ? `$${appliedCoupon.amount.toFixed(2)}`
-                                      : `${appliedCoupon.amount}%`
-                                    }
+                                    -{(() => {
+                                      let subtotal = selectedFee ? selectedFee.amount : 0;
+                                      requiredFees.forEach((fee) => {
+                                        subtotal += fee.amount;
+                                      });
+                                      
+                                      if (appliedCoupon.discountType === 'fixed') {
+                                        const discountAmount = Math.min(appliedCoupon.amount * 100, subtotal);
+                                        return `$${(discountAmount / 100).toFixed(2)}`;
+                                      } else {
+                                        const discountAmount = Math.round(subtotal * (appliedCoupon.amount / 100));
+                                        return `$${(discountAmount / 100).toFixed(2)}`;
+                                      }
+                                    })()}
                                   </span>
                                 </div>
                               )}
