@@ -165,6 +165,9 @@ function Router() {
         <EmergencyRegistrationFix />
       </Route>
       
+      {/* Payment completion route for teams with incomplete setup */}
+      <Route path="/complete-payment/:token" component={CompletePayment} />
+      
       {/* Handle other routes based on auth status */}
       {!user ? (
         <>
