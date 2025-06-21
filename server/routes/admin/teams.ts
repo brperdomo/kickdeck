@@ -5,8 +5,70 @@ import { eq, and, or, like, asc, desc, sql } from 'drizzle-orm';
 import { log } from '../../vite';
 import { sendTemplatedEmail } from '../../services/emailService';
 import { createRefund, createTestPaymentIntent } from '../../services/stripeService';
+import Stripe from 'stripe';
 
 type TeamStatus = 'registered' | 'approved' | 'rejected' | 'paid' | 'withdrawn' | 'refunded' | 'waitlisted';
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+
+/**
+ * Process payment when a team is approved
+ */
+async function processTeamApprovalPayment(team: any, teamId: string): Promise<string> {
+  try {
+    log(`Processing approval payment for team ${team.name} (ID: ${teamId})`, 'admin');
+    
+    // Check if team has setup intent
+    if (!team.setupIntentId) {
+      log(`Team ${teamId} has no setup intent - cannot process payment`, 'admin');
+      return 'no_payment_method';
+    }
+    
+    // Get setup intent from Stripe
+    const setupIntent = await stripe.setupIntents.retrieve(team.setupIntentId);
+    
+    if (setupIntent.status !== 'succeeded' || !setupIntent.payment_method) {
+      log(`Setup intent ${team.setupIntentId} not completed - status: ${setupIntent.status}`, 'admin');
+      return 'payment_method_incomplete';
+    }
+    
+    // Create payment intent
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: team.totalAmount,
+      currency: 'usd',
+      payment_method: setupIntent.payment_method,
+      customer: setupIntent.customer,
+      confirm: true,
+      off_session: true,
+      metadata: {
+        teamId: teamId,
+        teamName: team.name,
+        eventType: 'team_approval_payment'
+      }
+    });
+    
+    if (paymentIntent.status === 'succeeded') {
+      // Update team with payment details
+      await db.update(teams)
+        .set({
+          paymentIntentId: paymentIntent.id,
+          paymentStatus: 'paid',
+          paymentMethodId: setupIntent.payment_method
+        })
+        .where(eq(teams.id, parseInt(teamId, 10)));
+      
+      log(`Payment successful for team ${teamId}: ${paymentIntent.id}`, 'admin');
+      return 'payment_successful';
+    }
+    
+    log(`Payment failed for team ${teamId}: ${paymentIntent.status}`, 'admin');
+    return 'payment_failed';
+    
+  } catch (error) {
+    log(`Payment processing error for team ${teamId}: ${error}`, 'admin');
+    return 'payment_error';
+  }
+}
 
 /**
  * Get all team registrations with filtering options
@@ -279,6 +341,12 @@ export async function updateTeamStatus(req: Request, res: Response) {
     }
     
     log(`Team status updated successfully to ${status}`, 'admin');
+    
+    // Process payment if team is being approved
+    let paymentStatus = 'not_applicable';
+    if (status === 'approved' && currentTeam.totalAmount && currentTeam.totalAmount > 0) {
+      paymentStatus = await processTeamApprovalPayment(currentTeam, teamId);
+    }
     
     // Handle email notifications in a separate try/catch to prevent errors from affecting the response
     let emailStatus = 'not_sent';
