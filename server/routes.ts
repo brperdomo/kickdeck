@@ -1474,6 +1474,19 @@ export function registerRoutes(app: Express): Server {
           return { team, playerCount };
         });
         
+        // PAYMENT ENFORCEMENT: Validate payment setup for teams with fees
+        if (totalAmount > 0 && (!paymentMethod || paymentMethod === 'pay_later')) {
+          // For teams with registration fees, require immediate payment setup
+          // No more "pay later" option for new registrations
+          console.log('Registration blocked: Payment required for teams with fees');
+          return res.status(400).json({
+            error: 'Payment setup required',
+            message: 'Teams with registration fees must complete payment setup during registration',
+            totalAmount: totalAmount,
+            requiresPayment: true
+          });
+        }
+
         // Process payment with Stripe Connect if payment is required
         let paymentResult = null;
         if (totalAmount && totalAmount > 0 && paymentMethod === 'card') {
@@ -1563,8 +1576,13 @@ export function registerRoutes(app: Express): Server {
             }
           } catch (paymentError) {
             console.error('Error setting up payment processing:', paymentError);
-            // Continue with registration but note payment setup failed
-            paymentResult = { error: 'Payment setup failed' };
+            // PAYMENT ENFORCEMENT: Block registration if payment setup fails
+            return res.status(400).json({
+              error: 'Payment setup failed',
+              message: 'Unable to process payment setup. Please try again or contact support.',
+              details: paymentError.message,
+              requiresPayment: true
+            });
           }
         }
 
