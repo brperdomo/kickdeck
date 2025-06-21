@@ -48,6 +48,7 @@ import Checkout from "@/pages/checkout";
 import PaymentConfirmation from "@/pages/payment-confirmation";
 import PaymentSetupConfirmation from "@/pages/payment-setup-confirmation";
 import CompletePayment from "@/pages/CompletePayment";
+import PaymentRecoveryDashboard from "@/pages/PaymentRecoveryDashboard";
 import SendGridSettingsPage from "@/pages/sendgrid-settings";
 import AdminSendGridSetup from "@/pages/admin-sendgrid-setup";
 import { AuthProvider } from "@/hooks/use-auth";
@@ -329,6 +330,9 @@ function Router() {
           </Route>
           <Route path="/admin/settings">
             {user.isAdmin ? <AdminDashboard initialView="settings" /> : <NotFound />}
+          </Route>
+          <Route path="/admin/payment-recovery">
+            {user.isAdmin ? <PaymentRecoveryDashboard /> : <NotFound />}
           </Route>
           {/* We'll enhance the main dashboard with animations directly */}
           <Route path="/admin">
