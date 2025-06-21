@@ -47,6 +47,7 @@ import RevenueForecast from "@/pages/revenue-forecast";
 import Checkout from "@/pages/checkout";
 import PaymentConfirmation from "@/pages/payment-confirmation";
 import PaymentSetupConfirmation from "@/pages/payment-setup-confirmation";
+import CompletePayment from "@/pages/CompletePayment";
 import SendGridSettingsPage from "@/pages/sendgrid-settings";
 import AdminSendGridSetup from "@/pages/admin-sendgrid-setup";
 import { AuthProvider } from "@/hooks/use-auth";

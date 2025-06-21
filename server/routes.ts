@@ -83,6 +83,7 @@ import {
 import userRouter from "./routes/user";
 import sendgridWebhookRouter from "./routes/sendgrid-webhook";
 import { fixCardDetails } from "./routes/fix-card-details";
+import paymentCompletionRouter from "./routes/payment-completion";
 import { sql, eq, and, or, inArray, notInArray, isNull } from "drizzle-orm";
 import { sendTemplatedEmail, sendRegistrationReceiptEmail, sendRegistrationConfirmationEmail } from "./services/emailService";
 import {
@@ -1687,6 +1688,9 @@ export function registerRoutes(app: Express): Server {
 
     // Payment processing endpoints
     app.use('/api/payments', paymentsRouter);
+    
+    // Payment completion endpoints for teams with incomplete setup
+    app.use('/api/payment-completion', paymentCompletionRouter);
     
     // Financial reporting endpoints
     // Financial reporting endpoints - former getFinancialReportData endpoint has been removed
