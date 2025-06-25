@@ -43,6 +43,9 @@ export function SetupPaymentForm({
         setIsLoading(true);
         setErrorMessage(null);
 
+        console.log('🎯 Creating setup intent for payment form initialization');
+        console.log('🎯 Team ID:', teamId, 'Amount:', expectedAmount, 'Team Name:', teamName);
+        
         const response = await createSetupIntent(teamId, {
           teamName,
           eventName,
@@ -52,6 +55,10 @@ export function SetupPaymentForm({
         if (response.clientSecret) {
           setClientSecret(response.clientSecret);
           setSetupIntentId(response.setupIntentId);
+          console.log('🎯 Setup intent created successfully:', response.setupIntentId);
+          
+          // Store the setup intent ID globally for registration use
+          (window as any).lastSetupIntentId = response.setupIntentId;
         } else {
           throw new Error('No client secret returned from server');
         }
@@ -127,8 +134,14 @@ export function SetupPaymentForm({
         
         // Pass both setup intent ID and payment method ID to parent
         if (onSuccess) {
-          // Temporarily store setup intent ID in global scope for access by parent
+          // Store setup intent ID in global scope for registration use
           (window as any).lastSetupIntentId = result.setupIntent.id;
+          (window as any).lastPaymentMethodId = result.setupIntent.payment_method as string;
+          
+          console.log('🎯 Payment setup completed successfully');
+          console.log('🎯 Stored Setup Intent ID:', result.setupIntent.id);
+          console.log('🎯 Stored Payment Method ID:', result.setupIntent.payment_method);
+          
           onSuccess(result.setupIntent.payment_method as string);
         }
       } else {

@@ -94,58 +94,10 @@ function PaymentCompletionForm({
   onError: (error: Error) => void;
   isProcessing: boolean;
 }) {
-  const [clientSecret, setClientSecret] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
   const [paymentCompleted, setPaymentCompleted] = useState(false);
   const [setupIntentId, setSetupIntentId] = useState<string | null>(null);
   const [paymentMethodId, setPaymentMethodId] = useState<string | null>(null);
   const { toast } = useToast();
-
-  useEffect(() => {
-    const initializeSetupIntent = async () => {
-      try {
-        const response = await fetch('/api/payments/create-setup-intent', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            teamId,
-            expectedAmount,
-            metadata: {
-              teamName,
-              eventName,
-              expectedAmount: expectedAmount.toString()
-            }
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to create setup intent');
-        }
-
-        const data = await response.json();
-        setClientSecret(data.clientSecret);
-        setSetupIntentId(data.setupIntentId);
-      } catch (error) {
-        console.error('Error creating setup intent:', error);
-        onError(error instanceof Error ? error : new Error('Failed to initialize payment setup'));
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    initializeSetupIntent();
-  }, [teamId, expectedAmount, teamName, eventName, onError]);
-
-  const handlePaymentSuccess = (paymentMethodId: string) => {
-    setPaymentMethodId(paymentMethodId);
-    setPaymentCompleted(true);
-    toast({
-      title: "Payment Method Added",
-      description: "Your payment information has been securely saved. You can now complete your registration.",
-    });
-  };
 
   const handleRegistrationSubmit = () => {
     if (!setupIntentId || !paymentMethodId) {
@@ -161,32 +113,9 @@ function PaymentCompletionForm({
     onPaymentComplete(setupIntentId, paymentMethodId);
   };
 
-  if (isLoading) {
-    return (
-      <Card>
-        <CardContent className="pt-6 flex justify-center items-center h-48">
-          <div className="text-center">
-            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-primary" />
-            <p>Initializing payment form...</p>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  if (!clientSecret) {
-    return (
-      <Card>
-        <CardContent className="pt-6 text-center">
-          <p className="text-muted-foreground">Payment setup not initialized. Please try again.</p>
-        </CardContent>
-      </Card>
-    );
-  }
-
   return (
     <div className="space-y-4">
-      <SetupPaymentProvider clientSecret={clientSecret}>
+      <StripeProvider>
         <SetupPaymentForm 
           teamId={teamId}
           expectedAmount={expectedAmount}
@@ -195,13 +124,26 @@ function PaymentCompletionForm({
           returnUrl={window.location.origin + '/payment-setup-confirmation'}
           onSuccess={(paymentMethodId) => {
             // Get the actual setup intent ID that was confirmed
-            const actualSetupIntentId = (window as any).lastSetupIntentId || setupIntentId;
-            console.log(`✅ Payment method saved: ${paymentMethodId}`);
+            const actualSetupIntentId = (window as any).lastSetupIntentId;
+            const actualPaymentMethodId = (window as any).lastPaymentMethodId || paymentMethodId;
+            
+            console.log(`✅ Payment setup callback received`);
             console.log(`✅ Setup Intent ID: ${actualSetupIntentId}`);
+            console.log(`✅ Payment Method ID: ${actualPaymentMethodId}`);
+            
+            if (!actualSetupIntentId || !actualPaymentMethodId) {
+              console.error('❌ Missing setup intent or payment method ID');
+              toast({
+                title: "Payment Setup Error",
+                description: "Payment setup was incomplete. Please try again.",
+                variant: "destructive"
+              });
+              return;
+            }
             
             // Update state with confirmed IDs
             setSetupIntentId(actualSetupIntentId);
-            setPaymentMethodId(paymentMethodId);
+            setPaymentMethodId(actualPaymentMethodId);
             setPaymentCompleted(true);
             
             toast({
@@ -212,7 +154,7 @@ function PaymentCompletionForm({
           onError={onError}
           hideSubmitButton={false}
         />
-      </SetupPaymentProvider>
+      </StripeProvider>
       
       {paymentCompleted && (
         <div className="border-t pt-4 mt-6">
