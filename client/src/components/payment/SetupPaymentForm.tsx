@@ -118,7 +118,7 @@ export function SetupPaymentForm({
           paymentMethodId: result.setupIntent.payment_method,
           status: result.setupIntent.status
         });
-        
+
         // Handle success - setupIntent is available on the result object
         toast({
           title: 'Payment Method Saved',
