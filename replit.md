@@ -121,6 +121,9 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
   - Resolved approval workflow issues where teams with incomplete payment setups bypass charging
   - Implemented comprehensive logging to track payment validation failures
   - Manually processed charges for Test 4 and Test 5 teams to demonstrate working approval workflow
+  - CRITICAL FIX: Blocked legacy payment flow that allowed incomplete Setup Intent registrations
+  - System now enforces pre-validated Setup Intents for all card payments before registration
+  - Rejected teams with incomplete payment setups (IDs 125, 126, 127) to maintain data integrity
 - June 23, 2025. Initial setup
 
 ## User Preferences
