@@ -191,9 +191,6 @@ export function SetupPaymentForm({
                   amazonPay: 'never',
                   applePay: 'never',
                   googlePay: 'never'
-                },
-                fields: {
-                  billingDetails: 'never'
                 }
               }}
             />
