@@ -1,0 +1,53 @@
+index-D_MpAY2E.js:886 
+ POST https://app.matchpro.ai/api/events/1755746106/register-team 400 (Bad Request)
+mutationFn	@	index-D_MpAY2E.js:886
+fn	@	index-D_MpAY2E.js:40
+h	@	index-D_MpAY2E.js:40
+start	@	index-D_MpAY2E.js:40
+execute	@	index-D_MpAY2E.js:40
+await in execute		
+mutate	@	index-D_MpAY2E.js:40
+(anonymous)	@	index-D_MpAY2E.js:40
+onPaymentComplete	@	index-D_MpAY2E.js:889
+x	@	index-D_MpAY2E.js:886
+nue	@	index-D_MpAY2E.js:37
+sue	@	index-D_MpAY2E.js:37
+aue	@	index-D_MpAY2E.js:37
+HM	@	index-D_MpAY2E.js:37
+Cq	@	index-D_MpAY2E.js:37
+(anonymous)	@	index-D_MpAY2E.js:37
+iO	@	index-D_MpAY2E.js:40
+YG	@	index-D_MpAY2E.js:37
+c2	@	index-D_MpAY2E.js:37
+I4	@	index-D_MpAY2E.js:37
+jue	@	index-D_MpAY2E.js:37
+
+index-D_MpAY2E.js:886 AUTH FIX: EventRegistration component starting - user should now see event details without immediate redirect
+index-D_MpAY2E.js:886 AUTH FIX: RegistrationAuthChecker allowUnauthenticated is now set to TRUE by default
+index-D_MpAY2E.js:886 Enhanced registration flow: Always starting at personal step with integrated auth
+index-D_MpAY2E.js:886 🔍 AUTH DEBUG 🔍 
+{user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'personal', isPreview: false}
+index-D_MpAY2E.js:885 AnimatedEventBackground CONSTRUCTOR - Received colors: 
+{primaryColor: '#007AFF', secondaryColor: '#34C759', type: 'particles', opacity: 0.6}
+index-D_MpAY2E.js:886 Fetch failed loading: POST "https://app.matchpro.ai/api/events/1755746106/register-team".
+mutationFn	@	index-D_MpAY2E.js:886
+fn	@	index-D_MpAY2E.js:40
+h	@	index-D_MpAY2E.js:40
+start	@	index-D_MpAY2E.js:40
+execute	@	index-D_MpAY2E.js:40
+await in execute		
+mutate	@	index-D_MpAY2E.js:40
+(anonymous)	@	index-D_MpAY2E.js:40
+onPaymentComplete	@	index-D_MpAY2E.js:889
+x	@	index-D_MpAY2E.js:886
+nue	@	index-D_MpAY2E.js:37
+sue	@	index-D_MpAY2E.js:37
+aue	@	index-D_MpAY2E.js:37
+HM	@	index-D_MpAY2E.js:37
+Cq	@	index-D_MpAY2E.js:37
+(anonymous)	@	index-D_MpAY2E.js:37
+iO	@	index-D_MpAY2E.js:40
+YG	@	index-D_MpAY2E.js:37
+c2	@	index-D_MpAY2E.js:37
+I4	@	index-D_MpAY2E.js:37
+jue	@	index-D_MpAY2E.js:37
