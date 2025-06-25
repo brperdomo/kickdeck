@@ -67,24 +67,37 @@ import {
 } from "@/components/ui/dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
-// Payment Setup Wrapper Component
-function PaymentSetupWrapper({ 
+// Extend window object for Stripe access
+declare global {
+  interface Window {
+    stripe: any;
+    elements: any;
+  }
+}
+
+// Payment Completion Form Component - Prevents registration until payment setup is complete
+function PaymentCompletionForm({ 
   teamId, 
   expectedAmount, 
   teamName, 
   eventName, 
-  onSuccess, 
-  onError 
+  onPaymentComplete, 
+  onError,
+  isProcessing
 }: {
   teamId: string | number;
   expectedAmount: number;
   teamName: string;
   eventName: string;
-  onSuccess: (setupIntentId: string, paymentMethodId: string) => void;
+  onPaymentComplete: (setupIntentId: string, paymentMethodId: string) => void;
   onError: (error: Error) => void;
+  isProcessing: boolean;
 }) {
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [paymentCompleted, setPaymentCompleted] = useState(false);
+  const [setupIntentId, setSetupIntentId] = useState<string | null>(null);
+  const [paymentMethodId, setPaymentMethodId] = useState<string | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -97,6 +110,7 @@ function PaymentSetupWrapper({
           },
           body: JSON.stringify({
             teamId,
+            expectedAmount,
             metadata: {
               teamName,
               eventName,
@@ -111,6 +125,7 @@ function PaymentSetupWrapper({
 
         const data = await response.json();
         setClientSecret(data.clientSecret);
+        setSetupIntentId(data.setupIntentId);
       } catch (error) {
         console.error('Error creating setup intent:', error);
         onError(error instanceof Error ? error : new Error('Failed to initialize payment setup'));
@@ -121,6 +136,28 @@ function PaymentSetupWrapper({
 
     initializeSetupIntent();
   }, [teamId, expectedAmount, teamName, eventName, onError]);
+
+  const handlePaymentSuccess = (paymentMethodId: string) => {
+    setPaymentMethodId(paymentMethodId);
+    setPaymentCompleted(true);
+    toast({
+      title: "Payment Method Added",
+      description: "Your payment information has been securely saved. You can now complete your registration.",
+    });
+  };
+
+  const handleRegistrationSubmit = () => {
+    if (!setupIntentId || !paymentMethodId) {
+      toast({
+        title: "Payment Setup Required",
+        description: "Please complete the payment form before registering.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    onPaymentComplete(setupIntentId, paymentMethodId);
+  };
 
   if (isLoading) {
     return (
@@ -146,17 +183,115 @@ function PaymentSetupWrapper({
   }
 
   return (
-    <SetupPaymentProvider clientSecret={clientSecret}>
-      <SetupPaymentForm 
-        teamId={teamId}
-        expectedAmount={expectedAmount}
-        teamName={teamName}
-        eventName={eventName}
-        returnUrl={window.location.origin + '/payment-setup-confirmation'}
-        onSuccess={onSuccess}
-        onError={onError}
-      />
-    </SetupPaymentProvider>
+    <div className="space-y-4">
+      <SetupPaymentProvider clientSecret={clientSecret}>
+        <div className="space-y-4">
+          <SetupPaymentForm 
+            teamId={teamId}
+            expectedAmount={expectedAmount}
+            teamName={teamName}
+            eventName={eventName}
+            returnUrl={window.location.origin + '/payment-setup-confirmation'}
+            onSuccess={handlePaymentSuccess}
+            onError={onError}
+            hideSubmitButton={true}
+          />
+          
+          <Button 
+            onClick={async (e) => {
+              e.preventDefault();
+              
+              if (!window.stripe || !window.elements) {
+                toast({
+                  title: "Payment Setup Error",
+                  description: "Payment form is not ready. Please wait and try again.",
+                  variant: "destructive"
+                });
+                return;
+              }
+
+              setIsLoading(true);
+              try {
+                const result = await window.stripe.confirmSetup({
+                  elements: window.elements,
+                  confirmParams: {
+                    return_url: window.location.origin + '/payment-setup-confirmation',
+                  },
+                  redirect: 'if_required'
+                });
+
+                if (result.error) {
+                  toast({
+                    title: "Payment Setup Error",
+                    description: result.error.message || "Failed to save payment method",
+                    variant: "destructive"
+                  });
+                } else if (result.setupIntent && result.setupIntent.status === 'succeeded' && result.setupIntent.payment_method) {
+                  handlePaymentSuccess(result.setupIntent.payment_method as string);
+                }
+              } catch (error) {
+                toast({
+                  title: "Payment Setup Error",
+                  description: "There was a problem saving your payment method",
+                  variant: "destructive"
+                });
+              } finally {
+                setIsLoading(false);
+              }
+            }}
+            disabled={isLoading}
+            className="w-full"
+            size="lg"
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Processing Payment Method...
+              </>
+            ) : (
+              <>
+                <CreditCard className="mr-2 h-4 w-4" />
+                Save Payment Information
+              </>
+            )}
+          </Button>
+        </div>
+      </SetupPaymentProvider>
+      
+      {paymentCompleted && (
+        <div className="border-t pt-4 mt-6">
+          <div className="bg-green-50 border border-green-200 rounded-md p-4 mb-4">
+            <div className="flex items-center">
+              <CheckCircle className="h-5 w-5 text-green-600 mr-2" />
+              <div>
+                <h4 className="text-green-800 font-medium">Payment Method Secured</h4>
+                <p className="text-green-700 text-sm">Your card information has been safely stored and verified.</p>
+              </div>
+            </div>
+          </div>
+          
+          <Button 
+            onClick={handleRegistrationSubmit}
+            disabled={isProcessing}
+            className="w-full"
+            size="lg"
+            style={{ backgroundColor: '#22c55e' }}
+          >
+            {isProcessing ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Completing Registration...
+              </>
+            ) : (
+              <>
+                <CheckCircle className="mr-2 h-4 w-4" />
+                Complete Team Registration
+              </>
+            )}
+          </Button>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -4689,13 +4824,13 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                               </p>
                             </div>
                             
-                            <PaymentSetupWrapper 
-                              teamId={`temp-${Date.now()}`} // Use temporary ID that won't conflict with database
-                              expectedAmount={parseFloat(calculateTotalAmount()) * 100} // Convert back to cents for payment processing
+                            <PaymentCompletionForm 
+                              teamId={`temp-${Date.now()}`}
+                              expectedAmount={parseFloat(calculateTotalAmount()) * 100}
                               teamName={teamForm.getValues().name}
                               eventName={event?.name || 'tournament'}
-                              onSuccess={(setupIntentId, paymentMethodId) => {
-                                console.log(`Setup intent created successfully: ${setupIntentId}, Payment method: ${paymentMethodId}`);
+                              onPaymentComplete={(setupIntentId, paymentMethodId) => {
+                                console.log(`Payment setup completed: ${setupIntentId}, Payment method: ${paymentMethodId}`);
                                 
                                 // Make sure to sync the latest players array with form data
                                 teamForm.setValue('players', players);
@@ -4706,15 +4841,15 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                                   ...requiredFees.map(fee => fee.id)
                                 ];
                                 
-                                // Then submit the form values along with player data, selected fees, and payment method info
+                                // Submit registration with completed payment setup
                                 registerTeamMutation.mutate({
                                   ...teamForm.getValues(),
                                   selectedFeeIds: allSelectedFeeIds,
-                                  totalAmount: parseFloat(calculateTotalAmount()) * 100, // in cents
+                                  totalAmount: parseFloat(calculateTotalAmount()) * 100,
                                   paymentMethod: 'card',
-                                  addRosterLater, // Include the flag to indicate roster will be added later
-                                  setupIntentId, // Include the setup intent ID
-                                  paymentMethodId // Include the payment method ID
+                                  addRosterLater,
+                                  setupIntentId,
+                                  paymentMethodId
                                 });
                               }}
                               onError={(error) => {
@@ -4724,6 +4859,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                                   variant: "destructive"
                                 });
                               }}
+                              isProcessing={registerTeamMutation.isPending}
                             />
                           </>
                         )}

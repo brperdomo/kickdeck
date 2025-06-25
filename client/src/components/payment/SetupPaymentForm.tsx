@@ -10,11 +10,12 @@ import { createSetupIntent, confirmSetup } from '@/lib/payment';
 interface SetupPaymentFormProps {
   teamId: number | string;
   expectedAmount: number;
-  onSuccess: (setupIntentId: string, paymentMethodId: string) => void;
+  onSuccess: (paymentMethodId: string) => void;
   onError?: (error: Error) => void;
   teamName?: string;
   eventName?: string;
   returnUrl?: string;
+  hideSubmitButton?: boolean;
 }
 
 export function SetupPaymentForm({
@@ -24,7 +25,8 @@ export function SetupPaymentForm({
   onError,
   teamName = 'Team Registration',
   eventName = 'Event',
-  returnUrl = window.location.origin + '/payment-setup-confirmation'
+  returnUrl = window.location.origin + '/payment-setup-confirmation',
+  hideSubmitButton = false
 }: SetupPaymentFormProps) {
   const stripe = useStripe();
   const elements = useElements();
@@ -116,7 +118,7 @@ export function SetupPaymentForm({
           title: 'Payment Method Saved',
           description: 'Your payment information has been securely saved.',
         });
-        if (onSuccess) onSuccess(result.setupIntent.id, result.setupIntent.payment_method as string);
+        if (onSuccess) onSuccess(result.setupIntent.payment_method as string);
       } else {
         // Handle other statuses or missing setupIntent
         const status = result.setupIntent?.status || 'unknown';
@@ -186,23 +188,25 @@ export function SetupPaymentForm({
             </div>
           )}
           
-          <Button 
-            type="submit" 
-            className="w-full" 
-            disabled={!stripe || isLoading}
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Processing...
-              </>
-            ) : (
-              <>
-                <CreditCard className="mr-2 h-4 w-4" />
-                Save Payment Information
-              </>
-            )}
-          </Button>
+          {!hideSubmitButton && (
+            <Button 
+              type="submit" 
+              className="w-full" 
+              disabled={!stripe || isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Processing...
+                </>
+              ) : (
+                <>
+                  <CreditCard className="mr-2 h-4 w-4" />
+                  Save Payment Information
+                </>
+              )}
+            </Button>
+          )}
         </form>
       </CardContent>
     </Card>
