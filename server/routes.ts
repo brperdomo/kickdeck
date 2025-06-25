@@ -591,18 +591,8 @@ export function registerRoutes(app: Express): Server {
     // Coach email check endpoint - returns coach information if exists
     app.post('/api/coaches/check-email', async (req, res) => {
       try {
-        const { email } = req.body;
-        
-        if (!email) {
-          return res.status(400).json({ error: 'Email is required' });
-        }
-
-        // For now, return a default response since coaches table might not exist
-        // This prevents the 500 error and allows registration to continue
-        res.json({ 
-          exists: false, 
-          coach: null 
-        });
+        const { checkCoachEmail } = await import('./routes/coaches');
+        await checkCoachEmail(req, res);
       } catch (error) {
         console.error('Error checking coach email:', error);
         res.status(500).json({ error: 'Failed to check coach email' });
@@ -618,11 +608,36 @@ export function registerRoutes(app: Express): Server {
           return res.status(400).json({ error: 'Email is required' });
         }
 
-        // For now, return a default response since managers table might not exist
-        // This prevents the 500 error and allows registration to continue
-        res.json({ 
-          exists: false, 
-          manager: null 
+        // Import the users schema and check if the email exists
+        const { users } = await import('@db/schema');
+        const { eq } = await import('drizzle-orm');
+        
+        // Look up the email in the users table
+        const userResults = await db.select()
+          .from(users)
+          .where(eq(users.email, email.toLowerCase()))
+          .limit(1);
+        
+        if (userResults.length === 0) {
+          // No matching user found
+          return res.json({
+            exists: false,
+            manager: null
+          });
+        }
+        
+        const user = userResults[0];
+        
+        // Return manager information for auto-filling form fields
+        return res.json({
+          exists: true,
+          manager: {
+            id: user.id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            phone: user.phone || ''
+          }
         });
       } catch (error) {
         console.error('Error checking manager email:', error);
