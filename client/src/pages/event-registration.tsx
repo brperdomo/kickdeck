@@ -185,77 +185,29 @@ function PaymentCompletionForm({
   return (
     <div className="space-y-4">
       <SetupPaymentProvider clientSecret={clientSecret}>
-        <div className="space-y-4">
-          <SetupPaymentForm 
-            teamId={teamId}
-            expectedAmount={expectedAmount}
-            teamName={teamName}
-            eventName={eventName}
-            returnUrl={window.location.origin + '/payment-setup-confirmation'}
-            onSuccess={handlePaymentSuccess}
-            onError={onError}
-            hideSubmitButton={true}
-          />
-          
-          <Button 
-            onClick={async (e) => {
-              e.preventDefault();
-              
-              if (!window.stripe || !window.elements) {
-                toast({
-                  title: "Payment Setup Error",
-                  description: "Payment form is not ready. Please wait and try again.",
-                  variant: "destructive"
-                });
-                return;
-              }
-
-              setIsLoading(true);
-              try {
-                const result = await window.stripe.confirmSetup({
-                  elements: window.elements,
-                  confirmParams: {
-                    return_url: window.location.origin + '/payment-setup-confirmation',
-                  },
-                  redirect: 'if_required'
-                });
-
-                if (result.error) {
-                  toast({
-                    title: "Payment Setup Error",
-                    description: result.error.message || "Failed to save payment method",
-                    variant: "destructive"
-                  });
-                } else if (result.setupIntent && result.setupIntent.status === 'succeeded' && result.setupIntent.payment_method) {
-                  handlePaymentSuccess(result.setupIntent.payment_method as string);
-                }
-              } catch (error) {
-                toast({
-                  title: "Payment Setup Error",
-                  description: "There was a problem saving your payment method",
-                  variant: "destructive"
-                });
-              } finally {
-                setIsLoading(false);
-              }
-            }}
-            disabled={isLoading}
-            className="w-full"
-            size="lg"
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Processing Payment Method...
-              </>
-            ) : (
-              <>
-                <CreditCard className="mr-2 h-4 w-4" />
-                Save Payment Information
-              </>
-            )}
-          </Button>
+        <SetupPaymentForm 
+          teamId={teamId}
+          expectedAmount={expectedAmount}
+          teamName={teamName}
+          eventName={eventName}
+          returnUrl={window.location.origin + '/payment-setup-confirmation'}
+          onSuccess={handlePaymentSuccess}
+          onError={onError}
+          hideSubmitButton={false}
+        />
+        
+        <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-md">
+          <div className="flex items-start">
+            <Info className="h-5 w-5 text-blue-600 mr-2 mt-0.5" />
+            <div>
+              <h4 className="text-blue-800 font-medium">Next Steps</h4>
+              <p className="text-blue-700 text-sm">
+                After you save your payment information above, a "Complete Registration" button will appear to finalize your team registration.
+              </p>
+            </div>
+          </div>
         </div>
+
       </SetupPaymentProvider>
       
       {paymentCompleted && (
