@@ -157,6 +157,7 @@ function PaymentCompletionForm({
       return;
     }
     
+    console.log(`📝 Submitting registration with Setup Intent: ${setupIntentId} and Payment Method: ${paymentMethodId}`);
     onPaymentComplete(setupIntentId, paymentMethodId);
   };
 
@@ -193,13 +194,16 @@ function PaymentCompletionForm({
           eventName={eventName}
           returnUrl={window.location.origin + '/payment-setup-confirmation'}
           onSuccess={(paymentMethodId) => {
-            // Get the setup intent ID from the global scope
+            // Get the actual setup intent ID that was confirmed
             const actualSetupIntentId = (window as any).lastSetupIntentId || setupIntentId;
             console.log(`✅ Payment method saved: ${paymentMethodId}`);
             console.log(`✅ Setup Intent ID: ${actualSetupIntentId}`);
+            
+            // Update state with confirmed IDs
             setSetupIntentId(actualSetupIntentId);
             setPaymentMethodId(paymentMethodId);
             setPaymentCompleted(true);
+            
             toast({
               title: "Payment Method Added",
               description: "Your payment information has been securely saved. You can now complete your registration.",
@@ -4782,9 +4786,10 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                               teamName={teamForm.getValues().name}
                               eventName={event?.name || 'tournament'}
                               onPaymentComplete={(setupIntentId, paymentMethodId) => {
-                                console.log(`Payment setup completed: ${setupIntentId}, Payment method: ${paymentMethodId}`);
-                                console.log(`addRosterLater value: ${addRosterLater}`);
-                                console.log(`Players count: ${players.length}`);
+                                console.log(`🎯 Payment setup completed: ${setupIntentId}, Payment method: ${paymentMethodId}`);
+                                console.log(`🎯 addRosterLater value: ${addRosterLater}`);
+                                console.log(`🎯 Players count: ${players.length}`);
+                                console.log(`🎯 Total amount: ${parseFloat(calculateTotalAmount()) * 100}`);
                                 
                                 // Make sure to sync the latest players array with form data
                                 teamForm.setValue('players', players);
