@@ -28,7 +28,16 @@ async function processTeamApprovalPayment(team: any, teamId: string): Promise<st
     const setupIntent = await stripe.setupIntents.retrieve(team.setupIntentId);
     
     if (setupIntent.status !== 'succeeded' || !setupIntent.payment_method) {
-      log(`Setup intent ${team.setupIntentId} not completed - status: ${setupIntent.status}`, 'admin');
+      log(`Setup intent ${team.setupIntentId} not completed - status: ${setupIntent.status}, payment_method: ${setupIntent.payment_method}`, 'admin');
+      
+      // Update team to indicate payment issue
+      await db.update(teams)
+        .set({
+          paymentStatus: 'payment_required',
+          notes: `Payment method incomplete. Setup Intent status: ${setupIntent.status}`
+        })
+        .where(eq(teams.id, parseInt(teamId, 10)));
+      
       return 'payment_method_incomplete';
     }
     

@@ -98,12 +98,23 @@ export function SetupPaymentForm({
         setErrorMessage(result.error.message || 'An error occurred with your payment method');
         if (onError) onError(new Error(result.error.message || 'Payment setup failed'));
       } else if (result.setupIntent && result.setupIntent.status === 'succeeded') {
+        // Verify payment method is actually attached
+        if (!result.setupIntent.payment_method) {
+          setErrorMessage('Payment method was not properly saved. Please try again.');
+          if (onError) onError(new Error('Payment method not saved'));
+          return;
+        }
+        
         // Handle success - setupIntent is available on the result object
         toast({
           title: 'Payment Method Saved',
           description: 'Your payment information has been securely saved.',
         });
         if (onSuccess) onSuccess(result.setupIntent.id, result.setupIntent.payment_method as string);
+      } else {
+        // Handle other statuses or missing setupIntent
+        setErrorMessage(`Payment setup incomplete. Status: ${result.setupIntent?.status || 'unknown'}`);
+        if (onError) onError(new Error('Payment setup not completed'));
       }
     } catch (error) {
       console.error('Error confirming setup:', error);
