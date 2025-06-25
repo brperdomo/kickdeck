@@ -34,9 +34,11 @@ async function processTeamApprovalPayment(team: any, teamId: string): Promise<st
       await db.update(teams)
         .set({
           paymentStatus: 'payment_required',
-          notes: `Payment method incomplete. Setup Intent status: ${setupIntent.status}`
+          notes: `Payment method incomplete. Setup Intent status: ${setupIntent.status}. Contact team to complete payment setup.`
         })
         .where(eq(teams.id, parseInt(teamId, 10)));
+      
+      log(`Team ${teamId} marked as requiring payment completion due to incomplete Setup Intent`, 'admin');
       
       return 'payment_method_incomplete';
     }

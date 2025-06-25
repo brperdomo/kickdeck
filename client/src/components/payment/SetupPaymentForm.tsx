@@ -113,8 +113,9 @@ export function SetupPaymentForm({
         if (onSuccess) onSuccess(result.setupIntent.id, result.setupIntent.payment_method as string);
       } else {
         // Handle other statuses or missing setupIntent
-        setErrorMessage(`Payment setup incomplete. Status: ${result.setupIntent?.status || 'unknown'}`);
-        if (onError) onError(new Error('Payment setup not completed'));
+        const status = result.setupIntent?.status || 'unknown';
+        setErrorMessage(`Payment setup incomplete. Please ensure your card information is complete and try again. Status: ${status}`);
+        if (onError) onError(new Error(`Payment setup not completed. Status: ${status}`));
       }
     } catch (error) {
       console.error('Error confirming setup:', error);
