@@ -71,7 +71,11 @@ export function SetupPaymentForm({
     event.preventDefault();
 
     if (!stripe || !elements || !clientSecret) {
-      // Stripe.js has not loaded yet or client secret is missing
+      toast({
+        title: 'Payment Setup Error',
+        description: 'Payment form is not ready. Please wait and try again.',
+        variant: 'destructive'
+      });
       return;
     }
 
@@ -79,26 +83,21 @@ export function SetupPaymentForm({
     setErrorMessage(null);
 
     try {
-      // Confirm setup intent without redirect to keep user on the form
-      const { getStripe } = await import('@/lib/payment');
-      const stripeInstance = await getStripe();
-      
-      if (!stripeInstance) {
-        throw new Error('Stripe failed to load');
-      }
-
-      // First submit the form to validate elements
+      // First validate the payment element
       const { error: submitError } = await elements.submit();
       if (submitError) {
-        throw new Error(submitError.message || 'Payment form validation failed');
+        console.error('Payment element validation error:', submitError);
+        setErrorMessage(submitError.message || 'Please check your payment information');
+        return;
       }
 
-      const result = await stripeInstance.confirmSetup({
+      // Then confirm the setup intent
+      const result = await stripe.confirmSetup({
         elements,
         confirmParams: {
           return_url: returnUrl,
         },
-        redirect: 'if_required' // Only redirect if absolutely necessary
+        redirect: 'if_required'
       });
 
       if (result.error) {

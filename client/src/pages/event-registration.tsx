@@ -4801,7 +4801,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                                 ];
                                 
                                 // Submit registration with completed payment setup
-                                registerTeamMutation.mutate({
+                                const registrationPayload = {
                                   ...teamForm.getValues(),
                                   players: players, // Explicitly include players array
                                   selectedFeeIds: allSelectedFeeIds,
@@ -4810,7 +4810,10 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                                   addRosterLater: addRosterLater, // Explicitly include addRosterLater flag
                                   setupIntentId,
                                   paymentMethodId
-                                });
+                                };
+                                
+                                console.log('🎯 Final registration payload:', registrationPayload);
+                                registerTeamMutation.mutate(registrationPayload);
                               }}
                               onError={(error) => {
                                 toast({
