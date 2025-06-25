@@ -118,7 +118,13 @@ export function SetupPaymentForm({
           title: 'Payment Method Saved',
           description: 'Your payment information has been securely saved.',
         });
-        if (onSuccess) onSuccess(result.setupIntent.payment_method as string);
+        
+        // Pass both setup intent ID and payment method ID to parent
+        if (onSuccess) {
+          // Temporarily store setup intent ID in global scope for access by parent
+          (window as any).lastSetupIntentId = result.setupIntent.id;
+          onSuccess(result.setupIntent.payment_method as string);
+        }
       } else {
         // Handle other statuses or missing setupIntent
         const status = result.setupIntent?.status || 'unknown';

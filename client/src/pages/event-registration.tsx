@@ -70,6 +70,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 // Extend window object for Stripe access
 declare global {
   interface Window {
+    Stripe: any;
     stripe: any;
     elements: any;
   }
@@ -191,23 +192,22 @@ function PaymentCompletionForm({
           teamName={teamName}
           eventName={eventName}
           returnUrl={window.location.origin + '/payment-setup-confirmation'}
-          onSuccess={handlePaymentSuccess}
+          onSuccess={(paymentMethodId) => {
+            // Get the setup intent ID from the global scope
+            const actualSetupIntentId = (window as any).lastSetupIntentId || setupIntentId;
+            console.log(`✅ Payment method saved: ${paymentMethodId}`);
+            console.log(`✅ Setup Intent ID: ${actualSetupIntentId}`);
+            setSetupIntentId(actualSetupIntentId);
+            setPaymentMethodId(paymentMethodId);
+            setPaymentCompleted(true);
+            toast({
+              title: "Payment Method Added",
+              description: "Your payment information has been securely saved. You can now complete your registration.",
+            });
+          }}
           onError={onError}
           hideSubmitButton={false}
         />
-        
-        <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-md">
-          <div className="flex items-start">
-            <Info className="h-5 w-5 text-blue-600 mr-2 mt-0.5" />
-            <div>
-              <h4 className="text-blue-800 font-medium">Next Steps</h4>
-              <p className="text-blue-700 text-sm">
-                After you save your payment information above, a "Complete Registration" button will appear to finalize your team registration.
-              </p>
-            </div>
-          </div>
-        </div>
-
       </SetupPaymentProvider>
       
       {paymentCompleted && (
@@ -4783,6 +4783,8 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                               eventName={event?.name || 'tournament'}
                               onPaymentComplete={(setupIntentId, paymentMethodId) => {
                                 console.log(`Payment setup completed: ${setupIntentId}, Payment method: ${paymentMethodId}`);
+                                console.log(`addRosterLater value: ${addRosterLater}`);
+                                console.log(`Players count: ${players.length}`);
                                 
                                 // Make sure to sync the latest players array with form data
                                 teamForm.setValue('players', players);
@@ -4796,10 +4798,11 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                                 // Submit registration with completed payment setup
                                 registerTeamMutation.mutate({
                                   ...teamForm.getValues(),
+                                  players: players, // Explicitly include players array
                                   selectedFeeIds: allSelectedFeeIds,
                                   totalAmount: parseFloat(calculateTotalAmount()) * 100,
                                   paymentMethod: 'card',
-                                  addRosterLater,
+                                  addRosterLater: addRosterLater, // Explicitly include addRosterLater flag
                                   setupIntentId,
                                   paymentMethodId
                                 });
