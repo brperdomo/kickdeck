@@ -113,6 +113,10 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
+- June 25, 2025: Implemented and verified "Collect Now, Charge Later" payment workflow
+  - Server-side Setup Intent validation blocks incomplete registrations
+  - Team approval workflow automatically charges stored payment methods
+  - Complete end-to-end payment processing guaranteed and functional
 - June 23, 2025. Initial setup
 
 ## User Preferences
