@@ -87,6 +87,12 @@ export function SetupPaymentForm({
         throw new Error('Stripe failed to load');
       }
 
+      // First submit the form to validate elements
+      const { error: submitError } = await elements.submit();
+      if (submitError) {
+        throw new Error(submitError.message || 'Payment form validation failed');
+      }
+
       const result = await stripeInstance.confirmSetup({
         elements,
         confirmParams: {
@@ -182,7 +188,12 @@ export function SetupPaymentForm({
               options={{
                 paymentMethodOrder: ['card'],
                 wallets: {
-                  amazonPay: 'never'
+                  amazonPay: 'never',
+                  applePay: 'never',
+                  googlePay: 'never'
+                },
+                fields: {
+                  billingDetails: 'never'
                 }
               }}
             />
