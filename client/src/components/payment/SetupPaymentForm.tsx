@@ -223,33 +223,34 @@ export function SetupPaymentForm({
                 }}
               />
             </div>
-          
-          {errorMessage && (
-            <div className="p-3 bg-destructive/10 text-destructive rounded-lg">
-              {errorMessage}
-            </div>
-          )}
-          
-          {!hideSubmitButton && (
-            <Button 
-              type="submit" 
-              className="w-full" 
-              disabled={!stripe || isLoading}
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Processing...
-                </>
-              ) : (
-                <>
-                  <CreditCard className="mr-2 h-4 w-4" />
-                  Save Payment Information
-                </>
-              )}
-            </Button>
-          )}
-        </form>
+            
+            {errorMessage && (
+              <div className="p-3 bg-destructive/10 text-destructive rounded-lg">
+                {errorMessage}
+              </div>
+            )}
+            
+            {!hideSubmitButton && (
+              <Button 
+                type="submit" 
+                className="w-full" 
+                disabled={!stripe || isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    <CreditCard className="mr-2 h-4 w-4" />
+                    Save Payment Information
+                  </>
+                )}
+              </Button>
+            )}
+          </form>
+        </Elements>
       </CardContent>
     </Card>
   );
