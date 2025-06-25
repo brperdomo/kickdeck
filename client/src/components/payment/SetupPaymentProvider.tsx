@@ -61,6 +61,9 @@ export function SetupPaymentProvider({
     paymentMethodOrder: ['card'],
     wallets: {
       amazonPay: 'never'
+    },
+    fields: {
+      billingDetails: 'auto'
     }
   };
 
