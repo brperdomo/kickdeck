@@ -4812,7 +4812,18 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                                   paymentMethodId
                                 };
                                 
+                                // Validate setup intent and payment method before submission
+                                if (!setupIntentId || !paymentMethodId) {
+                                  toast({
+                                    title: "Payment Setup Required",
+                                    description: "Please complete the payment setup before registering.",
+                                    variant: "destructive"
+                                  });
+                                  return;
+                                }
+                                
                                 console.log('🎯 Final registration payload:', registrationPayload);
+                                console.log('🎯 Payload validation: SetupIntent:', setupIntentId, 'PaymentMethod:', paymentMethodId);
                                 registerTeamMutation.mutate(registrationPayload);
                               }}
                               onError={(error) => {
