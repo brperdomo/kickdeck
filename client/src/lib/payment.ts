@@ -7,7 +7,7 @@ let stripePromise: Promise<Stripe | null>;
  */
 export function getStripe(): Promise<Stripe | null> {
   if (!stripePromise) {
-    const key = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
+    const key = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
     if (!key) {
       console.error('Stripe public key is missing');
       return Promise.reject('Stripe public key is missing');
