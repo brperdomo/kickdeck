@@ -977,17 +977,17 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
       setIsCheckingManager(false);
       setManagerFound(data.exists);
       
-      if (data.exists && data.coach) {
-        setManagerData(data.coach);
+      if (data.exists && data.manager) {
+        setManagerData(data.manager);
         
         // Auto-fill the manager name and phone if found
-        if (teamForm && data.coach.firstName && data.coach.lastName) {
-          const fullName = `${data.coach.firstName} ${data.coach.lastName}`;
+        if (teamForm && data.manager.firstName && data.manager.lastName) {
+          const fullName = `${data.manager.firstName} ${data.manager.lastName}`;
           teamForm.setValue('managerName', fullName);
         }
         
-        if (teamForm && data.coach.phone) {
-          teamForm.setValue('managerPhone', data.coach.phone);
+        if (teamForm && data.manager.phone) {
+          teamForm.setValue('managerPhone', data.manager.phone);
         }
       } else {
         setManagerData(null);
