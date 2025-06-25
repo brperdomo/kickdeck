@@ -1559,9 +1559,23 @@ export function registerRoutes(app: Express): Server {
           }
         }
 
-        // Process payment with Stripe Connect if payment is required
+        // CRITICAL FIX: For card payments, Setup Intent validation must have already passed
+        // Do NOT create new Setup Intents here - they should be provided from frontend
         let paymentResult = null;
         if (totalAmount && totalAmount > 0 && paymentMethod === 'card') {
+          // This code path should NEVER execute for new "Collect Now, Charge Later" workflow
+          // Setup Intents must be completed before registration, not after
+          console.log('❌ CRITICAL ERROR: Card payment attempted without pre-validated Setup Intent');
+          return res.status(400).json({
+            error: 'Invalid payment workflow',
+            message: 'Card payments must complete payment setup before registration. Please refresh and try again.',
+            totalAmount: totalAmount,
+            requiresPayment: true
+          });
+        }
+        
+        // Legacy payment processing for non-card methods only
+        if (totalAmount && totalAmount > 0 && paymentMethod !== 'card') {
           try {
             // Get event's Stripe Connect account information
             const [eventConnectInfo] = await db
