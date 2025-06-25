@@ -1,0 +1,68 @@
+Enhanced registration flow: Always starting at personal step with integrated auth
+index-9i2OeX4i.js:886 🔍 AUTH DEBUG 🔍 
+{user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'personal', isPreview: false}
+index-9i2OeX4i.js:885 AnimatedEventBackground CONSTRUCTOR - Received colors: 
+{primaryColor: '#007AFF', secondaryColor: '#34C759', type: 'particles', opacity: 0.6}
+5
+index-9i2OeX4i.js:885 Animation frame running, particles: 152 Canvas size: 880 x 864
+index-9i2OeX4i.js:886 🎯 Creating setup intent for payment form initialization
+index-9i2OeX4i.js:886 🎯 Team ID: temp-1750887255278 Amount: 100 Team Name: Test 0
+22
+index-9i2OeX4i.js:885 Animation frame running, particles: 152 Canvas size: 880 x 864
+index-9i2OeX4i.js:886 🎯 Setup intent created successfully: seti_1Re0xPP4BpmZARxtwN83YhWR
+index-9i2OeX4i.js:40 IntegrationError: In order to create a payment element, you must pass a clientSecret or mode when creating the Elements group.
+
+  e.g. stripe.elements({clientSecret: "{{CLIENT_SECRET}}"})
+    at Go (stripe.js:1:347382)
+    at Mi (stripe.js:1:396826)
+    at new t (stripe.js:1:403067)
+    at t.<anonymous> (stripe.js:1:424621)
+    at t.create (stripe.js:1:70605)
+    at index-9i2OeX4i.js:886:6076
+    at i1 (index-9i2OeX4i.js:40:24296)
+    at bF (index-9i2OeX4i.js:40:31641)
+    at xW (index-9i2OeX4i.js:40:31497)
+    at Ome (index-9i2OeX4i.js:40:31047)
+zk	@	index-9i2OeX4i.js:40
+r.callback	@	index-9i2OeX4i.js:40
+sF	@	index-9i2OeX4i.js:38
+bF	@	index-9i2OeX4i.js:40
+xW	@	index-9i2OeX4i.js:40
+Ome	@	index-9i2OeX4i.js:40
+Mme	@	index-9i2OeX4i.js:40
+uu	@	index-9i2OeX4i.js:40
+NF	@	index-9i2OeX4i.js:40
+Bd	@	index-9i2OeX4i.js:38
+Mme	@	index-9i2OeX4i.js:40
+uu	@	index-9i2OeX4i.js:40
+vW	@	index-9i2OeX4i.js:40
+N	@	index-9i2OeX4i.js:25
+O	@	index-9i2OeX4i.js:25
+index-9i2OeX4i.js:38 Uncaught IntegrationError: In order to create a payment element, you must pass a clientSecret or mode when creating the Elements group.
+
+  e.g. stripe.elements({clientSecret: "{{CLIENT_SECRET}}"})
+    at Go (stripe.js:1:347382)
+    at Mi (stripe.js:1:396826)
+    at new t (stripe.js:1:403067)
+    at t.<anonymous> (stripe.js:1:424621)
+    at t.create (stripe.js:1:70605)
+    at index-9i2OeX4i.js:886:6076
+    at i1 (index-9i2OeX4i.js:40:24296)
+    at bF (index-9i2OeX4i.js:40:31641)
+    at xW (index-9i2OeX4i.js:40:31497)
+    at Ome (index-9i2OeX4i.js:40:31047)
+Go	@	stripe.js:1
+Mi	@	stripe.js:1
+t	@	stripe.js:1
+(anonymous)	@	stripe.js:1
+(anonymous)	@	stripe.js:1
+(anonymous)	@	index-9i2OeX4i.js:886
+i1	@	index-9i2OeX4i.js:40
+bF	@	index-9i2OeX4i.js:40
+xW	@	index-9i2OeX4i.js:40
+Ome	@	index-9i2OeX4i.js:40
+Mme	@	index-9i2OeX4i.js:40
+uu	@	index-9i2OeX4i.js:40
+vW	@	index-9i2OeX4i.js:40
+N	@	index-9i2OeX4i.js:25
+O	@	index-9i2OeX4i.js:25

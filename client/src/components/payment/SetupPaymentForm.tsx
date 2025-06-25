@@ -53,12 +53,15 @@ export function SetupPaymentForm({
         });
 
         if (response.clientSecret) {
-          setClientSecret(response.clientSecret);
-          setSetupIntentId(response.setupIntentId);
           console.log('🎯 Setup intent created successfully:', response.setupIntentId);
+          console.log('🎯 Client secret received, length:', response.clientSecret.length);
           
           // Store the setup intent ID globally for registration use
           (window as any).lastSetupIntentId = response.setupIntentId;
+          
+          // Set states in the correct order
+          setSetupIntentId(response.setupIntentId);
+          setClientSecret(response.clientSecret);
         } else {
           throw new Error('No client secret returned from server');
         }
@@ -164,13 +167,14 @@ export function SetupPaymentForm({
     }
   };
 
-  if (isLoading && !clientSecret) {
+  // Don't render Elements until clientSecret is available
+  if (!clientSecret) {
     return (
       <Card>
         <CardContent className="pt-6 flex justify-center items-center h-48">
           <div className="text-center">
             <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-primary" />
-            <p>Initializing payment form...</p>
+            <p>Preparing payment form...</p>
           </div>
         </CardContent>
       </Card>
@@ -195,19 +199,30 @@ export function SetupPaymentForm({
           </AlertDescription>
         </Alert>
         
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="p-4 bg-accent/10 rounded-lg">
-            <PaymentElement 
-              options={{
-                paymentMethodOrder: ['card'],
-                wallets: {
-                  amazonPay: 'never',
-                  applePay: 'never',
-                  googlePay: 'never'
-                }
-              }}
-            />
-          </div>
+        <Elements
+          stripe={stripe}
+          options={{
+            clientSecret,
+            appearance: {
+              theme: 'stripe',
+              variables: {
+                colorPrimary: '#007AFF',
+              },
+            },
+          }}
+        >
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="p-4 bg-accent/10 rounded-lg">
+              <PaymentElement 
+                options={{
+                  paymentMethodOrder: ['card'],
+                  wallets: {
+                    applePay: 'never',
+                    googlePay: 'never'
+                  }
+                }}
+              />
+            </div>
           
           {errorMessage && (
             <div className="p-3 bg-destructive/10 text-destructive rounded-lg">
