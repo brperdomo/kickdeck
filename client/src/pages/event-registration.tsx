@@ -4942,6 +4942,16 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                               teamName={teamForm.getValues().name}
                               eventName={event?.name || 'tournament'}
                               onSuccess={(setupIntentId, paymentMethodId) => {
+                                // Verify both IDs are present before proceeding
+                                if (!setupIntentId || !paymentMethodId) {
+                                  toast({
+                                    title: "Payment Setup Error",
+                                    description: "Payment method setup incomplete. Please try again.",
+                                    variant: "destructive"
+                                  });
+                                  return;
+                                }
+                                
                                 console.log(`Setup intent created successfully: ${setupIntentId}, Payment method: ${paymentMethodId}`);
                                 
                                 teamForm.setValue('players', players);
