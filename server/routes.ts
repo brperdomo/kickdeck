@@ -316,13 +316,65 @@ export function registerRoutes(app: Express): Server {
           });
         }
 
+        // Extract payment method ID
+        const paymentMethodId = typeof setupIntent.payment_method === 'string' 
+          ? setupIntent.payment_method 
+          : setupIntent.payment_method.id;
+
+        let customerId = setupIntent.customer;
+        
+        console.log('Setup Intent customer field:', customerId, 'Type:', typeof customerId);
+
+        // If no customer exists, create one and attach the payment method
+        if (!customerId || customerId === '') {
+          console.log('No customer associated with Setup Intent, creating customer and attaching payment method...');
+          
+          const customer = await stripe.customers.create({
+            email: team.managerEmail,
+            name: team.managerName,
+            metadata: {
+              teamId: team.id.toString(),
+              teamName: team.name,
+              source: 'payment_completion'
+            }
+          });
+
+          // Attach the payment method to the customer
+          await stripe.paymentMethods.attach(paymentMethodId, {
+            customer: customer.id,
+          });
+
+          customerId = customer.id;
+          console.log(`Created customer ${customer.id} and attached payment method for team ${teamId}`);
+        } else {
+          // Customer exists, but payment method might not be attached
+          console.log(`Using existing customer ${customerId}, checking payment method attachment...`);
+          
+          try {
+            // Try to get the payment method to see if it's attached
+            const paymentMethod = await stripe.paymentMethods.retrieve(paymentMethodId);
+            
+            if (!paymentMethod.customer) {
+              console.log('Payment method not attached to customer, attaching...');
+              await stripe.paymentMethods.attach(paymentMethodId, {
+                customer: customerId,
+              });
+              console.log('Payment method attached successfully');
+            } else {
+              console.log('Payment method already attached to customer');
+            }
+          } catch (attachError) {
+            console.log('Error checking/attaching payment method:', attachError);
+            throw attachError;
+          }
+        }
+
         // Create payment intent options
         const paymentIntentOptions: any = {
           amount: team.totalAmount,
           currency: 'usd',
-          payment_method: typeof setupIntent.payment_method === 'string' 
-            ? setupIntent.payment_method 
-            : setupIntent.payment_method.id,
+          customer: customerId,
+          payment_method: paymentMethodId,
           confirm: true,
           off_session: true,
           metadata: {
@@ -331,11 +383,6 @@ export function registerRoutes(app: Express): Server {
             eventType: 'delayed_payment_completion'
           }
         };
-
-        // Only add customer if it exists and is not empty
-        if (setupIntent.customer && setupIntent.customer !== null && setupIntent.customer.toString().trim() !== '') {
-          paymentIntentOptions.customer = setupIntent.customer;
-        }
         
         console.log('Payment intent options:', {
           ...paymentIntentOptions,
@@ -351,9 +398,8 @@ export function registerRoutes(app: Express): Server {
             .set({
               paymentIntentId: paymentIntent.id,
               paymentStatus: 'paid',
-              paymentMethodId: typeof setupIntent.payment_method === 'string' 
-                ? setupIntent.payment_method 
-                : setupIntent.payment_method.id,
+              paymentMethodId: paymentMethodId,
+              stripeCustomerId: customerId,
               notes: `${team.notes || ''} | Payment completed after Setup Intent confirmation`.trim()
             })
             .where(eq(teams.id, parseInt(teamId, 10)));
