@@ -165,6 +165,10 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
   - IMPROVED: Frontend error handling now displays specific backend error messages instead of generic failures
   - ENHANCED: Backend provides helpful status-specific messages ("payment already complete", "no amount required")
   - USER EXPERIENCE: Admins now get clear explanations when completion URLs cannot be generated for valid reasons
+  - CRITICAL PAYMENT COMPLETION FIX: Resolved direct Setup Intent completion charging wrong amount ($1.00 vs $1.34)
+  - UNIFIED: Payment completion endpoint now uses same fee calculation and Connect platform logic as approval workflow
+  - CONSISTENT: Both approval pathway and direct completion pathway now charge identical amounts including platform fees
+  - VERIFIED: Test 00 issue identified and fixed - future Setup Intent completions will charge correct total amount
 - June 23, 2025. Initial setup
 
 ## User Preferences
