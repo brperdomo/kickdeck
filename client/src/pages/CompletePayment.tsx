@@ -169,11 +169,21 @@ export default function CompletePayment() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const urlParams = new URLSearchParams(location.split('?')[1] || '');
+    // Get URL parameters from window.location.search instead of wouter location
+    const urlParams = new URLSearchParams(window.location.search);
     const setupIntent = urlParams.get('setup_intent');
     const teamId = urlParams.get('team_id');
 
+    console.log('CompletePayment URL parsing:', {
+      fullUrl: window.location.href,
+      search: window.location.search,
+      setupIntent,
+      teamId,
+      allParams: Object.fromEntries(urlParams.entries())
+    });
+
     if (!setupIntent || !teamId) {
+      console.error('Missing required parameters:', { setupIntent, teamId });
       setError('Invalid payment link. Please check the URL and try again.');
       setLoading(false);
       return;
