@@ -115,46 +115,44 @@ function PaymentCompletionForm({
 
   return (
     <div className="space-y-4">
-      <StripeProvider>
-        <SetupPaymentForm 
-          teamId={teamId}
-          expectedAmount={expectedAmount}
-          teamName={teamName}
-          eventName={eventName}
-          returnUrl={window.location.origin + '/payment-setup-confirmation'}
-          onSuccess={(paymentMethodId) => {
-            // Get the actual setup intent ID that was confirmed
-            const actualSetupIntentId = (window as any).lastSetupIntentId;
-            const actualPaymentMethodId = (window as any).lastPaymentMethodId || paymentMethodId;
-            
-            console.log(`✅ Payment setup callback received`);
-            console.log(`✅ Setup Intent ID: ${actualSetupIntentId}`);
-            console.log(`✅ Payment Method ID: ${actualPaymentMethodId}`);
-            
-            if (!actualSetupIntentId || !actualPaymentMethodId) {
-              console.error('❌ Missing setup intent or payment method ID');
-              toast({
-                title: "Payment Setup Error",
-                description: "Payment setup was incomplete. Please try again.",
-                variant: "destructive"
-              });
-              return;
-            }
-            
-            // Update state with confirmed IDs
-            setSetupIntentId(actualSetupIntentId);
-            setPaymentMethodId(actualPaymentMethodId);
-            setPaymentCompleted(true);
-            
+      <SetupPaymentForm 
+        teamId={teamId}
+        expectedAmount={expectedAmount}
+        teamName={teamName}
+        eventName={eventName}
+        returnUrl={window.location.origin + '/payment-setup-confirmation'}
+        onSuccess={(paymentMethodId) => {
+          // Get the actual setup intent ID that was confirmed
+          const actualSetupIntentId = (window as any).lastSetupIntentId;
+          const actualPaymentMethodId = (window as any).lastPaymentMethodId || paymentMethodId;
+          
+          console.log(`✅ Payment setup callback received`);
+          console.log(`✅ Setup Intent ID: ${actualSetupIntentId}`);
+          console.log(`✅ Payment Method ID: ${actualPaymentMethodId}`);
+          
+          if (!actualSetupIntentId || !actualPaymentMethodId) {
+            console.error('❌ Missing setup intent or payment method ID');
             toast({
-              title: "Payment Method Added",
-              description: "Your payment information has been securely saved. You can now complete your registration.",
+              title: "Payment Setup Error",
+              description: "Payment setup was incomplete. Please try again.",
+              variant: "destructive"
             });
-          }}
-          onError={onError}
-          hideSubmitButton={false}
-        />
-      </StripeProvider>
+            return;
+          }
+          
+          // Update state with confirmed IDs
+          setSetupIntentId(actualSetupIntentId);
+          setPaymentMethodId(actualPaymentMethodId);
+          setPaymentCompleted(true);
+          
+          toast({
+            title: "Payment Method Added",
+            description: "Your payment information has been securely saved. You can now complete your registration.",
+          });
+        }}
+        onError={onError}
+        hideSubmitButton={false}
+      />
       
       {paymentCompleted && (
         <div className="border-t pt-4 mt-6">

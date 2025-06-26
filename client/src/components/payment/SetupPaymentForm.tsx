@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useStripe, useElements, PaymentElement } from '@stripe/react-stripe-js';
+import { useStripe, useElements, PaymentElement, Elements } from '@stripe/react-stripe-js';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Loader2, CreditCard, Info } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { createSetupIntent, confirmSetup } from '@/lib/payment';
+import { getStripe } from '@/lib/payment';
 
 interface SetupPaymentFormProps {
   teamId: number | string;
@@ -18,7 +19,7 @@ interface SetupPaymentFormProps {
   hideSubmitButton?: boolean;
 }
 
-export function SetupPaymentForm({
+function SetupPaymentFormInner({
   teamId,
   expectedAmount,
   onSuccess,
@@ -167,19 +168,7 @@ export function SetupPaymentForm({
     }
   };
 
-  // Don't render Elements until clientSecret is available
-  if (!clientSecret) {
-    return (
-      <Card>
-        <CardContent className="pt-6 flex justify-center items-center h-48">
-          <div className="text-center">
-            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-primary" />
-            <p>Preparing payment form...</p>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
+  // Inner component always has clientSecret available
 
   return (
     <Card>
@@ -240,5 +229,79 @@ export function SetupPaymentForm({
         </form>
       </CardContent>
     </Card>
+  );
+}
+
+export function SetupPaymentForm(props: SetupPaymentFormProps) {
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [setupIntentId, setSetupIntentId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const stripePromise = getStripe();
+
+  useEffect(() => {
+    const initializeSetupIntent = async () => {
+      try {
+        setIsLoading(true);
+
+        console.log('🎯 Creating setup intent for payment form initialization');
+        console.log('🎯 Team ID:', props.teamId, 'Amount:', props.expectedAmount, 'Team Name:', props.teamName);
+        
+        const response = await createSetupIntent(props.teamId, {
+          teamName: props.teamName,
+          eventName: props.eventName,
+          expectedAmount: props.expectedAmount.toString()
+        });
+
+        if (response.clientSecret) {
+          console.log('🎯 Setup intent created successfully:', response.setupIntentId);
+          console.log('🎯 Client secret received, length:', response.clientSecret.length);
+          
+          // Store the setup intent ID globally for registration use
+          (window as any).lastSetupIntentId = response.setupIntentId;
+          
+          setSetupIntentId(response.setupIntentId);
+          setClientSecret(response.clientSecret);
+        } else {
+          throw new Error('No client secret returned from server');
+        }
+      } catch (error) {
+        console.error('Failed to create setup intent:', error);
+        if (props.onError) props.onError(error instanceof Error ? error : new Error('Setup intent creation failed'));
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initializeSetupIntent();
+  }, [props.teamId, props.expectedAmount, props.teamName, props.eventName, props.onError]);
+
+  if (isLoading || !clientSecret) {
+    return (
+      <Card>
+        <CardContent className="pt-6 flex justify-center items-center h-48">
+          <div className="text-center">
+            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-primary" />
+            <p>Preparing payment form...</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Elements 
+      stripe={stripePromise} 
+      options={{
+        clientSecret,
+        appearance: {
+          theme: 'stripe',
+          variables: {
+            colorPrimary: '#007AFF',
+          },
+        },
+      }}
+    >
+      <SetupPaymentFormInner {...props} clientSecret={clientSecret} />
+    </Elements>
   );
 }
