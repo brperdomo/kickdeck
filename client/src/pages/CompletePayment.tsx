@@ -69,7 +69,7 @@ function PaymentCompletionForm({ clientSecret, teamId }: { clientSecret: string;
 
   const processTeamPayment = async (teamId: string) => {
     try {
-      const response = await fetch(`/api/admin/teams/${teamId}/process-payment`, {
+      const response = await fetch(`/api/teams/${teamId}/complete-payment`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

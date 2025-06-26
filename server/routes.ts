@@ -308,12 +308,21 @@ export function registerRoutes(app: Express): Server {
         
         console.log(`Setup Intent ${team.setupIntentId} is completed. Processing payment...`);
         
-        // Create and confirm payment intent
-        const paymentIntent = await stripe.paymentIntents.create({
+        // Validate team amount
+        if (!team.totalAmount || team.totalAmount <= 0) {
+          return res.status(400).json({ 
+            error: 'Invalid amount',
+            message: 'Team does not have a valid payment amount'
+          });
+        }
+
+        // Create payment intent options
+        const paymentIntentOptions: any = {
           amount: team.totalAmount,
           currency: 'usd',
-          customer: setupIntent.customer,
-          payment_method: setupIntent.payment_method,
+          payment_method: typeof setupIntent.payment_method === 'string' 
+            ? setupIntent.payment_method 
+            : setupIntent.payment_method.id,
           confirm: true,
           off_session: true,
           metadata: {
@@ -321,7 +330,20 @@ export function registerRoutes(app: Express): Server {
             teamName: team.name,
             eventType: 'delayed_payment_completion'
           }
+        };
+
+        // Only add customer if it exists and is not empty
+        if (setupIntent.customer && setupIntent.customer !== null && setupIntent.customer.toString().trim() !== '') {
+          paymentIntentOptions.customer = setupIntent.customer;
+        }
+        
+        console.log('Payment intent options:', {
+          ...paymentIntentOptions,
+          payment_method: 'pm_***'
         });
+        
+        // Create and confirm payment intent
+        const paymentIntent = await stripe.paymentIntents.create(paymentIntentOptions);
         
         if (paymentIntent.status === 'succeeded') {
           // Update team with payment details
@@ -329,7 +351,9 @@ export function registerRoutes(app: Express): Server {
             .set({
               paymentIntentId: paymentIntent.id,
               paymentStatus: 'paid',
-              paymentMethodId: setupIntent.payment_method,
+              paymentMethodId: typeof setupIntent.payment_method === 'string' 
+                ? setupIntent.payment_method 
+                : setupIntent.payment_method.id,
               notes: `${team.notes || ''} | Payment completed after Setup Intent confirmation`.trim()
             })
             .where(eq(teams.id, parseInt(teamId, 10)));
