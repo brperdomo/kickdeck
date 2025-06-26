@@ -24,7 +24,7 @@ async function testEnhancedPaymentForm() {
     // Test 1: Verify server-side Setup Intent creation still works
     console.log('\n1. Testing server-side Setup Intent creation...');
     
-    const setupIntentResponse = await fetch(`${BASE_URL}/api/stripe/create-setup-intent`, {
+    const setupIntentResponse = await fetch(`${BASE_URL}/api/payments/create-setup-intent`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -66,7 +66,7 @@ async function testEnhancedPaymentForm() {
     console.log('\n3. Testing enhanced error handling scenarios...');
     
     // Test with invalid team ID to trigger error path
-    const invalidResponse = await fetch(`${BASE_URL}/api/stripe/create-setup-intent`, {
+    const invalidResponse = await fetch(`${BASE_URL}/api/payments/create-setup-intent`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
