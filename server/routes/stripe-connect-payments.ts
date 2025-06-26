@@ -192,9 +192,40 @@ export async function chargeApprovedTeam(teamId: number) {
       throw new Error('Event does not have a properly configured Stripe Connect account');
     }
 
-    // Validate team has payment method and amount
-    if (!team.paymentMethodId || !team.totalAmount) {
-      throw new Error('Team does not have payment method or amount configured');
+    // Check if team has payment setup - either direct payment method or completed setup intent
+    if (!team.totalAmount) {
+      throw new Error('Team does not have amount configured');
+    }
+
+    let paymentMethodId = team.paymentMethodId;
+    
+    // If no direct payment method, check if there's a completed setup intent
+    if (!paymentMethodId && team.setupIntentId) {
+      try {
+        const setupIntent = await stripe.setupIntents.retrieve(team.setupIntentId);
+        
+        if (setupIntent.status === 'succeeded' && setupIntent.payment_method) {
+          paymentMethodId = setupIntent.payment_method as string;
+          console.log(`Using payment method from completed setup intent: ${paymentMethodId}`);
+          
+          // Update team record with the payment method for future use
+          await db.update(teams)
+            .set({ 
+              paymentMethodId: paymentMethodId,
+              stripeCustomerId: setupIntent.customer as string || null
+            })
+            .where(eq(teams.id, teamId));
+            
+        } else {
+          throw new Error(`Setup Intent ${team.setupIntentId} is not completed (status: ${setupIntent.status}). Team needs to complete payment setup.`);
+        }
+      } catch (stripeError) {
+        throw new Error(`Failed to retrieve setup intent: ${stripeError instanceof Error ? stripeError.message : 'Unknown error'}`);
+      }
+    }
+    
+    if (!paymentMethodId) {
+      throw new Error('Team does not have payment method or completed setup intent');
     }
 
     // Calculate the total amount that should be charged to the customer (including platform fees)
@@ -211,7 +242,7 @@ export async function chargeApprovedTeam(teamId: number) {
     const result = await processDestinationCharge(
       team.id,
       team.eventId,
-      team.paymentMethodId,
+      paymentMethodId, // Use the payment method we determined above
       feeCalculation.totalChargedAmount, // Use the total amount including platform fees
       event.stripeConnectAccountId,
       true // Mark as pre-calculated to avoid double fee calculation
