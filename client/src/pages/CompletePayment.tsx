@@ -194,7 +194,7 @@ function PaymentCompletionForm({ clientSecret, teamId, teamInfo }: { clientSecre
               </>
             ) : (
               teamInfo 
-                ? `Setup Payment Method ($${(teamInfo.totalAmount / 100).toFixed(2)})`
+                ? `Submit Payment of ${teamInfo.feeBreakdown ? teamInfo.feeBreakdown.totalAmountFormatted : `$${(teamInfo.totalAmount / 100).toFixed(2)}`}`
                 : 'Complete Payment Setup'
             )}
           </Button>

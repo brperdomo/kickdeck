@@ -1,0 +1,58 @@
+shared-831492f60d06d…555cece9687f28.js:1 
+ POST https://api.stripe.com/v1/setup_intents/seti_1ReMrNP4BpmZARxtX5xtEyg7/confirm 400 (Bad Request)
+(anonymous)	@	shared-831492f60d06d…555cece9687f28.js:1
+e	@	shared-831492f60d06d…555cece9687f28.js:1
+l	@	shared-831492f60d06d…555cece9687f28.js:1
+i	@	shared-831492f60d06d…555cece9687f28.js:1
+s	@	shared-831492f60d06d…555cece9687f28.js:1
+e	@	shared-831492f60d06d…555cece9687f28.js:1
+(anonymous)	@	shared-831492f60d06d…555cece9687f28.js:1
+n	@	shared-831492f60d06d…555cece9687f28.js:1
+(anonymous)	@	shared-831492f60d06d…555cece9687f28.js:1
+(anonymous)	@	shared-831492f60d06d…555cece9687f28.js:1
+a	@	shared-831492f60d06d…555cece9687f28.js:1
+i	@	shared-831492f60d06d…555cece9687f28.js:1
+(anonymous)	@	shared-831492f60d06d…555cece9687f28.js:1
+(anonymous)	@	shared-831492f60d06d…555cece9687f28.js:1
+(anonymous)	@	shared-831492f60d06d…555cece9687f28.js:1
+_	@	shared-831492f60d06d…555cece9687f28.js:1
+confirm	@	controller-with-prec…739f19879c21e5.js:1
+(anonymous)	@	controller-with-prec…739f19879c21e5.js:1
+n	@	shared-831492f60d06d…555cece9687f28.js:1
+(anonymous)	@	shared-831492f60d06d…555cece9687f28.js:1
+(anonymous)	@	shared-831492f60d06d…555cece9687f28.js:1
+a	@	shared-831492f60d06d…555cece9687f28.js:1
+i	@	shared-831492f60d06d…555cece9687f28.js:1
+Promise.then		
+a	@	shared-831492f60d06d…555cece9687f28.js:1
+i	@	shared-831492f60d06d…555cece9687f28.js:1
+(anonymous)	@	shared-831492f60d06d…555cece9687f28.js:1
+(anonymous)	@	shared-831492f60d06d…555cece9687f28.js:1
+(anonymous)	@	controller-with-prec…739f19879c21e5.js:1
+Promise.then		
+(anonymous)	@	controller-with-prec…739f19879c21e5.js:1
+n	@	shared-831492f60d06d…555cece9687f28.js:1
+(anonymous)	@	shared-831492f60d06d…555cece9687f28.js:1
+(anonymous)	@	shared-831492f60d06d…555cece9687f28.js:1
+a	@	shared-831492f60d06d…555cece9687f28.js:1
+i	@	shared-831492f60d06d…555cece9687f28.js:1
+(anonymous)	@	shared-831492f60d06d…555cece9687f28.js:1
+(anonymous)	@	shared-831492f60d06d…555cece9687f28.js:1
+(anonymous)	@	controller-with-prec…739f19879c21e5.js:1
+(anonymous)	@	controller-with-prec…739f19879c21e5.js:1
+n	@	shared-831492f60d06d…555cece9687f28.js:1
+(anonymous)	@	shared-831492f60d06d…555cece9687f28.js:1
+(anonymous)	@	shared-831492f60d06d…555cece9687f28.js:1
+a	@	shared-831492f60d06d…555cece9687f28.js:1
+i	@	shared-831492f60d06d…555cece9687f28.js:1
+(anonymous)	@	shared-831492f60d06d…555cece9687f28.js:1
+(anonymous)	@	shared-831492f60d06d…555cece9687f28.js:1
+(anonymous)	@	controller-with-prec…739f19879c21e5.js:1
+value	@	controller-with-prec…739f19879c21e5.js:1
+(anonymous)	@	controller-with-prec…739f19879c21e5.js:1
+
+confirm:1 
+ Failed to load resource: the server responded with a status of 400 ()
+shared-831492f60d06d…555cece9687f28.js:1 Fetch failed loading: POST "https://api.stripe.com/v1/setup_intents/seti_1ReMrNP4BpmZARxtX5xtEyg7/confirm".
+﻿
+
