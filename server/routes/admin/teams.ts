@@ -5,6 +5,7 @@ import { eq, and, or, like, asc, desc, sql } from 'drizzle-orm';
 import { log } from '../../vite';
 import { sendTemplatedEmail } from '../../services/emailService';
 import { createRefund, createTestPaymentIntent } from '../../services/stripeService';
+import { chargeApprovedTeam } from '../stripe-connect-payments';
 import Stripe from 'stripe';
 
 type TeamStatus = 'registered' | 'approved' | 'rejected' | 'paid' | 'withdrawn' | 'refunded' | 'waitlisted';
@@ -16,69 +17,59 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
  */
 async function processTeamApprovalPayment(team: any, teamId: string): Promise<string> {
   try {
-    log(`Processing approval payment for team ${team.name} (ID: ${teamId})`, 'admin');
+    log(`Processing approval payment for team ${team.name} (ID: ${teamId}) using Stripe Connect with platform fees`, 'admin');
+    
+    // Check if team has payment setup
+    if (!team.setupIntentId && !team.paymentMethodId) {
+      log(`Team ${teamId} has no payment method - cannot process payment`, 'admin');
+      return 'no_payment_method';
+    }
+    
+    // Use Stripe Connect platform fee flow
+    const result = await chargeApprovedTeam(parseInt(teamId, 10));
+    
+    log(`Stripe Connect payment result for team ${teamId}: ${JSON.stringify(result)}`, 'admin');
+    
+    if (result.success) {
+      log(`Payment successful for team ${teamId} with platform fees applied`, 'admin');
+      return 'payment_successful';
+    } else {
+      log(`Payment failed for team ${teamId}: ${result.error}`, 'admin');
+      return 'payment_failed';
+    }
+    
+  } catch (error) {
+    log(`Payment processing error for team ${teamId}: ${error}`, 'admin');
+    
+    // Check if this is a Connect account issue
+    if (error instanceof Error && error.message.includes('Connect account')) {
+      log(`Connect account issue for team ${teamId} - falling back to basic payment`, 'admin');
+      return await processTeamApprovalPaymentFallback(team, teamId);
+    }
+    
+    // Update team to indicate payment issue
+    await db.update(teams)
+      .set({
+        paymentStatus: 'payment_failed',
+        notes: `Payment processing failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      })
+      .where(eq(teams.id, parseInt(teamId, 10)));
+    
+    return 'payment_error';
+  }
+}
+
+/**
+ * Fallback payment processing for events without proper Stripe Connect setup
+ */
+async function processTeamApprovalPaymentFallback(team: any, teamId: string): Promise<string> {
+  try {
+    log(`Processing fallback payment for team ${team.name} (ID: ${teamId}) - NO PLATFORM FEES`, 'admin');
     
     // Check if team has setup intent
     if (!team.setupIntentId) {
       log(`Team ${teamId} has no setup intent - cannot process payment`, 'admin');
       return 'no_payment_method';
-    }
-    
-    // For teams with payment method but no customer, create customer and attach payment method
-    if (team.paymentMethodId && !team.stripeCustomerId) {
-      log(`Team ${teamId} has payment method but no customer - creating customer and attaching payment method`, 'admin');
-      
-      try {
-        // Create customer for the team
-        const customer = await stripe.customers.create({
-          email: team.managerEmail,
-          metadata: {
-            teamId: teamId,
-            teamName: team.name,
-            eventType: 'team_approval_customer'
-          }
-        });
-        
-        // Attach payment method to customer
-        await stripe.paymentMethods.attach(team.paymentMethodId, {
-          customer: customer.id
-        });
-        
-        // Create payment intent with customer
-        const paymentIntent = await stripe.paymentIntents.create({
-          amount: team.totalAmount,
-          currency: 'usd',
-          payment_method: team.paymentMethodId,
-          customer: customer.id,
-          confirm: true,
-          off_session: true,
-          metadata: {
-            teamId: teamId,
-            teamName: team.name,
-            eventType: 'team_approval_payment'
-          }
-        });
-        
-        if (paymentIntent.status === 'succeeded') {
-          await db.update(teams)
-            .set({
-              paymentIntentId: paymentIntent.id,
-              paymentStatus: 'paid',
-              stripeCustomerId: customer.id
-            })
-            .where(eq(teams.id, parseInt(teamId, 10)));
-          
-          log(`Payment successful with new customer for team ${teamId}: ${paymentIntent.id}`, 'admin');
-          return 'payment_successful';
-        }
-        
-        log(`Payment failed for team ${teamId}: ${paymentIntent.status}`, 'admin');
-        return 'payment_failed';
-        
-      } catch (customerPaymentError) {
-        log(`Customer payment error for team ${teamId}: ${customerPaymentError}`, 'admin');
-        // Fall through to setup intent processing
-      }
     }
     
     // Get setup intent from Stripe
@@ -100,7 +91,7 @@ async function processTeamApprovalPayment(team: any, teamId: string): Promise<st
       return 'payment_method_incomplete';
     }
     
-    // Create payment intent with proper customer handling
+    // Create basic payment intent (without platform fees)
     const paymentIntentData: any = {
       amount: team.totalAmount,
       currency: 'usd',
@@ -110,7 +101,7 @@ async function processTeamApprovalPayment(team: any, teamId: string): Promise<st
       metadata: {
         teamId: teamId,
         teamName: team.name,
-        eventType: 'team_approval_payment'
+        eventType: 'team_approval_payment_fallback'
       }
     };
     
@@ -131,15 +122,24 @@ async function processTeamApprovalPayment(team: any, teamId: string): Promise<st
         })
         .where(eq(teams.id, parseInt(teamId, 10)));
       
-      log(`Payment successful for team ${teamId}: ${paymentIntent.id}`, 'admin');
+      log(`Fallback payment successful for team ${teamId}: ${paymentIntent.id} (NO PLATFORM FEES APPLIED)`, 'admin');
       return 'payment_successful';
     }
     
-    log(`Payment failed for team ${teamId}: ${paymentIntent.status}`, 'admin');
+    log(`Fallback payment failed for team ${teamId}: ${paymentIntent.status}`, 'admin');
     return 'payment_failed';
     
   } catch (error) {
-    log(`Payment processing error for team ${teamId}: ${error}`, 'admin');
+    log(`Fallback payment processing error for team ${teamId}: ${error}`, 'admin');
+    
+    // Update team to indicate payment issue
+    await db.update(teams)
+      .set({
+        paymentStatus: 'payment_failed',
+        notes: `Fallback payment processing failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      })
+      .where(eq(teams.id, parseInt(teamId, 10)));
+    
     return 'payment_error';
   }
 }
