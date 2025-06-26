@@ -121,7 +121,7 @@ export async function processDestinationCharge(
       netAmount: feeCalculation.tournamentReceives,
       status: paymentIntent.status,
       metadata: {
-        tournamentCost: tournamentCostCents,
+        tournamentCost: totalAmountCents.toString(),
         platformFeeRate: feeCalculation.platformFeeRate,
         platformFeeAmount: feeCalculation.platformFeeAmount,
         connectAccountId: connectAccountId,
