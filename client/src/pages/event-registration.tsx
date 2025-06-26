@@ -740,6 +740,10 @@ const teamRegistrationSchema = z.object({
   clubId: z.number().nullable().optional(),
   clubName: z.string().optional(),
   newClub: z.boolean().optional(),
+  // Payment information for setup intent workflow
+  setupIntentId: z.string().optional(),
+  paymentMethodId: z.string().optional(),
+  appliedCoupon: z.any().optional(),
 });
 
 type TeamRegistrationForm = z.infer<typeof teamRegistrationSchema>;
