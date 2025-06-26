@@ -4861,7 +4861,7 @@ function TeamsView() {
                             onClick={async () => {
                               try {
                                 // Generate a new Setup Intent for payment completion
-                                const response = await fetch(`/api/admin/teams/${selectedTeam.id}/payment-completion-url`, {
+                                const response = await fetch(`/api/admin/teams/${selectedTeam.id}/generate-completion-url`, {
                                   method: 'POST'
                                 });
                                 
