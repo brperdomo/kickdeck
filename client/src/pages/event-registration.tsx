@@ -2605,22 +2605,38 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
         }
       }
       
-      // Transform dates and include terms agreement and fee in submission
+      // Create clean payload with only expected fields for production compatibility
+      const registrationPayload = {
+        name: data.name,
+        ageGroupId: data.ageGroupId,
+        bracketId: data.bracketId || null,
+        headCoachName: data.headCoachName,
+        headCoachEmail: data.headCoachEmail,
+        headCoachPhone: data.headCoachPhone,
+        managerName: data.managerName,
+        managerEmail: data.managerEmail,
+        managerPhone: data.managerPhone,
+        clubId: clubId || data.clubId,
+        clubName: data.clubName,
+        players: processedPlayers,
+        addRosterLater: data.addRosterLater,
+        selectedFeeIds: selectedFeeIds,
+        totalAmount: data.totalAmount,
+        setupIntentId: data.setupIntentId,
+        paymentMethodId: data.paymentMethodId,
+        appliedCoupon: appliedCoupon,
+        termsAcknowledged: termsAgreed,
+        termsAcknowledgedAt: new Date().toISOString()
+      };
+
+      console.log('🎯 Sending registration payload:', registrationPayload);
+
       const response = await fetch(`/api/events/${eventId}/register-team`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          ...data,
-          clubId, // Use updated clubId if a new club was created
-          players: processedPlayers,
-          termsAcknowledged: termsAgreed,
-          registrationFee: registrationFee,
-          selectedFeeIds: selectedFeeIds, // Include all selected fee IDs
-          appliedCoupon: appliedCoupon, // Include coupon data for usage tracking
-          termsAcknowledgedAt: new Date() // Send as Date object, server will handle proper formatting
-        }),
+        body: JSON.stringify(registrationPayload),
       });
       
       if (!response.ok) {
