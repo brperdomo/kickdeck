@@ -256,7 +256,7 @@ export async function getTeamById(req: Request, res: Response) {
 /**
  * Update a team's status (approve/reject/withdraw)
  */
-export async function updateTeamStatus(req: Request, res: Response) {
+async function updateTeamStatus(req: Request, res: Response) {
   // Ensure we're always sending a JSON response, no matter what happens
   res.setHeader('Content-Type', 'application/json');
   
@@ -477,7 +477,7 @@ export async function updateTeamStatus(req: Request, res: Response) {
 /**
  * Process a refund for a team registration
  */
-export async function processRefund(req: Request, res: Response) {
+async function processRefund(req: Request, res: Response) {
   // Set JSON content type from the start to ensure HTML isn't returned
   res.setHeader('Content-Type', 'application/json');
   
@@ -717,3 +717,106 @@ export async function processRefund(req: Request, res: Response) {
     });
   }
 }
+
+/**
+ * Process payment for a team after Setup Intent completion
+ */
+async function processTeamPaymentAfterSetup(req: Request, res: Response) {
+  try {
+    const teamId = req.params?.teamId;
+    
+    if (!teamId) {
+      return res.status(400).json({ 
+        error: 'Team ID is required' 
+      });
+    }
+    
+    log(`Processing payment for team ${teamId} after Setup Intent completion`, 'admin');
+    
+    // Get team details
+    const teamResult = await db
+      .select()
+      .from(teams)
+      .where(eq(teams.id, parseInt(teamId, 10)));
+    
+    if (!teamResult || teamResult.length === 0) {
+      return res.status(404).json({ 
+        error: 'Team not found' 
+      });
+    }
+    
+    const team = teamResult[0];
+    
+    if (!team.setupIntentId) {
+      return res.status(400).json({ 
+        error: 'No Setup Intent found for this team' 
+      });
+    }
+    
+    // Get the latest Setup Intent status from Stripe
+    const setupIntent = await stripe.setupIntents.retrieve(team.setupIntentId);
+    
+    if (setupIntent.status !== 'succeeded' || !setupIntent.payment_method) {
+      return res.status(400).json({ 
+        error: 'Setup Intent is not completed or no payment method attached',
+        setupIntentStatus: setupIntent.status
+      });
+    }
+    
+    log(`Setup Intent ${team.setupIntentId} is completed. Processing payment...`, 'admin');
+    
+    // Create and confirm payment intent
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: team.totalAmount,
+      currency: 'usd',
+      customer: setupIntent.customer,
+      payment_method: setupIntent.payment_method,
+      confirm: true,
+      off_session: true,
+      metadata: {
+        teamId: team.id.toString(),
+        teamName: team.name,
+        eventType: 'delayed_payment_completion'
+      }
+    });
+    
+    if (paymentIntent.status === 'succeeded') {
+      // Update team with payment details
+      await db.update(teams)
+        .set({
+          paymentIntentId: paymentIntent.id,
+          paymentStatus: 'paid',
+          paymentMethodId: setupIntent.payment_method,
+          notes: `${team.notes || ''} | Payment completed after Setup Intent confirmation`.trim()
+        })
+        .where(eq(teams.id, parseInt(teamId, 10)));
+      
+      log(`Payment successful for team ${teamId}. Payment Intent: ${paymentIntent.id}`, 'admin');
+      
+      return res.json({
+        success: true,
+        paymentIntentId: paymentIntent.id,
+        amount: team.totalAmount / 100,
+        message: 'Payment processed successfully'
+      });
+    } else {
+      log(`Payment failed for team ${teamId}. Status: ${paymentIntent.status}`, 'admin');
+      
+      return res.status(400).json({
+        error: 'Payment processing failed',
+        status: paymentIntent.status,
+        paymentIntentId: paymentIntent.id
+      });
+    }
+    
+  } catch (error) {
+    log(`Error processing payment for team ${req.params?.teamId}: ${error}`, 'admin');
+    
+    return res.status(500).json({
+      error: 'Failed to process payment',
+      message: error instanceof Error ? error.message : 'Unknown error occurred'
+    });
+  }
+}
+
+export { updateTeamStatus, processRefund, processTeamPaymentAfterSetup };

@@ -167,7 +167,7 @@ function Router() {
       </Route>
       
       {/* Payment completion route for teams with incomplete setup */}
-      <Route path="/complete-payment/:token" component={CompletePayment} />
+      <Route path="/complete-payment" component={CompletePayment} />
       
       {/* Handle other routes based on auth status */}
       {!user ? (
