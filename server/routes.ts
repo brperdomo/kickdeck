@@ -212,6 +212,150 @@ export function registerRoutes(app: Express): Server {
     // Authentication is already set up in index.ts, no need to call setupAuth again
     log("Using existing authentication middleware");
     
+    // Public route for team payment completion (no authentication required)
+    app.get('/api/teams/:teamId/payment-info', async (req, res) => {
+      try {
+        const { teamId } = req.params;
+        
+        if (!teamId) {
+          return res.status(400).json({ error: 'Team ID is required' });
+        }
+        
+        // Get basic team information for payment completion
+        const teamResult = await db
+          .select({
+            id: teams.id,
+            name: teams.name,
+            totalAmount: teams.totalAmount,
+            setupIntentId: teams.setupIntentId,
+            paymentStatus: teams.paymentStatus,
+            eventId: teams.eventId
+          })
+          .from(teams)
+          .where(eq(teams.id, parseInt(teamId, 10)));
+        
+        if (!teamResult || teamResult.length === 0) {
+          return res.status(404).json({ error: 'Team not found' });
+        }
+        
+        const team = teamResult[0];
+        
+        // Get event name for display
+        const eventResult = await db
+          .select({ name: events.name })
+          .from(events)
+          .where(eq(events.id, team.eventId));
+        
+        const eventName = eventResult.length > 0 ? eventResult[0].name : 'Unknown Event';
+        
+        res.json({
+          teamId: team.id,
+          teamName: team.name,
+          eventName: eventName,
+          totalAmount: team.totalAmount,
+          setupIntentId: team.setupIntentId,
+          paymentStatus: team.paymentStatus
+        });
+        
+      } catch (error) {
+        console.error(`Error fetching team payment info: ${error}`);
+        res.status(500).json({ error: 'Failed to fetch team information' });
+      }
+    });
+
+    // Public route for processing payment after Setup Intent completion
+    app.post('/api/teams/:teamId/complete-payment', async (req, res) => {
+      try {
+        const { teamId } = req.params;
+        
+        if (!teamId) {
+          return res.status(400).json({ error: 'Team ID is required' });
+        }
+        
+        console.log(`Processing payment completion for team ${teamId}`);
+        
+        // Get team details
+        const teamResult = await db
+          .select()
+          .from(teams)
+          .where(eq(teams.id, parseInt(teamId, 10)));
+        
+        if (!teamResult || teamResult.length === 0) {
+          return res.status(404).json({ error: 'Team not found' });
+        }
+        
+        const team = teamResult[0];
+        
+        if (!team.setupIntentId) {
+          return res.status(400).json({ error: 'No Setup Intent found for this team' });
+        }
+        
+        // Get the latest Setup Intent status from Stripe
+        const setupIntent = await stripe.setupIntents.retrieve(team.setupIntentId);
+        
+        if (setupIntent.status !== 'succeeded' || !setupIntent.payment_method) {
+          return res.status(400).json({ 
+            error: 'Setup Intent is not completed or no payment method attached',
+            setupIntentStatus: setupIntent.status
+          });
+        }
+        
+        console.log(`Setup Intent ${team.setupIntentId} is completed. Processing payment...`);
+        
+        // Create and confirm payment intent
+        const paymentIntent = await stripe.paymentIntents.create({
+          amount: team.totalAmount,
+          currency: 'usd',
+          customer: setupIntent.customer,
+          payment_method: setupIntent.payment_method,
+          confirm: true,
+          off_session: true,
+          metadata: {
+            teamId: team.id.toString(),
+            teamName: team.name,
+            eventType: 'delayed_payment_completion'
+          }
+        });
+        
+        if (paymentIntent.status === 'succeeded') {
+          // Update team with payment details
+          await db.update(teams)
+            .set({
+              paymentIntentId: paymentIntent.id,
+              paymentStatus: 'paid',
+              paymentMethodId: setupIntent.payment_method,
+              notes: `${team.notes || ''} | Payment completed after Setup Intent confirmation`.trim()
+            })
+            .where(eq(teams.id, parseInt(teamId, 10)));
+          
+          console.log(`Payment successful for team ${teamId}. Payment Intent: ${paymentIntent.id}`);
+          
+          return res.json({
+            success: true,
+            paymentIntentId: paymentIntent.id,
+            amount: team.totalAmount / 100,
+            message: 'Payment processed successfully'
+          });
+        } else {
+          console.log(`Payment failed for team ${teamId}. Status: ${paymentIntent.status}`);
+          
+          return res.status(400).json({
+            error: 'Payment processing failed',
+            status: paymentIntent.status,
+            paymentIntentId: paymentIntent.id
+          });
+        }
+        
+      } catch (error) {
+        console.error(`Error processing payment completion: ${error}`);
+        
+        return res.status(500).json({
+          error: 'Failed to process payment',
+          message: error instanceof Error ? error.message : 'Unknown error occurred'
+        });
+      }
+    });
+    
     // Email check endpoint for contextual authentication flow
     app.get("/api/auth/check-email", async (req: Request, res: Response) => {
       try {

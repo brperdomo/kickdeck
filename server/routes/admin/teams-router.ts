@@ -130,4 +130,7 @@ router.patch('/:teamId/status', extractEventIdFromTeam, hasEventAccess, updateTe
 // Process refund for rejected team
 router.post('/:teamId/refund', extractEventIdFromTeam, hasEventAccess, processRefund);
 
+// Process payment after Setup Intent completion
+router.post('/:teamId/process-payment', extractEventIdFromTeam, hasEventAccess, processTeamPaymentAfterSetup);
+
 export default router;
