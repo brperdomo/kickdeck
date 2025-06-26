@@ -222,8 +222,8 @@ export async function chargeApprovedTeam(teamId: number) {
           
           try {
             // Create a fresh setup intent for immediate completion and processing
-            const recoverySetupIntent = await stripe.setupIntents.create({
-              customer: setupIntent.customer,
+            // Handle case where original setup intent has no customer
+            const createParams: any = {
               usage: 'off_session',
               metadata: {
                 teamId: teamId.toString(),
@@ -232,7 +232,14 @@ export async function chargeApprovedTeam(teamId: number) {
                 autoRecovery: 'true',
                 eventType: 'approval_auto_recovery'
               }
-            });
+            };
+            
+            // Only include customer if the original setup intent had one
+            if (setupIntent.customer && typeof setupIntent.customer === 'string' && setupIntent.customer.trim() !== '') {
+              createParams.customer = setupIntent.customer;
+            }
+            
+            const recoverySetupIntent = await stripe.setupIntents.create(createParams);
             
             // Try to complete the payment flow automatically if the original setup had payment method data
             // This won't work for completely empty setup intents, but worth trying
@@ -243,11 +250,11 @@ export async function chargeApprovedTeam(teamId: number) {
               .set({
                 paymentStatus: 'payment_required',
                 setupIntentId: recoverySetupIntent.id, // Replace with fresh setup intent
-                notes: `Auto-recovery attempted. Original setup intent incomplete (status: ${setupIntent.status}). Fresh setup intent created: ${recoverySetupIntent.id}. Admin can generate payment completion URL for team to finish payment setup.`
+                notes: `Auto-recovery successful. Original setup intent incomplete (status: ${setupIntent.status}). Fresh setup intent created: ${recoverySetupIntent.id}. Ready for payment completion URL generation.`
               })
               .where(eq(teams.id, teamId));
             
-            throw new Error(`Setup Intent auto-recovery initiated for team ${teamId}. Use "Generate Payment Completion URL" to complete payment setup with the new setup intent.`);
+            throw new Error(`Setup Intent auto-recovery completed for team ${teamId}. Team ready for payment completion. Use "Generate Payment Completion URL" to allow team to complete payment setup.`);
             
           } catch (recoveryError) {
             // If auto-recovery fails, fall back to original error handling
