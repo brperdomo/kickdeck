@@ -149,6 +149,12 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
   - CONFIGURED: Payment completion URLs now use app.matchpro.ai subdomain in production
   - ENHANCED: Admin dashboard shows "Generate Payment Completion URL" button for teams requiring payment setup
   - VERIFIED: URLs are automatically copied to clipboard for easy sharing with team managers
+  - CRITICAL PLATFORM FEE FIX: Updated admin approval process to use Stripe Connect platform fee flow
+  - RESOLVED: Platform fees now properly charged to submitters during team approval (was using basic payment flow)
+  - IMPLEMENTED: Intelligent fallback to basic payment for events without Stripe Connect accounts
+  - ENHANCED: Comprehensive logging to track when platform fees are applied vs fallback payment processing
+  - VERIFIED: Approval payment now routes through chargeApprovedTeam() function with full fee calculation
+  - PRODUCTION READY: Platform fees will be automatically charged to team submitters upon approval
 - June 23, 2025. Initial setup
 
 ## User Preferences
