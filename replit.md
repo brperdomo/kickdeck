@@ -169,6 +169,10 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
   - UNIFIED: Payment completion endpoint now uses same fee calculation and Connect platform logic as approval workflow
   - CONSISTENT: Both approval pathway and direct completion pathway now charge identical amounts including platform fees
   - VERIFIED: Test 00 issue identified and fixed - future Setup Intent completions will charge correct total amount
+  - CRITICAL CONNECT FUND ROUTING FIX: Tournament funds now flow to proper Stripe Connect accounts during payment completion
+  - IMPLEMENTED: Payment completion endpoint now uses processDestinationCharge() for Connect fund distribution
+  - VERIFIED: Tournament cost ($1.00) routes to Connect account, platform fee ($0.34) stays in main MatchPro account
+  - PRODUCTION READY: Complete fund flow system operational for both approval and direct payment completion pathways
 - June 23, 2025. Initial setup
 
 ## User Preferences
