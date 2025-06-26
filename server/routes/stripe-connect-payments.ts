@@ -77,20 +77,23 @@ export async function processDestinationCharge(
     // For pre-calculated amounts, use the provided total; otherwise use calculated total
     const chargeAmount = isPreCalculated ? totalAmountCents : feeCalculation.totalChargedAmount;
     
+    // Get the customer from the payment method to ensure proper association
+    const paymentMethod = await stripe.paymentMethods.retrieve(paymentMethodId);
+    const customerId = paymentMethod.customer;
+
     // Create payment intent with destination charge
     const paymentIntent = await stripe.paymentIntents.create({
       amount: chargeAmount, // Use the correct total amount
       currency: 'usd',
+      customer: customerId, // Include customer for payment method association
       payment_method: paymentMethodId,
-      confirmation_method: 'manual',
       confirm: true,
       on_behalf_of: connectAccountId,
       receipt_email: team?.submitterEmail, // Enable Stripe's automatic receipt email
       transfer_data: {
         destination: connectAccountId,
-        amount: feeCalculation.tournamentReceives, // Tournament gets their base amount
       },
-      application_fee_amount: feeCalculation.platformFeeAmount, // MatchPro gets platform fee
+      application_fee_amount: feeCalculation.platformFeeAmount, // MatchPro gets platform fee, tournament gets the rest
       // Prevent redirect-based payment methods to avoid return_url requirement
       automatic_payment_methods: {
         enabled: true,
