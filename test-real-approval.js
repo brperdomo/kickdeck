@@ -63,12 +63,11 @@ async function testRealApproval() {
     
     console.log('💳 Processing approval payment...');
     
-    // Create payment intent using the same logic as the approval system
-    const paymentIntent = await stripe.paymentIntents.create({
+    // Create payment intent with proper customer handling
+    const paymentIntentData = {
       amount: team.total_amount,
       currency: 'usd',
       payment_method: setupIntent.payment_method,
-      customer: setupIntent.customer,
       confirm: true,
       off_session: true,
       metadata: {
@@ -76,7 +75,14 @@ async function testRealApproval() {
         teamName: team.name,
         eventType: 'team_approval_payment'
       }
-    });
+    };
+    
+    // Only add customer if it exists and is not null
+    if (setupIntent.customer) {
+      paymentIntentData.customer = setupIntent.customer;
+    }
+    
+    const paymentIntent = await stripe.paymentIntents.create(paymentIntentData);
     
     console.log(`Payment Intent: ${paymentIntent.id}`);
     console.log(`Status: ${paymentIntent.status}`);
