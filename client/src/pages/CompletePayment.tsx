@@ -213,6 +213,8 @@ export default function CompletePayment() {
     eventName: string;
     totalAmount: number;
     paymentStatus: string;
+    paymentIntentId?: string;
+    paidAt?: string;
     feeBreakdown?: {
       tournamentCost: number;
       tournamentCostFormatted: string;
@@ -264,6 +266,8 @@ export default function CompletePayment() {
           eventName: data.eventName,
           totalAmount: data.totalAmount,
           paymentStatus: data.paymentStatus,
+          paymentIntentId: data.paymentIntentId,
+          paidAt: data.paidAt,
           feeBreakdown: data.feeBreakdown
         });
         setLoading(false);
@@ -299,6 +303,73 @@ export default function CompletePayment() {
             <Alert variant="destructive">
               <AlertDescription>{error || 'Invalid payment link'}</AlertDescription>
             </Alert>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Check if payment has already been completed
+  if (teamInfo && (teamInfo.paymentStatus === 'paid' || teamInfo.paymentIntentId)) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <Card className="w-full max-w-md mx-auto">
+          <CardHeader className="text-center">
+            <div className="mx-auto w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4">
+              <CheckCircle className="w-6 h-6 text-green-600" />
+            </div>
+            <CardTitle className="text-green-800">Payment Already Completed</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="text-center">
+              <p className="text-gray-600 mb-4">
+                Payment for this team has already been successfully processed.
+              </p>
+            </div>
+
+            {/* Payment Receipt Information */}
+            <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+              <h3 className="font-semibold text-green-900 mb-3">Payment Receipt</h3>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-green-700">Team:</span>
+                  <span className="font-medium text-green-900">{teamInfo.name}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-green-700">Event:</span>
+                  <span className="font-medium text-green-900">{teamInfo.eventName}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-green-700">Amount Paid:</span>
+                  <span className="font-medium text-green-900">
+                    {teamInfo.feeBreakdown 
+                      ? teamInfo.feeBreakdown.totalAmountFormatted 
+                      : `$${(teamInfo.totalAmount / 100).toFixed(2)}`
+                    }
+                  </span>
+                </div>
+                {teamInfo.paidAt && (
+                  <div className="flex justify-between">
+                    <span className="text-green-700">Payment Date:</span>
+                    <span className="font-medium text-green-900">
+                      {new Date(teamInfo.paidAt).toLocaleDateString()}
+                    </span>
+                  </div>
+                )}
+                {teamInfo.paymentIntentId && (
+                  <div className="flex justify-between">
+                    <span className="text-green-700">Transaction ID:</span>
+                    <span className="font-mono text-xs text-green-900">{teamInfo.paymentIntentId}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="text-center">
+              <p className="text-sm text-gray-500">
+                If you need assistance or have questions about this payment, please contact support with the transaction ID above.
+              </p>
+            </div>
           </CardContent>
         </Card>
       </div>

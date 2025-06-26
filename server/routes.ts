@@ -236,6 +236,7 @@ export function registerRoutes(app: Express): Server {
             totalAmount: teams.totalAmount,
             setupIntentId: teams.setupIntentId,
             paymentStatus: teams.paymentStatus,
+            paymentIntentId: teams.paymentIntentId,
             eventId: teams.eventId
           })
           .from(teams)
@@ -254,6 +255,24 @@ export function registerRoutes(app: Express): Server {
           .where(eq(events.id, team.eventId));
         
         const eventName = eventResult.length > 0 ? eventResult[0].name : 'Unknown Event';
+        
+        // Get payment completion date if payment exists
+        let paidAt = null;
+        if (team.paymentIntentId) {
+          try {
+            const paymentResult = await db
+              .select({ createdAt: paymentTransactions.createdAt })
+              .from(paymentTransactions)
+              .where(eq(paymentTransactions.paymentIntentId, team.paymentIntentId))
+              .limit(1);
+            
+            if (paymentResult.length > 0) {
+              paidAt = paymentResult[0].createdAt.toISOString();
+            }
+          } catch (paymentError) {
+            console.warn(`Could not fetch payment date for team ${teamId}:`, paymentError);
+          }
+        }
         
         // Calculate fee breakdown for transparency
         let feeBreakdown = null;
