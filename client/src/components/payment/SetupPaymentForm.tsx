@@ -125,7 +125,19 @@ function SetupPaymentFormInner({
       }
     } catch (error) {
       console.error('Error confirming setup:', error);
-      setErrorMessage(error instanceof Error ? error.message : 'An unexpected error occurred');
+      
+      // Check if this is a Stripe connectivity error
+      const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
+      if (errorMessage.includes('Failed to fetch') && errorMessage.includes('stripe.com')) {
+        setHasStripeConnectivityError(true);
+        setErrorMessage('Unable to connect to payment servers. Please check your network connection and try again.');
+      } else if (errorMessage.includes('Failed to load Stripe')) {
+        setHasStripeConnectivityError(true);
+        setErrorMessage('Payment system is having connectivity issues. Please try the suggestions below.');
+      } else {
+        setErrorMessage(errorMessage);
+      }
+      
       if (onError) onError(error instanceof Error ? error : new Error('Payment setup failed'));
     } finally {
       setIsLoading(false);
@@ -163,10 +175,20 @@ function SetupPaymentFormInner({
             />
           </div>
           
-          {errorMessage && (
+          {errorMessage && !hasStripeConnectivityError && (
             <div className="p-3 bg-destructive/10 text-destructive rounded-lg">
               {errorMessage}
             </div>
+          )}
+          
+          {hasStripeConnectivityError && (
+            <StripeConnectionDiagnostics 
+              onConnectionRestored={() => {
+                setHasStripeConnectivityError(false);
+                setErrorMessage(null);
+                setRetryAttempt(prev => prev + 1);
+              }}
+            />
           )}
           
           {!hideSubmitButton && (
@@ -198,7 +220,33 @@ export function SetupPaymentForm(props: SetupPaymentFormProps) {
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [setupIntentId, setSetupIntentId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const stripePromise = getStripe();
+  const [stripeError, setStripeError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
+  const [stripePromise, setStripePromise] = useState<Promise<Stripe | null> | null>(null);
+
+  // Initialize Stripe with retry logic
+  useEffect(() => {
+    const initStripe = async () => {
+      try {
+        if (retryCount > 0) {
+          resetStripeLoader();
+        }
+        const stripe = getStripe();
+        setStripePromise(stripe);
+        setStripeError(null);
+      } catch (error) {
+        console.error('Failed to initialize Stripe:', error);
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        if (errorMessage.includes('stripe.com') || errorMessage.includes('Failed to load Stripe')) {
+          setStripeError('Unable to connect to payment servers. Please check your network connection.');
+        } else {
+          setStripeError('Failed to load payment system.');
+        }
+      }
+    };
+    
+    initStripe();
+  }, [retryCount]);
 
   useEffect(() => {
     const initializeSetupIntent = async () => {
@@ -228,6 +276,15 @@ export function SetupPaymentForm(props: SetupPaymentFormProps) {
         }
       } catch (error) {
         console.error('Failed to create setup intent:', error);
+        const errorMessage = error instanceof Error ? error.message : 'Setup intent creation failed';
+        
+        // Check if this is a connectivity error
+        if (errorMessage.includes('Failed to fetch') || errorMessage.includes('NetworkError')) {
+          setStripeError('Unable to connect to payment servers. Please check your network connection.');
+        } else {
+          setStripeError(errorMessage);
+        }
+        
         if (props.onError) props.onError(error instanceof Error ? error : new Error('Setup intent creation failed'));
       } finally {
         setIsLoading(false);
@@ -237,7 +294,26 @@ export function SetupPaymentForm(props: SetupPaymentFormProps) {
     initializeSetupIntent();
   }, [props.teamId, props.expectedAmount, props.teamName, props.eventName, props.onError]);
 
-  if (isLoading || !clientSecret) {
+  if (stripeError) {
+    return (
+      <Card>
+        <CardContent className="pt-6">
+          <div className="text-center space-y-4">
+            <AlertTriangle className="h-12 w-12 mx-auto text-destructive" />
+            <div>
+              <h3 className="text-lg font-semibold mb-2">Payment System Error</h3>
+              <p className="text-muted-foreground mb-4">{stripeError}</p>
+            </div>
+            <StripeConnectionDiagnostics 
+              onConnectionRestored={() => setRetryCount(prev => prev + 1)}
+            />
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (isLoading || !clientSecret || !stripePromise) {
     return (
       <Card>
         <CardContent className="pt-6 flex justify-center items-center h-48">
