@@ -1,0 +1,41 @@
+5
+Fetch finished loading: GET "<URL>".
+index-DFiQQZDo.js:835 Sending status update with data: 
+{teamId: 156, status: 'approved', notes: null}
+index-DFiQQZDo.js:835 Raw response text: {"status":"success","team":{"id":156,"eventId":1755746106,"ageGroupId":10006,"groupId":null,"bracketId":null,"clubId":null,"clubName":null,"name":"Test 0","coach":"{\"headCoachName\":\"Bryan Perdomo\",\"headCoachEmail\":\"bperdomo@zoho.com\",\"headCoachPhone\":\"(202) 695-6262\",\"accountCreated\":false}","managerName":"Bryan Perdomo","managerPhone":"(202) 695-6262","managerEmail":"bperdomo@zoho.com","submitterName":"Bryan Perdomo","submitterEmail":"bperdomo@zoho.com","seedRanking":null,"createdAt":"2025-06-26T13:49:16.695Z","status":"approved","registrationFee":null,"selectedFeeIds":"{\"34\"}","totalAmount":100,"paymentStatus":"payment_info_pending","paymentDate":null,"paymentIntentId":null,"setupIntentId":"seti_1ReGAyP4BpmZARxtLISuCHgq","paymentMethodId":null,"cardBrand":null,"cardLast4":null,"paymentMethodType":null,"paymentErrorCode":null,"paymentErrorMessage":null,"refundDate":null,"stripeCustomerId":null,"termsAcknowledged":true,"termsAcknowledgedAt":"2025-06-26T13:49:16.379Z","termsAcknowledgementRecord":null,"addRosterLater":true,"rosterUploadedAt":null,"rosterUploadMethod":null,"initialRosterComplete":false,"appliedCoupon":null,"notes":null},"notification":{"status":"sent","recipients":["bperdomo@zoho.com"],"message":"Email notification sent successfully"}}
+index-DFiQQZDo.js:835 Fetch finished loading: PUT "https://app.matchpro.ai/api/admin/teams/156/status".
+teams:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap
+teams:1 OTS parsing error: invalid sfntVersion: 791289955
+index-DFiQQZDo.js:835 Teams data received: 
+(129) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+index-DFiQQZDo.js:835 Teams data from API: 
+(129) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+index-DFiQQZDo.js:835 Normalized teams data: 
+(129) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+teams:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received
+chunk-DPQRDNL2.js:288 Uncaught (in promise) 
+lhi {message: 'Value of the latch has already changed', cause: undefined, name: 'lhi', mw8_1: e6t, stack: 'lhi: Value of the latch has already changed\n    at…bbjpldiijjmm/content/chunk-4RD4FFU6.js:32:121910)'}
+chunk-LRH6BLRZ.js:31 orchestration: Initializing user store with state 
+{}
+chunk-LRH6BLRZ.js:31 orchestration: Updating combined state 
+{anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+shared-e864a3e608739…3f774b6d751e03.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous)	@	shared-e864a3e608739…3f774b6d751e03.js:1
+e	@	shared-e864a3e608739…3f774b6d751e03.js:1
+l	@	shared-e864a3e608739…3f774b6d751e03.js:1
+value	@	shared-e864a3e608739…3f774b6d751e03.js:1
+value	@	shared-e864a3e608739…3f774b6d751e03.js:1
+value	@	shared-e864a3e608739…3f774b6d751e03.js:1
+value	@	shared-e864a3e608739…3f774b6d751e03.js:1
+value	@	shared-e864a3e608739…3f774b6d751e03.js:1
+(anonymous)	@	shared-e864a3e608739…3f774b6d751e03.js:1
+setTimeout		
+value	@	shared-e864a3e608739…3f774b6d751e03.js:1
+value	@	shared-e864a3e608739…3f774b6d751e03.js:1
+value	@	shared-e864a3e608739…3f774b6d751e03.js:1
+(anonymous)	@	shared-e864a3e608739…3f774b6d751e03.js:1
+value	@	shared-e864a3e608739…3f774b6d751e03.js:1
+log	@	shared-e864a3e608739…3f774b6d751e03.js:1
+log	@	controller-with-prec…5daed9c42e61ee.js:1
+de	@	controller-with-prec…5daed9c42e61ee.js:1
+(anonymous)	@	controller-with-prec…5daed9c42e61ee.js:1
