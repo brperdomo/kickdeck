@@ -260,12 +260,13 @@ export function registerRoutes(app: Express): Server {
           try {
             // For payment completion display, show the correct breakdown:
             // - Tournament cost is the base registration fee
-            // - Platform fee is 4% of the tournament cost
-            // - Customer doesn't need to see Stripe fee breakdown details
+            // - Platform fee is 4% of tournament cost + $0.30 to cover Stripe fees
+            // - Customer doesn't need to see internal Stripe fee breakdown details
             
             const tournamentCost = team.totalAmount; // The total amount IS the tournament registration fee
             const platformFeeRate = 0.04; // 4% platform fee
-            const platformFee = Math.round(tournamentCost * platformFeeRate); // 4% of tournament cost
+            const stripeFeeFixed = 30; // $0.30 fixed fee in cents
+            const platformFee = Math.round(tournamentCost * platformFeeRate) + stripeFeeFixed; // 4% + $0.30
             const totalCharged = tournamentCost + platformFee;
             
             feeBreakdown = {
