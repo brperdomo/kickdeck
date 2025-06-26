@@ -897,6 +897,11 @@ async function generatePaymentCompletionUrl(req: Request, res: Response) {
     
     log(`Generating payment completion URL for team ${teamId}`, 'admin');
     
+    // Define frontend URL - use app.matchpro.ai for production
+    const frontendUrl = process.env.NODE_ENV === 'production' 
+      ? 'https://app.matchpro.ai' 
+      : (process.env.FRONTEND_URL || 'http://localhost:5000');
+    
     // Get team details
     const teamResult = await db
       .select()
@@ -1002,10 +1007,7 @@ async function generatePaymentCompletionUrl(req: Request, res: Response) {
       })
       .where(eq(teams.id, parseInt(teamId, 10)));
     
-    // Generate completion URL - use app.matchpro.ai for production
-    const frontendUrl = process.env.NODE_ENV === 'production' 
-      ? 'https://app.matchpro.ai' 
-      : (process.env.FRONTEND_URL || 'http://localhost:5000');
+    // Frontend URL already defined above
     const completionUrl = `${frontendUrl}/complete-payment?setup_intent=${newSetupIntent.client_secret}&team_id=${teamId}`;
     
     log(`Payment completion URL generated for team ${teamId}: ${completionUrl}`, 'admin');
