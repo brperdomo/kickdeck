@@ -308,12 +308,6 @@ export default function CompletePayment() {
         };
         
         setTeamInfo(teamData);
-        
-        // If payment is already complete, show receipt immediately
-        if (data.paymentStatus === 'paid') {
-          setIsComplete(true);
-        }
-        
         setLoading(false);
       })
       .catch(err => {
