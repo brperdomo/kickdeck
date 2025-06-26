@@ -199,58 +199,45 @@ export function SetupPaymentForm({
           </AlertDescription>
         </Alert>
         
-        <Elements
-          stripe={stripe}
-          options={{
-            clientSecret,
-            appearance: {
-              theme: 'stripe',
-              variables: {
-                colorPrimary: '#007AFF',
-              },
-            },
-          }}
-        >
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="p-4 bg-accent/10 rounded-lg">
-              <PaymentElement 
-                options={{
-                  paymentMethodOrder: ['card'],
-                  wallets: {
-                    applePay: 'never',
-                    googlePay: 'never'
-                  }
-                }}
-              />
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="p-4 bg-accent/10 rounded-lg">
+            <PaymentElement 
+              options={{
+                paymentMethodOrder: ['card'],
+                wallets: {
+                  applePay: 'never',
+                  googlePay: 'never'
+                }
+              }}
+            />
+          </div>
+          
+          {errorMessage && (
+            <div className="p-3 bg-destructive/10 text-destructive rounded-lg">
+              {errorMessage}
             </div>
-            
-            {errorMessage && (
-              <div className="p-3 bg-destructive/10 text-destructive rounded-lg">
-                {errorMessage}
-              </div>
-            )}
-            
-            {!hideSubmitButton && (
-              <Button 
-                type="submit" 
-                className="w-full" 
-                disabled={!stripe || isLoading}
-              >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Processing...
-                  </>
-                ) : (
-                  <>
-                    <CreditCard className="mr-2 h-4 w-4" />
-                    Save Payment Information
-                  </>
-                )}
-              </Button>
-            )}
-          </form>
-        </Elements>
+          )}
+          
+          {!hideSubmitButton && (
+            <Button 
+              type="submit" 
+              className="w-full" 
+              disabled={!stripe || isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Processing...
+                </>
+              ) : (
+                <>
+                  <CreditCard className="mr-2 h-4 w-4" />
+                  Save Payment Information
+                </>
+              )}
+            </Button>
+          )}
+        </form>
       </CardContent>
     </Card>
   );
