@@ -882,4 +882,117 @@ async function processTeamPaymentAfterSetup(req: Request, res: Response) {
   }
 }
 
-export { updateTeamStatus, processRefund, processTeamPaymentAfterSetup };
+/**
+ * Generate payment completion URL for teams with incomplete Setup Intents
+ */
+async function generatePaymentCompletionUrl(req: Request, res: Response) {
+  try {
+    const teamId = req.params?.teamId;
+    
+    if (!teamId) {
+      return res.status(400).json({ 
+        error: 'Team ID is required' 
+      });
+    }
+    
+    log(`Generating payment completion URL for team ${teamId}`, 'admin');
+    
+    // Get team details
+    const teamResult = await db
+      .select()
+      .from(teams)
+      .where(eq(teams.id, parseInt(teamId, 10)));
+    
+    if (!teamResult || teamResult.length === 0) {
+      return res.status(404).json({ 
+        error: 'Team not found' 
+      });
+    }
+    
+    const team = teamResult[0];
+    
+    // Check if team has incomplete Setup Intent
+    if (!team.setupIntentId || team.paymentStatus !== 'payment_required') {
+      return res.status(400).json({ 
+        error: 'Team does not have incomplete payment setup',
+        currentStatus: team.paymentStatus
+      });
+    }
+    
+    // Check the current Setup Intent status in Stripe
+    let setupIntentStatus = 'unknown';
+    try {
+      const setupIntent = await stripe.setupIntents.retrieve(team.setupIntentId);
+      setupIntentStatus = setupIntent.status;
+      
+      if (setupIntent.status === 'succeeded' && setupIntent.payment_method) {
+        // Setup Intent is actually complete - update team record
+        await db
+          .update(teams)
+          .set({
+            paymentMethodId: setupIntent.payment_method.toString(),
+            stripeCustomerId: setupIntent.customer?.toString() || null,
+            paymentStatus: 'payment_info_provided'
+          })
+          .where(eq(teams.id, parseInt(teamId, 10)));
+        
+        return res.json({
+          message: 'Team payment setup is already complete',
+          status: 'complete',
+          paymentMethodId: setupIntent.payment_method
+        });
+      }
+    } catch (stripeError) {
+      log(`Error checking Setup Intent ${team.setupIntentId}: ${stripeError}`, 'admin');
+    }
+    
+    // Create new Setup Intent for completion
+    const newSetupIntent = await stripe.setupIntents.create({
+      usage: 'off_session',
+      metadata: {
+        teamId: teamId,
+        teamName: team.name || 'Unknown Team',
+        originalSetupIntent: team.setupIntentId,
+        eventType: 'incomplete_registration_recovery',
+        managerEmail: team.managerEmail || 'unknown'
+      }
+    });
+    
+    // Update team with new Setup Intent
+    await db
+      .update(teams)
+      .set({
+        setupIntentId: newSetupIntent.id,
+        paymentStatus: 'setup_intent_created',
+        notes: (team.notes || '') + `\nNew Setup Intent created for incomplete registration: ${newSetupIntent.id} (${new Date().toISOString()})`
+      })
+      .where(eq(teams.id, parseInt(teamId, 10)));
+    
+    // Generate completion URL
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5000';
+    const completionUrl = `${frontendUrl}/complete-payment?setup_intent=${newSetupIntent.client_secret}&team_id=${teamId}`;
+    
+    log(`Payment completion URL generated for team ${teamId}: ${completionUrl}`, 'admin');
+    
+    return res.json({
+      success: true,
+      completionUrl: completionUrl,
+      setupIntentId: newSetupIntent.id,
+      teamId: teamId,
+      teamName: team.name,
+      managerEmail: team.managerEmail,
+      originalSetupIntentStatus: setupIntentStatus,
+      message: 'Payment completion URL generated successfully'
+    });
+    
+  } catch (error) {
+    log(`Error generating payment completion URL for team ${req.params?.teamId}: ${error}`, 'admin');
+    
+    return res.status(500).json({
+      error: 'Failed to generate payment completion URL',
+      message: error instanceof Error ? error.message : 'Unknown error occurred'
+    });
+  }
+}
+
+export { updateTeamStatus, processRefund, processTeamPaymentAfterSetup, generatePaymentCompletionUrl };

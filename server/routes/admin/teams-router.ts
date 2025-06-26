@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { getTeams, getTeamById, updateTeamStatus, processRefund, processTeamPaymentAfterSetup } from './teams';
+import { getTeams, getTeamById, updateTeamStatus, processRefund, processTeamPaymentAfterSetup, generatePaymentCompletionUrl } from './teams';
 import { db } from '@db';
 import { eventFees, teams } from '@db/schema';
 import { eq, inArray } from 'drizzle-orm';
@@ -132,5 +132,8 @@ router.post('/:teamId/refund', extractEventIdFromTeam, hasEventAccess, processRe
 
 // Process payment after Setup Intent completion
 router.post('/:teamId/process-payment', extractEventIdFromTeam, hasEventAccess, processTeamPaymentAfterSetup);
+
+// Generate payment completion URL for teams with incomplete Setup Intents
+router.post('/:teamId/generate-completion-url', extractEventIdFromTeam, hasEventAccess, generatePaymentCompletionUrl);
 
 export default router;

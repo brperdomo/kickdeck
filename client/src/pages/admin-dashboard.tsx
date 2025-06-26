@@ -4845,6 +4845,61 @@ function TeamsView() {
                       </div>
                     )}
                     
+                    {/* Payment Completion URL for teams with incomplete Setup Intents */}
+                    {selectedTeam.paymentStatus === 'payment_required' && selectedTeam.setupIntentId && (
+                      <div className="grid grid-cols-3 gap-1">
+                        <div className="font-medium">Payment Setup:</div>
+                        <div className="col-span-2">
+                          <div className="flex items-center gap-2">
+                            <AlertTriangle className="h-4 w-4 text-amber-500" />
+                            <span className="text-sm text-amber-700">Incomplete payment setup</span>
+                          </div>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="mt-2 w-full"
+                            onClick={async () => {
+                              try {
+                                // Generate a new Setup Intent for payment completion
+                                const response = await fetch(`/api/admin/teams/${selectedTeam.id}/payment-completion-url`, {
+                                  method: 'POST'
+                                });
+                                
+                                if (!response.ok) {
+                                  throw new Error('Failed to generate completion URL');
+                                }
+                                
+                                const data = await response.json();
+                                
+                                if (data.completionUrl) {
+                                  // Copy URL to clipboard
+                                  await navigator.clipboard.writeText(data.completionUrl);
+                                  toast({
+                                    title: "Completion URL Generated",
+                                    description: "Payment completion URL copied to clipboard. Send this to the team manager.",
+                                  });
+                                } else {
+                                  throw new Error('No completion URL received');
+                                }
+                              } catch (error) {
+                                toast({
+                                  title: "Error",
+                                  description: error instanceof Error ? error.message : "Failed to generate completion URL",
+                                  variant: "destructive",
+                                });
+                              }
+                            }}
+                          >
+                            <Link2 className="h-4 w-4 mr-2" />
+                            Generate Payment Completion URL
+                          </Button>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Send this URL to {selectedTeam.managerEmail} to complete payment setup
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                    
                     {selectedTeam.refundDate && (
                       <div className="grid grid-cols-3 gap-1">
                         <div className="font-medium">Refunded On:</div>
