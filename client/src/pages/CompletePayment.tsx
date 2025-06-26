@@ -113,6 +113,42 @@ function PaymentCompletionForm({ clientSecret, teamId, teamInfo }: { clientSecre
           <p className="text-gray-600 mb-4">
             Your payment method has been saved and your registration payment has been processed.
           </p>
+          
+          {/* Payment Receipt Details */}
+          {teamInfo && (
+            <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg text-left">
+              <div className="text-sm text-green-800 font-medium mb-2">Payment Receipt</div>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-green-700">Team:</span>
+                  <span className="font-medium text-green-900">{teamInfo.name}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-green-700">Event:</span>
+                  <span className="font-medium text-green-900">{teamInfo.eventName}</span>
+                </div>
+                {teamInfo.paymentIntentId && (
+                  <div className="flex justify-between">
+                    <span className="text-green-700">Transaction ID:</span>
+                    <span className="font-mono text-xs text-green-900">{teamInfo.paymentIntentId}</span>
+                  </div>
+                )}
+                {teamInfo.paidAt && (
+                  <div className="flex justify-between">
+                    <span className="text-green-700">Paid At:</span>
+                    <span className="text-green-900">{new Date(teamInfo.paidAt).toLocaleString()}</span>
+                  </div>
+                )}
+                <div className="flex justify-between pt-2 border-t border-green-200">
+                  <span className="text-green-700 font-medium">Amount Paid:</span>
+                  <span className="font-bold text-green-900">
+                    {teamInfo.feeBreakdown ? teamInfo.feeBreakdown.totalAmountFormatted : `$${(teamInfo.totalAmount / 100).toFixed(2)}`}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+          
           <p className="text-sm text-gray-500">
             You can now close this window. You should receive a confirmation email shortly.
           </p>
@@ -260,7 +296,7 @@ export default function CompletePayment() {
         return res.json();
       })
       .then(data => {
-        setTeamInfo({
+        const teamData = {
           id: data.teamId,
           name: data.teamName,
           eventName: data.eventName,
@@ -269,7 +305,15 @@ export default function CompletePayment() {
           paymentIntentId: data.paymentIntentId,
           paidAt: data.paidAt,
           feeBreakdown: data.feeBreakdown
-        });
+        };
+        
+        setTeamInfo(teamData);
+        
+        // If payment is already complete, show receipt immediately
+        if (data.paymentStatus === 'paid') {
+          setIsComplete(true);
+        }
+        
         setLoading(false);
       })
       .catch(err => {
