@@ -4868,7 +4868,8 @@ function TeamsView() {
                                 });
                                 
                                 if (!response.ok) {
-                                  throw new Error('Failed to generate completion URL');
+                                  const errorData = await response.json();
+                                  throw new Error(errorData.error || 'Failed to generate completion URL');
                                 }
                                 
                                 const data = await response.json();
@@ -4881,7 +4882,9 @@ function TeamsView() {
                                     description: "Payment completion URL copied to clipboard. Send this to the team manager.",
                                   });
                                 } else {
-                                  throw new Error('No completion URL received');
+                                  // Show more specific error message
+                                  const errorMessage = data.error || data.message || 'No completion URL received';
+                                  throw new Error(errorMessage);
                                 }
                               } catch (error) {
                                 toast({

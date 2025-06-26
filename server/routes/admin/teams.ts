@@ -928,10 +928,22 @@ async function generatePaymentCompletionUrl(req: Request, res: Response) {
     );
     
     if (!needsPayment) {
+      // Provide specific helpful messages based on team status
+      let message = 'Team does not need payment setup';
+      
+      if (team.paymentStatus === 'paid') {
+        message = 'Team payment is already complete. No completion URL needed.';
+      } else if (team.status === 'approved' && team.paymentStatus === 'paid') {
+        message = 'Team is approved and payment has been processed successfully.';
+      } else if (!team.totalAmount || team.totalAmount === 0) {
+        message = 'Team has no payment amount required. No completion URL needed.';
+      }
+      
       return res.status(400).json({ 
-        error: 'Team does not need payment setup',
+        error: message,
         currentStatus: team.paymentStatus,
-        teamStatus: team.status
+        teamStatus: team.status,
+        totalAmount: team.totalAmount
       });
     }
     
