@@ -181,11 +181,22 @@ export default function CompletePayment() {
 
     setParams({ setup_intent: setupIntent, team_id: teamId });
 
-    // Fetch team information
-    fetch(`/api/teams/${teamId}`)
-      .then(res => res.json())
+    // Fetch team information using the public payment info endpoint
+    fetch(`/api/teams/${teamId}/payment-info`)
+      .then(res => {
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+        }
+        return res.json();
+      })
       .then(data => {
-        setTeamInfo(data);
+        setTeamInfo({
+          id: data.teamId,
+          name: data.teamName,
+          eventName: data.eventName,
+          totalAmount: data.totalAmount,
+          paymentStatus: data.paymentStatus
+        });
         setLoading(false);
       })
       .catch(err => {
