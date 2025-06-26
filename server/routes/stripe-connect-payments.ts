@@ -217,7 +217,15 @@ export async function chargeApprovedTeam(teamId: number) {
             .where(eq(teams.id, teamId));
             
         } else {
-          throw new Error(`Setup Intent ${team.setupIntentId} is not completed (status: ${setupIntent.status}). Team needs to complete payment setup.`);
+          // Setup intent is incomplete - update team status to indicate payment completion needed
+          await db.update(teams)
+            .set({
+              paymentStatus: 'payment_required',
+              notes: `Setup Intent incomplete (status: ${setupIntent.status}). Admin can generate payment completion URL for team to finish payment setup.`
+            })
+            .where(eq(teams.id, teamId));
+          
+          throw new Error(`Setup Intent ${team.setupIntentId} is incomplete (status: ${setupIntent.status}). Use "Generate Payment Completion URL" to allow team to complete payment setup.`);
         }
       } catch (stripeError) {
         throw new Error(`Failed to retrieve setup intent: ${stripeError instanceof Error ? stripeError.message : 'Unknown error'}`);
