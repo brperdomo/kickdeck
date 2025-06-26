@@ -1950,9 +1950,30 @@ export function registerRoutes(app: Express): Server {
               });
             }
             
+            // ADDITIONAL ENFORCEMENT: Double-check payment method is actually attached and usable
+            if (!setupIntent.payment_method || typeof setupIntent.payment_method !== 'string') {
+              console.log(`❌ REGISTRATION BLOCKED: Setup Intent ${setupIntentId} has no valid payment method`);
+              console.log(`   Payment Method Value: ${setupIntent.payment_method} (type: ${typeof setupIntent.payment_method})`);
+              console.log(`   Team: ${req.body.name}`);
+              
+              return res.status(400).json({
+                error: 'Payment method not properly attached',
+                message: 'Your payment method was not properly saved to your setup intent. Please complete payment setup again.',
+                totalAmount: totalAmount,
+                requiresPayment: true,
+                setupIntentStatus: setupIntent.status,
+                debug: {
+                  setupIntentId: setupIntentId,
+                  hasPaymentMethod: !!setupIntent.payment_method,
+                  paymentMethodType: typeof setupIntent.payment_method,
+                  status: setupIntent.status
+                }
+              });
+            }
+            
             console.log(`✅ PAYMENT VALIDATION PASSED:`);
             console.log(`   Setup Intent: ${setupIntentId}`);
-            console.log(`   Payment Method: ${paymentMethodId}`);
+            console.log(`   Payment Method: ${paymentMethodId} (Stripe: ${setupIntent.payment_method})`);
             console.log(`   Status: ${setupIntent.status}`);
             console.log(`   Team: ${req.body.name}`);
             

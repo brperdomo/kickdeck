@@ -217,15 +217,49 @@ export async function chargeApprovedTeam(teamId: number) {
             .where(eq(teams.id, teamId));
             
         } else {
-          // Setup intent is incomplete - update team status to indicate payment completion needed
-          await db.update(teams)
-            .set({
-              paymentStatus: 'payment_required',
-              notes: `Setup Intent incomplete (status: ${setupIntent.status}). Admin can generate payment completion URL for team to finish payment setup.`
-            })
-            .where(eq(teams.id, teamId));
+          // For legacy teams with incomplete setup intents, try to auto-recover by creating a fresh payment flow
+          console.log(`Attempting auto-recovery for team ${teamId} with incomplete setup intent...`);
           
-          throw new Error(`Setup Intent ${team.setupIntentId} is incomplete (status: ${setupIntent.status}). Use "Generate Payment Completion URL" to allow team to complete payment setup.`);
+          try {
+            // Create a fresh setup intent for immediate completion and processing
+            const recoverySetupIntent = await stripe.setupIntents.create({
+              customer: setupIntent.customer,
+              usage: 'off_session',
+              metadata: {
+                teamId: teamId.toString(),
+                teamName: team.name || 'Unknown Team',
+                originalSetupIntent: team.setupIntentId,
+                autoRecovery: 'true',
+                eventType: 'approval_auto_recovery'
+              }
+            });
+            
+            // Try to complete the payment flow automatically if the original setup had payment method data
+            // This won't work for completely empty setup intents, but worth trying
+            console.log(`Created recovery setup intent ${recoverySetupIntent.id} for team ${teamId}`);
+            
+            // For now, fall back to requiring manual completion, but with better messaging
+            await db.update(teams)
+              .set({
+                paymentStatus: 'payment_required',
+                setupIntentId: recoverySetupIntent.id, // Replace with fresh setup intent
+                notes: `Auto-recovery attempted. Original setup intent incomplete (status: ${setupIntent.status}). Fresh setup intent created: ${recoverySetupIntent.id}. Admin can generate payment completion URL for team to finish payment setup.`
+              })
+              .where(eq(teams.id, teamId));
+            
+            throw new Error(`Setup Intent auto-recovery initiated for team ${teamId}. Use "Generate Payment Completion URL" to complete payment setup with the new setup intent.`);
+            
+          } catch (recoveryError) {
+            // If auto-recovery fails, fall back to original error handling
+            await db.update(teams)
+              .set({
+                paymentStatus: 'payment_required',
+                notes: `Setup Intent incomplete (status: ${setupIntent.status}). Auto-recovery failed: ${recoveryError instanceof Error ? recoveryError.message : 'Unknown error'}. Admin can generate payment completion URL for team to finish payment setup.`
+              })
+              .where(eq(teams.id, teamId));
+            
+            throw new Error(`Setup Intent ${team.setupIntentId} is incomplete (status: ${setupIntent.status}). Auto-recovery failed. Use "Generate Payment Completion URL" to allow team to complete payment setup.`);
+          }
         }
       } catch (stripeError) {
         throw new Error(`Failed to retrieve setup intent: ${stripeError instanceof Error ? stripeError.message : 'Unknown error'}`);
