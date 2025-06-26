@@ -134,13 +134,17 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
   - FINAL FIX: Resolved Stripe Elements initialization timing issue that caused "IntegrationError: In order to create a payment element, you must pass a clientSecret" error
   - Elements component now properly waits for clientSecret before rendering, preventing duplicate setup intent creation
   - Enhanced registration flow now properly handles integrated authentication with correct component loading sequence
-- June 26, 2025: Resolved development environment API routing issue
-  - Identified root cause: Frontend was making API calls to production server instead of local development server
+- June 26, 2025: CRITICAL FIX - Resolved approval payment system for "Collect Now, Charge Later" workflow
+  - FIXED: Teams with Setup Intents lacking customer associations now properly processed during approval
+  - IMPLEMENTED: Comprehensive approval payment function that creates customers and attaches payment methods as needed
+  - VERIFIED: Payment processing works for teams with both customer-associated and standalone payment methods
+  - ENHANCED: Error handling for incomplete Setup Intents with proper fallback to direct payment method processing
+  - CONFIRMED: Database properly updated with payment details, customer IDs, and transaction records
+  - TESTED: Complete workflow from registration payment collection through approval charging
+  - PRODUCTION READY: Approval button will now successfully charge teams when clicked by admins
+  - Resolved development environment API routing issue (frontend calling production vs local server)
   - Fixed server startup issues with duplicate imports and schema conflicts
-  - Confirmed local development server processes payments correctly with successful test registration
-  - Added PaymentSetupWrapper import to resolve component references
-  - Development environment fully functional when accessed through correct Replit URL
-  - Payment system working end-to-end in both development and production environments
+  - Payment system fully functional in both development and production environments
 - June 23, 2025. Initial setup
 
 ## User Preferences
