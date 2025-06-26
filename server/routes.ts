@@ -401,7 +401,6 @@ export function registerRoutes(app: Express): Server {
         }
 
         // Calculate total amount including platform fees using the same logic as approval workflow
-        const { calculateFees } = require('./services/fee-calculator');
         const { processDestinationCharge } = require('./routes/stripe-connect-payments');
         
         // Get event details for fee calculation
@@ -415,56 +414,50 @@ export function registerRoutes(app: Express): Server {
         }
         
         const event = eventResult[0];
-        
-        // Calculate fees with platform fee system
         const tournamentCostCents = team.totalAmount; // This should be the original tournament cost
-        const feeCalculation = calculateFees(tournamentCostCents);
-        const totalAmountWithFees = feeCalculation.totalAmount; // This includes platform fees
         
         console.log(`PAYMENT COMPLETION: Processing team ${teamId}`);
         console.log(`Original tournament cost: $${(tournamentCostCents / 100).toFixed(2)}`);
-        console.log(`Platform fee: $${(feeCalculation.platformFee / 100).toFixed(2)}`);
-        console.log(`Total amount with fees: $${(totalAmountWithFees / 100).toFixed(2)}`);
+        console.log(`Event ID: ${team.eventId}`);
+        console.log(`Connect Account: ${event.stripeConnectAccountId || 'None'}`);
         
         // Check if event has Connect account for platform fee processing
         if (event.stripeConnectAccountId) {
           console.log(`Using Connect platform fee flow with account: ${event.stripeConnectAccountId}`);
           
-          // Use the Connect platform fee system (same as approval workflow)
-          const chargeResult = await processDestinationCharge({
-            amount: totalAmountWithFees, // Total amount pre-calculated with fees
-            currency: 'usd',
-            customer: customerId,
-            payment_method: paymentMethodId,
-            stripeAccountId: event.stripeConnectAccountId,
-            metadata: {
-              teamId: team.id.toString(),
-              teamName: team.name,
-              eventType: 'delayed_payment_completion',
-              tournamentCost: tournamentCostCents.toString(),
-              platformFee: feeCalculation.platformFee.toString()
-            },
-            confirm: true,
-            off_session: true
-          });
+          // Use the Connect platform fee system with correct parameter order
+          const chargeResult = await processDestinationCharge(
+            team.id,                        // teamId: number
+            team.eventId,                   // eventId: string  
+            paymentMethodId,                // paymentMethodId: string
+            tournamentCostCents,            // totalAmountCents: number (tournament cost, fees calculated inside)
+            event.stripeConnectAccountId,   // connectAccountId: string
+            false                           // isPreCalculated: boolean (let it calculate fees)
+          );
           
           if (!chargeResult.success) {
-            console.log(`Connect charge failed for team ${teamId}: ${chargeResult.error}`);
+            console.log(`Connect charge failed for team ${teamId}: ${chargeResult.error || 'Unknown error'}`);
             return res.status(400).json({
               error: 'Payment processing failed',
-              message: chargeResult.error
+              message: chargeResult.error || 'Unknown error occurred'
             });
           }
           
           var paymentIntent = chargeResult.paymentIntent;
+          var feeCalculation = chargeResult.feeCalculation;
+          
           console.log(`Connect charge successful for team ${teamId}. Payment Intent: ${paymentIntent.id}`);
+          console.log(`Tournament receives: $${(chargeResult.breakdown.tournamentReceives / 100).toFixed(2)}`);
+          console.log(`Platform fee: $${(chargeResult.breakdown.platformFeeAmount / 100).toFixed(2)}`);
+          console.log(`Total charged: $${(chargeResult.breakdown.totalCharged / 100).toFixed(2)}`);
           
         } else {
           console.log('No Connect account found, using basic payment processing');
           
-          // Fallback to basic payment if no Connect account
+          // For events without Connect accounts, use basic processing
+          // Note: This should be rare as most events should have Connect accounts
           const paymentIntentOptions: any = {
-            amount: totalAmountWithFees, // Use total amount with fees instead of just tournament cost
+            amount: tournamentCostCents, // Just the tournament cost without platform fees
             currency: 'usd',
             customer: customerId,
             payment_method: paymentMethodId,
@@ -473,13 +466,13 @@ export function registerRoutes(app: Express): Server {
             metadata: {
               teamId: team.id.toString(),
               teamName: team.name,
-              eventType: 'delayed_payment_completion',
-              tournamentCost: tournamentCostCents.toString(),
-              platformFee: feeCalculation.platformFee.toString()
+              eventType: 'delayed_payment_completion_no_connect',
+              tournamentCost: tournamentCostCents.toString()
             }
           };
           
           var paymentIntent = await stripe.paymentIntents.create(paymentIntentOptions);
+          var feeCalculation = { totalAmount: tournamentCostCents, platformFee: 0 };
         }
         
         if (paymentIntent.status === 'succeeded') {
@@ -490,20 +483,28 @@ export function registerRoutes(app: Express): Server {
               paymentStatus: 'paid',
               paymentMethodId: paymentMethodId,
               stripeCustomerId: customerId,
-              notes: `${team.notes || ''} | Payment completed after Setup Intent confirmation (Platform fees included)`.trim()
+              notes: `${team.notes || ''} | Payment completed after Setup Intent confirmation (Connect funds routed)`.trim()
             })
             .where(eq(teams.id, parseInt(teamId, 10)));
           
           console.log(`Payment successful for team ${teamId}. Payment Intent: ${paymentIntent.id}`);
-          console.log(`Total charged: $${(totalAmountWithFees / 100).toFixed(2)} (Tournament: $${(tournamentCostCents / 100).toFixed(2)} + Platform Fee: $${(feeCalculation.platformFee / 100).toFixed(2)})`);
+          
+          // Use the correct fee calculation results
+          const totalCharged = feeCalculation.totalAmount || feeCalculation.totalChargedAmount || tournamentCostCents;
+          const platformFeeAmount = feeCalculation.platformFee || feeCalculation.platformFeeAmount || 0;
+          
+          console.log(`Total charged: $${(totalCharged / 100).toFixed(2)} (Tournament: $${(tournamentCostCents / 100).toFixed(2)} + Platform Fee: $${(platformFeeAmount / 100).toFixed(2)})`);
           
           return res.json({
             success: true,
             paymentIntentId: paymentIntent.id,
-            amount: totalAmountWithFees / 100, // Return total amount charged including fees
+            amount: totalCharged / 100, // Return total amount charged including fees
             tournamentCost: tournamentCostCents / 100,
-            platformFee: feeCalculation.platformFee / 100,
-            message: 'Payment processed successfully with platform fees'
+            platformFee: platformFeeAmount / 100,
+            connectAccount: event.stripeConnectAccountId || null,
+            message: event.stripeConnectAccountId ? 
+              'Payment processed successfully with Connect fund distribution' : 
+              'Payment processed successfully (no Connect account)'
           });
         } else {
           console.log(`Payment failed for team ${teamId}. Status: ${paymentIntent.status}`);

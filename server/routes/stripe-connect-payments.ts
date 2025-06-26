@@ -96,7 +96,7 @@ export async function processDestinationCharge(
         eventId: eventId,
         connectAccountId: connectAccountId,
         type: 'team_registration',
-        tournamentCost: tournamentCostCents.toString(),
+        tournamentCost: totalAmountCents.toString(),
         platformFeeRate: feeCalculation.platformFeeRate.toString(),
         stripeFeeAmount: feeCalculation.stripeFeeAmount.toString()
       }
