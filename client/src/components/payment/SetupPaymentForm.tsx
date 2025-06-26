@@ -3,10 +3,11 @@ import { useStripe, useElements, PaymentElement, Elements } from '@stripe/react-
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Loader2, CreditCard, Info } from 'lucide-react';
+import { Loader2, CreditCard, Info, AlertTriangle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { createSetupIntent, confirmSetup } from '@/lib/payment';
-import { getStripe } from '@/lib/payment';
+import { getStripe, resetStripeLoader } from '@/lib/payment';
+import { StripeConnectionDiagnostics } from './StripeConnectionDiagnostics';
 
 interface SetupPaymentFormProps {
   teamId: number | string;
@@ -36,6 +37,8 @@ function SetupPaymentFormInner({
   
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [hasStripeConnectivityError, setHasStripeConnectivityError] = useState(false);
+  const [retryAttempt, setRetryAttempt] = useState(0);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();

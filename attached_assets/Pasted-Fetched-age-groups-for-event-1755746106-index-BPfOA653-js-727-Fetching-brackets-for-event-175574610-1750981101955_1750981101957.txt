@@ -1,0 +1,32 @@
+Fetched age groups for event: 1755746106
+index-BPfOA653.js:727 Fetching brackets for event 1755746106 and age group 10006
+[Violation] Forced reflow while executing JavaScript took 38ms
+index-BPfOA653.js:835 Sending status update with data: {teamId: 166, status: 'approved', notes: null}
+index-BPfOA653.js:835 Fetch finished loading: PUT "https://app.matchpro.ai/api/admin/teams/166/status".
+mutationFn @ index-BPfOA653.js:835
+fn @ index-BPfOA653.js:40
+h @ index-BPfOA653.js:40
+start @ index-BPfOA653.js:40
+execute @ index-BPfOA653.js:40
+await in execute
+mutate @ index-BPfOA653.js:40
+(anonymous) @ index-BPfOA653.js:40
+he @ index-BPfOA653.js:835
+onClick @ index-BPfOA653.js:835
+sue @ index-BPfOA653.js:37
+iue @ index-BPfOA653.js:37
+oue @ index-BPfOA653.js:37
+HM @ index-BPfOA653.js:37
+Eq @ index-BPfOA653.js:37
+(anonymous) @ index-BPfOA653.js:37
+sO @ index-BPfOA653.js:40
+QG @ index-BPfOA653.js:37
+l2 @ index-BPfOA653.js:37
+_4 @ index-BPfOA653.js:37
+Nue @ index-BPfOA653.js:37
+index-BPfOA653.js:835 Raw response text: {"status":"success","team":{"id":166,"eventId":1755746106,"ageGroupId":10006,"groupId":null,"bracketId":null,"clubId":null,"clubName":null,"name":"Test91919191","coach":"{\"headCoachName\":\"Bryan Perdomo\",\"headCoachEmail\":\"bperdomo@zoho.com\",\"headCoachPhone\":\"(202) 695-6262\",\"accountCreated\":false}","managerName":"Bryan Perdomo","managerPhone":"(202) 695-6262","managerEmail":"bperdomo@zoho.com","submitterName":"Bryan Perdomo","submitterEmail":"bperdomo@zoho.com","seedRanking":null,"createdAt":"2025-06-26T23:37:06.032Z","status":"approved","registrationFee":null,"selectedFeeIds":"{\"34\"}","totalAmount":100,"paymentStatus":"payment_info_pending","paymentDate":null,"paymentIntentId":null,"setupIntentId":"seti_1RePLqP4BpmZARxtoLngikOP","paymentMethodId":null,"cardBrand":null,"cardLast4":null,"paymentMethodType":null,"paymentErrorCode":null,"paymentErrorMessage":null,"refundDate":null,"stripeCustomerId":null,"termsAcknowledged":true,"termsAcknowledgedAt":"2025-06-26T23:37:05.678Z","termsAcknowledgementRecord":null,"addRosterLater":true,"rosterUploadedAt":null,"rosterUploadMethod":null,"initialRosterComplete":false,"appliedCoupon":null,"notes":null},"notification":{"status":"sent","recipients":["bperdomo@zoho.com"],"message":"Email notification sent successfully"}}
+/admin/teams:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+/admin/teams:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+index-BPfOA653.js:835 Teams data received: (139) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+index-BPfOA653.js:835 Teams data from API: (139) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+index-BPfOA653.js:835 Normalized teams data: (139) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]

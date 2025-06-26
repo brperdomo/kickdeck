@@ -1,20 +1,81 @@
 import { loadStripe, Stripe, StripeElements } from '@stripe/stripe-js';
 
 let stripePromise: Promise<Stripe | null>;
+let stripeLoadAttempts = 0;
+const MAX_STRIPE_LOAD_ATTEMPTS = 3;
 
 /**
- * Initializes the Stripe instance with the provided API key
+ * Initializes the Stripe instance with enhanced error handling and retry logic
  */
 export function getStripe(): Promise<Stripe | null> {
   if (!stripePromise) {
     const key = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
     if (!key) {
       console.error('Stripe public key is missing');
-      return Promise.reject('Stripe public key is missing');
+      return Promise.reject(new Error('Stripe public key is missing'));
     }
-    stripePromise = loadStripe(key);
+    
+    stripePromise = loadStripeWithRetry(key);
   }
   return stripePromise;
+}
+
+/**
+ * Loads Stripe with retry logic and enhanced error handling
+ */
+async function loadStripeWithRetry(publishableKey: string): Promise<Stripe | null> {
+  stripeLoadAttempts++;
+  
+  try {
+    console.log(`Loading Stripe (attempt ${stripeLoadAttempts}/${MAX_STRIPE_LOAD_ATTEMPTS})...`);
+    
+    // Add timeout to loadStripe call
+    const stripePromise = loadStripe(publishableKey);
+    const timeoutPromise = new Promise<null>((_, reject) => {
+      setTimeout(() => reject(new Error('Stripe loading timeout after 10 seconds')), 10000);
+    });
+    
+    const stripe = await Promise.race([stripePromise, timeoutPromise]);
+    
+    if (!stripe) {
+      throw new Error('Stripe failed to initialize - returned null');
+    }
+    
+    console.log('✅ Stripe loaded successfully');
+    return stripe;
+    
+  } catch (error) {
+    console.error(`❌ Stripe load attempt ${stripeLoadAttempts} failed:`, error);
+    
+    // If we haven't exceeded max attempts, reset promise and retry
+    if (stripeLoadAttempts < MAX_STRIPE_LOAD_ATTEMPTS) {
+      console.log(`Retrying Stripe load in 2 seconds...`);
+      stripePromise = null as any; // Reset the promise
+      
+      return new Promise((resolve, reject) => {
+        setTimeout(async () => {
+          try {
+            const result = await loadStripeWithRetry(publishableKey);
+            resolve(result);
+          } catch (retryError) {
+            reject(retryError);
+          }
+        }, 2000);
+      });
+    }
+    
+    // All attempts failed
+    throw new Error(`Failed to load Stripe after ${MAX_STRIPE_LOAD_ATTEMPTS} attempts. This may be due to network connectivity issues or firewall restrictions blocking access to Stripe's servers (*.stripe.com). Please check your network connection and try again.`);
+  }
+}
+
+/**
+ * Reset Stripe loader for manual retry
+ */
+export function resetStripeLoader(): void {
+  stripePromise = null as any;
+  stripeLoadAttempts = 0;
+  console.log('Stripe loader reset - ready for retry');
 }
 
 /**
