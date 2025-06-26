@@ -85,7 +85,7 @@ import {
 import userRouter from "./routes/user";
 import sendgridWebhookRouter from "./routes/sendgrid-webhook";
 import { fixCardDetails } from "./routes/fix-card-details";
-import { desc, asc, ilike, isNotNull } from "drizzle-orm";
+import { sql, eq, and, or, inArray, notInArray, isNull, desc, asc, ilike, isNotNull } from "drizzle-orm";
 import { sendTemplatedEmail, sendRegistrationReceiptEmail, sendRegistrationConfirmationEmail } from "./services/emailService";
 import {
   users,
@@ -212,7 +212,7 @@ export function registerRoutes(app: Express): Server {
   try {
     // Initialize Stripe
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-      apiVersion: '2025-02-24.acacia',
+      apiVersion: '2023-10-16',
     });
     
     // Authentication is already set up in index.ts, no need to call setupAuth again
