@@ -24,6 +24,63 @@ async function processTeamApprovalPayment(team: any, teamId: string): Promise<st
       return 'no_payment_method';
     }
     
+    // For teams with payment method but no customer, create customer and attach payment method
+    if (team.paymentMethodId && !team.stripeCustomerId) {
+      log(`Team ${teamId} has payment method but no customer - creating customer and attaching payment method`, 'admin');
+      
+      try {
+        // Create customer for the team
+        const customer = await stripe.customers.create({
+          email: team.managerEmail,
+          metadata: {
+            teamId: teamId,
+            teamName: team.name,
+            eventType: 'team_approval_customer'
+          }
+        });
+        
+        // Attach payment method to customer
+        await stripe.paymentMethods.attach(team.paymentMethodId, {
+          customer: customer.id
+        });
+        
+        // Create payment intent with customer
+        const paymentIntent = await stripe.paymentIntents.create({
+          amount: team.totalAmount,
+          currency: 'usd',
+          payment_method: team.paymentMethodId,
+          customer: customer.id,
+          confirm: true,
+          off_session: true,
+          metadata: {
+            teamId: teamId,
+            teamName: team.name,
+            eventType: 'team_approval_payment'
+          }
+        });
+        
+        if (paymentIntent.status === 'succeeded') {
+          await db.update(teams)
+            .set({
+              paymentIntentId: paymentIntent.id,
+              paymentStatus: 'paid',
+              stripeCustomerId: customer.id
+            })
+            .where(eq(teams.id, parseInt(teamId, 10)));
+          
+          log(`Payment successful with new customer for team ${teamId}: ${paymentIntent.id}`, 'admin');
+          return 'payment_successful';
+        }
+        
+        log(`Payment failed for team ${teamId}: ${paymentIntent.status}`, 'admin');
+        return 'payment_failed';
+        
+      } catch (customerPaymentError) {
+        log(`Customer payment error for team ${teamId}: ${customerPaymentError}`, 'admin');
+        // Fall through to setup intent processing
+      }
+    }
+    
     // Get setup intent from Stripe
     const setupIntent = await stripe.setupIntents.retrieve(team.setupIntentId);
     
@@ -43,12 +100,11 @@ async function processTeamApprovalPayment(team: any, teamId: string): Promise<st
       return 'payment_method_incomplete';
     }
     
-    // Create payment intent
-    const paymentIntent = await stripe.paymentIntents.create({
+    // Create payment intent with proper customer handling
+    const paymentIntentData: any = {
       amount: team.totalAmount,
       currency: 'usd',
       payment_method: setupIntent.payment_method,
-      customer: setupIntent.customer,
       confirm: true,
       off_session: true,
       metadata: {
@@ -56,7 +112,14 @@ async function processTeamApprovalPayment(team: any, teamId: string): Promise<st
         teamName: team.name,
         eventType: 'team_approval_payment'
       }
-    });
+    };
+    
+    // Only add customer if it exists and is not null
+    if (setupIntent.customer) {
+      paymentIntentData.customer = setupIntent.customer;
+    }
+    
+    const paymentIntent = await stripe.paymentIntents.create(paymentIntentData);
     
     if (paymentIntent.status === 'succeeded') {
       // Update team with payment details
