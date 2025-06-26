@@ -85,6 +85,7 @@ import {
 import userRouter from "./routes/user";
 import sendgridWebhookRouter from "./routes/sendgrid-webhook";
 import { fixCardDetails } from "./routes/fix-card-details";
+import { processDestinationCharge } from "./routes/stripe-connect-payments";
 import { sql, eq, and, or, inArray, notInArray, isNull, desc, asc, ilike, isNotNull } from "drizzle-orm";
 import { sendTemplatedEmail, sendRegistrationReceiptEmail, sendRegistrationConfirmationEmail } from "./services/emailService";
 import {
@@ -401,7 +402,6 @@ export function registerRoutes(app: Express): Server {
         }
 
         // Calculate total amount including platform fees using the same logic as approval workflow
-        const { processDestinationCharge } = require('./routes/stripe-connect-payments');
         
         // Get event details for fee calculation
         const eventResult = await db

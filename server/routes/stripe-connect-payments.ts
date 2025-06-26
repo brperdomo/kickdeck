@@ -91,6 +91,11 @@ export async function processDestinationCharge(
         amount: feeCalculation.tournamentReceives, // Tournament gets their base amount
       },
       application_fee_amount: feeCalculation.platformFeeAmount, // MatchPro gets platform fee
+      // Prevent redirect-based payment methods to avoid return_url requirement
+      automatic_payment_methods: {
+        enabled: true,
+        allow_redirects: 'never'
+      },
       metadata: {
         teamId: teamId.toString(),
         eventId: eventId,
