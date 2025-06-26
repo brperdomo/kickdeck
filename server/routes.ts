@@ -1192,7 +1192,10 @@ export function registerRoutes(app: Express): Server {
           // Payment method ('card' or 'pay_later')
           paymentMethod,
           // Coupon information
-          appliedCoupon
+          appliedCoupon,
+          // Setup Intent and Payment Method IDs for two-step payment flow
+          setupIntentId,
+          paymentMethodId
         } = req.body;
         
         // Validate required fields

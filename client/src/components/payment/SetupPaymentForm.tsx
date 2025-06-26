@@ -11,7 +11,7 @@ import { getStripe } from '@/lib/payment';
 interface SetupPaymentFormProps {
   teamId: number | string;
   expectedAmount: number;
-  onSuccess: (paymentMethodId: string) => void;
+  onSuccess: (setupIntentId: string, paymentMethodId: string) => void;
   onError?: (error: Error) => void;
   teamName?: string;
   eventName?: string;
@@ -108,7 +108,7 @@ function SetupPaymentFormInner({
           console.log('🎯 Stored Setup Intent ID:', result.setupIntent.id);
           console.log('🎯 Stored Payment Method ID:', result.setupIntent.payment_method);
           
-          onSuccess(result.setupIntent.payment_method as string);
+          onSuccess(result.setupIntent.id, result.setupIntent.payment_method as string);
         }
       } else {
         const status = result.setupIntent?.status || 'unknown';
