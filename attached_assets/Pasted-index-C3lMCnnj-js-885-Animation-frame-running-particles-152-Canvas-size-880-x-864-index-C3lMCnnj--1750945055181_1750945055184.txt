@@ -1,0 +1,207 @@
+index-C3lMCnnj.js:885 Animation frame running, particles: 152 Canvas size: 880 x 864
+index-C3lMCnnj.js:886 🎯 Confirming setup intent with client secret: seti_1ReFyaP4BpmZARxtKfMR5a20_secret_SZOmXuMeEhHiW4iajLURdzs0R0i0EEt
+60index-C3lMCnnj.js:885 Animation frame running, particles: 152 Canvas size: 880 x 864
+index-C3lMCnnj.js:886 🎯 Setup intent confirmation result: {error: undefined, setupIntentStatus: 'succeeded', setupIntentId: 'seti_1ReFyaP4BpmZARxtKfMR5a20', paymentMethodId: 'pm_1ReFyeP4BpmZARxta4bf0SqV'}
+index-C3lMCnnj.js:886 🎯 Payment setup completed successfully
+index-C3lMCnnj.js:886 🎯 Stored Setup Intent ID: seti_1ReFyaP4BpmZARxtKfMR5a20
+index-C3lMCnnj.js:886 🎯 Stored Payment Method ID: pm_1ReFyeP4BpmZARxta4bf0SqV
+index-C3lMCnnj.js:886 ✅ Payment setup callback received
+index-C3lMCnnj.js:886 ✅ Setup Intent ID: seti_1ReFyaP4BpmZARxtKfMR5a20
+index-C3lMCnnj.js:886 ✅ Payment Method ID: pm_1ReFyeP4BpmZARxta4bf0SqV
+index-C3lMCnnj.js:886 AUTH FIX: EventRegistration component starting - user should now see event details without immediate redirect
+index-C3lMCnnj.js:886 AUTH FIX: RegistrationAuthChecker allowUnauthenticated is now set to TRUE by default
+index-C3lMCnnj.js:886 Enhanced registration flow: Always starting at personal step with integrated auth
+index-C3lMCnnj.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'personal', isPreview: false}
+index-C3lMCnnj.js:885 AnimatedEventBackground CONSTRUCTOR - Received colors: {primaryColor: '#007AFF', secondaryColor: '#34C759', type: 'particles', opacity: 0.6}
+index-C3lMCnnj.js:886 🎯 Creating setup intent for payment form initialization
+index-C3lMCnnj.js:886 🎯 Team ID: temp-1750944995197 Amount: 100 Team Name: Test 0
+index-C3lMCnnj.js:886 🎯 Setup intent created successfully: seti_1ReFyhP4BpmZARxtLr8zdE2m
+index-C3lMCnnj.js:886 🎯 Client secret received, length: 68
+61index-C3lMCnnj.js:885 Animation frame running, particles: 152 Canvas size: 880 x 864
+index-C3lMCnnj.js:886 📝 Submitting registration with Setup Intent: seti_1ReFyaP4BpmZARxtKfMR5a20 and Payment Method: pm_1ReFyeP4BpmZARxta4bf0SqV
+index-C3lMCnnj.js:889 🎯 Payment setup completed: seti_1ReFyaP4BpmZARxtKfMR5a20, Payment method: pm_1ReFyeP4BpmZARxta4bf0SqV
+index-C3lMCnnj.js:889 🎯 addRosterLater value: true
+index-C3lMCnnj.js:889 🎯 Players count: 0
+index-C3lMCnnj.js:889 🎯 Total amount: 100
+index-C3lMCnnj.js:889 🎯 Final registration payload: {name: 'Test 0', ageGroupId: 10006, bracketId: null, headCoachName: 'Bryan Perdomo', headCoachEmail: 'bperdomo@zoho.com', …}
+index-C3lMCnnj.js:889 🎯 Payload validation: SetupIntent: seti_1ReFyaP4BpmZARxtKfMR5a20 PaymentMethod: pm_1ReFyeP4BpmZARxta4bf0SqV
+index-C3lMCnnj.js:886 AUTH FIX: EventRegistration component starting - user should now see event details without immediate redirect
+index-C3lMCnnj.js:886 AUTH FIX: RegistrationAuthChecker allowUnauthenticated is now set to TRUE by default
+index-C3lMCnnj.js:886 Enhanced registration flow: Always starting at personal step with integrated auth
+index-C3lMCnnj.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'personal', isPreview: false}
+index-C3lMCnnj.js:885 AnimatedEventBackground CONSTRUCTOR - Received colors: {primaryColor: '#007AFF', secondaryColor: '#34C759', type: 'particles', opacity: 0.6}
+index-C3lMCnnj.js:886 🎯 Creating setup intent for payment form initialization
+index-C3lMCnnj.js:886 🎯 Team ID: temp-1750944997100 Amount: 100 Team Name: Test 0
+index-C3lMCnnj.js:886 🎯 Setup intent created successfully: seti_1ReFyjP4BpmZARxtMrzUdxpL
+index-C3lMCnnj.js:886 🎯 Client secret received, length: 68
+index-C3lMCnnj.js:886 Fetch failed loading: POST "https://app.matchpro.ai/api/events/1755746106/register-team".
+mutationFn @ index-C3lMCnnj.js:886
+fn @ index-C3lMCnnj.js:40
+h @ index-C3lMCnnj.js:40
+start @ index-C3lMCnnj.js:40
+execute @ index-C3lMCnnj.js:40
+await in execute
+mutate @ index-C3lMCnnj.js:40
+(anonymous) @ index-C3lMCnnj.js:40
+onPaymentComplete @ index-C3lMCnnj.js:889
+h @ index-C3lMCnnj.js:886
+nue @ index-C3lMCnnj.js:37
+sue @ index-C3lMCnnj.js:37
+aue @ index-C3lMCnnj.js:37
+HM @ index-C3lMCnnj.js:37
+Cq @ index-C3lMCnnj.js:37
+(anonymous) @ index-C3lMCnnj.js:37
+iO @ index-C3lMCnnj.js:40
+YG @ index-C3lMCnnj.js:37
+c2 @ index-C3lMCnnj.js:37
+I4 @ index-C3lMCnnj.js:37
+jue @ index-C3lMCnnj.js:37
+index-C3lMCnnj.js:886 
+            
+            
+           POST https://app.matchpro.ai/api/events/1755746106/register-team 400 (Bad Request)
+mutationFn @ index-C3lMCnnj.js:886
+fn @ index-C3lMCnnj.js:40
+h @ index-C3lMCnnj.js:40
+start @ index-C3lMCnnj.js:40
+execute @ index-C3lMCnnj.js:40
+await in execute
+mutate @ index-C3lMCnnj.js:40
+(anonymous) @ index-C3lMCnnj.js:40
+onPaymentComplete @ index-C3lMCnnj.js:889
+h @ index-C3lMCnnj.js:886
+nue @ index-C3lMCnnj.js:37
+sue @ index-C3lMCnnj.js:37
+aue @ index-C3lMCnnj.js:37
+HM @ index-C3lMCnnj.js:37
+Cq @ index-C3lMCnnj.js:37
+(anonymous) @ index-C3lMCnnj.js:37
+iO @ index-C3lMCnnj.js:40
+YG @ index-C3lMCnnj.js:37
+c2 @ index-C3lMCnnj.js:37
+I4 @ index-C3lMCnnj.js:37
+jue @ index-C3lMCnnj.js:37Understand this error
+index-C3lMCnnj.js:886 AUTH FIX: EventRegistration component starting - user should now see event details without immediate redirect
+index-C3lMCnnj.js:886 AUTH FIX: RegistrationAuthChecker allowUnauthenticated is now set to TRUE by default
+index-C3lMCnnj.js:886 Enhanced registration flow: Always starting at personal step with integrated auth
+index-C3lMCnnj.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'personal', isPreview: false}
+index-C3lMCnnj.js:885 AnimatedEventBackground CONSTRUCTOR - Received colors: {primaryColor: '#007AFF', secondaryColor: '#34C759', type: 'particles', opacity: 0.6}
+index-C3lMCnnj.js:886 🎯 Creating setup intent for payment form initialization
+index-C3lMCnnj.js:886 🎯 Team ID: temp-1750944997606 Amount: 100 Team Name: Test 0
+index-C3lMCnnj.js:886 🎯 Setup intent created successfully: seti_1ReFyjP4BpmZARxtHnLwyiNE
+index-C3lMCnnj.js:886 🎯 Client secret received, length: 68
+60index-C3lMCnnj.js:885 Animation frame running, particles: 152 Canvas size: 880 x 864
+index-C3lMCnnj.js:886 AUTH FIX: EventRegistration component starting - user should now see event details without immediate redirect
+index-C3lMCnnj.js:886 AUTH FIX: RegistrationAuthChecker allowUnauthenticated is now set to TRUE by default
+index-C3lMCnnj.js:886 Enhanced registration flow: Always starting at personal step with integrated auth
+index-C3lMCnnj.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'personal', isPreview: false}
+index-C3lMCnnj.js:885 AnimatedEventBackground CONSTRUCTOR - Received colors: {primaryColor: '#007AFF', secondaryColor: '#34C759', type: 'particles', opacity: 0.6}
+index-C3lMCnnj.js:886 🎯 Creating setup intent for payment form initialization
+index-C3lMCnnj.js:886 🎯 Team ID: temp-1750945000204 Amount: 100 Team Name: Test 0
+index-C3lMCnnj.js:886 🎯 Setup intent created successfully: seti_1ReFymP4BpmZARxtbSQXlMFI
+index-C3lMCnnj.js:886 🎯 Client secret received, length: 68
+12index-C3lMCnnj.js:885 Animation frame running, particles: 152 Canvas size: 880 x 864
+index-C3lMCnnj.js:886 AUTH FIX: EventRegistration component starting - user should now see event details without immediate redirect
+index-C3lMCnnj.js:886 AUTH FIX: RegistrationAuthChecker allowUnauthenticated is now set to TRUE by default
+index-C3lMCnnj.js:886 Enhanced registration flow: Always starting at personal step with integrated auth
+index-C3lMCnnj.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'personal', isPreview: false}
+index-C3lMCnnj.js:885 AnimatedEventBackground CONSTRUCTOR - Received colors: {primaryColor: '#007AFF', secondaryColor: '#34C759', type: 'particles', opacity: 0.6}
+index-C3lMCnnj.js:886 🎯 Creating setup intent for payment form initialization
+index-C3lMCnnj.js:886 🎯 Team ID: temp-1750945002206 Amount: 100 Team Name: Test 0
+15index-C3lMCnnj.js:885 Animation frame running, particles: 152 Canvas size: 880 x 864
+index-C3lMCnnj.js:886 🎯 Setup intent created successfully: seti_1ReFyoP4BpmZARxt8wMQZj1X
+index-C3lMCnnj.js:886 🎯 Client secret received, length: 68
+32index-C3lMCnnj.js:885 Animation frame running, particles: 152 Canvas size: 880 x 864
+index-C3lMCnnj.js:886 AUTH FIX: EventRegistration component starting - user should now see event details without immediate redirect
+index-C3lMCnnj.js:886 AUTH FIX: RegistrationAuthChecker allowUnauthenticated is now set to TRUE by default
+index-C3lMCnnj.js:886 Enhanced registration flow: Always starting at personal step with integrated auth
+index-C3lMCnnj.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'personal', isPreview: false}
+index-C3lMCnnj.js:885 AnimatedEventBackground CONSTRUCTOR - Received colors: {primaryColor: '#007AFF', secondaryColor: '#34C759', type: 'particles', opacity: 0.6}
+index-C3lMCnnj.js:886 🎯 Creating setup intent for payment form initialization
+index-C3lMCnnj.js:886 🎯 Team ID: temp-1750945003323 Amount: 100 Team Name: Test 0
+index-C3lMCnnj.js:886 🎯 Setup intent created successfully: seti_1ReFypP4BpmZARxt0l8v5FNz
+index-C3lMCnnj.js:886 🎯 Client secret received, length: 68
+19index-C3lMCnnj.js:885 Animation frame running, particles: 152 Canvas size: 880 x 864
+index-C3lMCnnj.js:886 AUTH FIX: EventRegistration component starting - user should now see event details without immediate redirect
+index-C3lMCnnj.js:886 AUTH FIX: RegistrationAuthChecker allowUnauthenticated is now set to TRUE by default
+index-C3lMCnnj.js:886 Enhanced registration flow: Always starting at personal step with integrated auth
+index-C3lMCnnj.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'personal', isPreview: false}
+index-C3lMCnnj.js:885 AnimatedEventBackground CONSTRUCTOR - Received colors: {primaryColor: '#007AFF', secondaryColor: '#34C759', type: 'particles', opacity: 0.6}
+index-C3lMCnnj.js:886 🎯 Creating setup intent for payment form initialization
+index-C3lMCnnj.js:886 🎯 Team ID: temp-1750945005324 Amount: 100 Team Name: Test 0
+17index-C3lMCnnj.js:885 Animation frame running, particles: 152 Canvas size: 880 x 864
+index-C3lMCnnj.js:886 🎯 Setup intent created successfully: seti_1ReFyrP4BpmZARxtZsg9dKCs
+index-C3lMCnnj.js:886 🎯 Client secret received, length: 68
+83index-C3lMCnnj.js:885 Animation frame running, particles: 152 Canvas size: 880 x 864
+index-C3lMCnnj.js:886 📝 Submitting registration with Setup Intent: seti_1ReFyaP4BpmZARxtKfMR5a20 and Payment Method: pm_1ReFyeP4BpmZARxta4bf0SqV
+index-C3lMCnnj.js:889 🎯 Payment setup completed: seti_1ReFyaP4BpmZARxtKfMR5a20, Payment method: pm_1ReFyeP4BpmZARxta4bf0SqV
+index-C3lMCnnj.js:889 🎯 addRosterLater value: true
+index-C3lMCnnj.js:889 🎯 Players count: 0
+index-C3lMCnnj.js:889 🎯 Total amount: 100
+index-C3lMCnnj.js:889 🎯 Final registration payload: {name: 'Test 0', ageGroupId: 10006, bracketId: null, headCoachName: 'Bryan Perdomo', headCoachEmail: 'bperdomo@zoho.com', …}
+index-C3lMCnnj.js:889 🎯 Payload validation: SetupIntent: seti_1ReFyaP4BpmZARxtKfMR5a20 PaymentMethod: pm_1ReFyeP4BpmZARxta4bf0SqV
+index-C3lMCnnj.js:886 AUTH FIX: EventRegistration component starting - user should now see event details without immediate redirect
+index-C3lMCnnj.js:886 AUTH FIX: RegistrationAuthChecker allowUnauthenticated is now set to TRUE by default
+index-C3lMCnnj.js:886 Enhanced registration flow: Always starting at personal step with integrated auth
+index-C3lMCnnj.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'personal', isPreview: false}
+index-C3lMCnnj.js:885 AnimatedEventBackground CONSTRUCTOR - Received colors: {primaryColor: '#007AFF', secondaryColor: '#34C759', type: 'particles', opacity: 0.6}
+index-C3lMCnnj.js:886 🎯 Creating setup intent for payment form initialization
+index-C3lMCnnj.js:886 🎯 Team ID: temp-1750945009168 Amount: 100 Team Name: Test 0
+index-C3lMCnnj.js:886 🎯 Setup intent created successfully: seti_1ReFyvP4BpmZARxtZdQh65yE
+index-C3lMCnnj.js:886 🎯 Client secret received, length: 68
+index-C3lMCnnj.js:886 
+            
+            
+           POST https://app.matchpro.ai/api/events/1755746106/register-team 400 (Bad Request)
+mutationFn @ index-C3lMCnnj.js:886
+fn @ index-C3lMCnnj.js:40
+h @ index-C3lMCnnj.js:40
+start @ index-C3lMCnnj.js:40
+execute @ index-C3lMCnnj.js:40
+await in execute
+mutate @ index-C3lMCnnj.js:40
+(anonymous) @ index-C3lMCnnj.js:40
+onPaymentComplete @ index-C3lMCnnj.js:889
+h @ index-C3lMCnnj.js:886
+nue @ index-C3lMCnnj.js:37
+sue @ index-C3lMCnnj.js:37
+aue @ index-C3lMCnnj.js:37
+HM @ index-C3lMCnnj.js:37
+Cq @ index-C3lMCnnj.js:37
+(anonymous) @ index-C3lMCnnj.js:37
+iO @ index-C3lMCnnj.js:40
+YG @ index-C3lMCnnj.js:37
+c2 @ index-C3lMCnnj.js:37
+I4 @ index-C3lMCnnj.js:37
+jue @ index-C3lMCnnj.js:37Understand this error
+index-C3lMCnnj.js:886 AUTH FIX: EventRegistration component starting - user should now see event details without immediate redirect
+index-C3lMCnnj.js:886 Fetch failed loading: POST "https://app.matchpro.ai/api/events/1755746106/register-team".
+mutationFn @ index-C3lMCnnj.js:886
+fn @ index-C3lMCnnj.js:40
+h @ index-C3lMCnnj.js:40
+start @ index-C3lMCnnj.js:40
+execute @ index-C3lMCnnj.js:40
+await in execute
+mutate @ index-C3lMCnnj.js:40
+(anonymous) @ index-C3lMCnnj.js:40
+onPaymentComplete @ index-C3lMCnnj.js:889
+h @ index-C3lMCnnj.js:886
+nue @ index-C3lMCnnj.js:37
+sue @ index-C3lMCnnj.js:37
+aue @ index-C3lMCnnj.js:37
+HM @ index-C3lMCnnj.js:37
+Cq @ index-C3lMCnnj.js:37
+(anonymous) @ index-C3lMCnnj.js:37
+iO @ index-C3lMCnnj.js:40
+YG @ index-C3lMCnnj.js:37
+c2 @ index-C3lMCnnj.js:37
+I4 @ index-C3lMCnnj.js:37
+jue @ index-C3lMCnnj.js:37
+index-C3lMCnnj.js:886 AUTH FIX: RegistrationAuthChecker allowUnauthenticated is now set to TRUE by default
+index-C3lMCnnj.js:886 Enhanced registration flow: Always starting at personal step with integrated auth
+index-C3lMCnnj.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'personal', isPreview: false}
+index-C3lMCnnj.js:885 AnimatedEventBackground CONSTRUCTOR - Received colors: {primaryColor: '#007AFF', secondaryColor: '#34C759', type: 'particles', opacity: 0.6}
+index-C3lMCnnj.js:886 🎯 Creating setup intent for payment form initialization
+index-C3lMCnnj.js:886 🎯 Team ID: temp-1750945009602 Amount: 100 Team Name: Test 0
+index-C3lMCnnj.js:886 🎯 Setup intent created successfully: seti_1ReFyvP4BpmZARxtdbNe85Gh
+index-C3lMCnnj.js:886 🎯 Client secret received, length: 68

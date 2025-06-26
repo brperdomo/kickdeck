@@ -51,6 +51,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { PaymentElement, CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import StripeProvider from "@/components/StripeProvider";
 import { SetupPaymentForm } from "@/components/payment/SetupPaymentForm";
+import { PaymentSetupWrapper } from "@/components/payment/PaymentSetupWrapper";
 import { SetupPaymentProvider } from "@/components/payment/SetupPaymentProvider";
 import { Footer } from "@/components/ui/Footer";
 import { motion, AnimatePresence } from "framer-motion";
