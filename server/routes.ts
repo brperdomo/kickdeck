@@ -258,25 +258,24 @@ export function registerRoutes(app: Express): Server {
         let feeBreakdown = null;
         if (team.totalAmount && team.totalAmount > 0) {
           try {
-            // Import fee calculator
-            const { calculateEventFees, formatFeeCalculation } = await import('./services/fee-calculator.js');
+            // For payment completion display, show the correct breakdown:
+            // - Tournament cost is the base registration fee
+            // - Platform fee is 4% of the tournament cost
+            // - Customer doesn't need to see Stripe fee breakdown details
             
-            // Calculate the fees based on tournament cost (totalAmount includes all fees)
-            // We need to work backwards to get the base tournament cost
-            const estimatedTournamentCost = Math.round(team.totalAmount * 0.85); // Rough estimate
-            const feeCalculation = await calculateEventFees(team.eventId, estimatedTournamentCost);
+            const tournamentCost = team.totalAmount; // The total amount IS the tournament registration fee
+            const platformFeeRate = 0.04; // 4% platform fee
+            const platformFee = Math.round(tournamentCost * platformFeeRate); // 4% of tournament cost
+            const totalCharged = tournamentCost + platformFee;
             
             feeBreakdown = {
-              tournamentCost: estimatedTournamentCost,
-              tournamentCostFormatted: `$${(estimatedTournamentCost / 100).toFixed(2)}`,
-              platformFee: feeCalculation.platformFeeAmount,
-              platformFeeFormatted: `$${(feeCalculation.platformFeeAmount / 100).toFixed(2)}`,
-              stripeFee: feeCalculation.stripeFeeAmount,
-              stripeFeeFormatted: `$${(feeCalculation.stripeFeeAmount / 100).toFixed(2)}`,
-              totalAmount: team.totalAmount,
-              totalAmountFormatted: `$${(team.totalAmount / 100).toFixed(2)}`,
-              platformFeeRate: feeCalculation.platformFeeRate,
-              breakdown: formatFeeCalculation(feeCalculation)
+              tournamentCost: tournamentCost,
+              tournamentCostFormatted: `$${(tournamentCost / 100).toFixed(2)}`,
+              platformFee: platformFee,
+              platformFeeFormatted: `$${(platformFee / 100).toFixed(2)}`,
+              totalAmount: totalCharged,
+              totalAmountFormatted: `$${(totalCharged / 100).toFixed(2)}`,
+              platformFeeRate: platformFeeRate
             };
           } catch (feeError) {
             console.warn(`Could not calculate fee breakdown for team ${teamId}:`, feeError);

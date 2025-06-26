@@ -154,12 +154,8 @@ function PaymentCompletionForm({ clientSecret, teamId, teamInfo }: { clientSecre
                       <span className="text-blue-900">{teamInfo.feeBreakdown.tournamentCostFormatted}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-blue-700">Platform Fee:</span>
+                      <span className="text-blue-700">Platform Fee (4%):</span>
                       <span className="text-blue-900">{teamInfo.feeBreakdown.platformFeeFormatted}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-blue-700">Processing Fee:</span>
-                      <span className="text-blue-900">{teamInfo.feeBreakdown.stripeFeeFormatted}</span>
                     </div>
                   </div>
                 </div>
@@ -168,7 +164,7 @@ function PaymentCompletionForm({ clientSecret, teamId, teamInfo }: { clientSecre
               <div className="flex justify-between items-center pt-2 mt-3 border-t border-blue-200">
                 <span className="text-blue-700 font-medium">Total Amount:</span>
                 <span className="text-lg font-bold text-blue-900">
-                  ${(teamInfo.totalAmount / 100).toFixed(2)}
+                  {teamInfo.feeBreakdown ? teamInfo.feeBreakdown.totalAmountFormatted : `$${(teamInfo.totalAmount / 100).toFixed(2)}`}
                 </span>
               </div>
             </div>
@@ -222,12 +218,9 @@ export default function CompletePayment() {
       tournamentCostFormatted: string;
       platformFee: number;
       platformFeeFormatted: string;
-      stripeFee: number;
-      stripeFeeFormatted: string;
       totalAmount: number;
       totalAmountFormatted: string;
       platformFeeRate: number;
-      breakdown: any;
     };
   } | null>(null);
   const [loading, setLoading] = useState(true);
