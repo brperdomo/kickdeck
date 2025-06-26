@@ -84,7 +84,6 @@ import {
 import userRouter from "./routes/user";
 import sendgridWebhookRouter from "./routes/sendgrid-webhook";
 import { fixCardDetails } from "./routes/fix-card-details";
-import paymentCompletionRouter from "./routes/payment-completion";
 import { sql, eq, and, or, inArray, notInArray, isNull } from "drizzle-orm";
 import { sendTemplatedEmail, sendRegistrationReceiptEmail, sendRegistrationConfirmationEmail } from "./services/emailService";
 import {
@@ -115,15 +114,12 @@ import {
   formFields,
   formFieldOptions,
   formResponses,
-  teams,
   players,
-  games,
   gameTimeSlots,
   eventSettings,
   ageGroupSettings,
   coupons,
   eventAdministrators,
-  eventBrackets,
   emailProviderSettings,
 } from "@db/schema";
 import fs from "fs/promises";
@@ -1198,9 +1194,34 @@ export function registerRoutes(app: Express): Server {
           paymentMethodId
         } = req.body;
         
+        // Add detailed logging for debugging
+        console.log('📝 Registration request body:', {
+          name: !!name,
+          ageGroupId: !!ageGroupId,
+          headCoachName: !!headCoachName,
+          headCoachEmail: !!headCoachEmail,
+          headCoachPhone: !!headCoachPhone,
+          managerName: !!managerName,
+          managerEmail: !!managerEmail,
+          managerPhone: !!managerPhone,
+          setupIntentId: !!setupIntentId,
+          paymentMethodId: !!paymentMethodId,
+          totalAmount
+        });
+
         // Validate required fields
         if (!name || !ageGroupId || !headCoachName || !headCoachEmail || !headCoachPhone || 
             !managerName || !managerEmail || !managerPhone) {
+          console.log('❌ VALIDATION FAILED - Missing required fields:', {
+            name: !!name,
+            ageGroupId: !!ageGroupId,
+            headCoachName: !!headCoachName,
+            headCoachEmail: !!headCoachEmail,
+            headCoachPhone: !!headCoachPhone,
+            managerName: !!managerName,
+            managerEmail: !!managerEmail,
+            managerPhone: !!managerPhone
+          });
           return res.status(400).json({ 
             error: 'Missing required team information. Please fill out all required fields.' 
           });
