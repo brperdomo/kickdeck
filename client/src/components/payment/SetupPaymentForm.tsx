@@ -24,59 +24,18 @@ function SetupPaymentFormInner({
   expectedAmount,
   onSuccess,
   onError,
-  teamName = 'Team Registration',
-  eventName = 'Event',
-  returnUrl = window.location.origin + '/payment-setup-confirmation',
-  hideSubmitButton = false
-}: SetupPaymentFormProps) {
+  teamName = '',
+  eventName = '',
+  returnUrl = '',
+  hideSubmitButton = false,
+  clientSecret
+}: SetupPaymentFormProps & { clientSecret: string }) {
   const stripe = useStripe();
   const elements = useElements();
   const { toast } = useToast();
+  
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [clientSecret, setClientSecret] = useState<string | null>(null);
-  const [setupIntentId, setSetupIntentId] = useState<string | null>(null);
-
-  // Create a setup intent when the component loads
-  useEffect(() => {
-    const initializeSetupIntent = async () => {
-      try {
-        setIsLoading(true);
-        setErrorMessage(null);
-
-        console.log('🎯 Creating setup intent for payment form initialization');
-        console.log('🎯 Team ID:', teamId, 'Amount:', expectedAmount, 'Team Name:', teamName);
-        
-        const response = await createSetupIntent(teamId, {
-          teamName,
-          eventName,
-          expectedAmount: expectedAmount.toString()
-        });
-
-        if (response.clientSecret) {
-          console.log('🎯 Setup intent created successfully:', response.setupIntentId);
-          console.log('🎯 Client secret received, length:', response.clientSecret.length);
-          
-          // Store the setup intent ID globally for registration use
-          (window as any).lastSetupIntentId = response.setupIntentId;
-          
-          // Set states in the correct order
-          setSetupIntentId(response.setupIntentId);
-          setClientSecret(response.clientSecret);
-        } else {
-          throw new Error('No client secret returned from server');
-        }
-      } catch (error) {
-        console.error('Error creating setup intent:', error);
-        setErrorMessage(error instanceof Error ? error.message : 'Failed to initialize payment setup');
-        if (onError) onError(error instanceof Error ? error : new Error('Failed to initialize payment setup'));
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    initializeSetupIntent();
-  }, [teamId, expectedAmount, teamName, eventName, onError]);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -102,14 +61,23 @@ function SetupPaymentFormInner({
         return;
       }
 
-      // Then confirm the setup intent with billing details
+      console.log('🎯 Confirming setup intent with client secret:', clientSecret);
+      
+      // Confirm the setup intent with the payment method
       const result = await stripe.confirmSetup({
         elements,
+        clientSecret,
         confirmParams: {
           return_url: returnUrl,
-
         },
         redirect: 'if_required'
+      });
+      
+      console.log('🎯 Setup intent confirmation result:', {
+        error: result.error,
+        setupIntentStatus: result.setupIntent?.status,
+        setupIntentId: result.setupIntent?.id,
+        paymentMethodId: result.setupIntent?.payment_method
       });
 
       if (result.error) {
@@ -123,14 +91,8 @@ function SetupPaymentFormInner({
           if (onError) onError(new Error('Payment method not saved'));
           return;
         }
-        
-        console.log('✅ PAYMENT SETUP SUCCESS:', {
-          setupIntentId: result.setupIntent.id,
-          paymentMethodId: result.setupIntent.payment_method,
-          status: result.setupIntent.status
-        });
 
-        // Handle success - setupIntent is available on the result object
+        // Show success message
         toast({
           title: 'Payment Method Saved',
           description: 'Your payment information has been securely saved.',
@@ -149,7 +111,6 @@ function SetupPaymentFormInner({
           onSuccess(result.setupIntent.payment_method as string);
         }
       } else {
-        // Handle other statuses or missing setupIntent
         const status = result.setupIntent?.status || 'unknown';
         console.log('❌ PAYMENT SETUP FAILED:', {
           status: status,
@@ -167,8 +128,6 @@ function SetupPaymentFormInner({
       setIsLoading(false);
     }
   };
-
-  // Inner component always has clientSecret available
 
   return (
     <Card>
@@ -247,8 +206,8 @@ export function SetupPaymentForm(props: SetupPaymentFormProps) {
         console.log('🎯 Team ID:', props.teamId, 'Amount:', props.expectedAmount, 'Team Name:', props.teamName);
         
         const response = await createSetupIntent(props.teamId, {
-          teamName: props.teamName,
-          eventName: props.eventName,
+          teamName: props.teamName || '',
+          eventName: props.eventName || '',
           expectedAmount: props.expectedAmount.toString()
         });
 
