@@ -41,6 +41,10 @@ interface Registration {
 export default function UserRegistrationsView() {
   const [selectedRegistration, setSelectedRegistration] = useState<Registration | null>(null);
   const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
+  
+  // Debug logging
+  console.log('UserRegistrationsView render - detailsDialogOpen:', detailsDialogOpen);
+  console.log('UserRegistrationsView render - selectedRegistration:', selectedRegistration?.teamName);
   const [selectedEvent, setSelectedEvent] = useState<string>('all');
   const [viewMode, setViewMode] = useState<'grouped' | 'list'>('grouped');
 
@@ -96,8 +100,10 @@ export default function UserRegistrationsView() {
   
   // Function to show registration details
   const showRegistrationDetails = (registration: Registration) => {
+    console.log('Show details clicked for registration:', registration);
     setSelectedRegistration(registration);
     setDetailsDialogOpen(true);
+    console.log('Dialog should be open now, detailsDialogOpen:', true);
   };
 
   if (isLoading) {
