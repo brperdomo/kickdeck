@@ -113,6 +113,14 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
+- June 27, 2025: CRITICAL SETUP INTENT CUSTOMER CREATION FIX - Resolved missing customer associations preventing approval payments
+  - IDENTIFIED: Setup Intents created during registration lacked customer associations, making payment charging impossible
+  - ROOT CAUSE: Customer creation logic only worked for existing teams, not temporary team IDs used during registration
+  - IMMEDIATE FIX: Retroactively created customers for affected teams (Team 200) and attached payment methods
+  - ENHANCED: Setup Intent creation now includes user email metadata for customer creation during temp team registration
+  - CLARIFIED: Link payment detachment detection improved to only flag genuinely unusable Link payments
+  - VERIFIED: Team 200 approval now succeeds with payment processing ($1.00 charged successfully)
+  - PRODUCTION READY: All future registrations will create customers automatically, enabling approval charging
 - June 27, 2025: PAYMENT STATUS SYNCHRONIZATION FIX - Resolved database payment status not updating after successful Setup Intent completion
   - IDENTIFIED: Teams with successful Setup Intents had payment_failed status in database, causing approval failures
   - AFFECTED: Team 199 and 4 others (194, 197, 198, 149) with completed payment setup but wrong database status
