@@ -50,6 +50,12 @@ async function processTeamApprovalPayment(team: any, teamId: string): Promise<st
       return await processTeamApprovalPaymentFallback(team, teamId);
     }
     
+    // Check if this is a Link payment method issue
+    if (error instanceof Error && error.message.includes('The provided PaymentMethod cannot be attached')) {
+      log(`ADMIN MAIN: Link payment method issue for team ${teamId} - falling back to basic payment`, 'admin');
+      return await processTeamApprovalPaymentFallback(team, teamId);
+    }
+    
     // Update team to indicate payment issue
     await db.update(teams)
       .set({

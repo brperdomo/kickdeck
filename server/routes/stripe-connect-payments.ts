@@ -287,11 +287,20 @@ export async function chargeApprovedTeam(teamId: number) {
           paymentMethodId = setupIntent.payment_method as string;
           console.log(`Using payment method from completed setup intent: ${paymentMethodId}`);
           
+          // Check if this is a Link payment method before setting customer ID
+          const paymentMethod = await stripe.paymentMethods.retrieve(paymentMethodId);
+          let customerIdToSet = setupIntent.customer as string || null;
+          
+          if (paymentMethod.type === 'link') {
+            console.log(`LINK PAYMENT DETECTED: Setting customer ID to null for Link payment method ${paymentMethodId}`);
+            customerIdToSet = null; // Link payment methods cannot be used with customers
+          }
+          
           // Update team record with the payment method for future use
           await db.update(teams)
             .set({ 
               paymentMethodId: paymentMethodId,
-              stripeCustomerId: setupIntent.customer as string || null
+              stripeCustomerId: customerIdToSet
             })
             .where(eq(teams.id, teamId));
             
