@@ -1890,9 +1890,9 @@ export function registerRoutes(app: Express): Server {
           return { team, playerCount };
         });
         
-        // PAYMENT ENFORCEMENT: For "Collect Now, Charge Later" workflow
-        // Verify Setup Intent is completed when paymentMethod is 'card'
-        if (totalAmount > 0 && paymentMethod === 'card') {
+        // BULLETPROOF PAYMENT ENFORCEMENT: For "Collect Now, Charge Later" workflow
+        // ANY registration with amount > 0 MUST have completed Setup Intent
+        if (totalAmount > 0) {
           const { setupIntentId, paymentMethodId } = req.body;
           
           console.log(`PAYMENT VALIDATION: Amount=${totalAmount}, Method=${paymentMethod}, SetupIntent=${setupIntentId}, PaymentMethod=${paymentMethodId}`);
