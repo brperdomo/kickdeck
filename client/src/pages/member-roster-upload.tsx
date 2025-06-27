@@ -34,7 +34,7 @@ interface Player {
 }
 
 export default function MemberRosterUpload() {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<{[teamId: number]: File}>({});
   const [uploadingTeamId, setUploadingTeamId] = useState<number | null>(null);
   const [expandedTeam, setExpandedTeam] = useState<number | null>(null);
   const { toast } = useToast();
@@ -93,7 +93,11 @@ export default function MemberRosterUpload() {
       });
       queryClient.invalidateQueries({ queryKey: ['/api/member-roster/my-teams'] });
       queryClient.invalidateQueries({ queryKey: ['/api/member-roster/teams', variables.teamId, 'players'] });
-      setSelectedFile(null);
+      setSelectedFiles(prev => {
+        const updated = { ...prev };
+        delete updated[variables.teamId];
+        return updated;
+      });
       setUploadingTeamId(null);
     },
     onError: (error: Error) => {
@@ -106,7 +110,7 @@ export default function MemberRosterUpload() {
     }
   });
 
-  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, teamId: number) => {
     const file = event.target.files?.[0];
     if (file) {
       if (file.type !== 'text/csv' && !file.name.endsWith('.csv')) {
@@ -117,12 +121,13 @@ export default function MemberRosterUpload() {
         });
         return;
       }
-      setSelectedFile(file);
+      setSelectedFiles(prev => ({ ...prev, [teamId]: file }));
     }
   };
 
   const handleUpload = (teamId: number) => {
-    if (!selectedFile) {
+    const file = selectedFiles[teamId];
+    if (!file) {
       toast({
         title: "No File Selected",
         description: "Please select a CSV file to upload.",
@@ -132,7 +137,7 @@ export default function MemberRosterUpload() {
     }
 
     setUploadingTeamId(teamId);
-    uploadRosterMutation.mutate({ teamId, file: selectedFile });
+    uploadRosterMutation.mutate({ teamId, file });
   };
 
   const toggleTeamExpansion = (teamId: number) => {
@@ -197,43 +202,6 @@ export default function MemberRosterUpload() {
         </CardContent>
       </Card>
 
-      {/* File Upload Section */}
-      {teamsNeedingRoster.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Upload className="h-5 w-5" />
-              Upload Roster File
-            </CardTitle>
-            <CardDescription>
-              Select a CSV file containing player information
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="roster-file">Choose CSV File</Label>
-                <Input
-                  id="roster-file"
-                  type="file"
-                  accept=".csv"
-                  onChange={handleFileSelect}
-                  className="mt-1"
-                />
-              </div>
-              {selectedFile && (
-                <Alert>
-                  <CheckCircle className="h-4 w-4" />
-                  <AlertDescription>
-                    File selected: {selectedFile.name} ({(selectedFile.size / 1024).toFixed(1)} KB)
-                  </AlertDescription>
-                </Alert>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
       {/* Teams Needing Roster */}
       {teamsNeedingRoster.length > 0 ? (
         <div className="space-y-6">
@@ -257,27 +225,53 @@ export default function MemberRosterUpload() {
                         <Badge variant="outline" className="text-orange-600 border-orange-600">
                           Roster Required
                         </Badge>
-                        {selectedFile && (
-                          <Button
-                            onClick={() => handleUpload(team.id)}
-                            disabled={uploadingTeamId === team.id}
-                            size="sm"
-                          >
-                            {uploadingTeamId === team.id ? "Uploading..." : "Upload Roster"}
-                          </Button>
-                        )}
                       </div>
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                      <div className="flex items-center gap-1">
-                        <Calendar className="h-4 w-4" />
-                        Registered: {team.registeredAt ? format(new Date(team.registeredAt), 'MMM d, yyyy') : 'Unknown'}
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                        <div className="flex items-center gap-1">
+                          <Calendar className="h-4 w-4" />
+                          Registered: {team.registeredAt ? format(new Date(team.registeredAt), 'MMM d, yyyy') : 'Unknown'}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Users className="h-4 w-4" />
+                          Current Players: {team.playerCount}
+                        </div>
                       </div>
-                      <div className="flex items-center gap-1">
-                        <Users className="h-4 w-4" />
-                        Current Players: {team.playerCount}
+                      
+                      <div className="border-t pt-4">
+                        <div className="flex items-center gap-4">
+                          <div className="flex-1">
+                            <label className="block text-sm font-medium mb-2">
+                              Upload roster for {team.teamName}
+                            </label>
+                            <div className="flex items-center gap-2">
+                              <label className="cursor-pointer flex-1">
+                                <input
+                                  type="file"
+                                  accept=".csv"
+                                  onChange={(e) => handleFileChange(e, team.id)}
+                                  className="sr-only"
+                                />
+                                <div className="flex items-center gap-2 px-4 py-2 border border-input rounded-md hover:bg-accent hover:text-accent-foreground text-sm">
+                                  <Upload className="h-4 w-4" />
+                                  {selectedFiles[team.id] ? selectedFiles[team.id].name : "Choose CSV File"}
+                                </div>
+                              </label>
+                              {selectedFiles[team.id] && (
+                                <Button
+                                  onClick={() => handleUpload(team.id)}
+                                  disabled={uploadingTeamId === team.id}
+                                  size="sm"
+                                >
+                                  {uploadingTeamId === team.id ? "Uploading..." : "Upload"}
+                                </Button>
+                              )}
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </CardContent>
