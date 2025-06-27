@@ -1,0 +1,51 @@
+index-YMsqbXYN.js:885 Animation frame running, particles: 157 Canvas size: 912 x 864
+index-YMsqbXYN.js:886 🎯 Confirming setup intent with client secret: seti_1ReQTbP4BpmZARxtlfiv8ONy_secret_SZZcXBMLmr2tLunsMgpqLLh5M9SIZhY
+115index-YMsqbXYN.js:885 Animation frame running, particles: 157 Canvas size: 912 x 864
+index-YMsqbXYN.js:886 🎯 Setup intent confirmation result: {error: undefined, setupIntentStatus: 'succeeded', setupIntentId: 'seti_1ReQTbP4BpmZARxtlfiv8ONy', paymentMethodId: 'pm_1ReQTkP4BpmZARxtdPfJe2LT'}
+index-YMsqbXYN.js:886 🎯 Payment setup completed successfully
+index-YMsqbXYN.js:886 🎯 Stored Setup Intent ID: seti_1ReQTbP4BpmZARxtlfiv8ONy
+index-YMsqbXYN.js:886 🎯 Stored Payment Method ID: pm_1ReQTkP4BpmZARxtdPfJe2LT
+index-YMsqbXYN.js:886 ✅ Payment setup callback received
+index-YMsqbXYN.js:886 ✅ Setup Intent ID: seti_1ReQTbP4BpmZARxtlfiv8ONy
+index-YMsqbXYN.js:886 ✅ Payment Method ID: pm_1ReQTkP4BpmZARxtdPfJe2LT
+index-YMsqbXYN.js:886 AUTH FIX: EventRegistration component starting - user should now see event details without immediate redirect
+index-YMsqbXYN.js:886 AUTH FIX: RegistrationAuthChecker allowUnauthenticated is now set to TRUE by default
+index-YMsqbXYN.js:886 Enhanced registration flow: Always starting at personal step with integrated auth
+index-YMsqbXYN.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'personal', isPreview: false}
+index-YMsqbXYN.js:886 Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T00:49:24.916Z
+index-YMsqbXYN.js:886 Event timezone: America/New_York
+index-YMsqbXYN.js:886 Deadline passed: false
+index-YMsqbXYN.js:885 AnimatedEventBackground CONSTRUCTOR - Received colors: {primaryColor: '#007AFF', secondaryColor: '#34C759', type: 'particles', opacity: 0.6}
+index-YMsqbXYN.js:886 🎯 Creating setup intent for payment form initialization
+index-YMsqbXYN.js:886 🎯 Team ID: temp-1750985252626-bfb9hcopm Amount: 100 Team Name: Run123
+5index-YMsqbXYN.js:885 Animation frame running, particles: 157 Canvas size: 912 x 864
+index-YMsqbXYN.js:886 🎯 Setup intent created successfully: seti_1ReQTpP4BpmZARxtiNNsj14z
+index-YMsqbXYN.js:886 🎯 Client secret received, length: 68
+60index-YMsqbXYN.js:885 Animation frame running, particles: 157 Canvas size: 912 x 864
+index-YMsqbXYN.js:886 AUTH FIX: EventRegistration component starting - user should now see event details without immediate redirect
+index-YMsqbXYN.js:886 AUTH FIX: RegistrationAuthChecker allowUnauthenticated is now set to TRUE by default
+index-YMsqbXYN.js:886 Enhanced registration flow: Always starting at personal step with integrated auth
+index-YMsqbXYN.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'personal', isPreview: false}
+index-YMsqbXYN.js:886 Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T00:49:29.922Z
+index-YMsqbXYN.js:886 Event timezone: America/New_York
+index-YMsqbXYN.js:886 Deadline passed: false
+index-YMsqbXYN.js:885 AnimatedEventBackground CONSTRUCTOR - Received colors: {primaryColor: '#007AFF', secondaryColor: '#34C759', type: 'particles', opacity: 0.6}
+index-YMsqbXYN.js:886 🎯 Creating setup intent for payment form initialization
+index-YMsqbXYN.js:886 🎯 Team ID: temp-1750985252626-bfb9hcopm Amount: 100 Team Name: Run123
+12index-YMsqbXYN.js:885 Animation frame running, particles: 157 Canvas size: 912 x 864
+index-YMsqbXYN.js:886 🎯 Setup intent created successfully: seti_1ReQTuP4BpmZARxtavtFno7z
+index-YMsqbXYN.js:886 🎯 Client secret received, length: 68
+48index-YMsqbXYN.js:885 Animation frame running, particles: 157 Canvas size: 912 x 864
+index-YMsqbXYN.js:886 AUTH FIX: EventRegistration component starting - user should now see event details without immediate redirect
+index-YMsqbXYN.js:886 AUTH FIX: RegistrationAuthChecker allowUnauthenticated is now set to TRUE by default
+index-YMsqbXYN.js:886 Enhanced registration flow: Always starting at personal step with integrated auth
+index-YMsqbXYN.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'personal', isPreview: false}
+index-YMsqbXYN.js:886 Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T00:49:31.922Z
+index-YMsqbXYN.js:886 Event timezone: America/New_York
+index-YMsqbXYN.js:886 Deadline passed: false
+index-YMsqbXYN.js:885 AnimatedEventBackground CONSTRUCTOR - Received colors: {primaryColor: '#007AFF', secondaryColor: '#34C759', type: 'particles', opacity: 0.6}
+index-YMsqbXYN.js:886 🎯 Creating setup intent for payment form initialization
+index-YMsqbXYN.js:886 🎯 Team ID: temp-1750985252626-bfb9hcopm Amount: 100 Team Name: Run123
+index-YMsqbXYN.js:886 🎯 Setup intent created successfully: seti_1ReQTwP4BpmZARxt4IkshR8p
+index-YMsqbXYN.js:886 🎯 Client secret received, length: 68
+245index-YMsqbXYN.js:885 Animation frame running, particles: 157 Canvas size: 912 x 864
