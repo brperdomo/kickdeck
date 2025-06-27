@@ -409,7 +409,11 @@ export function registerRoutes(app: Express): Server {
             // Try to get the payment method to see if it's attached
             const paymentMethod = await stripe.paymentMethods.retrieve(paymentMethodId);
             
-            if (!paymentMethod.customer) {
+            // Handle Link payment methods differently - they cannot be attached to customers
+            if (paymentMethod.type === 'link') {
+              console.log('Link payment method detected - skipping customer attachment (not supported for Link)');
+              // For Link payments, we'll proceed without customer attachment
+            } else if (!paymentMethod.customer) {
               console.log('Payment method not attached to customer, attaching...');
               await stripe.paymentMethods.attach(paymentMethodId, {
                 customer: customerId,
