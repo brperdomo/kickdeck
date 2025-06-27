@@ -139,7 +139,7 @@ async function processTeamApprovalPaymentFallback(team: any, teamId: string): Pr
         // Create a customer for the Link payment method
         log(`Creating customer for Link payment method attachment`, 'admin');
         const customer = await stripe.customers.create({
-          email: team.email || 'noemail@example.com',
+          email: team.submitterEmail || 'noemail@example.com',
           metadata: {
             teamId: teamId,
             teamName: team.name,

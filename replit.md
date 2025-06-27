@@ -113,6 +113,12 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
+- June 27, 2025: LINK PAYMENT EMAIL FIX - Resolved Link payment customer creation using incorrect email fallback
+  - IDENTIFIED: Link payment customer creation was using "noemail@example.com" instead of actual submitter email "bperdomo@zoho.com"
+  - ROOT CAUSE: Line 142 in server/routes/admin/teams.ts used `team.email` (undefined) instead of `team.submitterEmail`
+  - FIXED: Changed customer creation to use `team.submitterEmail || 'noemail@example.com'` for proper email association
+  - VERIFIED: Database shows all teams have correct submitter_email values (bperdomo@zoho.com)
+  - PRODUCTION READY: Link payment receipts and Stripe customer records will now show correct submitter emails
 - June 27, 2025: COMPLETE LINK PAYMENT FIX - Resolved fundamental Link payment method limitations in "Collect Now, Charge Later" workflow
   - IDENTIFIED: Link payment methods have Stripe limitations preventing direct reuse without customer attachment
   - DISCOVERED: Root cause was in chargeApprovedTeam function where Setup Intent customer associations were being restored to database
