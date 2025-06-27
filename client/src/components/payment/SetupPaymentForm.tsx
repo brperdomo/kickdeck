@@ -102,6 +102,31 @@ function SetupPaymentFormInner({
           description: 'Your payment information has been securely saved.',
         });
         
+        // CRITICAL FIX: Update database payment status for non-temp teams
+        if (typeof teamId === 'number' || !teamId.toString().startsWith('temp-')) {
+          try {
+            console.log('🔄 Updating database payment status for team', teamId);
+            const updateResponse = await fetch('/api/payments/update-setup-status', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                teamId: teamId,
+                setupIntentId: result.setupIntent.id,
+                paymentMethodId: result.setupIntent.payment_method,
+                status: 'setup_intent_completed'
+              })
+            });
+            
+            if (updateResponse.ok) {
+              console.log('✅ Database payment status updated successfully');
+            } else {
+              console.warn('⚠️ Failed to update database payment status:', await updateResponse.text());
+            }
+          } catch (updateError) {
+            console.warn('⚠️ Error updating database payment status:', updateError);
+          }
+        }
+        
         // Pass both setup intent ID and payment method ID to parent
         if (onSuccess) {
           // Store setup intent ID in global scope for registration use

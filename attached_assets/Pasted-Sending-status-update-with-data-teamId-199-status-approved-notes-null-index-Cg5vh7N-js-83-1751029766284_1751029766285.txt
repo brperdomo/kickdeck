@@ -1,0 +1,97 @@
+Sending status update with data: {teamId: 199, status: 'approved', notes: null}
+index-Cg5vh7N-.js:835 
+            
+            
+           PUT https://app.matchpro.ai/api/admin/teams/199/status 400 (Bad Request)
+mutationFn @ index-Cg5vh7N-.js:835
+fn @ index-Cg5vh7N-.js:40
+h @ index-Cg5vh7N-.js:40
+start @ index-Cg5vh7N-.js:40
+execute @ index-Cg5vh7N-.js:40
+await in execute
+mutate @ index-Cg5vh7N-.js:40
+(anonymous) @ index-Cg5vh7N-.js:40
+fe @ index-Cg5vh7N-.js:835
+onClick @ index-Cg5vh7N-.js:835
+pue @ index-Cg5vh7N-.js:37
+xue @ index-Cg5vh7N-.js:37
+vue @ index-Cg5vh7N-.js:37
+QM @ index-Cg5vh7N-.js:37
+Tq @ index-Cg5vh7N-.js:37
+(anonymous) @ index-Cg5vh7N-.js:37
+iO @ index-Cg5vh7N-.js:40
+eq @ index-Cg5vh7N-.js:37
+d2 @ index-Cg5vh7N-.js:37
+I4 @ index-Cg5vh7N-.js:37
+Iue @ index-Cg5vh7N-.js:37Understand this error
+index-Cg5vh7N-.js:835 Raw response text: {"status":"error","error":"Payment processing failed","message":"Payment processing failed. Please check team payment details.","paymentStatus":"payment_error","teamStatus":"registered"}
+index-Cg5vh7N-.js:835 Error response: {status: 'error', error: 'Payment processing failed', message: 'Payment processing failed. Please check team payment details.', paymentStatus: 'payment_error', teamStatus: 'registered'}
+mutationFn @ index-Cg5vh7N-.js:835
+await in mutationFn
+fn @ index-Cg5vh7N-.js:40
+h @ index-Cg5vh7N-.js:40
+start @ index-Cg5vh7N-.js:40
+execute @ index-Cg5vh7N-.js:40
+await in execute
+mutate @ index-Cg5vh7N-.js:40
+(anonymous) @ index-Cg5vh7N-.js:40
+fe @ index-Cg5vh7N-.js:835
+onClick @ index-Cg5vh7N-.js:835
+pue @ index-Cg5vh7N-.js:37
+xue @ index-Cg5vh7N-.js:37
+vue @ index-Cg5vh7N-.js:37
+QM @ index-Cg5vh7N-.js:37
+Tq @ index-Cg5vh7N-.js:37
+(anonymous) @ index-Cg5vh7N-.js:37
+iO @ index-Cg5vh7N-.js:40
+eq @ index-Cg5vh7N-.js:37
+d2 @ index-Cg5vh7N-.js:37
+I4 @ index-Cg5vh7N-.js:37
+Iue @ index-Cg5vh7N-.js:37Understand this error
+index-Cg5vh7N-.js:835 Error in updateTeamStatus mutation: Error: Payment processing failed
+    at Object.mutationFn (index-Cg5vh7N-.js:835:82164)
+mutationFn @ index-Cg5vh7N-.js:835
+await in mutationFn
+fn @ index-Cg5vh7N-.js:40
+h @ index-Cg5vh7N-.js:40
+start @ index-Cg5vh7N-.js:40
+execute @ index-Cg5vh7N-.js:40
+await in execute
+mutate @ index-Cg5vh7N-.js:40
+(anonymous) @ index-Cg5vh7N-.js:40
+fe @ index-Cg5vh7N-.js:835
+onClick @ index-Cg5vh7N-.js:835
+pue @ index-Cg5vh7N-.js:37
+xue @ index-Cg5vh7N-.js:37
+vue @ index-Cg5vh7N-.js:37
+QM @ index-Cg5vh7N-.js:37
+Tq @ index-Cg5vh7N-.js:37
+(anonymous) @ index-Cg5vh7N-.js:37
+iO @ index-Cg5vh7N-.js:40
+eq @ index-Cg5vh7N-.js:37
+d2 @ index-Cg5vh7N-.js:37
+I4 @ index-Cg5vh7N-.js:37
+Iue @ index-Cg5vh7N-.js:37Understand this error
+index-Cg5vh7N-.js:835 Fetch failed loading: PUT "https://app.matchpro.ai/api/admin/teams/199/status".
+mutationFn @ index-Cg5vh7N-.js:835
+fn @ index-Cg5vh7N-.js:40
+h @ index-Cg5vh7N-.js:40
+start @ index-Cg5vh7N-.js:40
+execute @ index-Cg5vh7N-.js:40
+await in execute
+mutate @ index-Cg5vh7N-.js:40
+(anonymous) @ index-Cg5vh7N-.js:40
+fe @ index-Cg5vh7N-.js:835
+onClick @ index-Cg5vh7N-.js:835
+pue @ index-Cg5vh7N-.js:37
+xue @ index-Cg5vh7N-.js:37
+vue @ index-Cg5vh7N-.js:37
+QM @ index-Cg5vh7N-.js:37
+Tq @ index-Cg5vh7N-.js:37
+(anonymous) @ index-Cg5vh7N-.js:37
+iO @ index-Cg5vh7N-.js:40
+eq @ index-Cg5vh7N-.js:37
+d2 @ index-Cg5vh7N-.js:37
+I4 @ index-Cg5vh7N-.js:37
+Iue @ index-Cg5vh7N-.js:37
+chunk-RODKCX5K.js:3 [Violation] 'setTimeout' handler took 74ms

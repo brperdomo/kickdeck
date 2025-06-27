@@ -193,6 +193,49 @@ router.get('/payment-method/:paymentMethodId', async (req, res) => {
   }
 });
 
+// Update setup intent status in database (prevents payment_failed status sync issues)
+router.post('/update-setup-status', async (req, res) => {
+  try {
+    const { teamId, setupIntentId, paymentMethodId, status } = req.body;
+    
+    if (!teamId || !setupIntentId || !status) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+    
+    console.log(`🔄 Updating payment status for team ${teamId} to ${status}`);
+    
+    // Only update real teams (not temp IDs)
+    if (typeof teamId === 'number' || !teamId.toString().startsWith('temp-')) {
+      const { db } = await import('../db');
+      const { teams } = await import('../db/schema');
+      const { eq } = await import('drizzle-orm');
+      
+      const numericTeamId = typeof teamId === 'number' ? teamId : parseInt(teamId.toString());
+      
+      const updateData: any = {
+        paymentStatus: status,
+        setupIntentId: setupIntentId
+      };
+      
+      if (paymentMethodId) {
+        updateData.paymentMethodId = paymentMethodId;
+      }
+      
+      await db.update(teams)
+        .set(updateData)
+        .where(eq(teams.id, numericTeamId));
+      
+      console.log(`✅ Updated team ${numericTeamId} payment status to ${status}`);
+      res.json({ success: true, message: 'Payment status updated successfully' });
+    } else {
+      res.json({ success: true, message: 'Temporary team - no database update needed' });
+    }
+  } catch (error: any) {
+    console.error('Error updating setup intent status:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Webhook for Stripe events
 router.post('/webhook', stripeWebhookMiddleware, async (req, res) => {
   const sig = req.headers['stripe-signature'];
