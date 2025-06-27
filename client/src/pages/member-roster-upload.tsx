@@ -273,7 +273,7 @@ export default function MemberRosterUpload() {
                     <div className="flex items-center gap-4 text-sm text-muted-foreground">
                       <div className="flex items-center gap-1">
                         <Calendar className="h-4 w-4" />
-                        Registered: {format(new Date(team.registeredAt), 'MMM d, yyyy')}
+                        Registered: {team.registeredAt ? format(new Date(team.registeredAt), 'MMM d, yyyy') : 'Unknown'}
                       </div>
                       <div className="flex items-center gap-1">
                         <Users className="h-4 w-4" />
@@ -334,7 +334,7 @@ export default function MemberRosterUpload() {
                       <div className="flex items-center gap-4 text-sm text-muted-foreground">
                         <div className="flex items-center gap-1">
                           <Calendar className="h-4 w-4" />
-                          Registered: {format(new Date(team.registeredAt), 'MMM d, yyyy')}
+                          Registered: {team.registeredAt ? format(new Date(team.registeredAt), 'MMM d, yyyy') : 'Unknown'}
                         </div>
                         <div className="flex items-center gap-1">
                           <Users className="h-4 w-4" />
@@ -343,7 +343,7 @@ export default function MemberRosterUpload() {
                         {team.rosterUploadedAt && (
                           <div className="flex items-center gap-1">
                             <Upload className="h-4 w-4" />
-                            Roster uploaded: {format(new Date(team.rosterUploadedAt), 'MMM d, yyyy')}
+                            Roster uploaded: {team.rosterUploadedAt ? format(new Date(team.rosterUploadedAt), 'MMM d, yyyy') : 'Unknown'}
                           </div>
                         )}
                       </div>
