@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useStripe, useElements, PaymentElement, Elements } from '@stripe/react-stripe-js';
+import type { Stripe } from '@stripe/stripe-js';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -222,7 +223,7 @@ export function SetupPaymentForm(props: SetupPaymentFormProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [stripeError, setStripeError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
-  const [stripePromise, setStripePromise] = useState<Promise<Stripe | null> | null>(null);
+  const [stripePromise, setStripePromise] = useState<Promise<any> | null>(null);
 
   // Initialize Stripe with retry logic
   useEffect(() => {
@@ -253,6 +254,25 @@ export function SetupPaymentForm(props: SetupPaymentFormProps) {
       try {
         setIsLoading(true);
 
+        // CRITICAL FIX: Check if we already have a completed Setup Intent for this session
+        const lastSetupIntentId = (window as any).lastSetupIntentId;
+        const lastClientSecret = (window as any).lastClientSecret;
+        const lastTeamId = (window as any).lastTeamId;
+        const lastAmount = (window as any).lastAmount;
+        
+        // If we have a cached Setup Intent for the same team and amount, reuse it
+        if (lastSetupIntentId && lastClientSecret && 
+            lastTeamId === props.teamId && 
+            lastAmount === props.expectedAmount) {
+          console.log('🔄 Reusing existing Setup Intent for team', props.teamId, ':', lastSetupIntentId);
+          console.log('🔄 Client secret length:', lastClientSecret.length);
+          
+          setSetupIntentId(lastSetupIntentId);
+          setClientSecret(lastClientSecret);
+          setIsLoading(false);
+          return;
+        }
+
         console.log('🎯 Creating setup intent for payment form initialization');
         console.log('🎯 Team ID:', props.teamId, 'Amount:', props.expectedAmount, 'Team Name:', props.teamName);
         
@@ -266,8 +286,11 @@ export function SetupPaymentForm(props: SetupPaymentFormProps) {
           console.log('🎯 Setup intent created successfully:', response.setupIntentId);
           console.log('🎯 Client secret received, length:', response.clientSecret.length);
           
-          // Store the setup intent ID globally for registration use
+          // Store the setup intent details globally for session reuse
           (window as any).lastSetupIntentId = response.setupIntentId;
+          (window as any).lastClientSecret = response.clientSecret;
+          (window as any).lastTeamId = props.teamId;
+          (window as any).lastAmount = props.expectedAmount;
           
           setSetupIntentId(response.setupIntentId);
           setClientSecret(response.clientSecret);

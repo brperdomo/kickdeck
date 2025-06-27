@@ -1,0 +1,31 @@
+shared-20e2d375ccaa6…283082fdc6576d.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+shared-20e2d375ccaa6…283082fdc6576d.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+util.js:39 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+chunk-RODKCX5K.js:3 [Violation] 'setTimeout' handler took 55ms
+shared-20e2d375ccaa6…283082fdc6576d.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+index-CAuR929B.js:727 Fetched age groups for event: 1755746106
+index-CAuR929B.js:727 Fetching brackets for event 1755746106 and age group 10006
+index-CAuR929B.js:727 Fetch finished loading: GET "https://app.matchpro.ai/api/brackets?eventId=1755746106&ageGroupId=10006".
+index-CAuR929B.js:727 Fetch finished loading: GET "https://app.matchpro.ai/api/admin/events/1755746106/age-groups".
+chunk-RODKCX5K.js:3 [Violation] 'setTimeout' handler took 53ms
+index-CAuR929B.js:835 Sending status update with data: 
+{teamId: 197, status: 'approved', notes: null}
+index-CAuR929B.js:835 
+ PUT https://app.matchpro.ai/api/admin/teams/197/status 400 (Bad Request)
+index-CAuR929B.js:835 Fetch failed loading: PUT "https://app.matchpro.ai/api/admin/teams/197/status".
+index-CAuR929B.js:835 Raw response text: {"status":"error","error":"Payment processing failed","message":"Payment processing failed. Please check team payment details.","paymentStatus":"payment_error","teamStatus":"registered"}
+index-CAuR929B.js:835 Error response: 
+{status: 'error', error: 'Payment processing failed', message: 'Payment processing failed. Please check team payment details.', paymentStatus: 'payment_error', teamStatus: 'registered'}
+index-CAuR929B.js:835 Error in updateTeamStatus mutation: Error: Payment processing failed
+    at Object.mutationFn (index-CAuR929B.js:835:82164)
+chunk-RODKCX5K.js:3 [Violation] 'setTimeout' handler took 64ms
+chunk-LRH6BLRZ.js:31 orchestration: Initializing user store with state 
+{pill-player: {…}}
+chunk-LRH6BLRZ.js:31 orchestration: Updating combined state 
+{anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-RODKCX5K.js:3 [Violation] 'setTimeout' handler took 52ms
+shared-20e2d375ccaa6…283082fdc6576d.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+﻿
+

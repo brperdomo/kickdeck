@@ -113,6 +113,13 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
+- June 27, 2025: CRITICAL PAYMENT FORM RE-MOUNT FIX - Resolved component re-mounting causing debit card data loss
+  - IDENTIFIED: Payment form component re-mounted 4 times during registration, wiping entered card data each time
+  - ROOT CAUSE: SetupPaymentForm useEffect always created new Setup Intent on mount, resetting Stripe Elements form
+  - IMPLEMENTED: Setup Intent caching mechanism prevents recreation of completed Setup Intents during re-mounts
+  - ENHANCED: Component now checks browser cache before creating new Setup Intent (team ID + amount matching)
+  - VERIFIED: Card data preservation across component re-mounts, eliminating "Payment processing failed" on approval
+  - PRODUCTION READY: Registration flow maintains payment method integrity throughout multi-step process
 - June 27, 2025: LINK PAYMENT EMAIL FIX - Resolved Link payment customer creation using incorrect email fallback
   - IDENTIFIED: Link payment customer creation was using "noemail@example.com" instead of actual submitter email "bperdomo@zoho.com"
   - ROOT CAUSE: Line 142 in server/routes/admin/teams.ts used `team.email` (undefined) instead of `team.submitterEmail`

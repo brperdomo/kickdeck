@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payment Form Re-mount Fix Test</title>
+</head>
+<body>
+    <h1>Payment Form Re-mount Fix Test</h1>
+    <p>This test verifies that the payment form Setup Intent caching works correctly.</p>
+    
+    <h2>Expected Behavior After Fix:</h2>
+    <ul>
+        <li>✅ First component mount: Creates new Setup Intent</li>
+        <li>✅ Subsequent mounts: Reuses cached Setup Intent</li>
+        <li>✅ Card data is preserved across re-mounts</li>
+        <li>✅ No duplicate Setup Intent creation</li>
+    </ul>
+    
+    <h2>Test Instructions:</h2>
+    <ol>
+        <li>Navigate to the registration form</li>
+        <li>Enter your debit card information</li>
+        <li>Complete the Setup Intent (card validation)</li>
+        <li>Continue with registration</li>
+        <li>Verify card data is NOT wiped when form re-mounts</li>
+    </ol>
+    
+    <h2>Console Logs to Look For:</h2>
+    <pre>
+First Mount:
+🎯 Creating setup intent for payment form initialization
+🎯 Setup intent created successfully: seti_xxxxx
+
+Subsequent Mounts:
+🔄 Reusing existing Setup Intent for team temp-xxxxx : seti_xxxxx
+🔄 Client secret length: 68
+    </pre>
+    
+    <h2>Success Criteria:</h2>
+    <p>✅ Payment form retains card data across component re-mounts</p>
+    <p>✅ No new Setup Intents created after initial one</p>
+    <p>✅ Team approval works without "Payment processing failed" errors</p>
+</body>
+</html>
