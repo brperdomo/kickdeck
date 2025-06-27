@@ -4838,7 +4838,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                                 
                                 // Clear setup intent cache since payment is completed
                                 import('@/components/payment/PaymentSetupWrapper').then(({ clearSetupIntentCache }) => {
-                                  clearSetupIntentCache(stableTeamId, parseFloat(calculateTotalAmount()) * 100);
+                                  clearSetupIntentCache(stableTeamId, calculateTotalChargeAmount());
                                 });
                                 
                                 // Make sure to sync the latest players array with form data
@@ -5115,7 +5115,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                                 
                                 // Clear setup intent cache since payment is completed
                                 import('@/components/payment/PaymentSetupWrapper').then(({ clearSetupIntentCache }) => {
-                                  clearSetupIntentCache(stableTeamId, parseFloat(calculateTotalAmount()) * 100);
+                                  clearSetupIntentCache(stableTeamId, calculateTotalChargeAmount());
                                 });
                                 
                                 console.log(`Setup intent created successfully: ${setupIntentId}, Payment method: ${paymentMethodId}`);
