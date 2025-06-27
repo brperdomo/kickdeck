@@ -4863,7 +4863,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           return res.status(404).json({ error: 'User email not found' });
         }
         
-        console.log(`Fetching registrations for user: ${user.email}`);
+        console.log(`DEBUG: Starting registration fetch for user: ${user.email}`);
         
         // When in emulation mode or for regular users, we need to be more strict about which registrations to show
         // Only show registrations that are directly associated with this specific user

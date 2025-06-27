@@ -41,7 +41,7 @@ export default function UserRegistrationsView() {
   const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ['user', 'registrations', Date.now()], // Force fresh request every time
+    queryKey: ['user', 'registrations', 'v3'], // Fixed version to avoid infinite requests
     queryFn: async () => {
       console.log('Fetching registrations from API...');
       const response = await fetch('/api/user/registrations', {
@@ -56,9 +56,7 @@ export default function UserRegistrationsView() {
       const result = await response.json();
       console.log('Registration API response:', result);
       return result;
-    },
-    staleTime: 0,
-    cacheTime: 0
+    }
   });
   
   // Extract registrations array from the response
