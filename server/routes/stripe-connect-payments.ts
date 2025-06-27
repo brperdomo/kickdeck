@@ -109,6 +109,14 @@ export async function processDestinationCharge(
     if (paymentMethod.type === 'link') {
       console.log(`Processing Link payment method - using standard payment intent with manual transfer`);
       
+      // Debug email retrieval for Link payments
+      console.log(`LINK EMAIL DEBUG: team data:`, {
+        teamId: team?.id,
+        teamName: team?.name,
+        submitterEmail: team?.submitterEmail,
+        submitterName: team?.submitterName
+      });
+      
       // For Link payments, use standard payment intent (no destination charge)
       const paymentIntentParams: any = {
         amount: chargeAmount,
