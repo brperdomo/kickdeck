@@ -4912,6 +4912,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         const formattedRegistrations = await Promise.all(teamRegistrations.map(async reg => {
           // Get the actual payment amount from payment_transactions table for approved teams
           let actualAmountCharged = reg.team.registrationFee || reg.team.totalAmount || 0;
+          let transactionData = null;
           
           if (reg.team.status === 'approved' && reg.team.paymentIntentId) {
             try {
@@ -4923,6 +4924,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
               
               if (paymentTransaction && paymentTransaction.amount) {
                 actualAmountCharged = paymentTransaction.amount;
+                transactionData = paymentTransaction;
               }
             } catch (error) {
               console.log('Could not fetch payment transaction for team', reg.team.id);
@@ -4942,8 +4944,8 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
             paymentId: reg.team.paymentIntentId || undefined,
             
             // Additional payment details
-            paymentDate: reg.team.paidAt || undefined,
-            cardLastFour: reg.team.cardLastFour || undefined,
+            paymentDate: transactionData?.createdAt || reg.team.paidAt || undefined,
+            cardLastFour: transactionData?.cardLastFour || reg.team.cardLastFour || undefined,
             paymentStatus: reg.team.paymentStatus || undefined,
             errorCode: reg.team.paymentErrorCode || undefined,
             errorMessage: reg.team.paymentErrorMessage || undefined,
