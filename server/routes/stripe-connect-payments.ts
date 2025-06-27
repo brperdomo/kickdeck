@@ -81,11 +81,10 @@ export async function processDestinationCharge(
     const paymentMethod = await stripe.paymentMethods.retrieve(paymentMethodId);
     const customerId = paymentMethod.customer;
 
-    // Create payment intent with destination charge
-    const paymentIntent = await stripe.paymentIntents.create({
+    // Handle Link payment methods which may not have customers initially
+    const paymentIntentParams: any = {
       amount: chargeAmount, // Use the correct total amount
       currency: 'usd',
-      customer: customerId, // Include customer for payment method association
       payment_method: paymentMethodId,
       confirm: true,
       on_behalf_of: connectAccountId,
@@ -108,7 +107,18 @@ export async function processDestinationCharge(
         platformFeeRate: feeCalculation.platformFeeRate.toString(),
         stripeFeeAmount: feeCalculation.stripeFeeAmount.toString()
       }
-    });
+    };
+
+    // Only include customer if it exists (Link payment methods may not have one)
+    if (customerId) {
+      paymentIntentParams.customer = customerId;
+      console.log(`Using existing customer: ${customerId}`);
+    } else {
+      console.log(`Payment method ${paymentMethodId} has no customer - proceeding without customer association`);
+    }
+
+    // Create payment intent with destination charge
+    const paymentIntent = await stripe.paymentIntents.create(paymentIntentParams);
 
     // Record comprehensive transaction in database with detailed fee breakdown
     await db.insert(paymentTransactions).values({
