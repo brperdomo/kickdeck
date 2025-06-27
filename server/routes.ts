@@ -2128,7 +2128,10 @@ export function registerRoutes(app: Express): Server {
             }
             
             // Check if this is a setup intent payment workflow
-            const isSetupIntentFlow = result.team.setupIntentId && result.team.paymentStatus === 'payment_info_provided';
+            const isSetupIntentFlow = result.team.setupIntentId && (
+              result.team.paymentStatus === 'payment_info_provided' || 
+              result.team.paymentStatus === 'setup_intent_completed'
+            );
             
             if (isSetupIntentFlow) {
               // For setup intent flow, send registration confirmation email

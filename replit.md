@@ -113,6 +113,13 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
+- June 27, 2025: CRITICAL PRODUCTION EMAIL FIX - Resolved registration confirmation emails not being sent to team submitters
+  - IDENTIFIED: Email trigger condition checked for 'payment_info_provided' status but actual teams had 'setup_intent_completed' status
+  - ROOT CAUSE: Payment status mismatch in conditional logic preventing email system activation during registration
+  - IMMEDIATE FIX: Updated email trigger logic to accept both 'payment_info_provided' AND 'setup_intent_completed' statuses
+  - RETROACTIVE SOLUTION: Sent missing registration confirmation emails to 3 teams that registered today without receiving confirmations
+  - VERIFIED: SendGrid integration working correctly, templates exist and deliver successfully
+  - PRODUCTION READY: All future registrations with Setup Intents will now automatically send confirmation emails
 - June 27, 2025: COMPREHENSIVE ROSTER UPLOAD ENHANCEMENT - Updated CSV template to match full registration requirements
   - IDENTIFIED: CSV template only requested basic fields (first name, last name, date of birth, position, jersey number)
   - ENHANCED: Template now requires comprehensive player data matching registration process
