@@ -235,17 +235,31 @@ async function processTeamApprovalPaymentFallback(team: any, teamId: string): Pr
       }
     }
     
-    const paymentResult = await processDestinationCharge({
-      amount: team.totalAmount,
-      paymentMethodId: setupIntent.payment_method as string,
-      customerId: customerIdForPayment,
-      destinationAccountId: eventInfo.stripeConnectAccountId,
-      metadata: {
-        teamId: teamId.toString(),
-        teamName: team.name || 'Unknown Team',
-        eventType: 'team_approval_payment_fallback_connect'
-      }
-    });
+    log(`FALLBACK DEBUG: About to call processDestinationCharge with:`, 'admin');
+    log(`  - teamId: ${teamId}`, 'admin');
+    log(`  - eventId: ${team.eventId}`, 'admin');
+    log(`  - paymentMethodId: ${setupIntent.payment_method}`, 'admin');
+    log(`  - amount: ${team.totalAmount}`, 'admin');
+    log(`  - paymentMethod.type: ${paymentMethod.type}`, 'admin');
+    log(`  - destinationAccountId: ${eventInfo.stripeConnectAccountId}`, 'admin');
+    
+    // Calculate the total amount including platform fees
+    const { calculateEventFees } = await import('../services/fee-calculator.js');
+    const feeCalculation = await calculateEventFees(team.eventId, team.totalAmount);
+    
+    log(`FALLBACK Fee calculation:`, 'admin');
+    log(`  - tournament cost: $${(team.totalAmount / 100).toFixed(2)}`, 'admin');
+    log(`  - total to charge: $${(feeCalculation.totalChargedAmount / 100).toFixed(2)}`, 'admin');
+    log(`  - platform fee: $${(feeCalculation.platformFeeAmount / 100).toFixed(2)}`, 'admin');
+    
+    const paymentResult = await processDestinationCharge(
+      teamId,
+      team.eventId,
+      setupIntent.payment_method as string,
+      feeCalculation.totalChargedAmount, // Use total amount including platform fees
+      eventInfo.stripeConnectAccountId,
+      true // Mark as pre-calculated to avoid double fee calculation
+    );
     
     if (paymentResult.success) {
       // Update team with payment details
