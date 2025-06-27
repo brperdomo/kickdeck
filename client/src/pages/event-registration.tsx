@@ -770,6 +770,9 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
   
+  // Create stable team ID for payment setup to prevent multiple Setup Intents
+  const [stableTeamId] = useState(() => `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
+  
   // Coach validation states
   const [isCheckingCoach, setIsCheckingCoach] = useState(false);
   const [coachFound, setCoachFound] = useState(false);
@@ -4759,7 +4762,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                             </div>
                             
                             <PaymentCompletionForm 
-                              teamId={`temp-${Date.now()}`}
+                              teamId={stableTeamId}
                               expectedAmount={parseFloat(calculateTotalAmount()) * 100}
                               teamName={teamForm.getValues().name}
                               eventName={event?.name || 'tournament'}
@@ -5025,7 +5028,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                         <div className="border-t pt-4">
                           <StripeProvider>
                             <PaymentSetupWrapper 
-                              teamId={`temp-${Date.now()}`}
+                              teamId={stableTeamId}
                               expectedAmount={parseFloat(calculateTotalAmount()) * 100}
                               teamName={teamForm.getValues().name}
                               eventName={event?.name || 'tournament'}
