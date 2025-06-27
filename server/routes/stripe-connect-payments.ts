@@ -79,46 +79,143 @@ export async function processDestinationCharge(
     
     // Get the customer from the payment method to ensure proper association
     const paymentMethod = await stripe.paymentMethods.retrieve(paymentMethodId);
-    const customerId = paymentMethod.customer;
+    let customerId = paymentMethod.customer as string | null;
 
     // Handle Link payment methods which may not have customers initially
-    const paymentIntentParams: any = {
-      amount: chargeAmount, // Use the correct total amount
-      currency: 'usd',
-      payment_method: paymentMethodId,
-      confirm: true,
-      on_behalf_of: connectAccountId,
-      receipt_email: team?.submitterEmail, // Enable Stripe's automatic receipt email
-      transfer_data: {
-        destination: connectAccountId,
-      },
-      application_fee_amount: feeCalculation.platformFeeAmount, // MatchPro gets platform fee, tournament gets the rest
-      // Prevent redirect-based payment methods to avoid return_url requirement
-      automatic_payment_methods: {
-        enabled: true,
-        allow_redirects: 'never'
-      },
-      metadata: {
-        teamId: teamId.toString(),
-        eventId: eventId,
-        connectAccountId: connectAccountId,
-        type: 'team_registration',
-        tournamentCost: totalAmountCents.toString(),
-        platformFeeRate: feeCalculation.platformFeeRate.toString(),
-        stripeFeeAmount: feeCalculation.stripeFeeAmount.toString()
+    if (!customerId && paymentMethod.type === 'link') {
+      console.log(`Link payment method ${paymentMethodId} has no customer - searching for existing customer or creating new one`);
+      
+      // For Link payment methods, search for existing customer by email first
+      const email = team?.submitterEmail || team?.managerEmail;
+      if (email) {
+        const existingCustomers = await stripe.customers.list({
+          email: email,
+          limit: 1
+        });
+        
+        if (existingCustomers.data.length > 0) {
+          customerId = existingCustomers.data[0].id;
+          console.log(`Using existing customer ${customerId} for Link payment method`);
+        } else {
+          // Create a customer for this Link payment method
+          const customer = await stripe.customers.create({
+            email: email,
+            name: team?.submitterName || team?.managerName,
+            metadata: {
+              teamId: teamId.toString(),
+              eventId: eventId,
+              paymentType: 'link'
+            }
+          });
+          customerId = customer.id;
+          console.log(`Created new customer ${customerId} for Link payment method`);
+        }
+        
+        // Update the team record with the customer ID for future use
+        await db.update(teams)
+          .set({ stripeCustomerId: customerId })
+          .where(eq(teams.id, teamId));
       }
-    };
-
-    // Only include customer if it exists (Link payment methods may not have one)
-    if (customerId) {
-      paymentIntentParams.customer = customerId;
-      console.log(`Using existing customer: ${customerId}`);
-    } else {
-      console.log(`Payment method ${paymentMethodId} has no customer - proceeding without customer association`);
     }
 
-    // Create payment intent with destination charge
-    const paymentIntent = await stripe.paymentIntents.create(paymentIntentParams);
+    // Handle Link payment methods differently since they can't use destination charges
+    let paymentIntent;
+    
+    if (paymentMethod.type === 'link') {
+      console.log(`Processing Link payment method - using standard payment intent with manual transfer`);
+      
+      // For Link payments, use standard payment intent (no destination charge)
+      const paymentIntentParams: any = {
+        amount: chargeAmount,
+        currency: 'usd',
+        payment_method: paymentMethodId,
+        confirm: true,
+        receipt_email: team?.submitterEmail,
+        automatic_payment_methods: {
+          enabled: true,
+          allow_redirects: 'never'
+        },
+        metadata: {
+          teamId: teamId.toString(),
+          eventId: eventId,
+          connectAccountId: connectAccountId,
+          type: 'team_registration_link',
+          tournamentCost: totalAmountCents.toString(),
+          platformFeeAmount: feeCalculation.platformFeeAmount.toString(),
+          needsManualTransfer: 'true'
+        }
+      };
+
+      // Include customer if we have one
+      if (customerId) {
+        paymentIntentParams.customer = customerId;
+        console.log(`Using customer: ${customerId} for Link payment`);
+      }
+
+      paymentIntent = await stripe.paymentIntents.create(paymentIntentParams);
+      
+      // After successful payment, create manual transfer to Connect account
+      if (paymentIntent.status === 'succeeded') {
+        console.log(`Link payment succeeded, creating manual transfer to Connect account`);
+        
+        try {
+          const transfer = await stripe.transfers.create({
+            amount: feeCalculation.tournamentReceivesAmount, // Send tournament portion to Connect account
+            currency: 'usd',
+            destination: connectAccountId,
+            source_transaction: paymentIntent.latest_charge as string,
+            metadata: {
+              teamId: teamId.toString(),
+              paymentIntentId: paymentIntent.id,
+              type: 'link_tournament_payout'
+            }
+          });
+          
+          console.log(`Manual transfer created: ${transfer.id} for $${feeCalculation.tournamentReceivesAmount / 100}`);
+        } catch (transferError) {
+          console.error('Error creating manual transfer for Link payment:', transferError);
+          // Payment succeeded but transfer failed - this needs manual handling
+        }
+      }
+      
+    } else {
+      console.log(`Processing regular payment method - using destination charge`);
+      
+      // For regular payment methods, use destination charge as before
+      const paymentIntentParams: any = {
+        amount: chargeAmount,
+        currency: 'usd',
+        payment_method: paymentMethodId,
+        confirm: true,
+        on_behalf_of: connectAccountId,
+        receipt_email: team?.submitterEmail,
+        transfer_data: {
+          destination: connectAccountId,
+        },
+        application_fee_amount: feeCalculation.platformFeeAmount,
+        automatic_payment_methods: {
+          enabled: true,
+          allow_redirects: 'never'
+        },
+        metadata: {
+          teamId: teamId.toString(),
+          eventId: eventId,
+          connectAccountId: connectAccountId,
+          type: 'team_registration',
+          tournamentCost: totalAmountCents.toString(),
+          platformFeeRate: feeCalculation.platformFeeRate.toString(),
+          stripeFeeAmount: feeCalculation.stripeFeeAmount.toString()
+        }
+      };
+
+      // Include customer if we have one
+      if (customerId) {
+        paymentIntentParams.customer = customerId;
+        console.log(`Using customer: ${customerId}`);
+      }
+
+      paymentIntent = await stripe.paymentIntents.create(paymentIntentParams);
+    }
 
     // Record comprehensive transaction in database with detailed fee breakdown
     await db.insert(paymentTransactions).values({
