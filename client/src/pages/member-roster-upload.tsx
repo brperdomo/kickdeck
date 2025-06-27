@@ -13,15 +13,17 @@ import { format } from "date-fns";
 
 interface Team {
   id: number;
-  teamName: string;
-  eventName: string;
+  name: string;
+  eventName: string | null;
   eventId: string;
-  ageGroup: string;
-  registeredAt: string;
+  ageGroupName: string | null;
+  ageGroupId: number;
+  createdAt: string;
   initialRosterComplete: boolean;
   rosterUploadedAt: string | null;
   rosterUploadMethod: string | null;
   playerCount: number;
+  needsRoster: boolean;
 }
 
 interface Player {

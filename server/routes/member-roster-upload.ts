@@ -9,7 +9,7 @@ import { parse } from 'csv-parse';
 import * as z from 'zod';
 import { v4 as uuidv4 } from 'uuid';
 import { db } from '../../db';
-import { players as playersTable, teams as teamsTable } from '../../db/schema';
+import { players as playersTable, teams as teamsTable, events as eventsTable, eventAgeGroups as ageGroupsTable } from '../../db/schema';
 import { eq, and } from 'drizzle-orm';
 
 // Set up multer for file uploads
@@ -70,7 +70,9 @@ router.get('/my-teams', requireAuth, async (req: Request, res: Response) => {
         id: teamsTable.id,
         name: teamsTable.name,
         eventId: teamsTable.eventId,
+        eventName: eventsTable.name,
         ageGroupId: teamsTable.ageGroupId,
+        ageGroupName: ageGroupsTable.ageGroup,
         addRosterLater: teamsTable.addRosterLater,
         initialRosterComplete: teamsTable.initialRosterComplete,
         rosterUploadedAt: teamsTable.rosterUploadedAt,
@@ -80,6 +82,8 @@ router.get('/my-teams', requireAuth, async (req: Request, res: Response) => {
         createdAt: teamsTable.createdAt,
       })
       .from(teamsTable)
+      .leftJoin(eventsTable, eq(teamsTable.eventId, eventsTable.id))
+      .leftJoin(ageGroupsTable, eq(teamsTable.ageGroupId, ageGroupsTable.id))
       .where(
         and(
           eq(teamsTable.submitterEmail, userEmail),
@@ -391,6 +395,24 @@ router.get('/teams/:teamId/players', requireAuth, async (req: Request, res: Resp
       details: error.message,
     });
   }
+});
+
+// Download CSV template
+router.get('/template', (req: Request, res: Response) => {
+  // Create the CSV header exactly as shown in the registration process
+  const csvHeader = 'firstName,lastName,dateOfBirth,position,jerseyNumber\n';
+  
+  // Add an example row for guidance
+  const exampleRow = 'John,Doe,2010-05-15,Forward,10\n';
+  
+  const csvContent = csvHeader + exampleRow;
+  
+  // Set headers for file download
+  res.setHeader('Content-Type', 'text/csv');
+  res.setHeader('Content-Disposition', 'attachment; filename="roster-template.csv"');
+  
+  // Send the CSV content
+  res.send(csvContent);
 });
 
 export default router;
