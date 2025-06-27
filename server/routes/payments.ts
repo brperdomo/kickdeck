@@ -92,6 +92,9 @@ router.get('/check-existing-setup-intent', async (req, res) => {
   }
 });
 
+// Server-side cache to prevent duplicate Setup Intent creation
+const setupIntentCache = new Map<string, { setupIntentId: string, clientSecret: string, timestamp: number }>();
+
 // Create a setup intent (collect payment info without charging)
 router.post('/create-setup-intent', async (req, res) => {
   try {
@@ -101,7 +104,27 @@ router.post('/create-setup-intent', async (req, res) => {
       return res.status(400).json({ error: 'TeamId is required' });
     }
     
+    // Check server-side cache to prevent duplicate creation within 5 minutes
+    const cacheKey = teamId.toString();
+    const cached = setupIntentCache.get(cacheKey);
+    if (cached && (Date.now() - cached.timestamp < 5 * 60 * 1000)) {
+      console.log(`🔄 SERVER: Reusing cached setup intent for team ${teamId}: ${cached.setupIntentId}`);
+      return res.json({
+        clientSecret: cached.clientSecret,
+        setupIntentId: cached.setupIntentId
+      });
+    }
+    
     const result = await createSetupIntent(teamId, metadata);
+    
+    // Cache the result on server side
+    setupIntentCache.set(cacheKey, {
+      setupIntentId: result.setupIntentId,
+      clientSecret: result.clientSecret,
+      timestamp: Date.now()
+    });
+    
+    console.log(`💾 SERVER: Cached setup intent for team ${teamId}: ${result.setupIntentId}`);
     res.json(result);
   } catch (error: any) {
     console.error('Error creating setup intent:', error);

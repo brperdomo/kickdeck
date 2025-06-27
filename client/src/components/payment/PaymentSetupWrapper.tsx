@@ -8,19 +8,40 @@ import { Loader2 } from 'lucide-react';
 
 // Persistent cache to store setup intents by team ID to prevent duplicates
 const CACHE_PREFIX = 'matchpro_setup_intent_';
+const SESSION_PREFIX = 'matchpro_session_setup_';
 
 function getCacheKey(teamId: string | number, expectedAmount: number): string {
   return `${CACHE_PREFIX}${teamId}-${expectedAmount}`;
 }
 
+function getSessionCacheKey(teamId: string | number): string {
+  return `${SESSION_PREFIX}${teamId}`;
+}
+
 function getCachedSetupIntent(teamId: string | number, expectedAmount: number) {
   try {
+    // First check session-specific cache (more strict, for this session only)
+    const sessionKey = getSessionCacheKey(teamId);
+    const sessionCached = sessionStorage.getItem(sessionKey);
+    if (sessionCached) {
+      const data = JSON.parse(sessionCached);
+      console.log('🔄 Reusing SESSION cached setup intent:', data.setupIntentId);
+      return { clientSecret: data.clientSecret, setupIntentId: data.setupIntentId };
+    }
+    
+    // Fall back to localStorage cache with amount validation
     const cacheKey = getCacheKey(teamId, expectedAmount);
     const cached = localStorage.getItem(cacheKey);
     if (cached) {
       const data = JSON.parse(cached);
       // Check if cache is still valid (less than 1 hour old)
       if (Date.now() - data.timestamp < 60 * 60 * 1000) {
+        console.log('🔄 Reusing LOCAL cached setup intent:', data.setupIntentId);
+        // Also store in session cache for faster future access
+        sessionStorage.setItem(sessionKey, JSON.stringify({
+          clientSecret: data.clientSecret,
+          setupIntentId: data.setupIntentId
+        }));
         return { clientSecret: data.clientSecret, setupIntentId: data.setupIntentId };
       } else {
         localStorage.removeItem(cacheKey);
@@ -34,6 +55,7 @@ function getCachedSetupIntent(teamId: string | number, expectedAmount: number) {
 
 function setCachedSetupIntent(teamId: string | number, expectedAmount: number, clientSecret: string, setupIntentId: string) {
   try {
+    // Store in localStorage with amount validation
     const cacheKey = getCacheKey(teamId, expectedAmount);
     const data = {
       clientSecret,
@@ -41,6 +63,16 @@ function setCachedSetupIntent(teamId: string | number, expectedAmount: number, c
       timestamp: Date.now()
     };
     localStorage.setItem(cacheKey, JSON.stringify(data));
+    
+    // ALSO store in sessionStorage for strict session-based reuse
+    const sessionKey = getSessionCacheKey(teamId);
+    const sessionData = {
+      clientSecret,
+      setupIntentId
+    };
+    sessionStorage.setItem(sessionKey, JSON.stringify(sessionData));
+    
+    console.log('💾 Setup intent cached in both localStorage and sessionStorage:', setupIntentId);
   } catch (error) {
     console.log('Error caching setup intent:', error);
   }
