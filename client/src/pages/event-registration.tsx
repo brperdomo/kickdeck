@@ -757,14 +757,33 @@ interface EventRegistrationProps {
 // We'll use the types defined below
 
 export default function EventRegistration({ isPreview = false, eventIdOverride }: EventRegistrationProps) {
-  // CRITICAL DEBUG: Track what's causing component re-mounting
+  // CRITICAL DEBUG: Track what's causing component re-mounting with parent tracking
+  const mountId = React.useRef(Math.random().toString(36).substr(2, 9));
   console.log("🚨 COMPONENT RE-MOUNT DEBUG:", {
+    mountId: mountId.current,
     timestamp: new Date().toISOString(),
     isPreview,
     eventIdOverride,
     currentLocation: window.location.href,
-    stackTrace: new Error().stack?.split('\n').slice(0, 5)
+    renderCount: React.useRef(0).current++
   });
+  
+  // Track if this is a genuine re-mount vs re-render
+  React.useEffect(() => {
+    console.log("🔄 COMPONENT MOUNTED/UNMOUNTED:", {
+      mountId: mountId.current,
+      action: 'MOUNTED',
+      timestamp: new Date().toISOString()
+    });
+    
+    return () => {
+      console.log("🔄 COMPONENT MOUNTED/UNMOUNTED:", {
+        mountId: mountId.current,
+        action: 'UNMOUNTED',
+        timestamp: new Date().toISOString()
+      });
+    };
+  }, []);
   const params = useParams();
   const { toast } = useToast();
   
