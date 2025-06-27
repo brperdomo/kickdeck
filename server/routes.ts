@@ -4910,6 +4910,25 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         
         // Enhanced version of formattedRegistrations with payment details
         const formattedRegistrations = await Promise.all(teamRegistrations.map(async reg => {
+          // Get the actual payment amount from payment_transactions table for approved teams
+          let actualAmountCharged = reg.team.registrationFee || reg.team.totalAmount || 0;
+          
+          if (reg.team.status === 'approved' && reg.team.paymentIntentId) {
+            try {
+              const [paymentTransaction] = await db
+                .select()
+                .from(paymentTransactions)
+                .where(eq(paymentTransactions.paymentIntentId, reg.team.paymentIntentId))
+                .limit(1);
+              
+              if (paymentTransaction && paymentTransaction.amount) {
+                actualAmountCharged = paymentTransaction.amount;
+              }
+            } catch (error) {
+              console.log('Could not fetch payment transaction for team', reg.team.id);
+            }
+          }
+          
           // Default registration object with ENHANCED payment info
           const registration = {
             id: reg.team.id,
@@ -4919,7 +4938,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
             ageGroup: reg.ageGroup?.ageGroup || 'Unknown Age Group',
             registeredAt: reg.team.createdAt,
             status: reg.team.status || 'registered',
-            amount: reg.team.registrationFee || 0,
+            amount: actualAmountCharged,
             paymentId: reg.team.paymentIntentId || undefined,
             
             // Additional payment details
