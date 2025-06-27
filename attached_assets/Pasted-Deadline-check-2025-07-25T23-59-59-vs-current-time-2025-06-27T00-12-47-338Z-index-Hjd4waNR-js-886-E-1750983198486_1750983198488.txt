@@ -1,0 +1,56 @@
+Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T00:12:47.338Z
+index-Hjd4waNR.js:886 Event timezone: America/New_York
+index-Hjd4waNR.js:886 Deadline passed: false
+index-Hjd4waNR.js:885 AnimatedEventBackground CONSTRUCTOR - Received colors: {primaryColor: '#007AFF', secondaryColor: '#34C759', type: 'particles', opacity: 0.6}
+index-Hjd4waNR.js:886 🎯 Creating setup intent for payment form initialization
+index-Hjd4waNR.js:886 🎯 Team ID: temp-1750983167339 Amount: 100 Team Name: Admin222
+index-Hjd4waNR.js:886 🎯 Setup intent created successfully: seti_1RePuNP4BpmZARxtPdf6e5AH
+index-Hjd4waNR.js:886 🎯 Client secret received, length: 68
+60index-Hjd4waNR.js:885 Animation frame running, particles: 157 Canvas size: 912 x 864
+index-Hjd4waNR.js:886 📝 Submitting registration with Setup Intent: seti_1RePuEP4BpmZARxtJAiVUFCs and Payment Method: pm_1RePuJP4BpmZARxtEOLMJfkv
+index-Hjd4waNR.js:889 🎯 Payment setup completed: seti_1RePuEP4BpmZARxtJAiVUFCs, Payment method: pm_1RePuJP4BpmZARxtEOLMJfkv
+index-Hjd4waNR.js:889 🎯 addRosterLater value: true
+index-Hjd4waNR.js:889 🎯 Players count: 0
+index-Hjd4waNR.js:889 🎯 Total amount: 100
+index-Hjd4waNR.js:889 🎯 Final registration payload: {name: 'Admin222', ageGroupId: 10006, bracketId: null, headCoachName: 'Bryan Perdomo', headCoachEmail: 'bperdomo@zoho.com', …}
+index-Hjd4waNR.js:889 🎯 Payload validation: SetupIntent: seti_1RePuEP4BpmZARxtJAiVUFCs PaymentMethod: pm_1RePuJP4BpmZARxtEOLMJfkv
+index-Hjd4waNR.js:886 🎯 Sending registration payload: {name: 'Admin222', ageGroupId: 10006, bracketId: null, headCoachName: 'Bryan Perdomo', headCoachEmail: 'bperdomo@zoho.com', …}
+index-Hjd4waNR.js:886 AUTH FIX: EventRegistration component starting - user should now see event details without immediate redirect
+index-Hjd4waNR.js:886 AUTH FIX: RegistrationAuthChecker allowUnauthenticated is now set to TRUE by default
+index-Hjd4waNR.js:886 Enhanced registration flow: Always starting at personal step with integrated auth
+index-Hjd4waNR.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'personal', isPreview: false}
+index-Hjd4waNR.js:886 Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T00:12:49.933Z
+index-Hjd4waNR.js:886 Event timezone: America/New_York
+index-Hjd4waNR.js:886 Deadline passed: false
+index-Hjd4waNR.js:885 AnimatedEventBackground CONSTRUCTOR - Received colors: {primaryColor: '#007AFF', secondaryColor: '#34C759', type: 'particles', opacity: 0.6}
+index-Hjd4waNR.js:886 🎯 Creating setup intent for payment form initialization
+index-Hjd4waNR.js:886 🎯 Team ID: temp-1750983169933 Amount: 100 Team Name: Admin222
+index-Hjd4waNR.js:886 🎯 Setup intent created successfully: seti_1RePuQP4BpmZARxtjVqHwn4C
+index-Hjd4waNR.js:886 🎯 Client secret received, length: 68
+index-Hjd4waNR.js:886 AUTH FIX: EventRegistration component starting - user should now see event details without immediate redirect
+index-Hjd4waNR.js:886 AUTH FIX: RegistrationAuthChecker allowUnauthenticated is now set to TRUE by default
+index-Hjd4waNR.js:886 Enhanced registration flow: Always starting at personal step with integrated auth
+index-Hjd4waNR.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'personal', isPreview: false}
+index-Hjd4waNR.js:886 Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T00:12:50.549Z
+index-Hjd4waNR.js:886 Event timezone: America/New_York
+index-Hjd4waNR.js:886 Deadline passed: false
+index-Hjd4waNR.js:885 AnimatedEventBackground CONSTRUCTOR - Received colors: {primaryColor: '#007AFF', secondaryColor: '#34C759', type: 'particles', opacity: 0.6}
+form:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+form:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+61index-Hjd4waNR.js:885 Animation frame running, particles: 157 Canvas size: 912 x 864
+index-Hjd4waNR.js:886 AUTH FIX: EventRegistration component starting - user should now see event details without immediate redirect
+index-Hjd4waNR.js:886 AUTH FIX: RegistrationAuthChecker allowUnauthenticated is now set to TRUE by default
+index-Hjd4waNR.js:886 Enhanced registration flow: Always starting at personal step with integrated auth
+index-Hjd4waNR.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'personal', isPreview: false}
+index-Hjd4waNR.js:886 Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T00:12:52.345Z
+index-Hjd4waNR.js:886 Event timezone: America/New_York
+index-Hjd4waNR.js:886 Deadline passed: false
+index-Hjd4waNR.js:885 AnimatedEventBackground CONSTRUCTOR - Received colors: {primaryColor: '#007AFF', secondaryColor: '#34C759', type: 'particles', opacity: 0.6}
+21index-Hjd4waNR.js:885 Animation frame running, particles: 157 Canvas size: 912 x 864
+index-Hjd4waNR.js:886 AUTH FIX: EventRegistration component starting - user should now see event details without immediate redirect
+index-Hjd4waNR.js:886 AUTH FIX: RegistrationAuthChecker allowUnauthenticated is now set to TRUE by default
+index-Hjd4waNR.js:886 Enhanced registration flow: Always starting at personal step with integrated auth
+index-Hjd4waNR.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'personal', isPreview: false}
+index-Hjd4waNR.js:886 Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T00:12:54.347Z
+index-Hjd4waNR.js:886 Event timezone: America/New_York
+index-Hjd4waNR.js:886 Deadline passed: false
