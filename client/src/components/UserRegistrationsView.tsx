@@ -12,6 +12,19 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { useState, useMemo } from 'react';
+import { useToast } from '@/hooks/use-toast';
+
+// Helper functions for fee calculation
+function calculateTournamentCost(totalAmountCents: number): number {
+  // Total amount includes 4% platform fee
+  // So tournament cost = total / 1.04
+  return Math.round(totalAmountCents / 1.04);
+}
+
+function calculatePlatformFee(totalAmountCents: number): number {
+  const tournamentCost = calculateTournamentCost(totalAmountCents);
+  return totalAmountCents - tournamentCost;
+}
 
 interface Registration {
   id: number;
@@ -59,6 +72,35 @@ export default function UserRegistrationsView() {
   const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<string>('all');
   const [viewMode, setViewMode] = useState<'grouped' | 'list'>('grouped');
+  const { toast } = useToast();
+
+  // Function to request email receipt from Stripe
+  const requestEmailReceipt = async (paymentIntentId: string) => {
+    try {
+      const response = await fetch('/api/payments/resend-receipt', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ paymentIntentId }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to send receipt');
+      }
+
+      toast({
+        title: "Receipt Sent",
+        description: "Payment receipt has been sent to your email address.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to send receipt. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['user', 'registrations', 'v4'], // Force new cache key
@@ -436,6 +478,21 @@ export default function UserRegistrationsView() {
                     <div className="mt-2 p-2 border border-primary/20 bg-primary/5 rounded-md text-sm">
                       <p className="font-medium text-primary">Payment Method Saved</p>
                       <p className="text-muted-foreground">Your card will be charged after your registration is approved by the event organizer.</p>
+                    </div>
+                  )}
+                  
+                  {/* Email Receipt Button for paid registrations */}
+                  {selectedRegistration.paymentStatus === 'paid' && selectedRegistration.paymentId && (
+                    <div className="mt-2 pt-2 border-t">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="w-full"
+                        onClick={() => requestEmailReceipt(selectedRegistration.paymentId!)}
+                      >
+                        <CreditCard className="h-4 w-4 mr-2" />
+                        Email Payment Receipt
+                      </Button>
                     </div>
                   )}
                 </div>
