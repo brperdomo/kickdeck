@@ -380,9 +380,12 @@ export function registerRoutes(app: Express): Server {
         
         console.log('Setup Intent customer field:', customerId, 'Type:', typeof customerId);
 
-        // If no customer exists, create one and attach the payment method
+        // If no customer exists, create one and attach the payment method (unless it's Link)
         if (!customerId || customerId === '') {
-          console.log('No customer associated with Setup Intent, creating customer and attaching payment method...');
+          console.log('No customer associated with Setup Intent, creating customer...');
+          
+          // Check payment method type first
+          const paymentMethod = await stripe.paymentMethods.retrieve(paymentMethodId);
           
           const customer = await stripe.customers.create({
             email: team.managerEmail,
@@ -394,13 +397,19 @@ export function registerRoutes(app: Express): Server {
             }
           });
 
-          // Attach the payment method to the customer
-          await stripe.paymentMethods.attach(paymentMethodId, {
-            customer: customer.id,
-          });
+          // Only attach if it's not a Link payment method
+          if (paymentMethod.type === 'link') {
+            console.log('Link payment method detected - skipping customer attachment during customer creation');
+          } else {
+            console.log('Attaching regular payment method to customer...');
+            await stripe.paymentMethods.attach(paymentMethodId, {
+              customer: customer.id,
+            });
+            console.log('Payment method attached successfully');
+          }
 
           customerId = customer.id;
-          console.log(`Created customer ${customer.id} and attached payment method for team ${teamId}`);
+          console.log(`Created customer ${customer.id} for team ${teamId}`);
         } else {
           // Customer exists, but payment method might not be attached
           console.log(`Using existing customer ${customerId}, checking payment method attachment...`);

@@ -440,69 +440,76 @@ export async function processPaymentForApprovedTeam(teamId: number, amount: numb
       throw new Error(`Team ${teamId} has no saved payment method`);
     }
     
-    // First, create a Stripe customer or use existing one
+    // Check if this is a Link payment method first
+    const paymentMethod = await stripe.paymentMethods.retrieve(team.paymentMethodId);
+    
+    // Handle Link payment methods differently - they cannot be attached to customers
     let customerId = team.stripeCustomerId;
     
-    if (!customerId) {
-      log(`Creating Stripe customer for team: ${teamId}`);
-      const customer = await stripe.customers.create({
-        name: team.name || `Team ${teamId}`,
-        email: team.submitterEmail || `team-${teamId}@example.com`,
-        metadata: {
-          teamId: teamId.toString(),
-          eventId: team.eventId?.toString() || '',
-        }
-      });
-      customerId = customer.id;
-      
-      // Save the customer ID to the team record
-      await db.update(teams)
-        .set({ stripeCustomerId: customerId })
-        .where(eq(teams.id, teamId));
-      
-      // Attach the payment method to the customer
-      await stripe.paymentMethods.attach(team.paymentMethodId, {
-        customer: customerId,
-      });
+    if (paymentMethod.type === 'link') {
+      log(`Processing Link payment method for team: ${teamId} - skipping customer attachment`);
+      // For Link payments, we cannot attach to customers and must process differently
+      customerId = null;
     } else {
-      // Verify if payment method is attached to this customer
-      log(`Using existing Stripe customer for team: ${teamId}`);
-      
-      try {
-        // Check if payment method is already attached to this customer
-        const paymentMethod = await stripe.paymentMethods.retrieve(team.paymentMethodId);
+      // For regular payment methods, create/use customer and attach as usual
+      if (!customerId) {
+        log(`Creating Stripe customer for team: ${teamId}`);
+        const customer = await stripe.customers.create({
+          name: team.name || `Team ${teamId}`,
+          email: team.submitterEmail || `team-${teamId}@example.com`,
+          metadata: {
+            teamId: teamId.toString(),
+            eventId: team.eventId?.toString() || '',
+          }
+        });
+        customerId = customer.id;
         
-        if (paymentMethod.customer !== customerId) {
-          // If not attached, attach it now
-          log(`Attaching payment method ${team.paymentMethodId} to customer ${customerId}`);
+        // Save the customer ID to the team record
+        await db.update(teams)
+          .set({ stripeCustomerId: customerId })
+          .where(eq(teams.id, teamId));
+        
+        // Attach the payment method to the customer
+        await stripe.paymentMethods.attach(team.paymentMethodId, {
+          customer: customerId,
+        });
+      } else {
+        // Verify if payment method is attached to this customer
+        log(`Using existing Stripe customer for team: ${teamId}`);
+        
+        try {
+          if (paymentMethod.customer !== customerId) {
+            // If not attached, attach it now
+            log(`Attaching payment method ${team.paymentMethodId} to customer ${customerId}`);
+            await stripe.paymentMethods.attach(team.paymentMethodId, {
+              customer: customerId,
+            });
+          }
+        } catch (error) {
+          // If an error occurred, the payment method might be attached to another customer
+          // In this case we need to detach it first and then attach to our customer
+          log(`Detaching and re-attaching payment method for team: ${teamId}`);
+          
+          try {
+            await stripe.paymentMethods.detach(team.paymentMethodId);
+          } catch (detachError) {
+            // If detach fails, let's continue and try to attach anyway
+            log(`Failed to detach payment method: ${detachError}`);
+          }
+          
+          // Attach to our customer
           await stripe.paymentMethods.attach(team.paymentMethodId, {
             customer: customerId,
           });
         }
-      } catch (error) {
-        // If an error occurred, the payment method might be attached to another customer
-        // In this case we need to detach it first and then attach to our customer
-        log(`Detaching and re-attaching payment method for team: ${teamId}`);
-        
-        try {
-          await stripe.paymentMethods.detach(team.paymentMethodId);
-        } catch (detachError) {
-          // If detach fails, let's continue and try to attach anyway
-          log(`Failed to detach payment method: ${detachError.message}`);
-        }
-        
-        // Attach to our customer
-        await stripe.paymentMethods.attach(team.paymentMethodId, {
-          customer: customerId,
-        });
       }
     }
     
     // Create a payment intent with the saved payment method
-    const paymentIntent = await stripe.paymentIntents.create({
+    // For Link payments, we cannot include customer parameter
+    const paymentIntentParams: any = {
       amount: Math.round(amount * 100), // Convert to cents
       currency: "usd",
-      customer: customerId,
       payment_method: team.paymentMethodId,
       confirm: true, // Immediately attempt to confirm the payment
       off_session: true, // Since the customer is not present
@@ -512,7 +519,15 @@ export async function processPaymentForApprovedTeam(teamId: number, amount: numb
         eventId: team.eventId?.toString() || '',
         description: `Team registration payment for ${team.name}`
       }
-    });
+    };
+    
+    // Only add customer for non-Link payment methods
+    if (customerId) {
+      paymentIntentParams.customer = customerId;
+    }
+    
+    log(`Creating payment intent for team ${teamId}, payment method type: ${paymentMethod.type}, customer: ${customerId || 'none'}`);
+    const paymentIntent = await stripe.paymentIntents.create(paymentIntentParams);
     
     // Update the team with the payment intent ID
     await db.update(teams)
