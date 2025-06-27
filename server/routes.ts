@@ -1972,19 +1972,10 @@ export function registerRoutes(app: Express): Server {
 
         // CRITICAL FIX: Skip payment processing if Setup Intent already validated and stored  
         let paymentResult = null;
-        console.log('🔍 DEBUGGING SETUP INTENT DETECTION:');
-        console.log(`   totalAmount: ${totalAmount} (type: ${typeof totalAmount})`);
-        console.log(`   req.body.setupIntentId: ${req.body.setupIntentId} (type: ${typeof req.body.setupIntentId})`);
-        console.log(`   req.body.paymentMethodId: ${req.body.paymentMethodId} (type: ${typeof req.body.paymentMethodId})`);
-        
         const hasValidatedSetupIntent = Boolean(totalAmount > 0 && req.body.setupIntentId && req.body.paymentMethodId);
-        console.log(`   hasValidatedSetupIntent: ${hasValidatedSetupIntent}`);
         
         if (hasValidatedSetupIntent) {
-          console.log(`✅ USING PRE-VALIDATED SETUP INTENT: ${req.body.setupIntentId}`);
-          console.log(`   Payment Method: ${req.body.paymentMethodId}`);
-          console.log(`   Team: ${result.team.name} (ID: ${result.team.id})`);
-          console.log(`   Skipping legacy payment processing - Setup Intent already completed`);
+          console.log(`✅ USING PRE-VALIDATED SETUP INTENT: ${req.body.setupIntentId} for team ${result.team.name} (ID: ${result.team.id})`);
         }
         
         // Legacy payment processing only for non-Setup Intent workflows

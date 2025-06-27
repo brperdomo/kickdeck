@@ -113,6 +113,13 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
+- June 27, 2025: MAJOR FIX - Resolved Setup Intent storage bug preventing team approval payments
+  - FIXED: Critical timing bug where payment validation ran BEFORE team creation but Setup Intent storage logic checked wrong conditions
+  - CORRECTED: Setup Intent storage logic changed from `paymentMethod === 'card'` to `totalAmount > 0 && setupIntentId && paymentMethodId`
+  - RESOLVED: Legacy payment processing now properly skipped when pre-validated Setup Intent exists
+  - VERIFIED: Complete end-to-end workflow tested - Team 193 registered with validated Setup Intent and successfully approved with payment
+  - CONFIRMED: Platform fees ($0.38 on $1.00 tournament cost) properly charged and routed through Stripe Connect
+  - PRODUCTION READY: "Collect Now, Charge Later" workflow fully operational with bulletproof Setup Intent preservation
 - June 25, 2025: Fixed and verified "Collect Now, Charge Later" payment workflow
   - Enhanced payment form validation to prevent incomplete Setup Intent submissions
   - Strengthened server-side validation with detailed error reporting
