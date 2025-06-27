@@ -999,7 +999,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   // CRITICAL FIX: Persist step across component re-mounts to prevent payment form from disappearing
   const getInitialStep = (): RegistrationStep => {
     const savedStep = sessionStorage.getItem(`registration-step-${eventId}`) as RegistrationStep;
-    return savedStep && ['personal', 'team', 'payment', 'review'].includes(savedStep) ? savedStep : 'personal';
+    return savedStep && ['personal', 'team', 'payment', 'review', 'success'].includes(savedStep) ? savedStep : 'personal';
   };
   const initialStep = getInitialStep();
   console.log('Enhanced registration flow: Starting at step:', initialStep);
