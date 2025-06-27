@@ -324,16 +324,32 @@ export async function createSetupIntent(teamId: number | string, metadata?: Reco
     });
 
     // Only update the team in the database if it's a numeric ID (not a temp ID)
+    // AND only if the team doesn't already have a confirmed Setup Intent
     if (typeof teamId === 'number' || !teamId.toString().startsWith('temp-')) {
       try {
         const numericTeamId = typeof teamId === 'number' ? teamId : parseInt(teamId.toString());
-        // Update the team with the setup intent ID
-        await db.update(teams)
-          .set({
-            setupIntentId: setupIntent.id,
-            paymentStatus: 'payment_info_provided'
-          })
-          .where(eq(teams.id, numericTeamId));
+        
+        // Check if team already has a Setup Intent
+        const existingTeam = await db.query.teams.findFirst({
+          where: eq(teams.id, numericTeamId),
+          columns: {
+            setupIntentId: true,
+            paymentStatus: true
+          }
+        });
+        
+        // Only update if no existing Setup Intent or existing one is not completed
+        if (!existingTeam?.setupIntentId || existingTeam?.paymentStatus === 'pending') {
+          log(`Updating team ${numericTeamId} with Setup Intent: ${setupIntent.id}`);
+          await db.update(teams)
+            .set({
+              setupIntentId: setupIntent.id,
+              paymentStatus: 'payment_info_provided'
+            })
+            .where(eq(teams.id, numericTeamId));
+        } else {
+          log(`Team ${numericTeamId} already has Setup Intent ${existingTeam.setupIntentId}, skipping database update to preserve confirmed payment info`);
+        }
       } catch (dbError: any) {
         console.warn(`Could not update team record with setup intent ID, likely a temporary team: ${dbError.message}`);
       }

@@ -1,0 +1,360 @@
+index-CAuR929B.js:886 🔄 Step change: payment → team
+index-CAuR929B.js:886 🚨 COMPONENT RE-MOUNT DEBUG: {mountId: 'wdcyoae7f', timestamp: '2025-06-27T02:04:34.868Z', isPreview: false, eventIdOverride: undefined, currentLocation: 'https://app.matchpro.ai/register/event/1755746106/form', …}
+index-CAuR929B.js:886 Enhanced registration flow: Starting at step: team
+index-CAuR929B.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'team', isPreview: false}
+index-CAuR929B.js:886 Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T02:04:34.869Z
+index-CAuR929B.js:886 Event timezone: America/New_York
+index-CAuR929B.js:886 Deadline passed: false
+index-CAuR929B.js:48 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap
+X0 @ index-CAuR929B.js:48
+(anonymous) @ index-CAuR929B.js:48
+o1 @ index-CAuR929B.js:40
+Rf @ index-CAuR929B.js:40
+EF @ index-CAuR929B.js:40
+Ld @ index-CAuR929B.js:38
+Qme @ index-CAuR929B.js:40
+cu @ index-CAuR929B.js:40
+SW @ index-CAuR929B.js:40
+N @ index-CAuR929B.js:25
+O @ index-CAuR929B.js:25Understand this warning
+index-CAuR929B.js:48 OTS parsing error: invalid sfntVersion: 791289955
+X0 @ index-CAuR929B.js:48
+(anonymous) @ index-CAuR929B.js:48
+o1 @ index-CAuR929B.js:40
+Rf @ index-CAuR929B.js:40
+EF @ index-CAuR929B.js:40
+Ld @ index-CAuR929B.js:38
+Qme @ index-CAuR929B.js:40
+cu @ index-CAuR929B.js:40
+SW @ index-CAuR929B.js:40
+N @ index-CAuR929B.js:25
+O @ index-CAuR929B.js:25Understand this warning
+63Fetch finished loading: POST "<URL>".
+index-CAuR929B.js:886 Team form submission attempted with data: {name: 'TeamDemo', ageGroupId: 10006, bracketId: null, headCoachName: 'Bryan Perdomo', headCoachEmail: 'bperdomo@zoho.com', …}
+index-CAuR929B.js:886 Form errors: {}
+index-CAuR929B.js:886 Form validation passed, proceeding to payment step
+index-CAuR929B.js:886 🔄 Step change: team → payment
+index-CAuR929B.js:886 🚨 COMPONENT RE-MOUNT DEBUG: {mountId: 'wdcyoae7f', timestamp: '2025-06-27T02:04:38.674Z', isPreview: false, eventIdOverride: undefined, currentLocation: 'https://app.matchpro.ai/register/event/1755746106/form', …}
+index-CAuR929B.js:886 Enhanced registration flow: Starting at step: payment
+index-CAuR929B.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'payment', isPreview: false}
+index-CAuR929B.js:886 Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T02:04:38.674Z
+index-CAuR929B.js:886 Event timezone: America/New_York
+index-CAuR929B.js:886 Deadline passed: false
+index-CAuR929B.js:886 🚨 COMPONENT RE-MOUNT DEBUG: {mountId: 'wdcyoae7f', timestamp: '2025-06-27T02:04:38.676Z', isPreview: false, eventIdOverride: undefined, currentLocation: 'https://app.matchpro.ai/register/event/1755746106/form', …}
+index-CAuR929B.js:886 Enhanced registration flow: Starting at step: payment
+index-CAuR929B.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'payment', isPreview: false}
+index-CAuR929B.js:886 Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T02:04:38.677Z
+index-CAuR929B.js:886 Event timezone: America/New_York
+index-CAuR929B.js:886 Deadline passed: false
+index-CAuR929B.js:886 🎯 Creating setup intent for payment form initialization
+index-CAuR929B.js:886 🎯 Team ID: temp-1750989840004-ea7cwtzo6 Amount: 100 Team Name: TeamDemo
+index-CAuR929B.js:886 🎯 Setup intent created successfully: seti_1ReReQP4BpmZARxt3cEkKsxV
+index-CAuR929B.js:886 🎯 Client secret received, length: 68
+index-CAuR929B.js:886 Fetch finished loading: POST "https://app.matchpro.ai/api/payments/create-setup-intent".
+B5e @ index-CAuR929B.js:886
+(anonymous) @ index-CAuR929B.js:886
+(anonymous) @ index-CAuR929B.js:886
+o1 @ index-CAuR929B.js:40
+Rf @ index-CAuR929B.js:40
+EF @ index-CAuR929B.js:40
+Ld @ index-CAuR929B.js:38
+Qme @ index-CAuR929B.js:40
+cu @ index-CAuR929B.js:40
+SW @ index-CAuR929B.js:40
+N @ index-CAuR929B.js:25
+O @ index-CAuR929B.js:25
+shared-20e2d375ccaa62a79e283082fdc6576d.js:1 Fetch finished loading: GET "https://api.stripe.com/v1/elements/sessions?client_secret=seti_1ReReQP4BpmZARxt3cEkKsxV_secret_SZaq1DeAk1YuYpDJWGsdTKhJnWbZvgz&key=pk_live_51RJmW2P4BpmZARxtMyXl67Sxzx6HzKb0O2pCYzsnJRJ4l9sMefcyfcNrz5zFfabPZbBPaONgYZvfTyhgPBDFf3eC00HQIhlkQ2&_stripe_version=2025-01-27.acacia&elements_init_source=stripe.elements&referrer_host=app.matchpro.ai&stripe_js_id=813768d6-f63f-48aa-bf2e-096f8d4ddccf&locale=en-US&expand[0]=payment_method_preference.setup_intent.payment_method&type=setup_intent".
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+e @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+l @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+i @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+s @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+e @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+n @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+a @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+i @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+_ @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+d @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+t.requestParams @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+zy @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+Ky.singleFlightCreateAndParse @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+(anonymous) @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+n @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+a @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+i @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+(anonymous) @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+(anonymous) @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+n @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+a @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+i @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+value @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+(anonymous) @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+index-CAuR929B.js:886 🎯 Confirming setup intent with client secret: seti_1ReReQP4BpmZARxt3cEkKsxV_secret_SZaq1DeAk1YuYpDJWGsdTKhJnWbZvgz
+index-CAuR929B.js:886 🎯 Setup intent confirmation result: {error: undefined, setupIntentStatus: 'succeeded', setupIntentId: 'seti_1ReReQP4BpmZARxt3cEkKsxV', paymentMethodId: 'pm_1ReRejP4BpmZARxtKXPXj9Ej'}
+index-CAuR929B.js:886 🎯 Payment setup completed successfully
+index-CAuR929B.js:886 🎯 Stored Setup Intent ID: seti_1ReReQP4BpmZARxt3cEkKsxV
+index-CAuR929B.js:886 🎯 Stored Payment Method ID: pm_1ReRejP4BpmZARxtKXPXj9Ej
+index-CAuR929B.js:886 ✅ Payment setup callback received
+index-CAuR929B.js:886 ✅ Setup Intent ID: seti_1ReReQP4BpmZARxt3cEkKsxV
+index-CAuR929B.js:886 ✅ Payment Method ID: pm_1ReRejP4BpmZARxtKXPXj9Ej
+index-CAuR929B.js:886 🚨 COMPONENT RE-MOUNT DEBUG: {mountId: 'wdcyoae7f', timestamp: '2025-06-27T02:04:49.189Z', isPreview: false, eventIdOverride: undefined, currentLocation: 'https://app.matchpro.ai/register/event/1755746106/form', …}
+index-CAuR929B.js:886 Enhanced registration flow: Starting at step: payment
+index-CAuR929B.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'payment', isPreview: false}
+index-CAuR929B.js:886 Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T02:04:49.189Z
+index-CAuR929B.js:886 Event timezone: America/New_York
+index-CAuR929B.js:886 Deadline passed: false
+index-CAuR929B.js:886 🎯 Creating setup intent for payment form initialization
+index-CAuR929B.js:886 🎯 Team ID: temp-1750989840004-ea7cwtzo6 Amount: 100 Team Name: TeamDemo
+index-CAuR929B.js:886 🎯 Setup intent created successfully: seti_1ReReQP4BpmZARxt3cEkKsxV
+index-CAuR929B.js:886 🎯 Client secret received, length: 68
+index-CAuR929B.js:886 Fetch finished loading: POST "https://app.matchpro.ai/api/payments/create-setup-intent".
+B5e @ index-CAuR929B.js:886
+(anonymous) @ index-CAuR929B.js:886
+(anonymous) @ index-CAuR929B.js:886
+o1 @ index-CAuR929B.js:40
+Rf @ index-CAuR929B.js:40
+EF @ index-CAuR929B.js:40
+Ld @ index-CAuR929B.js:38
+Qme @ index-CAuR929B.js:40
+cu @ index-CAuR929B.js:40
+SW @ index-CAuR929B.js:40
+N @ index-CAuR929B.js:25
+O @ index-CAuR929B.js:25
+shared-20e2d375ccaa62a79e283082fdc6576d.js:1 Fetch finished loading: GET "https://api.stripe.com/v1/elements/sessions?client_secret=seti_1ReReQP4BpmZARxt3cEkKsxV_secret_SZaq1DeAk1YuYpDJWGsdTKhJnWbZvgz&key=pk_live_51RJmW2P4BpmZARxtMyXl67Sxzx6HzKb0O2pCYzsnJRJ4l9sMefcyfcNrz5zFfabPZbBPaONgYZvfTyhgPBDFf3eC00HQIhlkQ2&_stripe_version=2025-01-27.acacia&elements_init_source=stripe.elements&referrer_host=app.matchpro.ai&stripe_js_id=813768d6-f63f-48aa-bf2e-096f8d4ddccf&locale=en-US&expand[0]=payment_method_preference.setup_intent.payment_method&type=setup_intent".
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+e @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+l @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+i @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+s @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+e @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+n @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+a @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+i @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+_ @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+d @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+t.requestParams @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+zy @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+Ky.singleFlightCreateAndParse @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+(anonymous) @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+n @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+a @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+i @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+(anonymous) @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+(anonymous) @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+n @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+a @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+i @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+value @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+(anonymous) @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+shared-20e2d375ccaa62a79e283082fdc6576d.js:1 [Violation] 'setTimeout' handler took 56ms
+index-CAuR929B.js:886 📝 Submitting registration with Setup Intent: seti_1ReReQP4BpmZARxt3cEkKsxV and Payment Method: pm_1ReRejP4BpmZARxtKXPXj9Ej
+index-CAuR929B.js:889 🎯 Payment setup completed: seti_1ReReQP4BpmZARxt3cEkKsxV, Payment method: pm_1ReRejP4BpmZARxtKXPXj9Ej
+index-CAuR929B.js:889 🎯 addRosterLater value: true
+index-CAuR929B.js:889 🎯 Players count: 0
+index-CAuR929B.js:889 🎯 Total amount: 100
+index-CAuR929B.js:889 🎯 Final registration payload: {name: 'TeamDemo', ageGroupId: 10006, bracketId: null, headCoachName: 'Bryan Perdomo', headCoachEmail: 'bperdomo@zoho.com', …}
+index-CAuR929B.js:889 🎯 Payload validation: SetupIntent: seti_1ReReQP4BpmZARxt3cEkKsxV PaymentMethod: pm_1ReRejP4BpmZARxtKXPXj9Ej
+index-CAuR929B.js:886 🎯 Sending registration payload: {name: 'TeamDemo', ageGroupId: 10006, bracketId: null, headCoachName: 'Bryan Perdomo', headCoachEmail: 'bperdomo@zoho.com', …}
+index-CAuR929B.js:886 🧹 Cleared setup intent cache for team temp-1750989840004-ea7cwtzo6
+index-CAuR929B.js:886 🚨 COMPONENT RE-MOUNT DEBUG: {mountId: 'wdcyoae7f', timestamp: '2025-06-27T02:04:52.978Z', isPreview: false, eventIdOverride: undefined, currentLocation: 'https://app.matchpro.ai/register/event/1755746106/form', …}
+index-CAuR929B.js:886 Enhanced registration flow: Starting at step: payment
+index-CAuR929B.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'payment', isPreview: false}
+index-CAuR929B.js:886 Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T02:04:52.979Z
+index-CAuR929B.js:886 Event timezone: America/New_York
+index-CAuR929B.js:886 Deadline passed: false
+index-CAuR929B.js:886 🎯 Creating setup intent for payment form initialization
+index-CAuR929B.js:886 🎯 Team ID: temp-1750989840004-ea7cwtzo6 Amount: 100 Team Name: TeamDemo
+index-CAuR929B.js:886 🎯 Setup intent created successfully: seti_1ReReQP4BpmZARxt3cEkKsxV
+index-CAuR929B.js:886 🎯 Client secret received, length: 68
+index-CAuR929B.js:886 Fetch finished loading: POST "https://app.matchpro.ai/api/payments/create-setup-intent".
+B5e @ index-CAuR929B.js:886
+(anonymous) @ index-CAuR929B.js:886
+(anonymous) @ index-CAuR929B.js:886
+o1 @ index-CAuR929B.js:40
+Rf @ index-CAuR929B.js:40
+Qme @ index-CAuR929B.js:40
+cu @ index-CAuR929B.js:40
+EF @ index-CAuR929B.js:40
+Ld @ index-CAuR929B.js:38
+(anonymous) @ index-CAuR929B.js:40
+setTimeout
+pfe @ index-CAuR929B.js:40
+o @ index-CAuR929B.js:40
+batch @ index-CAuR929B.js:40
+Ic @ index-CAuR929B.js:40
+execute @ index-CAuR929B.js:40
+mutate @ index-CAuR929B.js:40
+(anonymous) @ index-CAuR929B.js:40
+onPaymentComplete @ index-CAuR929B.js:889
+h @ index-CAuR929B.js:886
+pue @ index-CAuR929B.js:37
+xue @ index-CAuR929B.js:37
+vue @ index-CAuR929B.js:37
+QM @ index-CAuR929B.js:37
+Tq @ index-CAuR929B.js:37
+(anonymous) @ index-CAuR929B.js:37
+iO @ index-CAuR929B.js:40
+eq @ index-CAuR929B.js:37
+d2 @ index-CAuR929B.js:37
+I4 @ index-CAuR929B.js:37
+Iue @ index-CAuR929B.js:37
+index-CAuR929B.js:886 Fetch finished loading: POST "https://app.matchpro.ai/api/events/1755746106/register-team".
+mutationFn @ index-CAuR929B.js:886
+fn @ index-CAuR929B.js:40
+h @ index-CAuR929B.js:40
+start @ index-CAuR929B.js:40
+execute @ index-CAuR929B.js:40
+await in execute
+mutate @ index-CAuR929B.js:40
+(anonymous) @ index-CAuR929B.js:40
+onPaymentComplete @ index-CAuR929B.js:889
+h @ index-CAuR929B.js:886
+pue @ index-CAuR929B.js:37
+xue @ index-CAuR929B.js:37
+vue @ index-CAuR929B.js:37
+QM @ index-CAuR929B.js:37
+Tq @ index-CAuR929B.js:37
+(anonymous) @ index-CAuR929B.js:37
+iO @ index-CAuR929B.js:40
+eq @ index-CAuR929B.js:37
+d2 @ index-CAuR929B.js:37
+I4 @ index-CAuR929B.js:37
+Iue @ index-CAuR929B.js:37
+index-CAuR929B.js:886 🔄 Step change: payment → success
+index-CAuR929B.js:886 🚨 COMPONENT RE-MOUNT DEBUG: {mountId: 'wdcyoae7f', timestamp: '2025-06-27T02:04:53.515Z', isPreview: false, eventIdOverride: undefined, currentLocation: 'https://app.matchpro.ai/register/event/1755746106/form', …}
+index-CAuR929B.js:886 Enhanced registration flow: Starting at step: personal
+index-CAuR929B.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'personal', isPreview: false}
+index-CAuR929B.js:886 Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T02:04:53.515Z
+index-CAuR929B.js:886 Event timezone: America/New_York
+index-CAuR929B.js:886 Deadline passed: false
+shared-20e2d375ccaa62a79e283082fdc6576d.js:1 Fetch finished loading: GET "https://api.stripe.com/v1/elements/sessions?client_secret=seti_1ReReQP4BpmZARxt3cEkKsxV_secret_SZaq1DeAk1YuYpDJWGsdTKhJnWbZvgz&key=pk_live_51RJmW2P4BpmZARxtMyXl67Sxzx6HzKb0O2pCYzsnJRJ4l9sMefcyfcNrz5zFfabPZbBPaONgYZvfTyhgPBDFf3eC00HQIhlkQ2&_stripe_version=2025-01-27.acacia&elements_init_source=stripe.elements&referrer_host=app.matchpro.ai&stripe_js_id=813768d6-f63f-48aa-bf2e-096f8d4ddccf&locale=en-US&expand[0]=payment_method_preference.setup_intent.payment_method&type=setup_intent".
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+e @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+l @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+i @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+s @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+e @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+n @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+a @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+i @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+_ @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+d @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+t.requestParams @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+zy @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+Ky.singleFlightCreateAndParse @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+(anonymous) @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+n @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+a @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+i @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+(anonymous) @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+(anonymous) @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+n @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+a @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+i @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+value @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+(anonymous) @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+form:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+form:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+index-CAuR929B.js:886 🚨 COMPONENT RE-MOUNT DEBUG: {mountId: 'wdcyoae7f', timestamp: '2025-06-27T02:04:54.194Z', isPreview: false, eventIdOverride: undefined, currentLocation: 'https://app.matchpro.ai/register/event/1755746106/form', …}
+index-CAuR929B.js:886 Enhanced registration flow: Starting at step: personal
+index-CAuR929B.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'personal', isPreview: false}
+index-CAuR929B.js:886 Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T02:04:54.195Z
+index-CAuR929B.js:886 Event timezone: America/New_York
+index-CAuR929B.js:886 Deadline passed: false
+shared-20e2d375ccaa62a79e283082fdc6576d.js:1 Uncaught (in promise) FetchError: Error fetching https://r.stripe.com/b: Failed to fetch
+    at shared-20e2d375ccaa62a79e283082fdc6576d.js:1:212397
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+Promise.catch
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+e @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+l @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+Promise.finally
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+setTimeout
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+log @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+log @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+(anonymous) @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+n @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+a @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+i @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1Understand this error
+index-CAuR929B.js:886 🚨 COMPONENT RE-MOUNT DEBUG: {mountId: 'wdcyoae7f', timestamp: '2025-06-27T02:04:56.197Z', isPreview: false, eventIdOverride: undefined, currentLocation: 'https://app.matchpro.ai/register/event/1755746106/form', …}
+index-CAuR929B.js:886 Enhanced registration flow: Starting at step: personal
+index-CAuR929B.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'personal', isPreview: false}
+index-CAuR929B.js:886 Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T02:04:56.199Z
+index-CAuR929B.js:886 Event timezone: America/New_York
+index-CAuR929B.js:886 Deadline passed: false
+index-CAuR929B.js:886 🚨 COMPONENT RE-MOUNT DEBUG: {mountId: 'wdcyoae7f', timestamp: '2025-06-27T02:04:58.520Z', isPreview: false, eventIdOverride: undefined, currentLocation: 'https://app.matchpro.ai/register/event/1755746106/form', …}
+index-CAuR929B.js:886 Enhanced registration flow: Starting at step: personal
+index-CAuR929B.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'personal', isPreview: false}
+index-CAuR929B.js:886 Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T02:04:58.521Z
+index-CAuR929B.js:886 Event timezone: America/New_York
+index-CAuR929B.js:886 Deadline passed: false
+index-CAuR929B.js:886 🚨 COMPONENT RE-MOUNT DEBUG: {mountId: 'wdcyoae7f', timestamp: '2025-06-27T02:05:00.521Z', isPreview: false, eventIdOverride: undefined, currentLocation: 'https://app.matchpro.ai/register/event/1755746106/form', …}
+index-CAuR929B.js:886 Enhanced registration flow: Starting at step: personal
+index-CAuR929B.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'personal', isPreview: false}
+index-CAuR929B.js:886 Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T02:05:00.521Z
+index-CAuR929B.js:886 Event timezone: America/New_York
+index-CAuR929B.js:886 Deadline passed: false
