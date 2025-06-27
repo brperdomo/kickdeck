@@ -360,7 +360,7 @@ function RegistrationCard({ registration, onShowDetails }: {
     <Card 
       className="member-card w-full h-full overflow-hidden relative group"
     >
-      <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
       
       <CardHeader className="pb-2 member-card-header">
         <div className="flex justify-between items-start">
@@ -427,14 +427,19 @@ function RegistrationCard({ registration, onShowDetails }: {
         </div>
       </CardContent>
       
-      <CardFooter className="pt-2">
+      <CardFooter className="pt-2 relative z-10">
         <div className="flex flex-col w-full gap-2">
           <div className="flex justify-between gap-2">
             <Button 
               variant="outline" 
               size="sm" 
-              className="w-full" 
-              onClick={() => onShowDetails(registration)}
+              className="w-full relative z-20 pointer-events-auto" 
+              onClick={(e) => {
+                console.log('Button clicked!', registration.teamName);
+                e.preventDefault();
+                e.stopPropagation();
+                onShowDetails(registration);
+              }}
             >
               View Registration Details
             </Button>
