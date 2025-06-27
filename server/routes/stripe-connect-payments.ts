@@ -207,6 +207,7 @@ export async function processDestinationCharge(
       paymentIntentId: paymentIntent.id,
       transactionType: 'payment',
       amount: chargeAmount, // Use the actual amount charged
+      platformFeeAmount: feeCalculation.platformFeeAmount, // ✓ Add platform fee to dedicated column
       stripeFee: feeCalculation.stripeFeeAmount,
       netAmount: feeCalculation.tournamentReceives,
       status: paymentIntent.status,
