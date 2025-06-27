@@ -133,9 +133,15 @@ async function processTeamApprovalPaymentFallback(team: any, teamId: string): Pr
       }
     };
     
-    // Only add customer if it exists and is not null
-    if (setupIntent.customer) {
+    // Check if this is a Link payment method before adding customer
+    const paymentMethod = await stripe.paymentMethods.retrieve(setupIntent.payment_method as string);
+    
+    // Only add customer if it exists and is not null AND it's not a Link payment method
+    if (setupIntent.customer && paymentMethod.type !== 'link') {
       paymentIntentData.customer = setupIntent.customer;
+      log(`Fallback payment: Using customer ${setupIntent.customer} for ${paymentMethod.type} payment method`, 'admin');
+    } else if (paymentMethod.type === 'link') {
+      log(`Fallback payment: Skipping customer for Link payment method ${setupIntent.payment_method}`, 'admin');
     }
     
     const paymentIntent = await stripe.paymentIntents.create(paymentIntentData);

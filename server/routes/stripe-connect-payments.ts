@@ -241,6 +241,7 @@ export async function processDestinationCharge(
  */
 export async function chargeApprovedTeam(teamId: number) {
   try {
+    console.log(`CONNECT DEBUG: chargeApprovedTeam called for team ${teamId}`);
     // Get team and event information
     const [teamInfo] = await db
       .select({
