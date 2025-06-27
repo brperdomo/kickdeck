@@ -308,7 +308,52 @@ export async function createSetupIntent(teamId: number | string, metadata?: Reco
   try {
     log(`Creating setup intent for team: ${teamId}`);
     
-    const setupIntent = await stripe.setupIntents.create({
+    // CRITICAL FIX: Create or get customer for charging capability
+    let customerId: string | undefined;
+    
+    // For real teams (not temp), create/get customer based on team info
+    if (typeof teamId === 'number' || !teamId.toString().startsWith('temp-')) {
+      try {
+        const numericTeamId = typeof teamId === 'number' ? teamId : parseInt(teamId.toString());
+        const existingTeam = await db.query.teams.findFirst({
+          where: eq(teams.id, numericTeamId),
+          columns: {
+            stripeCustomerId: true,
+            submitterEmail: true,
+            submitterName: true,
+            name: true
+          }
+        });
+        
+        if (existingTeam?.stripeCustomerId) {
+          customerId = existingTeam.stripeCustomerId;
+          log(`Using existing customer ID: ${customerId} for team ${teamId}`);
+        } else if (existingTeam?.submitterEmail) {
+          // Create new customer for this team
+          const customer = await stripe.customers.create({
+            email: existingTeam.submitterEmail,
+            name: existingTeam.submitterName || 'Team Manager',
+            metadata: {
+              teamId: teamId.toString(),
+              teamName: existingTeam.name || 'Unknown Team'
+            }
+          });
+          customerId = customer.id;
+          
+          // Store customer ID in database for future use
+          await db.update(teams)
+            .set({ stripeCustomerId: customerId })
+            .where(eq(teams.id, numericTeamId));
+          
+          log(`Created new customer: ${customerId} for team ${teamId}`);
+        }
+      } catch (customerError: any) {
+        log(`Could not create/retrieve customer for team ${teamId}: ${customerError.message}`);
+        // Continue without customer - will limit charging ability but still allow Setup Intent creation
+      }
+    }
+    
+    const setupIntentData: any = {
       // Use automatic_payment_methods instead of payment_method_types
       // This is the recommended approach by Stripe
       automatic_payment_methods: {
@@ -316,12 +361,21 @@ export async function createSetupIntent(teamId: number | string, metadata?: Reco
         allow_redirects: 'never'
       },
       usage: 'off_session', // This allows for future use without customer being present
-      // Remove hardcoded payment_method_configuration to use account default
       metadata: {
         teamId: teamId.toString(),
         ...metadata
       }
-    });
+    };
+    
+    // Add customer if we have one (critical for charging later)
+    if (customerId) {
+      setupIntentData.customer = customerId;
+      log(`Setup Intent will be created with customer: ${customerId}`);
+    } else {
+      log(`WARNING: Setup Intent created without customer - charging will be limited`);
+    }
+    
+    const setupIntent = await stripe.setupIntents.create(setupIntentData);
 
     // Only update the team in the database if it's a numeric ID (not a temp ID)
     // AND only if the team doesn't already have a confirmed Setup Intent
