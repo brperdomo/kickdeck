@@ -41,20 +41,21 @@ export default function UserRegistrationsView() {
   const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ['user', 'registrations', 'v3'], // Fixed version to avoid infinite requests
+    queryKey: ['user', 'registrations', 'v4'], // Force new cache key
     queryFn: async () => {
-      console.log('Fetching registrations from API...');
-      const response = await fetch('/api/user/registrations', {
+      console.log('Fetching registrations with payment details...');
+      const response = await fetch(`/api/user/registrations?_t=${Date.now()}`, {
         headers: {
-          'Cache-Control': 'no-cache',
-          'Pragma': 'no-cache'
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
         }
       });
       if (!response.ok) {
         throw new Error('Failed to fetch registrations');
       }
       const result = await response.json();
-      console.log('Registration API response:', result);
+      console.log('Registration API response with payment details:', result);
       return result;
     }
   });
