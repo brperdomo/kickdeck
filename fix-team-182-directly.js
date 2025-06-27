@@ -56,7 +56,10 @@ async function fixTeam182() {
   const paymentMethod = await stripe.paymentMethods.create({
     type: 'card',
     card: {
-      token: 'tok_visa' // Stripe test token for development
+      number: '4242424242424242',
+      exp_month: 12,
+      exp_year: 2030,
+      cvc: '123'
     }
   });
   
