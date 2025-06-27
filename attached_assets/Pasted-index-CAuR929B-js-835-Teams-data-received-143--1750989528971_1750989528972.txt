@@ -1,0 +1,211 @@
+index-CAuR929B.js:835 Teams data received: (143) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+index-CAuR929B.js:835 Teams data from API: (143) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+index-CAuR929B.js:835 Normalized teams data: (143) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+chunk-RODKCX5K.js:3 [Violation] 'setTimeout' handler took 267ms
+shared-20e2d375ccaa62a79e283082fdc6576d.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+e @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+l @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+setTimeout
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+Promise.then
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+e @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+value @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+e @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+81446 @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+e @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+(anonymous) @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+e.O @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+(anonymous) @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+(anonymous) @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+shared-20e2d375ccaa62a79e283082fdc6576d.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+e @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+l @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+setTimeout
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+Promise.then
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+log @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+log @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+e @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+81446 @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+e @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+(anonymous) @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+e.O @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+(anonymous) @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+(anonymous) @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+util.js:39 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+swa @ util.js:39
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1450
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1450
+setTimeout
+Vca @ js?libraries=places&v=beta&callback=Function.prototype:1450
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1694
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1694Understand this warning
+chunk-RODKCX5K.js:3 [Violation] 'setTimeout' handler took 53ms
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+Promise.then
+S @ out-4.5.44.js:1
+y @ out-4.5.44.js:1
+E @ out-4.5.44.js:1
+e.onload @ inner.html:1
+script
+(anonymous) @ inner.html:1
+(anonymous) @ inner.html:1
+index-CAuR929B.js:727 Fetched age groups for event: 1755746106
+index-CAuR929B.js:727 Fetching brackets for event 1755746106 and age group 10006
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+h @ out-4.5.44.js:1
+e @ inner.html:1
+index-CAuR929B.js:727 Fetch finished loading: GET "https://app.matchpro.ai/api/brackets?eventId=1755746106&ageGroupId=10006".
+queryFn @ index-CAuR929B.js:727
+i @ index-CAuR929B.js:40
+h @ index-CAuR929B.js:40
+start @ index-CAuR929B.js:40
+fetch @ index-CAuR929B.js:40
+$g @ index-CAuR929B.js:40
+onSubscribe @ index-CAuR929B.js:40
+subscribe @ index-CAuR929B.js:40
+(anonymous) @ index-CAuR929B.js:40
+Wq @ index-CAuR929B.js:38
+o1 @ index-CAuR929B.js:40
+Rf @ index-CAuR929B.js:40
+Qme @ index-CAuR929B.js:40
+cu @ index-CAuR929B.js:40
+EF @ index-CAuR929B.js:40
+Ld @ index-CAuR929B.js:38
+(anonymous) @ index-CAuR929B.js:40
+index-CAuR929B.js:727 Fetch finished loading: GET "https://app.matchpro.ai/api/admin/events/1755746106/age-groups".
+queryFn @ index-CAuR929B.js:727
+i @ index-CAuR929B.js:40
+h @ index-CAuR929B.js:40
+start @ index-CAuR929B.js:40
+fetch @ index-CAuR929B.js:40
+$g @ index-CAuR929B.js:40
+onSubscribe @ index-CAuR929B.js:40
+subscribe @ index-CAuR929B.js:40
+(anonymous) @ index-CAuR929B.js:40
+Wq @ index-CAuR929B.js:38
+o1 @ index-CAuR929B.js:40
+Rf @ index-CAuR929B.js:40
+Qme @ index-CAuR929B.js:40
+cu @ index-CAuR929B.js:40
+EF @ index-CAuR929B.js:40
+Ld @ index-CAuR929B.js:38
+(anonymous) @ index-CAuR929B.js:40
+index-CAuR929B.js:835 Sending status update with data: {teamId: 170, status: 'approved', notes: null}
+shared-20e2d375ccaa62a79e283082fdc6576d.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+e @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+l @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+setTimeout
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+log @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+log @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+value @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+value @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+(anonymous) @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+index-CAuR929B.js:835 Fetch finished loading: PUT "https://app.matchpro.ai/api/admin/teams/170/status".
+mutationFn @ index-CAuR929B.js:835
+fn @ index-CAuR929B.js:40
+h @ index-CAuR929B.js:40
+start @ index-CAuR929B.js:40
+execute @ index-CAuR929B.js:40
+await in execute
+mutate @ index-CAuR929B.js:40
+(anonymous) @ index-CAuR929B.js:40
+fe @ index-CAuR929B.js:835
+onClick @ index-CAuR929B.js:835
+pue @ index-CAuR929B.js:37
+xue @ index-CAuR929B.js:37
+vue @ index-CAuR929B.js:37
+QM @ index-CAuR929B.js:37
+Tq @ index-CAuR929B.js:37
+(anonymous) @ index-CAuR929B.js:37
+iO @ index-CAuR929B.js:40
+eq @ index-CAuR929B.js:37
+d2 @ index-CAuR929B.js:37
+I4 @ index-CAuR929B.js:37
+Iue @ index-CAuR929B.js:37
+index-CAuR929B.js:835 Raw response text: {"status":"success","team":{"id":170,"eventId":1755746106,"ageGroupId":10006,"groupId":null,"bracketId":null,"clubId":null,"clubName":null,"name":"Doogie","coach":"{\"headCoachName\":\"Bryan Perdomo\",\"headCoachEmail\":\"bperdomo@zoho.com\",\"headCoachPhone\":\"(202) 695-6262\",\"accountCreated\":false}","managerName":"Bryan Perdomo","managerPhone":"(202) 695-6262","managerEmail":"bperdomo@zoho.com","submitterName":"Bryan Perdomo","submitterEmail":"bperdomo@zoho.com","seedRanking":null,"createdAt":"2025-06-27T01:56:40.005Z","status":"approved","registrationFee":null,"selectedFeeIds":"{\"34\"}","totalAmount":100,"paymentStatus":"payment_info_pending","paymentDate":null,"paymentIntentId":null,"setupIntentId":"seti_1ReRWuP4BpmZARxtFr5vxVAI","paymentMethodId":null,"cardBrand":null,"cardLast4":null,"paymentMethodType":null,"paymentErrorCode":null,"paymentErrorMessage":null,"refundDate":null,"stripeCustomerId":null,"termsAcknowledged":true,"termsAcknowledgedAt":"2025-06-27T01:56:39.705Z","termsAcknowledgementRecord":null,"addRosterLater":true,"rosterUploadedAt":null,"rosterUploadMethod":null,"initialRosterComplete":false,"appliedCoupon":null,"notes":null},"notification":{"status":"sent","recipients":["bperdomo@zoho.com"],"message":"Email notification sent successfully"}}
+teams:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+teams:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+index-CAuR929B.js:835 Teams data received: (143) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+index-CAuR929B.js:835 Fetch finished loading: GET "https://app.matchpro.ai/api/admin/teams".
+queryFn @ index-CAuR929B.js:835
+i @ index-CAuR929B.js:40
+h @ index-CAuR929B.js:40
+start @ index-CAuR929B.js:40
+fetch @ index-CAuR929B.js:40
+$g @ index-CAuR929B.js:40
+fetch @ index-CAuR929B.js:40
+refetch @ index-CAuR929B.js:40
+onSuccess @ index-CAuR929B.js:835
+execute @ index-CAuR929B.js:40
+await in execute
+mutate @ index-CAuR929B.js:40
+(anonymous) @ index-CAuR929B.js:40
+fe @ index-CAuR929B.js:835
+onClick @ index-CAuR929B.js:835
+pue @ index-CAuR929B.js:37
+xue @ index-CAuR929B.js:37
+vue @ index-CAuR929B.js:37
+QM @ index-CAuR929B.js:37
+Tq @ index-CAuR929B.js:37
+(anonymous) @ index-CAuR929B.js:37
+iO @ index-CAuR929B.js:40
+eq @ index-CAuR929B.js:37
+d2 @ index-CAuR929B.js:37
+I4 @ index-CAuR929B.js:37
+Iue @ index-CAuR929B.js:37
+index-CAuR929B.js:835 Teams data from API: (143) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+index-CAuR929B.js:835 Normalized teams data: (143) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]

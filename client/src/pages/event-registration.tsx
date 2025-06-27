@@ -4801,8 +4801,8 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                               expectedAmount={parseFloat(calculateTotalAmount()) * 100}
                               teamName={teamForm.getValues().name}
                               eventName={event?.name || 'tournament'}
-                              onPaymentComplete={(setupIntentId, paymentMethodId) => {
-                                console.log(`🎯 Payment setup completed: ${setupIntentId}, Payment method: ${paymentMethodId}`);
+                              onPaymentComplete={(confirmedSetupIntentId, confirmedPaymentMethodId) => {
+                                console.log(`🎯 Payment setup completed: ${confirmedSetupIntentId}, Payment method: ${confirmedPaymentMethodId}`);
                                 console.log(`🎯 addRosterLater value: ${addRosterLater}`);
                                 console.log(`🎯 Players count: ${players.length}`);
                                 console.log(`🎯 Total amount: ${parseFloat(calculateTotalAmount()) * 100}`);
@@ -4822,7 +4822,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                                 ];
                                 
                                 // Submit registration with completed payment setup
-                                // CRITICAL FIX: Use the callback parameters (correct values) instead of state variables
+                                // CRITICAL FIX: Use the confirmed callback parameters (correct values)
                                 const registrationPayload = {
                                   ...teamForm.getValues(),
                                   players: players, // Explicitly include players array
@@ -4830,12 +4830,12 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                                   totalAmount: parseFloat(calculateTotalAmount()) * 100,
                                   paymentMethod: 'card',
                                   addRosterLater: addRosterLater, // Explicitly include addRosterLater flag
-                                  setupIntentId: setupIntentId, // Use callback parameter (correct value)
-                                  paymentMethodId: paymentMethodId // Use callback parameter (correct value)
+                                  setupIntentId: confirmedSetupIntentId, // Use confirmed callback parameter
+                                  paymentMethodId: confirmedPaymentMethodId // Use confirmed callback parameter
                                 };
                                 
                                 // Validate setup intent and payment method before submission
-                                if (!setupIntentId || !paymentMethodId) {
+                                if (!confirmedSetupIntentId || !confirmedPaymentMethodId) {
                                   toast({
                                     title: "Payment Setup Required",
                                     description: "Please complete the payment setup before registering.",
@@ -4845,7 +4845,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                                 }
                                 
                                 console.log('🎯 Final registration payload:', registrationPayload);
-                                console.log('🎯 Payload validation: SetupIntent:', setupIntentId, 'PaymentMethod:', paymentMethodId);
+                                console.log('🎯 Payload validation: SetupIntent:', confirmedSetupIntentId, 'PaymentMethod:', confirmedPaymentMethodId);
                                 registerTeamMutation.mutate(registrationPayload);
                               }}
                               onError={(error) => {
