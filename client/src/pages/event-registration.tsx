@@ -1820,7 +1820,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
       
       fetchClubs();
     }
-  }, [eventId, toast]);
+  }, [eventId]);
 
   const renderStepIndicator = () => {
     const steps: { key: RegistrationStep; label: string; icon: React.ReactNode }[] = [
