@@ -1,0 +1,591 @@
+admin/teams:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+admin/teams:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+chunk-RODKCX5K.js:3 [Violation] 'setTimeout' handler took 51ms
+index-CAuR929B.js:835 Sending status update with data: {teamId: 186, status: 'approved', notes: null}
+index-CAuR929B.js:835 
+            
+            
+           PUT https://app.matchpro.ai/api/admin/teams/186/status 400 (Bad Request)
+mutationFn @ index-CAuR929B.js:835
+fn @ index-CAuR929B.js:40
+h @ index-CAuR929B.js:40
+start @ index-CAuR929B.js:40
+execute @ index-CAuR929B.js:40
+await in execute
+mutate @ index-CAuR929B.js:40
+(anonymous) @ index-CAuR929B.js:40
+fe @ index-CAuR929B.js:835
+onClick @ index-CAuR929B.js:835
+pue @ index-CAuR929B.js:37
+xue @ index-CAuR929B.js:37
+vue @ index-CAuR929B.js:37
+QM @ index-CAuR929B.js:37
+Tq @ index-CAuR929B.js:37
+(anonymous) @ index-CAuR929B.js:37
+iO @ index-CAuR929B.js:40
+eq @ index-CAuR929B.js:37
+d2 @ index-CAuR929B.js:37
+I4 @ index-CAuR929B.js:37
+Iue @ index-CAuR929B.js:37Understand this error
+index-CAuR929B.js:835 Raw response text: {"status":"error","error":"Payment processing failed","message":"Team has not completed payment setup. Use \"Generate Payment Completion URL\" to allow them to complete payment first.","paymentStatus":"no_payment_method","teamStatus":"registered"}
+index-CAuR929B.js:835 Error response: {status: 'error', error: 'Payment processing failed', message: 'Team has not completed payment setup. Use "Generat…ion URL" to allow them to complete payment first.', paymentStatus: 'no_payment_method', teamStatus: 'registered'}
+mutationFn @ index-CAuR929B.js:835
+await in mutationFn
+fn @ index-CAuR929B.js:40
+h @ index-CAuR929B.js:40
+start @ index-CAuR929B.js:40
+execute @ index-CAuR929B.js:40
+await in execute
+mutate @ index-CAuR929B.js:40
+(anonymous) @ index-CAuR929B.js:40
+fe @ index-CAuR929B.js:835
+onClick @ index-CAuR929B.js:835
+pue @ index-CAuR929B.js:37
+xue @ index-CAuR929B.js:37
+vue @ index-CAuR929B.js:37
+QM @ index-CAuR929B.js:37
+Tq @ index-CAuR929B.js:37
+(anonymous) @ index-CAuR929B.js:37
+iO @ index-CAuR929B.js:40
+eq @ index-CAuR929B.js:37
+d2 @ index-CAuR929B.js:37
+I4 @ index-CAuR929B.js:37
+Iue @ index-CAuR929B.js:37Understand this error
+index-CAuR929B.js:835 Error in updateTeamStatus mutation: Error: Payment processing failed
+    at Object.mutationFn (index-CAuR929B.js:835:82164)
+mutationFn @ index-CAuR929B.js:835
+await in mutationFn
+fn @ index-CAuR929B.js:40
+h @ index-CAuR929B.js:40
+start @ index-CAuR929B.js:40
+execute @ index-CAuR929B.js:40
+await in execute
+mutate @ index-CAuR929B.js:40
+(anonymous) @ index-CAuR929B.js:40
+fe @ index-CAuR929B.js:835
+onClick @ index-CAuR929B.js:835
+pue @ index-CAuR929B.js:37
+xue @ index-CAuR929B.js:37
+vue @ index-CAuR929B.js:37
+QM @ index-CAuR929B.js:37
+Tq @ index-CAuR929B.js:37
+(anonymous) @ index-CAuR929B.js:37
+iO @ index-CAuR929B.js:40
+eq @ index-CAuR929B.js:37
+d2 @ index-CAuR929B.js:37
+I4 @ index-CAuR929B.js:37
+Iue @ index-CAuR929B.js:37Understand this error
+index-CAuR929B.js:835 Fetch failed loading: PUT "https://app.matchpro.ai/api/admin/teams/186/status".
+mutationFn @ index-CAuR929B.js:835
+fn @ index-CAuR929B.js:40
+h @ index-CAuR929B.js:40
+start @ index-CAuR929B.js:40
+execute @ index-CAuR929B.js:40
+await in execute
+mutate @ index-CAuR929B.js:40
+(anonymous) @ index-CAuR929B.js:40
+fe @ index-CAuR929B.js:835
+onClick @ index-CAuR929B.js:835
+pue @ index-CAuR929B.js:37
+xue @ index-CAuR929B.js:37
+vue @ index-CAuR929B.js:37
+QM @ index-CAuR929B.js:37
+Tq @ index-CAuR929B.js:37
+(anonymous) @ index-CAuR929B.js:37
+iO @ index-CAuR929B.js:40
+eq @ index-CAuR929B.js:37
+d2 @ index-CAuR929B.js:37
+I4 @ index-CAuR929B.js:37
+Iue @ index-CAuR929B.js:37
+admin/teams:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+admin/teams:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+chunk-RODKCX5K.js:3 [Violation] 'setTimeout' handler took 51ms
+chunk-RODKCX5K.js:3 [Violation] 'setTimeout' handler took 56ms
+index-CAuR929B.js:835 Fetch finished loading: GET "https://app.matchpro.ai/api/admin/registrations/new-count".
+queryFn @ index-CAuR929B.js:835
+i @ index-CAuR929B.js:40
+h @ index-CAuR929B.js:40
+start @ index-CAuR929B.js:40
+fetch @ index-CAuR929B.js:40
+$g @ index-CAuR929B.js:40
+(anonymous) @ index-CAuR929B.js:40
+Navigated to https://app.matchpro.ai/admin/teams
+chunk-LRH6BLRZ.js:31 orchestration: Initializing config store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-LRH6BLRZ.js:31 orchestration: Initializing feature flag store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-LRH6BLRZ.js:31 orchestration: Initializing user store with state {}
+chunk-LRH6BLRZ.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+js?libraries=places&v=beta&callback=Function.prototype:1448 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+Vca @ js?libraries=places&v=beta&callback=Function.prototype:1448
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1694
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1694Understand this warning
+js?libraries=places&v=beta&callback=Function.prototype:1477 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+_.B.send @ js?libraries=places&v=beta&callback=Function.prototype:1477
+Tca @ js?libraries=places&v=beta&callback=Function.prototype:1457
+Vca @ js?libraries=places&v=beta&callback=Function.prototype:1449
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1694
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1694
+index-CAuR929B.js:816 Google Maps API key length: 0 characters
+index-CAuR929B.js:816 Mapbox API key length: 93 characters
+index-CAuR929B.js:816 Google Maps API already loaded
+index-CAuR929B.js:646 Current route location (Wouter): /admin/teams
+index-CAuR929B.js:646 Current URL: https://app.matchpro.ai/admin/teams
+index-CAuR929B.js:646 Current pathname: /admin/teams
+index-CAuR929B.js:646 Current search: 
+index-CAuR929B.js:646 Fetching user with emulation token: not present
+index-CAuR929B.js:646 User data fetched: {id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: '$2b$12$d6n1CBWgsWFm0fh77F1OX.YxDZy7/O3aLSuJOuq4QkvOtFmSit7BC', firstName: 'Bryan', …}
+13Fetch finished loading: GET "<URL>".
+index-CAuR929B.js:727 Fetching permissions, emulation token: not present
+index-CAuR929B.js:727 Fetched permissions: {roles: Array(1), permissions: Array(42)}
+index-CAuR929B.js:727 Normalized dot permission "users.view" to "view_users"
+index-CAuR929B.js:727 Normalized dot permission "users.create" to "create_users"
+index-CAuR929B.js:727 Normalized dot permission "users.edit" to "edit_users"
+index-CAuR929B.js:727 Normalized dot permission "users.delete" to "delete_users"
+index-CAuR929B.js:727 Normalized dot permission "events.view" to "view_events"
+index-CAuR929B.js:727 Normalized dot permission "events.create" to "create_events"
+index-CAuR929B.js:727 Normalized dot permission "events.edit" to "edit_events"
+index-CAuR929B.js:727 Normalized dot permission "events.delete" to "delete_events"
+index-CAuR929B.js:727 Normalized dot permission "teams.view" to "view_teams"
+index-CAuR929B.js:727 Normalized dot permission "teams.create" to "create_teams"
+index-CAuR929B.js:727 Normalized dot permission "teams.edit" to "edit_teams"
+index-CAuR929B.js:727 Normalized dot permission "teams.delete" to "delete_teams"
+index-CAuR929B.js:727 Normalized dot permission "games.view" to "view_games"
+index-CAuR929B.js:727 Normalized dot permission "games.create" to "create_games"
+index-CAuR929B.js:727 Normalized dot permission "games.edit" to "edit_games"
+index-CAuR929B.js:727 Normalized dot permission "games.delete" to "delete_games"
+index-CAuR929B.js:727 Normalized dot permission "scores.view" to "view_scores"
+index-CAuR929B.js:727 Normalized dot permission "scores.create" to "create_scores"
+index-CAuR929B.js:727 Normalized dot permission "scores.edit" to "edit_scores"
+index-CAuR929B.js:727 Normalized dot permission "scores.delete" to "delete_scores"
+index-CAuR929B.js:727 Normalized dot permission "finances.view" to "view_finances"
+index-CAuR929B.js:727 Normalized dot permission "finances.create" to "create_finances"
+index-CAuR929B.js:727 Normalized dot permission "finances.edit" to "edit_finances"
+index-CAuR929B.js:727 Normalized dot permission "finances.delete" to "delete_finances"
+index-CAuR929B.js:727 Normalized dot permission "finances.approve" to "approve_finances"
+index-CAuR929B.js:727 Normalized dot permission "settings.view" to "view_settings"
+index-CAuR929B.js:727 Normalized dot permission "settings.edit" to "edit_settings"
+index-CAuR929B.js:727 Normalized dot permission "reports.view" to "view_reports"
+index-CAuR929B.js:727 Normalized dot permission "reports.export" to "export_reports"
+index-CAuR929B.js:727 Normalized dot permission "administrators.view" to "view_administrators"
+index-CAuR929B.js:727 Normalized dot permission "administrators.create" to "create_administrators"
+index-CAuR929B.js:727 Normalized dot permission "administrators.edit" to "edit_administrators"
+index-CAuR929B.js:727 Normalized dot permission "administrators.delete" to "delete_administrators"
+index-CAuR929B.js:727 Normalized dot permission "coupons.view" to "view_coupons"
+index-CAuR929B.js:727 Normalized dot permission "coupons.create" to "create_coupons"
+index-CAuR929B.js:727 Normalized dot permission "coupons.edit" to "edit_coupons"
+index-CAuR929B.js:727 Normalized dot permission "coupons.delete" to "delete_coupons"
+index-CAuR929B.js:727 Normalized dot permission "members.view" to "view_members"
+index-CAuR929B.js:727 Normalized dot permission "scheduling.view" to "view_scheduling"
+index-CAuR929B.js:727 Normalized dot permission "scheduling.create" to "create_scheduling"
+index-CAuR929B.js:727 Normalized dot permission "scheduling.edit" to "edit_scheduling"
+index-CAuR929B.js:727 Normalized dot permission "scheduling.delete" to "delete_scheduling"
+index-CAuR929B.js:727 Final normalized permissions: (42) ['view_users', 'create_users', 'edit_users', 'delete_users', 'view_events', 'create_events', 'edit_events', 'delete_events', 'view_teams', 'create_teams', 'edit_teams', 'delete_teams', 'view_games', 'create_games', 'edit_games', 'delete_games', 'view_scores', 'create_scores', 'edit_scores', 'delete_scores', 'view_finances', 'create_finances', 'edit_finances', 'delete_finances', 'approve_finances', 'view_settings', 'edit_settings', 'view_reports', 'export_reports', 'view_administrators', 'create_administrators', 'edit_administrators', 'delete_administrators', 'view_coupons', 'create_coupons', 'edit_coupons', 'delete_coupons', 'view_members', 'view_scheduling', 'create_scheduling', 'edit_scheduling', 'delete_scheduling']
+teams:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+teams:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+index-CAuR929B.js:40 Fetch failed loading: GET "https://app.matchpro.ai/api/admin/organization-settings".
+queryFn @ index-CAuR929B.js:40
+i @ index-CAuR929B.js:40
+h @ index-CAuR929B.js:40
+start @ index-CAuR929B.js:40
+fetch @ index-CAuR929B.js:40
+$g @ index-CAuR929B.js:40
+onSubscribe @ index-CAuR929B.js:40
+subscribe @ index-CAuR929B.js:40
+(anonymous) @ index-CAuR929B.js:40
+Wq @ index-CAuR929B.js:38
+o1 @ index-CAuR929B.js:40
+Rf @ index-CAuR929B.js:40
+Qme @ index-CAuR929B.js:40
+cu @ index-CAuR929B.js:40
+EF @ index-CAuR929B.js:40
+Ld @ index-CAuR929B.js:38
+(anonymous) @ index-CAuR929B.js:40
+setTimeout
+pfe @ index-CAuR929B.js:40
+o @ index-CAuR929B.js:40
+batch @ index-CAuR929B.js:40
+Bl @ index-CAuR929B.js:40
+setData @ index-CAuR929B.js:40
+onSuccess @ index-CAuR929B.js:40
+m @ index-CAuR929B.js:40
+Promise.then
+h @ index-CAuR929B.js:40
+start @ index-CAuR929B.js:40
+fetch @ index-CAuR929B.js:40
+$g @ index-CAuR929B.js:40
+onSubscribe @ index-CAuR929B.js:40
+subscribe @ index-CAuR929B.js:40
+(anonymous) @ index-CAuR929B.js:40
+Wq @ index-CAuR929B.js:38
+o1 @ index-CAuR929B.js:40
+Rf @ index-CAuR929B.js:40
+EF @ index-CAuR929B.js:40
+Ld @ index-CAuR929B.js:38
+Qme @ index-CAuR929B.js:40
+cu @ index-CAuR929B.js:40
+SW @ index-CAuR929B.js:40
+N @ index-CAuR929B.js:25
+O @ index-CAuR929B.js:25
+12Invalid keyframe value for property filter: blur(-0.08136px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.16063px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.22707px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.28173px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.32564px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.3598px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.38521px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.40278px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.41343px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.41799px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.41726px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.41199px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.40286px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.39052px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.37556px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.35849px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.33982px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.31996px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.2993px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.27819px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.25693px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.23576px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.21492px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.19459px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.17493px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.15606px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.13808px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.12106px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.10507px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.09014px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.07628px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.0635px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.0518px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.04115px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.03153px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.02289px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.01521px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.00842px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.00249px)Understand this warning
+index-CAuR929B.js:835 Import eligible events: (4) [{…}, {…}, {…}, {…}]
+
+                
+          
+          
+          
+         Chrome is moving towards a new experience that allows users to choose to browse without third-party cookies.Understand this warning
+index-CAuR929B.js:40 Fetch failed loading: GET "https://app.matchpro.ai/api/admin/organization-settings".
+queryFn @ index-CAuR929B.js:40
+i @ index-CAuR929B.js:40
+h @ index-CAuR929B.js:40
+start @ index-CAuR929B.js:40
+fetch @ index-CAuR929B.js:40
+$g @ index-CAuR929B.js:40
+onSubscribe @ index-CAuR929B.js:40
+subscribe @ index-CAuR929B.js:40
+(anonymous) @ index-CAuR929B.js:40
+Wq @ index-CAuR929B.js:38
+o1 @ index-CAuR929B.js:40
+Rf @ index-CAuR929B.js:40
+EF @ index-CAuR929B.js:40
+Ld @ index-CAuR929B.js:38
+Qme @ index-CAuR929B.js:40
+cu @ index-CAuR929B.js:40
+SW @ index-CAuR929B.js:40
+N @ index-CAuR929B.js:25
+O @ index-CAuR929B.js:25
+index-CAuR929B.js:835 Teams data received: (162) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+index-CAuR929B.js:835 Teams data from API: (162) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+index-CAuR929B.js:835 Normalized teams data: (162) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+shared-20e2d375ccaa62a79e283082fdc6576d.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+e @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+l @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+k @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+e @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+value @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+e @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+81446 @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+e @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+(anonymous) @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+e.O @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+(anonymous) @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+(anonymous) @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+shared-20e2d375ccaa62a79e283082fdc6576d.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+e @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+l @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+k @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+log @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+log @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+e @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+81446 @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+e @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+(anonymous) @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+e.O @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+(anonymous) @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+(anonymous) @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+chunk-RODKCX5K.js:3 [Violation] 'setTimeout' handler took 51ms
+shared-20e2d375ccaa62a79e283082fdc6576d.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+e @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+l @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+setTimeout
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+Promise.then
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+e @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+value @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+e @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+81446 @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+e @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+(anonymous) @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+e.O @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+(anonymous) @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+(anonymous) @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+shared-20e2d375ccaa62a79e283082fdc6576d.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+e @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+l @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+setTimeout
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+Promise.then
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+log @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+log @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+e @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+81446 @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+e @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+(anonymous) @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+e.O @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+(anonymous) @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+(anonymous) @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+util.js:39 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+swa @ util.js:39
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1450
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1450
+setTimeout
+Vca @ js?libraries=places&v=beta&callback=Function.prototype:1450
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1694
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1694Understand this warning
+index-CAuR929B.js:727 Fetched age groups for event: 1755746106
+index-CAuR929B.js:727 Fetching brackets for event 1755746106 and age group 10006
+index-CAuR929B.js:835 Sending status update with data: {teamId: 189, status: 'approved', notes: null}
+index-CAuR929B.js:835 
+            
+            
+           PUT https://app.matchpro.ai/api/admin/teams/189/status 400 (Bad Request)
+mutationFn @ index-CAuR929B.js:835
+fn @ index-CAuR929B.js:40
+h @ index-CAuR929B.js:40
+start @ index-CAuR929B.js:40
+execute @ index-CAuR929B.js:40
+await in execute
+mutate @ index-CAuR929B.js:40
+(anonymous) @ index-CAuR929B.js:40
+fe @ index-CAuR929B.js:835
+onClick @ index-CAuR929B.js:835
+pue @ index-CAuR929B.js:37
+xue @ index-CAuR929B.js:37
+vue @ index-CAuR929B.js:37
+QM @ index-CAuR929B.js:37
+Tq @ index-CAuR929B.js:37
+(anonymous) @ index-CAuR929B.js:37
+iO @ index-CAuR929B.js:40
+eq @ index-CAuR929B.js:37
+d2 @ index-CAuR929B.js:37
+I4 @ index-CAuR929B.js:37
+Iue @ index-CAuR929B.js:37Understand this error
+index-CAuR929B.js:835 Raw response text: {"status":"error","error":"Payment processing failed","message":"Payment processing failed. Please check team payment details.","paymentStatus":"payment_error","teamStatus":"registered"}
+index-CAuR929B.js:835 Error response: {status: 'error', error: 'Payment processing failed', message: 'Payment processing failed. Please check team payment details.', paymentStatus: 'payment_error', teamStatus: 'registered'}
+mutationFn @ index-CAuR929B.js:835
+await in mutationFn
+fn @ index-CAuR929B.js:40
+h @ index-CAuR929B.js:40
+start @ index-CAuR929B.js:40
+execute @ index-CAuR929B.js:40
+await in execute
+mutate @ index-CAuR929B.js:40
+(anonymous) @ index-CAuR929B.js:40
+fe @ index-CAuR929B.js:835
+onClick @ index-CAuR929B.js:835
+pue @ index-CAuR929B.js:37
+xue @ index-CAuR929B.js:37
+vue @ index-CAuR929B.js:37
+QM @ index-CAuR929B.js:37
+Tq @ index-CAuR929B.js:37
+(anonymous) @ index-CAuR929B.js:37
+iO @ index-CAuR929B.js:40
+eq @ index-CAuR929B.js:37
+d2 @ index-CAuR929B.js:37
+I4 @ index-CAuR929B.js:37
+Iue @ index-CAuR929B.js:37Understand this error
+index-CAuR929B.js:835 Error in updateTeamStatus mutation: Error: Payment processing failed
+    at Object.mutationFn (index-CAuR929B.js:835:82164)
+mutationFn @ index-CAuR929B.js:835
+await in mutationFn
+fn @ index-CAuR929B.js:40
+h @ index-CAuR929B.js:40
+start @ index-CAuR929B.js:40
+execute @ index-CAuR929B.js:40
+await in execute
+mutate @ index-CAuR929B.js:40
+(anonymous) @ index-CAuR929B.js:40
+fe @ index-CAuR929B.js:835
+onClick @ index-CAuR929B.js:835
+pue @ index-CAuR929B.js:37
+xue @ index-CAuR929B.js:37
+vue @ index-CAuR929B.js:37
+QM @ index-CAuR929B.js:37
+Tq @ index-CAuR929B.js:37
+(anonymous) @ index-CAuR929B.js:37
+iO @ index-CAuR929B.js:40
+eq @ index-CAuR929B.js:37
+d2 @ index-CAuR929B.js:37
+I4 @ index-CAuR929B.js:37
+Iue @ index-CAuR929B.js:37Understand this error
+index-CAuR929B.js:835 Fetch failed loading: PUT "https://app.matchpro.ai/api/admin/teams/189/status".
+mutationFn @ index-CAuR929B.js:835
+fn @ index-CAuR929B.js:40
+h @ index-CAuR929B.js:40
+start @ index-CAuR929B.js:40
+execute @ index-CAuR929B.js:40
+await in execute
+mutate @ index-CAuR929B.js:40
+(anonymous) @ index-CAuR929B.js:40
+fe @ index-CAuR929B.js:835
+onClick @ index-CAuR929B.js:835
+pue @ index-CAuR929B.js:37
+xue @ index-CAuR929B.js:37
+vue @ index-CAuR929B.js:37
+QM @ index-CAuR929B.js:37
+Tq @ index-CAuR929B.js:37
+(anonymous) @ index-CAuR929B.js:37
+iO @ index-CAuR929B.js:40
+eq @ index-CAuR929B.js:37
+d2 @ index-CAuR929B.js:37
+I4 @ index-CAuR929B.js:37
+Iue @ index-CAuR929B.js:37
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+Promise.then
+S @ out-4.5.44.js:1
+y @ out-4.5.44.js:1
+E @ out-4.5.44.js:1
+e.onload @ inner.html:1
+script
+(anonymous) @ inner.html:1
+(anonymous) @ inner.html:1
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+h @ out-4.5.44.js:1
+e @ inner.html:1
+chunk-RODKCX5K.js:3 [Violation] 'setTimeout' handler took 62ms
+shared-20e2d375ccaa62a79e283082fdc6576d.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+e @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+l @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+setTimeout
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+log @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+log @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+value @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+value @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+(anonymous) @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+injected.js:5 [USO] Button detection aborting due to timeout.
+index-CAuR929B.js:727 Fetching permissions, emulation token: not present
+chunk-LRH6BLRZ.js:31 orchestration: Initializing user store with state {}
+index-CAuR929B.js:727 Fetched permissions: {roles: Array(1), permissions: Array(42)}
+index-CAuR929B.js:727 Normalized dot permission "users.view" to "view_users"
+index-CAuR929B.js:727 Normalized dot permission "users.create" to "create_users"
+index-CAuR929B.js:727 Normalized dot permission "users.edit" to "edit_users"
+index-CAuR929B.js:727 Normalized dot permission "users.delete" to "delete_users"
+index-CAuR929B.js:727 Normalized dot permission "events.view" to "view_events"
+index-CAuR929B.js:727 Normalized dot permission "events.create" to "create_events"
+index-CAuR929B.js:727 Normalized dot permission "events.edit" to "edit_events"
+index-CAuR929B.js:727 Normalized dot permission "events.delete" to "delete_events"
+index-CAuR929B.js:727 Normalized dot permission "teams.view" to "view_teams"
+index-CAuR929B.js:727 Normalized dot permission "teams.create" to "create_teams"
+index-CAuR929B.js:727 Normalized dot permission "teams.edit" to "edit_teams"
+index-CAuR929B.js:727 Normalized dot permission "teams.delete" to "delete_teams"
+index-CAuR929B.js:727 Normalized dot permission "games.view" to "view_games"
+index-CAuR929B.js:727 Normalized dot permission "games.create" to "create_games"
+index-CAuR929B.js:727 Normalized dot permission "games.edit" to "edit_games"
+index-CAuR929B.js:727 Normalized dot permission "games.delete" to "delete_games"
+index-CAuR929B.js:727 Normalized dot permission "scores.view" to "view_scores"
+index-CAuR929B.js:727 Normalized dot permission "scores.create" to "create_scores"
+index-CAuR929B.js:727 Normalized dot permission "scores.edit" to "edit_scores"
+index-CAuR929B.js:727 Normalized dot permission "scores.delete" to "delete_scores"
+index-CAuR929B.js:727 Normalized dot permission "finances.view" to "view_finances"
+index-CAuR929B.js:727 Normalized dot permission "finances.create" to "create_finances"
+index-CAuR929B.js:727 Normalized dot permission "finances.edit" to "edit_finances"
+index-CAuR929B.js:727 Normalized dot permission "finances.delete" to "delete_finances"
+index-CAuR929B.js:727 Normalized dot permission "finances.approve" to "approve_finances"
+index-CAuR929B.js:727 Normalized dot permission "settings.view" to "view_settings"
+index-CAuR929B.js:727 Normalized dot permission "settings.edit" to "edit_settings"
+index-CAuR929B.js:727 Normalized dot permission "reports.view" to "view_reports"
+index-CAuR929B.js:727 Normalized dot permission "reports.export" to "export_reports"
+index-CAuR929B.js:727 Normalized dot permission "administrators.view" to "view_administrators"
+index-CAuR929B.js:727 Normalized dot permission "administrators.create" to "create_administrators"
+index-CAuR929B.js:727 Normalized dot permission "administrators.edit" to "edit_administrators"
+index-CAuR929B.js:727 Normalized dot permission "administrators.delete" to "delete_administrators"
+index-CAuR929B.js:727 Normalized dot permission "coupons.view" to "view_coupons"
+index-CAuR929B.js:727 Normalized dot permission "coupons.create" to "create_coupons"
+index-CAuR929B.js:727 Normalized dot permission "coupons.edit" to "edit_coupons"
+index-CAuR929B.js:727 Normalized dot permission "coupons.delete" to "delete_coupons"
+index-CAuR929B.js:727 Normalized dot permission "members.view" to "view_members"
+index-CAuR929B.js:727 Normalized dot permission "scheduling.view" to "view_scheduling"
+index-CAuR929B.js:727 Normalized dot permission "scheduling.create" to "create_scheduling"
+index-CAuR929B.js:727 Normalized dot permission "scheduling.edit" to "edit_scheduling"
+index-CAuR929B.js:727 Normalized dot permission "scheduling.delete" to "delete_scheduling"
+index-CAuR929B.js:727 Final normalized permissions: (42) ['view_users', 'create_users', 'edit_users', 'delete_users', 'view_events', 'create_events', 'edit_events', 'delete_events', 'view_teams', 'create_teams', 'edit_teams', 'delete_teams', 'view_games', 'create_games', 'edit_games', 'delete_games', 'view_scores', 'create_scores', 'edit_scores', 'delete_scores', 'view_finances', 'create_finances', 'edit_finances', 'delete_finances', 'approve_finances', 'view_settings', 'edit_settings', 'view_reports', 'export_reports', 'view_administrators', 'create_administrators', 'edit_administrators', 'delete_administrators', 'view_coupons', 'create_coupons', 'edit_coupons', 'delete_coupons', 'view_members', 'view_scheduling', 'create_scheduling', 'edit_scheduling', 'delete_scheduling']
+chunk-LRH6BLRZ.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}

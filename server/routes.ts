@@ -1798,9 +1798,10 @@ export function registerRoutes(app: Express): Server {
               selectedFeeIds: selectedFeeIds || null, // Store as comma-separated list
               totalAmount: totalAmount || null, // Total amount in cents including all fees
               // Store payment information for "Collect Now, Charge Later" workflow
-              setupIntentId: paymentMethod === 'card' ? req.body.setupIntentId : null,
-              paymentMethodId: paymentMethod === 'card' ? req.body.paymentMethodId : null,
-              paymentStatus: paymentMethod === 'card' ? 'payment_info_provided' : 
+              // If totalAmount > 0 and we have Setup Intent data, store it (validation already passed)
+              setupIntentId: (totalAmount > 0 && req.body.setupIntentId) ? req.body.setupIntentId : null,
+              paymentMethodId: (totalAmount > 0 && req.body.paymentMethodId) ? req.body.paymentMethodId : null,
+              paymentStatus: (totalAmount > 0 && req.body.setupIntentId) ? 'payment_info_provided' : 
                             paymentMethod === 'pay_later' ? 'pending' : 'pending',
               termsAcknowledged: termsAcknowledged || false,  // Use camelCase as defined in the schema
               termsAcknowledgedAt: termsAcknowledgedAt ? new Date(termsAcknowledgedAt) : new Date(),  // Use camelCase as defined in the schema
@@ -1969,23 +1970,25 @@ export function registerRoutes(app: Express): Server {
         });
 
 
-        // CRITICAL FIX: For card payments, Setup Intent validation must have already passed
-        // Do NOT create new Setup Intents here - they should be provided from frontend
+        // CRITICAL FIX: Skip payment processing if Setup Intent already validated and stored  
         let paymentResult = null;
-        if (totalAmount && totalAmount > 0 && paymentMethod === 'card') {
-          // This code path should NEVER execute for new "Collect Now, Charge Later" workflow
-          // Setup Intents must be completed before registration, not after
-          console.log('❌ CRITICAL ERROR: Card payment attempted without pre-validated Setup Intent');
-          return res.status(400).json({
-            error: 'Invalid payment workflow',
-            message: 'Card payments must complete payment setup before registration. Please refresh and try again.',
-            totalAmount: totalAmount,
-            requiresPayment: true
-          });
+        console.log('🔍 DEBUGGING SETUP INTENT DETECTION:');
+        console.log(`   totalAmount: ${totalAmount} (type: ${typeof totalAmount})`);
+        console.log(`   req.body.setupIntentId: ${req.body.setupIntentId} (type: ${typeof req.body.setupIntentId})`);
+        console.log(`   req.body.paymentMethodId: ${req.body.paymentMethodId} (type: ${typeof req.body.paymentMethodId})`);
+        
+        const hasValidatedSetupIntent = totalAmount > 0 && req.body.setupIntentId && req.body.paymentMethodId;
+        console.log(`   hasValidatedSetupIntent: ${hasValidatedSetupIntent}`);
+        
+        if (hasValidatedSetupIntent) {
+          console.log(`✅ USING PRE-VALIDATED SETUP INTENT: ${req.body.setupIntentId}`);
+          console.log(`   Payment Method: ${req.body.paymentMethodId}`);
+          console.log(`   Team: ${result.team.name} (ID: ${result.team.id})`);
+          console.log(`   Skipping legacy payment processing - Setup Intent already completed`);
         }
         
-        // Legacy payment processing for non-card methods only
-        if (totalAmount && totalAmount > 0 && paymentMethod !== 'card') {
+        // Legacy payment processing only for non-Setup Intent workflows
+        if (totalAmount && totalAmount > 0 && !hasValidatedSetupIntent) {
           try {
             // Get event's Stripe Connect account information
             const [eventConnectInfo] = await db
