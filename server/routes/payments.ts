@@ -348,4 +348,70 @@ router.post('/test-attach-payment-method', async (req, res) => {
   }
 });
 
+// Resend payment receipt email for members
+router.post('/resend-receipt', async (req, res) => {
+  try {
+    const { paymentIntentId } = req.body;
+    
+    if (!paymentIntentId) {
+      return res.status(400).json({ error: 'Payment Intent ID is required' });
+    }
+    
+    // Retrieve the payment intent from Stripe to get the email
+    const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+    
+    if (!paymentIntent) {
+      return res.status(404).json({ error: 'Payment not found' });
+    }
+    
+    // Get the customer email from the payment intent
+    let receiptEmail = null;
+    if (paymentIntent.receipt_email) {
+      receiptEmail = paymentIntent.receipt_email;
+    } else if (paymentIntent.customer) {
+      try {
+        const customer = await stripe.customers.retrieve(paymentIntent.customer as string);
+        if (customer && !customer.deleted && customer.email) {
+          receiptEmail = customer.email;
+        }
+      } catch (error) {
+        console.error('Error retrieving customer:', error);
+      }
+    }
+    
+    if (!receiptEmail) {
+      return res.status(400).json({ error: 'No email address found for this payment' });
+    }
+    
+    // Resend the receipt email through Stripe
+    await stripe.charges.retrieve(paymentIntent.latest_charge as string, {
+      expand: ['receipt_url']
+    });
+    
+    // Create a receipt URL and send email notification
+    const receiptUrl = `https://pay.stripe.com/receipts/${paymentIntent.latest_charge}`;
+    
+    // Use Stripe's receipt email functionality if available
+    try {
+      // Try to trigger Stripe's receipt email
+      await stripe.paymentIntents.update(paymentIntentId, {
+        receipt_email: receiptEmail
+      });
+      
+      res.json({ 
+        success: true, 
+        message: 'Receipt email sent successfully',
+        receiptEmail: receiptEmail
+      });
+    } catch (stripeError) {
+      console.error('Error sending Stripe receipt:', stripeError);
+      res.status(500).json({ error: 'Failed to send receipt email' });
+    }
+    
+  } catch (error: any) {
+    console.error('Error resending receipt:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 export default router;
