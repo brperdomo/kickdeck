@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { db } from '@db/index';
-import { users, teams, events, eventAgeGroups, players } from '@db/schema';
+import { users, teams, events, eventAgeGroups, players, paymentTransactions } from '@db/schema';
 import { eq, like, and, or, desc, asc, inArray } from 'drizzle-orm';
 import { sendTemplatedEmail } from '../../services/emailService';
 import { SQL, sql } from 'drizzle-orm';
@@ -382,6 +382,32 @@ export async function getCurrentUserRegistrations(req: Request, res: Response) {
     
     // Enhanced version of formattedRegistrations with payment details
     const formattedRegistrations = await Promise.all(teamRegistrations.map(async reg => {
+      // Get the actual payment amount from payment_transactions table for approved teams
+      let actualAmountCharged = reg.team.registrationFee || reg.team.totalAmount || 0;
+      let transactionData = null;
+      
+      if (reg.team.status === 'approved' && reg.team.paymentIntentId) {
+        console.log(`Looking up payment for team ${reg.team.id} with payment intent: ${reg.team.paymentIntentId}`);
+        try {
+          const [paymentTransaction] = await db
+            .select()
+            .from(paymentTransactions)
+            .where(eq(paymentTransactions.paymentIntentId, reg.team.paymentIntentId))
+            .limit(1);
+          
+          if (paymentTransaction) {
+            // Use the actual charged amount from the transaction
+            actualAmountCharged = paymentTransaction.amount;
+            transactionData = paymentTransaction;
+            console.log(`✓ Found payment transaction for team ${reg.team.id}: $${(actualAmountCharged / 100).toFixed(2)}`);
+          } else {
+            console.log(`✗ No payment transaction found for team ${reg.team.id}`);
+          }
+        } catch (error) {
+          console.error(`Error looking up payment transaction for team ${reg.team.id}:`, error);
+        }
+      }
+      
       // Default registration object
       const registration = {
         id: reg.team.id,
@@ -391,7 +417,7 @@ export async function getCurrentUserRegistrations(req: Request, res: Response) {
         ageGroup: reg.ageGroup?.ageGroup || 'Unknown Age Group',
         registeredAt: reg.team.createdAt,
         status: reg.team.status || 'registered',
-        amount: reg.team.registrationFee || 0,
+        amount: actualAmountCharged,
         paymentId: reg.team.paymentIntentId || undefined,
         
         // Additional payment details
