@@ -1,0 +1,310 @@
+🚨 COMPONENT RE-MOUNT DEBUG: {mountId: 'uabtfq0ax', timestamp: '2025-06-27T04:46:38.534Z', isPreview: false, eventIdOverride: undefined, currentLocation: 'https://app.matchpro.ai/register/event/1755746106/form', …}
+index-CAuR929B.js:886 Enhanced registration flow: Starting at step: team
+index-CAuR929B.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'team', isPreview: false}
+index-CAuR929B.js:886 Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T04:46:38.535Z
+index-CAuR929B.js:886 Event timezone: America/New_York
+index-CAuR929B.js:886 Deadline passed: false
+index-CAuR929B.js:886 🚨 COMPONENT RE-MOUNT DEBUG: {mountId: 'uabtfq0ax', timestamp: '2025-06-27T04:46:39.899Z', isPreview: false, eventIdOverride: undefined, currentLocation: 'https://app.matchpro.ai/register/event/1755746106/form', …}
+index-CAuR929B.js:886 Enhanced registration flow: Starting at step: team
+index-CAuR929B.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'team', isPreview: false}
+index-CAuR929B.js:886 Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T04:46:39.905Z
+index-CAuR929B.js:886 Event timezone: America/New_York
+index-CAuR929B.js:886 Deadline passed: false
+index-CAuR929B.js:886 🚨 COMPONENT RE-MOUNT DEBUG: {mountId: 'uabtfq0ax', timestamp: '2025-06-27T04:46:40.237Z', isPreview: false, eventIdOverride: undefined, currentLocation: 'https://app.matchpro.ai/register/event/1755746106/form', …}
+index-CAuR929B.js:886 Enhanced registration flow: Starting at step: team
+index-CAuR929B.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'team', isPreview: false}
+index-CAuR929B.js:886 Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T04:46:40.237Z
+index-CAuR929B.js:886 Event timezone: America/New_York
+index-CAuR929B.js:886 Deadline passed: false
+index-CAuR929B.js:886 🚨 COMPONENT RE-MOUNT DEBUG: {mountId: 'uabtfq0ax', timestamp: '2025-06-27T04:46:40.404Z', isPreview: false, eventIdOverride: undefined, currentLocation: 'https://app.matchpro.ai/register/event/1755746106/form', …}
+index-CAuR929B.js:886 Enhanced registration flow: Starting at step: team
+index-CAuR929B.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'team', isPreview: false}
+index-CAuR929B.js:886 Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T04:46:40.404Z
+index-CAuR929B.js:886 Event timezone: America/New_York
+index-CAuR929B.js:886 Deadline passed: false
+index-CAuR929B.js:886 🚨 COMPONENT RE-MOUNT DEBUG: {mountId: 'uabtfq0ax', timestamp: '2025-06-27T04:46:40.408Z', isPreview: false, eventIdOverride: undefined, currentLocation: 'https://app.matchpro.ai/register/event/1755746106/form', …}
+index-CAuR929B.js:886 Enhanced registration flow: Starting at step: team
+index-CAuR929B.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'team', isPreview: false}
+index-CAuR929B.js:886 Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T04:46:40.408Z
+index-CAuR929B.js:886 Event timezone: America/New_York
+index-CAuR929B.js:886 Deadline passed: false
+7Fetch finished loading: POST "<URL>".
+index-CAuR929B.js:886 🚨 COMPONENT RE-MOUNT DEBUG: {mountId: 'uabtfq0ax', timestamp: '2025-06-27T04:46:40.505Z', isPreview: false, eventIdOverride: undefined, currentLocation: 'https://app.matchpro.ai/register/event/1755746106/form', …}
+index-CAuR929B.js:886 Enhanced registration flow: Starting at step: team
+index-CAuR929B.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'team', isPreview: false}
+index-CAuR929B.js:886 Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T04:46:40.505Z
+index-CAuR929B.js:886 Event timezone: America/New_York
+index-CAuR929B.js:886 Deadline passed: false
+index-CAuR929B.js:886 🚨 COMPONENT RE-MOUNT DEBUG: {mountId: 'uabtfq0ax', timestamp: '2025-06-27T04:46:40.536Z', isPreview: false, eventIdOverride: undefined, currentLocation: 'https://app.matchpro.ai/register/event/1755746106/form', …}
+index-CAuR929B.js:886 Enhanced registration flow: Starting at step: team
+index-CAuR929B.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'team', isPreview: false}
+index-CAuR929B.js:886 Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T04:46:40.536Z
+index-CAuR929B.js:886 Event timezone: America/New_York
+index-CAuR929B.js:886 Deadline passed: false
+index-CAuR929B.js:886 🚨 COMPONENT RE-MOUNT DEBUG: {mountId: 'uabtfq0ax', timestamp: '2025-06-27T04:46:41.108Z', isPreview: false, eventIdOverride: undefined, currentLocation: 'https://app.matchpro.ai/register/event/1755746106/form', …}
+index-CAuR929B.js:886 Enhanced registration flow: Starting at step: team
+index-CAuR929B.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'team', isPreview: false}
+index-CAuR929B.js:886 Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T04:46:41.109Z
+index-CAuR929B.js:886 Event timezone: America/New_York
+index-CAuR929B.js:886 Deadline passed: false
+index-CAuR929B.js:886 🚨 COMPONENT RE-MOUNT DEBUG: {mountId: 'uabtfq0ax', timestamp: '2025-06-27T04:46:42.043Z', isPreview: false, eventIdOverride: undefined, currentLocation: 'https://app.matchpro.ai/register/event/1755746106/form', …}
+index-CAuR929B.js:886 Enhanced registration flow: Starting at step: team
+index-CAuR929B.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'team', isPreview: false}
+index-CAuR929B.js:886 Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T04:46:42.044Z
+index-CAuR929B.js:886 Event timezone: America/New_York
+index-CAuR929B.js:886 Deadline passed: false
+index-CAuR929B.js:886 🚨 COMPONENT RE-MOUNT DEBUG: {mountId: 'uabtfq0ax', timestamp: '2025-06-27T04:46:42.238Z', isPreview: false, eventIdOverride: undefined, currentLocation: 'https://app.matchpro.ai/register/event/1755746106/form', …}
+index-CAuR929B.js:886 Enhanced registration flow: Starting at step: team
+index-CAuR929B.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'team', isPreview: false}
+index-CAuR929B.js:886 Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T04:46:42.238Z
+index-CAuR929B.js:886 Event timezone: America/New_York
+index-CAuR929B.js:886 Deadline passed: false
+index-CAuR929B.js:886 🚨 COMPONENT RE-MOUNT DEBUG: {mountId: 'uabtfq0ax', timestamp: '2025-06-27T04:46:44.949Z', isPreview: false, eventIdOverride: undefined, currentLocation: 'https://app.matchpro.ai/register/event/1755746106/form', …}
+index-CAuR929B.js:886 Enhanced registration flow: Starting at step: team
+index-CAuR929B.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'team', isPreview: false}
+index-CAuR929B.js:886 Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T04:46:44.950Z
+index-CAuR929B.js:886 Event timezone: America/New_York
+index-CAuR929B.js:886 Deadline passed: false
+form:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+form:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+index-CAuR929B.js:886 🚨 COMPONENT RE-MOUNT DEBUG: {mountId: 'uabtfq0ax', timestamp: '2025-06-27T04:46:45.992Z', isPreview: false, eventIdOverride: undefined, currentLocation: 'https://app.matchpro.ai/register/event/1755746106/form', …}
+index-CAuR929B.js:886 Enhanced registration flow: Starting at step: team
+index-CAuR929B.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'team', isPreview: false}
+index-CAuR929B.js:886 Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T04:46:45.993Z
+index-CAuR929B.js:886 Event timezone: America/New_York
+index-CAuR929B.js:886 Deadline passed: false
+index-CAuR929B.js:48 Select is changing from uncontrolled to controlled. Components should not switch from controlled to uncontrolled (or vice versa). Decide between using a controlled or uncontrolled value for the lifetime of the component.
+(anonymous) @ index-CAuR929B.js:48
+o1 @ index-CAuR929B.js:40
+Rf @ index-CAuR929B.js:40
+EF @ index-CAuR929B.js:40
+Ld @ index-CAuR929B.js:38
+Qme @ index-CAuR929B.js:40
+cu @ index-CAuR929B.js:40
+SW @ index-CAuR929B.js:40
+N @ index-CAuR929B.js:25
+O @ index-CAuR929B.js:25Understand this warning
+index-CAuR929B.js:886 Fetching fees for age group 10006 in event 1755746106
+index-CAuR929B.js:886 Fetch finished loading: GET "https://app.matchpro.ai/api/age-groups/10006/brackets".
+(anonymous) @ index-CAuR929B.js:886
+(anonymous) @ index-CAuR929B.js:886
+o1 @ index-CAuR929B.js:40
+Rf @ index-CAuR929B.js:40
+EF @ index-CAuR929B.js:40
+Ld @ index-CAuR929B.js:38
+Qme @ index-CAuR929B.js:40
+cu @ index-CAuR929B.js:40
+SW @ index-CAuR929B.js:40
+N @ index-CAuR929B.js:25
+O @ index-CAuR929B.js:25
+index-CAuR929B.js:886 Fetched brackets: []
+index-CAuR929B.js:886 🚨 COMPONENT RE-MOUNT DEBUG: {mountId: 'uabtfq0ax', timestamp: '2025-06-27T04:46:46.091Z', isPreview: false, eventIdOverride: undefined, currentLocation: 'https://app.matchpro.ai/register/event/1755746106/form', …}
+index-CAuR929B.js:886 Enhanced registration flow: Starting at step: team
+index-CAuR929B.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'team', isPreview: false}
+index-CAuR929B.js:886 Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T04:46:46.091Z
+index-CAuR929B.js:886 Event timezone: America/New_York
+index-CAuR929B.js:886 Deadline passed: false
+index-CAuR929B.js:886 Fetched fees: {fees: Array(1), fee: {…}}
+index-CAuR929B.js:886 Adding 1 fees from fees array
+index-CAuR929B.js:886 All normalized fees: [{…}]
+index-CAuR929B.js:886 Required fees by type: {registration: Array(1)}
+index-CAuR929B.js:886 Selected primary fee: {id: 34, name: 'Test Fee', amount: 100, feeType: 'registration', isRequired: true, …}
+index-CAuR929B.js:886 Adding 1 required fees to total automatically
+index-CAuR929B.js:886 Fetch finished loading: GET "https://app.matchpro.ai/api/events/1755746106/fees?ageGroupId=10006".
+(anonymous) @ index-CAuR929B.js:886
+(anonymous) @ index-CAuR929B.js:886
+o1 @ index-CAuR929B.js:40
+Rf @ index-CAuR929B.js:40
+EF @ index-CAuR929B.js:40
+Ld @ index-CAuR929B.js:38
+Qme @ index-CAuR929B.js:40
+cu @ index-CAuR929B.js:40
+SW @ index-CAuR929B.js:40
+N @ index-CAuR929B.js:25
+O @ index-CAuR929B.js:25
+index-CAuR929B.js:886 🚨 COMPONENT RE-MOUNT DEBUG: {mountId: 'uabtfq0ax', timestamp: '2025-06-27T04:46:46.181Z', isPreview: false, eventIdOverride: undefined, currentLocation: 'https://app.matchpro.ai/register/event/1755746106/form', …}
+index-CAuR929B.js:886 Enhanced registration flow: Starting at step: team
+index-CAuR929B.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'team', isPreview: false}
+index-CAuR929B.js:886 Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T04:46:46.181Z
+index-CAuR929B.js:886 Event timezone: America/New_York
+index-CAuR929B.js:886 Deadline passed: false
+index-CAuR929B.js:886 Fetch finished loading: GET "https://app.matchpro.ai/api/age-groups/10006/brackets".
+(anonymous) @ index-CAuR929B.js:886
+(anonymous) @ index-CAuR929B.js:886
+o1 @ index-CAuR929B.js:40
+Rf @ index-CAuR929B.js:40
+EF @ index-CAuR929B.js:40
+Ld @ index-CAuR929B.js:38
+Qme @ index-CAuR929B.js:40
+cu @ index-CAuR929B.js:40
+SW @ index-CAuR929B.js:40
+N @ index-CAuR929B.js:25
+O @ index-CAuR929B.js:25
+index-CAuR929B.js:886 Fetched brackets: []
+index-CAuR929B.js:886 🚨 COMPONENT RE-MOUNT DEBUG: {mountId: 'uabtfq0ax', timestamp: '2025-06-27T04:46:46.291Z', isPreview: false, eventIdOverride: undefined, currentLocation: 'https://app.matchpro.ai/register/event/1755746106/form', …}
+index-CAuR929B.js:886 Enhanced registration flow: Starting at step: team
+index-CAuR929B.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'team', isPreview: false}
+index-CAuR929B.js:886 Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T04:46:46.292Z
+index-CAuR929B.js:886 Event timezone: America/New_York
+index-CAuR929B.js:886 Deadline passed: false
+index-CAuR929B.js:886 🚨 COMPONENT RE-MOUNT DEBUG: {mountId: 'uabtfq0ax', timestamp: '2025-06-27T04:46:47.757Z', isPreview: false, eventIdOverride: undefined, currentLocation: 'https://app.matchpro.ai/register/event/1755746106/form', …}
+index-CAuR929B.js:886 Enhanced registration flow: Starting at step: team
+index-CAuR929B.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'team', isPreview: false}
+index-CAuR929B.js:886 Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T04:46:47.758Z
+index-CAuR929B.js:886 Event timezone: America/New_York
+index-CAuR929B.js:886 Deadline passed: false
+index-CAuR929B.js:886 Team form submission attempted with data: {name: 'Hi Team', ageGroupId: 10006, bracketId: null, headCoachName: 'Bryan Perdomo', headCoachEmail: 'bperdomo@zoho.com', …}
+index-CAuR929B.js:886 Form errors: {}
+index-CAuR929B.js:886 Form validation passed, proceeding to payment step
+index-CAuR929B.js:886 🔄 Step change: team → payment
+index-CAuR929B.js:886 🚨 COMPONENT RE-MOUNT DEBUG: {mountId: 'uabtfq0ax', timestamp: '2025-06-27T04:46:49.433Z', isPreview: false, eventIdOverride: undefined, currentLocation: 'https://app.matchpro.ai/register/event/1755746106/form', …}
+index-CAuR929B.js:886 Enhanced registration flow: Starting at step: payment
+index-CAuR929B.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'payment', isPreview: false}
+index-CAuR929B.js:886 Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T04:46:49.433Z
+index-CAuR929B.js:886 Event timezone: America/New_York
+index-CAuR929B.js:886 Deadline passed: false
+index-CAuR929B.js:886 🚨 COMPONENT RE-MOUNT DEBUG: {mountId: 'uabtfq0ax', timestamp: '2025-06-27T04:46:49.435Z', isPreview: false, eventIdOverride: undefined, currentLocation: 'https://app.matchpro.ai/register/event/1755746106/form', …}
+index-CAuR929B.js:886 Enhanced registration flow: Starting at step: payment
+index-CAuR929B.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'payment', isPreview: false}
+index-CAuR929B.js:886 Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T04:46:49.435Z
+index-CAuR929B.js:886 Event timezone: America/New_York
+index-CAuR929B.js:886 Deadline passed: false
+index-CAuR929B.js:886 🚨 COMPONENT RE-MOUNT DEBUG: {mountId: 'uabtfq0ax', timestamp: '2025-06-27T04:46:51.624Z', isPreview: false, eventIdOverride: undefined, currentLocation: 'https://app.matchpro.ai/register/event/1755746106/form', …}
+index-CAuR929B.js:886 Enhanced registration flow: Starting at step: payment
+index-CAuR929B.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'payment', isPreview: false}
+index-CAuR929B.js:886 Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T04:46:51.625Z
+index-CAuR929B.js:886 Event timezone: America/New_York
+index-CAuR929B.js:886 Deadline passed: false
+index-CAuR929B.js:886 Loading Stripe (attempt 1/3)...
+index-CAuR929B.js:886 🎯 Creating setup intent for payment form initialization
+index-CAuR929B.js:886 🎯 Team ID: temp-1750999575238-9q2hozo36 Amount: 100 Team Name: Hi Team
+index-CAuR929B.js:886 ✅ Stripe loaded successfully
+index-CAuR929B.js:886 🎯 Setup intent created successfully: seti_1ReUBbP4BpmZARxtHtkeNPB3
+index-CAuR929B.js:886 🎯 Client secret received, length: 68
+11Fetch finished loading: GET "<URL>".
+6XHR finished loading: POST "<URL>".
+106Fetch finished loading: POST "<URL>".
+shared-20e2d375ccaa62a79e283082fdc6576d.js:1 [Violation] 'setTimeout' handler took 56ms
+shared-20e2d375ccaa62a79e283082fdc6576d.js:1 [Violation] 'setTimeout' handler took 71ms
+main.js:288 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+(anonymous) @ trycatch.js:220
+(anonymous) @ instrument.js:266
+_.B.send @ main.js:288
+Sca @ main.js:270
+Uca @ main.js:262
+await in Uca
+google.maps.Load @ js?key=AIzaSyCuvGvOqj_eSUVyAu3Dwq47JBdpAN3r-5Y&loading=async&libraries=places&callback=initGoogleMapsService:38
+(anonymous) @ main.js:499
+(anonymous) @ main.js:499
+hcaptcha.html:14  
+8[Violation] Added non-passive event listener to a scroll-blocking <some> event. Consider marking event handler as 'passive' to make the page more responsive. See <URL>
+hcaptcha.html:14  
+index-CAuR929B.js:886 🎯 Confirming setup intent with client secret: seti_1ReUBbP4BpmZARxtHtkeNPB3_secret_SZdS9B21cpLmuxPlzKe5Hg4DNL1r1Ka
+index-CAuR929B.js:886 🎯 Setup intent confirmation result: {error: undefined, setupIntentStatus: 'succeeded', setupIntentId: 'seti_1ReUBbP4BpmZARxtHtkeNPB3', paymentMethodId: 'pm_1ReUBhP4BpmZARxtxF4udImY'}
+index-CAuR929B.js:886 🎯 Payment setup completed successfully
+index-CAuR929B.js:886 🎯 Stored Setup Intent ID: seti_1ReUBbP4BpmZARxtHtkeNPB3
+index-CAuR929B.js:886 🎯 Stored Payment Method ID: pm_1ReUBhP4BpmZARxtxF4udImY
+index-CAuR929B.js:886 ✅ Payment setup callback received
+index-CAuR929B.js:886 ✅ Setup Intent ID: seti_1ReUBbP4BpmZARxtHtkeNPB3
+index-CAuR929B.js:886 ✅ Payment Method ID: pm_1ReUBhP4BpmZARxtxF4udImY
+index-CAuR929B.js:886 🚨 COMPONENT RE-MOUNT DEBUG: {mountId: 'uabtfq0ax', timestamp: '2025-06-27T04:47:01.372Z', isPreview: false, eventIdOverride: undefined, currentLocation: 'https://app.matchpro.ai/register/event/1755746106/form', …}
+index-CAuR929B.js:886 Enhanced registration flow: Starting at step: payment
+index-CAuR929B.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'payment', isPreview: false}
+index-CAuR929B.js:886 Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T04:47:01.372Z
+index-CAuR929B.js:886 Event timezone: America/New_York
+index-CAuR929B.js:886 Deadline passed: false
+index-CAuR929B.js:886 🎯 Creating setup intent for payment form initialization
+index-CAuR929B.js:886 🎯 Team ID: temp-1750999575238-9q2hozo36 Amount: 100 Team Name: Hi Team
+index-CAuR929B.js:886 🎯 Setup intent created successfully: seti_1ReUBbP4BpmZARxtHtkeNPB3
+index-CAuR929B.js:886 🎯 Client secret received, length: 68
+index-CAuR929B.js:886 🚨 COMPONENT RE-MOUNT DEBUG: {mountId: 'uabtfq0ax', timestamp: '2025-06-27T04:47:06.379Z', isPreview: false, eventIdOverride: undefined, currentLocation: 'https://app.matchpro.ai/register/event/1755746106/form', …}
+index-CAuR929B.js:886 Enhanced registration flow: Starting at step: payment
+index-CAuR929B.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'payment', isPreview: false}
+index-CAuR929B.js:886 Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T04:47:06.379Z
+index-CAuR929B.js:886 Event timezone: America/New_York
+index-CAuR929B.js:886 Deadline passed: false
+index-CAuR929B.js:886 🎯 Creating setup intent for payment form initialization
+index-CAuR929B.js:886 🎯 Team ID: temp-1750999575238-9q2hozo36 Amount: 100 Team Name: Hi Team
+index-CAuR929B.js:886 🎯 Setup intent created successfully: seti_1ReUBbP4BpmZARxtHtkeNPB3
+index-CAuR929B.js:886 🎯 Client secret received, length: 68
+index-CAuR929B.js:886 🚨 COMPONENT RE-MOUNT DEBUG: {mountId: 'uabtfq0ax', timestamp: '2025-06-27T04:47:08.380Z', isPreview: false, eventIdOverride: undefined, currentLocation: 'https://app.matchpro.ai/register/event/1755746106/form', …}
+index-CAuR929B.js:886 Enhanced registration flow: Starting at step: payment
+index-CAuR929B.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'payment', isPreview: false}
+index-CAuR929B.js:886 Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T04:47:08.381Z
+index-CAuR929B.js:886 Event timezone: America/New_York
+index-CAuR929B.js:886 Deadline passed: false
+index-CAuR929B.js:886 🎯 Creating setup intent for payment form initialization
+index-CAuR929B.js:886 🎯 Team ID: temp-1750999575238-9q2hozo36 Amount: 100 Team Name: Hi Team
+index-CAuR929B.js:886 🎯 Setup intent created successfully: seti_1ReUBbP4BpmZARxtHtkeNPB3
+index-CAuR929B.js:886 🎯 Client secret received, length: 68
+shared-20e2d375ccaa62a79e283082fdc6576d.js:1 [Violation] 'setTimeout' handler took 69ms
+index-CAuR929B.js:886 📝 Submitting registration with Setup Intent: seti_1ReUBbP4BpmZARxtHtkeNPB3 and Payment Method: pm_1ReUBhP4BpmZARxtxF4udImY
+index-CAuR929B.js:889 🎯 Payment setup completed: seti_1ReUBbP4BpmZARxtHtkeNPB3, Payment method: pm_1ReUBhP4BpmZARxtxF4udImY
+index-CAuR929B.js:889 🎯 addRosterLater value: true
+index-CAuR929B.js:889 🎯 Players count: 0
+index-CAuR929B.js:889 🎯 Total amount: 100
+index-CAuR929B.js:889 🎯 Final registration payload: {name: 'Hi Team', ageGroupId: 10006, bracketId: null, headCoachName: 'Bryan Perdomo', headCoachEmail: 'bperdomo@zoho.com', …}
+index-CAuR929B.js:889 🎯 Payload validation: SetupIntent: seti_1ReUBbP4BpmZARxtHtkeNPB3 PaymentMethod: pm_1ReUBhP4BpmZARxtxF4udImY
+index-CAuR929B.js:886 🎯 Sending registration payload: {name: 'Hi Team', ageGroupId: 10006, bracketId: null, headCoachName: 'Bryan Perdomo', headCoachEmail: 'bperdomo@zoho.com', …}
+index-CAuR929B.js:886 🧹 Cleared setup intent cache for team temp-1750999575238-9q2hozo36
+index-CAuR929B.js:886 🚨 COMPONENT RE-MOUNT DEBUG: {mountId: 'uabtfq0ax', timestamp: '2025-06-27T04:47:13.009Z', isPreview: false, eventIdOverride: undefined, currentLocation: 'https://app.matchpro.ai/register/event/1755746106/form', …}
+index-CAuR929B.js:886 Enhanced registration flow: Starting at step: payment
+index-CAuR929B.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'payment', isPreview: false}
+index-CAuR929B.js:886 Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T04:47:13.013Z
+index-CAuR929B.js:886 Event timezone: America/New_York
+index-CAuR929B.js:886 Deadline passed: false
+index-CAuR929B.js:886 🎯 Creating setup intent for payment form initialization
+index-CAuR929B.js:886 🎯 Team ID: temp-1750999575238-9q2hozo36 Amount: 100 Team Name: Hi Team
+index-CAuR929B.js:886 🎯 Setup intent created successfully: seti_1ReUBbP4BpmZARxtHtkeNPB3
+index-CAuR929B.js:886 🎯 Client secret received, length: 68
+shared-20e2d375ccaa62a79e283082fdc6576d.js:1 [Violation] 'setTimeout' handler took 52ms
+index-CAuR929B.js:886 🔄 Step change: payment → success
+index-CAuR929B.js:886 🚨 COMPONENT RE-MOUNT DEBUG: {mountId: 'uabtfq0ax', timestamp: '2025-06-27T04:47:13.542Z', isPreview: false, eventIdOverride: undefined, currentLocation: 'https://app.matchpro.ai/register/event/1755746106/form', …}
+index-CAuR929B.js:886 Enhanced registration flow: Starting at step: personal
+index-CAuR929B.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'personal', isPreview: false}
+index-CAuR929B.js:886 Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T04:47:13.543Z
+index-CAuR929B.js:886 Event timezone: America/New_York
+index-CAuR929B.js:886 Deadline passed: false
+form:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+form:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+shared-20e2d375ccaa62a79e283082fdc6576d.js:1 Uncaught (in promise) FetchError: Error fetching https://r.stripe.com/b: Failed to fetch
+    at shared-20e2d375ccaa62a79e283082fdc6576d.js:1:212397
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+Promise.catch
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+e @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+l @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+log @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+log @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+value @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+setTimeout
+value @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+reporter @ controller-with-preconnect-091c19eb1c5e6f0e078cf8d2a7a4f525.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+setTimeout
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1
+(anonymous) @ shared-20e2d375ccaa62a79e283082fdc6576d.js:1Understand this error
+index-CAuR929B.js:886 🚨 COMPONENT RE-MOUNT DEBUG: {mountId: 'uabtfq0ax', timestamp: '2025-06-27T04:47:18.547Z', isPreview: false, eventIdOverride: undefined, currentLocation: 'https://app.matchpro.ai/register/event/1755746106/form', …}
+index-CAuR929B.js:886 Enhanced registration flow: Starting at step: personal
+index-CAuR929B.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'personal', isPreview: false}
+index-CAuR929B.js:886 Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T04:47:18.548Z
+index-CAuR929B.js:886 Event timezone: America/New_York
+index-CAuR929B.js:886 Deadline passed: false
+index-CAuR929B.js:886 🚨 COMPONENT RE-MOUNT DEBUG: {mountId: 'uabtfq0ax', timestamp: '2025-06-27T04:47:20.548Z', isPreview: false, eventIdOverride: undefined, currentLocation: 'https://app.matchpro.ai/register/event/1755746106/form', …}
+index-CAuR929B.js:886 Enhanced registration flow: Starting at step: personal
+index-CAuR929B.js:886 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'personal', isPreview: false}
+index-CAuR929B.js:886 Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T04:47:20.549Z
+index-CAuR929B.js:886 Event timezone: America/New_York
+index-CAuR929B.js:886 Deadline passed: false
