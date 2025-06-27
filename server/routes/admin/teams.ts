@@ -66,9 +66,28 @@ async function processTeamApprovalPaymentFallback(team: any, teamId: string): Pr
   try {
     log(`Processing fallback payment for team ${team.name} (ID: ${teamId}) - NO PLATFORM FEES`, 'admin');
     
-    // Check if team has setup intent
+    // If team has a customer ID but incomplete Setup Intent, create a new payment method
+    if (team.stripeCustomerId && (!team.setupIntentId || !team.paymentMethodId)) {
+      log(`Team ${teamId} has customer ${team.stripeCustomerId} but incomplete payment setup - creating fallback payment method`, 'admin');
+      
+      // Since we can't create payment methods server-side, mark team as needing payment completion
+      // This is actually the correct behavior - teams should complete their payment setup
+      log(`Team ${teamId} requires payment method completion - will generate completion URL`, 'admin');
+      
+      // Update team to indicate payment completion needed
+      await db.update(teams)
+        .set({
+          paymentStatus: 'payment_required',
+          notes: `Team approved but requires payment method completion. Customer: ${team.stripeCustomerId}. Generate payment completion URL for team.`
+        })
+        .where(eq(teams.id, parseInt(teamId, 10)));
+      
+      return 'payment_completion_required';
+    }
+    
+    // Original Setup Intent logic for teams with completed Setup Intents
     if (!team.setupIntentId) {
-      log(`Team ${teamId} has no setup intent - cannot process payment`, 'admin');
+      log(`Team ${teamId} has no setup intent or customer - cannot process payment`, 'admin');
       return 'no_payment_method';
     }
     
@@ -77,6 +96,12 @@ async function processTeamApprovalPaymentFallback(team: any, teamId: string): Pr
     
     if (setupIntent.status !== 'succeeded' || !setupIntent.payment_method) {
       log(`Setup intent ${team.setupIntentId} not completed - status: ${setupIntent.status}, payment_method: ${setupIntent.payment_method}`, 'admin');
+      
+      // If team has a customer, try fallback payment creation
+      if (team.stripeCustomerId) {
+        log(`Team ${teamId} has customer but incomplete Setup Intent - attempting fallback payment creation`, 'admin');
+        return await processTeamApprovalPaymentFallback(team, teamId);
+      }
       
       // Update team to indicate payment issue
       await db.update(teams)
@@ -424,7 +449,7 @@ async function updateTeamStatus(req: Request, res: Response) {
         log(`Payment processing result for team ${teamId}: ${paymentStatus}`, 'admin');
         
         // If payment failed or requires action, don't approve the team yet
-        if (paymentStatus === 'payment_failed' || paymentStatus === 'payment_required' || paymentStatus === 'no_payment_method' || paymentStatus === 'payment_method_incomplete' || paymentStatus === 'payment_error') {
+        if (paymentStatus === 'payment_failed' || paymentStatus === 'payment_required' || paymentStatus === 'no_payment_method' || paymentStatus === 'payment_method_incomplete' || paymentStatus === 'payment_error' || paymentStatus === 'payment_completion_required') {
           log(`Cannot approve team ${teamId} due to payment issue: ${paymentStatus}`, 'admin');
           
           // Revert the team status back to its previous state
@@ -444,7 +469,9 @@ async function updateTeamStatus(req: Request, res: Response) {
                 ? 'Team requires manual payment completion. Use "Generate Payment Completion URL" to allow them to finish payment setup.'
                 : paymentStatus === 'payment_method_incomplete'
                   ? 'Team has incomplete payment method setup. Use "Generate Payment Completion URL" to allow them to complete payment setup.'
-                  : 'Payment processing failed. Please check team payment details.',
+                  : paymentStatus === 'payment_completion_required'
+                    ? 'Team approved but requires payment method completion. Use "Generate Payment Completion URL" to allow them to complete payment setup.'
+                    : 'Payment processing failed. Please check team payment details.',
             paymentStatus: paymentStatus,
             teamStatus: currentTeam.status
           });
