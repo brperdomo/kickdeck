@@ -206,8 +206,8 @@ router.post('/update-setup-status', async (req, res) => {
     
     // Only update real teams (not temp IDs)
     if (typeof teamId === 'number' || !teamId.toString().startsWith('temp-')) {
-      const { db } = await import('../db');
-      const { teams } = await import('../db/schema');
+      const { db } = await import('../../db');
+      const { teams } = await import('../../db/schema');
       const { eq } = await import('drizzle-orm');
       
       const numericTeamId = typeof teamId === 'number' ? teamId : parseInt(teamId.toString());
