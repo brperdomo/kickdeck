@@ -191,22 +191,25 @@ export default function MemberRosterUpload() {
           <div className="space-y-4">
             <p>Your CSV file should have the following columns (header row required):</p>
             <div className="bg-muted p-3 rounded-md font-mono text-sm">
-              firstName,lastName,dateOfBirth,position,jerseyNumber
+              First Name,Last Name,Date of Birth,Jersey Number,Medical Notes,Emergency Contact First Name,Emergency Contact Last Name,Emergency Contact Phone
             </div>
             <div className="grid md:grid-cols-2 gap-4 text-sm">
               <div>
                 <h4 className="font-semibold mb-2">Required columns:</h4>
                 <ul className="space-y-1 text-muted-foreground">
-                  <li>• firstName - Player's first name</li>
-                  <li>• lastName - Player's last name</li>
-                  <li>• dateOfBirth - Format: YYYY-MM-DD</li>
+                  <li>• First Name - Player's first name</li>
+                  <li>• Last Name - Player's last name</li>
+                  <li>• Date of Birth - Format: YYYY-MM-DD</li>
+                  <li>• Emergency Contact First Name</li>
+                  <li>• Emergency Contact Last Name</li>
+                  <li>• Emergency Contact Phone</li>
                 </ul>
               </div>
               <div>
                 <h4 className="font-semibold mb-2">Optional columns:</h4>
                 <ul className="space-y-1 text-muted-foreground">
-                  <li>• position - Player position (e.g., Forward, Midfielder)</li>
-                  <li>• jerseyNumber - Player's jersey number</li>
+                  <li>• Jersey Number - Player's jersey number</li>
+                  <li>• Medical Notes - Any medical conditions or allergies</li>
                 </ul>
               </div>
             </div>

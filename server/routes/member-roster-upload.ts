@@ -178,7 +178,7 @@ router.post('/teams/:teamId/roster', requireAuth, upload.single('file'), async (
         lastName: record['lastName'] || record['Last Name'],
         jerseyNumber: record['jerseyNumber'] || record['Jersey Number'] || undefined,
         dateOfBirth: record['dateOfBirth'] || record['Date of Birth'],
-        medicalNotes: record['medicalNotes'] || record['Notes'] || undefined,
+        medicalNotes: record['medicalNotes'] || record['Medical Notes'] || undefined,
         emergencyContactFirstName: record['emergencyContactFirstName'] || record['Emergency Contact First Name'],
         emergencyContactLastName: record['emergencyContactLastName'] || record['Emergency Contact Last Name'],
         emergencyContactPhone: record['emergencyContactPhone'] || record['Emergency Contact Phone'],
@@ -399,13 +399,14 @@ router.get('/teams/:teamId/players', requireAuth, async (req: Request, res: Resp
 
 // Download CSV template
 router.get('/template', (req: Request, res: Response) => {
-  // Create the CSV header exactly as shown in the registration process
-  const csvHeader = 'firstName,lastName,dateOfBirth,position,jerseyNumber\n';
+  // Create the CSV header matching the full registration requirements
+  const csvHeader = 'First Name,Last Name,Date of Birth,Jersey Number,Medical Notes,Emergency Contact First Name,Emergency Contact Last Name,Emergency Contact Phone\n';
   
-  // Add an example row for guidance
-  const exampleRow = 'John,Doe,2010-05-15,Forward,10\n';
+  // Add example rows for guidance
+  const exampleRow1 = 'John,Doe,2005-01-15,10,Allergic to penicillin,Mary,Doe,555-123-4567\n';
+  const exampleRow2 = 'Jane,Smith,2005-03-22,7,No known conditions,Robert,Smith,555-987-6543\n';
   
-  const csvContent = csvHeader + exampleRow;
+  const csvContent = csvHeader + exampleRow1 + exampleRow2;
   
   // Set headers for file download
   res.setHeader('Content-Type', 'text/csv');

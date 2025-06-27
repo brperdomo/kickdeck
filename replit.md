@@ -113,6 +113,14 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
+- June 27, 2025: COMPREHENSIVE ROSTER UPLOAD ENHANCEMENT - Updated CSV template to match full registration requirements
+  - IDENTIFIED: CSV template only requested basic fields (first name, last name, date of birth, position, jersey number)
+  - ENHANCED: Template now requires comprehensive player data matching registration process
+  - UPDATED: CSV header now includes First Name, Last Name, Date of Birth, Jersey Number, Medical Notes, Emergency Contact First Name, Emergency Contact Last Name, Emergency Contact Phone
+  - IMPROVED: Backend CSV parsing supports both old and new field formats for backward compatibility
+  - REDESIGNED: Frontend UI with proper team identification (team name, event name, age group)
+  - VERIFIED: Template download provides complete example data matching registration requirements
+  - PRODUCTION READY: Roster uploads now capture same quality data as initial registration process
 - June 27, 2025: CRITICAL SETUP INTENT CUSTOMER CREATION FIX - Resolved missing customer associations preventing approval payments
   - IDENTIFIED: Setup Intents created during registration lacked customer associations, making payment charging impossible
   - ROOT CAUSE: Customer creation logic only worked for existing teams, not temporary team IDs used during registration
