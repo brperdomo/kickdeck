@@ -1977,7 +1977,7 @@ export function registerRoutes(app: Express): Server {
         console.log(`   req.body.setupIntentId: ${req.body.setupIntentId} (type: ${typeof req.body.setupIntentId})`);
         console.log(`   req.body.paymentMethodId: ${req.body.paymentMethodId} (type: ${typeof req.body.paymentMethodId})`);
         
-        const hasValidatedSetupIntent = totalAmount > 0 && req.body.setupIntentId && req.body.paymentMethodId;
+        const hasValidatedSetupIntent = Boolean(totalAmount > 0 && req.body.setupIntentId && req.body.paymentMethodId);
         console.log(`   hasValidatedSetupIntent: ${hasValidatedSetupIntent}`);
         
         if (hasValidatedSetupIntent) {
