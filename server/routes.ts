@@ -5008,6 +5008,10 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         console.log(`Sample amounts being returned:`, 
           formattedRegistrations.slice(0, 3).map(r => ({ id: r.id, teamName: r.teamName, amount: r.amount })));
         
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', '0');
+        
         res.json({
           registrations: formattedRegistrations,
           playerCount: playerCount?.count || 0
