@@ -133,15 +133,57 @@ async function processTeamApprovalPaymentFallback(team: any, teamId: string): Pr
       }
     };
     
-    // Check if this is a Link payment method before adding customer
+    // Check if this is a Link payment method and handle it properly
     const paymentMethod = await stripe.paymentMethods.retrieve(setupIntent.payment_method as string);
     
-    // Only add customer if it exists and is not null AND it's not a Link payment method
-    if (setupIntent.customer && paymentMethod.type !== 'link') {
-      paymentIntentData.customer = setupIntent.customer;
-      log(`Fallback payment: Using customer ${setupIntent.customer} for ${paymentMethod.type} payment method`, 'admin');
-    } else if (paymentMethod.type === 'link') {
-      log(`Fallback payment: Skipping customer for Link payment method ${setupIntent.payment_method}`, 'admin');
+    if (paymentMethod.type === 'link') {
+      log(`Fallback payment: Detected Link payment method ${setupIntent.payment_method}`, 'admin');
+      
+      // Link payment methods require customer attachment to be reused
+      let customerId = setupIntent.customer;
+      
+      if (!customerId) {
+        // Create a customer for the Link payment method
+        log(`Creating customer for Link payment method attachment`, 'admin');
+        const customer = await stripe.customers.create({
+          email: team.email || 'noemail@example.com',
+          metadata: {
+            teamId: teamId,
+            teamName: team.name,
+            createdFor: 'link_payment_method_reuse'
+          }
+        });
+        customerId = customer.id;
+        log(`Created customer ${customerId} for Link payment method`, 'admin');
+        
+        // Update team with customer ID
+        await db.update(teams)
+          .set({ stripeCustomerId: customerId })
+          .where(eq(teams.id, parseInt(teamId, 10)));
+      }
+      
+      // Ensure payment method is attached to customer
+      try {
+        await stripe.paymentMethods.attach(setupIntent.payment_method as string, {
+          customer: customerId
+        });
+        log(`Attached Link payment method to customer ${customerId}`, 'admin');
+      } catch (attachError) {
+        // Payment method might already be attached
+        log(`Payment method might already be attached: ${attachError.message}`, 'admin');
+      }
+      
+      paymentIntentData.customer = customerId;
+      log(`Using customer ${customerId} for Link payment method`, 'admin');
+      
+    } else {
+      // For non-Link payment methods, use customer if available
+      if (setupIntent.customer) {
+        paymentIntentData.customer = setupIntent.customer;
+        log(`Fallback payment: Using customer ${setupIntent.customer} for ${paymentMethod.type} payment method`, 'admin');
+      } else {
+        log(`Fallback payment: No customer needed for ${paymentMethod.type} payment method`, 'admin');
+      }
     }
     
     const paymentIntent = await stripe.paymentIntents.create(paymentIntentData);
