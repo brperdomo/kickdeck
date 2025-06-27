@@ -36,15 +36,27 @@ interface Registration {
     expMonth?: number;
     expYear?: number;
   };
+  // Enhanced team information
+  headCoachName?: string;
+  headCoachEmail?: string;
+  headCoachPhone?: string;
+  managerName?: string;
+  managerEmail?: string;
+  managerPhone?: string;
+  clubName?: string;
+  bracketName?: string;
+  playerCount?: number;
+  initialRosterComplete?: boolean;
+  rosterUploadedAt?: string;
+  submitter?: {
+    name: string;
+    email: string;
+  };
 }
 
 export default function UserRegistrationsView() {
   const [selectedRegistration, setSelectedRegistration] = useState<Registration | null>(null);
   const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
-  
-  // Debug logging
-  console.log('UserRegistrationsView render - detailsDialogOpen:', detailsDialogOpen);
-  console.log('UserRegistrationsView render - selectedRegistration:', selectedRegistration?.teamName);
   const [selectedEvent, setSelectedEvent] = useState<string>('all');
   const [viewMode, setViewMode] = useState<'grouped' | 'list'>('grouped');
 
@@ -255,9 +267,15 @@ export default function UserRegistrationsView() {
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
                   <h3 className="text-sm font-medium text-muted-foreground">Team Information</h3>
-                  <div className="bg-muted rounded-md p-3">
+                  <div className="bg-muted rounded-md p-3 space-y-2">
                     <p className="font-semibold text-lg">{selectedRegistration.teamName}</p>
                     <p className="text-sm text-muted-foreground">Age Group: {selectedRegistration.ageGroup}</p>
+                    {selectedRegistration.clubName && (
+                      <p className="text-sm text-muted-foreground">Club: {selectedRegistration.clubName}</p>
+                    )}
+                    {selectedRegistration.bracketName && (
+                      <p className="text-sm text-muted-foreground">Bracket: {selectedRegistration.bracketName}</p>
+                    )}
                   </div>
                 </div>
                 
@@ -269,6 +287,76 @@ export default function UserRegistrationsView() {
                   </div>
                 </div>
               </div>
+
+              {/* Team Contacts */}
+              <div className="space-y-3">
+                <h3 className="text-sm font-medium text-muted-foreground">Team Contacts</h3>
+                <div className="grid gap-3 md:grid-cols-2">
+                  {/* Head Coach */}
+                  {selectedRegistration.headCoachName && (
+                    <div className="bg-muted rounded-md p-3">
+                      <p className="font-medium text-sm text-primary">Head Coach</p>
+                      <p className="font-semibold">{selectedRegistration.headCoachName}</p>
+                      {selectedRegistration.headCoachEmail && (
+                        <p className="text-sm text-muted-foreground">{selectedRegistration.headCoachEmail}</p>
+                      )}
+                      {selectedRegistration.headCoachPhone && (
+                        <p className="text-sm text-muted-foreground">{selectedRegistration.headCoachPhone}</p>
+                      )}
+                    </div>
+                  )}
+                  
+                  {/* Team Manager */}
+                  {selectedRegistration.managerName && (
+                    <div className="bg-muted rounded-md p-3">
+                      <p className="font-medium text-sm text-primary">Team Manager</p>
+                      <p className="font-semibold">{selectedRegistration.managerName}</p>
+                      {selectedRegistration.managerEmail && (
+                        <p className="text-sm text-muted-foreground">{selectedRegistration.managerEmail}</p>
+                      )}
+                      {selectedRegistration.managerPhone && (
+                        <p className="text-sm text-muted-foreground">{selectedRegistration.managerPhone}</p>
+                      )}
+                    </div>
+                  )}
+                  
+                  {/* Registration Submitter */}
+                  {selectedRegistration.submitter && (
+                    <div className="bg-muted rounded-md p-3">
+                      <p className="font-medium text-sm text-primary">Registration Submitter</p>
+                      <p className="font-semibold">{selectedRegistration.submitter.name}</p>
+                      <p className="text-sm text-muted-foreground">{selectedRegistration.submitter.email}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Roster Information */}
+              {(selectedRegistration.playerCount !== undefined || selectedRegistration.initialRosterComplete !== undefined) && (
+                <div className="space-y-2">
+                  <h3 className="text-sm font-medium text-muted-foreground">Roster Information</h3>
+                  <div className="bg-muted rounded-md p-3 space-y-2">
+                    {selectedRegistration.playerCount !== undefined && (
+                      <div className="flex justify-between">
+                        <span>Players:</span>
+                        <span className="font-semibold">{selectedRegistration.playerCount}</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between">
+                      <span>Roster Status:</span>
+                      <span className={`font-semibold ${selectedRegistration.initialRosterComplete ? 'text-green-600' : 'text-orange-600'}`}>
+                        {selectedRegistration.initialRosterComplete ? 'Complete' : 'Pending'}
+                      </span>
+                    </div>
+                    {selectedRegistration.rosterUploadedAt && (
+                      <div className="flex justify-between">
+                        <span>Roster Uploaded:</span>
+                        <span>{formatDate(selectedRegistration.rosterUploadedAt)}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
               
               {/* Registration Status */}
               <div className="space-y-2">
