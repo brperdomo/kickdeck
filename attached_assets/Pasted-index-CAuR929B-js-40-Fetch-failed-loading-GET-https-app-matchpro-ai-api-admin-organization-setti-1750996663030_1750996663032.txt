@@ -1,0 +1,91 @@
+index-CAuR929B.js:40 Fetch failed loading: GET "https://app.matchpro.ai/api/admin/organization-settings".
+index-CAuR929B.js:835 Import eligible events: 
+(4) [{…}, {…}, {…}, {…}]
+index-CAuR929B.js:835 Teams data received: 
+(155) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+index-CAuR929B.js:835 Teams data from API: 
+(155) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+index-CAuR929B.js:835 Normalized teams data: 
+(155) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+injected.js:5 [USO] Button detection aborting due to timeout.
+util.js:39 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+
+ Chrome is moving towards a new experience that allows users to choose to browse without third-party cookies.
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+index-CAuR929B.js:727 Fetched age groups for event: 1755746106
+index-CAuR929B.js:727 Fetching brackets for event 1755746106 and age group 10006
+index-CAuR929B.js:835 Sending status update with data: 
+{teamId: 182, status: 'approved', notes: null}
+index-CAuR929B.js:835 
+ PUT https://app.matchpro.ai/api/admin/teams/182/status 400 (Bad Request)
+mutationFn	@	index-CAuR929B.js:835
+fn	@	index-CAuR929B.js:40
+h	@	index-CAuR929B.js:40
+start	@	index-CAuR929B.js:40
+execute	@	index-CAuR929B.js:40
+await in execute		
+mutate	@	index-CAuR929B.js:40
+(anonymous)	@	index-CAuR929B.js:40
+fe	@	index-CAuR929B.js:835
+onClick	@	index-CAuR929B.js:835
+pue	@	index-CAuR929B.js:37
+xue	@	index-CAuR929B.js:37
+vue	@	index-CAuR929B.js:37
+QM	@	index-CAuR929B.js:37
+Tq	@	index-CAuR929B.js:37
+(anonymous)	@	index-CAuR929B.js:37
+iO	@	index-CAuR929B.js:40
+eq	@	index-CAuR929B.js:37
+d2	@	index-CAuR929B.js:37
+I4	@	index-CAuR929B.js:37
+Iue	@	index-CAuR929B.js:37
+index-CAuR929B.js:835 Raw response text: {"status":"error","error":"Payment processing failed","message":"Payment processing failed. Please check team payment details.","paymentStatus":"payment_error","teamStatus":"registered"}
+index-CAuR929B.js:835 Error response: 
+{status: 'error', error: 'Payment processing failed', message: 'Payment processing failed. Please check team payment details.', paymentStatus: 'payment_error', teamStatus: 'registered'}
+mutationFn	@	index-CAuR929B.js:835
+await in mutationFn		
+fn	@	index-CAuR929B.js:40
+h	@	index-CAuR929B.js:40
+start	@	index-CAuR929B.js:40
+execute	@	index-CAuR929B.js:40
+await in execute		
+mutate	@	index-CAuR929B.js:40
+(anonymous)	@	index-CAuR929B.js:40
+fe	@	index-CAuR929B.js:835
+onClick	@	index-CAuR929B.js:835
+pue	@	index-CAuR929B.js:37
+xue	@	index-CAuR929B.js:37
+vue	@	index-CAuR929B.js:37
+QM	@	index-CAuR929B.js:37
+Tq	@	index-CAuR929B.js:37
+(anonymous)	@	index-CAuR929B.js:37
+iO	@	index-CAuR929B.js:40
+eq	@	index-CAuR929B.js:37
+d2	@	index-CAuR929B.js:37
+I4	@	index-CAuR929B.js:37
+Iue	@	index-CAuR929B.js:37
+index-CAuR929B.js:835 Error in updateTeamStatus mutation: Error: Payment processing failed
+    at Object.mutationFn (index-CAuR929B.js:835:82164)
+mutationFn	@	index-CAuR929B.js:835
+await in mutationFn		
+fn	@	index-CAuR929B.js:40
+h	@	index-CAuR929B.js:40
+start	@	index-CAuR929B.js:40
+execute	@	index-CAuR929B.js:40
+await in execute		
+mutate	@	index-CAuR929B.js:40
+(anonymous)	@	index-CAuR929B.js:40
+fe	@	index-CAuR929B.js:835
+onClick	@	index-CAuR929B.js:835
+pue	@	index-CAuR929B.js:37
+xue	@	index-CAuR929B.js:37
+vue	@	index-CAuR929B.js:37
+QM	@	index-CAuR929B.js:37
+Tq	@	index-CAuR929B.js:37
+(anonymous)	@	index-CAuR929B.js:37
+iO	@	index-CAuR929B.js:40
+eq	@	index-CAuR929B.js:37
+d2	@	index-CAuR929B.js:37
+I4	@	index-CAuR929B.js:37
+Iue	@	index-CAuR929B.js:37
