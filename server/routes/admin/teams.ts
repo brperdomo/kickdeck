@@ -26,7 +26,9 @@ async function processTeamApprovalPayment(team: any, teamId: string): Promise<st
     }
     
     // Use Stripe Connect platform fee flow
+    log(`ADMIN DEBUG: About to call chargeApprovedTeam for team ${teamId}`, 'admin');
     const result = await chargeApprovedTeam(parseInt(teamId, 10));
+    log(`ADMIN DEBUG: chargeApprovedTeam returned result: ${JSON.stringify(result)}`, 'admin');
     
     log(`Stripe Connect payment result for team ${teamId}: ${JSON.stringify(result)}`, 'admin');
     

@@ -84,9 +84,11 @@ export async function processDestinationCharge(
     // Handle Link payment methods which fundamentally cannot be used with customers
     if (paymentMethod.type === 'link') {
       console.log(`Link payment method ${paymentMethodId} detected - Link payments cannot be used with customers in payment intents`);
+      console.log(`BEFORE Link fix: customerId was ${customerId}, paymentMethod.customer was ${paymentMethod.customer}`);
       // For Link payments, we MUST process without a customer to avoid attachment errors
       // This is true regardless of whether the payment method has an associated customer
       customerId = null;
+      console.log(`AFTER Link fix: customerId is now ${customerId}`);
     }
 
     // Handle Link payment methods differently since they can't use destination charges
