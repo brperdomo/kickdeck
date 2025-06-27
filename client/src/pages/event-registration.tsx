@@ -2335,18 +2335,21 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   };
 
   // Calculate the total charge amount including platform fees (what customer will actually be charged)
+  // This matches the exact server-side logic from server/services/fee-calculator.ts
   const calculateTotalChargeAmount = () => {
     const tournamentCostCents = parseFloat(calculateTotalAmount()) * 100;
     
     if (tournamentCostCents <= 0) return 0;
     
-    // Platform fee calculation (matches server logic)
+    // Constants matching server/services/fee-calculator.ts
     const DEFAULT_PLATFORM_FEE_RATE = 0.04; // 4%
     const STRIPE_PERCENTAGE_FEE = 0.029; // 2.9%
     const STRIPE_FIXED_FEE = 30; // $0.30 in cents
 
-    // Calculate the total amount needed to cover tournament cost + fees
+    // Server-side calculation logic (calculateFeeBreakdown function)
     const matchproTargetMargin = Math.round(tournamentCostCents * DEFAULT_PLATFORM_FEE_RATE);
+    
+    // Solve for total amount: totalAmount = (tournamentCost + matchproMargin + 30) / (1 - 0.029)
     const totalChargedAmount = Math.round((tournamentCostCents + matchproTargetMargin + STRIPE_FIXED_FEE) / (1 - STRIPE_PERCENTAGE_FEE));
     
     return totalChargedAmount; // Return in cents
