@@ -80,13 +80,25 @@ export async function processDestinationCharge(
     // Get the customer from the payment method to ensure proper association
     const paymentMethod = await stripe.paymentMethods.retrieve(paymentMethodId);
     let customerId = paymentMethod.customer as string | null;
+    
+    console.log(`PAYMENT METHOD DEBUG: Retrieved payment method ${paymentMethodId}`);
+    console.log(`  - type: ${paymentMethod.type}`);
+    console.log(`  - customer: ${paymentMethod.customer}`);
+    console.log(`  - customerId variable: ${customerId}`);
 
     // Handle Link payment methods which fundamentally cannot be used with customers
     if (paymentMethod.type === 'link') {
       console.log(`Link payment method ${paymentMethodId} detected - Link payments cannot be used with customers in payment intents`);
       console.log(`BEFORE Link fix: customerId was ${customerId}, paymentMethod.customer was ${paymentMethod.customer}`);
+      
+      // If Link payment method is attached to a customer, detach it first
+      if (paymentMethod.customer) {
+        console.log(`Detaching Link payment method from customer ${paymentMethod.customer} to prevent attachment errors`);
+        await stripe.paymentMethods.detach(paymentMethodId);
+        console.log(`Successfully detached Link payment method ${paymentMethodId} from customer`);
+      }
+      
       // For Link payments, we MUST process without a customer to avoid attachment errors
-      // This is true regardless of whether the payment method has an associated customer
       customerId = null;
       console.log(`AFTER Link fix: customerId is now ${customerId}`);
     }
