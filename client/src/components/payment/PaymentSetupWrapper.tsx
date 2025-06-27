@@ -116,9 +116,7 @@ export function PaymentSetupWrapper({
 
   useEffect(() => {
     const createOrReuseSetupIntent = async () => {
-      setIsCreatingSetupIntent(true);
-      
-      // Check if we already have a setup intent cached for this team
+      // ALWAYS check cache first before any state changes
       const cached = getCachedSetupIntent(teamId, expectedAmount);
       if (cached) {
         console.log(`🔄 Reusing cached setup intent for team ${teamId}: ${cached.setupIntentId}`);
@@ -127,9 +125,11 @@ export function PaymentSetupWrapper({
         return;
       }
       
+      setIsCreatingSetupIntent(true);
+      
       try {
         console.log(`🎯 Creating setup intent for payment form initialization`);
-        console.log(`🎯 Team ID: ${teamId} Amount: ${expectedAmount} Team Name: ${teamName}`);
+        console.log(`🎯 Team ID: ${teamId} Amount: ${expectedAmount}`);
         
         const response = await fetch('/api/payments/create-setup-intent', {
           method: 'POST',
@@ -138,10 +138,7 @@ export function PaymentSetupWrapper({
           },
           body: JSON.stringify({
             teamId,
-            expectedAmount,
-            teamName,
-            eventName,
-            returnUrl
+            expectedAmount
           }),
         });
 
@@ -175,7 +172,7 @@ export function PaymentSetupWrapper({
     };
 
     createOrReuseSetupIntent();
-  }, [teamId, expectedAmount, teamName, eventName, returnUrl, onError, toast]);
+  }, [teamId, expectedAmount]); // ONLY depend on essential variables
 
   if (isCreatingSetupIntent || !clientSecret) {
     return (
