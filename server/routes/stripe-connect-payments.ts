@@ -81,41 +81,11 @@ export async function processDestinationCharge(
     const paymentMethod = await stripe.paymentMethods.retrieve(paymentMethodId);
     let customerId = paymentMethod.customer as string | null;
 
-    // Handle Link payment methods which may not have customers initially
+    // Handle Link payment methods which fundamentally cannot be attached to customers
     if (!customerId && paymentMethod.type === 'link') {
-      console.log(`Link payment method ${paymentMethodId} has no customer - searching for existing customer or creating new one`);
-      
-      // For Link payment methods, search for existing customer by email first
-      const email = team?.submitterEmail || team?.managerEmail;
-      if (email) {
-        const existingCustomers = await stripe.customers.list({
-          email: email,
-          limit: 1
-        });
-        
-        if (existingCustomers.data.length > 0) {
-          customerId = existingCustomers.data[0].id;
-          console.log(`Using existing customer ${customerId} for Link payment method`);
-        } else {
-          // Create a customer for this Link payment method
-          const customer = await stripe.customers.create({
-            email: email,
-            name: team?.submitterName || team?.managerName,
-            metadata: {
-              teamId: teamId.toString(),
-              eventId: eventId,
-              paymentType: 'link'
-            }
-          });
-          customerId = customer.id;
-          console.log(`Created new customer ${customerId} for Link payment method`);
-        }
-        
-        // Update the team record with the customer ID for future use
-        await db.update(teams)
-          .set({ stripeCustomerId: customerId })
-          .where(eq(teams.id, teamId));
-      }
+      console.log(`Link payment method ${paymentMethodId} detected - Link payments cannot be attached to customers`);
+      // For Link payments, we'll process without a customer to avoid attachment errors
+      customerId = null;
     }
 
     // Handle Link payment methods differently since they can't use destination charges
@@ -146,11 +116,9 @@ export async function processDestinationCharge(
         }
       };
 
-      // Include customer if we have one
-      if (customerId) {
-        paymentIntentParams.customer = customerId;
-        console.log(`Using customer: ${customerId} for Link payment`);
-      }
+      // DO NOT include customer for Link payments - they cannot be attached to customers
+      console.log(`Link payment processing without customer to avoid attachment errors`);
+      // Explicitly do not set customer for Link payments
 
       paymentIntent = await stripe.paymentIntents.create(paymentIntentParams);
       
