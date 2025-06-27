@@ -1,0 +1,508 @@
+[vite] connecting...
+client:536 WebSocket connection to 'wss://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/?token=CuEWSEOJ_i9r' failed: 
+setupWebSocket @ client:536Understand this error
+client:536 Uncaught (in promise) SyntaxError: Failed to construct 'WebSocket': The URL 'wss://localhost:undefined/?token=CuEWSEOJ_i9r' is invalid.
+    at setupWebSocket (client:536:19)
+    at fallback (client:509:16)
+    at WebSocket.<anonymous> (client:555:7)Understand this error
+util.js:39 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+swa @ util.js:39Understand this warning
+env.ts:10 Google Maps API key length: 0 characters
+env.ts:11 Mapbox API key length: 93 characters
+env.ts:17 Google Maps API already loaded
+RouteDebugger.tsx:13 Current route location (Wouter): /dashboard
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/dashboard
+RouteDebugger.tsx:15 Current pathname: /dashboard
+RouteDebugger.tsx:16 Current search: 
+use-user.ts:59 Fetching user with emulation token: not present
+7Failed to decode downloaded font: <URL>Understand this warning
+7OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+use-user.ts:76 User data fetched: Object
+UserRegistrationsView.tsx:46 Fetching registrations from API...
+UserRegistrationsView.tsx:52 Registration API response: Object
+RouteDebugger.tsx:13 Current route location (Wouter): /dashboard/registrations
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/dashboard/registrations
+RouteDebugger.tsx:15 Current pathname: /dashboard/registrations
+RouteDebugger.tsx:16 Current search: 
+RouteDebugger.tsx:13 Current route location (Wouter): /dashboard
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/dashboard
+RouteDebugger.tsx:15 Current pathname: /dashboard
+RouteDebugger.tsx:16 Current search: 
+7XHR finished loading: POST "<URL>".
+Navigated to https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/dashboard/registrations
+js?libraries=places&v=beta&callback=Function.prototype:1448 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+Vca @ js?libraries=places&v=beta&callback=Function.prototype:1448
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1694
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1694Understand this warning
+js?libraries=places&v=beta&callback=Function.prototype:1477 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+_.B.send @ js?libraries=places&v=beta&callback=Function.prototype:1477
+Tca @ js?libraries=places&v=beta&callback=Function.prototype:1457
+Vca @ js?libraries=places&v=beta&callback=Function.prototype:1449
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1694
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1694
+client:495 [vite] connecting...
+client:536 WebSocket connection to 'wss://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/?token=CuEWSEOJ_i9r' failed: 
+setupWebSocket @ client:536
+(anonymous) @ client:531Understand this error
+client:536 Uncaught (in promise) SyntaxError: Failed to construct 'WebSocket': The URL 'wss://localhost:undefined/?token=CuEWSEOJ_i9r' is invalid.
+    at setupWebSocket (client:536:19)
+    at fallback (client:509:16)
+    at WebSocket.<anonymous> (client:555:7)
+setupWebSocket @ client:536
+fallback @ client:509
+(anonymous) @ client:555Understand this error
+util.js:39 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+swa @ util.js:39
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1450
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1450
+setTimeout
+Vca @ js?libraries=places&v=beta&callback=Function.prototype:1450
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1694
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1694Understand this warning
+env.ts:10 Google Maps API key length: 0 characters
+env.ts:11 Mapbox API key length: 93 characters
+env.ts:17 Google Maps API already loaded
+RouteDebugger.tsx:13 Current route location (Wouter): /dashboard/registrations
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/dashboard/registrations
+RouteDebugger.tsx:15 Current pathname: /dashboard/registrations
+RouteDebugger.tsx:16 Current search: 
+use-user.ts:59 Fetching user with emulation token: not present
+registrations:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+registrations:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+use-user.ts:76 User data fetched: {id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: '$2b$12$d6n1CBWgsWFm0fh77F1OX.YxDZy7/O3aLSuJOuq4QkvOtFmSit7BC', firstName: 'Bryan', …}
+use-user.ts:61 Fetch finished loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user".
+fetchUser @ use-user.ts:61
+fetchFn @ @tanstack_react-query.js?v=80b17ebe:881
+run @ @tanstack_react-query.js?v=80b17ebe:513
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+executeFetch_fn @ @tanstack_react-query.js?v=80b17ebe:2278
+onSubscribe @ @tanstack_react-query.js?v=80b17ebe:1982
+subscribe @ @tanstack_react-query.js?v=80b17ebe:24
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:3145
+ai @ chunk-E27YX2RL.js?v=80b17ebe:3392
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+Ek @ chunk-E27YX2RL.js?v=80b17ebe:5681
+jg @ chunk-E27YX2RL.js?v=80b17ebe:2527
+Wk @ chunk-E27YX2RL.js?v=80b17ebe:6021
+Pk @ chunk-E27YX2RL.js?v=80b17ebe:5964
+Gk @ chunk-E27YX2RL.js?v=80b17ebe:5620
+J @ chunk-E27YX2RL.js?v=80b17ebe:97
+R @ chunk-E27YX2RL.js?v=80b17ebe:129
+use-auth.tsx:85 Fetch failed loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user".
+queryFn @ use-auth.tsx:85
+fetchFn @ @tanstack_react-query.js?v=80b17ebe:881
+run @ @tanstack_react-query.js?v=80b17ebe:513
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+executeFetch_fn @ @tanstack_react-query.js?v=80b17ebe:2278
+onSubscribe @ @tanstack_react-query.js?v=80b17ebe:1982
+subscribe @ @tanstack_react-query.js?v=80b17ebe:24
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:3145
+ai @ chunk-E27YX2RL.js?v=80b17ebe:3392
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+Ek @ chunk-E27YX2RL.js?v=80b17ebe:5681
+jg @ chunk-E27YX2RL.js?v=80b17ebe:2527
+Wk @ chunk-E27YX2RL.js?v=80b17ebe:6021
+Pk @ chunk-E27YX2RL.js?v=80b17ebe:5964
+Gk @ chunk-E27YX2RL.js?v=80b17ebe:5620
+J @ chunk-E27YX2RL.js?v=80b17ebe:97
+R @ chunk-E27YX2RL.js?v=80b17ebe:129
+registrations:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+registrations:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+6Fetch finished loading: GET "<URL>".
+queryClient.ts:72 Fetch failed loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/admin/organization-settings".
+queryFn @ queryClient.ts:72
+fetchFn @ @tanstack_react-query.js?v=80b17ebe:881
+run @ @tanstack_react-query.js?v=80b17ebe:513
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+executeFetch_fn @ @tanstack_react-query.js?v=80b17ebe:2278
+onSubscribe @ @tanstack_react-query.js?v=80b17ebe:1982
+subscribe @ @tanstack_react-query.js?v=80b17ebe:24
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:3145
+ai @ chunk-E27YX2RL.js?v=80b17ebe:3392
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+(anonymous) @ chunk-E27YX2RL.js?v=80b17ebe:5987
+J @ chunk-E27YX2RL.js?v=80b17ebe:97
+R @ chunk-E27YX2RL.js?v=80b17ebe:129
+registrations.tsx:278 Fetch finished loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user/registrations".
+queryFn @ registrations.tsx:278
+fetchFn @ @tanstack_react-query.js?v=80b17ebe:881
+run @ @tanstack_react-query.js?v=80b17ebe:513
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+executeFetch_fn @ @tanstack_react-query.js?v=80b17ebe:2278
+onSubscribe @ @tanstack_react-query.js?v=80b17ebe:1982
+subscribe @ @tanstack_react-query.js?v=80b17ebe:24
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:3145
+ai @ chunk-E27YX2RL.js?v=80b17ebe:3392
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+(anonymous) @ chunk-E27YX2RL.js?v=80b17ebe:5987
+J @ chunk-E27YX2RL.js?v=80b17ebe:97
+R @ chunk-E27YX2RL.js?v=80b17ebe:129
+10Fetch finished loading: POST "<URL>".
+Navigated to https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/dashboard/registrations
+js?libraries=places&v=beta&callback=Function.prototype:1448 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+Vca @ js?libraries=places&v=beta&callback=Function.prototype:1448
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1694
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1694Understand this warning
+js?libraries=places&v=beta&callback=Function.prototype:1477 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+_.B.send @ js?libraries=places&v=beta&callback=Function.prototype:1477
+Tca @ js?libraries=places&v=beta&callback=Function.prototype:1457
+Vca @ js?libraries=places&v=beta&callback=Function.prototype:1449
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1694
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1694
+client:495 [vite] connecting...
+client:536 WebSocket connection to 'wss://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/?token=OlIKZB_6FXH1' failed: 
+setupWebSocket @ client:536
+(anonymous) @ client:531Understand this error
+client:536 Uncaught (in promise) SyntaxError: Failed to construct 'WebSocket': The URL 'wss://localhost:undefined/?token=OlIKZB_6FXH1' is invalid.
+    at setupWebSocket (client:536:19)
+    at fallback (client:509:16)
+    at WebSocket.<anonymous> (client:555:7)
+setupWebSocket @ client:536
+fallback @ client:509
+(anonymous) @ client:555Understand this error
+util.js:39 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+swa @ util.js:39
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1450
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1450
+setTimeout
+Vca @ js?libraries=places&v=beta&callback=Function.prototype:1450
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1694
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1694Understand this warning
+env.ts:10 Google Maps API key length: 0 characters
+env.ts:11 Mapbox API key length: 93 characters
+env.ts:17 Google Maps API already loaded
+RouteDebugger.tsx:13 Current route location (Wouter): /dashboard/registrations
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/dashboard/registrations
+RouteDebugger.tsx:15 Current pathname: /dashboard/registrations
+RouteDebugger.tsx:16 Current search: 
+use-user.ts:59 Fetching user with emulation token: not present
+registrations:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+registrations:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+use-user.ts:61 
+            
+            
+           GET https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user 401 (Unauthorized)
+fetchUser @ use-user.ts:61
+fetchFn @ @tanstack_react-query.js?v=80b17ebe:881
+run @ @tanstack_react-query.js?v=80b17ebe:513
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+executeFetch_fn @ @tanstack_react-query.js?v=80b17ebe:2278
+onSubscribe @ @tanstack_react-query.js?v=80b17ebe:1982
+subscribe @ @tanstack_react-query.js?v=80b17ebe:24
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:3145
+ai @ chunk-E27YX2RL.js?v=80b17ebe:3392
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+Ek @ chunk-E27YX2RL.js?v=80b17ebe:5681
+jg @ chunk-E27YX2RL.js?v=80b17ebe:2527
+Wk @ chunk-E27YX2RL.js?v=80b17ebe:6021
+Pk @ chunk-E27YX2RL.js?v=80b17ebe:5964
+Gk @ chunk-E27YX2RL.js?v=80b17ebe:5620
+J @ chunk-E27YX2RL.js?v=80b17ebe:97
+R @ chunk-E27YX2RL.js?v=80b17ebe:129Understand this error
+AnimatedBackground.tsx:30 AnimatedBackground initialized with type: particles
+auth-page.tsx:78 Setting redirect based on current protected URL: /dashboard/registrations
+use-user.ts:61 Fetch failed loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user".
+fetchUser @ use-user.ts:61
+fetchFn @ @tanstack_react-query.js?v=80b17ebe:881
+run @ @tanstack_react-query.js?v=80b17ebe:513
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+executeFetch_fn @ @tanstack_react-query.js?v=80b17ebe:2278
+onSubscribe @ @tanstack_react-query.js?v=80b17ebe:1982
+subscribe @ @tanstack_react-query.js?v=80b17ebe:24
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:3145
+ai @ chunk-E27YX2RL.js?v=80b17ebe:3392
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+Ek @ chunk-E27YX2RL.js?v=80b17ebe:5681
+jg @ chunk-E27YX2RL.js?v=80b17ebe:2527
+Wk @ chunk-E27YX2RL.js?v=80b17ebe:6021
+Pk @ chunk-E27YX2RL.js?v=80b17ebe:5964
+Gk @ chunk-E27YX2RL.js?v=80b17ebe:5620
+J @ chunk-E27YX2RL.js?v=80b17ebe:97
+R @ chunk-E27YX2RL.js?v=80b17ebe:129
+use-auth.tsx:85 
+            
+            
+           GET https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user 401 (Unauthorized)
+queryFn @ use-auth.tsx:85
+fetchFn @ @tanstack_react-query.js?v=80b17ebe:881
+run @ @tanstack_react-query.js?v=80b17ebe:513
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+executeFetch_fn @ @tanstack_react-query.js?v=80b17ebe:2278
+onSubscribe @ @tanstack_react-query.js?v=80b17ebe:1982
+subscribe @ @tanstack_react-query.js?v=80b17ebe:24
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:3145
+ai @ chunk-E27YX2RL.js?v=80b17ebe:3392
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+Ek @ chunk-E27YX2RL.js?v=80b17ebe:5681
+jg @ chunk-E27YX2RL.js?v=80b17ebe:2527
+Wk @ chunk-E27YX2RL.js?v=80b17ebe:6021
+Pk @ chunk-E27YX2RL.js?v=80b17ebe:5964
+Gk @ chunk-E27YX2RL.js?v=80b17ebe:5620
+J @ chunk-E27YX2RL.js?v=80b17ebe:97
+R @ chunk-E27YX2RL.js?v=80b17ebe:129Understand this error
+use-auth.tsx:85 Fetch failed loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user".
+queryFn @ use-auth.tsx:85
+fetchFn @ @tanstack_react-query.js?v=80b17ebe:881
+run @ @tanstack_react-query.js?v=80b17ebe:513
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+executeFetch_fn @ @tanstack_react-query.js?v=80b17ebe:2278
+onSubscribe @ @tanstack_react-query.js?v=80b17ebe:1982
+subscribe @ @tanstack_react-query.js?v=80b17ebe:24
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:3145
+ai @ chunk-E27YX2RL.js?v=80b17ebe:3392
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+Ek @ chunk-E27YX2RL.js?v=80b17ebe:5681
+jg @ chunk-E27YX2RL.js?v=80b17ebe:2527
+Wk @ chunk-E27YX2RL.js?v=80b17ebe:6021
+Pk @ chunk-E27YX2RL.js?v=80b17ebe:5964
+Gk @ chunk-E27YX2RL.js?v=80b17ebe:5620
+J @ chunk-E27YX2RL.js?v=80b17ebe:97
+R @ chunk-E27YX2RL.js?v=80b17ebe:129
+auth-page.tsx:178 Submitting login with email: bperdomo@zoho.com
+use-auth.tsx:127 Login mutation called with: bperdomo@zoho.com
+use-auth.tsx:135 Sending login request with data: {email: 'bperdomo@zoho.com', passwordLength: 8}
+use-auth.tsx:150 Login response status: 200
+use-auth.tsx:166 Login successful, received user data: Yes
+use-auth.tsx:170 Fetching current user after login
+use-auth.tsx:139 Fetch finished loading: POST "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/login?t=1751052368129".
+mutationFn @ use-auth.tsx:139
+fn @ @tanstack_react-query.js?v=80b17ebe:1235
+run @ @tanstack_react-query.js?v=80b17ebe:513
+start @ @tanstack_react-query.js?v=80b17ebe:555
+execute @ @tanstack_react-query.js?v=80b17ebe:1271
+await in execute
+mutate @ @tanstack_react-query.js?v=80b17ebe:2690
+onSubmit @ auth-page.tsx:182
+(anonymous) @ chunk-Z3BHYHOH.js?v=80b17ebe:1481
+await in (anonymous)
+Nb @ chunk-E27YX2RL.js?v=80b17ebe:975
+Tb @ chunk-E27YX2RL.js?v=80b17ebe:991
+Ub @ chunk-E27YX2RL.js?v=80b17ebe:994
+nf @ chunk-E27YX2RL.js?v=80b17ebe:2017
+se @ chunk-E27YX2RL.js?v=80b17ebe:2040
+(anonymous) @ chunk-E27YX2RL.js?v=80b17ebe:2312
+Qk @ chunk-E27YX2RL.js?v=80b17ebe:5701
+Jb @ chunk-E27YX2RL.js?v=80b17ebe:927
+hd @ chunk-E27YX2RL.js?v=80b17ebe:2113
+fd @ chunk-E27YX2RL.js?v=80b17ebe:1454
+ed @ chunk-E27YX2RL.js?v=80b17ebe:1437
+use-auth.tsx:171 Fetch finished loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user".
+mutationFn @ use-auth.tsx:171
+await in mutationFn
+fn @ @tanstack_react-query.js?v=80b17ebe:1235
+run @ @tanstack_react-query.js?v=80b17ebe:513
+start @ @tanstack_react-query.js?v=80b17ebe:555
+execute @ @tanstack_react-query.js?v=80b17ebe:1271
+await in execute
+mutate @ @tanstack_react-query.js?v=80b17ebe:2690
+onSubmit @ auth-page.tsx:182
+(anonymous) @ chunk-Z3BHYHOH.js?v=80b17ebe:1481
+await in (anonymous)
+Nb @ chunk-E27YX2RL.js?v=80b17ebe:975
+Tb @ chunk-E27YX2RL.js?v=80b17ebe:991
+Ub @ chunk-E27YX2RL.js?v=80b17ebe:994
+nf @ chunk-E27YX2RL.js?v=80b17ebe:2017
+se @ chunk-E27YX2RL.js?v=80b17ebe:2040
+(anonymous) @ chunk-E27YX2RL.js?v=80b17ebe:2312
+Qk @ chunk-E27YX2RL.js?v=80b17ebe:5701
+Jb @ chunk-E27YX2RL.js?v=80b17ebe:927
+hd @ chunk-E27YX2RL.js?v=80b17ebe:2113
+fd @ chunk-E27YX2RL.js?v=80b17ebe:1454
+ed @ chunk-E27YX2RL.js?v=80b17ebe:1437
+use-auth.tsx:182 User data fetched after login: success
+auth-page.tsx:184 Login mutation completed successfully
+auth-page.tsx:188 Performing explicit user data fetch after login
+auth-page.tsx:108 AUTH REDIRECT: User logged in, handling redirect
+use-auth.tsx:85 Fetch finished loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user".
+queryFn @ use-auth.tsx:85
+fetchFn @ @tanstack_react-query.js?v=80b17ebe:881
+run @ @tanstack_react-query.js?v=80b17ebe:513
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:1810
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:1809
+batch @ @tanstack_react-query.js?v=80b17ebe:603
+refetchQueries @ @tanstack_react-query.js?v=80b17ebe:1808
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:1794
+batch @ @tanstack_react-query.js?v=80b17ebe:603
+invalidateQueries @ @tanstack_react-query.js?v=80b17ebe:1787
+onSuccess @ use-auth.tsx:202
+execute @ @tanstack_react-query.js?v=80b17ebe:1279
+await in execute
+mutate @ @tanstack_react-query.js?v=80b17ebe:2690
+onSubmit @ auth-page.tsx:182
+(anonymous) @ chunk-Z3BHYHOH.js?v=80b17ebe:1481
+await in (anonymous)
+Nb @ chunk-E27YX2RL.js?v=80b17ebe:975
+Tb @ chunk-E27YX2RL.js?v=80b17ebe:991
+Ub @ chunk-E27YX2RL.js?v=80b17ebe:994
+nf @ chunk-E27YX2RL.js?v=80b17ebe:2017
+se @ chunk-E27YX2RL.js?v=80b17ebe:2040
+(anonymous) @ chunk-E27YX2RL.js?v=80b17ebe:2312
+Qk @ chunk-E27YX2RL.js?v=80b17ebe:5701
+Jb @ chunk-E27YX2RL.js?v=80b17ebe:927
+hd @ chunk-E27YX2RL.js?v=80b17ebe:2113
+fd @ chunk-E27YX2RL.js?v=80b17ebe:1454
+ed @ chunk-E27YX2RL.js?v=80b17ebe:1437
+auth-page.tsx:127 Found redirect path: /dashboard/registrations
+auth-page.tsx:146 Redirecting to: /dashboard/registrations
+auth-page.tsx:200 User data retrieved after login: success
+auth-page.tsx:189 Fetch finished loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user".
+onSubmit @ auth-page.tsx:189
+await in onSubmit
+(anonymous) @ chunk-Z3BHYHOH.js?v=80b17ebe:1481
+await in (anonymous)
+Nb @ chunk-E27YX2RL.js?v=80b17ebe:975
+Tb @ chunk-E27YX2RL.js?v=80b17ebe:991
+Ub @ chunk-E27YX2RL.js?v=80b17ebe:994
+nf @ chunk-E27YX2RL.js?v=80b17ebe:2017
+se @ chunk-E27YX2RL.js?v=80b17ebe:2040
+(anonymous) @ chunk-E27YX2RL.js?v=80b17ebe:2312
+Qk @ chunk-E27YX2RL.js?v=80b17ebe:5701
+Jb @ chunk-E27YX2RL.js?v=80b17ebe:927
+hd @ chunk-E27YX2RL.js?v=80b17ebe:2113
+fd @ chunk-E27YX2RL.js?v=80b17ebe:1454
+ed @ chunk-E27YX2RL.js?v=80b17ebe:1437
+js?libraries=places&v=beta&callback=Function.prototype:1448 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+Vca @ js?libraries=places&v=beta&callback=Function.prototype:1448
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1694
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1694Understand this warning
+Navigated to https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/dashboard/registrations
+js?libraries=places&v=beta&callback=Function.prototype:1477 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+_.B.send @ js?libraries=places&v=beta&callback=Function.prototype:1477
+Tca @ js?libraries=places&v=beta&callback=Function.prototype:1457
+Vca @ js?libraries=places&v=beta&callback=Function.prototype:1449
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1694
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1694
+client:495 [vite] connecting...
+client:536 WebSocket connection to 'wss://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/?token=OlIKZB_6FXH1' failed: 
+setupWebSocket @ client:536
+(anonymous) @ client:531Understand this error
+client:536 Uncaught (in promise) SyntaxError: Failed to construct 'WebSocket': The URL 'wss://localhost:undefined/?token=OlIKZB_6FXH1' is invalid.
+    at setupWebSocket (client:536:19)
+    at fallback (client:509:16)
+    at WebSocket.<anonymous> (client:555:7)
+setupWebSocket @ client:536
+fallback @ client:509
+(anonymous) @ client:555Understand this error
+util.js:39 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+swa @ util.js:39
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1450
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1450
+setTimeout
+Vca @ js?libraries=places&v=beta&callback=Function.prototype:1450
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1694
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1694Understand this warning
+env.ts:10 Google Maps API key length: 0 characters
+env.ts:11 Mapbox API key length: 93 characters
+env.ts:17 Google Maps API already loaded
+RouteDebugger.tsx:13 Current route location (Wouter): /dashboard/registrations
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/dashboard/registrations
+RouteDebugger.tsx:15 Current pathname: /dashboard/registrations
+RouteDebugger.tsx:16 Current search: 
+use-user.ts:59 Fetching user with emulation token: not present
+registrations:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+registrations:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+use-user.ts:76 User data fetched: {id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: '$2b$12$d6n1CBWgsWFm0fh77F1OX.YxDZy7/O3aLSuJOuq4QkvOtFmSit7BC', firstName: 'Bryan', …}
+use-user.ts:61 Fetch finished loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user".
+fetchUser @ use-user.ts:61
+fetchFn @ @tanstack_react-query.js?v=80b17ebe:881
+run @ @tanstack_react-query.js?v=80b17ebe:513
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+executeFetch_fn @ @tanstack_react-query.js?v=80b17ebe:2278
+onSubscribe @ @tanstack_react-query.js?v=80b17ebe:1982
+subscribe @ @tanstack_react-query.js?v=80b17ebe:24
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:3145
+ai @ chunk-E27YX2RL.js?v=80b17ebe:3392
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+Ek @ chunk-E27YX2RL.js?v=80b17ebe:5681
+jg @ chunk-E27YX2RL.js?v=80b17ebe:2527
+Wk @ chunk-E27YX2RL.js?v=80b17ebe:6021
+Pk @ chunk-E27YX2RL.js?v=80b17ebe:5964
+Gk @ chunk-E27YX2RL.js?v=80b17ebe:5620
+J @ chunk-E27YX2RL.js?v=80b17ebe:97
+R @ chunk-E27YX2RL.js?v=80b17ebe:129
+use-auth.tsx:85 Fetch failed loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user".
+queryFn @ use-auth.tsx:85
+fetchFn @ @tanstack_react-query.js?v=80b17ebe:881
+run @ @tanstack_react-query.js?v=80b17ebe:513
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+executeFetch_fn @ @tanstack_react-query.js?v=80b17ebe:2278
+onSubscribe @ @tanstack_react-query.js?v=80b17ebe:1982
+subscribe @ @tanstack_react-query.js?v=80b17ebe:24
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:3145
+ai @ chunk-E27YX2RL.js?v=80b17ebe:3392
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+Ek @ chunk-E27YX2RL.js?v=80b17ebe:5681
+jg @ chunk-E27YX2RL.js?v=80b17ebe:2527
+Wk @ chunk-E27YX2RL.js?v=80b17ebe:6021
+Pk @ chunk-E27YX2RL.js?v=80b17ebe:5964
+Gk @ chunk-E27YX2RL.js?v=80b17ebe:5620
+J @ chunk-E27YX2RL.js?v=80b17ebe:97
+R @ chunk-E27YX2RL.js?v=80b17ebe:129
+registrations:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+registrations:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+queryClient.ts:72 Fetch failed loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/admin/organization-settings".
+queryFn @ queryClient.ts:72
+fetchFn @ @tanstack_react-query.js?v=80b17ebe:881
+run @ @tanstack_react-query.js?v=80b17ebe:513
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+executeFetch_fn @ @tanstack_react-query.js?v=80b17ebe:2278
+onSubscribe @ @tanstack_react-query.js?v=80b17ebe:1982
+subscribe @ @tanstack_react-query.js?v=80b17ebe:24
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:3145
+ai @ chunk-E27YX2RL.js?v=80b17ebe:3392
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+(anonymous) @ chunk-E27YX2RL.js?v=80b17ebe:5987
+J @ chunk-E27YX2RL.js?v=80b17ebe:97
+R @ chunk-E27YX2RL.js?v=80b17ebe:129
+registrations.tsx:278 Fetch finished loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user/registrations".
+queryFn @ registrations.tsx:278
+fetchFn @ @tanstack_react-query.js?v=80b17ebe:881
+run @ @tanstack_react-query.js?v=80b17ebe:513
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+executeFetch_fn @ @tanstack_react-query.js?v=80b17ebe:2278
+onSubscribe @ @tanstack_react-query.js?v=80b17ebe:1982
+subscribe @ @tanstack_react-query.js?v=80b17ebe:24
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:3145
+ai @ chunk-E27YX2RL.js?v=80b17ebe:3392
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+(anonymous) @ chunk-E27YX2RL.js?v=80b17ebe:5987
+J @ chunk-E27YX2RL.js?v=80b17ebe:97
+R @ chunk-E27YX2RL.js?v=80b17ebe:129

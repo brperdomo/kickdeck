@@ -4828,13 +4828,14 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
     // Complete password reset (set new password)
     app.post('/api/auth/reset-password', completePasswordReset);
     
-    // Get current user's registrations with enhanced details
+    // Get current user's registrations with enhanced details - FORCE NO CACHE
     app.get('/api/user/registrations', (req, res, next) => {
       if (!req.isAuthenticated()) {
         return res.status(401).json({ error: "Not authenticated" });
       }
       next();
     }, async (req, res) => {
+      console.log('=== PAYMENT RECEIPTS API CALLED ===', new Date().toISOString());
       try {
         // Check for emulation first - if emulating, use the emulated user ID instead
         let userId: number;
