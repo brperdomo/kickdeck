@@ -41,7 +41,7 @@ export default function MemberRosterUpload() {
   const queryClient = useQueryClient();
 
   // Fetch user's teams that need roster uploads
-  const { data: teams, isLoading: teamsLoading } = useQuery({
+  const { data: teamsData, isLoading: teamsLoading } = useQuery({
     queryKey: ['/api/member-roster/my-teams'],
     queryFn: async () => {
       const response = await fetch('/api/member-roster/my-teams');
@@ -51,6 +51,8 @@ export default function MemberRosterUpload() {
       return response.json();
     }
   });
+
+  const teams = teamsData?.teams || [];
 
   // Fetch players for a specific team
   const { data: teamPlayers } = useQuery({

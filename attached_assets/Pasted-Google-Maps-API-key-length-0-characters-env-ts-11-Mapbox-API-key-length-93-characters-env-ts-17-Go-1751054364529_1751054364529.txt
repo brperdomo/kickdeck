@@ -1,0 +1,36 @@
+Google Maps API key length: 0 characters
+env.ts:11 Mapbox API key length: 93 characters
+env.ts:17 Google Maps API already loaded
+RouteDebugger.tsx:13 Current route location (Wouter): /member-roster-upload
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/member-roster-upload
+RouteDebugger.tsx:15 Current pathname: /member-roster-upload
+RouteDebugger.tsx:16 Current search: 
+use-user.ts:59 Fetching user with emulation token: not present
+member-roster-upload:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+member-roster-upload:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+use-user.ts:76 User data fetched: Object
+chunk-E27YX2RL.js?v=80b17ebe:3770 TypeError: teams?.filter is not a function
+    at MemberRosterUpload (member-roster-upload.tsx:148:37)
+    at Nh (chunk-E27YX2RL.js?v=80b17ebe:3246:11)
+    at cj (chunk-E27YX2RL.js?v=80b17ebe:3904:11)
+    at Vk (chunk-E27YX2RL.js?v=80b17ebe:6266:90)
+    at Uk (chunk-E27YX2RL.js?v=80b17ebe:5923:15)
+    at Tk (chunk-E27YX2RL.js?v=80b17ebe:5917:28)
+    at Ik (chunk-E27YX2RL.js?v=80b17ebe:5902:11)
+    at Nk (chunk-E27YX2RL.js?v=80b17ebe:5633:11)
+    at Ek (chunk-E27YX2RL.js?v=80b17ebe:5687:32)
+    at jg (chunk-E27YX2RL.js?v=80b17ebe:2527:19)
+Li @ chunk-E27YX2RL.js?v=80b17ebe:3770Understand this error
+chunk-E27YX2RL.js?v=80b17ebe:2533 Uncaught TypeError: teams?.filter is not a function
+    at MemberRosterUpload (member-roster-upload.tsx:148:37)
+    at Nh (chunk-E27YX2RL.js?v=80b17ebe:3246:11)
+    at cj (chunk-E27YX2RL.js?v=80b17ebe:3904:11)
+    at Vk (chunk-E27YX2RL.js?v=80b17ebe:6266:90)
+    at Uk (chunk-E27YX2RL.js?v=80b17ebe:5923:15)
+    at Tk (chunk-E27YX2RL.js?v=80b17ebe:5917:28)
+    at Ik (chunk-E27YX2RL.js?v=80b17ebe:5902:11)
+    at Nk (chunk-E27YX2RL.js?v=80b17ebe:5633:11)
+    at Ek (chunk-E27YX2RL.js?v=80b17ebe:5687:32)
+    at jg (chunk-E27YX2RL.js?v=80b17ebe:2527:19)Understand this error
+member-roster-upload:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+member-roster-upload:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
