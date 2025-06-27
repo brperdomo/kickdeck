@@ -3,7 +3,7 @@ import { useStripe, useElements, PaymentElement, Elements } from '@stripe/react-
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Loader2, CreditCard, Info, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Loader2, CreditCard, Info, AlertTriangle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { createSetupIntent, confirmSetup } from '@/lib/payment';
 import { getStripe, resetStripeLoader } from '@/lib/payment';
@@ -39,11 +39,6 @@ function SetupPaymentFormInner({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [hasStripeConnectivityError, setHasStripeConnectivityError] = useState(false);
   const [retryAttempt, setRetryAttempt] = useState(0);
-  const [paymentCompleted, setPaymentCompleted] = useState(false);
-  const [completedDetails, setCompletedDetails] = useState<{
-    setupIntentId: string;
-    paymentMethodId: string;
-  } | null>(null);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -100,13 +95,6 @@ function SetupPaymentFormInner({
           return;
         }
 
-        // Store completed details and show success state
-        setCompletedDetails({
-          setupIntentId: result.setupIntent.id,
-          paymentMethodId: result.setupIntent.payment_method as string
-        });
-        setPaymentCompleted(true);
-        
         // Show success message
         toast({
           title: 'Payment Method Saved',
@@ -155,49 +143,6 @@ function SetupPaymentFormInner({
       setIsLoading(false);
     }
   };
-
-  // Show success state when payment is completed
-  if (paymentCompleted && completedDetails) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-green-600">
-            <CheckCircle className="h-5 w-5" />
-            Payment Information Saved
-          </CardTitle>
-          <CardDescription>
-            Your payment method has been securely stored for this registration
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Alert className="mb-4 bg-green-50 border-green-200">
-            <CheckCircle className="h-4 w-4 text-green-500" />
-            <AlertDescription className="text-green-700">
-              Your payment method is ready for processing.
-              You will only be charged ${(expectedAmount / 100).toFixed(2)} after your team registration is approved.
-            </AlertDescription>
-          </Alert>
-          
-          <div className="space-y-2 text-sm text-muted-foreground">
-            <div className="flex justify-between">
-              <span>Setup Intent ID:</span>
-              <span className="font-mono text-xs">{completedDetails.setupIntentId}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Expected Charge:</span>
-              <span className="font-semibold">${(expectedAmount / 100).toFixed(2)}</span>
-            </div>
-          </div>
-          
-          <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-            <p className="text-sm text-blue-700">
-              ✓ You can now proceed with your registration. Your payment method is secure and ready.
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
 
   return (
     <Card>

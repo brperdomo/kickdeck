@@ -999,7 +999,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   // CRITICAL FIX: Persist step across component re-mounts to prevent payment form from disappearing
   const getInitialStep = (): RegistrationStep => {
     const savedStep = sessionStorage.getItem(`registration-step-${eventId}`) as RegistrationStep;
-    return savedStep && ['personal', 'team', 'payment', 'review', 'success'].includes(savedStep) ? savedStep : 'personal';
+    return savedStep && ['personal', 'team', 'payment', 'review'].includes(savedStep) ? savedStep : 'personal';
   };
   const initialStep = getInitialStep();
   console.log('Enhanced registration flow: Starting at step:', initialStep);
@@ -1826,7 +1826,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
       // Move to personal step since we're already logged in
       setCurrentStep('personal');
     }
-  }, [user]); // Removed currentStep from dependencies to prevent infinite loop
+  }, [user, currentStep]);
   
   // Fetch clubs for the current event
   useEffect(() => {
@@ -4807,8 +4807,10 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                                 console.log(`🎯 Players count: ${players.length}`);
                                 console.log(`🎯 Total amount: ${parseFloat(calculateTotalAmount()) * 100}`);
                                 
-                                // Don't clear cache after successful payment - this causes form re-mounting
-                                // and makes the payment form appear wiped for direct card payments
+                                // Clear setup intent cache since payment is completed
+                                import('@/components/payment/PaymentSetupWrapper').then(({ clearSetupIntentCache }) => {
+                                  clearSetupIntentCache(stableTeamId, parseFloat(calculateTotalAmount()) * 100);
+                                });
                                 
                                 // Make sure to sync the latest players array with form data
                                 teamForm.setValue('players', players);
@@ -5082,8 +5084,10 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                                   return;
                                 }
                                 
-                                // Don't clear cache after successful payment - this causes form re-mounting
-                                // and makes the payment form appear wiped for direct card payments
+                                // Clear setup intent cache since payment is completed
+                                import('@/components/payment/PaymentSetupWrapper').then(({ clearSetupIntentCache }) => {
+                                  clearSetupIntentCache(stableTeamId, parseFloat(calculateTotalAmount()) * 100);
+                                });
                                 
                                 console.log(`Setup intent created successfully: ${setupIntentId}, Payment method: ${paymentMethodId}`);
                                 

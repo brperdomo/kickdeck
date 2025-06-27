@@ -19,7 +19,7 @@ async function processTeamApprovalPayment(team: any, teamId: string): Promise<st
   try {
     log(`Processing approval payment for team ${team.name} (ID: ${teamId}) using Stripe Connect with platform fees`, 'admin');
     
-    // Check if team has payment setup (either Setup Intent OR Payment Method)
+    // Check if team has payment setup
     if (!team.setupIntentId && !team.paymentMethodId) {
       log(`Team ${teamId} has no payment method - cannot process payment`, 'admin');
       return 'no_payment_method';
