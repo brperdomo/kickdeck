@@ -41,13 +41,16 @@ export default function UserRegistrationsView() {
   const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ['user', 'registrations'],
+    queryKey: ['user', 'registrations', 'v2'], // Added version to force cache refresh
     queryFn: async () => {
+      console.log('Fetching registrations from API...');
       const response = await fetch('/api/user/registrations');
       if (!response.ok) {
         throw new Error('Failed to fetch registrations');
       }
-      return response.json();
+      const result = await response.json();
+      console.log('Registration API response:', result);
+      return result;
     }
   });
   

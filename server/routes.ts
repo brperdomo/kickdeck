@@ -5005,6 +5005,8 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         
         // Log the output before sending
         console.log('Returning enhanced registration data with payment details');
+        console.log(`Sample amounts being returned:`, 
+          formattedRegistrations.slice(0, 3).map(r => ({ id: r.id, teamName: r.teamName, amount: r.amount })));
         
         res.json({
           registrations: formattedRegistrations,
