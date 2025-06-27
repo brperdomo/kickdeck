@@ -424,7 +424,7 @@ async function updateTeamStatus(req: Request, res: Response) {
         log(`Payment processing result for team ${teamId}: ${paymentStatus}`, 'admin');
         
         // If payment failed or requires action, don't approve the team yet
-        if (paymentStatus === 'payment_failed' || paymentStatus === 'payment_required' || paymentStatus === 'no_payment_method') {
+        if (paymentStatus === 'payment_failed' || paymentStatus === 'payment_required' || paymentStatus === 'no_payment_method' || paymentStatus === 'payment_method_incomplete' || paymentStatus === 'payment_error') {
           log(`Cannot approve team ${teamId} due to payment issue: ${paymentStatus}`, 'admin');
           
           // Revert the team status back to its previous state
@@ -442,7 +442,9 @@ async function updateTeamStatus(req: Request, res: Response) {
               ? 'Team has not completed payment setup. Use "Generate Payment Completion URL" to allow them to complete payment first.'
               : paymentStatus === 'payment_required'
                 ? 'Team requires manual payment completion. Use "Generate Payment Completion URL" to allow them to finish payment setup.'
-                : 'Payment processing failed. Please check team payment details.',
+                : paymentStatus === 'payment_method_incomplete'
+                  ? 'Team has incomplete payment method setup. Use "Generate Payment Completion URL" to allow them to complete payment setup.'
+                  : 'Payment processing failed. Please check team payment details.',
             paymentStatus: paymentStatus,
             teamStatus: currentTeam.status
           });
