@@ -6,6 +6,16 @@ import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
 
+// Global cache to store setup intents by team ID to prevent duplicates
+const setupIntentCache = new Map<string, { clientSecret: string; setupIntentId: string }>();
+
+// Function to clear completed setup intents from cache
+export function clearSetupIntentCache(teamId: string | number, expectedAmount: number) {
+  const cacheKey = `${teamId}-${expectedAmount}`;
+  setupIntentCache.delete(cacheKey);
+  console.log(`🧹 Cleared setup intent cache for team ${teamId}`);
+}
+
 interface PaymentSetupWrapperProps {
   teamId: number | string;
   expectedAmount: number;
@@ -32,9 +42,25 @@ export function PaymentSetupWrapper({
   const { toast } = useToast();
 
   useEffect(() => {
-    const createSetupIntent = async () => {
+    const createOrReuseSetupIntent = async () => {
       setIsCreatingSetupIntent(true);
+      
+      // Create a unique cache key for this team/amount combination
+      const cacheKey = `${teamId}-${expectedAmount}`;
+      
+      // Check if we already have a setup intent for this team
+      const cached = setupIntentCache.get(cacheKey);
+      if (cached) {
+        console.log(`🔄 Reusing existing setup intent for team ${teamId}: ${cached.setupIntentId}`);
+        setClientSecret(cached.clientSecret);
+        setIsCreatingSetupIntent(false);
+        return;
+      }
+      
       try {
+        console.log(`🎯 Creating setup intent for payment form initialization`);
+        console.log(`🎯 Team ID: ${teamId} Amount: ${expectedAmount} Team Name: ${teamName}`);
+        
         const response = await fetch('/api/payments/create-setup-intent', {
           method: 'POST',
           headers: {
@@ -54,6 +80,16 @@ export function PaymentSetupWrapper({
         }
 
         const data = await response.json();
+        
+        // Cache the setup intent for reuse
+        setupIntentCache.set(cacheKey, {
+          clientSecret: data.clientSecret,
+          setupIntentId: data.setupIntentId
+        });
+        
+        console.log(`🎯 Setup intent created successfully: ${data.setupIntentId}`);
+        console.log(`🎯 Client secret received, length: ${data.clientSecret?.length || 0}`);
+        
         setClientSecret(data.clientSecret);
       } catch (error) {
         console.error('Error creating setup intent:', error);
@@ -71,7 +107,7 @@ export function PaymentSetupWrapper({
       }
     };
 
-    createSetupIntent();
+    createOrReuseSetupIntent();
   }, [teamId, expectedAmount, teamName, eventName, returnUrl, onError, toast]);
 
   if (isCreatingSetupIntent || !clientSecret) {

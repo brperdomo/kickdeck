@@ -1,0 +1,119 @@
+hcaptcha.html:14 XHR finished loading: POST "https://api.hcaptcha.com/checksiteconfig?v=b005bdf……ripecdn.com&sitekey=24ed0064-62cf-4d42-9960-5dd1a41d4e29&sc=1&swa=1&spst=1".
+hcaptcha.html:14 XHR finished loading: POST "https://api.hcaptcha.com/checksiteconfig?v=b005bdf……ripecdn.com&sitekey=463b917e-e264-403f-ad34-34af0ee10294&sc=1&swa=1&spst=1".
+64
+Fetch finished loading: POST "<URL>".
+hcaptcha.html:14 XHR finished loading: POST "https://api.hcaptcha.com/getcaptcha/24ed0064-62cf-4d42-9960-5dd1a41d4e29".
+hcaptcha.html:14 XHR finished loading: POST "https://api.hcaptcha.com/getcaptcha/463b917e-e264-403f-ad34-34af0ee10294".
+60
+index-CD3v2CCT.js:885 Animation frame running, particles: 157 Canvas size: 912 x 864
+index-CD3v2CCT.js:886 🎯 Confirming setup intent with client secret: seti_1ReQ47P4BpmZARxtQKM6kWFh_secret_SZZCUWzhBGtQayqd3p8Y810uCSzNzbE
+105
+index-CD3v2CCT.js:885 Animation frame running, particles: 157 Canvas size: 912 x 864
+index-CD3v2CCT.js:886 🎯 Setup intent confirmation result: 
+{error: undefined, setupIntentStatus: 'succeeded', setupIntentId: 'seti_1ReQ47P4BpmZARxtQKM6kWFh', paymentMethodId: 'pm_1ReQ4GP4BpmZARxt0BqHJ9dc'}
+index-CD3v2CCT.js:886 🎯 Payment setup completed successfully
+index-CD3v2CCT.js:886 🎯 Stored Setup Intent ID: seti_1ReQ47P4BpmZARxtQKM6kWFh
+index-CD3v2CCT.js:886 🎯 Stored Payment Method ID: pm_1ReQ4GP4BpmZARxt0BqHJ9dc
+index-CD3v2CCT.js:886 ✅ Payment setup callback received
+index-CD3v2CCT.js:886 ✅ Setup Intent ID: seti_1ReQ47P4BpmZARxtQKM6kWFh
+index-CD3v2CCT.js:886 ✅ Payment Method ID: pm_1ReQ4GP4BpmZARxt0BqHJ9dc
+index-CD3v2CCT.js:886 AUTH FIX: EventRegistration component starting - user should now see event details without immediate redirect
+index-CD3v2CCT.js:886 AUTH FIX: RegistrationAuthChecker allowUnauthenticated is now set to TRUE by default
+index-CD3v2CCT.js:886 Enhanced registration flow: Always starting at personal step with integrated auth
+index-CD3v2CCT.js:886 🔍 AUTH DEBUG 🔍 
+{user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'personal', isPreview: false}
+index-CD3v2CCT.js:886 Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T00:23:03.750Z
+index-CD3v2CCT.js:886 Event timezone: America/New_York
+index-CD3v2CCT.js:886 Deadline passed: false
+index-CD3v2CCT.js:885 AnimatedEventBackground CONSTRUCTOR - Received colors: 
+{primaryColor: '#007AFF', secondaryColor: '#34C759', type: 'particles', opacity: 0.6}
+index-CD3v2CCT.js:886 🎯 Creating setup intent for payment form initialization
+index-CD3v2CCT.js:886 🎯 Team ID: temp-1750983735727-4tm0gsun4 Amount: 100 Team Name: Admin234
+14
+index-CD3v2CCT.js:885 Animation frame running, particles: 157 Canvas size: 912 x 864
+index-CD3v2CCT.js:886 Fetch finished loading: POST "https://app.matchpro.ai/api/payments/create-setup-intent".
+index-CD3v2CCT.js:886 🎯 Setup intent created successfully: seti_1ReQ4JP4BpmZARxtimi04HZh
+index-CD3v2CCT.js:886 🎯 Client secret received, length: 68
+index-CD3v2CCT.js:885 Animation frame running, particles: 157 Canvas size: 912 x 864
+shared-20e2d375ccaa6…283082fdc6576d.js:1 Fetch finished loading: GET "https://api.stripe.com/v1/elements/sessions?client_secret=seti_1ReQ4JP4BpmZ…0]=payment_method_preference.setup_intent.payment_method&type=setup_intent".
+60
+index-CD3v2CCT.js:885 Animation frame running, particles: 157 Canvas size: 912 x 864
+index-CD3v2CCT.js:886 AUTH FIX: EventRegistration component starting - user should now see event details without immediate redirect
+index-CD3v2CCT.js:886 AUTH FIX: RegistrationAuthChecker allowUnauthenticated is now set to TRUE by default
+index-CD3v2CCT.js:886 Enhanced registration flow: Always starting at personal step with integrated auth
+index-CD3v2CCT.js:886 🔍 AUTH DEBUG 🔍 
+{user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'personal', isPreview: false}
+index-CD3v2CCT.js:886 Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T00:23:08.773Z
+index-CD3v2CCT.js:886 Event timezone: America/New_York
+index-CD3v2CCT.js:886 Deadline passed: false
+index-CD3v2CCT.js:885 AnimatedEventBackground CONSTRUCTOR - Received colors: 
+{primaryColor: '#007AFF', secondaryColor: '#34C759', type: 'particles', opacity: 0.6}
+index-CD3v2CCT.js:886 🎯 Creating setup intent for payment form initialization
+index-CD3v2CCT.js:886 🎯 Team ID: temp-1750983735727-4tm0gsun4 Amount: 100 Team Name: Admin234
+index-CD3v2CCT.js:885 Animation frame running, particles: 157 Canvas size: 912 x 864
+index-CD3v2CCT.js:886 🎯 Setup intent created successfully: seti_1ReQ4PP4BpmZARxtEFeAlzVs
+index-CD3v2CCT.js:886 🎯 Client secret received, length: 68
+index-CD3v2CCT.js:886 Fetch finished loading: POST "https://app.matchpro.ai/api/payments/create-setup-intent".
+19
+index-CD3v2CCT.js:885 Animation frame running, particles: 157 Canvas size: 912 x 864
+shared-20e2d375ccaa6…283082fdc6576d.js:1 Fetch finished loading: GET "https://api.stripe.com/v1/elements/sessions?client_secret=seti_1ReQ4PP4BpmZ…0]=payment_method_preference.setup_intent.payment_method&type=setup_intent".
+40
+index-CD3v2CCT.js:885 Animation frame running, particles: 157 Canvas size: 912 x 864
+index-CD3v2CCT.js:886 AUTH FIX: EventRegistration component starting - user should now see event details without immediate redirect
+index-CD3v2CCT.js:886 AUTH FIX: RegistrationAuthChecker allowUnauthenticated is now set to TRUE by default
+index-CD3v2CCT.js:886 Enhanced registration flow: Always starting at personal step with integrated auth
+index-CD3v2CCT.js:886 🔍 AUTH DEBUG 🔍 
+{user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'personal', isPreview: false}
+index-CD3v2CCT.js:886 Deadline check: 2025-07-25T23:59:59 vs current time 2025-06-27T00:23:10.776Z
+index-CD3v2CCT.js:886 Event timezone: America/New_York
+index-CD3v2CCT.js:886 Deadline passed: false
+index-CD3v2CCT.js:885 AnimatedEventBackground CONSTRUCTOR - Received colors: 
+{primaryColor: '#007AFF', secondaryColor: '#34C759', type: 'particles', opacity: 0.6}
+index-CD3v2CCT.js:886 🎯 Creating setup intent for payment form initialization
+index-CD3v2CCT.js:886 🎯 Team ID: temp-1750983735727-4tm0gsun4 Amount: 100 Team Name: Admin234
+index-CD3v2CCT.js:886 🎯 Setup intent created successfully: seti_1ReQ4RP4BpmZARxtQLdhP6sk
+index-CD3v2CCT.js:886 🎯 Client secret received, length: 68
+index-CD3v2CCT.js:886 Fetch finished loading: POST "https://app.matchpro.ai/api/payments/create-setup-intent".
+shared-20e2d375ccaa6…283082fdc6576d.js:1 Fetch finished loading: GET "https://api.stripe.com/v1/elements/sessions?client_secret=seti_1ReQ4RP4BpmZ…0]=payment_method_preference.setup_intent.payment_method&type=setup_intent".
+60
+index-CD3v2CCT.js:885 Animation frame running, particles: 157 Canvas size: 912 x 864
+shared-20e2d375ccaa6…283082fdc6576d.js:1 Uncaught (in promise) FetchError: Error fetching https://r.stripe.com/b: Failed to fetch
+    at shared-20e2d375ccaa6…dc6576d.js:1:212397
+(anonymous)	@	shared-20e2d375ccaa6…283082fdc6576d.js:1
+Promise.catch		
+(anonymous)	@	shared-20e2d375ccaa6…283082fdc6576d.js:1
+e	@	shared-20e2d375ccaa6…283082fdc6576d.js:1
+l	@	shared-20e2d375ccaa6…283082fdc6576d.js:1
+value	@	shared-20e2d375ccaa6…283082fdc6576d.js:1
+value	@	shared-20e2d375ccaa6…283082fdc6576d.js:1
+value	@	shared-20e2d375ccaa6…283082fdc6576d.js:1
+value	@	shared-20e2d375ccaa6…283082fdc6576d.js:1
+value	@	shared-20e2d375ccaa6…283082fdc6576d.js:1
+value	@	shared-20e2d375ccaa6…283082fdc6576d.js:1
+value	@	shared-20e2d375ccaa6…283082fdc6576d.js:1
+value	@	shared-20e2d375ccaa6…283082fdc6576d.js:1
+(anonymous)	@	shared-20e2d375ccaa6…283082fdc6576d.js:1
+value	@	shared-20e2d375ccaa6…283082fdc6576d.js:1
+log	@	shared-20e2d375ccaa6…283082fdc6576d.js:1
+log	@	controller-with-prec…8cf8d2a7a4f525.js:1
+value	@	controller-with-prec…8cf8d2a7a4f525.js:1
+value	@	shared-20e2d375ccaa6…283082fdc6576d.js:1
+(anonymous)	@	shared-20e2d375ccaa6…283082fdc6576d.js:1
+setTimeout		
+value	@	shared-20e2d375ccaa6…283082fdc6576d.js:1
+RECORD_ELEMENTS_PERFORMANCE_TIMELINE	@	controller-with-prec…8cf8d2a7a4f525.js:1
+(anonymous)	@	controller-with-prec…8cf8d2a7a4f525.js:1
+value	@	controller-with-prec…8cf8d2a7a4f525.js:1
+value	@	controller-with-prec…8cf8d2a7a4f525.js:1
+value	@	controller-with-prec…8cf8d2a7a4f525.js:1
+(anonymous)	@	controller-with-prec…8cf8d2a7a4f525.js:1
+postMessage		
+c	@	shared-20e2d375ccaa6…283082fdc6576d.js:1
+o._sendControllerMessage	@	shared-20e2d375ccaa6…283082fdc6576d.js:1
+(anonymous)	@	shared-20e2d375ccaa6…283082fdc6576d.js:1
+o.innerAction	@	shared-20e2d375ccaa6…283082fdc6576d.js:1
+reporter	@	shared-20e2d375ccaa6…283082fdc6576d.js:1
+(anonymous)	@	shared-20e2d375ccaa6…283082fdc6576d.js:1
+setTimeout		
+(anonymous)	@	shared-20e2d375ccaa6…283082fdc6576d.js:1
+(anonymous)
