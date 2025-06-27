@@ -26,35 +26,13 @@ export default function RegistrationAuthChecker({
   const queryClient = useQueryClient();
   const initialCheckDone = useRef(false);
   
-  // Force a fresh user data fetch on mount
+  // FIXED: Removed aggressive query invalidation to prevent infinite re-mounting
   useEffect(() => {
     if (!initialCheckDone.current) {
       initialCheckDone.current = true;
-      
-      // Force a fresh fetch of user data
-      queryClient.invalidateQueries({ queryKey: ["/api/user"] });
-      
-      // Make a direct fetch with cache-busting to ensure we get fresh data
-      fetch('/api/user', {
-        method: 'GET',
-        credentials: 'include',
-        headers: { 
-          'Cache-Control': 'no-cache',
-          'X-Cache-Bust': Date.now().toString()
-        }
-      })
-      .then(res => res.ok ? res.json() : null)
-      .then(userData => {
-        if (userData) {
-          console.log("Registration: User is authenticated", userData.email);
-          queryClient.setQueryData(["/api/user"], userData);
-        }
-      })
-      .catch(e => {
-        console.error('Error checking auth status:', e);
-      });
+      console.log("RegistrationAuthChecker: Initial check completed, using existing auth hook data");
     }
-  }, [queryClient]);
+  }, []);
   
   // Simple redirect to login if not authenticated, unless allowUnauthenticated
   useEffect(() => {
