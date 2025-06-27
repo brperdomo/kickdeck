@@ -383,17 +383,9 @@ router.post('/resend-receipt', async (req, res) => {
       return res.status(400).json({ error: 'No email address found for this payment' });
     }
     
-    // Resend the receipt email through Stripe
-    await stripe.charges.retrieve(paymentIntent.latest_charge as string, {
-      expand: ['receipt_url']
-    });
-    
-    // Create a receipt URL and send email notification
-    const receiptUrl = `https://pay.stripe.com/receipts/${paymentIntent.latest_charge}`;
-    
-    // Use Stripe's receipt email functionality if available
+    // Use Stripe's built-in receipt email functionality
     try {
-      // Try to trigger Stripe's receipt email
+      // Update the payment intent to include receipt email, which triggers Stripe to send receipt
       await stripe.paymentIntents.update(paymentIntentId, {
         receipt_email: receiptEmail
       });
