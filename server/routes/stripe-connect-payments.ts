@@ -42,6 +42,13 @@ export async function processDestinationCharge(
       where: eq(teams.id, teamId)
     });
 
+    console.log(`RECEIPT EMAIL DEBUG: Team ${teamId} data:`, {
+      teamId: team?.id,
+      submitterEmail: team?.submitterEmail,
+      submitterName: team?.submitterName,
+      name: team?.name
+    });
+
     let feeCalculation;
     
     if (isPreCalculated) {
