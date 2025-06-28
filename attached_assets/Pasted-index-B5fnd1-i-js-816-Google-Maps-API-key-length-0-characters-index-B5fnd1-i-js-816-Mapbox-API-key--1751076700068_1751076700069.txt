@@ -1,0 +1,104 @@
+index-B5fnd1_i.js:816 Google Maps API key length: 0 characters
+index-B5fnd1_i.js:816 Mapbox API key length: 93 characters
+index-B5fnd1_i.js:816 Google Maps API already loaded
+6Failed to decode downloaded font: <URL>Understand this warning
+6OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+index-B5fnd1_i.js:646 Current route location (Wouter): /admin
+index-B5fnd1_i.js:646 Current URL: https://app.matchpro.ai/admin
+index-B5fnd1_i.js:646 Current pathname: /admin
+index-B5fnd1_i.js:646 Current search: 
+index-B5fnd1_i.js:646 Fetching user with emulation token: not present
+index-B5fnd1_i.js:646 User data fetched: Object
+12Invalid keyframe value for property filter: blur(-0.08136px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.16063px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.22707px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.28173px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.32564px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.3598px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.38521px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.40278px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.41343px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.41799px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.41726px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.41199px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.40286px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.39052px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.37556px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.35849px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.33982px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.31996px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.2993px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.27819px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.25693px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.23576px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.21492px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.19459px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.17493px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.15606px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.13808px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.12106px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.10507px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.09014px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.07628px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.0635px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.0518px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.04115px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.03153px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.02289px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.01521px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.00842px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.00249px)Understand this warning
+util.js:39 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+swa @ util.js:39Understand this warning
+index-B5fnd1_i.js:646 Current route location (Wouter): /admin/teams
+index-B5fnd1_i.js:646 Current URL: https://app.matchpro.ai/admin/teams
+index-B5fnd1_i.js:646 Current pathname: /admin/teams
+index-B5fnd1_i.js:646 Current search: 
+index-B5fnd1_i.js:835 Updating activeView from URL: teams
+index-B5fnd1_i.js:835 Import eligible events: Array(4)
+index-B5fnd1_i.js:835 Teams data received: Array(191)
+index-B5fnd1_i.js:835 Teams data from API: Array(191)
+index-B5fnd1_i.js:835 Normalized teams data: Array(191)
+index-B5fnd1_i.js:727 Fetched age groups for event: 1755746106
+index-B5fnd1_i.js:727 Fetching brackets for event 1755746106 and age group 10006
+index-B5fnd1_i.js:835 Sending status update with data: Object
+index-B5fnd1_i.js:835 Raw response text: {"status":"success","team":{"id":218,"eventId":1755746106,"ageGroupId":10006,"groupId":null,"bracketId":null,"clubId":null,"clubName":null,"name":"TestingOnceMore","coach":"{\"headCoachName\":\"Bryan Perdomo\",\"headCoachEmail\":\"bperdomo@zoho.com\",\"headCoachPhone\":\"(202) 695-6262\",\"accountCreated\":false}","managerName":"Bryan Perdomo","managerPhone":"(202) 695-6262","managerEmail":"bperdomo@zoho.com","submitterName":"Bryan Perdomo","submitterEmail":"bperdomo@zoho.com","seedRanking":null,"createdAt":"2025-06-28T01:33:01.861Z","status":"registered","registrationFee":null,"selectedFeeIds":"{\"34\"}","totalAmount":100,"paymentStatus":"paid","paymentDate":null,"paymentIntentId":"pi_3RenxeP4BpmZARxt02gETaKd","setupIntentId":"seti_1Rend8P4BpmZARxtDWpJiejR","paymentMethodId":"pm_1RendTP4BpmZARxtbSZmzwrA","cardBrand":null,"cardLast4":null,"paymentMethodType":null,"paymentErrorCode":null,"paymentErrorMessage":null,"refundDate":null,"stripeCustomerId":"cus_SZxrAzYQ5DyZWH","termsAcknowledged":true,"termsAcknowledgedAt":"2025-06-28T01:33:01.377Z","termsAcknowledgementRecord":null,"addRosterLater":true,"rosterUploadedAt":null,"rosterUploadMethod":null,"initialRosterComplete":false,"appliedCoupon":null,"notes":"Approval attempted but payment failed (payment_error). Admin notes: Approval attempted but payment failed (payment_error). Admin notes: Approval attempted but payment failed (payment_error). Admin notes: Approval attempted but payment failed (payment_error). Please ensure team has completed payment setup before approving."},"notification":{"status":"sent","recipients":["bperdomo@zoho.com"],"message":"Email notification sent successfully"}}
+index-B5fnd1_i.js:835 Teams data received: Array(191)
+index-B5fnd1_i.js:835 Teams data from API: Array(191)
+index-B5fnd1_i.js:835 Normalized teams data: Array(191)
+index-B5fnd1_i.js:835 Sending status update with data: Object
+/api/admin/teams/218/status:1 
+            
+            
+           Failed to load resource: the server responded with a status of 400 ()Understand this error
+index-B5fnd1_i.js:835 Raw response text: {"status":"error","error":"Payment processing failed","message":"Payment processing failed. Please check team payment details.","paymentStatus":"payment_error","teamStatus":"registered"}
+index-B5fnd1_i.js:835 Error response: Object
+mutationFn @ index-B5fnd1_i.js:835Understand this error
+index-B5fnd1_i.js:835 Error in updateTeamStatus mutation: Error: Payment processing failed
+    at Object.mutationFn (index-B5fnd1_i.js:835:82164)
+mutationFn @ index-B5fnd1_i.js:835Understand this error
+index-B5fnd1_i.js:835 Sending status update with data: Object
+/api/admin/teams/199/status:1 
+            
+            
+           Failed to load resource: the server responded with a status of 400 ()Understand this error
+index-B5fnd1_i.js:835 Raw response text: {"status":"error","error":"Payment processing failed","message":"Payment processing failed. Please check team payment details.","paymentStatus":"payment_error","teamStatus":"registered"}
+index-B5fnd1_i.js:835 Error response: Object
+mutationFn @ index-B5fnd1_i.js:835Understand this error
+index-B5fnd1_i.js:835 Error in updateTeamStatus mutation: Error: Payment processing failed
+    at Object.mutationFn (index-B5fnd1_i.js:835:82164)
+mutationFn @ index-B5fnd1_i.js:835Understand this error
+index-B5fnd1_i.js:727 Fetched age groups for event: 1844329078
+index-B5fnd1_i.js:727 Fetching brackets for event 1844329078 and age group 10006
+index-B5fnd1_i.js:727 Fetching brackets for event 1844329078 and age group 9965
+index-B5fnd1_i.js:835 Sending status update with data: Object
+/api/admin/teams/212/status:1 
+            
+            
+           Failed to load resource: the server responded with a status of 400 ()Understand this error
+index-B5fnd1_i.js:835 Raw response text: {"status":"error","error":"Payment processing failed","message":"Payment processing failed. Please check team payment details.","paymentStatus":"payment_error","teamStatus":"registered"}
+index-B5fnd1_i.js:835 Error response: Object
+mutationFn @ index-B5fnd1_i.js:835Understand this error
+index-B5fnd1_i.js:835 Error in updateTeamStatus mutation: Error: Payment processing failed
+    at Object.mutationFn (index-B5fnd1_i.js:835:82164)
+mutationFn @ index-B5fnd1_i.js:835Understand this error
