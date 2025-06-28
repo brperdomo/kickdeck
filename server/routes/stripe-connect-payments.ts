@@ -42,13 +42,6 @@ export async function processDestinationCharge(
       where: eq(teams.id, teamId)
     });
 
-    console.log(`RECEIPT EMAIL DEBUG: Team ${teamId} data:`, {
-      teamId: team?.id,
-      submitterEmail: team?.submitterEmail,
-      submitterName: team?.submitterName,
-      name: team?.name
-    });
-
     let feeCalculation;
     
     if (isPreCalculated) {
@@ -84,89 +77,14 @@ export async function processDestinationCharge(
     // For pre-calculated amounts, use the provided total; otherwise use calculated total
     const chargeAmount = isPreCalculated ? totalAmountCents : feeCalculation.totalChargedAmount;
     
-    // COMPATIBILITY CHECK: Detect platform vs Connect account payment methods
-    console.log(`COMPATIBILITY CHECK: Checking payment method ${paymentMethodId} ownership`);
+    // Get the customer from the payment method to ensure proper association
+    const paymentMethod = await stripe.paymentMethods.retrieve(paymentMethodId);
+    let customerId = paymentMethod.customer as string | null;
     
-    let paymentMethod;
-    let customerId = null;
-    let isConnectPaymentMethod = false;
-    
-    try {
-      // First try to retrieve on Connect account (new approach)
-      paymentMethod = await stripe.paymentMethods.retrieve(paymentMethodId, {
-        stripeAccount: connectAccountId
-      });
-      customerId = paymentMethod.customer as string;
-      isConnectPaymentMethod = true;
-      console.log(`✅ Payment method is Connect account-owned: ${paymentMethodId}`);
-      
-    } catch (connectError) {
-      // If not found on Connect account, it's platform-owned (legacy approach)
-      console.log(`Payment method not on Connect account, checking platform account...`);
-      
-      try {
-        paymentMethod = await stripe.paymentMethods.retrieve(paymentMethodId);
-        customerId = paymentMethod.customer as string;
-        isConnectPaymentMethod = false;
-        console.log(`⚠️ Payment method is platform account-owned: ${paymentMethodId}`);
-        console.log(`  - Legacy customer: ${customerId}`);
-        
-      } catch (platformError) {
-        throw new Error(`Payment method ${paymentMethodId} not found on either platform or Connect account`);
-      }
-    }
-    
-    console.log(`PAYMENT METHOD DEBUG: ${paymentMethodId}`);
+    console.log(`PAYMENT METHOD DEBUG: Retrieved payment method ${paymentMethodId}`);
     console.log(`  - type: ${paymentMethod.type}`);
     console.log(`  - customer: ${paymentMethod.customer}`);
-    console.log(`  - isConnectPaymentMethod: ${isConnectPaymentMethod}`);
-
-    // CONNECT CUSTOMER CREATION: Handle both new and legacy payment methods
-    if (isConnectPaymentMethod) {
-      // New approach: payment method already on Connect account
-      console.log(`Using existing Connect account payment method and customer`);
-      
-    } else {
-      // Legacy approach: need to create new customer and payment method on Connect account
-      console.log(`LEGACY COMPATIBILITY: Creating new Connect customer and payment method for platform-owned method`);
-      
-      if (!team?.submitterEmail) {
-        throw new Error('Missing submitter email for Connect customer creation');
-      }
-      
-      try {
-        // Create customer on Connect account
-        const connectCustomer = await stripe.customers.create({
-          email: team.submitterEmail,
-          name: team.submitterName || team.submitterEmail,
-          metadata: {
-            teamId: teamId.toString(),
-            teamName: team.name || 'Unknown Team',
-            eventId: eventId,
-            createdFor: 'legacy_migration_payment',
-            originalCustomer: customerId
-          }
-        }, {
-          stripeAccount: connectAccountId
-        });
-        
-        customerId = connectCustomer.id;
-        console.log(`Created Connect customer for legacy payment: ${customerId}`);
-        
-        // For legacy payments, we'll create Payment Intent without specifying payment_method
-        // and let Stripe handle the payment with the legacy Setup Intent
-        paymentMethodId = null; // Clear this to use Setup Intent approach
-        
-        // Update team record with Connect customer ID
-        await db.update(teams)
-          .set({ stripeCustomerId: customerId })
-          .where(eq(teams.id, teamId));
-          
-      } catch (customerError) {
-        console.error('Error creating Connect customer for legacy payment:', customerError);
-        throw new Error(`Cannot create Connect customer: ${customerError.message}`);
-      }
-    }
+    console.log(`  - customerId variable: ${customerId}`);
 
     // Handle Link payment methods which fundamentally cannot be used with customers
     if (paymentMethod.type === 'link') {
@@ -205,7 +123,8 @@ export async function processDestinationCharge(
         currency: 'usd',
         payment_method: paymentMethodId,
         confirm: true,
-        receipt_email: team?.submitterEmail || null, // Ensure receipts are sent when available
+        // NOTE: Removed receipt_email to ensure consistent receipt handling
+        // Tournament organizers should handle their own receipt delivery
         automatic_payment_methods: {
           enabled: true,
           allow_redirects: 'never'
@@ -233,7 +152,7 @@ export async function processDestinationCharge(
         
         try {
           const transfer = await stripe.transfers.create({
-            amount: feeCalculation.tournamentReceivesAmount, // Send tournament portion to Connect account
+            amount: feeCalculation.tournamentReceives, // Send tournament portion to Connect account
             currency: 'usd',
             destination: connectAccountId,
             source_transaction: paymentIntent.latest_charge as string,
@@ -244,23 +163,27 @@ export async function processDestinationCharge(
             }
           });
           
-          console.log(`Manual transfer created: ${transfer.id} for $${feeCalculation.tournamentReceivesAmount / 100}`);
+          console.log(`Manual transfer created: ${transfer.id} for $${feeCalculation.tournamentReceives / 100}`);
         } catch (transferError) {
           console.error('Error creating manual transfer for Link payment:', transferError);
           // Payment succeeded but transfer failed - this needs manual handling
         }
+        
+        // Note: Link payments use platform account charges with manual transfers
+        // Receipt handling should be done via custom email system to maintain tournament branding
       }
       
     } else {
       console.log(`Processing regular payment method - using destination charge`);
       
-      // Create Payment Intent based on payment method ownership
+      // Create direct charge on Connect account - this ensures receipts come from tournament organizer
       const paymentIntentParams: any = {
         amount: chargeAmount,
         currency: 'usd',
+        payment_method: paymentMethodId,
         confirm: true,
-        receipt_email: team?.submitterEmail || null,
-        application_fee_amount: feeCalculation.platformFeeAmount,
+        receipt_email: team?.submitterEmail, // This will come from Connect account
+        application_fee_amount: feeCalculation.platformFeeAmount, // Platform fee for MatchPro
         automatic_payment_methods: {
           enabled: true,
           allow_redirects: 'never'
@@ -268,46 +191,32 @@ export async function processDestinationCharge(
         metadata: {
           teamId: teamId.toString(),
           eventId: eventId,
-          connectAccountId: connectAccountId,
-          type: 'team_registration',
+          type: 'team_registration_direct',
           tournamentCost: totalAmountCents.toString(),
           platformFeeRate: feeCalculation.platformFeeRate.toString(),
           stripeFeeAmount: feeCalculation.stripeFeeAmount.toString()
         }
       };
 
-      // Handle payment method based on ownership (Connect vs Platform)
-      if (isConnectPaymentMethod) {
-        // New approach: payment method on Connect account
-        paymentIntentParams.payment_method = paymentMethodId;
+      // Include customer if we have one
+      if (customerId) {
         paymentIntentParams.customer = customerId;
-        console.log(`Using Connect account payment method: ${paymentMethodId}`);
-        
-        paymentIntent = await stripe.paymentIntents.create(paymentIntentParams, {
-          stripeAccount: connectAccountId
-        });
-        
-      } else {
-        // Legacy approach: use Setup Intent with platform payment method
-        console.log(`Using legacy Setup Intent approach for platform payment method`);
-        
-        if (!team.setupIntentId) {
-          throw new Error('Missing Setup Intent ID for legacy payment method');
-        }
-        
-        // Confirm the Setup Intent payment on platform account with destination charge
-        paymentIntentParams.payment_method = paymentMethodId;
-        paymentIntentParams.on_behalf_of = connectAccountId;
-        paymentIntentParams.transfer_data = {
-          destination: connectAccountId,
-        };
-        
-        // Remove customer from params since it's platform-owned
-        delete paymentIntentParams.customer;
-        
-        paymentIntent = await stripe.paymentIntents.create(paymentIntentParams);
+        console.log(`Using customer: ${customerId}`);
       }
+
+      // Create charge directly on Connect account instead of platform account
+      paymentIntent = await stripe.paymentIntents.create(
+        paymentIntentParams,
+        {
+          stripeAccount: connectAccountId // This makes the charge on Connect account
+        }
+      );
     }
+
+    // Note: Receipt handling for direct charges on Connect account
+    // - receipt_email set on Connect account PaymentIntent
+    // - Receipts automatically sent from Connect account (tournament organizer)
+    // - No custom receipt system needed
 
     // Record comprehensive transaction in database with detailed fee breakdown
     await db.insert(paymentTransactions).values({
