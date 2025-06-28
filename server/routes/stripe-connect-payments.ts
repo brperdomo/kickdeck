@@ -254,13 +254,12 @@ export async function processDestinationCharge(
     } else {
       console.log(`Processing regular payment method - using destination charge`);
       
-      // For regular payment methods, create Payment Intent directly on Connect account
+      // Create Payment Intent based on payment method ownership
       const paymentIntentParams: any = {
         amount: chargeAmount,
         currency: 'usd',
-        payment_method: paymentMethodId,
         confirm: true,
-        receipt_email: team?.submitterEmail || null, // Ensure receipts are sent when available
+        receipt_email: team?.submitterEmail || null,
         application_fee_amount: feeCalculation.platformFeeAmount,
         automatic_payment_methods: {
           enabled: true,
@@ -277,16 +276,37 @@ export async function processDestinationCharge(
         }
       };
 
-      // Include customer if we have one
-      if (customerId) {
+      // Handle payment method based on ownership (Connect vs Platform)
+      if (isConnectPaymentMethod) {
+        // New approach: payment method on Connect account
+        paymentIntentParams.payment_method = paymentMethodId;
         paymentIntentParams.customer = customerId;
-        console.log(`Using customer: ${customerId}`);
+        console.log(`Using Connect account payment method: ${paymentMethodId}`);
+        
+        paymentIntent = await stripe.paymentIntents.create(paymentIntentParams, {
+          stripeAccount: connectAccountId
+        });
+        
+      } else {
+        // Legacy approach: use Setup Intent with platform payment method
+        console.log(`Using legacy Setup Intent approach for platform payment method`);
+        
+        if (!team.setupIntentId) {
+          throw new Error('Missing Setup Intent ID for legacy payment method');
+        }
+        
+        // Confirm the Setup Intent payment on platform account with destination charge
+        paymentIntentParams.payment_method = paymentMethodId;
+        paymentIntentParams.on_behalf_of = connectAccountId;
+        paymentIntentParams.transfer_data = {
+          destination: connectAccountId,
+        };
+        
+        // Remove customer from params since it's platform-owned
+        delete paymentIntentParams.customer;
+        
+        paymentIntent = await stripe.paymentIntents.create(paymentIntentParams);
       }
-
-      // Create Payment Intent directly on Connect account for customer visibility
-      paymentIntent = await stripe.paymentIntents.create(paymentIntentParams, {
-        stripeAccount: connectAccountId
-      });
     }
 
     // Record comprehensive transaction in database with detailed fee breakdown

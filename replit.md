@@ -120,6 +120,8 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
   - ENHANCED: Tournament organizers now own customer relationships and can see all customer data
   - VERIFIED: Connect customer creation and Payment Intent processing works perfectly with application fees
   - IMPROVED: Receipts will now automatically come from tournament organizers instead of MatchPro LLC
+  - LEGACY COMPATIBILITY: Added automatic detection of platform vs Connect payment methods for backward compatibility
+  - COMPREHENSIVE PAYMENT STATUS SYNC: Fixed 8 teams with mismatched database vs Stripe statuses
   - PRODUCTION READY: Customer emails will appear in Connect dashboards and receipts sent from proper accounts
 - June 27, 2025: CRITICAL PRODUCTION EMAIL FIX - Resolved registration confirmation emails not being sent to team submitters
   - IDENTIFIED: Email trigger condition checked for 'payment_info_provided' status but actual teams had 'setup_intent_completed' status
