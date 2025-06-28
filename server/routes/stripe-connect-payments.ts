@@ -123,8 +123,7 @@ export async function processDestinationCharge(
         currency: 'usd',
         payment_method: paymentMethodId,
         confirm: true,
-        // NOTE: Removed receipt_email to ensure consistent receipt handling
-        // Tournament organizers should handle their own receipt delivery
+        receipt_email: team?.submitterEmail,
         automatic_payment_methods: {
           enabled: true,
           allow_redirects: 'never'
@@ -152,7 +151,7 @@ export async function processDestinationCharge(
         
         try {
           const transfer = await stripe.transfers.create({
-            amount: feeCalculation.tournamentReceives, // Send tournament portion to Connect account
+            amount: feeCalculation.tournamentReceivesAmount, // Send tournament portion to Connect account
             currency: 'usd',
             destination: connectAccountId,
             source_transaction: paymentIntent.latest_charge as string,
@@ -163,27 +162,28 @@ export async function processDestinationCharge(
             }
           });
           
-          console.log(`Manual transfer created: ${transfer.id} for $${feeCalculation.tournamentReceives / 100}`);
+          console.log(`Manual transfer created: ${transfer.id} for $${feeCalculation.tournamentReceivesAmount / 100}`);
         } catch (transferError) {
           console.error('Error creating manual transfer for Link payment:', transferError);
           // Payment succeeded but transfer failed - this needs manual handling
         }
-        
-        // Note: Link payments use platform account charges with manual transfers
-        // Receipt handling should be done via custom email system to maintain tournament branding
       }
       
     } else {
       console.log(`Processing regular payment method - using destination charge`);
       
-      // Create direct charge on Connect account - this ensures receipts come from tournament organizer
+      // For regular payment methods, use destination charge as before
       const paymentIntentParams: any = {
         amount: chargeAmount,
         currency: 'usd',
         payment_method: paymentMethodId,
         confirm: true,
-        receipt_email: team?.submitterEmail, // This will come from Connect account
-        application_fee_amount: feeCalculation.platformFeeAmount, // Platform fee for MatchPro
+        on_behalf_of: connectAccountId,
+        receipt_email: team?.submitterEmail,
+        transfer_data: {
+          destination: connectAccountId,
+        },
+        application_fee_amount: feeCalculation.platformFeeAmount,
         automatic_payment_methods: {
           enabled: true,
           allow_redirects: 'never'
@@ -191,7 +191,8 @@ export async function processDestinationCharge(
         metadata: {
           teamId: teamId.toString(),
           eventId: eventId,
-          type: 'team_registration_direct',
+          connectAccountId: connectAccountId,
+          type: 'team_registration',
           tournamentCost: totalAmountCents.toString(),
           platformFeeRate: feeCalculation.platformFeeRate.toString(),
           stripeFeeAmount: feeCalculation.stripeFeeAmount.toString()
@@ -204,19 +205,8 @@ export async function processDestinationCharge(
         console.log(`Using customer: ${customerId}`);
       }
 
-      // Create charge directly on Connect account instead of platform account
-      paymentIntent = await stripe.paymentIntents.create(
-        paymentIntentParams,
-        {
-          stripeAccount: connectAccountId // This makes the charge on Connect account
-        }
-      );
+      paymentIntent = await stripe.paymentIntents.create(paymentIntentParams);
     }
-
-    // Note: Receipt handling for direct charges on Connect account
-    // - receipt_email set on Connect account PaymentIntent
-    // - Receipts automatically sent from Connect account (tournament organizer)
-    // - No custom receipt system needed
 
     // Record comprehensive transaction in database with detailed fee breakdown
     await db.insert(paymentTransactions).values({
