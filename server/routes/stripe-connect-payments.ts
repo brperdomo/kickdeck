@@ -152,7 +152,7 @@ export async function processDestinationCharge(
         
         try {
           const transfer = await stripe.transfers.create({
-            amount: feeCalculation.tournamentReceivesAmount, // Send tournament portion to Connect account
+            amount: feeCalculation.tournamentReceives, // Send tournament portion to Connect account
             currency: 'usd',
             destination: connectAccountId,
             source_transaction: paymentIntent.latest_charge as string,
@@ -163,10 +163,28 @@ export async function processDestinationCharge(
             }
           });
           
-          console.log(`Manual transfer created: ${transfer.id} for $${feeCalculation.tournamentReceivesAmount / 100}`);
+          console.log(`Manual transfer created: ${transfer.id} for $${feeCalculation.tournamentReceives / 100}`);
         } catch (transferError) {
           console.error('Error creating manual transfer for Link payment:', transferError);
           // Payment succeeded but transfer failed - this needs manual handling
+        }
+        
+        // Send receipt from platform account for Link payments (since they don't use destination charges)
+        if (team?.submitterEmail) {
+          try {
+            console.log(`Sending Link payment receipt from platform account to ${team.submitterEmail}`);
+            
+            await stripe.charges.update(
+              paymentIntent.latest_charge as string,
+              {
+                receipt_email: team.submitterEmail
+              }
+            );
+            
+            console.log(`✅ Link payment receipt sent to ${team.submitterEmail}`);
+          } catch (receiptError) {
+            console.error(`Failed to send Link payment receipt:`, receiptError);
+          }
         }
       }
       
