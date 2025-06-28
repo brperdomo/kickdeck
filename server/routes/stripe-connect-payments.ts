@@ -84,20 +84,58 @@ export async function processDestinationCharge(
     // For pre-calculated amounts, use the provided total; otherwise use calculated total
     const chargeAmount = isPreCalculated ? totalAmountCents : feeCalculation.totalChargedAmount;
     
-    // Get the customer from the payment method to ensure proper association
-    const paymentMethod = await stripe.paymentMethods.retrieve(paymentMethodId);
-    let customerId = paymentMethod.customer as string | null;
+    // COMPATIBILITY CHECK: Detect platform vs Connect account payment methods
+    console.log(`COMPATIBILITY CHECK: Checking payment method ${paymentMethodId} ownership`);
     
-    console.log(`PAYMENT METHOD DEBUG: Retrieved payment method ${paymentMethodId}`);
-    console.log(`  - type: ${paymentMethod.type}`);
-    console.log(`  - customer: ${paymentMethod.customer}`);
-    console.log(`  - customerId variable: ${customerId}`);
-
-    // CONNECT CUSTOMER FIX: Create customer on Connect account if needed
-    if (!customerId && team?.submitterEmail && connectAccountId) {
-      console.log(`Creating customer on Connect account ${connectAccountId} for better receipt delivery`);
+    let paymentMethod;
+    let customerId = null;
+    let isConnectPaymentMethod = false;
+    
+    try {
+      // First try to retrieve on Connect account (new approach)
+      paymentMethod = await stripe.paymentMethods.retrieve(paymentMethodId, {
+        stripeAccount: connectAccountId
+      });
+      customerId = paymentMethod.customer as string;
+      isConnectPaymentMethod = true;
+      console.log(`✅ Payment method is Connect account-owned: ${paymentMethodId}`);
+      
+    } catch (connectError) {
+      // If not found on Connect account, it's platform-owned (legacy approach)
+      console.log(`Payment method not on Connect account, checking platform account...`);
       
       try {
+        paymentMethod = await stripe.paymentMethods.retrieve(paymentMethodId);
+        customerId = paymentMethod.customer as string;
+        isConnectPaymentMethod = false;
+        console.log(`⚠️ Payment method is platform account-owned: ${paymentMethodId}`);
+        console.log(`  - Legacy customer: ${customerId}`);
+        
+      } catch (platformError) {
+        throw new Error(`Payment method ${paymentMethodId} not found on either platform or Connect account`);
+      }
+    }
+    
+    console.log(`PAYMENT METHOD DEBUG: ${paymentMethodId}`);
+    console.log(`  - type: ${paymentMethod.type}`);
+    console.log(`  - customer: ${paymentMethod.customer}`);
+    console.log(`  - isConnectPaymentMethod: ${isConnectPaymentMethod}`);
+
+    // CONNECT CUSTOMER CREATION: Handle both new and legacy payment methods
+    if (isConnectPaymentMethod) {
+      // New approach: payment method already on Connect account
+      console.log(`Using existing Connect account payment method and customer`);
+      
+    } else {
+      // Legacy approach: need to create new customer and payment method on Connect account
+      console.log(`LEGACY COMPATIBILITY: Creating new Connect customer and payment method for platform-owned method`);
+      
+      if (!team?.submitterEmail) {
+        throw new Error('Missing submitter email for Connect customer creation');
+      }
+      
+      try {
+        // Create customer on Connect account
         const connectCustomer = await stripe.customers.create({
           email: team.submitterEmail,
           name: team.submitterName || team.submitterEmail,
@@ -105,14 +143,19 @@ export async function processDestinationCharge(
             teamId: teamId.toString(),
             teamName: team.name || 'Unknown Team',
             eventId: eventId,
-            createdFor: 'connect_account_payment'
+            createdFor: 'legacy_migration_payment',
+            originalCustomer: customerId
           }
         }, {
-          stripeAccount: connectAccountId // Create on Connect account
+          stripeAccount: connectAccountId
         });
         
         customerId = connectCustomer.id;
-        console.log(`Created Connect customer: ${customerId} with email: ${team.submitterEmail}`);
+        console.log(`Created Connect customer for legacy payment: ${customerId}`);
+        
+        // For legacy payments, we'll create Payment Intent without specifying payment_method
+        // and let Stripe handle the payment with the legacy Setup Intent
+        paymentMethodId = null; // Clear this to use Setup Intent approach
         
         // Update team record with Connect customer ID
         await db.update(teams)
@@ -120,8 +163,8 @@ export async function processDestinationCharge(
           .where(eq(teams.id, teamId));
           
       } catch (customerError) {
-        console.error('Error creating Connect customer:', customerError);
-        // Continue without customer if creation fails
+        console.error('Error creating Connect customer for legacy payment:', customerError);
+        throw new Error(`Cannot create Connect customer: ${customerError.message}`);
       }
     }
 
