@@ -1,0 +1,67 @@
+index-B5fnd1_i.js:837 
+ GET https://app.matchpro.ai/api/events/1825427780/connect-account 500 (Internal Server Error)
+queryFn	@	index-B5fnd1_i.js:837
+i	@	index-B5fnd1_i.js:40
+h	@	index-B5fnd1_i.js:40
+(anonymous)	@	index-B5fnd1_i.js:40
+Promise.then		
+(anonymous)	@	index-B5fnd1_i.js:40
+Promise.catch		
+h	@	index-B5fnd1_i.js:40
+(anonymous)	@	index-B5fnd1_i.js:40
+Promise.then		
+(anonymous)	@	index-B5fnd1_i.js:40
+Promise.catch		
+h	@	index-B5fnd1_i.js:40
+start	@	index-B5fnd1_i.js:40
+fetch	@	index-B5fnd1_i.js:40
+Lg	@	index-B5fnd1_i.js:40
+onSubscribe	@	index-B5fnd1_i.js:40
+subscribe	@	index-B5fnd1_i.js:40
+(anonymous)	@	index-B5fnd1_i.js:40
+Zq	@	index-B5fnd1_i.js:38
+o1	@	index-B5fnd1_i.js:40
+Ff	@	index-B5fnd1_i.js:40
+efe	@	index-B5fnd1_i.js:40
+du	@	index-B5fnd1_i.js:40
+DF	@	index-B5fnd1_i.js:40
+$d	@	index-B5fnd1_i.js:38
+(anonymous)	@	index-B5fnd1_i.js:40
+index-B5fnd1_i.js:837 Fetch failed loading: GET "https://app.matchpro.ai/api/events/1825427780/connect-account".
+index-B5fnd1_i.js:837 
+ GET https://app.matchpro.ai/api/events/1825427780/connect-account 500 (Internal Server Error)
+queryFn	@	index-B5fnd1_i.js:837
+i	@	index-B5fnd1_i.js:40
+h	@	index-B5fnd1_i.js:40
+(anonymous)	@	index-B5fnd1_i.js:40
+Promise.then		
+(anonymous)	@	index-B5fnd1_i.js:40
+Promise.catch		
+h	@	index-B5fnd1_i.js:40
+(anonymous)	@	index-B5fnd1_i.js:40
+Promise.then		
+(anonymous)	@	index-B5fnd1_i.js:40
+Promise.catch		
+h	@	index-B5fnd1_i.js:40
+(anonymous)	@	index-B5fnd1_i.js:40
+Promise.then		
+(anonymous)	@	index-B5fnd1_i.js:40
+Promise.catch		
+h	@	index-B5fnd1_i.js:40
+start	@	index-B5fnd1_i.js:40
+fetch	@	index-B5fnd1_i.js:40
+Lg	@	index-B5fnd1_i.js:40
+onSubscribe	@	index-B5fnd1_i.js:40
+subscribe	@	index-B5fnd1_i.js:40
+(anonymous)	@	index-B5fnd1_i.js:40
+Zq	@	index-B5fnd1_i.js:38
+o1	@	index-B5fnd1_i.js:40
+Ff	@	index-B5fnd1_i.js:40
+efe	@	index-B5fnd1_i.js:40
+du	@	index-B5fnd1_i.js:40
+DF	@	index-B5fnd1_i.js:40
+$d	@	index-B5fnd1_i.js:38
+(anonymous)	@	index-B5fnd1_i.js:40
+index-B5fnd1_i.js:837 Fetch failed loading: GET "https://app.matchpro.ai/api/events/1825427780/connect-account".
+﻿
+
