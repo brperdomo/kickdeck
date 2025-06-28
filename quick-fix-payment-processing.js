@@ -131,7 +131,7 @@ async function processTeamApproval(teamId) {
 async function testApprovals() {
   console.log('🧪 Testing payment approvals...\n');
   
-  const testTeams = [218]; // Start with team 218 first
+  const testTeams = [212]; // Now test team 212
   
   for (const teamId of testTeams) {
     try {

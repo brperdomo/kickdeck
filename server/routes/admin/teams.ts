@@ -25,18 +25,17 @@ async function processTeamApprovalPayment(team: any, teamId: string): Promise<st
       return 'no_payment_method';
     }
     
-    // Use Stripe Connect platform fee flow
-    log(`ADMIN DEBUG: About to call chargeApprovedTeam for team ${teamId}`, 'admin');
-    const result = await chargeApprovedTeam(parseInt(teamId, 10));
-    log(`ADMIN DEBUG: chargeApprovedTeam returned result: ${JSON.stringify(result)}`, 'admin');
-    
-    log(`Stripe Connect payment result for team ${teamId}: ${JSON.stringify(result)}`, 'admin');
+    // Use the working payment processing function
+    log(`ADMIN DEBUG: About to call processTeamApproval for team ${teamId}`, 'admin');
+    const { processTeamApproval } = await import('../../quick-fix-payment-processing.js');
+    const result = await processTeamApproval(parseInt(teamId, 10));
+    log(`ADMIN DEBUG: processTeamApproval returned result: ${JSON.stringify(result)}`, 'admin');
     
     if (result.success) {
       log(`Payment successful for team ${teamId} with platform fees applied`, 'admin');
       return 'payment_successful';
     } else {
-      log(`Payment failed for team ${teamId}: ${result.error}`, 'admin');
+      log(`Payment failed for team ${teamId}`, 'admin');
       return 'payment_failed';
     }
     
@@ -162,8 +161,8 @@ async function processTeamApprovalPaymentFallback(team: any, teamId: string): Pr
       }
     }
     
-    // Import the Stripe Connect payment processing function
-    const { processDestinationCharge } = await import('../stripe-connect-payments.js');
+    // Import the working payment processing function
+    const { processTeamApproval } = await import('../../quick-fix-payment-processing.js');
     
     // Get event information for Connect account
     const [eventInfo] = await db
