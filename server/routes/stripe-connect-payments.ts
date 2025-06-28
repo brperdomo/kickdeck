@@ -210,6 +210,29 @@ export async function processDestinationCharge(
       paymentIntent = await stripe.paymentIntents.create(paymentIntentParams);
     }
 
+    // Send receipt from Connect account if payment succeeded
+    if (paymentIntent.status === 'succeeded' && team?.submitterEmail) {
+      try {
+        console.log(`Sending receipt from Connect account ${connectAccountId} to ${team.submitterEmail}`);
+        
+        // Create receipt from Connect account
+        await stripe.charges.update(
+          paymentIntent.latest_charge as string,
+          {
+            receipt_email: team.submitterEmail
+          },
+          {
+            stripeAccount: connectAccountId // Use Connect account credentials
+          }
+        );
+        
+        console.log(`✅ Receipt sent from Connect account to ${team.submitterEmail}`);
+      } catch (receiptError) {
+        console.error(`Failed to send receipt from Connect account:`, receiptError);
+        // Don't fail the payment if receipt sending fails
+      }
+    }
+
     // Record comprehensive transaction in database with detailed fee breakdown
     await db.insert(paymentTransactions).values({
       teamId: teamId,
