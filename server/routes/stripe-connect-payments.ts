@@ -176,19 +176,14 @@ export async function processDestinationCharge(
     } else {
       console.log(`Processing regular payment method - using destination charge`);
       
-      // For regular payment methods, use destination charge as before
+      // Create direct charge on Connect account - this ensures receipts come from tournament organizer
       const paymentIntentParams: any = {
         amount: chargeAmount,
         currency: 'usd',
         payment_method: paymentMethodId,
         confirm: true,
-        on_behalf_of: connectAccountId,
-        // NOTE: Removed receipt_email to allow Connect account to handle receipts
-        // Setting receipt_email on platform account causes receipts to come from MatchPro instead of tournament organizer
-        transfer_data: {
-          destination: connectAccountId,
-        },
-        application_fee_amount: feeCalculation.platformFeeAmount,
+        receipt_email: team?.submitterEmail, // This will come from Connect account
+        application_fee_amount: feeCalculation.platformFeeAmount, // Platform fee for MatchPro
         automatic_payment_methods: {
           enabled: true,
           allow_redirects: 'never'
@@ -196,8 +191,7 @@ export async function processDestinationCharge(
         metadata: {
           teamId: teamId.toString(),
           eventId: eventId,
-          connectAccountId: connectAccountId,
-          type: 'team_registration',
+          type: 'team_registration_direct',
           tournamentCost: totalAmountCents.toString(),
           platformFeeRate: feeCalculation.platformFeeRate.toString(),
           stripeFeeAmount: feeCalculation.stripeFeeAmount.toString()
@@ -210,38 +204,19 @@ export async function processDestinationCharge(
         console.log(`Using customer: ${customerId}`);
       }
 
-      paymentIntent = await stripe.paymentIntents.create(paymentIntentParams);
+      // Create charge directly on Connect account instead of platform account
+      paymentIntent = await stripe.paymentIntents.create(
+        paymentIntentParams,
+        {
+          stripeAccount: connectAccountId // This makes the charge on Connect account
+        }
+      );
     }
 
-    // Send custom receipt email from tournament organizer if payment succeeded
-    if (paymentIntent.status === 'succeeded' && team?.submitterEmail) {
-      try {
-        // Import email service dynamically to avoid circular dependencies
-        const { sendTemplatedEmail } = await import('../services/emailService.js');
-        
-        console.log(`Sending custom payment receipt to ${team.submitterEmail}`);
-        
-        await sendTemplatedEmail(
-          team.submitterEmail,
-          'payment_processed',
-          {
-            teamName: team.name || 'Unknown Team',
-            eventName: 'Tournament Registration', // Will be populated from event data
-            totalAmount: chargeAmount,
-            paymentDate: new Date().toLocaleDateString(),
-            paymentId: paymentIntent.id,
-            submitterName: team.submitterName || 'Team Manager',
-            receiptNumber: paymentIntent.latest_charge as string,
-            formatCurrency: (amount: number) => `$${(amount / 100).toFixed(2)}`
-          }
-        );
-        
-        console.log(`✅ Custom receipt sent to ${team.submitterEmail}`);
-      } catch (receiptError) {
-        console.error(`Failed to send custom receipt:`, receiptError);
-        // Don't fail the payment if receipt sending fails
-      }
-    }
+    // Note: Receipt handling for direct charges on Connect account
+    // - receipt_email set on Connect account PaymentIntent
+    // - Receipts automatically sent from Connect account (tournament organizer)
+    // - No custom receipt system needed
 
     // Record comprehensive transaction in database with detailed fee breakdown
     await db.insert(paymentTransactions).values({
