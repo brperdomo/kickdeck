@@ -130,7 +130,7 @@ export async function processDestinationCharge(
         currency: 'usd',
         payment_method: paymentMethodId,
         confirm: true,
-        receipt_email: team?.submitterEmail,
+        receipt_email: team?.submitterEmail || null, // Ensure receipts are sent when available
         automatic_payment_methods: {
           enabled: true,
           allow_redirects: 'never'
@@ -186,7 +186,7 @@ export async function processDestinationCharge(
         payment_method: paymentMethodId,
         confirm: true,
         on_behalf_of: connectAccountId,
-        receipt_email: team?.submitterEmail,
+        receipt_email: team?.submitterEmail || null, // Ensure receipts are sent when available
         transfer_data: {
           destination: connectAccountId,
         },
