@@ -1,0 +1,228 @@
+orchestration: Initializing feature flag store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-LRH6BLRZ.js:31 orchestration: Initializing user store with state {pill-player: {…}}
+chunk-LRH6BLRZ.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+util.js:39 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+swa @ util.js:39
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1450
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1450
+setTimeout
+Vca @ js?libraries=places&v=beta&callback=Function.prototype:1450
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1694
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1694Understand this warning
+index-B5fnd1_i.js:646 Current route location (Wouter): /admin/teams
+index-B5fnd1_i.js:646 Current URL: https://app.matchpro.ai/admin/teams
+index-B5fnd1_i.js:646 Current pathname: /admin/teams
+index-B5fnd1_i.js:646 Current search: 
+index-B5fnd1_i.js:835 Updating activeView from URL: teams
+index-B5fnd1_i.js:835 Import eligible events: (4) [{…}, {…}, {…}, {…}]
+chunk-LRH6BLRZ.js:31 orchestration: Initializing config store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-LRH6BLRZ.js:31 orchestration: Initializing feature flag store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-LRH6BLRZ.js:31 orchestration: Initializing user store with state {pill-player: {…}}
+chunk-LRH6BLRZ.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+index-B5fnd1_i.js:835 Teams data received: (191) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+index-B5fnd1_i.js:835 Teams data from API: (191) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+index-B5fnd1_i.js:835 Normalized teams data: (191) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+5[Violation] 'setTimeout' handler took <N>ms
+index-B5fnd1_i.js:727 Fetched age groups for event: 1755746106
+index-B5fnd1_i.js:727 Fetching brackets for event 1755746106 and age group 10006
+index-B5fnd1_i.js:835 Sending status update with data: {teamId: 218, status: 'approved', notes: 'Customer ID corrected from Setup Intent. Ready for approval payment processing.'}
+index-B5fnd1_i.js:835 
+            
+            
+           PUT https://app.matchpro.ai/api/admin/teams/218/status 400 (Bad Request)
+mutationFn @ index-B5fnd1_i.js:835
+fn @ index-B5fnd1_i.js:40
+h @ index-B5fnd1_i.js:40
+start @ index-B5fnd1_i.js:40
+execute @ index-B5fnd1_i.js:40
+await in execute
+mutate @ index-B5fnd1_i.js:40
+(anonymous) @ index-B5fnd1_i.js:40
+fe @ index-B5fnd1_i.js:835
+onClick @ index-B5fnd1_i.js:835
+yue @ index-B5fnd1_i.js:37
+jue @ index-B5fnd1_i.js:37
+wue @ index-B5fnd1_i.js:37
+rF @ index-B5fnd1_i.js:37
+Fq @ index-B5fnd1_i.js:37
+(anonymous) @ index-B5fnd1_i.js:37
+mO @ index-B5fnd1_i.js:40
+oq @ index-B5fnd1_i.js:37
+p2 @ index-B5fnd1_i.js:37
+B4 @ index-B5fnd1_i.js:37
+$ue @ index-B5fnd1_i.js:37Understand this error
+index-B5fnd1_i.js:835 Raw response text: {"status":"error","error":"Payment processing failed","message":"Payment processing failed. Please check team payment details.","paymentStatus":"payment_error","teamStatus":"registered"}
+index-B5fnd1_i.js:835 Error response: {status: 'error', error: 'Payment processing failed', message: 'Payment processing failed. Please check team payment details.', paymentStatus: 'payment_error', teamStatus: 'registered'}
+mutationFn @ index-B5fnd1_i.js:835
+await in mutationFn
+fn @ index-B5fnd1_i.js:40
+h @ index-B5fnd1_i.js:40
+start @ index-B5fnd1_i.js:40
+execute @ index-B5fnd1_i.js:40
+await in execute
+mutate @ index-B5fnd1_i.js:40
+(anonymous) @ index-B5fnd1_i.js:40
+fe @ index-B5fnd1_i.js:835
+onClick @ index-B5fnd1_i.js:835
+yue @ index-B5fnd1_i.js:37
+jue @ index-B5fnd1_i.js:37
+wue @ index-B5fnd1_i.js:37
+rF @ index-B5fnd1_i.js:37
+Fq @ index-B5fnd1_i.js:37
+(anonymous) @ index-B5fnd1_i.js:37
+mO @ index-B5fnd1_i.js:40
+oq @ index-B5fnd1_i.js:37
+p2 @ index-B5fnd1_i.js:37
+B4 @ index-B5fnd1_i.js:37
+$ue @ index-B5fnd1_i.js:37Understand this error
+index-B5fnd1_i.js:835 Fetch failed loading: PUT "https://app.matchpro.ai/api/admin/teams/218/status".
+mutationFn @ index-B5fnd1_i.js:835
+fn @ index-B5fnd1_i.js:40
+h @ index-B5fnd1_i.js:40
+start @ index-B5fnd1_i.js:40
+execute @ index-B5fnd1_i.js:40
+await in execute
+mutate @ index-B5fnd1_i.js:40
+(anonymous) @ index-B5fnd1_i.js:40
+fe @ index-B5fnd1_i.js:835
+onClick @ index-B5fnd1_i.js:835
+yue @ index-B5fnd1_i.js:37
+jue @ index-B5fnd1_i.js:37
+wue @ index-B5fnd1_i.js:37
+rF @ index-B5fnd1_i.js:37
+Fq @ index-B5fnd1_i.js:37
+(anonymous) @ index-B5fnd1_i.js:37
+mO @ index-B5fnd1_i.js:40
+oq @ index-B5fnd1_i.js:37
+p2 @ index-B5fnd1_i.js:37
+B4 @ index-B5fnd1_i.js:37
+$ue @ index-B5fnd1_i.js:37
+index-B5fnd1_i.js:835 Error in updateTeamStatus mutation: Error: Payment processing failed
+    at Object.mutationFn (index-B5fnd1_i.js:835:82164)
+mutationFn @ index-B5fnd1_i.js:835
+await in mutationFn
+fn @ index-B5fnd1_i.js:40
+h @ index-B5fnd1_i.js:40
+start @ index-B5fnd1_i.js:40
+execute @ index-B5fnd1_i.js:40
+await in execute
+mutate @ index-B5fnd1_i.js:40
+(anonymous) @ index-B5fnd1_i.js:40
+fe @ index-B5fnd1_i.js:835
+onClick @ index-B5fnd1_i.js:835
+yue @ index-B5fnd1_i.js:37
+jue @ index-B5fnd1_i.js:37
+wue @ index-B5fnd1_i.js:37
+rF @ index-B5fnd1_i.js:37
+Fq @ index-B5fnd1_i.js:37
+(anonymous) @ index-B5fnd1_i.js:37
+mO @ index-B5fnd1_i.js:40
+oq @ index-B5fnd1_i.js:37
+p2 @ index-B5fnd1_i.js:37
+B4 @ index-B5fnd1_i.js:37
+$ue @ index-B5fnd1_i.js:37Understand this error
+/admin/teams:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+/admin/teams:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+index-B5fnd1_i.js:727 Fetched age groups for event: 1844329078
+index-B5fnd1_i.js:727 Fetching brackets for event 1844329078 and age group 10006
+index-B5fnd1_i.js:727 Fetching brackets for event 1844329078 and age group 9965
+index-B5fnd1_i.js:835 Sending status update with data: {teamId: 212, status: 'approved', notes: 'Customer ID added from Setup Intent. Ready for approval payment processing.'}
+index-B5fnd1_i.js:835 
+            
+            
+           PUT https://app.matchpro.ai/api/admin/teams/212/status 400 (Bad Request)
+mutationFn @ index-B5fnd1_i.js:835
+fn @ index-B5fnd1_i.js:40
+h @ index-B5fnd1_i.js:40
+start @ index-B5fnd1_i.js:40
+execute @ index-B5fnd1_i.js:40
+await in execute
+mutate @ index-B5fnd1_i.js:40
+(anonymous) @ index-B5fnd1_i.js:40
+fe @ index-B5fnd1_i.js:835
+onClick @ index-B5fnd1_i.js:835
+yue @ index-B5fnd1_i.js:37
+jue @ index-B5fnd1_i.js:37
+wue @ index-B5fnd1_i.js:37
+rF @ index-B5fnd1_i.js:37
+Fq @ index-B5fnd1_i.js:37
+(anonymous) @ index-B5fnd1_i.js:37
+mO @ index-B5fnd1_i.js:40
+oq @ index-B5fnd1_i.js:37
+p2 @ index-B5fnd1_i.js:37
+B4 @ index-B5fnd1_i.js:37
+$ue @ index-B5fnd1_i.js:37Understand this error
+index-B5fnd1_i.js:835 Raw response text: {"status":"error","error":"Payment processing failed","message":"Payment processing failed. Please check team payment details.","paymentStatus":"payment_error","teamStatus":"registered"}
+index-B5fnd1_i.js:835 Error response: {status: 'error', error: 'Payment processing failed', message: 'Payment processing failed. Please check team payment details.', paymentStatus: 'payment_error', teamStatus: 'registered'}
+mutationFn @ index-B5fnd1_i.js:835
+await in mutationFn
+fn @ index-B5fnd1_i.js:40
+h @ index-B5fnd1_i.js:40
+start @ index-B5fnd1_i.js:40
+execute @ index-B5fnd1_i.js:40
+await in execute
+mutate @ index-B5fnd1_i.js:40
+(anonymous) @ index-B5fnd1_i.js:40
+fe @ index-B5fnd1_i.js:835
+onClick @ index-B5fnd1_i.js:835
+yue @ index-B5fnd1_i.js:37
+jue @ index-B5fnd1_i.js:37
+wue @ index-B5fnd1_i.js:37
+rF @ index-B5fnd1_i.js:37
+Fq @ index-B5fnd1_i.js:37
+(anonymous) @ index-B5fnd1_i.js:37
+mO @ index-B5fnd1_i.js:40
+oq @ index-B5fnd1_i.js:37
+p2 @ index-B5fnd1_i.js:37
+B4 @ index-B5fnd1_i.js:37
+$ue @ index-B5fnd1_i.js:37Understand this error
+index-B5fnd1_i.js:835 Error in updateTeamStatus mutation: Error: Payment processing failed
+    at Object.mutationFn (index-B5fnd1_i.js:835:82164)
+mutationFn @ index-B5fnd1_i.js:835
+await in mutationFn
+fn @ index-B5fnd1_i.js:40
+h @ index-B5fnd1_i.js:40
+start @ index-B5fnd1_i.js:40
+execute @ index-B5fnd1_i.js:40
+await in execute
+mutate @ index-B5fnd1_i.js:40
+(anonymous) @ index-B5fnd1_i.js:40
+fe @ index-B5fnd1_i.js:835
+onClick @ index-B5fnd1_i.js:835
+yue @ index-B5fnd1_i.js:37
+jue @ index-B5fnd1_i.js:37
+wue @ index-B5fnd1_i.js:37
+rF @ index-B5fnd1_i.js:37
+Fq @ index-B5fnd1_i.js:37
+(anonymous) @ index-B5fnd1_i.js:37
+mO @ index-B5fnd1_i.js:40
+oq @ index-B5fnd1_i.js:37
+p2 @ index-B5fnd1_i.js:37
+B4 @ index-B5fnd1_i.js:37
+$ue @ index-B5fnd1_i.js:37Understand this error
+index-B5fnd1_i.js:835 Fetch failed loading: PUT "https://app.matchpro.ai/api/admin/teams/212/status".
+mutationFn @ index-B5fnd1_i.js:835
+fn @ index-B5fnd1_i.js:40
+h @ index-B5fnd1_i.js:40
+start @ index-B5fnd1_i.js:40
+execute @ index-B5fnd1_i.js:40
+await in execute
+mutate @ index-B5fnd1_i.js:40
+(anonymous) @ index-B5fnd1_i.js:40
+fe @ index-B5fnd1_i.js:835
+onClick @ index-B5fnd1_i.js:835
+yue @ index-B5fnd1_i.js:37
+jue @ index-B5fnd1_i.js:37
+wue @ index-B5fnd1_i.js:37
+rF @ index-B5fnd1_i.js:37
+Fq @ index-B5fnd1_i.js:37
+(anonymous) @ index-B5fnd1_i.js:37
+mO @ index-B5fnd1_i.js:40
+oq @ index-B5fnd1_i.js:37
+p2 @ index-B5fnd1_i.js:37
+B4 @ index-B5fnd1_i.js:37
+$ue @ index-B5fnd1_i.js:37
+/admin/teams:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+/admin/teams:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning

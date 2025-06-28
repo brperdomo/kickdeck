@@ -427,7 +427,7 @@ export async function chargeApprovedTeam(teamId: number) {
     await db.update(teams)
       .set({
         paymentStatus: 'payment_failed',
-        paymentFailureReason: error instanceof Error ? error.message : 'Unknown error'
+        notes: `Payment failed: ${error instanceof Error ? error.message : 'Unknown error'}`
       })
       .where(eq(teams.id, teamId));
 
@@ -472,7 +472,6 @@ export function registerConnectPaymentRoutes(app: Express) {
             await db.update(teams)
               .set({
                 paymentStatus: 'paid',
-                paidAt: new Date(),
                 status: 'approved'
               })
               .where(eq(teams.id, teamId));
