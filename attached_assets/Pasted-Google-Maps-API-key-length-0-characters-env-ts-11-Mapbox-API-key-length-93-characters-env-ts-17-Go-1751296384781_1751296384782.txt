@@ -1,0 +1,260 @@
+Google Maps API key length: 0 characters
+env.ts:11 Mapbox API key length: 93 characters
+env.ts:17 Google Maps API already loaded
+RouteDebugger.tsx:13 Current route location (Wouter): /payment-logs
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/payment-logs
+RouteDebugger.tsx:15 Current pathname: /payment-logs
+RouteDebugger.tsx:16 Current search: 
+use-user.ts:59 Fetching user with emulation token: not present
+payment-logs:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+payment-logs:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+use-user.ts:61 Fetch finished loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user".
+fetchUser @ use-user.ts:61
+fetchFn @ @tanstack_react-query.js?v=80b17ebe:881
+run @ @tanstack_react-query.js?v=80b17ebe:513
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+executeFetch_fn @ @tanstack_react-query.js?v=80b17ebe:2278
+onSubscribe @ @tanstack_react-query.js?v=80b17ebe:1982
+subscribe @ @tanstack_react-query.js?v=80b17ebe:24
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:3145
+ai @ chunk-E27YX2RL.js?v=80b17ebe:3392
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+Ek @ chunk-E27YX2RL.js?v=80b17ebe:5681
+jg @ chunk-E27YX2RL.js?v=80b17ebe:2527
+Wk @ chunk-E27YX2RL.js?v=80b17ebe:6021
+Pk @ chunk-E27YX2RL.js?v=80b17ebe:5964
+Gk @ chunk-E27YX2RL.js?v=80b17ebe:5620
+J @ chunk-E27YX2RL.js?v=80b17ebe:97
+R @ chunk-E27YX2RL.js?v=80b17ebe:129
+use-user.ts:76 User data fetched: {id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: '$2b$12$d6n1CBWgsWFm0fh77F1OX.YxDZy7/O3aLSuJOuq4QkvOtFmSit7BC', firstName: 'Bryan', …}
+payment-logs.tsx:296 Frontend query params: {statusFilter: 'all', typeFilter: 'all', searchQuery: '', showCompleteOnly: true}
+payment-logs.tsx:297 URL params string: completeOnly=true
+shared-f871b65747a089a25cf0374457ca2c25.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+(anonymous) @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+e @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+l @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+k @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+value @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+value @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+value @ controller-with-preconnect-5fa05caa9a253f01ab9035a5962157c7.js:1
+e @ controller-with-preconnect-5fa05caa9a253f01ab9035a5962157c7.js:1
+value @ controller-with-preconnect-5fa05caa9a253f01ab9035a5962157c7.js:1
+e @ controller-with-preconnect-5fa05caa9a253f01ab9035a5962157c7.js:1
+37942 @ controller-with-preconnect-5fa05caa9a253f01ab9035a5962157c7.js:1
+e @ controller-with-preconnect-5fa05caa9a253f01ab9035a5962157c7.js:1
+(anonymous) @ controller-with-preconnect-5fa05caa9a253f01ab9035a5962157c7.js:1
+e.O @ controller-with-preconnect-5fa05caa9a253f01ab9035a5962157c7.js:1
+(anonymous) @ controller-with-preconnect-5fa05caa9a253f01ab9035a5962157c7.js:1
+(anonymous) @ controller-with-preconnect-5fa05caa9a253f01ab9035a5962157c7.js:1
+shared-f871b65747a089a25cf0374457ca2c25.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+(anonymous) @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+e @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+l @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+k @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+value @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+value @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+log @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+log @ controller-with-preconnect-5fa05caa9a253f01ab9035a5962157c7.js:1
+e @ controller-with-preconnect-5fa05caa9a253f01ab9035a5962157c7.js:1
+37942 @ controller-with-preconnect-5fa05caa9a253f01ab9035a5962157c7.js:1
+e @ controller-with-preconnect-5fa05caa9a253f01ab9035a5962157c7.js:1
+(anonymous) @ controller-with-preconnect-5fa05caa9a253f01ab9035a5962157c7.js:1
+e.O @ controller-with-preconnect-5fa05caa9a253f01ab9035a5962157c7.js:1
+(anonymous) @ controller-with-preconnect-5fa05caa9a253f01ab9035a5962157c7.js:1
+(anonymous) @ controller-with-preconnect-5fa05caa9a253f01ab9035a5962157c7.js:1
+use-auth.tsx:85 Fetch failed loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user".
+queryFn @ use-auth.tsx:85
+fetchFn @ @tanstack_react-query.js?v=80b17ebe:881
+run @ @tanstack_react-query.js?v=80b17ebe:513
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+executeFetch_fn @ @tanstack_react-query.js?v=80b17ebe:2278
+onSubscribe @ @tanstack_react-query.js?v=80b17ebe:1982
+subscribe @ @tanstack_react-query.js?v=80b17ebe:24
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:3145
+ai @ chunk-E27YX2RL.js?v=80b17ebe:3392
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+Ek @ chunk-E27YX2RL.js?v=80b17ebe:5681
+jg @ chunk-E27YX2RL.js?v=80b17ebe:2527
+Wk @ chunk-E27YX2RL.js?v=80b17ebe:6021
+Pk @ chunk-E27YX2RL.js?v=80b17ebe:5964
+Gk @ chunk-E27YX2RL.js?v=80b17ebe:5620
+J @ chunk-E27YX2RL.js?v=80b17ebe:97
+R @ chunk-E27YX2RL.js?v=80b17ebe:129
+payment-logs.tsx:299 Fetch finished loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/admin/payment-logs?completeOnly=true".
+queryFn @ payment-logs.tsx:299
+fetchFn @ @tanstack_react-query.js?v=80b17ebe:881
+run @ @tanstack_react-query.js?v=80b17ebe:513
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+executeFetch_fn @ @tanstack_react-query.js?v=80b17ebe:2278
+onSubscribe @ @tanstack_react-query.js?v=80b17ebe:1982
+subscribe @ @tanstack_react-query.js?v=80b17ebe:24
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:3145
+ai @ chunk-E27YX2RL.js?v=80b17ebe:3392
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+Wk @ chunk-E27YX2RL.js?v=80b17ebe:6018
+Pk @ chunk-E27YX2RL.js?v=80b17ebe:5964
+Ek @ chunk-E27YX2RL.js?v=80b17ebe:5693
+jg @ chunk-E27YX2RL.js?v=80b17ebe:2527
+(anonymous) @ chunk-E27YX2RL.js?v=80b17ebe:5515
+setTimeout
+defaultScheduler @ @tanstack_react-query.js?v=80b17ebe:565
+flush @ @tanstack_react-query.js?v=80b17ebe:589
+batch @ @tanstack_react-query.js?v=80b17ebe:607
+dispatch_fn @ @tanstack_react-query.js?v=80b17ebe:1039
+setData @ @tanstack_react-query.js?v=80b17ebe:718
+onSuccess @ @tanstack_react-query.js?v=80b17ebe:940
+resolve @ @tanstack_react-query.js?v=80b17ebe:475
+Promise.then
+run @ @tanstack_react-query.js?v=80b17ebe:517
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+executeFetch_fn @ @tanstack_react-query.js?v=80b17ebe:2278
+onSubscribe @ @tanstack_react-query.js?v=80b17ebe:1982
+subscribe @ @tanstack_react-query.js?v=80b17ebe:24
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:3145
+ai @ chunk-E27YX2RL.js?v=80b17ebe:3392
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+Ek @ chunk-E27YX2RL.js?v=80b17ebe:5681
+jg @ chunk-E27YX2RL.js?v=80b17ebe:2527
+Wk @ chunk-E27YX2RL.js?v=80b17ebe:6021
+Pk @ chunk-E27YX2RL.js?v=80b17ebe:5964
+Gk @ chunk-E27YX2RL.js?v=80b17ebe:5620
+J @ chunk-E27YX2RL.js?v=80b17ebe:97
+R @ chunk-E27YX2RL.js?v=80b17ebe:129
+shared-f871b65747a089a25cf0374457ca2c25.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+e @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+l @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+value @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+value @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+value @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+value @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+value @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+(anonymous) @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+setTimeout
+value @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+value @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+value @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+(anonymous) @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+value @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+value @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+(anonymous) @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+Promise.then
+value @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+value @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+log @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+log @ controller-with-preconnect-5fa05caa9a253f01ab9035a5962157c7.js:1
+e @ controller-with-preconnect-5fa05caa9a253f01ab9035a5962157c7.js:1
+37942 @ controller-with-preconnect-5fa05caa9a253f01ab9035a5962157c7.js:1
+e @ controller-with-preconnect-5fa05caa9a253f01ab9035a5962157c7.js:1
+(anonymous) @ controller-with-preconnect-5fa05caa9a253f01ab9035a5962157c7.js:1
+e.O @ controller-with-preconnect-5fa05caa9a253f01ab9035a5962157c7.js:1
+(anonymous) @ controller-with-preconnect-5fa05caa9a253f01ab9035a5962157c7.js:1
+(anonymous) @ controller-with-preconnect-5fa05caa9a253f01ab9035a5962157c7.js:1
+shared-f871b65747a089a25cf0374457ca2c25.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+e @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+l @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+value @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+value @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+value @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+value @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+value @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+(anonymous) @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+setTimeout
+value @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+value @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+value @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+(anonymous) @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+value @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+value @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+(anonymous) @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+Promise.then
+value @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+value @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+value @ controller-with-preconnect-5fa05caa9a253f01ab9035a5962157c7.js:1
+e @ controller-with-preconnect-5fa05caa9a253f01ab9035a5962157c7.js:1
+value @ controller-with-preconnect-5fa05caa9a253f01ab9035a5962157c7.js:1
+e @ controller-with-preconnect-5fa05caa9a253f01ab9035a5962157c7.js:1
+37942 @ controller-with-preconnect-5fa05caa9a253f01ab9035a5962157c7.js:1
+e @ controller-with-preconnect-5fa05caa9a253f01ab9035a5962157c7.js:1
+(anonymous) @ controller-with-preconnect-5fa05caa9a253f01ab9035a5962157c7.js:1
+e.O @ controller-with-preconnect-5fa05caa9a253f01ab9035a5962157c7.js:1
+(anonymous) @ controller-with-preconnect-5fa05caa9a253f01ab9035a5962157c7.js:1
+(anonymous) @ controller-with-preconnect-5fa05caa9a253f01ab9035a5962157c7.js:1
+
+                
+          
+          
+          
+         Chrome is moving towards a new experience that allows users to choose to browse without third-party cookies.Understand this warning
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+Promise.then
+S @ out-4.5.44.js:1
+y @ out-4.5.44.js:1
+E @ out-4.5.44.js:1
+e.onload @ inner.html:1
+script
+(anonymous) @ inner.html:1
+(anonymous) @ inner.html:1
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+h @ out-4.5.44.js:1
+e @ inner.html:1
+shared-f871b65747a089a25cf0374457ca2c25.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+e @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+l @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+value @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+value @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+value @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+value @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+value @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+(anonymous) @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+setTimeout
+value @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+value @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+value @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+(anonymous) @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+value @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+log @ shared-f871b65747a089a25cf0374457ca2c25.js:1
+log @ controller-with-preconnect-5fa05caa9a253f01ab9035a5962157c7.js:1
+value @ controller-with-preconnect-5fa05caa9a253f01ab9035a5962157c7.js:1
+value @ controller-with-preconnect-5fa05caa9a253f01ab9035a5962157c7.js:1
+(anonymous) @ controller-with-preconnect-5fa05caa9a253f01ab9035a5962157c7.js:1
+payment-logs:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+payment-logs:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+payment-logs.tsx:296 Frontend query params: {statusFilter: 'all', typeFilter: 'all', searchQuery: '', showCompleteOnly: false}
+payment-logs.tsx:297 URL params string: 
+payment-logs.tsx:299 Fetch finished loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/admin/payment-logs?".
+queryFn @ payment-logs.tsx:299
+fetchFn @ @tanstack_react-query.js?v=80b17ebe:881
+run @ @tanstack_react-query.js?v=80b17ebe:513
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+executeFetch_fn @ @tanstack_react-query.js?v=80b17ebe:2278
+setOptions @ @tanstack_react-query.js?v=80b17ebe:2039
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:3155
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+Wk @ chunk-E27YX2RL.js?v=80b17ebe:6018
+Pk @ chunk-E27YX2RL.js?v=80b17ebe:5964
+Ek @ chunk-E27YX2RL.js?v=80b17ebe:5693
+jg @ chunk-E27YX2RL.js?v=80b17ebe:2527
+(anonymous) @ chunk-E27YX2RL.js?v=80b17ebe:5515
+payment-logs:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+payment-logs:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning

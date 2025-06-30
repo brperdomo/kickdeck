@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { db } from '@db';
-import { sql } from 'drizzle-orm';
+import { sql, eq, and, or, like, desc, asc, isNotNull } from 'drizzle-orm';
+import { paymentTransactions, teams, events, eventAgeGroups } from '@db/schema';
 
 /**
  * Get comprehensive payment logs with filtering and search capabilities
@@ -191,6 +192,12 @@ export async function getPaymentLogs(req: Request, res: Response) {
 
     const transactionsResult = await db.execute(sql.raw(transactionsQuery, params));
     const transactions = transactionsResult.rows;
+
+    // Debug: log first transaction to see exact field names
+    if (transactions.length > 0) {
+      console.log('Sample transaction keys:', Object.keys(transactions[0]));
+      console.log('Sample transaction data:', JSON.stringify(transactions[0], null, 2));
+    }
 
     return res.json({
       success: true,
