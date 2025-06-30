@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Team Registration Status - Not Approved</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+    .header {
+      background-color: #007AFF;
+      text-align: center;
+      padding: 20px;
+    }
+    .header h1 {
+      color: #ffffff;
+      margin: 0;
+      font-size: 22px;
+    }
+    .content {
+      padding: 20px;
+    }
+    .footer {
+      background-color: #f7f7f7;
+      text-align: center;
+      padding: 15px;
+      font-size: 12px;
+      color: #777;
+    }
+    h2, h3 {
+      color: #1f2937;
+    }
+    .info-box,
+    .rejection-box,
+    .payment-info {
+      background-color: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 5px;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+    .rejection-box {
+      background-color: #fef2f2;
+      border-color: #fca5a5;
+      color: #991b1b;
+    }
+    .payment-info {
+      background-color: #f0f9ff;
+      border-color: #7dd3fc;
+    }
+    .button {
+      display: inline-block;
+      background-color: #007AFF;
+      color: #fff;
+      text-decoration: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      margin: 15px 0;
+      font-weight: 500;
+    }
+    .status {
+      display: inline-block;
+      background-color: #fecaca;
+      color: #991b1b;
+      font-weight: bold;
+      padding: 4px 10px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>{{eventName}}</h1>
+    </div>
+
+    <div class="content">
+      <h2>Team Registration Status: Not Approved</h2>
+      <p>Hello {{submitterName}},</p>
+
+      <p>Thank you for registering <strong>{{teamName}}</strong> for <strong>{{eventName}}</strong>. After careful review, we regret to inform you that your team's registration has been <span class="status">Not Approved</span>.</p>
+
+      <div class="info-box">
+        <h3>Registration Details</h3>
+        <p><strong>Team:</strong> {{teamName}}</p>
+        <p><strong>Division:</strong> {{ageGroup}}</p>
+        <p><strong>Registered By:</strong> {{submitterName}} ({{submitterEmail}})</p>
+        <p><strong>Registration Date:</strong> {{registrationDate}}</p>
+        {{#if clubName}}<p><strong>Club:</strong> {{clubName}}</p>{{/if}}
+        <p><strong>Status:</strong> <span class="status">Not Approved</span></p>
+      </div>
+
+      <div class="rejection-box">
+        <h3>Reason for Non-Approval</h3>
+        {{#if notes}}
+          <p>{{notes}}</p>
+        {{else}}
+          <p>Unfortunately, your team does not meet the participation criteria for this event. This may be due to age group restrictions, competitive balance, or division capacity.</p>
+        {{/if}}
+      </div>
+
+      <div class="payment-info">
+        <h3>Payment Information</h3>
+        <p><strong>Payment Status:</strong> No Charge Made</p>
+        {{#if totalAmount}}
+          <p>Your registration would have been <strong>${{totalAmount}}</strong> if approved, but no payment was processed due to the rejection.</p>
+        {{/if}}
+        {{#if setupIntentId}}
+          <p><strong>Saved Payment Method:</strong> Your {{cardBrand}} ending in {{cardLastFour}} was saved securely but not charged.</p>
+          <p style="font-size: 14px; color: #666;">Your payment information remains secure and can be used for future registrations.</p>
+        {{else}}
+          <p>No payment method was collected or charged for this registration.</p>
+        {{/if}}
+      </div>
+
+      <h3>What Happens Next?</h3>
+      <p>We encourage you to consider the following options:</p>
+      <ul>
+        <li>Check if other divisions or age groups are still accepting registrations</li>
+        <li>Explore future events that may be better suited to your team</li>
+        <li>Contact us if you have questions about the decision</li>
+        <li>Sign up for notifications about future tournament opportunities</li>
+      </ul>
+
+      <p style="text-align: center;">
+        <a href="{{loginLink}}" class="button">View Dashboard</a>
+      </p>
+
+      <p>If you have questions about this decision, please contact us at <a href="mailto:{{supportEmail}}">{{supportEmail}}</a>.</p>
+
+      <p>We appreciate your interest in {{eventName}} and hope to see your team at future events.</p>
+
+      <p>Best regards,<br>The {{eventName}} Team</p>
+    </div>
+
+    <div class="footer">
+      &copy; {{currentYear}} MatchPro AI. All rights reserved.
+    </div>
+  </div>
+</body>
+</html>
