@@ -7,7 +7,7 @@ import {
   Pencil, PlusCircle, CalendarRange, UserRoundPlus, ClipboardX, ArrowLeft,
   Upload, Wand2, Sparkles, AlertTriangle, CalendarDays, Loader2,
   Trophy, WandSparkles, CheckCircle2, AlertCircle, CreditCard, MapPin, User,
-  TrendingUp, BarChart2, DollarSign, FileText, Edit, Trash
+  TrendingUp, BarChart2, DollarSign, FileText, Edit, Trash, Trash2
 } from "lucide-react";
 // Removed ClubLogo import as we now display club name as text
 import { ComplexCard } from "@/components/admin/ComplexCard";
@@ -3398,6 +3398,37 @@ function TeamsView() {
     }
   });
 
+  // Mutation for deleting team registration
+  const deleteTeamMutation = useMutation({
+    mutationFn: async (teamId: number) => {
+      const response = await fetch(`/api/admin/teams/${teamId}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to delete team');
+      }
+
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Team deleted",
+        description: "Team registration has been successfully deleted",
+      });
+      teamsQuery.refetch();
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error deleting team",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  });
+
   // Mutation for processing refunds
   const processRefundMutation = useMutation({
     mutationFn: async ({ teamId, reason, amount }: { teamId: number, reason: string, amount?: number | null }) => {
@@ -5236,6 +5267,34 @@ function TeamsView() {
                   <Edit className="h-4 w-4 mr-1" />
                   Edit Team
                 </Button>
+                
+                {/* Delete button only for teams in registered/pending review status */}
+                {selectedTeam.status === 'registered' && (
+                  <Button 
+                    variant="outline"
+                    className="border-red-500 text-red-600 hover:bg-red-50 hover:text-red-700"
+                    onClick={() => {
+                      if (confirm(`Are you sure you want to delete team "${selectedTeam.name}"? This action cannot be undone.`)) {
+                        deleteTeamMutation.mutate(selectedTeam.id);
+                        setIsDetailsDialogOpen(false);
+                      }
+                    }}
+                    disabled={deleteTeamMutation.isPending}
+                  >
+                    {deleteTeamMutation.isPending ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                        Deleting...
+                      </>
+                    ) : (
+                      <>
+                        <Trash2 className="h-4 w-4 mr-1" />
+                        Delete Team
+                      </>
+                    )}
+                  </Button>
+                )}
+                
                 <Button variant="outline" onClick={() => setIsDetailsDialogOpen(false)}>
                   Close
                 </Button>
