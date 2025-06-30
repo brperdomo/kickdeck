@@ -167,7 +167,7 @@ export async function getPaymentLogs(req: Request, res: Response) {
     }
 
     // Execute summary query
-    const [summary] = await summaryQuery;
+    const [summary] = await summaryQueryWithFilters;
 
     // Get paginated transactions
     const transactions = await query

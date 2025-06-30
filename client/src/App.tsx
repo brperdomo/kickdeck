@@ -38,6 +38,7 @@ import FormEditorPage from "@/pages/form-editor";
 import CouponManagerPage from "@/pages/coupon-manager";
 import EventClubsPage from "@/pages/event-clubs";
 import RegistrationOrdersReport from "@/pages/registration-orders-report";
+import PaymentLogs from "@/pages/payment-logs";
 import FinancialOverviewReport from "@/pages/financial-overview-report";
 import EventFinancialReport from "@/pages/event-financial-report";
 import EventRegistrationReport from "@/pages/event-registration-report";

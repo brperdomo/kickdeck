@@ -48,7 +48,7 @@ import { registerPaymentReportRoutes } from "./routes/payment-reports";
 import { registerConnectPaymentRoutes } from "./routes/stripe-connect-payments";
 import { registerFeeCalculatorRoutes } from "./routes/admin/fee-calculator-router";
 import { registerRegistrationAnalyticsRoutes } from "./routes/registration-analytics";
-import { getPaymentLogs, getPaymentTransactionDetail, getRecentPaymentFailures } from "./routes/admin/payment-logs";
+import { getPaymentLogs, getPaymentTransactionDetail, getRecentPaymentFailures } from "./routes/admin/payment-logs-simple";
 import tournamentDirectorRoutes from "./routes/tournament-director-routes";
 import paymentCompletionRouter from "./routes/payment-completion";
 import { 
@@ -799,6 +799,11 @@ export function registerRoutes(app: Express): Server {
 
     // Register coupon routes with event-specific access control
     // Define the coupon create handler function that uses the working imported createCoupon function
+    
+    // Payment logs API routes
+    app.get('/api/admin/payment-logs', isAdmin, getPaymentLogs);
+    app.get('/api/admin/payment-logs/:transactionId', isAdmin, getPaymentTransactionDetail);
+    app.get('/api/admin/payment-failures/recent', isAdmin, getRecentPaymentFailures);
     const createCouponWithAccessControl = async (req, res) => {
       return createCoupon(req, res);
     };
