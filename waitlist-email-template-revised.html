@@ -132,8 +132,18 @@
 
       {{#if totalAmount}}
       <div class="payment-info">
-        <h3>Payment Status</h3>
-        <p><strong>Total Due (if accepted):</strong> ${{totalAmount}}</p>
+        <h3>Payment Information (if accepted)</h3>
+        {{#if tournamentCost}}
+        <div style="margin-bottom: 12px;">
+          <p><strong>Registration Fee:</strong> ${{tournamentCost}}</p>
+          <p style="font-size: 14px; color: #666;"><strong>Platform & Processing Fee (4%):</strong> ${{platformFee}}</p>
+          <hr style="margin: 8px 0; border: none; border-top: 1px solid #ddd;">
+          <p><strong>Total Amount to be Charged:</strong> ${{totalAmount}}</p>
+        </div>
+        {{else}}
+        <p><strong>Total Amount (if accepted):</strong> ${{totalAmount}}</p>
+        {{/if}}
+        
         {{#if setupIntentId}}
           <p><strong>Payment Method Status:</strong> Saved Securely</p>
           <p>Your payment method is saved and ready. If your team is accepted, we will charge your card:</p>
