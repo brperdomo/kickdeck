@@ -81,3 +81,28 @@ export function formatRelativeTime(date: string | Date): string {
     return 'Invalid date';
   }
 }
+
+/**
+ * Format a date with full timestamp including timezone
+ * @param date Date string or Date object
+ * @returns Formatted date/time string with timezone
+ */
+export function formatTimestamp(date: string | Date): string {
+  if (!date) return 'N/A';
+  
+  try {
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
+    return dateObj.toLocaleString('en-US', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      timeZoneName: 'short'
+    });
+  } catch (error) {
+    console.error('Error formatting timestamp:', error);
+    return 'Invalid date';
+  }
+}

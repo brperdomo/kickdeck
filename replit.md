@@ -113,6 +113,15 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
+- June 30, 2025: ENHANCED PAYMENT LOGS WITH COMPREHENSIVE AUDIT TRAILS - Implemented detailed payment failure tracking and admin visibility
+  - ENHANCED: Payment logs now show exact payment processing timestamps with timezone information
+  - IMPLEMENTED: Approver tracking system recording which admin approved each team and when
+  - ADDED: "Payment Processed" time column and "Approved By" information in payment logs interface
+  - ENHANCED: Detail modal with comprehensive payment timeline and approval details
+  - FIXED: Database column name mapping issue (PostgreSQL camelCase vs snake_case fields)
+  - CLARIFIED: Fee structure explanation showing 4% platform fee breakdown (2.9% + $0.30 Stripe + 1.1% MatchPro)
+  - VERIFIED: System correctly implements platform fee structure with proper Stripe processing fee calculation
+  - PRODUCTION READY: Complete audit trail system for payment processing and team approval tracking
 - June 27, 2025: CRITICAL STRIPE RECEIPT FIX - Resolved payment receipts coming from MatchPro account instead of tournament organizer accounts
   - IDENTIFIED: Receipt emails were being sent from main MatchPro Stripe account instead of individual tournament Connect accounts
   - ROOT CAUSE: `receipt_email` parameter set on platform PaymentIntent overrides Connect account receipt handling

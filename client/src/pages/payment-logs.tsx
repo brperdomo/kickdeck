@@ -32,7 +32,7 @@ import {
   Eye
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { formatCurrency, formatDate } from "@/lib/formatters";
+import { formatCurrency, formatDate, formatTimestamp } from "@/lib/formatters";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -124,12 +124,13 @@ function TransactionDetailDialog({ transaction }: { transaction: any }) {
             <h3 className="font-medium mb-3">Payment Details</h3>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
-                <span className="font-medium text-gray-500">Amount:</span>
+                <span className="font-medium text-gray-500">Total Charged:</span>
                 <p className="font-mono">{formatCurrency(transaction.amount)}</p>
               </div>
               <div>
-                <span className="font-medium text-gray-500">Stripe Fee:</span>
+                <span className="font-medium text-gray-500">Stripe Processing Fee:</span>
                 <p className="font-mono">{formatCurrency(transaction.stripeFee || 0)}</p>
+                <p className="text-xs text-gray-400 mt-1">2.9% + $0.30 processing fee</p>
               </div>
               <div>
                 <span className="font-medium text-gray-500">Net Amount:</span>
@@ -138,6 +139,16 @@ function TransactionDetailDialog({ transaction }: { transaction: any }) {
               <div>
                 <span className="font-medium text-gray-500">Payment Method:</span>
                 <p>{transaction.paymentMethodType || 'N/A'}</p>
+              </div>
+            </div>
+            
+            {/* Fee Structure Explanation */}
+            <div className="mt-4 p-3 bg-blue-50 rounded-lg border-l-4 border-blue-400">
+              <h4 className="font-medium text-blue-900 mb-2">MatchPro 4% Platform Fee Structure</h4>
+              <div className="text-xs text-blue-800 space-y-1">
+                <div>• <strong>Stripe Processing:</strong> 2.9% + $0.30 (shown above)</div>
+                <div>• <strong>MatchPro Revenue:</strong> 1.1% (approximately)</div>
+                <div>• <strong>Total Platform Fee:</strong> 4% covers all processing and platform costs</div>
               </div>
             </div>
           </div>
@@ -207,11 +218,11 @@ function TransactionDetailDialog({ transaction }: { transaction: any }) {
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <span className="font-medium text-gray-500">Payment Processed:</span>
-                <p>{transaction.paymentProcessedTime || (transaction.createdAt ? formatDate(transaction.createdAt) : 'N/A')}</p>
+                <p>{transaction.paymentProcessedAt ? formatTimestamp(transaction.paymentProcessedAt) : (transaction.createdAt ? formatTimestamp(transaction.createdAt) : 'N/A')}</p>
               </div>
               <div>
                 <span className="font-medium text-gray-500">Updated:</span>
-                <p>{transaction.updatedAt ? formatDate(transaction.updatedAt) : 'N/A'}</p>
+                <p>{transaction.updatedAt ? formatTimestamp(transaction.updatedAt) : 'N/A'}</p>
               </div>
               {transaction.approvedTime && (
                 <div>
@@ -565,7 +576,7 @@ export default function PaymentLogs() {
                     <TableRow key={transaction.id}>
                       <TableCell>
                         <div className="text-sm">
-                          {transaction.paymentProcessedTime || (transaction.createdAt ? formatDate(transaction.createdAt) : 'N/A')}
+                          {transaction.paymentProcessedAt ? formatTimestamp(transaction.paymentProcessedAt) : (transaction.createdAt ? formatTimestamp(transaction.createdAt) : 'N/A')}
                         </div>
                         <div className="text-xs text-gray-500">
                           {(transaction.paymentProcessedAt || transaction.createdAt) ? 
