@@ -5753,6 +5753,50 @@ function TeamsView() {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Bulk Approval Dialog */}
+      <Dialog open={isBulkApprovalDialogOpen} onOpenChange={setIsBulkApprovalDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Bulk Approve Teams</DialogTitle>
+            <DialogDescription>
+              You are about to approve {selectedTeamIds.length} team{selectedTeamIds.length !== 1 ? 's' : ''}. 
+              This will process payments and send confirmation emails.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="bulkApprovalNotes">Notes (optional)</Label>
+              <Textarea
+                id="bulkApprovalNotes"
+                placeholder="Add notes that will be included in approval emails..."
+                value={bulkApprovalNotes}
+                onChange={(e) => setBulkApprovalNotes(e.target.value)}
+                className="mt-1"
+              />
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={() => setIsBulkApprovalDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={confirmBulkApproval}
+              disabled={bulkApproveTeamsMutation.isPending}
+              className="bg-green-600 hover:bg-green-700 text-white"
+            >
+              {bulkApproveTeamsMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+              <Check className="h-4 w-4 mr-2" />
+              Confirm Bulk Approval
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
