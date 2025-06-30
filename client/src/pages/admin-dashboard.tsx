@@ -3293,6 +3293,9 @@ function TeamsView() {
   const [isTeamCsvImportDialogOpen, setIsTeamCsvImportDialogOpen] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<any>(null);
   const [isAddPlayerMode, setIsAddPlayerMode] = useState(false);
+  const [selectedTeamIds, setSelectedTeamIds] = useState<number[]>([]);
+  const [isBulkApprovalDialogOpen, setIsBulkApprovalDialogOpen] = useState(false);
+  const [bulkApprovalNotes, setBulkApprovalNotes] = useState("");
   const queryClient = useQueryClient();
   const { toast } = useToast();
   
@@ -3392,6 +3395,60 @@ function TeamsView() {
     onError: (error: Error) => {
       toast({
         title: "Error updating team status",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  });
+
+  const bulkApproveTeamsMutation = useMutation({
+    mutationFn: async ({ teamIds, notes }: { teamIds: number[], notes?: string }) => {
+      console.log('Bulk approving teams:', teamIds, 'with notes:', notes);
+      
+      const response = await fetch('/api/admin/teams/bulk-approve', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ teamIds, notes })
+      });
+      
+      const responseText = await response.text();
+      console.log('Bulk approval response:', responseText);
+      
+      let responseData;
+      try {
+        responseData = responseText ? JSON.parse(responseText) : {};
+      } catch (parseError) {
+        console.error('Error parsing bulk approval response:', parseError);
+        throw new Error('Server returned invalid response. Please try again.');
+      }
+      
+      if (!response.ok) {
+        throw new Error(responseData.message || 'Failed to bulk approve teams');
+      }
+      
+      return responseData;
+    },
+    onSuccess: (data) => {
+      const { summary, results } = data;
+      
+      toast({
+        title: "Bulk Approval Complete",
+        description: `${summary.successful} teams approved successfully. ${summary.failed > 0 ? `${summary.failed} failed.` : ''}`,
+      });
+      
+      // Show detailed results if there were warnings or failures
+      if (summary.warnings > 0 || summary.failed > 0) {
+        console.log('Bulk approval results:', results);
+      }
+      
+      setIsBulkApprovalDialogOpen(false);
+      setSelectedTeamIds([]);
+      setBulkApprovalNotes("");
+      teamsQuery.refetch();
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Bulk Approval Failed",
         description: error.message,
         variant: "destructive"
       });

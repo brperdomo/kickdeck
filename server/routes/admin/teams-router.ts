@@ -139,4 +139,7 @@ router.post('/:teamId/generate-completion-url', extractEventIdFromTeam, hasEvent
 // Delete team registration (only for teams in 'registered' status)
 router.delete('/:teamId', extractEventIdFromTeam, hasEventAccess, deleteTeam);
 
+// Bulk approve multiple teams
+router.post('/bulk-approve', bulkApproveTeams);
+
 export default router;
