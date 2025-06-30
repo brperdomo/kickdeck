@@ -76,6 +76,7 @@ export function calculateStripeFees(totalAmount: number): number {
 
 /**
  * Calculate comprehensive fee breakdown
+ * Simple 4% platform fee structure (not over-charging to guarantee MatchPro margin)
  */
 export function calculateFeeBreakdown(
   tournamentCost: number,
@@ -84,20 +85,11 @@ export function calculateFeeBreakdown(
   // Determine platform fee rate based on volume
   const basePlatformFeeRate = eventVolume ? getPlatformFeeRate(eventVolume) : DEFAULT_PLATFORM_FEE_RATE;
   
-  // Calculate the total amount needed to cover tournament cost + Stripe fees + MatchPro margin
-  // We need to solve: totalAmount = tournamentCost + stripeFees + matchproMargin
-  // Where stripeFees = (totalAmount * 0.029) + 30
-  // And matchproMargin = tournamentCost * basePlatformFeeRate
+  // Simple fee structure: Tournament Cost + 4% Platform Fee
+  const platformFeeAmount = Math.round(tournamentCost * basePlatformFeeRate);
+  const totalChargedAmount = tournamentCost + platformFeeAmount;
   
-  const matchproTargetMargin = Math.round(tournamentCost * basePlatformFeeRate);
-  
-  // Solve for total amount: totalAmount = (tournamentCost + matchproMargin + 30) / (1 - 0.029)
-  const totalChargedAmount = Math.round((tournamentCost + matchproTargetMargin + STRIPE_FIXED_FEE) / (1 - STRIPE_PERCENTAGE_FEE));
-  
-  // Calculate actual platform fee (what customer pays above tournament cost)
-  const platformFeeAmount = totalChargedAmount - tournamentCost;
-  
-  // Calculate actual platform fee rate
+  // Calculate actual platform fee rate (should be exactly the base rate)
   const platformFeeRate = platformFeeAmount / tournamentCost;
   
   // Calculate Stripe fees on the total charged amount
