@@ -229,16 +229,16 @@ function TransactionDetailDialog({ transaction }: { transaction: any }) {
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <span className="font-medium text-gray-500">Payment Processed:</span>
-                <p>{transaction.paymentProcessedTime ? formatTimestamp(transaction.paymentProcessedTime, true) : 'N/A'}</p>
+                <p>{transaction.paymentProcessedAt ? formatTimestamp(transaction.paymentProcessedAt, true) : 'N/A'}</p>
               </div>
               <div>
                 <span className="font-medium text-gray-500">Updated:</span>
                 <p>{transaction.updatedAt ? formatTimestamp(transaction.updatedAt, true) : 'N/A'}</p>
               </div>
-              {transaction.approvedTime && (
+              {transaction.approvedAt && (
                 <div>
                   <span className="font-medium text-gray-500">Team Approved:</span>
-                  <p>{formatTimestamp(transaction.approvedTime, true)}</p>
+                  <p>{formatTimestamp(transaction.approvedAt, true)}</p>
                 </div>
               )}
               {transaction.settlementDate && (

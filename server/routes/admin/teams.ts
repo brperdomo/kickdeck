@@ -573,9 +573,44 @@ async function updateTeamStatus(req: Request, res: Response) {
     // Process payment if team is being approved
     let paymentStatus = 'not_applicable';
     if (status === 'approved' && currentTeam.totalAmount && currentTeam.totalAmount > 0) {
-      try {
-        paymentStatus = await processTeamApprovalPayment(currentTeam, teamId);
-        log(`Payment processing result for team ${teamId}: ${paymentStatus}`, 'admin');
+      // Check if team has already been charged to prevent duplicate payments
+      if (currentTeam.paymentStatus === 'paid' && currentTeam.paymentIntentId) {
+        log(`WARNING: Team ${teamId} already has payment status 'paid' with PaymentIntent ${currentTeam.paymentIntentId}. Skipping payment processing.`, 'admin');
+        paymentStatus = 'already_paid';
+      } else if (currentTeam.status === 'approved' && currentTeam.paymentIntentId) {
+        log(`WARNING: Team ${teamId} was already approved with PaymentIntent ${currentTeam.paymentIntentId}. This may be a duplicate approval attempt.`, 'admin');
+        paymentStatus = 'already_charged';
+      } else {
+        try {
+          paymentStatus = await processTeamApprovalPayment(currentTeam, teamId);
+          log(`Payment processing result for team ${teamId}: ${paymentStatus}`, 'admin');
+        } catch (paymentError) {
+          log(`Payment processing error for team ${teamId}: ${paymentError}`, 'admin');
+          paymentStatus = 'payment_error';
+        }
+      }
+        
+        // Handle duplicate payment prevention
+        if (paymentStatus === 'already_paid') {
+          log(`Team ${teamId} approved successfully - payment was already processed`, 'admin');
+          return res.json({
+            status: 'success',
+            message: 'Team approved successfully. Payment was already processed.',
+            paymentStatus: 'already_paid',
+            warning: 'This team was already charged in a previous approval.'
+          });
+        }
+        
+        if (paymentStatus === 'already_charged') {
+          log(`Team ${teamId} approval blocked - team was already approved and charged`, 'admin');
+          return res.status(400).json({
+            status: 'error',
+            error: 'Duplicate approval attempt',
+            message: 'This team was already approved and charged. To avoid duplicate charges, the approval has been blocked.',
+            paymentStatus: 'already_charged',
+            suggestion: 'If you need to move to approved status without charging, use "Move to Approved Without Charging" option.'
+          });
+        }
         
         // If payment failed or requires action, don't approve the team yet
         if (paymentStatus === 'payment_failed' || paymentStatus === 'payment_required' || paymentStatus === 'no_payment_method' || paymentStatus === 'payment_method_incomplete' || paymentStatus === 'payment_error' || paymentStatus === 'payment_completion_required') {

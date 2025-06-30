@@ -95,10 +95,22 @@ export function formatTimestamp(date: string | Date, treatAsUTC: boolean = false
     let dateObj: Date;
     
     if (typeof date === 'string') {
+      // Check if it's already a formatted date string (like "06/30/2025, 02:05:51 PM")
+      if (date.includes('/') && date.includes(',')) {
+        // Already formatted, return as-is
+        return date;
+      }
+      
       // If treating as UTC, append 'Z' to ensure proper UTC interpretation
       dateObj = treatAsUTC ? new Date(date + 'Z') : new Date(date);
     } else {
       dateObj = date;
+    }
+    
+    // Check if date is valid
+    if (isNaN(dateObj.getTime())) {
+      console.error('Invalid date object:', date);
+      return 'Invalid date';
     }
     
     // Use user's local timezone automatically
@@ -112,7 +124,7 @@ export function formatTimestamp(date: string | Date, treatAsUTC: boolean = false
       timeZoneName: 'short'
     });
   } catch (error) {
-    console.error('Error formatting timestamp:', error);
+    console.error('Error formatting timestamp:', error, 'Input:', date);
     return 'Invalid date';
   }
 }
