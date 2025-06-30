@@ -221,7 +221,19 @@ export async function getPaymentLogs(req: Request, res: Response) {
       managerPhone: t.managerphone,
       clubName: t.clubname,
       eventName: t.eventname,
-      ageGroup: t.agegroup
+      ageGroup: t.agegroup,
+      // Enhanced timing information
+      paymentProcessedAt: t.createdat, // Exact timestamp when payment was processed
+      paymentProcessedTime: new Date(t.createdat).toLocaleString('en-US', {
+        timeZone: 'America/New_York',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true
+      })
     }));
 
     // Debug: log mapped transaction
