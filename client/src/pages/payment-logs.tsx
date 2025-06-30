@@ -549,9 +549,10 @@ export default function PaymentLogs() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Date</TableHead>
+                    <TableHead>Payment Processed</TableHead>
                     <TableHead>Team</TableHead>
                     <TableHead>Event</TableHead>
+                    <TableHead>Approved By</TableHead>
                     <TableHead>Amount</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Payment Method</TableHead>
@@ -564,13 +565,13 @@ export default function PaymentLogs() {
                     <TableRow key={transaction.id}>
                       <TableCell>
                         <div className="text-sm">
-                          {transaction.createdAt ? formatDate(transaction.createdAt) : 'N/A'}
+                          {transaction.paymentProcessedTime || (transaction.createdAt ? formatDate(transaction.createdAt) : 'N/A')}
                         </div>
                         <div className="text-xs text-gray-500">
-                          {transaction.createdAt ? 
+                          {(transaction.paymentProcessedAt || transaction.createdAt) ? 
                             (() => {
                               try {
-                                return formatDistanceToNow(new Date(transaction.createdAt), { addSuffix: true });
+                                return formatDistanceToNow(new Date(transaction.paymentProcessedAt || transaction.createdAt), { addSuffix: true });
                               } catch (e) {
                                 return 'Invalid date';
                               }
@@ -585,6 +586,16 @@ export default function PaymentLogs() {
                       <TableCell>
                         <div>{transaction.eventName || 'N/A'}</div>
                         <div className="text-sm text-gray-500">{transaction.ageGroup}</div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-sm">
+                          {transaction.approvedBy || 'N/A'}
+                        </div>
+                        {transaction.approvedTime && (
+                          <div className="text-xs text-gray-500">
+                            {transaction.approvedTime}
+                          </div>
+                        )}
                       </TableCell>
                       <TableCell>
                         <div className="font-mono font-medium">
