@@ -224,11 +224,20 @@ function TransactionDetailDialog({ transaction }: { transaction: any }) {
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <span className="font-medium text-gray-500">Payment Processed:</span>
-                <p>{transaction.paymentProcessedAt ? formatTimestamp(transaction.paymentProcessedAt) : (transaction.createdAt ? formatTimestamp(transaction.createdAt) : 'N/A')}</p>
+                <p>{transaction.paymentProcessedTime || 'N/A'}</p>
               </div>
               <div>
                 <span className="font-medium text-gray-500">Updated:</span>
-                <p>{transaction.updatedAt ? formatTimestamp(transaction.updatedAt) : 'N/A'}</p>
+                <p>{transaction.updatedAt ? new Date(transaction.updatedAt + 'Z').toLocaleString('en-US', {
+                  timeZone: 'America/New_York',
+                  year: 'numeric',
+                  month: '2-digit',
+                  day: '2-digit',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  second: '2-digit',
+                  hour12: true
+                }) : 'N/A'}</p>
               </div>
               {transaction.approvedTime && (
                 <div>
