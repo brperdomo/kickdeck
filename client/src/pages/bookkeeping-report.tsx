@@ -29,6 +29,8 @@ import {
   DollarSign,
   Calendar,
   CreditCard,
+  ExternalLink,
+  CreditCard,
   RotateCcw
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
@@ -283,7 +285,11 @@ export default function BookkeepingReport() {
             formatDate(transaction.created_at),
             transaction.team_name || 'N/A',
             transaction.event_name || 'N/A',
-            transaction.payment_method || 'N/A',
+            transaction.card_brand && transaction.card_last_four 
+              ? `${transaction.card_brand.charAt(0).toUpperCase() + transaction.card_brand.slice(1)} ••••${transaction.card_last_four}`
+              : transaction.payment_method === 'link' 
+              ? 'Link Payment'
+              : transaction.payment_method || 'N/A',
             formatCurrency(transaction.amount),
             formatCurrency(transaction.stripe_fee || 0),
             formatCurrency((transaction.amount || 0) - (transaction.stripe_fee || 0)),
