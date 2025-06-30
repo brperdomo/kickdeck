@@ -119,7 +119,8 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
   - ADDED: "Payment Processed" time column and "Approved By" information in payment logs interface
   - ENHANCED: Detail modal with comprehensive payment timeline and approval details
   - FIXED: Database column name mapping issue (PostgreSQL camelCase vs snake_case fields)
-  - CLARIFIED: Fee structure explanation showing 4% platform fee breakdown (2.9% + $0.30 Stripe + 1.1% MatchPro)
+  - CLARIFIED: Fee structure with accurate explanation - 4% platform fee covers Stripe costs (2.9% + $0.30), remainder is MatchPro revenue
+  - ADDED: MatchPro Revenue field showing actual net revenue after paying Stripe processing costs
   - VERIFIED: System correctly implements platform fee structure with proper Stripe processing fee calculation
   - PRODUCTION READY: Complete audit trail system for payment processing and team approval tracking
 - June 27, 2025: CRITICAL STRIPE RECEIPT FIX - Resolved payment receipts coming from MatchPro account instead of tournament organizer accounts
