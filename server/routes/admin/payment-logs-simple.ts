@@ -10,6 +10,8 @@ export async function getPaymentLogs(req: Request, res: Response) {
   try {
     const { status, type, search, format, limit = '100', offset = '0', completeOnly } = req.query;
     
+    console.log('Payment logs request params:', { status, type, search, format, limit, offset, completeOnly });
+    
     // Build WHERE conditions dynamically
     const conditions = [];
     const params: any[] = [];
@@ -40,7 +42,9 @@ export async function getPaymentLogs(req: Request, res: Response) {
     }
 
     // Filter for complete data only (transactions with team and event information)
+    console.log('Complete only filter check:', completeOnly, typeof completeOnly, completeOnly === 'true');
     if (completeOnly === 'true') {
+      console.log('Adding complete data filter condition');
       conditions.push(`pt.team_id IS NOT NULL AND pt.event_id IS NOT NULL`);
     }
 

@@ -293,6 +293,9 @@ export default function PaymentLogs() {
       if (searchQuery) params.append('search', searchQuery);
       if (showCompleteOnly) params.append('completeOnly', 'true');
       
+      console.log('Frontend query params:', { statusFilter, typeFilter, searchQuery, showCompleteOnly });
+      console.log('URL params string:', params.toString());
+      
       const response = await fetch(`/api/admin/payment-logs?${params.toString()}`);
       if (!response.ok) {
         const errorData = await response.json();
