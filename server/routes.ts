@@ -48,6 +48,7 @@ import { registerPaymentReportRoutes } from "./routes/payment-reports";
 import { registerConnectPaymentRoutes } from "./routes/stripe-connect-payments";
 import { registerFeeCalculatorRoutes } from "./routes/admin/fee-calculator-router";
 import { registerRegistrationAnalyticsRoutes } from "./routes/registration-analytics";
+import { getPaymentLogs, getPaymentTransactionDetail, getRecentPaymentFailures } from "./routes/admin/payment-logs";
 import tournamentDirectorRoutes from "./routes/tournament-director-routes";
 import paymentCompletionRouter from "./routes/payment-completion";
 import { 
