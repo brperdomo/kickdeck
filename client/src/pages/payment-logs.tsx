@@ -135,7 +135,7 @@ function TransactionDetailDialog({ transaction }: { transaction: any }) {
               <div>
                 <span className="font-medium text-gray-500">MatchPro Revenue:</span>
                 <p className="font-mono">{formatCurrency(transaction.matchproRevenue || 0)}</p>
-                <p className="text-xs text-gray-400 mt-1">4% platform fee</p>
+                <p className="text-xs text-gray-400 mt-1">Remainder from 4% platform fee</p>
               </div>
               <div>
                 <span className="font-medium text-gray-500">Tournament Receives:</span>
@@ -149,11 +149,11 @@ function TransactionDetailDialog({ transaction }: { transaction: any }) {
             
             {/* Fee Structure Explanation */}
             <div className="mt-4 p-3 bg-blue-50 rounded-lg border-l-4 border-blue-400">
-              <h4 className="font-medium text-blue-900 mb-2">MatchPro Platform Fee Breakdown</h4>
+              <h4 className="font-medium text-blue-900 mb-2">MatchPro 4% Platform Fee Structure</h4>
               <div className="text-xs text-blue-800 space-y-1">
-                <div>• <strong>Stripe Processing:</strong> 2.9% + $0.30 (shown above)</div>
-                <div>• <strong>MatchPro Revenue:</strong> 4% of tournament cost (shown above)</div>
-                <div>• <strong>Total Charged:</strong> Tournament cost + MatchPro fee + calculated to cover Stripe fees</div>
+                <div>• <strong>Platform Fee:</strong> 4% charged to cover all processing costs</div>
+                <div>• <strong>Stripe Processing:</strong> 2.9% + $0.30 (paid from platform fee)</div>
+                <div>• <strong>MatchPro Revenue:</strong> Remainder after paying Stripe fees</div>
                 <div>• <strong>Tournament Receives:</strong> Original tournament cost (base amount)</div>
               </div>
             </div>
