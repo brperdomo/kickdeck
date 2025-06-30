@@ -29,18 +29,22 @@ export async function getPaymentLogs(req: Request, res: Response) {
 
     if (search) {
       const searchTerm = `%${search}%`;
+      const searchParams = [];
+      for (let i = 0; i < 8; i++) {
+        searchParams.push(`$${paramIndex + i}`);
+        params.push(searchTerm);
+      }
       conditions.push(`(
-        t.name ILIKE $${paramIndex} OR 
-        t.manager_name ILIKE $${paramIndex} OR 
-        t.manager_email ILIKE $${paramIndex} OR 
-        e.name ILIKE $${paramIndex} OR 
-        pt.payment_intent_id ILIKE $${paramIndex} OR 
-        pt.setup_intent_id ILIKE $${paramIndex} OR 
-        pt.error_code ILIKE $${paramIndex} OR 
-        pt.error_message ILIKE $${paramIndex}
+        t.name ILIKE ${searchParams[0]} OR 
+        t.manager_name ILIKE ${searchParams[1]} OR 
+        t.manager_email ILIKE ${searchParams[2]} OR 
+        e.name ILIKE ${searchParams[3]} OR 
+        pt.payment_intent_id ILIKE ${searchParams[4]} OR 
+        pt.setup_intent_id ILIKE ${searchParams[5]} OR 
+        pt.error_code ILIKE ${searchParams[6]} OR 
+        pt.error_message ILIKE ${searchParams[7]}
       )`);
-      params.push(searchTerm);
-      paramIndex++;
+      paramIndex += 8;
     }
 
     const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
