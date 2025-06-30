@@ -668,7 +668,8 @@ export async function getBookkeepingReport(req: Request, res: Response) {
       ORDER BY created_at DESC
     `;
     
-    const transactions = await db.execute(query);
+    const queryResult = await db.execute(query);
+    const transactions = queryResult.rows || queryResult;
     
     // Generate summary statistics
     const summaryQuery = sql`
@@ -694,13 +695,14 @@ export async function getBookkeepingReport(req: Request, res: Response) {
       FROM transaction_details
     `;
     
-    const summaryResult = await db.execute(summaryQuery);
+    const summaryQueryResult = await db.execute(summaryQuery);
+    const summaryRows = summaryQueryResult.rows || summaryQueryResult;
     
     const summary = {
-      totalTransactions: summaryResult[0]?.total_transactions || 0,
-      totalAmount: summaryResult[0]?.total_amount || 0,
-      stripeFees: summaryResult[0]?.total_stripe_fees || 0,
-      netAmount: summaryResult[0]?.net_amount || 0
+      totalTransactions: summaryRows[0]?.total_transactions || 0,
+      totalAmount: summaryRows[0]?.total_amount || 0,
+      stripeFees: summaryRows[0]?.total_stripe_fees || 0,
+      netAmount: summaryRows[0]?.net_amount || 0
     };
     
     return res.json({
@@ -751,7 +753,8 @@ async function getPendingPaymentsReport(req: Request, res: Response, startDate: 
       ORDER BY teams.created_at DESC
     `;
     
-    const transactions = await db.execute(pendingQuery);
+    const pendingQueryResult = await db.execute(pendingQuery);
+    const transactions = pendingQueryResult.rows || pendingQueryResult;
     
     // Generate summary statistics
     const summaryQuery = sql`
@@ -765,13 +768,14 @@ async function getPendingPaymentsReport(req: Request, res: Response, startDate: 
       AND payment_status = 'pending'
     `;
     
-    const summaryResult = await db.execute(summaryQuery);
+    const summaryQueryResult = await db.execute(summaryQuery);
+    const summaryRows = summaryQueryResult.rows || summaryQueryResult;
     
     const summary = {
-      totalTransactions: summaryResult[0]?.total_transactions || 0,
-      totalAmount: summaryResult[0]?.total_amount || 0,
+      totalTransactions: summaryRows[0]?.total_transactions || 0,
+      totalAmount: summaryRows[0]?.total_amount || 0,
       stripeFees: 0, // No fees for pending payments
-      netAmount: summaryResult[0]?.net_amount || 0
+      netAmount: summaryRows[0]?.net_amount || 0
     };
     
     return res.json({
