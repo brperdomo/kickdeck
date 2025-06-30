@@ -210,6 +210,33 @@ export async function processDestinationCharge(
       paymentIntent = await stripe.paymentIntents.create(paymentIntentParams);
     }
 
+    // Get card details from the completed payment intent
+    let cardBrand = null;
+    let cardLastFour = null;
+    let paymentMethodType = null;
+    
+    try {
+      // For successful payments, get the charge details to extract card information
+      if (paymentIntent.status === 'succeeded' && paymentIntent.latest_charge) {
+        const charge = await stripe.charges.retrieve(paymentIntent.latest_charge as string);
+        const cardDetails = charge.payment_method_details?.card;
+        
+        if (cardDetails) {
+          cardBrand = cardDetails.brand; // visa, mastercard, amex, discover, etc.
+          cardLastFour = cardDetails.last4;
+          paymentMethodType = 'card';
+          
+          console.log(`Captured card details: ${cardBrand} ending in ${cardLastFour}`);
+        } else if (charge.payment_method_details?.link) {
+          paymentMethodType = 'link';
+          console.log('Link payment method detected');
+        }
+      }
+    } catch (cardError) {
+      console.warn('Could not retrieve card details:', cardError);
+      // Continue without card details rather than failing the entire transaction
+    }
+
     // Record comprehensive transaction in database with detailed fee breakdown
     await db.insert(paymentTransactions).values({
       teamId: teamId,
@@ -222,6 +249,9 @@ export async function processDestinationCharge(
       netAmount: feeCalculation.tournamentReceives,
       matchproRevenue: feeCalculation.matchproReceives, // ✓ Add MatchPro revenue field
       status: paymentIntent.status,
+      cardBrand: cardBrand, // ✓ Add card brand (visa, mastercard, etc.)
+      cardLastFour: cardLastFour, // ✓ Add last 4 digits
+      paymentMethodType: paymentMethodType, // ✓ Add payment method type
       metadata: {
         tournamentCost: totalAmountCents.toString(),
         platformFeeRate: feeCalculation.platformFeeRate,
@@ -232,12 +262,15 @@ export async function processDestinationCharge(
       createdAt: new Date()
     });
 
-    // Update team payment status
+    // Update team payment status and card details
     await db.update(teams)
       .set({
         paymentIntentId: paymentIntent.id,
         paymentStatus: paymentIntent.status === 'succeeded' ? 'paid' : 'payment_pending',
-        paidAt: paymentIntent.status === 'succeeded' ? new Date() : null
+        paidAt: paymentIntent.status === 'succeeded' ? new Date() : null,
+        cardBrand: cardBrand, // Store card brand for future reference
+        cardLast4: cardLastFour, // Store last 4 digits
+        paymentMethodType: paymentMethodType // Store payment method type
       })
       .where(eq(teams.id, teamId));
 

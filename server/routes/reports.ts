@@ -576,6 +576,8 @@ export async function getBookkeepingReport(req: Request, res: Response) {
           pt.team_id,
           pt.amount, 
           pt.payment_method_type as payment_method, 
+          pt.card_brand,
+          pt.card_last_four,
           pt.status, 
           pt.created_at,
           pt.payment_intent_id,

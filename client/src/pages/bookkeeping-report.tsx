@@ -699,7 +699,23 @@ export default function BookkeepingReport() {
                             <TableCell>{formatCurrency(transaction.amount)}</TableCell>
                             <TableCell>{formatCurrency(transaction.stripe_fee || 0)}</TableCell>
                             <TableCell>{formatCurrency((transaction.amount || 0) - (transaction.stripe_fee || 0))}</TableCell>
-                            <TableCell>{transaction.payment_method || 'N/A'}</TableCell>
+                            <TableCell>
+                              {transaction.card_brand && transaction.card_last_four ? (
+                                <div className="flex items-center gap-2">
+                                  <CreditCard className="w-4 h-4 text-gray-500" />
+                                  <span className="capitalize">
+                                    {transaction.card_brand} ••••{transaction.card_last_four}
+                                  </span>
+                                </div>
+                              ) : transaction.payment_method === 'link' ? (
+                                <div className="flex items-center gap-2">
+                                  <ExternalLink className="w-4 h-4 text-blue-500" />
+                                  <span>Link Payment</span>
+                                </div>
+                              ) : (
+                                <span>{transaction.payment_method || 'N/A'}</span>
+                              )}
+                            </TableCell>
                             <TableCell>
                               <Badge variant={statusBadge.variant}>
                                 {statusBadge.label}
