@@ -178,11 +178,19 @@ export async function getPaymentLogs(req: Request, res: Response) {
         t.manager_phone as managerPhone,
         t.club_name as clubName,
         e.name as eventName,
-        eag.age_group as ageGroup
+        eag.age_group as ageGroup,
+        t.approved_at as approvedAt,
+        CASE 
+          WHEN u.first_name IS NOT NULL AND u.last_name IS NOT NULL THEN 
+            u.first_name || ' ' || u.last_name
+          WHEN u.email IS NOT NULL THEN u.email
+          ELSE 'Unknown Admin'
+        END as approvedBy
       FROM payment_transactions pt
       LEFT JOIN teams t ON pt.team_id = t.id
       LEFT JOIN events e ON pt.event_id = e.id
       LEFT JOIN event_age_groups eag ON t.age_group_id = eag.id
+      LEFT JOIN users u ON t.approved_by_user_id = u.id
       ${whereClause}
       ORDER BY 
         CASE WHEN pt.team_id IS NOT NULL AND pt.event_id IS NOT NULL THEN 0 ELSE 1 END,
@@ -233,7 +241,20 @@ export async function getPaymentLogs(req: Request, res: Response) {
         minute: '2-digit',
         second: '2-digit',
         hour12: true
-      })
+      }),
+      // Approver information
+      approvedAt: t.approvedat,
+      approvedBy: t.approvedby,
+      approvedTime: t.approvedat ? new Date(t.approvedat).toLocaleString('en-US', {
+        timeZone: 'America/New_York',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true
+      }) : null
     }));
 
     // Debug: log mapped transaction

@@ -201,18 +201,24 @@ function TransactionDetailDialog({ transaction }: { transaction: any }) {
             </div>
           )}
 
-          {/* Timestamps */}
+          {/* Enhanced Timestamps */}
           <div>
-            <h3 className="font-medium mb-3">Timestamps</h3>
+            <h3 className="font-medium mb-3">Payment Timeline</h3>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
-                <span className="font-medium text-gray-500">Created:</span>
-                <p>{transaction.createdAt ? formatDate(transaction.createdAt) : 'N/A'}</p>
+                <span className="font-medium text-gray-500">Payment Processed:</span>
+                <p>{transaction.paymentProcessedTime || (transaction.createdAt ? formatDate(transaction.createdAt) : 'N/A')}</p>
               </div>
               <div>
                 <span className="font-medium text-gray-500">Updated:</span>
                 <p>{transaction.updatedAt ? formatDate(transaction.updatedAt) : 'N/A'}</p>
               </div>
+              {transaction.approvedTime && (
+                <div>
+                  <span className="font-medium text-gray-500">Team Approved:</span>
+                  <p>{transaction.approvedTime}</p>
+                </div>
+              )}
               {transaction.settlementDate && (
                 <div>
                   <span className="font-medium text-gray-500">Settlement:</span>
@@ -227,6 +233,25 @@ function TransactionDetailDialog({ transaction }: { transaction: any }) {
               )}
             </div>
           </div>
+
+          {/* Approver Information */}
+          {transaction.approvedBy && (
+            <div>
+              <h3 className="font-medium mb-3">Team Approval Details</h3>
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span className="font-medium text-gray-500">Approved by:</span>
+                  <p>{transaction.approvedBy}</p>
+                </div>
+                {transaction.approvedTime && (
+                  <div>
+                    <span className="font-medium text-gray-500">Approval time:</span>
+                    <p>{transaction.approvedTime}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Stripe Links */}
           <div>

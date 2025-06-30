@@ -346,7 +346,10 @@ export const teams = pgTable("teams", {
   // Applied coupon information
   appliedCoupon: text("applied_coupon"), // JSON string storing coupon details
   // Notes field for admin comments
-  notes: text("notes")
+  notes: text("notes"),
+  // Approver tracking
+  approvedByUserId: integer("approved_by_user_id").references(() => users.id),
+  approvedAt: timestamp("approved_at")
 });
 
 export const games = pgTable("games", {

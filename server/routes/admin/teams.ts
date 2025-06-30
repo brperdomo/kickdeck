@@ -534,13 +534,23 @@ async function updateTeamStatus(req: Request, res: Response) {
     let updatedTeam;
     try {
       const now = new Date().toISOString();
+      
+      // Prepare update data with conditional approver tracking
+      const updateData: any = {
+        status, 
+        notes: notes || null, // Using notes instead of adminNotes to match schema
+        // Use the drizzle update pattern correctly to avoid TypeScript errors
+        updatedAt: sql`${now}`
+      };
+      
+      // If team is being approved, record who approved it and when
+      if (status === 'approved') {
+        updateData.approvedByUserId = req.user?.id || null;
+        updateData.approvedAt = sql`${now}`;
+      }
+      
       const updateResult = await db.update(teams)
-        .set({ 
-          status, 
-          notes: notes || null, // Using notes instead of adminNotes to match schema
-          // Use the drizzle update pattern correctly to avoid TypeScript errors
-          updatedAt: sql`${now}`
-        })
+        .set(updateData)
         .where(eq(teams.id, parseInt(teamId, 10)))
         .returning();
       
