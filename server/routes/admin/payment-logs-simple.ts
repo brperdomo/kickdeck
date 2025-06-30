@@ -43,9 +43,11 @@ export async function getPaymentLogs(req: Request, res: Response) {
 
     // Filter for complete data only (transactions with team and event information)
     console.log('Complete only filter check:', completeOnly, typeof completeOnly, completeOnly === 'true');
+    // TEMPORARY TEST: Always apply complete data filter to see if logic works
+    console.log('APPLYING COMPLETE DATA FILTER FOR TESTING');
+    conditions.push(`pt.team_id IS NOT NULL AND pt.event_id IS NOT NULL`);
     if (completeOnly === 'true') {
-      console.log('Adding complete data filter condition');
-      conditions.push(`pt.team_id IS NOT NULL AND pt.event_id IS NOT NULL`);
+      console.log('Adding complete data filter condition (was already added for testing)');
     }
 
     const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
@@ -191,6 +193,11 @@ export async function getPaymentLogs(req: Request, res: Response) {
       LIMIT ${limitValue} OFFSET ${offsetValue}
     `;
 
+    console.log('Final conditions array:', conditions);
+    console.log('Final WHERE clause:', whereClause);
+    console.log('Final SQL query:', transactionsQuery);
+    console.log('Query parameters:', params);
+    
     const transactionsResult = await db.execute(sql.raw(transactionsQuery, params));
     const transactions = transactionsResult.rows;
 
