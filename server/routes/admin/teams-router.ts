@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { getTeams, getTeamById, updateTeamStatus, processRefund, processTeamPaymentAfterSetup, generatePaymentCompletionUrl, deleteTeam } from './teams';
+import { getTeams, getTeamById, updateTeamStatus, processRefund, processTeamPaymentAfterSetup, generatePaymentCompletionUrl, deleteTeam, bulkApproveTeams } from './teams';
 import { db } from '@db';
 import { eventFees, teams } from '@db/schema';
 import { eq, inArray } from 'drizzle-orm';

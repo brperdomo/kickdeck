@@ -1276,6 +1276,179 @@ async function generatePaymentCompletionUrl(req: Request, res: Response) {
 }
 
 /**
+ * Bulk approve multiple teams
+ */
+async function bulkApproveTeams(req: Request, res: Response) {
+  try {
+    const { teamIds, notes } = req.body;
+    
+    if (!Array.isArray(teamIds) || teamIds.length === 0) {
+      return res.status(400).json({
+        status: 'error',
+        error: 'Team IDs array is required'
+      });
+    }
+
+    log(`Processing bulk approval for ${teamIds.length} teams: ${teamIds.join(', ')}`, 'admin');
+    
+    const results: {
+      successful: Array<{ teamId: any; teamName: string; message: string }>;
+      failed: Array<{ teamId: any; teamName?: string; error: string }>;
+      warnings: Array<{ teamId: any; teamName: string; message: string }>;
+    } = {
+      successful: [],
+      failed: [],
+      warnings: []
+    };
+
+    // Process each team individually to handle different payment scenarios
+    for (const teamId of teamIds) {
+      try {
+        // Get team details first
+        const teamResult = await db
+          .select()
+          .from(teams)
+          .where(eq(teams.id, parseInt(teamId, 10)));
+        
+        if (!teamResult || teamResult.length === 0) {
+          results.failed.push({
+            teamId,
+            error: 'Team not found'
+          });
+          continue;
+        }
+
+        const team = teamResult[0];
+        
+        // Check if team is already approved
+        if (team.status === 'approved') {
+          results.warnings.push({
+            teamId,
+            teamName: team.name,
+            message: 'Team was already approved'
+          });
+          continue;
+        }
+
+        // Check if team can be approved (not rejected, withdrawn, etc.)
+        if (!['registered', 'waitlisted'].includes(team.status)) {
+          results.failed.push({
+            teamId,
+            teamName: team.name,
+            error: `Cannot approve team with status: ${team.status}`
+          });
+          continue;
+        }
+
+        // For bulk approval, we'll approve teams without payment processing
+        // This is ideal for imported teams or when fees aren't required
+        const totalAmount = team.totalAmount || 0;
+        
+        if (totalAmount > 0) {
+          // If team has fees, warn but still approve (admin can handle payment separately)
+          results.warnings.push({
+            teamId,
+            teamName: team.name,
+            message: `Team approved but has unpaid fees ($${(totalAmount / 100).toFixed(2)}). Consider generating payment completion URL.`
+          });
+        }
+
+        // Update team status to approved
+        await db.update(teams)
+          .set({ 
+            status: 'approved',
+            notes: notes ? `${team.notes ? team.notes + '\n' : ''}Bulk approval: ${notes}` : team.notes
+          })
+          .where(eq(teams.id, parseInt(teamId, 10)));
+
+        results.successful.push({
+          teamId,
+          teamName: team.name,
+          message: 'Team approved successfully'
+        });
+
+        log(`Team ${teamId} (${team.name}) approved in bulk operation`, 'admin');
+
+      } catch (error) {
+        results.failed.push({
+          teamId,
+          error: error instanceof Error ? error.message : 'Unknown error occurred'
+        });
+        log(`Error approving team ${teamId} in bulk operation: ${error}`, 'admin');
+      }
+    }
+
+    // Send email notifications for successful approvals
+    try {
+      for (const success of results.successful) {
+        const teamResult = await db
+          .select({
+            team: teams,
+            event: {
+              id: events.id,
+              name: events.name
+            }
+          })
+          .from(teams)
+          .leftJoin(events, eq(teams.eventId, events.id))
+          .where(eq(teams.id, parseInt(success.teamId, 10)));
+
+        if (teamResult && teamResult.length > 0) {
+          const { team, event } = teamResult[0];
+          
+          const recipients = [];
+          if (team.submitterEmail) recipients.push(team.submitterEmail);
+          if (team.managerEmail && team.managerEmail !== team.submitterEmail) {
+            recipients.push(team.managerEmail);
+          }
+
+          for (const recipient of recipients) {
+            if (recipient) {
+              await sendTemplatedEmail(
+                recipient,
+                'team_approved',
+                {
+                  teamName: team.name || 'your team',
+                  eventName: event?.name || 'the event',
+                  approvalDate: new Date().toLocaleDateString()
+                }
+              );
+            }
+          }
+        }
+      }
+    } catch (emailError) {
+      log(`Error sending bulk approval notification emails: ${emailError}`, 'admin');
+      // Don't fail the whole operation for email issues
+    }
+
+    const summary = {
+      total: teamIds.length,
+      successful: results.successful.length,
+      failed: results.failed.length,
+      warnings: results.warnings.length
+    };
+
+    log(`Bulk approval completed: ${summary.successful} successful, ${summary.failed} failed, ${summary.warnings} warnings`, 'admin');
+
+    return res.json({
+      status: 'success',
+      message: `Bulk approval completed: ${summary.successful} teams approved`,
+      summary,
+      results
+    });
+
+  } catch (error) {
+    log(`Error in bulk team approval: ${error}`, 'admin');
+    return res.status(500).json({
+      status: 'error',
+      error: 'Failed to process bulk approval',
+      message: error instanceof Error ? error.message : 'Unknown error occurred'
+    });
+  }
+}
+
+/**
  * Delete a team registration (only allowed for teams in 'registered' status)
  */
 async function deleteTeam(req: Request, res: Response) {
@@ -1437,4 +1610,4 @@ async function deleteTeam(req: Request, res: Response) {
   }
 }
 
-export { updateTeamStatus, processRefund, processTeamPaymentAfterSetup, generatePaymentCompletionUrl, deleteTeam };
+export { updateTeamStatus, processRefund, processTeamPaymentAfterSetup, generatePaymentCompletionUrl, deleteTeam, bulkApproveTeams };
