@@ -149,11 +149,12 @@ function TransactionDetailDialog({ transaction }: { transaction: any }) {
             
             {/* Fee Structure Explanation */}
             <div className="mt-4 p-3 bg-blue-50 rounded-lg border-l-4 border-blue-400">
-              <h4 className="font-medium text-blue-900 mb-2">MatchPro 4% Platform Fee Structure</h4>
+              <h4 className="font-medium text-blue-900 mb-2">MatchPro Platform Fee Breakdown</h4>
               <div className="text-xs text-blue-800 space-y-1">
                 <div>• <strong>Stripe Processing:</strong> 2.9% + $0.30 (shown above)</div>
-                <div>• <strong>MatchPro Revenue:</strong> 1.1% (approximately)</div>
-                <div>• <strong>Total Platform Fee:</strong> 4% covers all processing and platform costs</div>
+                <div>• <strong>MatchPro Revenue:</strong> 4% of tournament cost (shown above)</div>
+                <div>• <strong>Total Charged:</strong> Tournament cost + MatchPro fee + calculated to cover Stripe fees</div>
+                <div>• <strong>Tournament Receives:</strong> Original tournament cost (base amount)</div>
               </div>
             </div>
           </div>
