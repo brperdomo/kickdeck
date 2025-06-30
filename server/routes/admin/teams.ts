@@ -1440,7 +1440,7 @@ async function bulkApproveTeams(req: Request, res: Response) {
                   paymentDate: paymentData?.createdAt ? new Date(paymentData.createdAt).toLocaleDateString() : new Date().toLocaleDateString(),
                   cardBrand: team.cardBrand || 'Card',
                   cardLastFour: team.cardLast4 || '****',
-                  receiptNumber: team.paymentIntentId ? team.paymentIntentId.substring(0, 12).toUpperCase() : 'PENDING',
+                  transactionId: team.paymentIntentId || 'Processing',
                   
                   // Age group information  
                   ageGroup: 'Age Group', // This would need to be fetched from age groups table
