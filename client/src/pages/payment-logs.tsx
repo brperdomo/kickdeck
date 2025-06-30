@@ -52,6 +52,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { formatDistanceToNow } from "date-fns";
 
 // Transaction detail dialog component
@@ -310,6 +311,7 @@ export default function PaymentLogs() {
       if (statusFilter !== 'all') params.append('status', statusFilter);
       if (typeFilter !== 'all') params.append('type', typeFilter);
       if (searchQuery) params.append('search', searchQuery);
+      if (showCompleteOnly) params.append('completeOnly', 'true');
       params.append('format', 'csv');
       
       const response = await fetch(`/api/admin/payment-logs?${params.toString()}`);
@@ -424,7 +426,7 @@ export default function PaymentLogs() {
           <CardTitle>Filters</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
             <div>
               <Label htmlFor="search">Search</Label>
               <div className="relative">
@@ -467,6 +469,19 @@ export default function PaymentLogs() {
                 </SelectContent>
               </Select>
             </div>
+            <div>
+              <Label htmlFor="completeOnly">Complete Data Only</Label>
+              <div className="flex items-center space-x-2 mt-2">
+                <Switch
+                  id="completeOnly"
+                  checked={showCompleteOnly}
+                  onCheckedChange={setShowCompleteOnly}
+                />
+                <span className="text-sm text-gray-600">
+                  Show only transactions with team/event info
+                </span>
+              </div>
+            </div>
             <div className="flex items-end">
               <Button 
                 variant="outline" 
@@ -474,6 +489,7 @@ export default function PaymentLogs() {
                   setSearchQuery('');
                   setStatusFilter('all');
                   setTypeFilter('all');
+                  setShowCompleteOnly(true); // Reset to default
                 }}
               >
                 Clear Filters

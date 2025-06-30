@@ -39,6 +39,11 @@ export async function getPaymentLogs(req: Request, res: Response) {
       params.push(searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm);
     }
 
+    // Filter for complete data only (transactions with team and event information)
+    if (completeOnly === 'true') {
+      conditions.push(`pt.team_id IS NOT NULL AND pt.event_id IS NOT NULL`);
+    }
+
     const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
     // Handle CSV export
