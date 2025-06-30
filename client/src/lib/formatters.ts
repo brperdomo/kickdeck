@@ -84,14 +84,24 @@ export function formatRelativeTime(date: string | Date): string {
 
 /**
  * Format a date with full timestamp including timezone
- * @param date Date string or Date object
+ * @param date Date string or Date object  
+ * @param treatAsUTC Whether to treat the date string as UTC (for database timestamps)
  * @returns Formatted date/time string with timezone
  */
-export function formatTimestamp(date: string | Date): string {
+export function formatTimestamp(date: string | Date, treatAsUTC: boolean = false): string {
   if (!date) return 'N/A';
   
   try {
-    const dateObj = typeof date === 'string' ? new Date(date) : date;
+    let dateObj: Date;
+    
+    if (typeof date === 'string') {
+      // If treating as UTC, append 'Z' to ensure proper UTC interpretation
+      dateObj = treatAsUTC ? new Date(date + 'Z') : new Date(date);
+    } else {
+      dateObj = date;
+    }
+    
+    // Use user's local timezone automatically
     return dateObj.toLocaleString('en-US', {
       year: 'numeric',
       month: '2-digit',
@@ -104,5 +114,55 @@ export function formatTimestamp(date: string | Date): string {
   } catch (error) {
     console.error('Error formatting timestamp:', error);
     return 'Invalid date';
+  }
+}
+
+/**
+ * Format timestamp for a specific timezone
+ * @param date Date string or Date object
+ * @param timezone IANA timezone string (e.g., 'America/Los_Angeles')
+ * @param treatAsUTC Whether to treat the date string as UTC (for database timestamps)
+ * @returns Formatted date/time string with timezone
+ */
+export function formatTimestampInTimezone(date: string | Date, timezone: string, treatAsUTC: boolean = false): string {
+  if (!date) return 'N/A';
+  
+  try {
+    let dateObj: Date;
+    
+    if (typeof date === 'string') {
+      // If treating as UTC, append 'Z' to ensure proper UTC interpretation
+      dateObj = treatAsUTC ? new Date(date + 'Z') : new Date(date);
+    } else {
+      dateObj = date;
+    }
+    
+    return dateObj.toLocaleString('en-US', {
+      timeZone: timezone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      timeZoneName: 'short',
+      hour12: true
+    });
+  } catch (error) {
+    console.error('Error formatting timestamp for timezone:', error);
+    return 'Invalid date';
+  }
+}
+
+/**
+ * Get user's detected timezone
+ * @returns IANA timezone string
+ */
+export function getUserTimezone(): string {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone;
+  } catch (error) {
+    console.error('Error detecting user timezone:', error);
+    return 'America/New_York'; // fallback
   }
 }

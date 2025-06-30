@@ -32,7 +32,7 @@ import {
   Eye
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { formatCurrency, formatDate, formatTimestamp } from "@/lib/formatters";
+import { formatCurrency, formatDate, formatTimestamp, formatTimestampInTimezone, getUserTimezone } from "@/lib/formatters";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -220,29 +220,25 @@ function TransactionDetailDialog({ transaction }: { transaction: any }) {
 
           {/* Enhanced Timestamps */}
           <div>
-            <h3 className="font-medium mb-3">Payment Timeline</h3>
+            <h3 className="font-medium mb-3">
+              Payment Timeline 
+              <span className="text-xs text-gray-400 ml-2">
+                (Times shown in {getUserTimezone()})
+              </span>
+            </h3>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <span className="font-medium text-gray-500">Payment Processed:</span>
-                <p>{transaction.paymentProcessedTime || 'N/A'}</p>
+                <p>{transaction.paymentProcessedTime ? formatTimestamp(transaction.paymentProcessedTime, true) : 'N/A'}</p>
               </div>
               <div>
                 <span className="font-medium text-gray-500">Updated:</span>
-                <p>{transaction.updatedAt ? new Date(transaction.updatedAt + 'Z').toLocaleString('en-US', {
-                  timeZone: 'America/New_York',
-                  year: 'numeric',
-                  month: '2-digit',
-                  day: '2-digit',
-                  hour: '2-digit',
-                  minute: '2-digit',
-                  second: '2-digit',
-                  hour12: true
-                }) : 'N/A'}</p>
+                <p>{transaction.updatedAt ? formatTimestamp(transaction.updatedAt, true) : 'N/A'}</p>
               </div>
               {transaction.approvedTime && (
                 <div>
                   <span className="font-medium text-gray-500">Team Approved:</span>
-                  <p>{transaction.approvedTime}</p>
+                  <p>{formatTimestamp(transaction.approvedTime, true)}</p>
                 </div>
               )}
               {transaction.settlementDate && (

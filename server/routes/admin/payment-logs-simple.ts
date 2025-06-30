@@ -232,31 +232,13 @@ export async function getPaymentLogs(req: Request, res: Response) {
       clubName: t.clubname,
       eventName: t.eventname,
       ageGroup: t.agegroup,
-      // Enhanced timing information
-      paymentProcessedAt: t.createdat, // Exact timestamp when payment was processed
-      paymentProcessedTime: new Date(t.createdat + 'Z').toLocaleString('en-US', {
-        timeZone: 'America/New_York',
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: true
-      }),
-      // Approver information
+      // Enhanced timing information - let frontend handle timezone conversion
+      paymentProcessedAt: t.createdat, // Exact timestamp when payment was processed (UTC)
+      paymentProcessedTime: t.createdat, // Raw timestamp for frontend timezone conversion
+      // Approver information  
       approvedAt: t.approvedat,
       approvedBy: t.approvedby,
-      approvedTime: t.approvedat ? new Date(t.approvedat + 'Z').toLocaleString('en-US', {
-        timeZone: 'America/New_York',
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: true
-      }) : null
+      approvedTime: t.approvedat // Raw timestamp for frontend timezone conversion
     }));
 
     // Debug: log mapped transaction
