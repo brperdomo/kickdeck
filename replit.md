@@ -113,6 +113,15 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
+- June 30, 2025: CRITICAL FEE CALCULATION FIX - Corrected platform fee calculation system that was overcharging customers
+  - IDENTIFIED: Fee calculation system was charging $1,280.23 for $1,195 tournament cost (7.1% effective rate vs claimed 4%)
+  - ROOT CAUSE: Complex algorithm designed to guarantee MatchPro 4% margin by inflating customer charges to absorb all Stripe fees
+  - FIXED: Simplified to proper 4% platform fee structure: Tournament Cost + 4% = Total Charged
+  - CORRECTED: $1,195 tournament now charges correct $1,242.80 total (4% = $47.80 platform fee)
+  - ACCURATE: Stripe processing fee now $36.34 (2.9% of $1,242.80 + $0.30) instead of inflated $37.43
+  - FAIR: MatchPro revenue correctly calculated as $11.46 ($47.80 platform fee - $36.34 Stripe costs)
+  - DECISION: Historical payment records preserved unchanged since payments already processed through Stripe
+  - PRODUCTION READY: New registrations will use fair and transparent 4% platform fee structure
 - June 30, 2025: ENHANCED PAYMENT LOGS WITH COMPREHENSIVE AUDIT TRAILS - Implemented detailed payment failure tracking and admin visibility
   - ENHANCED: Payment logs now show exact payment processing timestamps with timezone information
   - IMPLEMENTED: Approver tracking system recording which admin approved each team and when
