@@ -191,12 +191,43 @@ export async function getPaymentLogs(req: Request, res: Response) {
     `;
 
     const transactionsResult = await db.execute(sql.raw(transactionsQuery, params));
-    const transactions = transactionsResult.rows;
+    const rawTransactions = transactionsResult.rows;
 
-    // Debug: log first transaction to see exact field names
+    // Fix field name mapping: PostgreSQL returns lowercase, frontend expects camelCase
+    const transactions = rawTransactions.map((t: any) => ({
+      id: t.id,
+      teamId: t.teamid,
+      eventId: t.eventid,
+      userId: t.userid,
+      paymentIntentId: t.paymentintentid,
+      setupIntentId: t.setupintentid,
+      transactionType: t.transactiontype,
+      amount: t.amount,
+      stripeFee: t.stripefee,
+      netAmount: t.netamount,
+      status: t.status,
+      cardBrand: t.cardbrand,
+      cardLastFour: t.cardlastfour,
+      paymentMethodType: t.paymentmethodtype,
+      errorCode: t.errorcode,
+      errorMessage: t.errormessage,
+      settlementDate: t.settlementdate,
+      payoutId: t.payoutid,
+      createdAt: t.createdat,
+      updatedAt: t.updatedat,
+      teamName: t.teamname,
+      managerName: t.managername,
+      managerEmail: t.manageremail,
+      managerPhone: t.managerphone,
+      clubName: t.clubname,
+      eventName: t.eventname,
+      ageGroup: t.agegroup
+    }));
+
+    // Debug: log mapped transaction
     if (transactions.length > 0) {
-      console.log('Sample transaction keys:', Object.keys(transactions[0]));
-      console.log('Sample transaction data:', JSON.stringify(transactions[0], null, 2));
+      console.log('Mapped transaction keys:', Object.keys(transactions[0]));
+      console.log('Sample mapped data:', JSON.stringify(transactions[0], null, 2));
     }
 
     return res.json({
@@ -251,14 +282,48 @@ export async function getPaymentTransactionDetail(req: Request, res: Response) {
     `;
 
     const result = await db.execute(sql.raw(query, [transactionId]));
-    const transaction = result.rows[0];
+    const rawTransaction = result.rows[0];
 
-    if (!transaction) {
+    if (!rawTransaction) {
       return res.status(404).json({
         success: false,
         error: 'Transaction not found'
       });
     }
+
+    // Fix field name mapping for transaction detail
+    const transaction = {
+      id: rawTransaction.id,
+      teamId: rawTransaction.team_id,
+      eventId: rawTransaction.event_id,
+      userId: rawTransaction.user_id,
+      paymentIntentId: rawTransaction.payment_intent_id,
+      setupIntentId: rawTransaction.setup_intent_id,
+      transactionType: rawTransaction.transaction_type,
+      amount: rawTransaction.amount,
+      stripeFee: rawTransaction.stripe_fee,
+      netAmount: rawTransaction.net_amount,
+      status: rawTransaction.status,
+      cardBrand: rawTransaction.card_brand,
+      cardLastFour: rawTransaction.card_last_four,
+      paymentMethodType: rawTransaction.payment_method_type,
+      errorCode: rawTransaction.error_code,
+      errorMessage: rawTransaction.error_message,
+      settlementDate: rawTransaction.settlement_date,
+      payoutId: rawTransaction.payout_id,
+      metadata: rawTransaction.metadata,
+      notes: rawTransaction.notes,
+      refundedAt: rawTransaction.refunded_at,
+      createdAt: rawTransaction.created_at,
+      updatedAt: rawTransaction.updated_at,
+      teamName: rawTransaction.team_name,
+      managerName: rawTransaction.manager_name,
+      managerEmail: rawTransaction.manager_email,
+      managerPhone: rawTransaction.manager_phone,
+      clubName: rawTransaction.club_name,
+      eventName: rawTransaction.event_name,
+      ageGroup: rawTransaction.age_group
+    };
 
     return res.json({
       success: true,
