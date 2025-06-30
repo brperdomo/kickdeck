@@ -375,6 +375,9 @@ function Router() {
           <Route path="/registration-orders-report">
             {user.isAdmin ? <RegistrationOrdersReport /> : <NotFound />}
           </Route>
+          <Route path="/payment-logs">
+            {user.isAdmin ? <PaymentLogs /> : <NotFound />}
+          </Route>
           <Route path="/financial-overview-report">
             {user.isAdmin ? <FinancialOverviewReport /> : <NotFound />}
           </Route>

@@ -1061,6 +1061,7 @@ function ReportsView() {
                 >
                   <option value="accounting-codes">Accounting Codes</option>
                   <option value="registration-orders">Registration Orders</option>
+                  <option value="payment-logs">Payment Logs</option>
                   <option value="financial-overview">Financial Overview</option>
                   <option value="fees-analysis">Fees Analysis</option>
                   <option value="bookkeeping">Bookkeeping Report</option>
@@ -1189,6 +1190,25 @@ function ReportsView() {
                       <Button onClick={() => navigate('/registration-orders-report')} className="space-x-2">
                         <FileText className="w-4 h-4" />
                         <span>Open Registration Orders Report</span>
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+            
+            {selectedFinancialReport === 'payment-logs' && (
+              <div className="space-y-4">
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle>Payment Logs</CardTitle>
+                    <CardDescription>Monitor detailed payment transaction logs including failures and error information</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex justify-center items-center py-4">
+                      <Button onClick={() => navigate('/payment-logs')} className="space-x-2">
+                        <CreditCard className="w-4 h-4" />
+                        <span>Open Payment Logs</span>
                       </Button>
                     </div>
                   </CardContent>
