@@ -10,48 +10,40 @@ export async function getPaymentLogs(req: Request, res: Response) {
   try {
     const { status, type, search, format, limit = '100', offset = '0' } = req.query;
     
-    // Build the WHERE clause conditions
+    // Build WHERE conditions dynamically
     const conditions = [];
     const params: any[] = [];
-    let paramIndex = 1;
 
     if (status && status !== 'all') {
-      conditions.push(`pt.status = $${paramIndex}`);
+      conditions.push(`pt.status = ?`);
       params.push(status);
-      paramIndex++;
     }
 
     if (type && type !== 'all') {
-      conditions.push(`pt.transaction_type = $${paramIndex}`);
+      conditions.push(`pt.transaction_type = ?`);
       params.push(type);
-      paramIndex++;
     }
 
     if (search) {
       const searchTerm = `%${search}%`;
-      const searchParams = [];
-      for (let i = 0; i < 8; i++) {
-        searchParams.push(`$${paramIndex + i}`);
-        params.push(searchTerm);
-      }
       conditions.push(`(
-        t.name ILIKE ${searchParams[0]} OR 
-        t.manager_name ILIKE ${searchParams[1]} OR 
-        t.manager_email ILIKE ${searchParams[2]} OR 
-        e.name ILIKE ${searchParams[3]} OR 
-        pt.payment_intent_id ILIKE ${searchParams[4]} OR 
-        pt.setup_intent_id ILIKE ${searchParams[5]} OR 
-        pt.error_code ILIKE ${searchParams[6]} OR 
-        pt.error_message ILIKE ${searchParams[7]}
+        t.name LIKE ? OR 
+        t.manager_name LIKE ? OR 
+        t.manager_email LIKE ? OR 
+        e.name LIKE ? OR 
+        pt.payment_intent_id LIKE ? OR 
+        pt.setup_intent_id LIKE ? OR 
+        pt.error_code LIKE ? OR 
+        pt.error_message LIKE ?
       )`);
-      paramIndex += 8;
+      params.push(searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm);
     }
 
     const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
     // Handle CSV export
     if (format === 'csv') {
-      const csvQuery = sql.raw(`
+      const csvQuery = `
         SELECT 
           pt.id,
           pt.created_at,
@@ -82,50 +74,31 @@ export async function getPaymentLogs(req: Request, res: Response) {
         LEFT JOIN event_age_groups eag ON t.age_group_id = eag.id
         ${whereClause}
         ORDER BY pt.created_at DESC
-        LIMIT 10000
-      `, params);
+      `;
 
-      const result = await db.execute(csvQuery);
-      const transactions = result.rows;
+      const csvResult = await db.execute(sql.raw(csvQuery, params));
+      const transactions = csvResult.rows;
 
+      // Generate CSV content
       const csvHeaders = [
-        'ID',
-        'Date',
-        'Team Name',
-        'Event Name',
-        'Age Group',
-        'Manager Name',
-        'Manager Email',
-        'Manager Phone',
-        'Club Name',
-        'Transaction Type',
-        'Amount',
-        'Stripe Fee',
-        'Net Amount',
-        'Status',
-        'Payment Method Type',
-        'Card Brand',
-        'Card Last Four',
-        'Payment Intent ID',
-        'Setup Intent ID',
-        'Error Code',
-        'Error Message',
-        'Settlement Date',
-        'Payout ID'
+        'ID', 'Date', 'Team Name', 'Event Name', 'Age Group', 'Manager Name', 'Manager Email', 
+        'Manager Phone', 'Club Name', 'Transaction Type', 'Amount', 'Stripe Fee', 'Net Amount', 
+        'Status', 'Payment Method', 'Card Brand', 'Card Last Four', 'Payment Intent ID', 
+        'Setup Intent ID', 'Error Code', 'Error Message', 'Settlement Date', 'Payout ID'
       ].join(',');
 
       const csvRows = transactions.map((t: any) => [
         t.id,
-        t.created_at?.toISOString ? t.created_at.toISOString() : t.created_at,
-        `"${t.team_name || ''}"`,
-        `"${t.event_name || ''}"`,
-        `"${t.age_group || ''}"`,
-        `"${t.manager_name || ''}"`,
-        `"${t.manager_email || ''}"`,
-        `"${t.manager_phone || ''}"`,
-        `"${t.club_name || ''}"`,
-        t.transaction_type,
-        t.amount,
+        new Date(t.created_at).toISOString(),
+        `"${(t.team_name || '').replace(/"/g, '""')}"`,
+        `"${(t.event_name || '').replace(/"/g, '""')}"`,
+        `"${(t.age_group || '').replace(/"/g, '""')}"`,
+        `"${(t.manager_name || '').replace(/"/g, '""')}"`,
+        t.manager_email || '',
+        t.manager_phone || '',
+        `"${(t.club_name || '').replace(/"/g, '""')}"`,
+        t.transaction_type || '',
+        t.amount || 0,
         t.stripe_fee || 0,
         t.net_amount || t.amount,
         t.status,
@@ -136,7 +109,7 @@ export async function getPaymentLogs(req: Request, res: Response) {
         t.setup_intent_id || '',
         t.error_code || '',
         `"${(t.error_message || '').replace(/"/g, '""')}"`,
-        t.settlement_date?.toISOString ? t.settlement_date.toISOString() : t.settlement_date || '',
+        t.settlement_date || '',
         t.payout_id || ''
       ].join(','));
 
@@ -148,7 +121,7 @@ export async function getPaymentLogs(req: Request, res: Response) {
     }
 
     // Get summary statistics
-    const summaryQuery = sql.raw(`
+    const summaryQuery = `
       SELECT 
         COUNT(*) as total_transactions,
         COALESCE(SUM(pt.amount), 0) as total_amount,
@@ -160,16 +133,16 @@ export async function getPaymentLogs(req: Request, res: Response) {
       LEFT JOIN teams t ON pt.team_id = t.id
       LEFT JOIN events e ON pt.event_id = e.id
       ${whereClause}
-    `, params);
+    `;
 
-    const summaryResult = await db.execute(summaryQuery);
+    const summaryResult = await db.execute(sql.raw(summaryQuery, params));
     const summary = summaryResult.rows[0];
 
     // Get paginated transactions
     const limitValue = parseInt(limit as string);
     const offsetValue = parseInt(offset as string);
     
-    const transactionsQuery = sql.raw(`
+    const transactionsQuery = `
       SELECT 
         pt.id,
         pt.team_id,
@@ -180,7 +153,7 @@ export async function getPaymentLogs(req: Request, res: Response) {
         pt.transaction_type,
         pt.amount,
         pt.stripe_fee,
-        COALESCE(pt.net_amount, pt.amount) as net_amount,
+        pt.net_amount,
         pt.status,
         pt.card_brand,
         pt.card_last_four,
@@ -204,10 +177,10 @@ export async function getPaymentLogs(req: Request, res: Response) {
       LEFT JOIN event_age_groups eag ON t.age_group_id = eag.id
       ${whereClause}
       ORDER BY pt.created_at DESC
-      LIMIT $${paramIndex} OFFSET $${paramIndex + 1}
-    `, [...params, limitValue, offsetValue]);
+      LIMIT ${limitValue} OFFSET ${offsetValue}
+    `;
 
-    const transactionsResult = await db.execute(transactionsQuery);
+    const transactionsResult = await db.execute(sql.raw(transactionsQuery, params));
     const transactions = transactionsResult.rows;
 
     return res.json({
@@ -244,7 +217,7 @@ export async function getPaymentTransactionDetail(req: Request, res: Response) {
   try {
     const { transactionId } = req.params;
 
-    const query = sql.raw(`
+    const query = `
       SELECT 
         pt.*,
         t.name as team_name,
@@ -252,24 +225,22 @@ export async function getPaymentTransactionDetail(req: Request, res: Response) {
         t.manager_email,
         t.manager_phone,
         t.club_name,
-        t.submitter_email,
         e.name as event_name,
         eag.age_group
       FROM payment_transactions pt
       LEFT JOIN teams t ON pt.team_id = t.id
       LEFT JOIN events e ON pt.event_id = e.id
       LEFT JOIN event_age_groups eag ON t.age_group_id = eag.id
-      WHERE pt.id = $1
-      LIMIT 1
-    `, [parseInt(transactionId)]);
+      WHERE pt.id = ?
+    `;
 
-    const result = await db.execute(query);
+    const result = await db.execute(sql.raw(query, [transactionId]));
     const transaction = result.rows[0];
 
     if (!transaction) {
       return res.status(404).json({
         success: false,
-        error: 'Payment transaction not found'
+        error: 'Transaction not found'
       });
     }
 
@@ -279,10 +250,10 @@ export async function getPaymentTransactionDetail(req: Request, res: Response) {
     });
 
   } catch (error) {
-    console.error('Error fetching payment transaction detail:', error);
+    console.error('Error fetching transaction detail:', error);
     return res.status(500).json({
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to fetch transaction details'
+      error: error instanceof Error ? error.message : 'Failed to fetch transaction detail'
     });
   }
 }
@@ -295,37 +266,39 @@ export async function getRecentPaymentFailures(req: Request, res: Response) {
     const { hours = '24' } = req.query;
     const hoursAgo = new Date(Date.now() - parseInt(hours as string) * 60 * 60 * 1000);
 
-    const query = sql.raw(`
+    const query = `
       SELECT 
         pt.id,
-        t.name as team_name,
-        e.name as event_name,
-        pt.amount,
         pt.error_code,
         pt.error_message,
+        pt.amount,
         pt.created_at,
-        t.manager_email
+        t.name as team_name,
+        t.manager_email,
+        e.name as event_name
       FROM payment_transactions pt
       LEFT JOIN teams t ON pt.team_id = t.id
       LEFT JOIN events e ON pt.event_id = e.id
-      WHERE pt.status = 'failed' AND pt.created_at >= $1
+      WHERE pt.status = 'failed' 
+        AND pt.created_at >= ?
       ORDER BY pt.created_at DESC
-      LIMIT 10
-    `, [hoursAgo]);
+      LIMIT 50
+    `;
 
-    const result = await db.execute(query);
+    const result = await db.execute(sql.raw(query, [hoursAgo.toISOString()]));
     const failures = result.rows;
 
     return res.json({
       success: true,
-      failures
+      failures,
+      count: failures.length
     });
 
   } catch (error) {
     console.error('Error fetching recent payment failures:', error);
     return res.status(500).json({
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to fetch recent failures'
+      error: error instanceof Error ? error.message : 'Failed to fetch recent payment failures'
     });
   }
 }

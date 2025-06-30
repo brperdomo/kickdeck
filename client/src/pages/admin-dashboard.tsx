@@ -6,7 +6,8 @@ import {
   Link2, X, Ticket, Plus, Mail, KeyRound, Check, RefreshCcw, UserMinus, RotateCcw, 
   Pencil, PlusCircle, CalendarRange, UserRoundPlus, ClipboardX, ArrowLeft,
   Upload, Wand2, Sparkles, AlertTriangle, CalendarDays, Loader2,
-  Trophy, WandSparkles, CheckCircle2, AlertCircle, CreditCard, MapPin, User
+  Trophy, WandSparkles, CheckCircle2, AlertCircle, CreditCard, MapPin, User,
+  TrendingUp, BarChart2, DollarSign, FileText, Edit, Trash
 } from "lucide-react";
 // Removed ClubLogo import as we now display club name as text
 import { ComplexCard } from "@/components/admin/ComplexCard";
