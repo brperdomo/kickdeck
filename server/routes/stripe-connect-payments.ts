@@ -220,6 +220,7 @@ export async function processDestinationCharge(
       platformFeeAmount: feeCalculation.platformFeeAmount, // ✓ Add platform fee to dedicated column
       stripeFee: feeCalculation.stripeFeeAmount,
       netAmount: feeCalculation.tournamentReceives,
+      matchproRevenue: feeCalculation.matchproReceives, // ✓ Add MatchPro revenue field
       status: paymentIntent.status,
       metadata: {
         tournamentCost: totalAmountCents.toString(),
