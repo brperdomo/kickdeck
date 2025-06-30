@@ -126,9 +126,10 @@ export default function BookkeepingReport() {
   });
   
   // Ensure transactions is always an array
+  // The API returns transactions as a direct array from db.execute()
   const transactions = Array.isArray(data?.transactions) 
     ? data.transactions 
-    : (data?.transactions?.count > 0 ? data.transactions.rows : []);
+    : (data?.transactions?.length > 0 ? data.transactions : []);
   
   const events = eventsData?.events || [];
   
