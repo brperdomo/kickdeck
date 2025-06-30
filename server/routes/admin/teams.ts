@@ -1275,4 +1275,166 @@ async function generatePaymentCompletionUrl(req: Request, res: Response) {
   }
 }
 
-export { updateTeamStatus, processRefund, processTeamPaymentAfterSetup, generatePaymentCompletionUrl };
+/**
+ * Delete a team registration (only allowed for teams in 'registered' status)
+ */
+async function deleteTeam(req: Request, res: Response) {
+  try {
+    const { teamId } = req.params;
+    
+    if (!teamId) {
+      return res.status(400).json({ 
+        status: 'error',
+        error: 'Team ID is required' 
+      });
+    }
+    
+    log(`Processing team deletion request. TeamID: ${teamId}`, 'admin');
+    
+    // Get current team details before deleting
+    let currentTeam;
+    try {
+      const teamResult = await db
+        .select()
+        .from(teams)
+        .where(eq(teams.id, parseInt(teamId, 10)));
+      
+      if (teamResult && teamResult.length > 0) {
+        currentTeam = teamResult[0];
+      }
+    } catch (dbError) {
+      log(`Database error fetching team: ${dbError}`, 'admin');
+      return res.status(500).json({ 
+        status: 'error',
+        error: 'Database error fetching team',
+        message: 'Failed to retrieve team details'
+      });
+    }
+    
+    if (!currentTeam) {
+      return res.status(404).json({ 
+        status: 'error',
+        error: 'Team not found' 
+      });
+    }
+    
+    // Only allow deletion of teams in 'registered' status (pending review)
+    if (currentTeam.status !== 'registered') {
+      return res.status(400).json({ 
+        status: 'error',
+        error: `Cannot delete team with status '${currentTeam.status}'`,
+        message: 'Only teams in "Pending Review" status (registered) can be deleted. Approved teams should be withdrawn instead.'
+      });
+    }
+    
+    // Check if team has been charged - prevent deletion if payment was processed
+    if (currentTeam.paymentStatus === 'paid' && currentTeam.paymentIntentId) {
+      return res.status(400).json({ 
+        status: 'error',
+        error: 'Cannot delete team with processed payment',
+        message: 'This team has already been charged. Use "Refund" instead of deletion.'
+      });
+    }
+    
+    log(`Team found for deletion. Status: ${currentTeam.status}, Payment Status: ${currentTeam.paymentStatus}`, 'admin');
+    
+    // Clean up Stripe Setup Intent if exists and not completed
+    if (currentTeam.setupIntentId && currentTeam.paymentStatus !== 'paid') {
+      try {
+        const setupIntent = await stripe.setupIntents.retrieve(currentTeam.setupIntentId);
+        if (setupIntent.status === 'requires_payment_method' || setupIntent.status === 'requires_confirmation') {
+          await stripe.setupIntents.cancel(currentTeam.setupIntentId);
+          log(`Cancelled Setup Intent ${currentTeam.setupIntentId} for deleted team`, 'admin');
+        }
+      } catch (stripeError) {
+        log(`Warning: Could not cancel Setup Intent ${currentTeam.setupIntentId}: ${stripeError}`, 'admin');
+        // Continue with deletion - this is not critical
+      }
+    }
+    
+    // Delete team from database
+    try {
+      const deletedResult = await db
+        .delete(teams)
+        .where(eq(teams.id, parseInt(teamId, 10)))
+        .returning();
+      
+      if (!deletedResult || deletedResult.length === 0) {
+        throw new Error('No rows deleted');
+      }
+      
+      log(`Team ${teamId} (${currentTeam.name}) successfully deleted from database`, 'admin');
+      
+    } catch (deleteError) {
+      log(`Database error deleting team: ${deleteError}`, 'admin');
+      return res.status(500).json({ 
+        status: 'error',
+        error: 'Database error deleting team',
+        message: 'Failed to delete team from database'
+      });
+    }
+    
+    // Send notification email to team submitter about deletion
+    try {
+      if (currentTeam.submitterEmail) {
+        // Get event details for email
+        let event = null;
+        try {
+          const eventId = currentTeam.eventId;
+          if (eventId) {
+            const eventResult = await db
+              .select()
+              .from(events)
+              .where(eq(events.id, parseInt(eventId.toString(), 10)));
+              
+            if (eventResult && eventResult.length > 0) {
+              event = eventResult[0];
+            }
+          }
+        } catch (eventError) {
+          log(`Error fetching event for deletion notification: ${eventError}`, 'admin');
+        }
+        
+        const templateData = {
+          teamName: currentTeam.name || 'your team',
+          eventName: event?.name || 'the event',
+          reason: 'The registration has been removed by an administrator.',
+          supportEmail: process.env.SUPPORT_EMAIL || 'support@matchpro.ai'
+        };
+        
+        await sendTemplatedEmail(
+          currentTeam.submitterEmail,
+          'team_registration_deleted',
+          templateData
+        );
+        log(`Deletion notification email sent to ${currentTeam.submitterEmail}`, 'admin');
+      }
+    } catch (emailError) {
+      log(`Failed to send deletion notification email: ${emailError}`, 'admin');
+      // Don't fail the deletion if email fails
+    }
+    
+    // Return success response
+    return res.json({
+      status: 'success',
+      message: 'Team registration deleted successfully',
+      deletedTeam: {
+        id: currentTeam.id,
+        name: currentTeam.name,
+        status: currentTeam.status,
+        submitterEmail: currentTeam.submitterEmail
+      }
+    });
+    
+  } catch (error) {
+    log(`Error deleting team ${req.params?.teamId}: ${error}`, 'admin');
+    
+    return res.status(500).json({
+      status: 'error',
+      error: 'Internal server error',
+      message: error instanceof Error ? error.message : 'Unknown error occurred'
+    });
+  }
+}
+
+export { updateTeamStatus, processRefund, processTeamPaymentAfterSetup, generatePaymentCompletionUrl, deleteTeam };
