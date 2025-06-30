@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { getTeams, getTeamById, updateTeamStatus, processRefund, processTeamPaymentAfterSetup, generatePaymentCompletionUrl } from './teams';
+import { getTeams, getTeamById, updateTeamStatus, processRefund, processTeamPaymentAfterSetup, generatePaymentCompletionUrl, deleteTeam } from './teams';
 import { db } from '@db';
 import { eventFees, teams } from '@db/schema';
 import { eq, inArray } from 'drizzle-orm';
@@ -135,5 +135,8 @@ router.post('/:teamId/process-payment', extractEventIdFromTeam, hasEventAccess, 
 
 // Generate payment completion URL for teams with incomplete Setup Intents
 router.post('/:teamId/generate-completion-url', extractEventIdFromTeam, hasEventAccess, generatePaymentCompletionUrl);
+
+// Delete team registration (only for teams in 'registered' status)
+router.delete('/:teamId', extractEventIdFromTeam, hasEventAccess, deleteTeam);
 
 export default router;
