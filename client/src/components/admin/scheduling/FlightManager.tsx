@@ -68,20 +68,22 @@ export function FlightManager({ eventId, teamsData, workflowData, onComplete, on
   console.log('FlightManager teamsData sample:', teamsData?.slice(0, 2));
   console.log('FlightManager ageGroupsData:', ageGroupsData?.slice(0, 5));
   
-  // Enhanced gender-aware age group extraction - ALWAYS call hooks before early returns
-  const genderAwareAgeGroups = useMemo(() => {
-    if (!ageGroupsData) return [];
-    
-    return ageGroupsData.map(ag => ({
-      id: ag.id,
-      name: ag.ageGroup,
-      gender: ag.ageGroup.toLowerCase().includes('girls') || ag.ageGroup.toLowerCase().includes('girl') ? 'Girls' :
-              ag.ageGroup.toLowerCase().includes('boys') || ag.ageGroup.toLowerCase().includes('boy') ? 'Boys' : 'Mixed',
-      ageOnly: ag.ageGroup.replace(/[-\s]*(girls?|boys?)/gi, '').trim()
-    }));
-  }, [ageGroupsData]);
-  
-  // Extract unique age groups from teams data and map to names
+  // Early return if data is not ready
+  if (!teamsData || !ageGroupsData || teamsData.length === 0 || ageGroupsData.length === 0) {
+    console.log('FlightManager: Waiting for data to load...', { teamsCount: teamsData?.length, ageGroupsCount: ageGroupsData?.length });
+    return (
+      <Card>
+        <CardContent className="p-6">
+          <div className="flex items-center justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+            <span className="ml-2">Loading flight management data...</span>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Safe data processing after guard
   const extractedAgeGroups = useMemo(() => {
     if (!teamsData || !Array.isArray(teamsData) || !ageGroupsData) {
       return [];
@@ -196,21 +198,6 @@ export function FlightManager({ eventId, teamsData, workflowData, onComplete, on
     
     generateAutoFlightSuggestions(updatedSummary);
   }, [teamsData, ageGroupsData, ageGroupSummary]);
-
-  // Early return if data is not ready - AFTER all hooks
-  if (!teamsData || !ageGroupsData || teamsData.length === 0 || ageGroupsData.length === 0) {
-    console.log('FlightManager: Waiting for data to load...', { teamsCount: teamsData?.length, ageGroupsCount: ageGroupsData?.length });
-    return (
-      <Card>
-        <CardContent className="p-6">
-          <div className="flex items-center justify-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-            <span className="ml-2">Loading flight management data...</span>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
 
 
 
