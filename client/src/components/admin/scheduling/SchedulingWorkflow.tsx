@@ -39,6 +39,8 @@ export function SchedulingWorkflow({ eventId, onComplete }: SchedulingWorkflowPr
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  console.log('SchedulingWorkflow component mounted with eventId:', eventId);
+
   // Fetch event data and teams
   const { data: eventData, isLoading: eventLoading } = useQuery({
     queryKey: ['event', eventId],

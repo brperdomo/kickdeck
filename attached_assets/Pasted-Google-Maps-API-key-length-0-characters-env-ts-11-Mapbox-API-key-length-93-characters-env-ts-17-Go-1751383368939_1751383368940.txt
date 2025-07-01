@@ -1,0 +1,434 @@
+Google Maps API key length: 0 characters
+env.ts:11 Mapbox API key length: 93 characters
+env.ts:17 Google Maps API already loaded
+RouteDebugger.tsx:13 Current route location (Wouter): /admin/scheduling
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin/scheduling
+RouteDebugger.tsx:15 Current pathname: /admin/scheduling
+RouteDebugger.tsx:16 Current search: 
+use-user.ts:59 Fetching user with emulation token: not present
+11Fetch finished loading: GET "<URL>".
+use-user.ts:76 User data fetched: {id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: '$2b$12$d6n1CBWgsWFm0fh77F1OX.YxDZy7/O3aLSuJOuq4QkvOtFmSit7BC', firstName: 'Bryan', …}
+9Failed to decode downloaded font: <URL>Understand this warning
+9OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+
+                
+          
+          
+          
+         Chrome is moving towards a new experience that allows users to choose to browse without third-party cookies.Understand this warning
+use-auth.tsx:85 Fetch failed loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user".
+queryFn @ use-auth.tsx:85
+fetchFn @ @tanstack_react-query.js?v=80b17ebe:881
+run @ @tanstack_react-query.js?v=80b17ebe:513
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+executeFetch_fn @ @tanstack_react-query.js?v=80b17ebe:2278
+onSubscribe @ @tanstack_react-query.js?v=80b17ebe:1982
+subscribe @ @tanstack_react-query.js?v=80b17ebe:24
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:3145
+ai @ chunk-E27YX2RL.js?v=80b17ebe:3392
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+Ek @ chunk-E27YX2RL.js?v=80b17ebe:5681
+jg @ chunk-E27YX2RL.js?v=80b17ebe:2527
+Wk @ chunk-E27YX2RL.js?v=80b17ebe:6021
+Pk @ chunk-E27YX2RL.js?v=80b17ebe:5964
+Gk @ chunk-E27YX2RL.js?v=80b17ebe:5620
+J @ chunk-E27YX2RL.js?v=80b17ebe:97
+R @ chunk-E27YX2RL.js?v=80b17ebe:129
+queryClient.ts:72 Fetch failed loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/admin/organization-settings".
+queryFn @ queryClient.ts:72
+fetchFn @ @tanstack_react-query.js?v=80b17ebe:881
+run @ @tanstack_react-query.js?v=80b17ebe:513
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+executeFetch_fn @ @tanstack_react-query.js?v=80b17ebe:2278
+onSubscribe @ @tanstack_react-query.js?v=80b17ebe:1982
+subscribe @ @tanstack_react-query.js?v=80b17ebe:24
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:3145
+ai @ chunk-E27YX2RL.js?v=80b17ebe:3392
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+Wk @ chunk-E27YX2RL.js?v=80b17ebe:6018
+Pk @ chunk-E27YX2RL.js?v=80b17ebe:5964
+Ek @ chunk-E27YX2RL.js?v=80b17ebe:5693
+jg @ chunk-E27YX2RL.js?v=80b17ebe:2527
+(anonymous) @ chunk-E27YX2RL.js?v=80b17ebe:5515
+setTimeout
+defaultScheduler @ @tanstack_react-query.js?v=80b17ebe:565
+flush @ @tanstack_react-query.js?v=80b17ebe:589
+batch @ @tanstack_react-query.js?v=80b17ebe:607
+dispatch_fn @ @tanstack_react-query.js?v=80b17ebe:1039
+setData @ @tanstack_react-query.js?v=80b17ebe:718
+onSuccess @ @tanstack_react-query.js?v=80b17ebe:940
+resolve @ @tanstack_react-query.js?v=80b17ebe:475
+Promise.then
+run @ @tanstack_react-query.js?v=80b17ebe:517
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+executeFetch_fn @ @tanstack_react-query.js?v=80b17ebe:2278
+onSubscribe @ @tanstack_react-query.js?v=80b17ebe:1982
+subscribe @ @tanstack_react-query.js?v=80b17ebe:24
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:3145
+ai @ chunk-E27YX2RL.js?v=80b17ebe:3392
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+Ek @ chunk-E27YX2RL.js?v=80b17ebe:5681
+jg @ chunk-E27YX2RL.js?v=80b17ebe:2527
+Wk @ chunk-E27YX2RL.js?v=80b17ebe:6021
+Pk @ chunk-E27YX2RL.js?v=80b17ebe:5964
+Gk @ chunk-E27YX2RL.js?v=80b17ebe:5620
+J @ chunk-E27YX2RL.js?v=80b17ebe:97
+R @ chunk-E27YX2RL.js?v=80b17ebe:129
+12Invalid keyframe value for property filter: blur(-0.08136px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.16063px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.22707px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.28173px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.32564px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.3598px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.38521px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.40278px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.41343px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.41799px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.41726px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.41199px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.40286px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.39052px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.37556px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.35849px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.33982px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.31996px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.2993px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.27819px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.25693px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.23576px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.21492px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.19459px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.17493px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.15606px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.13808px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.12106px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.10507px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.09014px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.07628px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.0635px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.0518px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.04115px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.03153px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.02289px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.01521px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.00842px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.00249px)Understand this warning
+queryClient.ts:72 Fetch failed loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/admin/events".
+queryFn @ queryClient.ts:72
+fetchFn @ @tanstack_react-query.js?v=80b17ebe:881
+run @ @tanstack_react-query.js?v=80b17ebe:513
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+fetchQuery @ @tanstack_react-query.js?v=80b17ebe:1827
+prefetchQuery @ @tanstack_react-query.js?v=80b17ebe:1830
+(anonymous) @ admin-dashboard.tsx:5914
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+Wk @ chunk-E27YX2RL.js?v=80b17ebe:6018
+Pk @ chunk-E27YX2RL.js?v=80b17ebe:5964
+Ek @ chunk-E27YX2RL.js?v=80b17ebe:5693
+jg @ chunk-E27YX2RL.js?v=80b17ebe:2527
+(anonymous) @ chunk-E27YX2RL.js?v=80b17ebe:5515
+setTimeout
+defaultScheduler @ @tanstack_react-query.js?v=80b17ebe:565
+flush @ @tanstack_react-query.js?v=80b17ebe:589
+batch @ @tanstack_react-query.js?v=80b17ebe:607
+dispatch_fn @ @tanstack_react-query.js?v=80b17ebe:1039
+setData @ @tanstack_react-query.js?v=80b17ebe:718
+onSuccess @ @tanstack_react-query.js?v=80b17ebe:940
+resolve @ @tanstack_react-query.js?v=80b17ebe:475
+Promise.then
+run @ @tanstack_react-query.js?v=80b17ebe:517
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+executeFetch_fn @ @tanstack_react-query.js?v=80b17ebe:2278
+onSubscribe @ @tanstack_react-query.js?v=80b17ebe:1982
+subscribe @ @tanstack_react-query.js?v=80b17ebe:24
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:3145
+ai @ chunk-E27YX2RL.js?v=80b17ebe:3392
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+Ek @ chunk-E27YX2RL.js?v=80b17ebe:5681
+jg @ chunk-E27YX2RL.js?v=80b17ebe:2527
+Wk @ chunk-E27YX2RL.js?v=80b17ebe:6021
+Pk @ chunk-E27YX2RL.js?v=80b17ebe:5964
+Gk @ chunk-E27YX2RL.js?v=80b17ebe:5620
+J @ chunk-E27YX2RL.js?v=80b17ebe:97
+R @ chunk-E27YX2RL.js?v=80b17ebe:129
+shared-a1be83f03fec2f03332c9884c372743f.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+(anonymous) @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+e @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+l @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+k @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+value @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+value @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+value @ controller-with-preconnect-28798d180f1c9b38342db6d773a0e46a.js:1
+e @ controller-with-preconnect-28798d180f1c9b38342db6d773a0e46a.js:1
+value @ controller-with-preconnect-28798d180f1c9b38342db6d773a0e46a.js:1
+e @ controller-with-preconnect-28798d180f1c9b38342db6d773a0e46a.js:1
+37942 @ controller-with-preconnect-28798d180f1c9b38342db6d773a0e46a.js:1
+e @ controller-with-preconnect-28798d180f1c9b38342db6d773a0e46a.js:1
+(anonymous) @ controller-with-preconnect-28798d180f1c9b38342db6d773a0e46a.js:1
+e.O @ controller-with-preconnect-28798d180f1c9b38342db6d773a0e46a.js:1
+(anonymous) @ controller-with-preconnect-28798d180f1c9b38342db6d773a0e46a.js:1
+(anonymous) @ controller-with-preconnect-28798d180f1c9b38342db6d773a0e46a.js:1
+shared-a1be83f03fec2f03332c9884c372743f.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+(anonymous) @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+e @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+l @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+k @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+value @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+value @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+log @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+log @ controller-with-preconnect-28798d180f1c9b38342db6d773a0e46a.js:1
+e @ controller-with-preconnect-28798d180f1c9b38342db6d773a0e46a.js:1
+37942 @ controller-with-preconnect-28798d180f1c9b38342db6d773a0e46a.js:1
+e @ controller-with-preconnect-28798d180f1c9b38342db6d773a0e46a.js:1
+(anonymous) @ controller-with-preconnect-28798d180f1c9b38342db6d773a0e46a.js:1
+e.O @ controller-with-preconnect-28798d180f1c9b38342db6d773a0e46a.js:1
+(anonymous) @ controller-with-preconnect-28798d180f1c9b38342db6d773a0e46a.js:1
+(anonymous) @ controller-with-preconnect-28798d180f1c9b38342db6d773a0e46a.js:1
+queryClient.ts:72 Fetch failed loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/admin/organization-settings".
+queryFn @ queryClient.ts:72
+fetchFn @ @tanstack_react-query.js?v=80b17ebe:881
+run @ @tanstack_react-query.js?v=80b17ebe:513
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+executeFetch_fn @ @tanstack_react-query.js?v=80b17ebe:2278
+onSubscribe @ @tanstack_react-query.js?v=80b17ebe:1982
+subscribe @ @tanstack_react-query.js?v=80b17ebe:24
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:3145
+ai @ chunk-E27YX2RL.js?v=80b17ebe:3392
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+Ek @ chunk-E27YX2RL.js?v=80b17ebe:5681
+jg @ chunk-E27YX2RL.js?v=80b17ebe:2527
+Wk @ chunk-E27YX2RL.js?v=80b17ebe:6021
+Pk @ chunk-E27YX2RL.js?v=80b17ebe:5964
+Gk @ chunk-E27YX2RL.js?v=80b17ebe:5620
+J @ chunk-E27YX2RL.js?v=80b17ebe:97
+R @ chunk-E27YX2RL.js?v=80b17ebe:129
+shared-a1be83f03fec2f03332c9884c372743f.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+e @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+l @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+value @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+value @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+value @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+value @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+value @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+(anonymous) @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+setTimeout
+value @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+value @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+value @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+(anonymous) @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+value @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+value @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+(anonymous) @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+Promise.then
+value @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+value @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+log @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+log @ controller-with-preconnect-28798d180f1c9b38342db6d773a0e46a.js:1
+e @ controller-with-preconnect-28798d180f1c9b38342db6d773a0e46a.js:1
+37942 @ controller-with-preconnect-28798d180f1c9b38342db6d773a0e46a.js:1
+e @ controller-with-preconnect-28798d180f1c9b38342db6d773a0e46a.js:1
+(anonymous) @ controller-with-preconnect-28798d180f1c9b38342db6d773a0e46a.js:1
+e.O @ controller-with-preconnect-28798d180f1c9b38342db6d773a0e46a.js:1
+(anonymous) @ controller-with-preconnect-28798d180f1c9b38342db6d773a0e46a.js:1
+(anonymous) @ controller-with-preconnect-28798d180f1c9b38342db6d773a0e46a.js:1
+shared-a1be83f03fec2f03332c9884c372743f.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+e @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+l @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+value @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+value @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+value @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+value @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+value @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+(anonymous) @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+setTimeout
+value @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+value @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+value @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+(anonymous) @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+value @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+value @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+(anonymous) @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+Promise.then
+value @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+value @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+value @ controller-with-preconnect-28798d180f1c9b38342db6d773a0e46a.js:1
+e @ controller-with-preconnect-28798d180f1c9b38342db6d773a0e46a.js:1
+value @ controller-with-preconnect-28798d180f1c9b38342db6d773a0e46a.js:1
+e @ controller-with-preconnect-28798d180f1c9b38342db6d773a0e46a.js:1
+37942 @ controller-with-preconnect-28798d180f1c9b38342db6d773a0e46a.js:1
+e @ controller-with-preconnect-28798d180f1c9b38342db6d773a0e46a.js:1
+(anonymous) @ controller-with-preconnect-28798d180f1c9b38342db6d773a0e46a.js:1
+e.O @ controller-with-preconnect-28798d180f1c9b38342db6d773a0e46a.js:1
+(anonymous) @ controller-with-preconnect-28798d180f1c9b38342db6d773a0e46a.js:1
+(anonymous) @ controller-with-preconnect-28798d180f1c9b38342db6d773a0e46a.js:1
+SchedulingWorkflow.tsx:56 Fetching teams for event: 1656618593
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+Promise.then
+S @ out-4.5.44.js:1
+y @ out-4.5.44.js:1
+E @ out-4.5.44.js:1
+e.onload @ inner.html:1
+script
+(anonymous) @ inner.html:1
+(anonymous) @ inner.html:1
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+h @ out-4.5.44.js:1
+e @ inner.html:1
+SchedulingWorkflow.tsx:60 Teams API response: (292) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:61 Teams API response length: 292
+SchedulingWorkflow.tsx:190 SchedulingWorkflow teamsData: (292) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: undefined
+FlightManager.tsx:111 Final extracted age groups: []
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: undefined
+FlightManager.tsx:111 Final extracted age groups: []
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:94 Extracted age group IDs: (292) [10066, 10066, 10064, 10064, 10064, 10064, 10065, 10066, 10066, 10048, 10056, 10066, 10064, 10066, 10066, 10064, 10065, 10064, 10065, 10066, 10065, 10065, 10065, 10065, 10065, 10065, 10066, 10063, 10061, 10061, 10061, 10061, 10062, 10062, 10062, 10062, 10062, 10062, 10062, 10062, 10062, 10063, 10063, 10063, 10063, 10063, 10063, 10063, 10063, 10061, 10060, 10060, 10060, 10060, 10060, 10060, 10061, 10060, 10060, 10060, 10061, 10061, 10061, 10059, 10059, 10058, 10057, 10057, 10057, 10057, 10057, 10058, 10058, 10058, 10058, 10059, 10059, 10059, 10059, 10059, 10059, 10059, 10058, 10058, 10058, 10058, 10054, 10054, 10054, 10057, 10057, 10057, 10057, 10056, 10056, 10056, 10056, 10056, 10056, 10056, …]
+FlightManager.tsx:106 Age groups with names: (24) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:111 Final extracted age groups: (24) ['U19', 'U17', 'U19', 'U9', 'U13', 'U17', 'U16', 'U16', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U12', 'U11', 'U11', 'U10', 'U10', 'U9', 'U8', 'U8', 'U7', 'U7']
+shared-a1be83f03fec2f03332c9884c372743f.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+e @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+l @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+value @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+value @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+value @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+value @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+value @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+(anonymous) @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+setTimeout
+value @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+value @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+value @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+(anonymous) @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+value @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+log @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+log @ controller-with-preconnect-28798d180f1c9b38342db6d773a0e46a.js:1
+value @ controller-with-preconnect-28798d180f1c9b38342db6d773a0e46a.js:1
+value @ controller-with-preconnect-28798d180f1c9b38342db6d773a0e46a.js:1
+(anonymous) @ controller-with-preconnect-28798d180f1c9b38342db6d773a0e46a.js:1
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:111 Final extracted age groups: (24) ['U19', 'U17', 'U19', 'U9', 'U13', 'U17', 'U16', 'U16', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U12', 'U11', 'U11', 'U10', 'U10', 'U9', 'U8', 'U8', 'U7', 'U7']
+chunk-J2F67UGW.js?v=80b17ebe:340 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ chunk-J2F67UGW.js?v=80b17ebe:340
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+Wk @ chunk-E27YX2RL.js?v=80b17ebe:6018
+Pk @ chunk-E27YX2RL.js?v=80b17ebe:5964
+Ek @ chunk-E27YX2RL.js?v=80b17ebe:5693
+jg @ chunk-E27YX2RL.js?v=80b17ebe:2527
+(anonymous) @ chunk-E27YX2RL.js?v=80b17ebe:5515Understand this warning
+menu.js:6 [Violation] Added non-passive event listener to a scroll-blocking 'wheel' event. Consider marking event handler as 'passive' to make the page more responsive. See https://www.chromestatus.com/feature/5745543795965952
+$ @ menu.js:6
+m @ menu.js:90
+T @ menu.js:6
+m @ menu.js:104
+T @ menu.js:6
+m @ menu.js:104
+p @ menu.js:104
+lp @ menu.js:6
+hn @ menu.js:6
+scheduling:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this error
+SchedulingWorkflow.tsx:190 SchedulingWorkflow teamsData: (292) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:111 Final extracted age groups: (24) ['U19', 'U17', 'U19', 'U9', 'U13', 'U17', 'U16', 'U16', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U12', 'U11', 'U11', 'U10', 'U10', 'U9', 'U8', 'U8', 'U7', 'U7']
+SchedulingWorkflow.tsx:190 SchedulingWorkflow teamsData: (292) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:111 Final extracted age groups: (24) ['U19', 'U17', 'U19', 'U9', 'U13', 'U17', 'U16', 'U16', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U12', 'U11', 'U11', 'U10', 'U10', 'U9', 'U8', 'U8', 'U7', 'U7']
+SchedulingWorkflow.tsx:190 SchedulingWorkflow teamsData: (292) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:111 Final extracted age groups: (24) ['U19', 'U17', 'U19', 'U9', 'U13', 'U17', 'U16', 'U16', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U12', 'U11', 'U11', 'U10', 'U10', 'U9', 'U8', 'U8', 'U7', 'U7']
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:111 Final extracted age groups: (24) ['U19', 'U17', 'U19', 'U9', 'U13', 'U17', 'U16', 'U16', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U12', 'U11', 'U11', 'U10', 'U10', 'U9', 'U8', 'U8', 'U7', 'U7']
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:111 Final extracted age groups: (24) ['U19', 'U17', 'U19', 'U9', 'U13', 'U17', 'U16', 'U16', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U12', 'U11', 'U11', 'U10', 'U10', 'U9', 'U8', 'U8', 'U7', 'U7']
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:111 Final extracted age groups: (24) ['U19', 'U17', 'U19', 'U9', 'U13', 'U17', 'U16', 'U16', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U12', 'U11', 'U11', 'U10', 'U10', 'U9', 'U8', 'U8', 'U7', 'U7']
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:111 Final extracted age groups: (24) ['U19', 'U17', 'U19', 'U9', 'U13', 'U17', 'U16', 'U16', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U12', 'U11', 'U11', 'U10', 'U10', 'U9', 'U8', 'U8', 'U7', 'U7']
+SchedulingWorkflow.tsx:190 SchedulingWorkflow teamsData: (292) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:190 SchedulingWorkflow teamsData: (292) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:190 SchedulingWorkflow teamsData: (292) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:190 SchedulingWorkflow teamsData: (292) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+GameCreation.tsx:58 GameCreation workflowData: {flight: {…}, bracket: {…}, seed: {…}, timeblock: {…}}
+GameCreation.tsx:59 GameCreation brackets: [{…}]
+GameCreation.tsx:60 GameCreation seedings: [{…}]
+GameCreation.tsx:61 GameCreation timeBlocks: [{…}]
+GameCreation.tsx:192 generateGamesForBracket - bracket: {id: 'flight_1751383304854_unassigned', flightId: 'flight_1751383304854', flightName: 'U17 Boys Flight A - Director Assignment Needed', teamCount: 4, format: 'round_robin_knockout', …}
+GameCreation.tsx:193 generateGamesForBracket - seeding: {bracketId: 'flight_1751383304854_unassigned', bracketName: 'U17 Boys Flight A - Director Assignment Needed', teams: Array(4), pools: Array(0)}
+GameCreation.tsx:194 generateGamesForBracket - seeding.teams: (4) [{…}, {…}, {…}, {…}]
+GameCreation.tsx:195 generateGamesForBracket - seeding.pools: []
+GameCreation.tsx:58 GameCreation workflowData: {flight: {…}, bracket: {…}, seed: {…}, timeblock: {…}}
+GameCreation.tsx:59 GameCreation brackets: [{…}]
+GameCreation.tsx:60 GameCreation seedings: [{…}]
+GameCreation.tsx:61 GameCreation timeBlocks: [{…}]
+SchedulingWorkflow.tsx:190 SchedulingWorkflow teamsData: (292) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+GameCreation.tsx:58 GameCreation workflowData: {flight: {…}, bracket: {…}, seed: {…}, timeblock: {…}}
+GameCreation.tsx:59 GameCreation brackets: [{…}]
+GameCreation.tsx:60 GameCreation seedings: [{…}]
+GameCreation.tsx:61 GameCreation timeBlocks: [{…}]
+SchedulingWorkflow.tsx:190 SchedulingWorkflow teamsData: (292) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+GameCreation.tsx:58 GameCreation workflowData: {flight: {…}, bracket: {…}, seed: {…}, timeblock: {…}}bracket: {brackets: Array(1), summary: {…}}flight: {flights: Array(1), summary: {…}}seed: {bracketSeedings: Array(1), summary: {…}}timeblock: {timeBlocks: Array(1), tournamentSettings: {…}, summary: {…}}[[Prototype]]: Object
+GameCreation.tsx:59 GameCreation brackets: [{…}]
+GameCreation.tsx:60 GameCreation seedings: [{…}]
+GameCreation.tsx:61 GameCreation timeBlocks: [{…}]
+SchedulingWorkflow.tsx:190 SchedulingWorkflow teamsData: (292) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+GameCreation.tsx:58 GameCreation workflowData: {flight: {…}, bracket: {…}, seed: {…}, timeblock: {…}}
+GameCreation.tsx:59 GameCreation brackets: [{…}]
+GameCreation.tsx:60 GameCreation seedings: [{…}]
+GameCreation.tsx:61 GameCreation timeBlocks: [{…}]
+GameCreation.tsx:192 generateGamesForBracket - bracket: {id: 'flight_1751383304854_unassigned', flightId: 'flight_1751383304854', flightName: 'U17 Boys Flight A - Director Assignment Needed', teamCount: 4, format: 'round_robin_knockout', …}
+GameCreation.tsx:193 generateGamesForBracket - seeding: {bracketId: 'flight_1751383304854_unassigned', bracketName: 'U17 Boys Flight A - Director Assignment Needed', teams: Array(4), pools: Array(0)}
+GameCreation.tsx:194 generateGamesForBracket - seeding.teams: (4) [{…}, {…}, {…}, {…}]
+GameCreation.tsx:195 generateGamesForBracket - seeding.pools: []
+GameCreation.tsx:58 GameCreation workflowData: {flight: {…}, bracket: {…}, seed: {…}, timeblock: {…}}
+GameCreation.tsx:59 GameCreation brackets: [{…}]
+GameCreation.tsx:60 GameCreation seedings: [{…}]
+GameCreation.tsx:61 GameCreation timeBlocks: [{…}]
+SchedulingWorkflow.tsx:190 SchedulingWorkflow teamsData: (292) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+GameCreation.tsx:58 GameCreation workflowData: {flight: {…}, bracket: {…}, seed: {…}, timeblock: {…}}
+GameCreation.tsx:59 GameCreation brackets: [{…}]
+GameCreation.tsx:60 GameCreation seedings: [{…}]
+GameCreation.tsx:61 GameCreation timeBlocks: [{…}]
+SchedulingWorkflow.tsx:190 SchedulingWorkflow teamsData: (292) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+GameCreation.tsx:58 GameCreation workflowData: {flight: {…}, bracket: {…}, seed: {…}, timeblock: {…}}
+GameCreation.tsx:59 GameCreation brackets: [{…}]
+GameCreation.tsx:60 GameCreation seedings: [{…}]
+GameCreation.tsx:61 GameCreation timeBlocks: [{…}]
+SchedulingWorkflow.tsx:190 SchedulingWorkflow teamsData: (292) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+GameCreation.tsx:58 GameCreation workflowData: {flight: {…}, bracket: {…}, seed: {…}, timeblock: {…}}
+GameCreation.tsx:59 GameCreation brackets: [{…}]
+GameCreation.tsx:60 GameCreation seedings: [{…}]
+GameCreation.tsx:61 GameCreation timeBlocks: [{…}]
