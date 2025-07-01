@@ -10,7 +10,7 @@ import {
   Users, Trophy, Target, Clock, Calendar, Play,
   CheckCircle, Circle, AlertTriangle, ArrowRight
 } from "lucide-react";
-import FlightManager from "./FlightManager-clean";
+import FlightManager from "./FlightManager-minimal";
 import { BracketCreator } from "./BracketCreator";
 import { TeamSeeding } from "./TeamSeeding";
 import { TimeBlockAssignment } from "./TimeBlockAssignment";
