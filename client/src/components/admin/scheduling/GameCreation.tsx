@@ -102,6 +102,88 @@ export function GameCreation({ eventId, workflowData, onComplete, onError }: Gam
     });
   };
 
+  const generateGamesWithAutoSeeding = async () => {
+    setIsGenerating(true);
+    setGenerationProgress(0);
+    
+    const allBracketGames: BracketGames[] = [];
+    
+    // Get flight data to find teams assigned to each bracket
+    const flights = workflowData?.flight?.flights || [];
+    
+    for (let i = 0; i < brackets.length; i++) {
+      const bracket = brackets[i];
+      
+      // Find teams assigned to this bracket from flight data
+      const bracketTeams = findTeamsForBracket(bracket, flights);
+      
+      if (bracketTeams.length > 1) {
+        // Create automatic seeding data
+        const autoSeeding = {
+          bracketId: bracket.id,
+          teams: bracketTeams.map((team, index) => ({
+            teamId: team.id,
+            name: team.name,
+            seedRanking: index + 1,
+            poolAssignment: bracket.format === 'pool_play' ? 'Pool A' : undefined
+          })),
+          pools: bracket.format === 'pool_play' ? [
+            {
+              poolId: 'pool_a',
+              poolName: 'Pool A',
+              teamIds: bracketTeams.map(team => team.id)
+            }
+          ] : []
+        };
+        
+        const games = generateGamesForBracket(bracket, autoSeeding);
+        allBracketGames.push(games);
+      }
+      
+      setGenerationProgress(((i + 1) / brackets.length) * 100);
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+    
+    setBracketGames(allBracketGames);
+    setIsGenerating(false);
+    
+    if (allBracketGames.length > 0) {
+      toast({
+        title: "Games Generated (Auto-Seeded)",
+        description: `Created ${allBracketGames.reduce((sum, bg) => sum + bg.totalGames, 0)} games across ${allBracketGames.length} brackets using automatic team assignment`
+      });
+    } else {
+      toast({
+        title: "No Games Generated",
+        description: "No teams were found assigned to brackets. Please complete the flight assignment step first.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const findTeamsForBracket = (bracket: any, flights: any[]): any[] => {
+    const teams: any[] = [];
+    
+    // Look through flights to find teams assigned to this bracket
+    flights.forEach(flight => {
+      if (flight.teams && Array.isArray(flight.teams)) {
+        flight.teams.forEach((team: any) => {
+          // Check if team belongs to this bracket (either by flight match or bracket assignment)
+          if (bracket.flightId === flight.id || 
+              (bracket.flightName && bracket.flightName.includes(flight.name))) {
+            teams.push({
+              id: team.id,
+              name: team.name,
+              flightId: flight.id
+            });
+          }
+        });
+      }
+    });
+    
+    return teams;
+  };
+
   const generateGamesForBracket = (bracket: any, seeding: any): BracketGames => {
     const poolGames: Game[] = [];
     const knockoutGames: Game[] = [];
