@@ -62,7 +62,6 @@ const FlightManager: React.FC<FlightManagerProps> = ({ eventId, teamsData, ageGr
   const [selectedTeamForAssignment, setSelectedTeamForAssignment] = useState<number | null>(null);
   const [selectedFlightForAssignment, setSelectedFlightForAssignment] = useState<number | null>(null);
   const [isCreateFlightDialogOpen, setIsCreateFlightDialogOpen] = useState(false);
-  const [flightSuggestions, setFlightSuggestions] = useState<Record<string, any>>({});
 
   const queryClient = useQueryClient();
 
@@ -175,43 +174,28 @@ const FlightManager: React.FC<FlightManagerProps> = ({ eventId, teamsData, ageGr
     return acc;
   }, []);
 
-  // Calculate suggested flights based on team count
-  useEffect(() => {
-    if (!teamsData || !ageGroupsData || ageGroupSummary.length === 0) return;
-    
-    const calculateSuggestedFlights = (teamCount: number) => {
-      if (teamCount <= 8) return 1;
-      if (teamCount <= 16) return 2;
-      if (teamCount <= 24) return 3;
-      return Math.ceil(teamCount / 8);
+  // Calculate flight suggestions inline without useEffect
+  const calculateSuggestedFlights = (teamCount: number) => {
+    if (teamCount <= 8) return 1;
+    if (teamCount <= 16) return 2;
+    if (teamCount <= 24) return 3;
+    return Math.ceil(teamCount / 8);
+  };
+
+  // Generate flight suggestions directly from age group summary
+  const flightSuggestions = ageGroupSummary.reduce((acc: Record<string, any>, group: any) => {
+    const suggestedCount = calculateSuggestedFlights(group.approvedTeams);
+    acc[group.ageGroup] = {
+      totalTeams: group.totalTeams,
+      approvedTeams: group.approvedTeams,
+      suggestedFlights: suggestedCount,
+      flightLevels: suggestedCount === 1 ? ['top_flight'] :
+                   suggestedCount === 2 ? ['top_flight', 'bottom_flight'] :
+                   suggestedCount === 3 ? ['top_flight', 'middle_flight', 'bottom_flight'] :
+                   Array.from({length: suggestedCount}, (_, i) => `flight_${i + 1}`)
     };
-    
-    const generateAutoFlightSuggestions = (summary: AgeGroupSummary[]) => {
-      const suggestions: Record<string, any> = {};
-      
-      summary.forEach((group: any) => {
-        const suggestedCount = calculateSuggestedFlights(group.approvedTeams);
-        suggestions[group.ageGroup] = {
-          totalTeams: group.totalTeams,
-          approvedTeams: group.approvedTeams,
-          suggestedFlights: suggestedCount,
-          flightLevels: suggestedCount === 1 ? ['top_flight'] :
-                       suggestedCount === 2 ? ['top_flight', 'bottom_flight'] :
-                       suggestedCount === 3 ? ['top_flight', 'middle_flight', 'bottom_flight'] :
-                       Array.from({length: suggestedCount}, (_, i) => `flight_${i + 1}`)
-        };
-      });
-      
-      setFlightSuggestions(suggestions);
-    };
-    
-    const updatedSummary = ageGroupSummary.map((group: any) => ({
-      ...group,
-      suggestedFlights: calculateSuggestedFlights(group.approvedTeams)
-    }));
-    
-    generateAutoFlightSuggestions(updatedSummary);
-  }, [teamsData, ageGroupsData]);
+    return acc;
+  }, {});
 
   const getFlightLevelBadge = (level: string) => {
     const colors = {
