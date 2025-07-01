@@ -327,12 +327,31 @@ export function FlightManager({ eventId, teamsData, workflowData, onComplete, on
       .map(teamObj => teamObj.team);
   };
 
-  const validateFlights = (): { isValid: boolean; errors: string[] } => {
+  // Get unassigned teams for a specific age group
+  const getUnassignedTeamsForAgeGroup = (targetAgeGroup: string) => {
+    const assignedTeamIds = flights.flatMap(flight => flight.teams.map(t => t.id));
+    return teamsData
+      .filter(teamObj => {
+        if (!teamObj.team || teamObj.team.status !== 'approved') return false;
+        if (assignedTeamIds.includes(teamObj.team.id)) return false;
+        
+        // Find the age group name for this team
+        const ageGroupData = ageGroupsData?.find(ag => ag.id === teamObj.team.ageGroupId);
+        const teamAgeGroup = ageGroupData?.ageGroup || '';
+        
+        return teamAgeGroup === targetAgeGroup;
+      })
+      .map(teamObj => teamObj.team);
+  };
+
+  const validateFlights = (): { isValid: boolean; errors: string[]; warnings: string[] } => {
     const errors: string[] = [];
+    const warnings: string[] = [];
     const unassignedTeams = getUnassignedTeams();
     
+    // Don't require ALL teams to be assigned - this is optional
     if (unassignedTeams.length > 0) {
-      errors.push(`${unassignedTeams.length} approved teams are not assigned to any flight`);
+      warnings.push(`${unassignedTeams.length} approved teams are not assigned to any flight`);
     }
     
     flights.forEach(flight => {
@@ -346,7 +365,8 @@ export function FlightManager({ eventId, teamsData, workflowData, onComplete, on
     
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
+      warnings
     };
   };
 
@@ -535,7 +555,7 @@ export function FlightManager({ eventId, teamsData, workflowData, onComplete, on
                 <FlightCard 
                   key={flight.id}
                   flight={flight}
-                  availableTeams={getUnassignedTeams()}
+                  availableTeams={getUnassignedTeamsForAgeGroup(flight.ageGroup)}
                   onAssignTeam={assignTeamToFlight}
                   onRemoveTeam={removeTeamFromFlight}
                   onEditFlight={(flight) => {
@@ -773,9 +793,9 @@ function FlightValidation({ flights, unassignedTeams, onComplete }: any) {
     warnings: [] as string[]
   };
 
+  // Move unassigned teams to warnings instead of blocking errors
   if (unassignedTeams.length > 0) {
-    validation.isValid = false;
-    validation.errors.push(`${unassignedTeams.length} approved teams are not assigned to any flight`);
+    validation.warnings.push(`${unassignedTeams.length} approved teams are not assigned to any flight`);
   }
 
   flights.forEach((flight: Flight) => {
