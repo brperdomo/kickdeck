@@ -51,7 +51,13 @@ export function TeamSeeding({ eventId, workflowData, onComplete, onError }: Team
   const [bracketSeedings, setBracketSeedings] = useState<BracketSeeding[]>([]);
   const [selectedBracket, setSelectedBracket] = useState<string>('');
   const [seedingMode, setSeedingMode] = useState<'manual' | 'automatic'>('automatic');
+  const [isDragEnabled, setIsDragEnabled] = useState(false);
   const { toast } = useToast();
+
+  // Enable drag and drop after component mounts to prevent SSR issues
+  useEffect(() => {
+    setIsDragEnabled(true);
+  }, []);
 
   const brackets = workflowData?.bracket?.brackets || [];
   const flights = workflowData?.flight?.flights || [];
@@ -444,26 +450,27 @@ export function TeamSeeding({ eventId, workflowData, onComplete, onError }: Team
             </CardHeader>
             <CardContent>
               {seedingMode === 'manual' ? (
-                <DragDropContext onDragEnd={(result) => handleDragEnd(result, selectedBracket)}>
-                  <Droppable droppableId="teams">
-                    {(provided) => (
-                      <div {...provided.droppableProps} ref={provided.innerRef} className="space-y-2">
-                        {selectedSeeding.teams.map((team, index) => (
-                          <Draggable key={team.id} draggableId={team.id.toString()} index={index}>
-                            {(provided, snapshot) => (
-                              <div
-                                ref={provided.innerRef}
-                                {...provided.draggableProps}
-                                className={`flex items-center gap-4 p-3 border rounded-lg ${
-                                  snapshot.isDragging ? 'bg-blue-50 border-blue-300' : 'bg-white'
-                                }`}
-                              >
-                                <div {...provided.dragHandleProps}>
-                                  <GripVertical className="h-5 w-5 text-gray-400" />
-                                </div>
-                                <Badge variant="outline" className="min-w-[3rem] text-center">
-                                  #{team.seedRanking}
-                                </Badge>
+                isDragEnabled ? (
+                  <DragDropContext onDragEnd={(result) => handleDragEnd(result, selectedBracket)}>
+                    <Droppable droppableId="teams">
+                      {(provided) => (
+                        <div {...provided.droppableProps} ref={provided.innerRef} className="space-y-2">
+                          {selectedSeeding.teams.map((team, index) => (
+                            <Draggable key={team.id} draggableId={team.id.toString()} index={index}>
+                              {(provided, snapshot) => (
+                                <div
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  className={`flex items-center gap-4 p-3 border rounded-lg ${
+                                    snapshot.isDragging ? 'bg-blue-50 border-blue-300' : 'bg-white'
+                                  }`}
+                                >
+                                  <div {...provided.dragHandleProps}>
+                                    <GripVertical className="h-5 w-5 text-gray-400" />
+                                  </div>
+                                  <Badge variant="outline" className="min-w-[3rem] text-center">
+                                    #{team.seedRanking}
+                                  </Badge>
                                 <div className="flex-1">
                                   <div className="font-medium">{team.name}</div>
                                   <div className="text-sm text-gray-600">{team.clubName}</div>
@@ -476,8 +483,13 @@ export function TeamSeeding({ eventId, workflowData, onComplete, onError }: Team
                         {provided.placeholder}
                       </div>
                     )}
-                  </Droppable>
-                </DragDropContext>
+                    </Droppable>
+                  </DragDropContext>
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    Loading drag and drop interface...
+                  </div>
+                )
               ) : (
                 <Table>
                   <TableHeader>
