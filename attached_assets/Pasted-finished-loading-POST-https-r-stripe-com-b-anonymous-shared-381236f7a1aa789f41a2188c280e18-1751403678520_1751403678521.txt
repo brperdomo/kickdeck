@@ -1,0 +1,67 @@
+finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-381236f7a1aa789f41a2188c280e186f.js:1
+e @ shared-381236f7a1aa789f41a2188c280e186f.js:1
+l @ shared-381236f7a1aa789f41a2188c280e186f.js:1
+value @ shared-381236f7a1aa789f41a2188c280e186f.js:1
+value @ shared-381236f7a1aa789f41a2188c280e186f.js:1
+value @ shared-381236f7a1aa789f41a2188c280e186f.js:1
+value @ shared-381236f7a1aa789f41a2188c280e186f.js:1
+value @ shared-381236f7a1aa789f41a2188c280e186f.js:1
+(anonymous) @ shared-381236f7a1aa789f41a2188c280e186f.js:1
+setTimeout
+value @ shared-381236f7a1aa789f41a2188c280e186f.js:1
+value @ shared-381236f7a1aa789f41a2188c280e186f.js:1
+value @ shared-381236f7a1aa789f41a2188c280e186f.js:1
+(anonymous) @ shared-381236f7a1aa789f41a2188c280e186f.js:1
+value @ shared-381236f7a1aa789f41a2188c280e186f.js:1
+log @ shared-381236f7a1aa789f41a2188c280e186f.js:1
+log @ controller-with-preconnect-25b60383b2ed44afbb1699305bf2ebc3.js:1
+pe @ controller-with-preconnect-25b60383b2ed44afbb1699305bf2ebc3.js:1
+(anonymous) @ controller-with-preconnect-25b60383b2ed44afbb1699305bf2ebc3.js:1
+ScheduleBuilder.tsx:86 
+            
+            
+           POST https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/admin/events/1656618593/generate-schedule 401 (Unauthorized)
+generateAISchedule @ ScheduleBuilder.tsx:86
+Nb @ chunk-E27YX2RL.js?v=80b17ebe:975
+Tb @ chunk-E27YX2RL.js?v=80b17ebe:991
+Ub @ chunk-E27YX2RL.js?v=80b17ebe:994
+nf @ chunk-E27YX2RL.js?v=80b17ebe:2017
+se @ chunk-E27YX2RL.js?v=80b17ebe:2040
+(anonymous) @ chunk-E27YX2RL.js?v=80b17ebe:2312
+Qk @ chunk-E27YX2RL.js?v=80b17ebe:5701
+Jb @ chunk-E27YX2RL.js?v=80b17ebe:927
+hd @ chunk-E27YX2RL.js?v=80b17ebe:2113
+fd @ chunk-E27YX2RL.js?v=80b17ebe:1454
+ed @ chunk-E27YX2RL.js?v=80b17ebe:1437Understand this error
+ScheduleBuilder.tsx:149 Error generating schedule: Error: Failed to generate schedule: 401
+    at generateAISchedule (ScheduleBuilder.tsx:101:15)
+generateAISchedule @ ScheduleBuilder.tsx:149
+await in generateAISchedule
+Nb @ chunk-E27YX2RL.js?v=80b17ebe:975
+Tb @ chunk-E27YX2RL.js?v=80b17ebe:991
+Ub @ chunk-E27YX2RL.js?v=80b17ebe:994
+nf @ chunk-E27YX2RL.js?v=80b17ebe:2017
+se @ chunk-E27YX2RL.js?v=80b17ebe:2040
+(anonymous) @ chunk-E27YX2RL.js?v=80b17ebe:2312
+Qk @ chunk-E27YX2RL.js?v=80b17ebe:5701
+Jb @ chunk-E27YX2RL.js?v=80b17ebe:927
+hd @ chunk-E27YX2RL.js?v=80b17ebe:2113
+fd @ chunk-E27YX2RL.js?v=80b17ebe:1454
+ed @ chunk-E27YX2RL.js?v=80b17ebe:1437Understand this error
+SchedulingWorkflow.tsx:189 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+ScheduleBuilder.tsx:86 Fetch failed loading: POST "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/admin/events/1656618593/generate-schedule".
+generateAISchedule @ ScheduleBuilder.tsx:86
+Nb @ chunk-E27YX2RL.js?v=80b17ebe:975
+Tb @ chunk-E27YX2RL.js?v=80b17ebe:991
+Ub @ chunk-E27YX2RL.js?v=80b17ebe:994
+nf @ chunk-E27YX2RL.js?v=80b17ebe:2017
+se @ chunk-E27YX2RL.js?v=80b17ebe:2040
+(anonymous) @ chunk-E27YX2RL.js?v=80b17ebe:2312
+Qk @ chunk-E27YX2RL.js?v=80b17ebe:5701
+Jb @ chunk-E27YX2RL.js?v=80b17ebe:927
+hd @ chunk-E27YX2RL.js?v=80b17ebe:2113
+fd @ chunk-E27YX2RL.js?v=80b17ebe:1454
+ed @ chunk-E27YX2RL.js?v=80b17ebe:1437
+SchedulingWorkflow.tsx:189 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:189 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
