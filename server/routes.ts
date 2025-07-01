@@ -32,6 +32,7 @@ import emailTemplateRoutingsRouter from "./routes/admin/email-template-routings"
 import membersRouter from "./routes/admin/members-router";
 import teamsRouter from "./routes/admin/teams-router";
 import playersRouter from "./routes/admin/players-router";
+import memberMergeRouter from "./routes/admin/member-merge";
 import bracketsRouter from "./routes/admin/brackets";
 import gamesRouter from "./routes/admin/games-router";
 import clubsRouter from "./routes/clubs";
@@ -700,6 +701,7 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/email-providers', isAdmin, emailProvidersRouter); // Add email providers router
     app.use('/api/admin/email-template-routings', isAdmin, emailTemplateRoutingsRouter); // Add email template routings router
     app.use('/api/admin/members', isAdmin, membersRouter); // Member management router
+    app.use('/api/admin/member-merge', isAdmin, memberMergeRouter); // Member deduplication and merge
     app.use('/api/admin/teams', isAdmin, teamsRouter); // Team management router
     app.use('/api/admin/files', isAdmin, filesRouter); // File management router
     app.use('/api/admin/folders', isAdmin, foldersRouter); // Folder management router
