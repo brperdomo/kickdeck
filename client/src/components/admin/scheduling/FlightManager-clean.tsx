@@ -69,7 +69,8 @@ const FlightManager: React.FC<FlightManagerProps> = ({ eventId, teamsData, ageGr
   // Debug: Log teams data structure to understand age group extraction
   console.log('FlightManager received teamsData count:', teamsData?.length);
   console.log('FlightManager teamsData sample:', teamsData?.slice(0, 2));
-  console.log('FlightManager ageGroupsData:', ageGroupsData?.slice(0, 5));
+  console.log('FlightManager ageGroupsData full:', ageGroupsData);
+  console.log('FlightManager ageGroupsData length:', ageGroupsData?.length);
   
   // Early return if data is not ready
   if (!teamsData || !ageGroupsData || teamsData.length === 0 || ageGroupsData.length === 0) {
