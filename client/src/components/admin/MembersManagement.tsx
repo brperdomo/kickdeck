@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useLocation } from 'wouter';
 import {
   Table,
   TableHeader,
@@ -40,7 +41,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Mail, Search, UserCircle, Filter, CheckCircle, XCircle, RotateCw } from 'lucide-react';
+import { Loader2, Mail, Search, UserCircle, Filter, CheckCircle, XCircle, RotateCw, Users } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Pagination } from '@/components/ui/pagination';
 import { formatDate } from '@/lib/utils';
@@ -56,6 +57,7 @@ export function MemberManagement() {
   const [isResendDialogOpen, setIsResendDialogOpen] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [, navigate] = useLocation();
 
   // Query members with search, pagination and sorting
   const { data: membersData, isLoading, isError } = useQuery({
@@ -199,21 +201,38 @@ export function MemberManagement() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Member Management</h2>
+        <div>
+          <h2 className="text-2xl font-bold">Member Management</h2>
+          <p className="text-sm text-muted-foreground">
+            View and manage all registered members in the system
+          </p>
+        </div>
         
-        <form onSubmit={handleSearch} className="flex gap-2">
-          <div className="relative">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search members..."
-              className="pl-8 w-[250px]"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
-          <Button type="submit" size="sm">Search</Button>
-        </form>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigate('/admin/member-merge')}
+            className="flex items-center gap-2"
+          >
+            <Users className="h-4 w-4" />
+            Member Merge
+          </Button>
+          
+          <form onSubmit={handleSearch} className="flex gap-2">
+            <div className="relative">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="search"
+                placeholder="Search members..."
+                className="pl-8 w-[250px]"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
+            <Button type="submit" size="sm">Search</Button>
+          </form>
+        </div>
       </div>
 
       {isLoading ? (
