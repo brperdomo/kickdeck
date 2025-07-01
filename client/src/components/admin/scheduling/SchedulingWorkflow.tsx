@@ -16,6 +16,7 @@ import { TeamSeeding } from "./TeamSeeding";
 import { TimeBlockAssignment } from "./TimeBlockAssignment";
 import { GameCreation } from "./GameCreation";
 import { ScheduleBuilder } from "./ScheduleBuilder";
+import ScheduleManagement from "./ScheduleManagement";
 import { useToast } from "@/hooks/use-toast";
 
 interface SchedulingWorkflowProps {
@@ -103,8 +104,15 @@ export function SchedulingWorkflow({ eventId, onComplete }: SchedulingWorkflowPr
     {
       id: 'schedule',
       title: 'Build Schedule',
-      description: 'Assign times and fields to games using drag-and-drop or AI',
+      description: 'Assign times and fields to games using SimpleScheduler',
       icon: Play,
+      status: 'pending'
+    },
+    {
+      id: 'management',
+      title: 'Manage Schedule',
+      description: 'Fine-tune assignments using drag-and-drop and conflict detection',
+      icon: Target,
       status: 'pending'
     }
   ]);
@@ -217,6 +225,8 @@ export function SchedulingWorkflow({ eventId, onComplete }: SchedulingWorkflowPr
         return <GameCreation {...commonProps} />;
       case 'schedule':
         return <ScheduleBuilder {...commonProps} />;
+      case 'management':
+        return <ScheduleManagement eventId={eventId} />;
       default:
         return <div>Step not implemented</div>;
     }
