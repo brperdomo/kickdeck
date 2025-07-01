@@ -68,22 +68,7 @@ export function FlightManager({ eventId, teamsData, workflowData, onComplete, on
   console.log('FlightManager teamsData sample:', teamsData?.slice(0, 2));
   console.log('FlightManager ageGroupsData:', ageGroupsData?.slice(0, 5));
   
-  // Early return if data is not ready
-  if (!teamsData || !ageGroupsData || teamsData.length === 0 || ageGroupsData.length === 0) {
-    console.log('FlightManager: Waiting for data to load...', { teamsCount: teamsData?.length, ageGroupsCount: ageGroupsData?.length });
-    return (
-      <Card>
-        <CardContent className="p-6">
-          <div className="flex items-center justify-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-            <span className="ml-2">Loading flight management data...</span>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-  
-  // Enhanced gender-aware age group extraction
+  // Enhanced gender-aware age group extraction - ALWAYS call hooks before early returns
   const genderAwareAgeGroups = useMemo(() => {
     if (!ageGroupsData) return [];
     
@@ -158,58 +143,76 @@ export function FlightManager({ eventId, teamsData, workflowData, onComplete, on
 
   // Calculate suggested flights based on team count
   useEffect(() => {
+    if (!teamsData || !ageGroupsData || ageGroupSummary.length === 0) return;
+    
+    const calculateSuggestedFlights = (teamCount: number): number => {
+      if (teamCount <= 8) return 1;
+      if (teamCount <= 16) return 2;
+      if (teamCount <= 24) return 3;
+      return Math.ceil(teamCount / 8);
+    };
+
+    const generateAutoFlightSuggestions = (summary: AgeGroupSummary[]) => {
+      const suggestions = summary.map(group => {
+        const flightCount = calculateSuggestedFlights(group.approvedTeams);
+        const flightSuggestions = [];
+        
+        for (let i = 0; i < flightCount; i++) {
+          const flightLevel = i === 0 ? 'top_flight' : 
+                             i === flightCount - 1 ? 'bottom_flight' : 'middle_flight';
+          
+          flightSuggestions.push({
+            name: `${group.ageGroup} Flight ${i + 1}`,
+            ageGroup: group.ageGroup,
+            level: flightLevel,
+            description: `${getFlightLevelDescription(flightLevel)} for ${group.ageGroup}`,
+            estimatedTeams: Math.ceil(group.approvedTeams / flightCount)
+          });
+        }
+        
+        return {
+          ageGroup: group.ageGroup,
+          totalTeams: group.approvedTeams,
+          flights: flightSuggestions
+        };
+      });
+      
+      setAutoFlightSuggestions(suggestions);
+    };
+
+    const getFlightLevelDescription = (level: string): string => {
+      switch (level) {
+        case 'top_flight': return 'Highest competitive level';
+        case 'middle_flight': return 'Intermediate competitive level';
+        case 'bottom_flight': return 'Developmental level';
+        default: return 'Custom level';
+      }
+    };
+    
     const updatedSummary = ageGroupSummary.map(group => ({
       ...group,
       suggestedFlights: calculateSuggestedFlights(group.approvedTeams)
     }));
     
-    // Generate auto-flight suggestions
     generateAutoFlightSuggestions(updatedSummary);
-  }, [teamsData]);
+  }, [teamsData, ageGroupsData, ageGroupSummary]);
 
-  const calculateSuggestedFlights = (teamCount: number): number => {
-    if (teamCount <= 8) return 1;
-    if (teamCount <= 16) return 2;
-    if (teamCount <= 24) return 3;
-    return Math.ceil(teamCount / 8);
-  };
+  // Early return if data is not ready - AFTER all hooks
+  if (!teamsData || !ageGroupsData || teamsData.length === 0 || ageGroupsData.length === 0) {
+    console.log('FlightManager: Waiting for data to load...', { teamsCount: teamsData?.length, ageGroupsCount: ageGroupsData?.length });
+    return (
+      <Card>
+        <CardContent className="p-6">
+          <div className="flex items-center justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+            <span className="ml-2">Loading flight management data...</span>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
-  const generateAutoFlightSuggestions = (summary: AgeGroupSummary[]) => {
-    const suggestions = summary.map(group => {
-      const flightCount = group.suggestedFlights;
-      const flightSuggestions = [];
-      
-      for (let i = 0; i < flightCount; i++) {
-        const flightLevel = i === 0 ? 'top_flight' : 
-                           i === flightCount - 1 ? 'bottom_flight' : 'middle_flight';
-        
-        flightSuggestions.push({
-          name: `${group.ageGroup} Flight ${i + 1}`,
-          ageGroup: group.ageGroup,
-          level: flightLevel,
-          description: `${getFlightLevelDescription(flightLevel)} for ${group.ageGroup}`,
-          estimatedTeams: Math.ceil(group.approvedTeams / flightCount)
-        });
-      }
-      
-      return {
-        ageGroup: group.ageGroup,
-        totalTeams: group.approvedTeams,
-        flights: flightSuggestions
-      };
-    });
-    
-    setAutoFlightSuggestions(suggestions);
-  };
 
-  const getFlightLevelDescription = (level: string): string => {
-    switch (level) {
-      case 'top_flight': return 'Highest competitive level';
-      case 'middle_flight': return 'Intermediate competitive level';
-      case 'bottom_flight': return 'Developmental level';
-      default: return 'Custom level';
-    }
-  };
 
   const getFlightLevelBadge = (level: string) => {
     const colors = {
