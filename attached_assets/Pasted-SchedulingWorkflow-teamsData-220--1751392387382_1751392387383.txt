@@ -1,0 +1,20 @@
+SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …][0 … 99][100 … 199][200 … 219]length: 220[[Prototype]]: Array(0)
+SchedulingWorkflow.tsx:189 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …][0 … 99][100 … 199][200 … 219]length: 220[[Prototype]]: Array(0)
+SchedulingWorkflow.tsx:189 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+GameCreation.tsx:58 GameCreation workflowData: {flight: {…}, bracket: {…}, seed: {…}, timeblock: {…}}
+GameCreation.tsx:59 GameCreation brackets: [{…}]
+GameCreation.tsx:60 GameCreation seedings: [{…}]
+GameCreation.tsx:61 GameCreation timeBlocks: [{…}]
+GameCreation.tsx:168 generateGamesForBracket - bracket: {id: 'flight_1751392304027_unassigned', flightId: 'flight_1751392304027', flightName: 'rr - Director Assignment Needed', teamCount: 4, format: 'round_robin_knockout', …}
+GameCreation.tsx:169 generateGamesForBracket - seeding: {bracketId: 'flight_1751392304027_unassigned', bracketName: 'rr - Director Assignment Needed', teams: Array(4), pools: Array(0)}
+GameCreation.tsx:170 generateGamesForBracket - seeding.teams: (4) [{…}, {…}, {…}, {…}]
+GameCreation.tsx:171 generateGamesForBracket - seeding.pools: []
+GameCreation.tsx:58 GameCreation workflowData: {flight: {…}, bracket: {…}, seed: {…}, timeblock: {…}}
+GameCreation.tsx:59 GameCreation brackets: [{…}]
+GameCreation.tsx:60 GameCreation seedings: [{…}]
+GameCreation.tsx:61 GameCreation timeBlocks: [{…}]
+SchedulingWorkflow.tsx:189 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+GameCreation.tsx:58 GameCreation workflowData: {flight: {…}, bracket: {…}, seed: {…}, timeblock: {…}}
+GameCreation.tsx:59 GameCreation brackets: [{…}]
+GameCreation.tsx:60 GameCreation seedings: [{…}]
+GameCreation.tsx:61 GameCreation timeBlocks: [{…}]

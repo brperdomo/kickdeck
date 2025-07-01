@@ -97,12 +97,27 @@ export function TeamSeeding({ eventId, workflowData, onComplete, onError }: Team
       // Generate pools if needed
       const pools = generatePools(bracket, seededTeams);
 
+      // Auto-distribute teams into pools if pools exist
+      const finalPools = pools.length > 0 ? distributeTeamsIntoPools(pools, seededTeams) : pools;
+      
+      // Update team pool assignments
+      const finalTeams = seededTeams.map(team => {
+        const poolAssignment = finalPools.find(pool => 
+          pool.teams.some(t => t.id === team.id)
+        )?.name;
+        
+        return {
+          ...team,
+          poolAssignment
+        };
+      });
+
       seedings.push({
         bracketId: bracket.id,
         bracketName: bracket.flightName,
         format: bracket.format,
-        pools,
-        teams: seededTeams
+        pools: finalPools,
+        teams: finalTeams
       });
     });
 
@@ -113,14 +128,18 @@ export function TeamSeeding({ eventId, workflowData, onComplete, onError }: Team
   };
 
   const generatePools = (bracket: any, teams: SeededTeam[]): Pool[] => {
-    if (bracket.format === 'knockout' || !bracket.poolCount || bracket.poolCount <= 1) {
+    // Only pure knockout brackets don't need pools
+    if (bracket.format === 'knockout') {
       return [];
     }
 
     const pools: Pool[] = [];
-    const teamsPerPool = Math.ceil(teams.length / bracket.poolCount);
+    
+    // For round_robin_knockout or pool_play formats, we need at least one pool
+    const poolCount = Math.max(1, bracket.poolCount || 1);
+    const teamsPerPool = Math.ceil(teams.length / poolCount);
 
-    for (let i = 0; i < bracket.poolCount; i++) {
+    for (let i = 0; i < poolCount; i++) {
       pools.push({
         id: `pool_${bracket.id}_${i}`,
         name: `Pool ${String.fromCharCode(65 + i)}`, // Pool A, B, C, etc.
@@ -169,17 +188,19 @@ export function TeamSeeding({ eventId, workflowData, onComplete, onError }: Team
   const distributeTeamsIntoPools = (pools: Pool[], teams: SeededTeam[]): Pool[] => {
     if (pools.length === 0) return pools;
 
-    const updatedPools = pools.map(pool => ({ ...pool, teams: [] }));
+    const updatedPools: Pool[] = pools.map(pool => ({ ...pool, teams: [] }));
     
     // Snake draft distribution
     let currentPoolIndex = 0;
     let direction = 1; // 1 for forward, -1 for backward
 
     teams.forEach((team) => {
-      updatedPools[currentPoolIndex].teams.push({
+      const teamWithPool: SeededTeam = {
         ...team,
         poolAssignment: updatedPools[currentPoolIndex].name
-      });
+      };
+      
+      updatedPools[currentPoolIndex].teams.push(teamWithPool);
 
       // Move to next pool
       currentPoolIndex += direction;
@@ -293,6 +314,7 @@ export function TeamSeeding({ eventId, workflowData, onComplete, onError }: Team
         bracketName: seeding.bracketName,
         teams: seeding.teams.map(team => ({
           teamId: team.id,
+          name: team.name,
           seedRanking: team.seedRanking,
           poolAssignment: team.poolAssignment
         })),
