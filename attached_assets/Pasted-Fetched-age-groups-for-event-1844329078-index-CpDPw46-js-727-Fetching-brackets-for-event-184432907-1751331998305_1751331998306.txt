@@ -1,0 +1,164 @@
+Fetched age groups for event: 1844329078
+index-CpDPw46-.js:727 Fetching brackets for event 1844329078 and age group 9953
+index-CpDPw46-.js:727 Fetch finished loading: GET "https://app.matchpro.ai/api/brackets?eventId=1844329078&ageGroupId=9953".
+queryFn @ index-CpDPw46-.js:727
+i @ index-CpDPw46-.js:40
+f @ index-CpDPw46-.js:40
+start @ index-CpDPw46-.js:40
+fetch @ index-CpDPw46-.js:40
+zg @ index-CpDPw46-.js:40
+onSubscribe @ index-CpDPw46-.js:40
+subscribe @ index-CpDPw46-.js:40
+(anonymous) @ index-CpDPw46-.js:40
+tW @ index-CpDPw46-.js:38
+d1 @ index-CpDPw46-.js:40
+$h @ index-CpDPw46-.js:40
+nhe @ index-CpDPw46-.js:40
+fu @ index-CpDPw46-.js:40
+RF @ index-CpDPw46-.js:40
+Vd @ index-CpDPw46-.js:38
+(anonymous) @ index-CpDPw46-.js:40
+index-CpDPw46-.js:727 Fetch finished loading: GET "https://app.matchpro.ai/api/admin/events/1844329078/age-groups".
+queryFn @ index-CpDPw46-.js:727
+i @ index-CpDPw46-.js:40
+f @ index-CpDPw46-.js:40
+start @ index-CpDPw46-.js:40
+fetch @ index-CpDPw46-.js:40
+zg @ index-CpDPw46-.js:40
+onSubscribe @ index-CpDPw46-.js:40
+subscribe @ index-CpDPw46-.js:40
+(anonymous) @ index-CpDPw46-.js:40
+tW @ index-CpDPw46-.js:38
+d1 @ index-CpDPw46-.js:40
+$h @ index-CpDPw46-.js:40
+nhe @ index-CpDPw46-.js:40
+fu @ index-CpDPw46-.js:40
+RF @ index-CpDPw46-.js:40
+Vd @ index-CpDPw46-.js:38
+(anonymous) @ index-CpDPw46-.js:40
+chunk-RODKCX5K.js:3 [Violation] 'setTimeout' handler took 57ms
+index-CpDPw46-.js:835 Sending status update with data: {teamId: 455, status: 'approved', notes: 'Approval attempted but payment failed (payment_err…eam has completed payment setup before approving.'}
+index-CpDPw46-.js:835 
+            
+            
+           PUT https://app.matchpro.ai/api/admin/teams/455/status 400 (Bad Request)
+mutationFn @ index-CpDPw46-.js:835
+fn @ index-CpDPw46-.js:40
+f @ index-CpDPw46-.js:40
+start @ index-CpDPw46-.js:40
+execute @ index-CpDPw46-.js:40
+await in execute
+mutate @ index-CpDPw46-.js:40
+(anonymous) @ index-CpDPw46-.js:40
+ee @ index-CpDPw46-.js:835
+onClick @ index-CpDPw46-.js:835
+jue @ index-CpDPw46-.js:37
+Nue @ index-CpDPw46-.js:37
+Sue @ index-CpDPw46-.js:37
+aF @ index-CpDPw46-.js:37
+Lq @ index-CpDPw46-.js:37
+(anonymous) @ index-CpDPw46-.js:37
+fO @ index-CpDPw46-.js:40
+cq @ index-CpDPw46-.js:37
+x2 @ index-CpDPw46-.js:37
+U4 @ index-CpDPw46-.js:37
+Bue @ index-CpDPw46-.js:37Understand this error
+index-CpDPw46-.js:835 Raw response text: {"status":"error","error":"Payment processing failed","message":"Payment processing failed. Please check team payment details.","paymentStatus":"payment_error","teamStatus":"registered"}
+index-CpDPw46-.js:835 Error response: {status: 'error', error: 'Payment processing failed', message: 'Payment processing failed. Please check team payment details.', paymentStatus: 'payment_error', teamStatus: 'registered'}
+mutationFn @ index-CpDPw46-.js:835
+await in mutationFn
+fn @ index-CpDPw46-.js:40
+f @ index-CpDPw46-.js:40
+start @ index-CpDPw46-.js:40
+execute @ index-CpDPw46-.js:40
+await in execute
+mutate @ index-CpDPw46-.js:40
+(anonymous) @ index-CpDPw46-.js:40
+ee @ index-CpDPw46-.js:835
+onClick @ index-CpDPw46-.js:835
+jue @ index-CpDPw46-.js:37
+Nue @ index-CpDPw46-.js:37
+Sue @ index-CpDPw46-.js:37
+aF @ index-CpDPw46-.js:37
+Lq @ index-CpDPw46-.js:37
+(anonymous) @ index-CpDPw46-.js:37
+fO @ index-CpDPw46-.js:40
+cq @ index-CpDPw46-.js:37
+x2 @ index-CpDPw46-.js:37
+U4 @ index-CpDPw46-.js:37
+Bue @ index-CpDPw46-.js:37Understand this error
+index-CpDPw46-.js:835 Error in updateTeamStatus mutation: Error: Payment processing failed
+    at Object.mutationFn (index-CpDPw46-.js:835:82803)
+mutationFn @ index-CpDPw46-.js:835
+await in mutationFn
+fn @ index-CpDPw46-.js:40
+f @ index-CpDPw46-.js:40
+start @ index-CpDPw46-.js:40
+execute @ index-CpDPw46-.js:40
+await in execute
+mutate @ index-CpDPw46-.js:40
+(anonymous) @ index-CpDPw46-.js:40
+ee @ index-CpDPw46-.js:835
+onClick @ index-CpDPw46-.js:835
+jue @ index-CpDPw46-.js:37
+Nue @ index-CpDPw46-.js:37
+Sue @ index-CpDPw46-.js:37
+aF @ index-CpDPw46-.js:37
+Lq @ index-CpDPw46-.js:37
+(anonymous) @ index-CpDPw46-.js:37
+fO @ index-CpDPw46-.js:40
+cq @ index-CpDPw46-.js:37
+x2 @ index-CpDPw46-.js:37
+U4 @ index-CpDPw46-.js:37
+Bue @ index-CpDPw46-.js:37Understand this error
+index-CpDPw46-.js:835 Fetch failed loading: PUT "https://app.matchpro.ai/api/admin/teams/455/status".
+mutationFn @ index-CpDPw46-.js:835
+fn @ index-CpDPw46-.js:40
+f @ index-CpDPw46-.js:40
+start @ index-CpDPw46-.js:40
+execute @ index-CpDPw46-.js:40
+await in execute
+mutate @ index-CpDPw46-.js:40
+(anonymous) @ index-CpDPw46-.js:40
+ee @ index-CpDPw46-.js:835
+onClick @ index-CpDPw46-.js:835
+jue @ index-CpDPw46-.js:37
+Nue @ index-CpDPw46-.js:37
+Sue @ index-CpDPw46-.js:37
+aF @ index-CpDPw46-.js:37
+Lq @ index-CpDPw46-.js:37
+(anonymous) @ index-CpDPw46-.js:37
+fO @ index-CpDPw46-.js:40
+cq @ index-CpDPw46-.js:37
+x2 @ index-CpDPw46-.js:37
+U4 @ index-CpDPw46-.js:37
+Bue @ index-CpDPw46-.js:37
+chunk-RODKCX5K.js:3 [Violation] 'setTimeout' handler took 69ms
+injected.js:5 [USO] Button detection aborting due to timeout.
+chunk-LRH6BLRZ.js:31 orchestration: Initializing user store with state {pill-player: {…}}
+teams:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this error
+chunk-LRH6BLRZ.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+shared-a1be83f03fec2f03332c9884c372743f.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+e @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+l @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+value @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+value @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+value @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+value @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+value @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+(anonymous) @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+setTimeout
+value @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+value @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+value @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+(anonymous) @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+value @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+log @ shared-a1be83f03fec2f03332c9884c372743f.js:1
+log @ controller-with-preconnect-28798d180f1c9b38342db6d773a0e46a.js:1
+pe @ controller-with-preconnect-28798d180f1c9b38342db6d773a0e46a.js:1
+(anonymous) @ controller-with-preconnect-28798d180f1c9b38342db6d773a0e46a.js:1
+chunk-RODKCX5K.js:3 [Violation] 'setTimeout' handler took 68ms
+teams:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+teams:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+chunk-RODKCX5K.js:3 [Violation] 'setTimeout' handler took 52ms
