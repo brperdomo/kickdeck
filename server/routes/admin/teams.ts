@@ -358,7 +358,7 @@ export async function getTeams(req: Request, res: Response) {
     })
     .from(teams)
     .leftJoin(events, eq(teams.eventId, events.id))
-    .leftJoin(eventAgeGroups, sql`${teams.ageGroupId}::integer = ${eventAgeGroups.id}::integer`)
+    .leftJoin(eventAgeGroups, eq(teams.ageGroupId, eventAgeGroups.id))
     .leftJoin(users, eq(teams.managerEmail, users.email));
     
     // Add filters if provided
