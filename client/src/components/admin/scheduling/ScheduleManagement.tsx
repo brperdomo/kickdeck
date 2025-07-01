@@ -61,8 +61,14 @@ export default function ScheduleManagement({ eventId }: ScheduleManagementProps)
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<string>('');
   const [conflicts, setConflicts] = useState<Conflict[]>([]);
   const [showConflicts, setShowConflicts] = useState(false);
+  const [isDragEnabled, setIsDragEnabled] = useState(false);
   
   const queryClient = useQueryClient();
+
+  // Enable drag after component mounts to avoid SSR issues
+  useEffect(() => {
+    setIsDragEnabled(true);
+  }, []);
 
   // Fetch current schedule
   const { data: gamesData, isLoading: gamesLoading } = useQuery({
@@ -260,17 +266,18 @@ export default function ScheduleManagement({ eventId }: ScheduleManagementProps)
       </div>
 
       {/* Drag and Drop Schedule Grid */}
-      <DragDropContext onDragEnd={handleDragEnd}>
-        <div className="space-y-6">
-          {complexes.map((complex: Complex) => (
-            <Card key={complex.id}>
-              <CardHeader>
-                <CardTitle className="text-lg">{complex.name}</CardTitle>
-                <p className="text-sm text-gray-600">{complex.address}</p>
-              </CardHeader>
-              <CardContent>
-                <div className="overflow-x-auto">
-                  <div className="grid grid-cols-6 gap-2 min-w-[800px]">
+      {isDragEnabled ? (
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <div className="space-y-6">
+            {complexes.map((complex: Complex) => (
+              <Card key={complex.id}>
+                <CardHeader>
+                  <CardTitle className="text-lg">{complex.name}</CardTitle>
+                  <p className="text-sm text-gray-600">{complex.address}</p>
+                </CardHeader>
+                <CardContent>
+                  <div className="overflow-x-auto">
+                    <div className="grid grid-cols-6 gap-2 min-w-[800px]">
                     {/* Time headers */}
                     <div className="font-semibold text-sm">Time</div>
                     {complex.fields.map((field: Field) => (
@@ -352,57 +359,64 @@ export default function ScheduleManagement({ eventId }: ScheduleManagementProps)
               </CardContent>
             </Card>
           ))}
-        </div>
-      </DragDropContext>
+          </div>
 
-      {/* Unassigned Games */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Unassigned Games</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Droppable droppableId="unassigned-games">
-            {(provided) => (
-              <div
-                ref={provided.innerRef}
-                {...provided.droppableProps}
-                className="grid grid-cols-1 md:grid-cols-3 gap-2"
-              >
-                {games
-                  .filter((game: Game) => !game.fieldId)
-                  .map((game: Game, index: number) => (
-                    <Draggable
-                      key={`game-${game.id}`}
-                      draggableId={`game-${game.id}`}
-                      index={index}
-                    >
-                      {(provided, snapshot) => (
-                        <div
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          className={`
-                            p-3 bg-white border rounded-lg shadow cursor-move
-                            ${snapshot.isDragging ? 'rotate-2 shadow-xl' : ''}
-                          `}
+          {/* Unassigned Games */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Unassigned Games</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Droppable droppableId="unassigned-games">
+                {(provided) => (
+                  <div
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
+                    className="grid grid-cols-1 md:grid-cols-3 gap-2"
+                  >
+                    {games
+                      .filter((game: Game) => !game.fieldId)
+                      .map((game: Game, index: number) => (
+                        <Draggable
+                          key={`game-${game.id}`}
+                          draggableId={`game-${game.id}`}
+                          index={index}
                         >
-                          <div className="font-semibold">Game {game.gameNumber}</div>
-                          <div className="text-sm text-gray-600">
-                            {game.homeTeam} vs {game.awayTeam}
-                          </div>
-                          <Badge variant="outline" className="mt-1">
-                            {game.bracket}
-                          </Badge>
-                        </div>
-                      )}
-                    </Draggable>
-                  ))}
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
-        </CardContent>
-      </Card>
+                          {(provided, snapshot) => (
+                            <div
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                              className={`
+                                p-3 bg-white border rounded-lg shadow cursor-move
+                                ${snapshot.isDragging ? 'rotate-2 shadow-xl' : ''}
+                              `}
+                            >
+                              <div className="font-semibold">Game {game.gameNumber}</div>
+                              <div className="text-sm text-gray-600">
+                                {game.homeTeam} vs {game.awayTeam}
+                              </div>
+                              <Badge variant="outline" className="mt-1">
+                                {game.bracket}
+                              </Badge>
+                            </div>
+                          )}
+                        </Draggable>
+                      ))}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            </CardContent>
+          </Card>
+        </DragDropContext>
+      ) : (
+        <div className="space-y-6">
+          <div className="text-center py-8 text-gray-500">
+            Loading scheduling interface...
+          </div>
+        </div>
+      )}
 
       {/* Conflicts Dialog */}
       <Dialog open={showConflicts} onOpenChange={setShowConflicts}>
