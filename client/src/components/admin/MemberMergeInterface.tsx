@@ -148,7 +148,7 @@ export default function MemberMergeInterface() {
   };
 
   const getMatchReasonLabel = (reason: string) => {
-    const labels = {
+    const labels: Record<string, string> = {
       email: 'Email Match',
       name_phone: 'Name + Phone',
       similar_name: 'Similar Name',

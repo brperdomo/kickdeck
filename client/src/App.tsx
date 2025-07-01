@@ -67,6 +67,9 @@ import MemberDashboard from "@/pages/member-dashboard";
 // Complex locations map
 import ComplexLocationsMapPage from "@/pages/complex-locations-map";
 
+// Member merge interface - lazy loaded for admin use
+const MemberMergeInterface = lazy(() => import("@/components/admin/MemberMergeInterface").then(m => ({ default: m.default })));
+
 // Import landing page components
 import LandingPage from "@/pages/landing-page";
 import { isMainDomain } from "@/lib/domainHelper";
@@ -322,6 +325,15 @@ function Router() {
           </Route>
           <Route path="/admin/members">
             {user.isAdmin ? <AdminDashboard initialView="members" /> : <NotFound />}
+          </Route>
+          <Route path="/admin/member-merge">
+            {user.isAdmin ? (
+              <Suspense fallback={<div className="flex items-center justify-center min-h-screen">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              </div>}>
+                <MemberMergeInterface />
+              </Suspense>
+            ) : <NotFound />}
           </Route>
           <Route path="/admin/roles">
             {user.isAdmin ? <AdminDashboard initialView="roles" /> : <NotFound />}
