@@ -69,6 +69,36 @@ const FlightManager: React.FC<FlightManagerProps> = ({ eventId, teamsData, ageGr
   // Debug: Log teams data structure (only once per mount)
   // console.log('FlightManager received teamsData count:', teamsData?.length);
   
+  // Fetch flights for this event - MUST be declared before any early returns
+  const { data: flights = [], isLoading: flightsLoading, error: flightsError } = useQuery({
+    queryKey: ['/api/admin/events', eventId, 'flights'],
+    queryFn: async () => {
+      const response = await fetch(`/api/admin/events/${eventId}/flights`, {
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Flights API error:', response.status, errorText);
+        throw new Error(`Failed to fetch flights: ${response.status}`);
+      }
+      
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const htmlContent = await response.text();
+        console.error('Expected JSON but got HTML:', htmlContent.substring(0, 200));
+        throw new Error('Server returned HTML instead of JSON - possible authentication issue');
+      }
+      
+      return response.json();
+    },
+    enabled: !!eventId,
+    retry: false
+  });
+
   // Early return if data is not ready
   if (!teamsData || !ageGroupsData || teamsData.length === 0 || ageGroupsData.length === 0) {
     console.log('FlightManager: Waiting for data to load...', { teamsCount: teamsData?.length, ageGroupsCount: ageGroupsData?.length });
@@ -98,36 +128,6 @@ const FlightManager: React.FC<FlightManagerProps> = ({ eventId, teamsData, ageGr
       </Card>
     );
   }
-
-  // Fetch flights for this event
-  const { data: flights = [], isLoading: flightsLoading, error: flightsError } = useQuery({
-    queryKey: ['/api/admin/events', eventId, 'flights'],
-    queryFn: async () => {
-      const response = await fetch(`/api/admin/events/${eventId}/flights`, {
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      });
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Flights API error:', response.status, errorText);
-        throw new Error(`Failed to fetch flights: ${response.status}`);
-      }
-      
-      const contentType = response.headers.get('content-type');
-      if (!contentType || !contentType.includes('application/json')) {
-        const htmlContent = await response.text();
-        console.error('Expected JSON but got HTML:', htmlContent.substring(0, 200));
-        throw new Error('Server returned HTML instead of JSON - possible authentication issue');
-      }
-      
-      return response.json();
-    },
-    enabled: !!eventId,
-    retry: false
-  });
 
   // Safe data processing after guard - no hooks needed here
   const ageGroupIds = teamsData
