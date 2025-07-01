@@ -1,0 +1,908 @@
+Google Maps API key length: 0 characters
+env.ts:11 Mapbox API key length: 93 characters
+env.ts:17 Google Maps API already loaded
+RouteDebugger.tsx:13 Current route location (Wouter): /admin
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin
+RouteDebugger.tsx:15 Current pathname: /admin
+RouteDebugger.tsx:16 Current search: 
+use-user.ts:59 Fetching user with emulation token: not present
+use-user.ts:76 User data fetched: Object
+15Failed to decode downloaded font: <URL>Understand this warning
+15OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+12Invalid keyframe value for property filter: blur(-0.08136px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.16063px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.22707px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.28173px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.32564px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.3598px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.38521px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.40278px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.41343px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.41799px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.41726px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.41199px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.40286px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.39052px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.37556px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.35849px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.33982px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.31996px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.2993px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.27819px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.25693px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.23576px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.21492px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.19459px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.17493px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.15606px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.13808px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.12106px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.10507px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.09014px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.07628px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.0635px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.0518px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.04115px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.03153px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.02289px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.01521px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.00842px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.00249px)Understand this warning
+RouteDebugger.tsx:13 Current route location (Wouter): /admin/teams
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin/teams
+RouteDebugger.tsx:15 Current pathname: /admin/teams
+RouteDebugger.tsx:16 Current search: 
+admin-dashboard.tsx:5904 Updating activeView from URL: teams
+chunk-LRH6BLRZ.js:31 orchestration: Initializing config store with state Object
+chunk-LRH6BLRZ.js:31 orchestration: Initializing feature flag store with state Object
+chunk-LRH6BLRZ.js:31 orchestration: Initializing user store with state Object
+chunk-LRH6BLRZ.js:31 orchestration: Updating combined state Object
+admin-dashboard.tsx:3322 Import eligible events: Array(5)
+admin-dashboard.tsx:3342 Teams data received: Array(427)
+admin-dashboard.tsx:3811 Teams data from API: Array(427)
+admin-dashboard.tsx:3852 Normalized teams data: Array(427)
+RouteDebugger.tsx:13 Current route location (Wouter): /admin/scheduling
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin/scheduling
+RouteDebugger.tsx:15 Current pathname: /admin/scheduling
+RouteDebugger.tsx:16 Current search: 
+admin-dashboard.tsx:5904 Updating activeView from URL: scheduling
+chunk-LRH6BLRZ.js:31 orchestration: Initializing config store with state Object
+chunk-LRH6BLRZ.js:31 orchestration: Initializing feature flag store with state Object
+chunk-LRH6BLRZ.js:31 orchestration: Initializing user store with state Object
+chunk-LRH6BLRZ.js:31 orchestration: Updating combined state Object
+SchedulingWorkflow.tsx:56 Fetching teams for event: 1656618593
+SchedulingWorkflow.tsx:60 Teams API response: Array(220)
+SchedulingWorkflow.tsx:189 SchedulingWorkflow teamsData: Array(220)
+FlightManager.tsx:67 FlightManager teamsData: Array(2)
+FlightManager.tsx:68 FlightManager ageGroupsData: undefined
+FlightManager.tsx:111 Final extracted age groups: Array(0)
+FlightManager.tsx:67 FlightManager teamsData: Array(2)
+FlightManager.tsx:68 FlightManager ageGroupsData: undefined
+FlightManager.tsx:111 Final extracted age groups: Array(0)
+SchedulingWorkflow.tsx:189 SchedulingWorkflow teamsData: Array(220)
+FlightManager.tsx:67 FlightManager teamsData: Array(2)
+FlightManager.tsx:68 FlightManager ageGroupsData: undefined
+FlightManager.tsx:111 Final extracted age groups: Array(0)
+FlightManager.tsx:67 FlightManager teamsData: Array(2)
+FlightManager.tsx:68 FlightManager ageGroupsData: Array(5)
+FlightManager.tsx:94 Extracted age group IDs: Array(220)
+FlightManager.tsx:106 Age groups with names: Array(24)
+FlightManager.tsx:111 Final extracted age groups: Array(24)
+FlightManager.tsx:67 FlightManager teamsData: Array(2)
+FlightManager.tsx:68 FlightManager ageGroupsData: Array(5)
+FlightManager.tsx:111 Final extracted age groups: Array(24)
+chunk-J2F67UGW.js?v=80b17ebe:340 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ chunk-J2F67UGW.js?v=80b17ebe:340Understand this warning
+SchedulingWorkflow.tsx:189 SchedulingWorkflow teamsData: Array(220)
+FlightManager.tsx:67 FlightManager teamsData: Array(2)
+FlightManager.tsx:68 FlightManager ageGroupsData: Array(5)
+FlightManager.tsx:111 Final extracted age groups: Array(24)
+FlightManager.tsx:67 FlightManager teamsData: Array(2)
+FlightManager.tsx:68 FlightManager ageGroupsData: Array(5)
+FlightManager.tsx:111 Final extracted age groups: Array(24)
+SchedulingWorkflow.tsx:189 SchedulingWorkflow teamsData: Array(220)
+FlightManager.tsx:67 FlightManager teamsData: Array(2)
+FlightManager.tsx:68 FlightManager ageGroupsData: Array(5)
+FlightManager.tsx:111 Final extracted age groups: Array(24)
+SchedulingWorkflow.tsx:189 SchedulingWorkflow teamsData: Array(220)
+FlightManager.tsx:67 FlightManager teamsData: Array(2)
+FlightManager.tsx:68 FlightManager ageGroupsData: Array(5)
+FlightManager.tsx:111 Final extracted age groups: Array(24)
+FlightManager.tsx:67 FlightManager teamsData: Array(2)
+FlightManager.tsx:68 FlightManager ageGroupsData: Array(5)
+FlightManager.tsx:111 Final extracted age groups: Array(24)
+FlightManager.tsx:67 FlightManager teamsData: Array(2)
+FlightManager.tsx:68 FlightManager ageGroupsData: Array(5)
+FlightManager.tsx:111 Final extracted age groups: Array(24)
+FlightManager.tsx:67 FlightManager teamsData: Array(2)
+FlightManager.tsx:68 FlightManager ageGroupsData: Array(5)
+FlightManager.tsx:111 Final extracted age groups: Array(24)
+SchedulingWorkflow.tsx:189 SchedulingWorkflow teamsData: Array(220)
+SchedulingWorkflow.tsx:189 SchedulingWorkflow teamsData: Array(220)
+SchedulingWorkflow.tsx:189 SchedulingWorkflow teamsData: Array(220)
+SchedulingWorkflow.tsx:189 SchedulingWorkflow teamsData: Array(220)
+SchedulingWorkflow.tsx:189 SchedulingWorkflow teamsData: Array(220)
+SchedulingWorkflow.tsx:189 SchedulingWorkflow teamsData: Array(220)
+SchedulingWorkflow.tsx:189 SchedulingWorkflow teamsData: Array(220)
+SchedulingWorkflow.tsx:189 SchedulingWorkflow teamsData: Array(220)
+SchedulingWorkflow.tsx:189 SchedulingWorkflow teamsData: Array(220)
+SchedulingWorkflow.tsx:189 SchedulingWorkflow teamsData: Array(220)
+SchedulingWorkflow.tsx:189 SchedulingWorkflow teamsData: Array(220)
+SchedulingWorkflow.tsx:189 SchedulingWorkflow teamsData: Array(220)
+SchedulingWorkflow.tsx:189 SchedulingWorkflow teamsData: Array(220)
+
+                
+          
+          
+          
+         Chrome is moving towards a new experience that allows users to choose to browse without third-party cookies.Understand this warning
+SchedulingWorkflow.tsx:189 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+6Fetch finished loading: GET "<URL>".
+SchedulingWorkflow.tsx:189 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:189 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+
+                
+          
+          
+          
+         Chrome is moving towards a new experience that allows users to choose to browse without third-party cookies.Understand this warning
+scheduling:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this error
+chunk-DPQRDNL2.js:288 Uncaught (in promise) lhi {message: 'Value of the latch has already changed', cause: undefined, name: 'lhi', mw8_1: e6t, stack: 'lhi: Value of the latch has already changed\n    at…bbjpldiijjmm/content/chunk-4RD4FFU6.js:32:121910)'}
+r.aq8 @ chunk-DPQRDNL2.js:288
+oSi @ chunk-DPQRDNL2.js:279
+r.uqi @ chunk-DPQRDNL2.js:283
+r.addContentAndGetCursorToStartFromIt @ chunk-DPQRDNL2.js:283
+r.pmy @ chunk-DPQRDNL2.js:275
+r.seekFromContent @ chunk-DPQRDNL2.js:275
+e @ chunk-4RD4FFU6.js:32Understand this error
+chunk-DPQRDNL2.js:288 Uncaught (in promise) lhi {message: 'Value of the latch has already changed', cause: undefined, name: 'lhi', mw8_1: e6t, stack: 'lhi: Value of the latch has already changed\n    at…bbjpldiijjmm/content/chunk-4RD4FFU6.js:32:121910)'}
+r.aq8 @ chunk-DPQRDNL2.js:288
+oSi @ chunk-DPQRDNL2.js:279
+r.uqi @ chunk-DPQRDNL2.js:283
+r.addContentAndGetCursorToStartFromIt @ chunk-DPQRDNL2.js:283
+r.pmy @ chunk-DPQRDNL2.js:275
+r.seekFromContent @ chunk-DPQRDNL2.js:275
+e @ chunk-4RD4FFU6.js:32Understand this error
+chunk-LRH6BLRZ.js:31 orchestration: Initializing user store with state {}
+chunk-LRH6BLRZ.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+11Fetch finished loading: POST "<URL>".
+chunk-LRH6BLRZ.js:31 orchestration: Initializing user store with state {}
+chunk-LRH6BLRZ.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-LRH6BLRZ.js:31 orchestration: Initializing user store with state {}
+chunk-LRH6BLRZ.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+SchedulingWorkflow.tsx:189 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+chunk-LRH6BLRZ.js:31 orchestration: Initializing user store with state {}
+chunk-LRH6BLRZ.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+SchedulingWorkflow.tsx:189 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:189 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:189 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+NewRegistrationsBanner.tsx:27 
+            
+            
+           GET https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/admin/registrations/new-count 502 (Bad Gateway)
+queryFn @ NewRegistrationsBanner.tsx:27
+fetchFn @ @tanstack_react-query.js?v=80b17ebe:881
+run @ @tanstack_react-query.js?v=80b17ebe:513
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+executeFetch_fn @ @tanstack_react-query.js?v=80b17ebe:2278
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:2312Understand this error
+NewRegistrationsBanner.tsx:27 
+            
+            
+           GET https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/admin/registrations/new-count 401 (Unauthorized)
+queryFn @ NewRegistrationsBanner.tsx:27
+fetchFn @ @tanstack_react-query.js?v=80b17ebe:881
+run @ @tanstack_react-query.js?v=80b17ebe:513
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+executeFetch_fn @ @tanstack_react-query.js?v=80b17ebe:2278
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:2312Understand this error
+NewRegistrationsBanner.tsx:27 Fetch failed loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/admin/registrations/new-count".
+queryFn @ NewRegistrationsBanner.tsx:27
+fetchFn @ @tanstack_react-query.js?v=80b17ebe:881
+run @ @tanstack_react-query.js?v=80b17ebe:513
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+executeFetch_fn @ @tanstack_react-query.js?v=80b17ebe:2278
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:2312
+chunk-LRH6BLRZ.js:31 orchestration: Initializing user store with state {}
+chunk-LRH6BLRZ.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+Fetch failed loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/admin/registrations/new-count".
+Navigated to https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin/scheduling
+chunk-LRH6BLRZ.js:31 orchestration: Initializing config store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-LRH6BLRZ.js:31 orchestration: Initializing feature flag store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-LRH6BLRZ.js:31 orchestration: Initializing user store with state {}
+chunk-LRH6BLRZ.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+js?libraries=places&v=beta&callback=Function.prototype:1448 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+Vca @ js?libraries=places&v=beta&callback=Function.prototype:1448
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1694
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1694Understand this warning
+js?libraries=places&v=beta&callback=Function.prototype:1477 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+_.B.send @ js?libraries=places&v=beta&callback=Function.prototype:1477
+Tca @ js?libraries=places&v=beta&callback=Function.prototype:1457
+Vca @ js?libraries=places&v=beta&callback=Function.prototype:1449
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1694
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1694
+client:495 [vite] connecting...
+client:536 WebSocket connection to 'wss://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/?token=joadLvJlLk-0' failed: 
+setupWebSocket @ client:536
+(anonymous) @ client:531Understand this error
+client:536 Uncaught (in promise) SyntaxError: Failed to construct 'WebSocket': The URL 'wss://localhost:undefined/?token=joadLvJlLk-0' is invalid.
+    at setupWebSocket (client:536:19)
+    at fallback (client:509:16)
+    at WebSocket.<anonymous> (client:555:7)
+setupWebSocket @ client:536
+fallback @ client:509
+(anonymous) @ client:555Understand this error
+util.js:39 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+swa @ util.js:39
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1450
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1450
+setTimeout
+Vca @ js?libraries=places&v=beta&callback=Function.prototype:1450
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1694
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1694Understand this warning
+env.ts:10 Google Maps API key length: 0 characters
+env.ts:11 Mapbox API key length: 93 characters
+env.ts:17 Google Maps API already loaded
+RouteDebugger.tsx:13 Current route location (Wouter): /admin/scheduling
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin/scheduling
+RouteDebugger.tsx:15 Current pathname: /admin/scheduling
+RouteDebugger.tsx:16 Current search: 
+use-user.ts:59 Fetching user with emulation token: not present
+use-user.ts:61 
+            
+            
+           GET https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user 401 (Unauthorized)
+fetchUser @ use-user.ts:61
+fetchFn @ @tanstack_react-query.js?v=80b17ebe:881
+run @ @tanstack_react-query.js?v=80b17ebe:513
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+executeFetch_fn @ @tanstack_react-query.js?v=80b17ebe:2278
+onSubscribe @ @tanstack_react-query.js?v=80b17ebe:1982
+subscribe @ @tanstack_react-query.js?v=80b17ebe:24
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:3145
+ai @ chunk-E27YX2RL.js?v=80b17ebe:3392
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+Ek @ chunk-E27YX2RL.js?v=80b17ebe:5681
+jg @ chunk-E27YX2RL.js?v=80b17ebe:2527
+Wk @ chunk-E27YX2RL.js?v=80b17ebe:6021
+Pk @ chunk-E27YX2RL.js?v=80b17ebe:5964
+Gk @ chunk-E27YX2RL.js?v=80b17ebe:5620
+J @ chunk-E27YX2RL.js?v=80b17ebe:97
+R @ chunk-E27YX2RL.js?v=80b17ebe:129Understand this error
+AnimatedBackground.tsx:30 AnimatedBackground initialized with type: particles
+auth-page.tsx:78 Setting redirect based on current protected URL: /admin/scheduling
+use-user.ts:61 Fetch failed loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user".
+fetchUser @ use-user.ts:61
+fetchFn @ @tanstack_react-query.js?v=80b17ebe:881
+run @ @tanstack_react-query.js?v=80b17ebe:513
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+executeFetch_fn @ @tanstack_react-query.js?v=80b17ebe:2278
+onSubscribe @ @tanstack_react-query.js?v=80b17ebe:1982
+subscribe @ @tanstack_react-query.js?v=80b17ebe:24
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:3145
+ai @ chunk-E27YX2RL.js?v=80b17ebe:3392
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+Ek @ chunk-E27YX2RL.js?v=80b17ebe:5681
+jg @ chunk-E27YX2RL.js?v=80b17ebe:2527
+Wk @ chunk-E27YX2RL.js?v=80b17ebe:6021
+Pk @ chunk-E27YX2RL.js?v=80b17ebe:5964
+Gk @ chunk-E27YX2RL.js?v=80b17ebe:5620
+J @ chunk-E27YX2RL.js?v=80b17ebe:97
+R @ chunk-E27YX2RL.js?v=80b17ebe:129
+
+                
+          
+          
+          
+         Chrome is moving towards a new experience that allows users to choose to browse without third-party cookies.Understand this warning
+scheduling:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+scheduling:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+use-auth.tsx:85 
+            
+            
+           GET https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user 401 (Unauthorized)
+queryFn @ use-auth.tsx:85
+fetchFn @ @tanstack_react-query.js?v=80b17ebe:881
+run @ @tanstack_react-query.js?v=80b17ebe:513
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+executeFetch_fn @ @tanstack_react-query.js?v=80b17ebe:2278
+onSubscribe @ @tanstack_react-query.js?v=80b17ebe:1982
+subscribe @ @tanstack_react-query.js?v=80b17ebe:24
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:3145
+ai @ chunk-E27YX2RL.js?v=80b17ebe:3392
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+Ek @ chunk-E27YX2RL.js?v=80b17ebe:5681
+jg @ chunk-E27YX2RL.js?v=80b17ebe:2527
+Wk @ chunk-E27YX2RL.js?v=80b17ebe:6021
+Pk @ chunk-E27YX2RL.js?v=80b17ebe:5964
+Gk @ chunk-E27YX2RL.js?v=80b17ebe:5620
+J @ chunk-E27YX2RL.js?v=80b17ebe:97
+R @ chunk-E27YX2RL.js?v=80b17ebe:129Understand this error
+use-auth.tsx:85 Fetch failed loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user".
+queryFn @ use-auth.tsx:85
+fetchFn @ @tanstack_react-query.js?v=80b17ebe:881
+run @ @tanstack_react-query.js?v=80b17ebe:513
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+executeFetch_fn @ @tanstack_react-query.js?v=80b17ebe:2278
+onSubscribe @ @tanstack_react-query.js?v=80b17ebe:1982
+subscribe @ @tanstack_react-query.js?v=80b17ebe:24
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:3145
+ai @ chunk-E27YX2RL.js?v=80b17ebe:3392
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+Ek @ chunk-E27YX2RL.js?v=80b17ebe:5681
+jg @ chunk-E27YX2RL.js?v=80b17ebe:2527
+Wk @ chunk-E27YX2RL.js?v=80b17ebe:6021
+Pk @ chunk-E27YX2RL.js?v=80b17ebe:5964
+Gk @ chunk-E27YX2RL.js?v=80b17ebe:5620
+J @ chunk-E27YX2RL.js?v=80b17ebe:97
+R @ chunk-E27YX2RL.js?v=80b17ebe:129
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+Promise.then
+S @ out-4.5.44.js:1
+y @ out-4.5.44.js:1
+E @ out-4.5.44.js:1
+e.onload @ inner.html:1
+script
+(anonymous) @ inner.html:1
+(anonymous) @ inner.html:1
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+h @ out-4.5.44.js:1
+e @ inner.html:1
+menu.js:6 [Violation] Added non-passive event listener to a scroll-blocking 'wheel' event. Consider marking event handler as 'passive' to make the page more responsive. See https://www.chromestatus.com/feature/5745543795965952
+$ @ menu.js:6
+m @ menu.js:90
+T @ menu.js:6
+m @ menu.js:104
+T @ menu.js:6
+m @ menu.js:104
+p @ menu.js:104
+lp @ menu.js:6
+hn @ menu.js:6
+ Submitting login with email: bperdomo@zoho.com
+ Login mutation called with: bperdomo@zoho.com
+ Sending login request with data: {email: 'bperdomo@zoho.com', passwordLength: 8}
+ Login response status: 200
+ Login successful, received user data: Yes
+ Fetching current user after login
+ Fetch finished loading: POST "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/login?t=1751382786567".
+mutationFn @ use-auth.tsx:81
+fn @ @tanstack_react-query.js:1235
+run @ @tanstack_react-query.js:513
+start @ @tanstack_react-query.js:555
+execute @ @tanstack_react-query.js:1271
+await in execute
+mutate @ @tanstack_react-query.js:2690
+onSubmit @ auth-page.tsx:122
+(anonymous) @ chunk-Z3BHYHOH.js:1481
+await in (anonymous)
+Nb @ chunk-E27YX2RL.js:975
+Tb @ chunk-E27YX2RL.js:991
+Ub @ chunk-E27YX2RL.js:994
+nf @ chunk-E27YX2RL.js:2017
+se @ chunk-E27YX2RL.js:2040
+(anonymous) @ chunk-E27YX2RL.js:2312
+Qk @ chunk-E27YX2RL.js:5701
+Jb @ chunk-E27YX2RL.js:927
+hd @ chunk-E27YX2RL.js:2113
+fd @ chunk-E27YX2RL.js:1454
+ed @ chunk-E27YX2RL.js:1437
+submit @ injected.js:5
+ds @ injected.js:5
+C1 @ injected.js:5
+await in C1
+hb @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+r @ injected.js:5
+ User data fetched after login: success
+ Fetch finished loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user".
+mutationFn @ use-auth.tsx:106
+await in mutationFn
+fn @ @tanstack_react-query.js:1235
+run @ @tanstack_react-query.js:513
+start @ @tanstack_react-query.js:555
+execute @ @tanstack_react-query.js:1271
+await in execute
+mutate @ @tanstack_react-query.js:2690
+onSubmit @ auth-page.tsx:122
+(anonymous) @ chunk-Z3BHYHOH.js:1481
+await in (anonymous)
+Nb @ chunk-E27YX2RL.js:975
+Tb @ chunk-E27YX2RL.js:991
+Ub @ chunk-E27YX2RL.js:994
+nf @ chunk-E27YX2RL.js:2017
+se @ chunk-E27YX2RL.js:2040
+(anonymous) @ chunk-E27YX2RL.js:2312
+Qk @ chunk-E27YX2RL.js:5701
+Jb @ chunk-E27YX2RL.js:927
+hd @ chunk-E27YX2RL.js:2113
+fd @ chunk-E27YX2RL.js:1454
+ed @ chunk-E27YX2RL.js:1437
+submit @ injected.js:5
+ds @ injected.js:5
+C1 @ injected.js:5
+await in C1
+hb @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+r @ injected.js:5
+ Login mutation completed successfully
+ Performing explicit user data fetch after login
+ AUTH REDIRECT: User logged in, handling redirect
+ Found redirect path: /admin/scheduling
+ Redirecting to: /admin/scheduling
+ Fetch finished loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user".
+onSubmit @ auth-page.tsx:126
+await in onSubmit
+(anonymous) @ chunk-Z3BHYHOH.js:1481
+await in (anonymous)
+Nb @ chunk-E27YX2RL.js:975
+Tb @ chunk-E27YX2RL.js:991
+Ub @ chunk-E27YX2RL.js:994
+nf @ chunk-E27YX2RL.js:2017
+se @ chunk-E27YX2RL.js:2040
+(anonymous) @ chunk-E27YX2RL.js:2312
+Qk @ chunk-E27YX2RL.js:5701
+Jb @ chunk-E27YX2RL.js:927
+hd @ chunk-E27YX2RL.js:2113
+fd @ chunk-E27YX2RL.js:1454
+ed @ chunk-E27YX2RL.js:1437
+submit @ injected.js:5
+ds @ injected.js:5
+C1 @ injected.js:5
+await in C1
+hb @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+r @ injected.js:5
+ User data retrieved after login: success
+ Fetch failed loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user".
+queryFn @ use-auth.tsx:38
+fetchFn @ @tanstack_react-query.js:881
+run @ @tanstack_react-query.js:513
+start @ @tanstack_react-query.js:555
+fetch @ @tanstack_react-query.js:969
+(anonymous) @ @tanstack_react-query.js:1810
+(anonymous) @ @tanstack_react-query.js:1809
+batch @ @tanstack_react-query.js:603
+refetchQueries @ @tanstack_react-query.js:1808
+(anonymous) @ @tanstack_react-query.js:1794
+batch @ @tanstack_react-query.js:603
+invalidateQueries @ @tanstack_react-query.js:1787
+onSuccess @ use-auth.tsx:129
+execute @ @tanstack_react-query.js:1279
+await in execute
+mutate @ @tanstack_react-query.js:2690
+onSubmit @ auth-page.tsx:122
+(anonymous) @ chunk-Z3BHYHOH.js:1481
+await in (anonymous)
+Nb @ chunk-E27YX2RL.js:975
+Tb @ chunk-E27YX2RL.js:991
+Ub @ chunk-E27YX2RL.js:994
+nf @ chunk-E27YX2RL.js:2017
+se @ chunk-E27YX2RL.js:2040
+(anonymous) @ chunk-E27YX2RL.js:2312
+Qk @ chunk-E27YX2RL.js:5701
+Jb @ chunk-E27YX2RL.js:927
+hd @ chunk-E27YX2RL.js:2113
+fd @ chunk-E27YX2RL.js:1454
+ed @ chunk-E27YX2RL.js:1437
+submit @ injected.js:5
+ds @ injected.js:5
+C1 @ injected.js:5
+await in C1
+hb @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+r @ injected.js:5
+Navigated to https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin/scheduling
+js?libraries=places&v=beta&callback=Function.prototype:1448 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+Vca @ js?libraries=places&v=beta&callback=Function.prototype:1448
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1694
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1694Understand this warning
+js?libraries=places&v=beta&callback=Function.prototype:1477 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1477
+Tca @ js?libraries=places&v=beta&callback=Function.prototype:1457
+Vca @ js?libraries=places&v=beta&callback=Function.prototype:1449
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1694
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1694
+chunk-LRH6BLRZ.js:31 orchestration: Initializing config store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-LRH6BLRZ.js:31 orchestration: Initializing feature flag store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-LRH6BLRZ.js:31 orchestration: Initializing user store with state {}
+chunk-LRH6BLRZ.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+client:495 [vite] connecting...
+client:536 WebSocket connection to 'wss://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/?token=joadLvJlLk-0' failed: 
+setupWebSocket @ client:536
+(anonymous) @ client:531Understand this error
+client:536 Uncaught (in promise) SyntaxError: Failed to construct 'WebSocket': The URL 'wss://localhost:undefined/?token=joadLvJlLk-0' is invalid.
+    at setupWebSocket (client:536:19)
+    at fallback (client:509:16)
+    at WebSocket.<anonymous> (client:555:7)
+setupWebSocket @ client:536
+fallback @ client:509
+(anonymous) @ client:555Understand this error
+util.js:39 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+swa @ util.js:39
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1450
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1450
+setTimeout
+Vca @ js?libraries=places&v=beta&callback=Function.prototype:1450
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1694
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1694Understand this warning
+env.ts:10 Google Maps API key length: 0 characters
+env.ts:11 Mapbox API key length: 93 characters
+env.ts:17 Google Maps API already loaded
+RouteDebugger.tsx:13 Current route location (Wouter): /admin/scheduling
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin/scheduling
+RouteDebugger.tsx:15 Current pathname: /admin/scheduling
+RouteDebugger.tsx:16 Current search: 
+use-user.ts:59 Fetching user with emulation token: not present
+14Fetch finished loading: GET "<URL>".
+use-user.ts:76 User data fetched: {id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: '$2b$12$d6n1CBWgsWFm0fh77F1OX.YxDZy7/O3aLSuJOuq4QkvOtFmSit7BC', firstName: 'Bryan', …}
+14Failed to decode downloaded font: <URL>Understand this warning
+14OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+
+                
+          
+          
+          
+         Chrome is moving towards a new experience that allows users to choose to browse without third-party cookies.Understand this warning
+use-permissions.ts:167 Fetching permissions, emulation token: not present
+queryClient.ts:72 Fetch failed loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/admin/organization-settings".
+queryFn @ queryClient.ts:72
+fetchFn @ @tanstack_react-query.js?v=80b17ebe:881
+run @ @tanstack_react-query.js?v=80b17ebe:513
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+executeFetch_fn @ @tanstack_react-query.js?v=80b17ebe:2278
+onSubscribe @ @tanstack_react-query.js?v=80b17ebe:1982
+subscribe @ @tanstack_react-query.js?v=80b17ebe:24
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:3145
+ai @ chunk-E27YX2RL.js?v=80b17ebe:3392
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+Wk @ chunk-E27YX2RL.js?v=80b17ebe:6018
+Pk @ chunk-E27YX2RL.js?v=80b17ebe:5964
+Ek @ chunk-E27YX2RL.js?v=80b17ebe:5693
+jg @ chunk-E27YX2RL.js?v=80b17ebe:2527
+(anonymous) @ chunk-E27YX2RL.js?v=80b17ebe:5515
+setTimeout
+defaultScheduler @ @tanstack_react-query.js?v=80b17ebe:565
+flush @ @tanstack_react-query.js?v=80b17ebe:589
+batch @ @tanstack_react-query.js?v=80b17ebe:607
+dispatch_fn @ @tanstack_react-query.js?v=80b17ebe:1039
+setData @ @tanstack_react-query.js?v=80b17ebe:718
+onSuccess @ @tanstack_react-query.js?v=80b17ebe:940
+resolve @ @tanstack_react-query.js?v=80b17ebe:475
+Promise.then
+run @ @tanstack_react-query.js?v=80b17ebe:517
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+executeFetch_fn @ @tanstack_react-query.js?v=80b17ebe:2278
+onSubscribe @ @tanstack_react-query.js?v=80b17ebe:1982
+subscribe @ @tanstack_react-query.js?v=80b17ebe:24
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:3145
+ai @ chunk-E27YX2RL.js?v=80b17ebe:3392
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+Ek @ chunk-E27YX2RL.js?v=80b17ebe:5681
+jg @ chunk-E27YX2RL.js?v=80b17ebe:2527
+Wk @ chunk-E27YX2RL.js?v=80b17ebe:6021
+Pk @ chunk-E27YX2RL.js?v=80b17ebe:5964
+Gk @ chunk-E27YX2RL.js?v=80b17ebe:5620
+J @ chunk-E27YX2RL.js?v=80b17ebe:97
+R @ chunk-E27YX2RL.js?v=80b17ebe:129
+12Invalid keyframe value for property filter: blur(-0.08136px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.16063px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.22707px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.28173px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.32564px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.3598px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.38521px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.40278px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.41343px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.41799px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.41726px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.41199px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.40286px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.39052px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.37556px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.35849px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.33982px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.31996px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.2993px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.27819px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.25693px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.23576px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.21492px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.19459px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.17493px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.15606px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.13808px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.12106px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.10507px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.09014px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.07628px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.0635px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.0518px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.04115px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.03153px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.02289px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.01521px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.00842px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.00249px)Understand this warning
+queryClient.ts:72 Fetch failed loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/admin/events".
+queryFn @ queryClient.ts:72
+fetchFn @ @tanstack_react-query.js?v=80b17ebe:881
+run @ @tanstack_react-query.js?v=80b17ebe:513
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+fetchQuery @ @tanstack_react-query.js?v=80b17ebe:1827
+prefetchQuery @ @tanstack_react-query.js?v=80b17ebe:1830
+(anonymous) @ admin-dashboard.tsx:5914
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+Wk @ chunk-E27YX2RL.js?v=80b17ebe:6018
+Pk @ chunk-E27YX2RL.js?v=80b17ebe:5964
+Ek @ chunk-E27YX2RL.js?v=80b17ebe:5693
+jg @ chunk-E27YX2RL.js?v=80b17ebe:2527
+(anonymous) @ chunk-E27YX2RL.js?v=80b17ebe:5515
+setTimeout
+defaultScheduler @ @tanstack_react-query.js?v=80b17ebe:565
+flush @ @tanstack_react-query.js?v=80b17ebe:589
+batch @ @tanstack_react-query.js?v=80b17ebe:607
+dispatch_fn @ @tanstack_react-query.js?v=80b17ebe:1039
+setData @ @tanstack_react-query.js?v=80b17ebe:718
+onSuccess @ @tanstack_react-query.js?v=80b17ebe:940
+resolve @ @tanstack_react-query.js?v=80b17ebe:475
+Promise.then
+run @ @tanstack_react-query.js?v=80b17ebe:517
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+executeFetch_fn @ @tanstack_react-query.js?v=80b17ebe:2278
+onSubscribe @ @tanstack_react-query.js?v=80b17ebe:1982
+subscribe @ @tanstack_react-query.js?v=80b17ebe:24
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:3145
+ai @ chunk-E27YX2RL.js?v=80b17ebe:3392
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+Ek @ chunk-E27YX2RL.js?v=80b17ebe:5681
+jg @ chunk-E27YX2RL.js?v=80b17ebe:2527
+Wk @ chunk-E27YX2RL.js?v=80b17ebe:6021
+Pk @ chunk-E27YX2RL.js?v=80b17ebe:5964
+Gk @ chunk-E27YX2RL.js?v=80b17ebe:5620
+J @ chunk-E27YX2RL.js?v=80b17ebe:97
+R @ chunk-E27YX2RL.js?v=80b17ebe:129
+use-permissions.ts:179 Fetched permissions: {roles: Array(1), permissions: Array(42)}
+use-permissions.ts:192 Normalized dot permission "users.view" to "view_users"
+use-permissions.ts:192 Normalized dot permission "users.create" to "create_users"
+use-permissions.ts:192 Normalized dot permission "users.edit" to "edit_users"
+use-permissions.ts:192 Normalized dot permission "users.delete" to "delete_users"
+use-permissions.ts:192 Normalized dot permission "events.view" to "view_events"
+use-permissions.ts:192 Normalized dot permission "events.create" to "create_events"
+use-permissions.ts:192 Normalized dot permission "events.edit" to "edit_events"
+use-permissions.ts:192 Normalized dot permission "events.delete" to "delete_events"
+use-permissions.ts:192 Normalized dot permission "teams.view" to "view_teams"
+use-permissions.ts:192 Normalized dot permission "teams.create" to "create_teams"
+use-permissions.ts:192 Normalized dot permission "teams.edit" to "edit_teams"
+use-permissions.ts:192 Normalized dot permission "teams.delete" to "delete_teams"
+use-permissions.ts:192 Normalized dot permission "games.view" to "view_games"
+use-permissions.ts:192 Normalized dot permission "games.create" to "create_games"
+use-permissions.ts:192 Normalized dot permission "games.edit" to "edit_games"
+use-permissions.ts:192 Normalized dot permission "games.delete" to "delete_games"
+use-permissions.ts:192 Normalized dot permission "scores.view" to "view_scores"
+use-permissions.ts:192 Normalized dot permission "scores.create" to "create_scores"
+use-permissions.ts:192 Normalized dot permission "scores.edit" to "edit_scores"
+use-permissions.ts:192 Normalized dot permission "scores.delete" to "delete_scores"
+use-permissions.ts:192 Normalized dot permission "finances.view" to "view_finances"
+use-permissions.ts:192 Normalized dot permission "finances.create" to "create_finances"
+use-permissions.ts:192 Normalized dot permission "finances.edit" to "edit_finances"
+use-permissions.ts:192 Normalized dot permission "finances.delete" to "delete_finances"
+use-permissions.ts:192 Normalized dot permission "finances.approve" to "approve_finances"
+use-permissions.ts:192 Normalized dot permission "settings.view" to "view_settings"
+use-permissions.ts:192 Normalized dot permission "settings.edit" to "edit_settings"
+use-permissions.ts:192 Normalized dot permission "reports.view" to "view_reports"
+use-permissions.ts:192 Normalized dot permission "reports.export" to "export_reports"
+use-permissions.ts:192 Normalized dot permission "administrators.view" to "view_administrators"
+use-permissions.ts:192 Normalized dot permission "administrators.create" to "create_administrators"
+use-permissions.ts:192 Normalized dot permission "administrators.edit" to "edit_administrators"
+use-permissions.ts:192 Normalized dot permission "administrators.delete" to "delete_administrators"
+use-permissions.ts:192 Normalized dot permission "coupons.view" to "view_coupons"
+use-permissions.ts:192 Normalized dot permission "coupons.create" to "create_coupons"
+use-permissions.ts:192 Normalized dot permission "coupons.edit" to "edit_coupons"
+use-permissions.ts:192 Normalized dot permission "coupons.delete" to "delete_coupons"
+use-permissions.ts:192 Normalized dot permission "members.view" to "view_members"
+use-permissions.ts:192 Normalized dot permission "scheduling.view" to "view_scheduling"
+use-permissions.ts:192 Normalized dot permission "scheduling.create" to "create_scheduling"
+use-permissions.ts:192 Normalized dot permission "scheduling.edit" to "edit_scheduling"
+use-permissions.ts:192 Normalized dot permission "scheduling.delete" to "delete_scheduling"
+use-permissions.ts:210 Final normalized permissions: (42) ['view_users', 'create_users', 'edit_users', 'delete_users', 'view_events', 'create_events', 'edit_events', 'delete_events', 'view_teams', 'create_teams', 'edit_teams', 'delete_teams', 'view_games', 'create_games', 'edit_games', 'delete_games', 'view_scores', 'create_scores', 'edit_scores', 'delete_scores', 'view_finances', 'create_finances', 'edit_finances', 'delete_finances', 'approve_finances', 'view_settings', 'edit_settings', 'view_reports', 'export_reports', 'view_administrators', 'create_administrators', 'edit_administrators', 'delete_administrators', 'view_coupons', 'create_coupons', 'edit_coupons', 'delete_coupons', 'view_members', 'view_scheduling', 'create_scheduling', 'edit_scheduling', 'delete_scheduling']
+queryClient.ts:72 Fetch failed loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/admin/organization-settings".
+queryFn @ queryClient.ts:72
+fetchFn @ @tanstack_react-query.js?v=80b17ebe:881
+run @ @tanstack_react-query.js?v=80b17ebe:513
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+executeFetch_fn @ @tanstack_react-query.js?v=80b17ebe:2278
+onSubscribe @ @tanstack_react-query.js?v=80b17ebe:1982
+subscribe @ @tanstack_react-query.js?v=80b17ebe:24
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:3145
+ai @ chunk-E27YX2RL.js?v=80b17ebe:3392
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+Ek @ chunk-E27YX2RL.js?v=80b17ebe:5681
+jg @ chunk-E27YX2RL.js?v=80b17ebe:2527
+Wk @ chunk-E27YX2RL.js?v=80b17ebe:6021
+Pk @ chunk-E27YX2RL.js?v=80b17ebe:5964
+Gk @ chunk-E27YX2RL.js?v=80b17ebe:5620
+J @ chunk-E27YX2RL.js?v=80b17ebe:97
+R @ chunk-E27YX2RL.js?v=80b17ebe:129
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+Promise.then
+S @ out-4.5.44.js:1
+y @ out-4.5.44.js:1
+E @ out-4.5.44.js:1
+e.onload @ inner.html:1
+script
+(anonymous) @ inner.html:1
+(anonymous) @ inner.html:1
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+h @ out-4.5.44.js:1
+e @ inner.html:1
+SchedulingWorkflow.tsx:56 Fetching teams for event: 1656618593
+SchedulingWorkflow.tsx:60 Teams API response: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:189 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: undefined
+FlightManager.tsx:111 Final extracted age groups: []
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: undefined
+FlightManager.tsx:111 Final extracted age groups: []
+SchedulingWorkflow.tsx:189 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: undefined
+FlightManager.tsx:111 Final extracted age groups: []
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:94 Extracted age group IDs: (220) [10064, 10066, 10066, 10064, 10066, 10066, 10064, 10066, 10056, 10048, 10065, 10064, 10064, 10064, 10064, 10065, 10065, 10065, 10065, 10065, 10065, 10065, 10065, 10066, 10066, 10066, 10066, 10064, 10064, 10061, 10061, 10061, 10061, 10062, 10062, 10062, 10062, 10062, 10062, 10062, 10062, 10062, 10063, 10063, 10063, 10063, 10063, 10063, 10063, 10063, 10063, 10061, 10060, 10060, 10061, 10061, 10061, 10061, 10059, 10060, 10060, 10060, 10060, 10060, 10060, 10060, 10059, 10059, 10057, 10057, 10057, 10057, 10057, 10058, 10058, 10059, 10059, 10059, 10059, 10059, 10059, 10058, 10058, 10058, 10058, 10058, 10058, 10058, 10057, 10054, 10054, 10054, 10054, 10054, 10054, 10055, 10055, 10055, 10055, 10055, …]
+FlightManager.tsx:106 Age groups with names: (24) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:111 Final extracted age groups: (24) ['U17', 'U19', 'U13', 'U9', 'U19', 'U16', 'U16', 'U17', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U11', 'U12', 'U11', 'U10', 'U9', 'U10', 'U8', 'U8', 'U7', 'U7']
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:111 Final extracted age groups: (24) ['U17', 'U19', 'U13', 'U9', 'U19', 'U16', 'U16', 'U17', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U11', 'U12', 'U11', 'U10', 'U9', 'U10', 'U8', 'U8', 'U7', 'U7']
+chunk-J2F67UGW.js?v=80b17ebe:340 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ chunk-J2F67UGW.js?v=80b17ebe:340
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+Wk @ chunk-E27YX2RL.js?v=80b17ebe:6018
+Pk @ chunk-E27YX2RL.js?v=80b17ebe:5964
+Ek @ chunk-E27YX2RL.js?v=80b17ebe:5693
+jg @ chunk-E27YX2RL.js?v=80b17ebe:2527
+(anonymous) @ chunk-E27YX2RL.js?v=80b17ebe:5515Understand this warning
+chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:6 [Violation] Added non-passive event listener to a scroll-blocking 'wheel' event. Consider marking event handler as 'passive' to make the page more responsive. See https://www.chromestatus.com/feature/5745543795965952
+$ @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:6
+m @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:90
+T @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:6
+m @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:104
+T @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:6
+m @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:104
+p @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:104
+lp @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:6
+hn @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:6
+SchedulingWorkflow.tsx:189 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:111 Final extracted age groups: (24) ['U17', 'U19', 'U13', 'U9', 'U19', 'U16', 'U16', 'U17', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U11', 'U12', 'U11', 'U10', 'U9', 'U10', 'U8', 'U8', 'U7', 'U7']
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:111 Final extracted age groups: (24) ['U17', 'U19', 'U13', 'U9', 'U19', 'U16', 'U16', 'U17', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U11', 'U12', 'U11', 'U10', 'U9', 'U10', 'U8', 'U8', 'U7', 'U7']
+SchedulingWorkflow.tsx:189 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:111 Final extracted age groups: (24) ['U17', 'U19', 'U13', 'U9', 'U19', 'U16', 'U16', 'U17', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U11', 'U12', 'U11', 'U10', 'U9', 'U10', 'U8', 'U8', 'U7', 'U7']
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:111 Final extracted age groups: (24) ['U17', 'U19', 'U13', 'U9', 'U19', 'U16', 'U16', 'U17', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U11', 'U12', 'U11', 'U10', 'U9', 'U10', 'U8', 'U8', 'U7', 'U7']
+SchedulingWorkflow.tsx:189 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:111 Final extracted age groups: (24) ['U17', 'U19', 'U13', 'U9', 'U19', 'U16', 'U16', 'U17', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U11', 'U12', 'U11', 'U10', 'U9', 'U10', 'U8', 'U8', 'U7', 'U7']
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:111 Final extracted age groups: (24) ['U17', 'U19', 'U13', 'U9', 'U19', 'U16', 'U16', 'U17', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U11', 'U12', 'U11', 'U10', 'U9', 'U10', 'U8', 'U8', 'U7', 'U7']
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:111 Final extracted age groups: (24) ['U17', 'U19', 'U13', 'U9', 'U19', 'U16', 'U16', 'U17', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U11', 'U12', 'U11', 'U10', 'U9', 'U10', 'U8', 'U8', 'U7', 'U7']
+SchedulingWorkflow.tsx:189 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:189 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:189 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:189 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+GameCreation.tsx:58 GameCreation workflowData: {flight: {…}, bracket: {…}, seed: {…}, timeblock: {…}}
+GameCreation.tsx:59 GameCreation brackets: [{…}]
+GameCreation.tsx:60 GameCreation seedings: [{…}]
+GameCreation.tsx:61 GameCreation timeBlocks: [{…}]
+GameCreation.tsx:192 generateGamesForBracket - bracket: {id: 'flight_1751382830919_unassigned', flightId: 'flight_1751382830919', flightName: 'U17 Boys Flight A - Director Assignment Needed', teamCount: 4, format: 'round_robin_knockout', …}
+GameCreation.tsx:193 generateGamesForBracket - seeding: {bracketId: 'flight_1751382830919_unassigned', bracketName: 'U17 Boys Flight A - Director Assignment Needed', teams: Array(4), pools: Array(0)}
+GameCreation.tsx:194 generateGamesForBracket - seeding.teams: (4) [{…}, {…}, {…}, {…}]
+GameCreation.tsx:195 generateGamesForBracket - seeding.pools: []
+GameCreation.tsx:58 GameCreation workflowData: {flight: {…}, bracket: {…}, seed: {…}, timeblock: {…}}
+GameCreation.tsx:59 GameCreation brackets: [{…}]
+GameCreation.tsx:60 GameCreation seedings: [{…}]
+GameCreation.tsx:61 GameCreation timeBlocks: [{…}]
+SchedulingWorkflow.tsx:189 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+GameCreation.tsx:58 GameCreation workflowData: {flight: {…}, bracket: {…}, seed: {…}, timeblock: {…}}
+GameCreation.tsx:59 GameCreation brackets: [{…}]
+GameCreation.tsx:60 GameCreation seedings: [{…}]
+GameCreation.tsx:61 GameCreation timeBlocks: [{…}]
+SchedulingWorkflow.tsx:189 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+GameCreation.tsx:58 GameCreation workflowData: {flight: {…}, bracket: {…}, seed: {…}, timeblock: {…}}
+GameCreation.tsx:59 GameCreation brackets: [{…}]
+GameCreation.tsx:60 GameCreation seedings: [{…}]
+GameCreation.tsx:61 GameCreation timeBlocks: [{…}]
+SchedulingWorkflow.tsx:189 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+GameCreation.tsx:58 GameCreation workflowData: {flight: {…}, bracket: {…}, seed: {…}, timeblock: {…}}
+GameCreation.tsx:59 GameCreation brackets: [{…}]
+GameCreation.tsx:60 GameCreation seedings: [{…}]
+GameCreation.tsx:61 GameCreation timeBlocks: [{…}]
+GameCreation.tsx:192 generateGamesForBracket - bracket: {id: 'flight_1751382830919_unassigned', flightId: 'flight_1751382830919', flightName: 'U17 Boys Flight A - Director Assignment Needed', teamCount: 4, format: 'round_robin_knockout', …}
+GameCreation.tsx:193 generateGamesForBracket - seeding: {bracketId: 'flight_1751382830919_unassigned', bracketName: 'U17 Boys Flight A - Director Assignment Needed', teams: Array(4), pools: Array(0)}
+GameCreation.tsx:194 generateGamesForBracket - seeding.teams: (4) [{…}, {…}, {…}, {…}]
+GameCreation.tsx:195 generateGamesForBracket - seeding.pools: []
+GameCreation.tsx:58 GameCreation workflowData: {flight: {…}, bracket: {…}, seed: {…}, timeblock: {…}}
+GameCreation.tsx:59 GameCreation brackets: [{…}]
+GameCreation.tsx:60 GameCreation seedings: [{…}]
+GameCreation.tsx:61 GameCreation timeBlocks: [{…}]
+SchedulingWorkflow.tsx:189 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+GameCreation.tsx:58 GameCreation workflowData: {flight: {…}, bracket: {…}, seed: {…}, timeblock: {…}}
+GameCreation.tsx:59 GameCreation brackets: [{…}]
+GameCreation.tsx:60 GameCreation seedings: [{…}]
+GameCreation.tsx:61 GameCreation timeBlocks: [{…}]
+SchedulingWorkflow.tsx:189 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+GameCreation.tsx:58 GameCreation workflowData: {flight: {…}, bracket: {…}, seed: {…}, timeblock: {…}}
+GameCreation.tsx:59 GameCreation brackets: [{…}]
+GameCreation.tsx:60 GameCreation seedings: [{…}]
+GameCreation.tsx:61 GameCreation timeBlocks: [{…}]
+SchedulingWorkflow.tsx:189 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+GameCreation.tsx:58 GameCreation workflowData: {flight: {…}, bracket: {…}, seed: {…}, timeblock: {…}}
+GameCreation.tsx:59 GameCreation brackets: [{…}]
+GameCreation.tsx:60 GameCreation seedings: [{…}]
+GameCreation.tsx:61 GameCreation timeBlocks: [{…}]
