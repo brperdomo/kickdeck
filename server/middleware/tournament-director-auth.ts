@@ -24,16 +24,16 @@ interface AuthenticatedRequest extends Request {
  */
 export async function checkTournamentDirectorRole(userId: number): Promise<boolean> {
   try {
-    const tournamentDirectorRole = await db.query.adminRoles.findFirst({
-      where: and(
-        eq(adminRoles.userId, userId)
-      ),
+    const tournamentDirectorRoles = await db.query.adminRoles.findMany({
+      where: eq(adminRoles.userId, userId),
       with: {
         role: true
       }
     });
 
-    return tournamentDirectorRole?.role?.name === 'tournament_admin';
+    console.log(`[Tournament Director Auth] User ${userId} roles:`, tournamentDirectorRoles.map(r => r.role?.name));
+    
+    return tournamentDirectorRoles.some(role => role.role?.name === 'tournament_director');
   } catch (error) {
     console.error('Error checking tournament director role:', error);
     return false;
@@ -46,7 +46,7 @@ export async function checkTournamentDirectorRole(userId: number): Promise<boole
 export async function getTournamentDirectorEvents(userId: number): Promise<string[]> {
   try {
     const assignments = await db.execute(
-      sql`SELECT event_id FROM tournament_director_events WHERE user_id = ${userId}`
+      sql`SELECT event_id FROM event_administrators WHERE user_id = ${userId}`
     );
 
     console.log(`[Tournament Director Auth] Raw assignments query result:`, assignments.rows);
@@ -75,14 +75,7 @@ export async function authenticateTournamentDirector(
       return res.status(401).json({ error: 'Authentication required' });
     }
 
-    // Check if user is a super admin first (has full access to everything)
-    if (req.user.isAdmin) {
-      console.log('[Tournament Director Auth] User is super admin, granting full access');
-      req.user.isTournamentDirector = false;
-      return next();
-    }
-
-    // Check if user has Tournament Director role
+    // Check if user has Tournament Director role first (even if they have admin flag)
     const isTournamentDirector = await checkTournamentDirectorRole(req.user.id);
     console.log(`[Tournament Director Auth] Is Tournament Director: ${isTournamentDirector}`);
     
@@ -91,10 +84,19 @@ export async function authenticateTournamentDirector(
       const assignedEvents = await getTournamentDirectorEvents(req.user.id);
       console.log(`[Tournament Director Auth] Assigned events: ${assignedEvents.join(', ')}`);
       
-      req.user.isTournamentDirector = true;
-      req.user.assignedEvents = assignedEvents;
-      
-      console.log('[Tournament Director Auth] Tournament Director authentication successful');
+      // If tournament director has specific event assignments, restrict them to those events
+      if (assignedEvents.length > 0) {
+        req.user.isTournamentDirector = true;
+        req.user.assignedEvents = assignedEvents;
+        console.log('[Tournament Director Auth] Tournament Director with restricted access');
+        return next();
+      }
+    }
+
+    // If user is admin but not a restricted tournament director, grant full access
+    if (req.user.isAdmin) {
+      console.log('[Tournament Director Auth] User is super admin, granting full access');
+      req.user.isTournamentDirector = false;
       return next();
     }
 

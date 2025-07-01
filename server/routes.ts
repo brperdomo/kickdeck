@@ -5609,19 +5609,15 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
     });
 
     // Add this new endpoint after the existing event creation endpoint
-    app.get('/api/admin/events', isAdmin, async (req, res) => {
+    app.get('/api/admin/events', authenticateTournamentDirector, async (req, res) => {
       try {
-        // First check if the user is a super admin
-        const userRoles = await db
-          .select({
-            roleName: roles.name
-          })
-          .from(adminRoles)
-          .innerJoin(roles, eq(adminRoles.roleId, roles.id))
-          .where(eq(adminRoles.userId, req.user.id));
-        
-        const isSuperAdmin = userRoles.some(role => role.roleName === 'super_admin');
-        
+        console.log('[Events Router] User object:', {
+          id: req.user?.id,
+          isTournamentDirector: req.user?.isTournamentDirector,
+          assignedEvents: req.user?.assignedEvents,
+          isAdmin: req.user?.isAdmin
+        });
+
         // Base query setup
         let eventsQuery = db
           .select({
@@ -5632,9 +5628,25 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           .from(events)
           .leftJoin(teams, eq(events.id, teams.eventId));
         
-        // For non-super-admin users, restrict events to those they are administrators for
-        if (!isSuperAdmin) {
-          // Get list of events where the user is an administrator
+        // Apply event filtering based on user type
+        if (req.user?.isTournamentDirector && req.user?.assignedEvents) {
+          // Tournament Directors see only their assigned events
+          console.log('[Events Router] Tournament Director - filtering to assigned events:', req.user.assignedEvents);
+          
+          if (req.user.assignedEvents.length === 0) {
+            console.log('[Events Router] No assigned events, returning empty list');
+            return res.json([]);
+          }
+          
+          eventsQuery = eventsQuery.where(
+            sql`${events.id} IN (${sql.join(req.user.assignedEvents.map(id => sql`${id}`), sql`, `)})`
+          );
+        } else if (req.user?.isAdmin && !req.user?.isTournamentDirector) {
+          // Super admins see all events (no filtering)
+          console.log('[Events Router] Super admin - showing all events (no filtering)');
+        } else {
+          // Regular admins see events they're assigned to
+          console.log('[Events Router] Regular admin - checking event assignments');
           const userEventIds = await db
             .select({
               eventId: eventAdministrators.eventId
@@ -5643,14 +5655,12 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
             .where(eq(eventAdministrators.userId, req.user.id))
             .then(results => results.map(r => r.eventId));
           
-          console.log(`User ${req.user.id} has access to ${userEventIds.length} events:`, userEventIds);
+          console.log('[Events Router] Regular admin event assignments:', userEventIds);
           
-          // If there are no events assigned to the user, return an empty array
           if (userEventIds.length === 0) {
             return res.json([]);
           }
           
-          // Modify the query to only include events the user has access to
           eventsQuery = eventsQuery.where(
             sql`${events.id} IN (${sql.join(userEventIds.map(id => sql`${id}`), sql`, `)})`
           );
@@ -5668,11 +5678,10 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           teamCount
         }));
 
+        console.log('[Events Router] Returning', formattedEvents.length, 'events');
         res.json(formattedEvents);
       } catch (error) {
         console.error('Error fetching events:', error);
-        // Added basic error logging for white screen debugging.
-        console.error("Error details:", error);
         res.status(500).send("Failed to fetch events");
       }
     });
