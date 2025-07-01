@@ -143,18 +143,14 @@ export class SimpleScheduler {
           id: teams.id,
           name: teams.name,
           coach: teams.coach,
-          coachPhone: teams.coachPhone,
-          coachEmail: teams.coachEmail,
         })
         .from(teams)
         .where(eq(teams.eventId, eventId));
 
-      const coachMap = {};
+      const coachMap: Record<number, any> = {};
       teamData.forEach(team => {
         coachMap[team.id] = {
           name: team.coach,
-          phone: team.coachPhone,
-          email: team.coachEmail,
           teamName: team.name
         };
       });

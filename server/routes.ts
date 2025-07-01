@@ -68,6 +68,7 @@ import {
   getAllPermissions,
   resetRolePermissions 
 } from "./routes/admin/role-permissions";
+import scheduleManagementRouter from "./routes/admin/schedule-management";
 import { checkCoachEmail } from "./routes/coaches";
 import {
   getEmulatableAdmins,
@@ -705,6 +706,7 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/teams', isAdmin, playersRouter); // Player management router
     app.use('/api/admin', isAdmin, bracketsRouter); // Bracket management router
     app.use('/api/admin/games', isAdmin, gamesRouter); // Game management router
+    app.use('/api/admin/schedule', isAdmin, scheduleManagementRouter); // Schedule management with drag-and-drop
     app.use('/api/admin/clubs', isAdmin, adminClubsRouter); // Admin club management router
     app.use('/api/admin/event-clubs', isAdmin, eventClubsRouter); // Event clubs management router
     app.use('/api/admin/email-config', isAdmin, emailConfigRouter); // Email configuration router
