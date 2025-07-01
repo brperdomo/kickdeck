@@ -6291,18 +6291,36 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           // Insert the generated games
           if (scheduleResult.games && scheduleResult.games.length > 0) {
             for (const game of scheduleResult.games) {
-              // Handle bracket ID - workflow generates string IDs, database expects integers
+              // Find age group ID by looking up one of the teams
               let ageGroupId = 0;
               
-              // Only try database lookup if bracketId looks like an integer
-              if (game.bracketId && !isNaN(Number(game.bracketId))) {
-                const bracket = await tx
-                  .select({ ageGroupId: eventBrackets.ageGroupId })
-                  .from(eventBrackets)
-                  .where(eq(eventBrackets.id, Number(game.bracketId)))
+              try {
+                // Look up the home team's age group
+                const team = await tx
+                  .select({ ageGroupId: teams.ageGroupId })
+                  .from(teams)
+                  .where(eq(teams.id, game.homeTeamId))
                   .limit(1);
                 
-                ageGroupId = bracket.length > 0 ? bracket[0].ageGroupId : 0;
+                if (team.length > 0 && team[0].ageGroupId !== null) {
+                  ageGroupId = team[0].ageGroupId;
+                  console.log(`🏷️ Found age group ID ${ageGroupId} for team ${game.homeTeamId}`);
+                } else {
+                  console.log(`⚠️ Team ${game.homeTeamId} has no age group, using fallback`);
+                  // Try to find any age group for this event as fallback
+                  const fallbackAgeGroup = await tx
+                    .select({ id: eventAgeGroups.id })
+                    .from(eventAgeGroups)
+                    .where(eq(eventAgeGroups.eventId, eventId))
+                    .limit(1);
+                  
+                  if (fallbackAgeGroup.length > 0) {
+                    ageGroupId = fallbackAgeGroup[0].id;
+                    console.log(`🔄 Using fallback age group ID ${ageGroupId}`);
+                  }
+                }
+              } catch (error) {
+                console.log(`❌ Error looking up team ${game.homeTeamId}:`, error);
               }
               
               await tx.insert(games).values({
