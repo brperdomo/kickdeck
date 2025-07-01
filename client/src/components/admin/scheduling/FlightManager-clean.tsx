@@ -84,15 +84,49 @@ const FlightManager: React.FC<FlightManagerProps> = ({ eventId, teamsData, ageGr
     );
   }
 
+  // Display error if flights fetch failed
+  if (flightsError) {
+    return (
+      <Card>
+        <CardContent className="p-6">
+          <div className="text-center text-red-600">
+            <h3 className="text-lg font-semibold mb-2">Error Loading Flights</h3>
+            <p className="text-sm">{flightsError.message}</p>
+            <p className="text-xs mt-2 text-gray-500">Check browser console for detailed error information</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   // Fetch flights for this event
-  const { data: flights = [], isLoading: flightsLoading } = useQuery({
+  const { data: flights = [], isLoading: flightsLoading, error: flightsError } = useQuery({
     queryKey: ['/api/admin/events', eventId, 'flights'],
     queryFn: async () => {
-      const response = await fetch(`/api/admin/events/${eventId}/flights`);
-      if (!response.ok) throw new Error('Failed to fetch flights');
+      const response = await fetch(`/api/admin/events/${eventId}/flights`, {
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Flights API error:', response.status, errorText);
+        throw new Error(`Failed to fetch flights: ${response.status}`);
+      }
+      
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const htmlContent = await response.text();
+        console.error('Expected JSON but got HTML:', htmlContent.substring(0, 200));
+        throw new Error('Server returned HTML instead of JSON - possible authentication issue');
+      }
+      
       return response.json();
     },
-    enabled: !!eventId
+    enabled: !!eventId,
+    retry: false
   });
 
   // Safe data processing after guard - no hooks needed here
@@ -194,10 +228,24 @@ const FlightManager: React.FC<FlightManagerProps> = ({ eventId, teamsData, ageGr
     mutationFn: async (flightData: any) => {
       const response = await fetch(`/api/admin/events/${eventId}/flights`, {
         method: 'POST',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(flightData)
       });
-      if (!response.ok) throw new Error('Failed to create flight');
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Create flight API error:', response.status, errorText);
+        throw new Error(`Failed to create flight: ${response.status}`);
+      }
+      
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const htmlContent = await response.text();
+        console.error('Expected JSON but got HTML:', htmlContent.substring(0, 200));
+        throw new Error('Server returned HTML instead of JSON');
+      }
+      
       return response.json();
     },
     onSuccess: () => {
