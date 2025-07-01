@@ -10,7 +10,7 @@ import {
   Users, Trophy, Target, Clock, Calendar, Play,
   CheckCircle, Circle, AlertTriangle, ArrowRight
 } from "lucide-react";
-import { FlightManager } from "./FlightManager";
+import FlightManager from "./FlightManager-clean";
 import { BracketCreator } from "./BracketCreator";
 import { TeamSeeding } from "./TeamSeeding";
 import { TimeBlockAssignment } from "./TimeBlockAssignment";
@@ -62,6 +62,17 @@ export function SchedulingWorkflow({ eventId, onComplete }: SchedulingWorkflowPr
       console.log('Teams API response:', data);
       console.log('Teams API response length:', data?.length);
       return data;
+    },
+    enabled: !!eventId
+  });
+
+  // Fetch age groups for the event
+  const { data: ageGroupsData, isLoading: ageGroupsLoading } = useQuery({
+    queryKey: ['ageGroups', eventId],
+    queryFn: async () => {
+      const response = await fetch(`/api/admin/events/${eventId}/age-groups`);
+      if (!response.ok) throw new Error('Failed to fetch age groups');
+      return response.json();
     },
     enabled: !!eventId
   });
@@ -195,6 +206,7 @@ export function SchedulingWorkflow({ eventId, onComplete }: SchedulingWorkflowPr
       eventId,
       eventData,
       teamsData: Array.isArray(teamsData) ? teamsData : (teamsData?.teams || []),
+      ageGroupsData: ageGroupsData || [],
       workflowData,
       onComplete: (data: any) => updateStepStatus(currentStepData.id, 'completed', data),
       onError: (error: string) => {
