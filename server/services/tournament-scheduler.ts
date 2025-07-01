@@ -93,26 +93,42 @@ export class TournamentScheduler {
     console.log('🏆 Starting deterministic tournament scheduling...');
     
     // Extract data from workflow
-    const { bracketSeedings, workflowTimeBlocks } = workflowData;
+    const { workflowGames, workflowTimeBlocks } = workflowData;
     
-    if (!bracketSeedings || bracketSeedings.length === 0) {
-      throw new Error('No bracket seedings found in workflow data');
+    if (!workflowGames || workflowGames.length === 0) {
+      throw new Error('No game data found in workflow');
     }
     
     const allGames: Game[] = [];
     let gameCounter = 1;
     
-    // Generate games for each bracket
-    for (const bracket of bracketSeedings) {
-      console.log(`📋 Processing bracket: ${bracket.bracketName} (${bracket.format})`);
+    // Process each bracket from workflow games
+    for (const bracketData of workflowGames) {
+      console.log(`📋 Processing bracket: ${bracketData.bracketName} (${bracketData.format})`);
       
-      const bracketGames = await this.generateBracketGames(
-        bracket,
-        gameCounter
-      );
-      
-      allGames.push(...bracketGames);
-      gameCounter += bracketGames.length;
+      // Convert workflow games to our Game format
+      for (const workflowGame of bracketData.games) {
+        const game: Game = {
+          id: workflowGame.id,
+          gameNumber: gameCounter++,
+          bracketId: bracketData.bracketId,
+          bracketName: bracketData.bracketName,
+          homeTeamId: workflowGame.homeTeamId,
+          homeTeamName: workflowGame.homeTeamName,
+          awayTeamId: workflowGame.awayTeamId,
+          awayTeamName: workflowGame.awayTeamName,
+          round: workflowGame.round,
+          gameType: workflowGame.gameType,
+          duration: workflowGame.duration || 90,
+          poolId: workflowGame.poolId,
+          poolName: workflowGame.poolName,
+          fieldId: undefined,
+          startTime: undefined,
+          endTime: undefined,
+          date: undefined
+        };
+        allGames.push(game);
+      }
     }
     
     // Get available fields and time slots

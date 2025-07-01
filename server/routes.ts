@@ -6274,17 +6274,13 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         console.log(`Filtering by brackets: ${JSON.stringify(selectedBrackets)}`);
         console.log(`Preview mode: ${previewMode ? 'ON' : 'OFF'}`);
 
-        // Use deterministic tournament scheduling (no AI dependency)
-        const { TournamentScheduler } = await import('./services/tournament-scheduler');
+        // Use simple deterministic scheduler (no AI dependency)
+        const { SimpleScheduler } = await import('./services/simple-scheduler');
         
-        console.log('🏆 Starting deterministic tournament scheduling...');
+        console.log('🏆 Starting simple deterministic tournament scheduling...');
         
-        // Generate schedule using traditional algorithms
-        const scheduleResult = await TournamentScheduler.generateSchedule(eventId, req.body, {
-          optimizeFieldUsage: optimizeFieldUsage || true,
-          minRestPeriod: minRestPeriod || 60,
-          allowBackToBack: false
-        });
+        // Generate schedule using workflow data
+        const scheduleResult = await SimpleScheduler.generateSchedule(eventId, req.body);
 
         // Save the generated schedule to the database
         await db.transaction(async (tx) => {
