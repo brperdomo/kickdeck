@@ -68,6 +68,21 @@ export function FlightManager({ eventId, teamsData, workflowData, onComplete, on
   console.log('FlightManager teamsData sample:', teamsData?.slice(0, 2));
   console.log('FlightManager ageGroupsData:', ageGroupsData?.slice(0, 5));
   
+  // Early return if data is not ready
+  if (!teamsData || !ageGroupsData || teamsData.length === 0 || ageGroupsData.length === 0) {
+    console.log('FlightManager: Waiting for data to load...', { teamsCount: teamsData?.length, ageGroupsCount: ageGroupsData?.length });
+    return (
+      <Card>
+        <CardContent className="p-6">
+          <div className="flex items-center justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+            <span className="ml-2">Loading flight management data...</span>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+  
   // Enhanced gender-aware age group extraction
   const genderAwareAgeGroups = useMemo(() => {
     if (!ageGroupsData) return [];
