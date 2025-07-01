@@ -84,7 +84,8 @@ export function FlightManager({ eventId, teamsData, workflowData, onComplete, on
   }
 
   // Safe data processing after guard
-  const extractedAgeGroups = useMemo(() => {
+  // Extract age groups without useMemo to avoid hook errors
+  const extractAgeGroups = () => {
     if (!teamsData || !Array.isArray(teamsData) || !ageGroupsData) {
       return [];
     }
@@ -108,14 +109,16 @@ export function FlightManager({ eventId, teamsData, workflowData, onComplete, on
     
     console.log('Age groups with names:', ageGroupsWithNames);
     
-    return ageGroupsWithNames.map(ag => ag.name);
-  }, [teamsData, ageGroupsData]);
+    return ageGroupsWithNames.map(ag => ag?.name);
+  };
   
+  const extractedAgeGroups = extractAgeGroups();
   console.log('Final extracted age groups:', extractedAgeGroups);
   const uniqueAgeGroups = Array.from(new Set(extractedAgeGroups));
 
   // Group teams by age group for analysis
-  const ageGroupSummary: AgeGroupSummary[] = useMemo(() => {
+  // Remove useMemo to avoid hook errors
+  const buildAgeGroupSummary = () => {
     if (!teamsData || !ageGroupsData) return [];
     
     return teamsData.reduce((acc: AgeGroupSummary[], teamObj) => {
@@ -141,7 +144,9 @@ export function FlightManager({ eventId, teamsData, workflowData, onComplete, on
       }
       return acc;
     }, []);
-  }, [teamsData, ageGroupsData]);
+  };
+  
+  const ageGroupSummary: AgeGroupSummary[] = buildAgeGroupSummary();
 
   // Calculate suggested flights based on team count
   useEffect(() => {
