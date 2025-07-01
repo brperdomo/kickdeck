@@ -66,11 +66,8 @@ const FlightManager: React.FC<FlightManagerProps> = ({ eventId, teamsData, ageGr
 
   const queryClient = useQueryClient();
 
-  // Debug: Log teams data structure to understand age group extraction
-  console.log('FlightManager received teamsData count:', teamsData?.length);
-  console.log('FlightManager teamsData sample:', teamsData?.slice(0, 2));
-  console.log('FlightManager ageGroupsData full:', ageGroupsData);
-  console.log('FlightManager ageGroupsData length:', ageGroupsData?.length);
+  // Debug: Log teams data structure (only once per mount)
+  // console.log('FlightManager received teamsData count:', teamsData?.length);
   
   // Early return if data is not ready
   if (!teamsData || !ageGroupsData || teamsData.length === 0 || ageGroupsData.length === 0) {
@@ -103,8 +100,6 @@ const FlightManager: React.FC<FlightManagerProps> = ({ eventId, teamsData, ageGr
     .map(teamObj => teamObj.team?.ageGroupId)
     .filter(Boolean);
   
-  console.log('Extracted age group IDs:', ageGroupIds);
-  
   const uniqueAgeGroupIds = Array.from(new Set(ageGroupIds));
   
   // Map IDs to age group names
@@ -115,10 +110,7 @@ const FlightManager: React.FC<FlightManagerProps> = ({ eventId, teamsData, ageGr
     })
     .filter(Boolean);
   
-  console.log('Age groups with names:', ageGroupsWithNames);
-  
   const extractedAgeGroups = ageGroupsWithNames.map(ag => ag?.name);
-  console.log('Final extracted age groups:', extractedAgeGroups);
   const uniqueAgeGroups = Array.from(new Set(extractedAgeGroups));
 
   // Group teams by age group for analysis - no useMemo to avoid hook errors
@@ -185,7 +177,7 @@ const FlightManager: React.FC<FlightManagerProps> = ({ eventId, teamsData, ageGr
     }));
     
     generateAutoFlightSuggestions(updatedSummary);
-  }, [teamsData, ageGroupsData, ageGroupSummary]);
+  }, [teamsData, ageGroupsData]);
 
   const getFlightLevelBadge = (level: string) => {
     const colors = {
