@@ -113,6 +113,13 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
+- July 1, 2025: TOURNAMENT DIRECTOR ACCESS RESTRICTION SETUP - Successfully implemented event-specific user access control for external tournament directors
+  - CREATED: Complete user account for darrell.johnson@rebelssoccerclub.com with tournament director role
+  - CONFIGURED: Event-specific access restriction to only Event ID 1825427780 (no access to other events)  
+  - PERMISSIONS: Full team and schedule management rights, view-only payment access, no admin management
+  - VERIFIED: Dual role assignment (tournament_director + tournament_admin) with proper permission enforcement
+  - SECURITY: Password set to TempPassword123! (user should change on first login)
+  - PRODUCTION READY: External tournament director can now access only their assigned event through standard admin interface
 - July 1, 2025: CRITICAL REACT BEAUTIFUL DND FIX - Resolved "Cannot read properties of null (reading 'store')" error in ScheduleManagement component
   - IDENTIFIED: React Beautiful DnD components attempting to access null store during component initialization/SSR
   - IMPLEMENTED: Conditional rendering pattern with isDragEnabled state flag to prevent premature DragDropContext rendering
