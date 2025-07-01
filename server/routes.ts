@@ -6291,14 +6291,19 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           // Insert the generated games
           if (scheduleResult.games && scheduleResult.games.length > 0) {
             for (const game of scheduleResult.games) {
-              // Find the age group for this bracket
-              const bracket = await tx
-                .select({ ageGroupId: eventBrackets.ageGroupId })
-                .from(eventBrackets)
-                .where(eq(eventBrackets.id, game.bracketId))
-                .limit(1);
+              // Handle bracket ID - workflow generates string IDs, database expects integers
+              let ageGroupId = 0;
               
-              const ageGroupId = bracket.length > 0 ? bracket[0].ageGroupId : 0;
+              // Only try database lookup if bracketId looks like an integer
+              if (game.bracketId && !isNaN(Number(game.bracketId))) {
+                const bracket = await tx
+                  .select({ ageGroupId: eventBrackets.ageGroupId })
+                  .from(eventBrackets)
+                  .where(eq(eventBrackets.id, Number(game.bracketId)))
+                  .limit(1);
+                
+                ageGroupId = bracket.length > 0 ? bracket[0].ageGroupId : 0;
+              }
               
               await tx.insert(games).values({
                 eventId,

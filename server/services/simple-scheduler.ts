@@ -27,6 +27,8 @@ export class SimpleScheduler {
       console.log(`📋 Processing bracket: ${bracketData.bracketName}`);
       
       for (const workflowGame of bracketData.games) {
+        console.log(`🏐 Processing game: ${workflowGame.homeTeamName} vs ${workflowGame.awayTeamName} (IDs: ${workflowGame.homeTeamId} vs ${workflowGame.awayTeamId})`);
+        
         // Convert workflow game to database format
         const game = {
           eventId,
