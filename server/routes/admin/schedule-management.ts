@@ -8,6 +8,7 @@ import { Router } from 'express';
 import { db } from '../../../db';
 import { complexes, fields, games, teams } from '../../../db/schema';
 import { eq, and, inArray } from 'drizzle-orm';
+import { CoachConflictService } from '../../services/coach-conflict-service';
 
 const router = Router();
 
