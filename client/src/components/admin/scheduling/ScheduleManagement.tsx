@@ -206,6 +206,10 @@ export default function ScheduleManagement({ eventId }: ScheduleManagementProps)
 
   const games = gamesData?.games || [];
   const complexes = complexesData?.complexes || [];
+  
+  console.log('Schedule Management - Games array:', games);
+  console.log('Schedule Management - Games length:', games.length);
+  console.log('Schedule Management - Complexes array:', complexes);
 
   return (
     <div className="space-y-6">

@@ -297,24 +297,27 @@ export class SimpleScheduler {
     const dayNumber = Math.floor(gameNumber / gamesPerDay);
     const gameSlotInDay = gameNumber % gamesPerDay;
     
-    // Start from next Saturday
+    // Create date in local timezone to avoid UTC conversion issues
     const startDate = new Date();
     const daysUntilSaturday = (6 - startDate.getDay()) % 7;
-    startDate.setDate(startDate.getDate() + (daysUntilSaturday || 7));
     
-    // Add additional days if we exceed single day capacity
-    startDate.setDate(startDate.getDate() + dayNumber);
+    // Calculate the target date
+    const targetDate = new Date(startDate);
+    targetDate.setDate(targetDate.getDate() + (daysUntilSaturday || 7) + dayNumber);
     
-    // Set to field opening time plus the game slot
-    startDate.setHours(fieldOpeningHour, 0, 0, 0);
+    // Calculate the game start time in minutes from field opening
+    const gameStartMinutes = (gameSlotInDay * timeInterval) + additionalMinutes;
+    const totalGameHour = fieldOpeningHour + Math.floor(gameStartMinutes / 60);
+    const totalGameMinute = gameStartMinutes % 60;
     
-    // Add time for this specific game slot
-    const gameTime = new Date(startDate.getTime() + (gameSlotInDay * timeInterval * 60 * 1000) + (additionalMinutes * 60 * 1000));
+    // Create the final game time
+    const gameTime = new Date(targetDate);
+    gameTime.setHours(totalGameHour, totalGameMinute, 0, 0);
     
     // Validate the game time is within operating hours
     const gameHour = gameTime.getHours();
     const gameEndTime = new Date(gameTime.getTime() + (gameDuration * 60 * 1000));
-    const gameEndHour = gameEndTime.getHours();
+    const gameEndHour = gameEndTime.getHours() + (gameEndTime.getMinutes() > 0 ? 1 : 0); // Round up if there are minutes
     
     if (gameHour < fieldOpeningHour || gameEndHour > fieldClosingHour) {
       console.warn(`⚠️ Game ${gameNumber} scheduled outside operating hours: ${gameTime.toLocaleTimeString()} - ${gameEndTime.toLocaleTimeString()}`);
@@ -322,6 +325,7 @@ export class SimpleScheduler {
       console.log(`✅ Game ${gameNumber} scheduled: ${gameTime.toLocaleTimeString()} - ${gameEndTime.toLocaleTimeString()}`);
     }
     
+    // Return ISO string in local timezone format
     return gameTime.toISOString();
   }
 
