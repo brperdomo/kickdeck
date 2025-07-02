@@ -64,9 +64,9 @@ export class SimpleScheduler {
           bracketId: bracketData.bracketId, // Include bracket ID for lookup
           ageGroup: bracketData.bracketName.includes('U17') ? 'U17 Boys' : 'Unknown Age Group',
           bracket: bracketData.bracketName,
-          // Generate realistic game times with proper rest time
-          startTime: SimpleScheduler.generateGameTime(gameCounter - 1, 0, gameDuration, restTime),
-          endTime: SimpleScheduler.generateGameTime(gameCounter - 1, gameDuration, gameDuration, restTime),
+          // Generate realistic game times with proper rest time (will be resolved during async processing)
+          startTime: '', // Will be set during async processing
+          endTime: '', // Will be set during async processing
           field: await SimpleScheduler.assignRealField(gameCounter, bracketData.bracketName, realComplexes),
           complexName: await SimpleScheduler.getComplexForField(gameCounter, bracketData.bracketName, realComplexes),
           // Add field size information for display
@@ -79,6 +79,16 @@ export class SimpleScheduler {
       }
     }
 
+    // Now generate proper game times for all games using systematic approach
+    console.log(`⏰ Generating game times with ${restTime}-minute rest periods from actual field operating hours...`);
+    for (let i = 0; i < allGames.length; i++) {
+      const startTime = await SimpleScheduler.generateGameTime(i, 0, gameDuration, restTime, realComplexes);
+      const endTime = await SimpleScheduler.generateGameTime(i, gameDuration, gameDuration, restTime, realComplexes);
+      
+      allGames[i].startTime = startTime;
+      allGames[i].endTime = endTime;
+    }
+
     console.log(`💾 Prepared ${allGames.length} games for database`);
     
     return {
@@ -86,7 +96,12 @@ export class SimpleScheduler {
       summary: {
         totalGames: allGames.length,
         poolPlayGames: allGames.filter(g => g.gameType === 'pool_play').length,
-        knockoutGames: allGames.filter(g => g.gameType !== 'pool_play').length
+        knockoutGames: allGames.filter(g => g.gameType !== 'pool_play').length,
+        fieldOpeningTime: realComplexes.length > 0 && realComplexes[0].fields.length > 0 
+          ? realComplexes[0].fields[0].openTime 
+          : '08:00',
+        restTimeBetweenGames: restTime,
+        gameDuration: gameDuration
       }
     };
   }
@@ -103,6 +118,7 @@ export class SimpleScheduler {
           address: complexes.address,
           openTime: complexes.openTime,
           closeTime: complexes.closeTime,
+          // timezone: complexes.timezone, // Remove until schema is updated
           fields: {
             id: fields.id,
             name: fields.name,
@@ -234,16 +250,41 @@ export class SimpleScheduler {
   /**
    * Generate realistic game time scheduling
    * Starting from next Saturday at field opening time, with configurable rest time between games
+   * Dynamically reads field opening times and timezones from database
    */
-  static generateGameTime(gameNumber: number, additionalMinutes: number = 0, gameDuration: number = 90, restTime: number = 60): string {
+  static async generateGameTime(
+    gameNumber: number, 
+    additionalMinutes: number = 0, 
+    gameDuration: number = 90, 
+    restTime: number = 60,
+    realComplexes: any[] = []
+  ): Promise<string> {
     const nextSaturday = new Date();
     const daysUntilSaturday = (6 - nextSaturday.getDay()) % 7;
     nextSaturday.setDate(nextSaturday.getDate() + (daysUntilSaturday || 7));
     
-    // Set to 8:00 AM (field opening time for Galway Downs)
-    nextSaturday.setHours(8, 0, 0, 0);
+    // Get field opening time from the first available complex, or default to 8 AM
+    let fieldOpeningHour = 8;
+    let timezone = 'America/New_York'; // Default timezone
     
-    // Calculate time interval: game duration + minimum rest time (default: 90 + 60 = 150 minutes)
+    if (realComplexes.length > 0) {
+      const firstComplex = realComplexes[0];
+      
+      // Parse field opening time from database (format: "08:00")
+      if (firstComplex.fields.length > 0 && firstComplex.fields[0].openTime) {
+        const openTime = firstComplex.fields[0].openTime;
+        fieldOpeningHour = parseInt(openTime.split(':')[0]);
+      }
+      
+      // Use complex timezone if available, otherwise default to Pacific Time  
+      // Note: timezone column may not exist in all database schemas
+      timezone = (firstComplex as any).timezone || 'America/Los_Angeles';
+    }
+    
+    // Set to field opening time
+    nextSaturday.setHours(fieldOpeningHour, 0, 0, 0);
+    
+    // Calculate time interval: game duration + minimum rest time
     const timeInterval = gameDuration + restTime;
     const gameTime = new Date(nextSaturday.getTime() + (gameNumber * timeInterval * 60 * 1000) + (additionalMinutes * 60 * 1000));
     

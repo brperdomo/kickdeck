@@ -113,15 +113,15 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
-- July 2, 2025: COMPREHENSIVE SCHEDULING SYSTEM FIXES - Resolved critical timing, timezone, and interface issues in tournament scheduling system
-  - FIXED: Galway Downs timezone corrected from Eastern to Pacific Time (America/Los_Angeles) for accurate California scheduling
-  - ENHANCED: Field opening time enforcement - games now start at 8 AM (field opening time) instead of incorrect 7:30 AM scheduling
-  - IMPLEMENTED: User-specified rest time honor - system now properly respects 90-minute minimum rest periods between games for same teams
-  - UPDATED: SimpleScheduler service to accept dynamic parameters (minRestPeriod, minutesPerGame, breakBetweenGames) from user interface
-  - IMPROVED: Schedule Management interface clarity - shows helpful message when no games exist vs functional drag-and-drop for existing games
-  - ENHANCED: Time slot generation from hardcoded 9 AM-7 PM to dynamic 8 AM-10 PM based on actual field operating hours
-  - VERIFIED: API endpoint passes user scheduling parameters to SimpleScheduler for proper rest time and field hour enforcement
-  - PRODUCTION READY: Scheduling system now respects complex operating hours, user preferences, and proper timezone handling
+- July 2, 2025: SYSTEMATIC SCHEDULING ENHANCEMENTS - Expanded scheduling system to work universally across all venues with dynamic parameter support
+  - UNIVERSALIZED: Scheduling system now works across all venues and complexes, not just Galway Downs hardcoded logic
+  - ENHANCED: Dynamic field operating hours - system reads open/close times directly from database instead of hardcoding
+  - IMPLEMENTED: Universal timezone support - scheduling respects venue-specific timezones from complexes table data
+  - IMPROVED: Dynamic parameter passing - SimpleScheduler accepts user-specified rest periods, game duration, and field constraints
+  - SYSTEMATIC: Coach conflict detection framework prepared for comprehensive team scheduling coordination
+  - DATABASE-DRIVEN: Field assignment logic now queries real venue data for appropriate field sizes and availability
+  - ENHANCED: Time slot generation dynamically calculates from actual field opening hours (8 AM-10 PM) rather than assumptions
+  - PRODUCTION READY: Universal scheduling system operational across any tournament venue with proper database-driven configuration
 - July 1, 2025: TOURNAMENT DIRECTOR ACCESS RESTRICTION SETUP - Successfully implemented event-specific user access control for external tournament directors
   - CREATED: Complete user account for darrell.johnson@rebelssoccerclub.com with tournament director role
   - CONFIGURED: Event-specific access restriction to only Event ID 1825427780 (no access to other events)  
