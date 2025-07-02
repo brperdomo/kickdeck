@@ -397,7 +397,7 @@ export default function ScheduleManagement({ eventId }: ScheduleManagementProps)
                                     Game {assignedGame.gameNumber}
                                   </div>
                                   <div className="text-xs text-gray-600">
-                                    {typeof assignedGame.homeTeam === 'object' ? assignedGame.homeTeam?.name || 'Team' : assignedGame.homeTeam} vs {typeof assignedGame.awayTeam === 'object' ? assignedGame.awayTeam?.name || 'Team' : assignedGame.awayTeam}
+                                    {typeof assignedGame.homeTeam === 'object' ? (assignedGame.homeTeam?.name || 'Team') : String(assignedGame.homeTeam || 'Team')} vs {typeof assignedGame.awayTeam === 'object' ? (assignedGame.awayTeam?.name || 'Team') : String(assignedGame.awayTeam || 'Team')}
                                   </div>
                                   <Badge variant="secondary" className="text-xs mt-1">
                                     {assignedGame.bracket}
@@ -441,7 +441,7 @@ export default function ScheduleManagement({ eventId }: ScheduleManagementProps)
                     >
                       <div className="font-semibold">Game {game.gameNumber}</div>
                       <div className="text-sm text-gray-600">
-                        {game.homeTeam} vs {game.awayTeam}
+                        {typeof game.homeTeam === 'object' ? (game.homeTeam?.name || 'Team') : String(game.homeTeam || 'Team')} vs {typeof game.awayTeam === 'object' ? (game.awayTeam?.name || 'Team') : String(game.awayTeam || 'Team')}
                       </div>
                       <Badge variant="outline" className="mt-1">
                         {game.bracket}
@@ -477,7 +477,7 @@ export default function ScheduleManagement({ eventId }: ScheduleManagementProps)
           {selectedGame && (
             <div className="space-y-4">
               <div className="bg-gray-50 p-3 rounded-lg">
-                <div className="font-semibold">{selectedGame.homeTeam} vs {selectedGame.awayTeam}</div>
+                <div className="font-semibold">{typeof selectedGame.homeTeam === 'object' ? (selectedGame.homeTeam?.name || 'Team') : String(selectedGame.homeTeam || 'Team')} vs {typeof selectedGame.awayTeam === 'object' ? (selectedGame.awayTeam?.name || 'Team') : String(selectedGame.awayTeam || 'Team')}</div>
                 <Badge variant="outline" className="mt-1">{selectedGame.bracket}</Badge>
               </div>
               
