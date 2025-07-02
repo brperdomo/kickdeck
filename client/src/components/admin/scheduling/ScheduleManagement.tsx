@@ -459,18 +459,18 @@ export default function ScheduleManagement({ eventId }: ScheduleManagementProps)
                             const assignedGame = games.find((game: Game) => {
                               if (game.fieldId !== field.id) return false;
                               
-                              // Check if game has timeSlot data
-                              if (!game.timeSlot || !game.timeSlot.startTime) {
-                                console.log(`Game ${game.gameNumber || game.matchNumber} has no timeSlot data`);
+                              // Check if game has startTime data (API returns startTime directly, not in timeSlot object)
+                              if (!game.startTime) {
+                                console.log(`Game ${game.gameNumber} has no startTime data`);
                                 return false;
                               }
                               
-                              // Get hour from game timeSlot start time
-                              const gameTime = new Date(game.timeSlot.startTime);
+                              // Get hour from game start time
+                              const gameTime = new Date(game.startTime);
                               const gameHour = gameTime.getHours();
                               const slotHour = parseInt(timeSlot.split(':')[0]);
                               
-                              console.log(`Field ${field.id}: Comparing game ${game.gameNumber || game.matchNumber} hour ${gameHour} with slot hour ${slotHour}`);
+                              console.log(`Field ${field.id}: Comparing game ${game.gameNumber} hour ${gameHour} with slot hour ${slotHour}`);
                               
                               return gameHour === slotHour;
                             });

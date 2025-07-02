@@ -1,0 +1,451 @@
+shared-24a197091605bf6b5db10cb218dc9ed9.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+e @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+l @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+(anonymous) @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+setTimeout
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+(anonymous) @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+(anonymous) @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+Promise.then
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+e @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+value @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+e @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+6261 @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+e @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+(anonymous) @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+e.O @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+(anonymous) @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+(anonymous) @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+shared-24a197091605bf6b5db10cb218dc9ed9.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+e @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+l @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+(anonymous) @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+setTimeout
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+(anonymous) @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+(anonymous) @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+Promise.then
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+log @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+log @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+e @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+6261 @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+e @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+(anonymous) @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+e.O @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+(anonymous) @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+(anonymous) @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+SchedulingWorkflow.tsx:57 Fetching teams for event: 1656618593
+8Failed to decode downloaded font: <URL>Understand this warning
+8OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+8Fetch finished loading: GET "<URL>".
+SchedulingWorkflow.tsx:61 Teams API response: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+Promise.then
+S @ out-4.5.44.js:1
+y @ out-4.5.44.js:1
+E @ out-4.5.44.js:1
+e.onload @ inner.html:1
+script
+(anonymous) @ inner.html:1
+(anonymous) @ inner.html:1
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: undefined
+FlightManager.tsx:111 Final extracted age groups: []
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: undefined
+FlightManager.tsx:111 Final extracted age groups: []
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+h @ out-4.5.44.js:1
+e @ inner.html:1
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: undefined
+FlightManager.tsx:111 Final extracted age groups: []
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:94 Extracted age group IDs: (220) [10064, 10066, 10066, 10064, 10066, 10066, 10064, 10066, 10056, 10048, 10065, 10064, 10064, 10064, 10064, 10065, 10065, 10065, 10065, 10065, 10065, 10065, 10065, 10066, 10066, 10066, 10066, 10064, 10064, 10061, 10061, 10061, 10061, 10062, 10062, 10062, 10062, 10062, 10062, 10062, 10062, 10062, 10063, 10063, 10063, 10063, 10063, 10063, 10063, 10063, 10063, 10061, 10060, 10060, 10061, 10061, 10061, 10061, 10059, 10060, 10060, 10060, 10060, 10060, 10060, 10060, 10059, 10059, 10057, 10057, 10057, 10057, 10057, 10058, 10058, 10059, 10059, 10059, 10059, 10059, 10059, 10058, 10058, 10058, 10058, 10058, 10058, 10058, 10057, 10054, 10054, 10054, 10054, 10054, 10054, 10055, 10055, 10055, 10055, 10055, …]
+FlightManager.tsx:106 Age groups with names: (24) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:111 Final extracted age groups: (24) ['U17', 'U19', 'U13', 'U9', 'U19', 'U16', 'U16', 'U17', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U11', 'U12', 'U11', 'U10', 'U9', 'U10', 'U8', 'U8', 'U7', 'U7']
+shared-24a197091605bf6b5db10cb218dc9ed9.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+e @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+l @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+(anonymous) @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+setTimeout
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+(anonymous) @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+log @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+log @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+value @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+value @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+(anonymous) @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:111 Final extracted age groups: (24) ['U17', 'U19', 'U13', 'U9', 'U19', 'U16', 'U16', 'U17', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U11', 'U12', 'U11', 'U10', 'U9', 'U10', 'U8', 'U8', 'U7', 'U7']
+chunk-J2F67UGW.js?v=80b17ebe:340 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ chunk-J2F67UGW.js?v=80b17ebe:340
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+Wk @ chunk-E27YX2RL.js?v=80b17ebe:6018
+Pk @ chunk-E27YX2RL.js?v=80b17ebe:5964
+Ek @ chunk-E27YX2RL.js?v=80b17ebe:5693
+jg @ chunk-E27YX2RL.js?v=80b17ebe:2527
+(anonymous) @ chunk-E27YX2RL.js?v=80b17ebe:5515Understand this warning
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:111 Final extracted age groups: (24) ['U17', 'U19', 'U13', 'U9', 'U19', 'U16', 'U16', 'U17', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U11', 'U12', 'U11', 'U10', 'U9', 'U10', 'U8', 'U8', 'U7', 'U7']
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:111 Final extracted age groups: (24) ['U17', 'U19', 'U13', 'U9', 'U19', 'U16', 'U16', 'U17', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U11', 'U12', 'U11', 'U10', 'U9', 'U10', 'U8', 'U8', 'U7', 'U7']
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:111 Final extracted age groups: (24) ['U17', 'U19', 'U13', 'U9', 'U19', 'U16', 'U16', 'U17', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U11', 'U12', 'U11', 'U10', 'U9', 'U10', 'U8', 'U8', 'U7', 'U7']
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:111 Final extracted age groups: (24) ['U17', 'U19', 'U13', 'U9', 'U19', 'U16', 'U16', 'U17', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U11', 'U12', 'U11', 'U10', 'U9', 'U10', 'U8', 'U8', 'U7', 'U7']
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:111 Final extracted age groups: (24) ['U17', 'U19', 'U13', 'U9', 'U19', 'U16', 'U16', 'U17', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U11', 'U12', 'U11', 'U10', 'U9', 'U10', 'U8', 'U8', 'U7', 'U7']
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:111 Final extracted age groups: (24) ['U17', 'U19', 'U13', 'U9', 'U19', 'U16', 'U16', 'U17', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U11', 'U12', 'U11', 'U10', 'U9', 'U10', 'U8', 'U8', 'U7', 'U7']
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:111 Final extracted age groups: (24) ['U17', 'U19', 'U13', 'U9', 'U19', 'U16', 'U16', 'U17', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U11', 'U12', 'U11', 'U10', 'U9', 'U10', 'U8', 'U8', 'U7', 'U7']
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+injected.js:5 Caught error handling <hide-notification> message
+(anonymous) @ injected.js:5
+Promise.catch
+n @ injected.js:5Understand this warning
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+GameCreation.tsx:58 GameCreation workflowData: {flight: {…}, bracket: {…}, seed: {…}, timeblock: {…}}
+GameCreation.tsx:59 GameCreation brackets: [{…}]
+GameCreation.tsx:60 GameCreation seedings: [{…}]
+GameCreation.tsx:61 GameCreation timeBlocks: [{…}]
+GameCreation.tsx:168 generateGamesForBracket - bracket: {id: 'flight_1751492505053_unassigned', flightId: 'flight_1751492505053', flightName: 'U17 Boys Flight A - Director Assignment Needed', teamCount: 4, format: 'round_robin_knockout', …}
+GameCreation.tsx:169 generateGamesForBracket - seeding: {bracketId: 'flight_1751492505053_unassigned', bracketName: 'U17 Boys Flight A - Director Assignment Needed', teams: Array(4), pools: Array(1)}
+GameCreation.tsx:170 generateGamesForBracket - seeding.teams: (4) [{…}, {…}, {…}, {…}]
+GameCreation.tsx:171 generateGamesForBracket - seeding.pools: [{…}]
+GameCreation.tsx:58 GameCreation workflowData: {flight: {…}, bracket: {…}, seed: {…}, timeblock: {…}}
+GameCreation.tsx:59 GameCreation brackets: [{…}]
+GameCreation.tsx:60 GameCreation seedings: [{…}]
+GameCreation.tsx:61 GameCreation timeBlocks: [{…}]
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+GameCreation.tsx:58 GameCreation workflowData: {flight: {…}, bracket: {…}, seed: {…}, timeblock: {…}}
+GameCreation.tsx:59 GameCreation brackets: [{…}]
+GameCreation.tsx:60 GameCreation seedings: [{…}]
+GameCreation.tsx:61 GameCreation timeBlocks: [{…}]
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+ScheduleBuilder.tsx:86 Fetch finished loading: POST "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/admin/events/1656618593/generate-schedule".
+generateAISchedule @ ScheduleBuilder.tsx:86
+Nb @ chunk-E27YX2RL.js?v=80b17ebe:975
+Tb @ chunk-E27YX2RL.js?v=80b17ebe:991
+Ub @ chunk-E27YX2RL.js?v=80b17ebe:994
+nf @ chunk-E27YX2RL.js?v=80b17ebe:2017
+se @ chunk-E27YX2RL.js?v=80b17ebe:2040
+(anonymous) @ chunk-E27YX2RL.js?v=80b17ebe:2312
+Qk @ chunk-E27YX2RL.js?v=80b17ebe:5701
+Jb @ chunk-E27YX2RL.js?v=80b17ebe:927
+hd @ chunk-E27YX2RL.js?v=80b17ebe:2113
+fd @ chunk-E27YX2RL.js?v=80b17ebe:1454
+ed @ chunk-E27YX2RL.js?v=80b17ebe:1437
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+ScheduleManagement.tsx:130 Schedule Management - Fetched games data: {games: Array(7)}
+ScheduleManagement.tsx:142 Schedule Management - Fetched complexes data: {complexes: Array(1), summary: {…}}
+ScheduleManagement.tsx:259 Actual game start hours: []
+ScheduleManagement.tsx:278 Generated time slots: (11) ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00']
+ScheduleManagement.tsx:285 SCHEDULE DEBUG: {gamesCount: 7, firstGame: {…}, fieldIds: Array(6), timeSlots: Array(11)}
+ScheduleManagement.tsx:464 Game 6 has no timeSlot data
+ScheduleManagement.tsx:464 Game 4 has no timeSlot data
+ScheduleManagement.tsx:464 Game 2 has no timeSlot data
+ScheduleManagement.tsx:464 Game 7 has no timeSlot data
+ScheduleManagement.tsx:464 Game 5 has no timeSlot data
+ScheduleManagement.tsx:464 Game 3 has no timeSlot data
+ScheduleManagement.tsx:464 Game 1 has no timeSlot data
+ScheduleManagement.tsx:464 Game 6 has no timeSlot data
+ScheduleManagement.tsx:464 Game 4 has no timeSlot data
+ScheduleManagement.tsx:464 Game 2 has no timeSlot data
+ScheduleManagement.tsx:464 Game 7 has no timeSlot data
+ScheduleManagement.tsx:464 Game 5 has no timeSlot data
+ScheduleManagement.tsx:464 Game 3 has no timeSlot data
+ScheduleManagement.tsx:464 Game 1 has no timeSlot data
+ScheduleManagement.tsx:464 Game 6 has no timeSlot data
+ScheduleManagement.tsx:464 Game 4 has no timeSlot data
+ScheduleManagement.tsx:464 Game 2 has no timeSlot data
+ScheduleManagement.tsx:464 Game 7 has no timeSlot data
+ScheduleManagement.tsx:464 Game 5 has no timeSlot data
+ScheduleManagement.tsx:464 Game 3 has no timeSlot data
+ScheduleManagement.tsx:464 Game 1 has no timeSlot data
+ScheduleManagement.tsx:464 Game 6 has no timeSlot data
+ScheduleManagement.tsx:464 Game 4 has no timeSlot data
+ScheduleManagement.tsx:464 Game 2 has no timeSlot data
+ScheduleManagement.tsx:464 Game 7 has no timeSlot data
+ScheduleManagement.tsx:464 Game 5 has no timeSlot data
+ScheduleManagement.tsx:464 Game 3 has no timeSlot data
+ScheduleManagement.tsx:464 Game 1 has no timeSlot data
+ScheduleManagement.tsx:464 Game 6 has no timeSlot data
+ScheduleManagement.tsx:464 Game 4 has no timeSlot data
+ScheduleManagement.tsx:464 Game 2 has no timeSlot data
+ScheduleManagement.tsx:464 Game 7 has no timeSlot data
+ScheduleManagement.tsx:464 Game 5 has no timeSlot data
+ScheduleManagement.tsx:464 Game 3 has no timeSlot data
+ScheduleManagement.tsx:464 Game 1 has no timeSlot data
+ScheduleManagement.tsx:464 Game 6 has no timeSlot data
+ScheduleManagement.tsx:464 Game 4 has no timeSlot data
+ScheduleManagement.tsx:464 Game 2 has no timeSlot data
+ScheduleManagement.tsx:464 Game 7 has no timeSlot data
+ScheduleManagement.tsx:464 Game 5 has no timeSlot data
+ScheduleManagement.tsx:464 Game 3 has no timeSlot data
+ScheduleManagement.tsx:464 Game 1 has no timeSlot data
+ScheduleManagement.tsx:464 Game 6 has no timeSlot data
+ScheduleManagement.tsx:464 Game 4 has no timeSlot data
+ScheduleManagement.tsx:464 Game 2 has no timeSlot data
+ScheduleManagement.tsx:464 Game 7 has no timeSlot data
+ScheduleManagement.tsx:464 Game 5 has no timeSlot data
+ScheduleManagement.tsx:464 Game 3 has no timeSlot data
+ScheduleManagement.tsx:464 Game 1 has no timeSlot data
+ScheduleManagement.tsx:464 Game 6 has no timeSlot data
+ScheduleManagement.tsx:464 Game 4 has no timeSlot data
+ScheduleManagement.tsx:464 Game 2 has no timeSlot data
+ScheduleManagement.tsx:464 Game 7 has no timeSlot data
+ScheduleManagement.tsx:464 Game 5 has no timeSlot data
+ScheduleManagement.tsx:464 Game 3 has no timeSlot data
+ScheduleManagement.tsx:464 Game 1 has no timeSlot data
+ScheduleManagement.tsx:464 Game 6 has no timeSlot data
+ScheduleManagement.tsx:464 Game 4 has no timeSlot data
+ScheduleManagement.tsx:464 Game 2 has no timeSlot data
+ScheduleManagement.tsx:464 Game 7 has no timeSlot data
+ScheduleManagement.tsx:464 Game 5 has no timeSlot data
+ScheduleManagement.tsx:464 Game 3 has no timeSlot data
+ScheduleManagement.tsx:464 Game 1 has no timeSlot data
+ScheduleManagement.tsx:464 Game 6 has no timeSlot data
+ScheduleManagement.tsx:464 Game 4 has no timeSlot data
+ScheduleManagement.tsx:464 Game 2 has no timeSlot data
+ScheduleManagement.tsx:464 Game 7 has no timeSlot data
+ScheduleManagement.tsx:464 Game 5 has no timeSlot data
+ScheduleManagement.tsx:464 Game 3 has no timeSlot data
+ScheduleManagement.tsx:464 Game 1 has no timeSlot data
+ScheduleManagement.tsx:464 Game 6 has no timeSlot data
+ScheduleManagement.tsx:464 Game 4 has no timeSlot data
+ScheduleManagement.tsx:464 Game 2 has no timeSlot data
+ScheduleManagement.tsx:464 Game 7 has no timeSlot data
+ScheduleManagement.tsx:464 Game 5 has no timeSlot data
+ScheduleManagement.tsx:464 Game 3 has no timeSlot data
+ScheduleManagement.tsx:464 Game 1 has no timeSlot data
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+ScheduleManagement.tsx:259 Actual game start hours: []
+ScheduleManagement.tsx:278 Generated time slots: (11) ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00']
+ScheduleManagement.tsx:285 SCHEDULE DEBUG: {gamesCount: 7, firstGame: {…}, fieldIds: Array(6), timeSlots: Array(11)}
+ScheduleManagement.tsx:464 Game 6 has no timeSlot data
+ScheduleManagement.tsx:464 Game 4 has no timeSlot data
+ScheduleManagement.tsx:464 Game 2 has no timeSlot data
+ScheduleManagement.tsx:464 Game 7 has no timeSlot data
+ScheduleManagement.tsx:464 Game 5 has no timeSlot data
+ScheduleManagement.tsx:464 Game 3 has no timeSlot data
+ScheduleManagement.tsx:464 Game 1 has no timeSlot data
+ScheduleManagement.tsx:464 Game 6 has no timeSlot data
+ScheduleManagement.tsx:464 Game 4 has no timeSlot data
+ScheduleManagement.tsx:464 Game 2 has no timeSlot data
+ScheduleManagement.tsx:464 Game 7 has no timeSlot data
+ScheduleManagement.tsx:464 Game 5 has no timeSlot data
+ScheduleManagement.tsx:464 Game 3 has no timeSlot data
+ScheduleManagement.tsx:464 Game 1 has no timeSlot data
+ScheduleManagement.tsx:464 Game 6 has no timeSlot data
+ScheduleManagement.tsx:464 Game 4 has no timeSlot data
+ScheduleManagement.tsx:464 Game 2 has no timeSlot data
+ScheduleManagement.tsx:464 Game 7 has no timeSlot data
+ScheduleManagement.tsx:464 Game 5 has no timeSlot data
+ScheduleManagement.tsx:464 Game 3 has no timeSlot data
+ScheduleManagement.tsx:464 Game 1 has no timeSlot data
+ScheduleManagement.tsx:464 Game 6 has no timeSlot data
+ScheduleManagement.tsx:464 Game 4 has no timeSlot data
+ScheduleManagement.tsx:464 Game 2 has no timeSlot data
+ScheduleManagement.tsx:464 Game 7 has no timeSlot data
+ScheduleManagement.tsx:464 Game 5 has no timeSlot data
+ScheduleManagement.tsx:464 Game 3 has no timeSlot data
+ScheduleManagement.tsx:464 Game 1 has no timeSlot data
+ScheduleManagement.tsx:464 Game 6 has no timeSlot data
+ScheduleManagement.tsx:464 Game 4 has no timeSlot data
+ScheduleManagement.tsx:464 Game 2 has no timeSlot data
+ScheduleManagement.tsx:464 Game 7 has no timeSlot data
+ScheduleManagement.tsx:464 Game 5 has no timeSlot data
+ScheduleManagement.tsx:464 Game 3 has no timeSlot data
+ScheduleManagement.tsx:464 Game 1 has no timeSlot data
+ScheduleManagement.tsx:464 Game 6 has no timeSlot data
+ScheduleManagement.tsx:464 Game 4 has no timeSlot data
+ScheduleManagement.tsx:464 Game 2 has no timeSlot data
+ScheduleManagement.tsx:464 Game 7 has no timeSlot data
+ScheduleManagement.tsx:464 Game 5 has no timeSlot data
+ScheduleManagement.tsx:464 Game 3 has no timeSlot data
+ScheduleManagement.tsx:464 Game 1 has no timeSlot data
+ScheduleManagement.tsx:464 Game 6 has no timeSlot data
+ScheduleManagement.tsx:464 Game 4 has no timeSlot data
+ScheduleManagement.tsx:464 Game 2 has no timeSlot data
+ScheduleManagement.tsx:464 Game 7 has no timeSlot data
+ScheduleManagement.tsx:464 Game 5 has no timeSlot data
+ScheduleManagement.tsx:464 Game 3 has no timeSlot data
+ScheduleManagement.tsx:464 Game 1 has no timeSlot data
+ScheduleManagement.tsx:464 Game 6 has no timeSlot data
+ScheduleManagement.tsx:464 Game 4 has no timeSlot data
+ScheduleManagement.tsx:464 Game 2 has no timeSlot data
+ScheduleManagement.tsx:464 Game 7 has no timeSlot data
+ScheduleManagement.tsx:464 Game 5 has no timeSlot data
+ScheduleManagement.tsx:464 Game 3 has no timeSlot data
+ScheduleManagement.tsx:464 Game 1 has no timeSlot data
+ScheduleManagement.tsx:464 Game 6 has no timeSlot data
+ScheduleManagement.tsx:464 Game 4 has no timeSlot data
+ScheduleManagement.tsx:464 Game 2 has no timeSlot data
+ScheduleManagement.tsx:464 Game 7 has no timeSlot data
+ScheduleManagement.tsx:464 Game 5 has no timeSlot data
+ScheduleManagement.tsx:464 Game 3 has no timeSlot data
+ScheduleManagement.tsx:464 Game 1 has no timeSlot data
+ScheduleManagement.tsx:464 Game 6 has no timeSlot data
+ScheduleManagement.tsx:464 Game 4 has no timeSlot data
+ScheduleManagement.tsx:464 Game 2 has no timeSlot data
+ScheduleManagement.tsx:464 Game 7 has no timeSlot data
+ScheduleManagement.tsx:464 Game 5 has no timeSlot data
+ScheduleManagement.tsx:464 Game 3 has no timeSlot data
+ScheduleManagement.tsx:464 Game 1 has no timeSlot data
+ScheduleManagement.tsx:464 Game 6 has no timeSlot data
+ScheduleManagement.tsx:464 Game 4 has no timeSlot data
+ScheduleManagement.tsx:464 Game 2 has no timeSlot data
+ScheduleManagement.tsx:464 Game 7 has no timeSlot data
+ScheduleManagement.tsx:464 Game 5 has no timeSlot data
+ScheduleManagement.tsx:464 Game 3 has no timeSlot data
+ScheduleManagement.tsx:464 Game 1 has no timeSlot data
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+ScheduleManagement.tsx:259 Actual game start hours: []
+ScheduleManagement.tsx:278 Generated time slots: (11) ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00']
+ScheduleManagement.tsx:285 SCHEDULE DEBUG: {gamesCount: 7, firstGame: {…}, fieldIds: Array(6), timeSlots: Array(11)}
+ScheduleManagement.tsx:464 Game 6 has no timeSlot data
+ScheduleManagement.tsx:464 Game 4 has no timeSlot data
+ScheduleManagement.tsx:464 Game 2 has no timeSlot data
+ScheduleManagement.tsx:464 Game 7 has no timeSlot data
+ScheduleManagement.tsx:464 Game 5 has no timeSlot data
+ScheduleManagement.tsx:464 Game 3 has no timeSlot data
+ScheduleManagement.tsx:464 Game 1 has no timeSlot data
+ScheduleManagement.tsx:464 Game 6 has no timeSlot data
+ScheduleManagement.tsx:464 Game 4 has no timeSlot data
+ScheduleManagement.tsx:464 Game 2 has no timeSlot data
+ScheduleManagement.tsx:464 Game 7 has no timeSlot data
+ScheduleManagement.tsx:464 Game 5 has no timeSlot data
+ScheduleManagement.tsx:464 Game 3 has no timeSlot data
+ScheduleManagement.tsx:464 Game 1 has no timeSlot data
+ScheduleManagement.tsx:464 Game 6 has no timeSlot data
+ScheduleManagement.tsx:464 Game 4 has no timeSlot data
+ScheduleManagement.tsx:464 Game 2 has no timeSlot data
+ScheduleManagement.tsx:464 Game 7 has no timeSlot data
+ScheduleManagement.tsx:464 Game 5 has no timeSlot data
+ScheduleManagement.tsx:464 Game 3 has no timeSlot data
+ScheduleManagement.tsx:464 Game 1 has no timeSlot data
+ScheduleManagement.tsx:464 Game 6 has no timeSlot data
+ScheduleManagement.tsx:464 Game 4 has no timeSlot data
+ScheduleManagement.tsx:464 Game 2 has no timeSlot data
+ScheduleManagement.tsx:464 Game 7 has no timeSlot data
+ScheduleManagement.tsx:464 Game 5 has no timeSlot data
+ScheduleManagement.tsx:464 Game 3 has no timeSlot data
+ScheduleManagement.tsx:464 Game 1 has no timeSlot data
+ScheduleManagement.tsx:464 Game 6 has no timeSlot data
+ScheduleManagement.tsx:464 Game 4 has no timeSlot data
+ScheduleManagement.tsx:464 Game 2 has no timeSlot data
+ScheduleManagement.tsx:464 Game 7 has no timeSlot data
+ScheduleManagement.tsx:464 Game 5 has no timeSlot data
+ScheduleManagement.tsx:464 Game 3 has no timeSlot data
+ScheduleManagement.tsx:464 Game 1 has no timeSlot data
+ScheduleManagement.tsx:464 Game 6 has no timeSlot data
+ScheduleManagement.tsx:464 Game 4 has no timeSlot data
+ScheduleManagement.tsx:464 Game 2 has no timeSlot data
+ScheduleManagement.tsx:464 Game 7 has no timeSlot data
+ScheduleManagement.tsx:464 Game 5 has no timeSlot data
+ScheduleManagement.tsx:464 Game 3 has no timeSlot data
+ScheduleManagement.tsx:464 Game 1 has no timeSlot data
+ScheduleManagement.tsx:464 Game 6 has no timeSlot data
+ScheduleManagement.tsx:464 Game 4 has no timeSlot data
+ScheduleManagement.tsx:464 Game 2 has no timeSlot data
+ScheduleManagement.tsx:464 Game 7 has no timeSlot data
+ScheduleManagement.tsx:464 Game 5 has no timeSlot data
+ScheduleManagement.tsx:464 Game 3 has no timeSlot data
+ScheduleManagement.tsx:464 Game 1 has no timeSlot data
+ScheduleManagement.tsx:464 Game 6 has no timeSlot data
+ScheduleManagement.tsx:464 Game 4 has no timeSlot data
+ScheduleManagement.tsx:464 Game 2 has no timeSlot data
+ScheduleManagement.tsx:464 Game 7 has no timeSlot data
+ScheduleManagement.tsx:464 Game 5 has no timeSlot data
+ScheduleManagement.tsx:464 Game 3 has no timeSlot data
+ScheduleManagement.tsx:464 Game 1 has no timeSlot data
+ScheduleManagement.tsx:464 Game 6 has no timeSlot data
+ScheduleManagement.tsx:464 Game 4 has no timeSlot data
+ScheduleManagement.tsx:464 Game 2 has no timeSlot data
+ScheduleManagement.tsx:464 Game 7 has no timeSlot data
+ScheduleManagement.tsx:464 Game 5 has no timeSlot data
+ScheduleManagement.tsx:464 Game 3 has no timeSlot data
+ScheduleManagement.tsx:464 Game 1 has no timeSlot data
+ScheduleManagement.tsx:464 Game 6 has no timeSlot data
+ScheduleManagement.tsx:464 Game 4 has no timeSlot data
+ScheduleManagement.tsx:464 Game 2 has no timeSlot data
+ScheduleManagement.tsx:464 Game 7 has no timeSlot data
+ScheduleManagement.tsx:464 Game 5 has no timeSlot data
+ScheduleManagement.tsx:464 Game 3 has no timeSlot data
+ScheduleManagement.tsx:464 Game 1 has no timeSlot data
+ScheduleManagement.tsx:464 Game 6 has no timeSlot data
+ScheduleManagement.tsx:464 Game 4 has no timeSlot data
+ScheduleManagement.tsx:464 Game 2 has no timeSlot data
+ScheduleManagement.tsx:464 Game 7 has no timeSlot data
+ScheduleManagement.tsx:464 Game 5 has no timeSlot data
+ScheduleManagement.tsx:464 Game 3 has no timeSlot data
+ScheduleManagement.tsx:464 Game 1 has no timeSlot data
