@@ -287,6 +287,23 @@ export default function ScheduleManagement({ eventId }: ScheduleManagementProps)
   console.log('Schedule Management - Games with field IDs:', games.filter(g => g.fieldId));
   console.log('Schedule Management - Games without field IDs:', games.filter(g => !g.fieldId));
   console.log('Schedule Management - Complexes array:', complexes);
+  
+  // Debug game time slot data
+  games.forEach((game, index) => {
+    console.log(`Game ${index + 1}:`, {
+      id: game.id,
+      gameNumber: game.gameNumber,
+      fieldId: game.fieldId,
+      timeSlot: game.timeSlot,
+      homeTeam: game.homeTeam,
+      awayTeam: game.awayTeam
+    });
+  });
+  
+  // Debug field data
+  complexes.forEach(complex => {
+    console.log(`Complex ${complex.name} fields:`, complex.fields.map(f => ({ id: f.id, name: f.name })));
+  });
 
   return (
     <div className="space-y-6">
