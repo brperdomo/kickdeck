@@ -1,0 +1,345 @@
+SchedulingWorkflow.tsx:57 Fetching teams for event: 1656618593
+8Failed to decode downloaded font: <URL>Understand this warning
+8OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+8Fetch finished loading: GET "<URL>".
+background.js:80 ⏳ Timeout waiting for response to <NmRequestAccounts> from native core <2651169958>
+(anonymous) @ background.js:80
+(anonymous) @ background.js:106Understand this warning
+SchedulingWorkflow.tsx:61 Teams API response: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: undefined
+FlightManager.tsx:111 Final extracted age groups: []
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: undefined
+FlightManager.tsx:111 Final extracted age groups: []
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: undefined
+FlightManager.tsx:111 Final extracted age groups: []
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:94 Extracted age group IDs: (220) [10064, 10066, 10066, 10064, 10066, 10066, 10064, 10066, 10056, 10048, 10065, 10064, 10064, 10064, 10064, 10065, 10065, 10065, 10065, 10065, 10065, 10065, 10065, 10066, 10066, 10066, 10066, 10064, 10064, 10061, 10061, 10061, 10061, 10062, 10062, 10062, 10062, 10062, 10062, 10062, 10062, 10062, 10063, 10063, 10063, 10063, 10063, 10063, 10063, 10063, 10063, 10061, 10060, 10060, 10061, 10061, 10061, 10061, 10059, 10060, 10060, 10060, 10060, 10060, 10060, 10060, 10059, 10059, 10057, 10057, 10057, 10057, 10057, 10058, 10058, 10059, 10059, 10059, 10059, 10059, 10059, 10058, 10058, 10058, 10058, 10058, 10058, 10058, 10057, 10054, 10054, 10054, 10054, 10054, 10054, 10055, 10055, 10055, 10055, 10055, …]
+FlightManager.tsx:106 Age groups with names: (24) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:111 Final extracted age groups: (24) ['U17', 'U19', 'U13', 'U9', 'U19', 'U16', 'U16', 'U17', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U11', 'U12', 'U11', 'U10', 'U9', 'U10', 'U8', 'U8', 'U7', 'U7']
+background.js:80 ⏳ Timeout waiting for response to <NmRequestAccounts> from native core <4020671397>
+(anonymous) @ background.js:80
+(anonymous) @ background.js:106
+setTimeout
+(anonymous) @ background.js:106
+invoke @ background.js:106
+mKA @ background.js:106
+gKA @ background.js:106
+await in gKA
+connectWithDesktopApp @ background.js:120
+reconnectWithDesktop @ background.js:120
+onBrowserWindowFocusChange @ background.js:120Understand this warning
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:111 Final extracted age groups: (24) ['U17', 'U19', 'U13', 'U9', 'U19', 'U16', 'U16', 'U17', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U11', 'U12', 'U11', 'U10', 'U9', 'U10', 'U8', 'U8', 'U7', 'U7']
+chunk-J2F67UGW.js?v=80b17ebe:340 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ chunk-J2F67UGW.js?v=80b17ebe:340
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+Wk @ chunk-E27YX2RL.js?v=80b17ebe:6018
+Pk @ chunk-E27YX2RL.js?v=80b17ebe:5964
+Ek @ chunk-E27YX2RL.js?v=80b17ebe:5693
+jg @ chunk-E27YX2RL.js?v=80b17ebe:2527
+(anonymous) @ chunk-E27YX2RL.js?v=80b17ebe:5515Understand this warning
+2background.js:80 The item cache has not been initialized yet.
+(anonymous) @ background.js:80
+loadItemCache @ background.js:120
+aQj @ background.js:120
+(anonymous) @ background.js:120
+iQj @ background.js:120
+YLA @ background.js:120
+xHA @ background.js:120
+SLj @ background.js:82
+r @ background.js:82Understand this warning
+background.js:80 💫 Looking for desktop app com.1password.1password
+background.js:80 📤 Sending <NmRequestAccounts> message to native core <1784869581>
+background.js:80 Desktop app port disconnected. Error: Specified native messaging host not found.
+background.js:80 💫 Looking for desktop app com.1password.1password7
+background.js:80 📤 Sending <NmRequestAccounts> message to native core <2739508107>
+background.js:80 Received <BrowserVerificationFailed> from the native core
+8Fetch finished loading: GET "<URL>".
+injected.js:5 Caught error handling <hide-notification> message
+(anonymous) @ injected.js:5
+Promise.catch
+n @ injected.js:5Understand this warning
+background.js:21 Fetch finished loading: POST "https://telemetry.1passwordservices.com/com.snowplowanalytics.snowplow/tp2".
+sendToSnowplow @ background.js:21
+record @ background.js:21
+(anonymous) @ background.js:80
+Promise.then
+recordEvent @ background.js:80
+Ot @ background.js:82
+(anonymous) @ background.js:120
+AHA @ background.js:120
+await in AHA
+mHA @ background.js:120
+nTj @ background.js:67
+await in nTj
+(anonymous) @ background.js:67
+background.js:21 Fetch finished loading: POST "https://telemetry.1passwordservices.com/com.snowplowanalytics.snowplow/tp2".
+sendToSnowplow @ background.js:21
+record @ background.js:21
+(anonymous) @ background.js:80
+Promise.then
+recordEvent @ background.js:80
+Ot @ background.js:82
+(anonymous) @ background.js:120
+aHA @ background.js:120
+await in aHA
+EHA @ background.js:120
+nTj @ background.js:67
+await in nTj
+(anonymous) @ background.js:67
+2background.js:80 The item cache has not been initialized yet.
+(anonymous) @ background.js:80
+loadItemCache @ background.js:120
+aQj @ background.js:120
+(anonymous) @ background.js:120
+iQj @ background.js:120
+YLA @ background.js:120
+xHA @ background.js:120
+SLj @ background.js:82
+r @ background.js:82Understand this warning
+Unchecked runtime.lastError: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this error
+background.js:80 ⏳ Timeout waiting for response to <NmRequestAccounts> from native core <2739508107>
+(anonymous) @ background.js:80
+(anonymous) @ background.js:106
+setTimeout
+(anonymous) @ background.js:106
+invoke @ background.js:106
+mKA @ background.js:106
+gKA @ background.js:106
+await in gKA
+connectWithDesktopApp @ background.js:120
+reconnectWithDesktop @ background.js:120
+(anonymous) @ background.js:120
+setTimeout
+j0 @ background.js:120
+vHA @ background.js:120
+SLj @ background.js:82
+r @ background.js:82Understand this warning
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:111 Final extracted age groups: (24) ['U17', 'U19', 'U13', 'U9', 'U19', 'U16', 'U16', 'U17', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U11', 'U12', 'U11', 'U10', 'U9', 'U10', 'U8', 'U8', 'U7', 'U7']
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:111 Final extracted age groups: (24) ['U17', 'U19', 'U13', 'U9', 'U19', 'U16', 'U16', 'U17', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U11', 'U12', 'U11', 'U10', 'U9', 'U10', 'U8', 'U8', 'U7', 'U7']
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:111 Final extracted age groups: (24) ['U17', 'U19', 'U13', 'U9', 'U19', 'U16', 'U16', 'U17', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U11', 'U12', 'U11', 'U10', 'U9', 'U10', 'U8', 'U8', 'U7', 'U7']
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:111 Final extracted age groups: (24) ['U17', 'U19', 'U13', 'U9', 'U19', 'U16', 'U16', 'U17', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U11', 'U12', 'U11', 'U10', 'U9', 'U10', 'U8', 'U8', 'U7', 'U7']
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:111 Final extracted age groups: (24) ['U17', 'U19', 'U13', 'U9', 'U19', 'U16', 'U16', 'U17', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U11', 'U12', 'U11', 'U10', 'U9', 'U10', 'U8', 'U8', 'U7', 'U7']
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:111 Final extracted age groups: (24) ['U17', 'U19', 'U13', 'U9', 'U19', 'U16', 'U16', 'U17', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U11', 'U12', 'U11', 'U10', 'U9', 'U10', 'U8', 'U8', 'U7', 'U7']
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:111 Final extracted age groups: (24) ['U17', 'U19', 'U13', 'U9', 'U19', 'U16', 'U16', 'U17', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U11', 'U12', 'U11', 'U10', 'U9', 'U10', 'U8', 'U8', 'U7', 'U7']
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+GameCreation.tsx:58 GameCreation workflowData: {flight: {…}, bracket: {…}, seed: {…}, timeblock: {…}}
+GameCreation.tsx:59 GameCreation brackets: [{…}]
+GameCreation.tsx:60 GameCreation seedings: [{…}]
+GameCreation.tsx:61 GameCreation timeBlocks: [{…}]
+GameCreation.tsx:168 generateGamesForBracket - bracket: {id: 'flight_1751493000509_unassigned', flightId: 'flight_1751493000509', flightName: 'U17 Boys Flight A - Director Assignment Needed', teamCount: 4, format: 'round_robin_knockout', …}
+GameCreation.tsx:169 generateGamesForBracket - seeding: {bracketId: 'flight_1751493000509_unassigned', bracketName: 'U17 Boys Flight A - Director Assignment Needed', teams: Array(4), pools: Array(1)}
+GameCreation.tsx:170 generateGamesForBracket - seeding.teams: (4) [{…}, {…}, {…}, {…}]
+GameCreation.tsx:171 generateGamesForBracket - seeding.pools: [{…}]
+GameCreation.tsx:58 GameCreation workflowData: {flight: {…}, bracket: {…}, seed: {…}, timeblock: {…}}
+GameCreation.tsx:59 GameCreation brackets: [{…}]
+GameCreation.tsx:60 GameCreation seedings: [{…}]
+GameCreation.tsx:61 GameCreation timeBlocks: [{…}]
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+GameCreation.tsx:58 GameCreation workflowData: {flight: {…}, bracket: {…}, seed: {…}, timeblock: {…}}
+GameCreation.tsx:59 GameCreation brackets: [{…}]
+GameCreation.tsx:60 GameCreation seedings: [{…}]
+GameCreation.tsx:61 GameCreation timeBlocks: [{…}]
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+ScheduleBuilder.tsx:86 Fetch finished loading: POST "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/admin/events/1656618593/generate-schedule".
+generateAISchedule @ ScheduleBuilder.tsx:86
+Nb @ chunk-E27YX2RL.js?v=80b17ebe:975
+Tb @ chunk-E27YX2RL.js?v=80b17ebe:991
+Ub @ chunk-E27YX2RL.js?v=80b17ebe:994
+nf @ chunk-E27YX2RL.js?v=80b17ebe:2017
+se @ chunk-E27YX2RL.js?v=80b17ebe:2040
+(anonymous) @ chunk-E27YX2RL.js?v=80b17ebe:2312
+Qk @ chunk-E27YX2RL.js?v=80b17ebe:5701
+Jb @ chunk-E27YX2RL.js?v=80b17ebe:927
+hd @ chunk-E27YX2RL.js?v=80b17ebe:2113
+fd @ chunk-E27YX2RL.js?v=80b17ebe:1454
+ed @ chunk-E27YX2RL.js?v=80b17ebe:1437
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+ScheduleManagement.tsx:130 Schedule Management - Fetched games data: {games: Array(7)}
+ScheduleManagement.tsx:142 Schedule Management - Fetched complexes data: {complexes: Array(1), summary: {…}}
+ScheduleManagement.tsx:259 Actual game start hours: []
+ScheduleManagement.tsx:278 Generated time slots: (11) ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00']
+ScheduleManagement.tsx:285 SCHEDULE DEBUG: {gamesCount: 7, firstGame: {…}, fieldIds: Array(6), timeSlots: Array(11)}
+ScheduleManagement.tsx:473 Field 8: Comparing game 6 hour 17 with slot hour 8
+ScheduleManagement.tsx:473 Field 8: Comparing game 4 hour 17 with slot hour 8
+ScheduleManagement.tsx:473 Field 8: Comparing game 2 hour 17 with slot hour 8
+ScheduleManagement.tsx:473 Field 9: Comparing game 7 hour 17 with slot hour 8
+ScheduleManagement.tsx:473 Field 9: Comparing game 5 hour 17 with slot hour 8
+ScheduleManagement.tsx:473 Field 9: Comparing game 3 hour 17 with slot hour 8
+ScheduleManagement.tsx:473 Field 9: Comparing game 1 hour 17 with slot hour 8
+ScheduleManagement.tsx:473 Field 8: Comparing game 6 hour 17 with slot hour 9
+ScheduleManagement.tsx:473 Field 8: Comparing game 4 hour 17 with slot hour 9
+ScheduleManagement.tsx:473 Field 8: Comparing game 2 hour 17 with slot hour 9
+ScheduleManagement.tsx:473 Field 9: Comparing game 7 hour 17 with slot hour 9
+ScheduleManagement.tsx:473 Field 9: Comparing game 5 hour 17 with slot hour 9
+ScheduleManagement.tsx:473 Field 9: Comparing game 3 hour 17 with slot hour 9
+ScheduleManagement.tsx:473 Field 9: Comparing game 1 hour 17 with slot hour 9
+ScheduleManagement.tsx:473 Field 8: Comparing game 6 hour 17 with slot hour 10
+ScheduleManagement.tsx:473 Field 8: Comparing game 4 hour 17 with slot hour 10
+ScheduleManagement.tsx:473 Field 8: Comparing game 2 hour 17 with slot hour 10
+ScheduleManagement.tsx:473 Field 9: Comparing game 7 hour 17 with slot hour 10
+ScheduleManagement.tsx:473 Field 9: Comparing game 5 hour 17 with slot hour 10
+ScheduleManagement.tsx:473 Field 9: Comparing game 3 hour 17 with slot hour 10
+ScheduleManagement.tsx:473 Field 9: Comparing game 1 hour 17 with slot hour 10
+ScheduleManagement.tsx:473 Field 8: Comparing game 6 hour 17 with slot hour 11
+ScheduleManagement.tsx:473 Field 8: Comparing game 4 hour 17 with slot hour 11
+ScheduleManagement.tsx:473 Field 8: Comparing game 2 hour 17 with slot hour 11
+ScheduleManagement.tsx:473 Field 9: Comparing game 7 hour 17 with slot hour 11
+ScheduleManagement.tsx:473 Field 9: Comparing game 5 hour 17 with slot hour 11
+ScheduleManagement.tsx:473 Field 9: Comparing game 3 hour 17 with slot hour 11
+ScheduleManagement.tsx:473 Field 9: Comparing game 1 hour 17 with slot hour 11
+ScheduleManagement.tsx:473 Field 8: Comparing game 6 hour 17 with slot hour 12
+ScheduleManagement.tsx:473 Field 8: Comparing game 4 hour 17 with slot hour 12
+ScheduleManagement.tsx:473 Field 8: Comparing game 2 hour 17 with slot hour 12
+ScheduleManagement.tsx:473 Field 9: Comparing game 7 hour 17 with slot hour 12
+ScheduleManagement.tsx:473 Field 9: Comparing game 5 hour 17 with slot hour 12
+ScheduleManagement.tsx:473 Field 9: Comparing game 3 hour 17 with slot hour 12
+ScheduleManagement.tsx:473 Field 9: Comparing game 1 hour 17 with slot hour 12
+ScheduleManagement.tsx:473 Field 8: Comparing game 6 hour 17 with slot hour 13
+ScheduleManagement.tsx:473 Field 8: Comparing game 4 hour 17 with slot hour 13
+ScheduleManagement.tsx:473 Field 8: Comparing game 2 hour 17 with slot hour 13
+ScheduleManagement.tsx:473 Field 9: Comparing game 7 hour 17 with slot hour 13
+ScheduleManagement.tsx:473 Field 9: Comparing game 5 hour 17 with slot hour 13
+ScheduleManagement.tsx:473 Field 9: Comparing game 3 hour 17 with slot hour 13
+ScheduleManagement.tsx:473 Field 9: Comparing game 1 hour 17 with slot hour 13
+ScheduleManagement.tsx:473 Field 8: Comparing game 6 hour 17 with slot hour 14
+ScheduleManagement.tsx:473 Field 8: Comparing game 4 hour 17 with slot hour 14
+ScheduleManagement.tsx:473 Field 8: Comparing game 2 hour 17 with slot hour 14
+ScheduleManagement.tsx:473 Field 9: Comparing game 7 hour 17 with slot hour 14
+ScheduleManagement.tsx:473 Field 9: Comparing game 5 hour 17 with slot hour 14
+ScheduleManagement.tsx:473 Field 9: Comparing game 3 hour 17 with slot hour 14
+ScheduleManagement.tsx:473 Field 9: Comparing game 1 hour 17 with slot hour 14
+ScheduleManagement.tsx:473 Field 8: Comparing game 6 hour 17 with slot hour 15
+ScheduleManagement.tsx:473 Field 8: Comparing game 4 hour 17 with slot hour 15
+ScheduleManagement.tsx:473 Field 8: Comparing game 2 hour 17 with slot hour 15
+ScheduleManagement.tsx:473 Field 9: Comparing game 7 hour 17 with slot hour 15
+ScheduleManagement.tsx:473 Field 9: Comparing game 5 hour 17 with slot hour 15
+ScheduleManagement.tsx:473 Field 9: Comparing game 3 hour 17 with slot hour 15
+ScheduleManagement.tsx:473 Field 9: Comparing game 1 hour 17 with slot hour 15
+ScheduleManagement.tsx:473 Field 8: Comparing game 6 hour 17 with slot hour 16
+ScheduleManagement.tsx:473 Field 8: Comparing game 4 hour 17 with slot hour 16
+ScheduleManagement.tsx:473 Field 8: Comparing game 2 hour 17 with slot hour 16
+ScheduleManagement.tsx:473 Field 9: Comparing game 7 hour 17 with slot hour 16
+ScheduleManagement.tsx:473 Field 9: Comparing game 5 hour 17 with slot hour 16
+ScheduleManagement.tsx:473 Field 9: Comparing game 3 hour 17 with slot hour 16
+ScheduleManagement.tsx:473 Field 9: Comparing game 1 hour 17 with slot hour 16
+ScheduleManagement.tsx:473 Field 8: Comparing game 6 hour 17 with slot hour 17
+ScheduleManagement.tsx:473 Field 9: Comparing game 7 hour 17 with slot hour 17
+ScheduleManagement.tsx:473 Field 8: Comparing game 6 hour 17 with slot hour 18
+ScheduleManagement.tsx:473 Field 8: Comparing game 4 hour 17 with slot hour 18
+ScheduleManagement.tsx:473 Field 8: Comparing game 2 hour 17 with slot hour 18
+ScheduleManagement.tsx:473 Field 9: Comparing game 7 hour 17 with slot hour 18
+ScheduleManagement.tsx:473 Field 9: Comparing game 5 hour 17 with slot hour 18
+ScheduleManagement.tsx:473 Field 9: Comparing game 3 hour 17 with slot hour 18
+ScheduleManagement.tsx:473 Field 9: Comparing game 1 hour 17 with slot hour 18
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+ScheduleManagement.tsx:259 Actual game start hours: []
+ScheduleManagement.tsx:278 Generated time slots: (11) ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00']
+ScheduleManagement.tsx:285 SCHEDULE DEBUG: {gamesCount: 7, firstGame: {…}, fieldIds: Array(6), timeSlots: Array(11)}
+ScheduleManagement.tsx:473 Field 8: Comparing game 6 hour 17 with slot hour 8
+ScheduleManagement.tsx:473 Field 8: Comparing game 4 hour 17 with slot hour 8
+ScheduleManagement.tsx:473 Field 8: Comparing game 2 hour 17 with slot hour 8
+ScheduleManagement.tsx:473 Field 9: Comparing game 7 hour 17 with slot hour 8
+ScheduleManagement.tsx:473 Field 9: Comparing game 5 hour 17 with slot hour 8
+ScheduleManagement.tsx:473 Field 9: Comparing game 3 hour 17 with slot hour 8
+ScheduleManagement.tsx:473 Field 9: Comparing game 1 hour 17 with slot hour 8
+ScheduleManagement.tsx:473 Field 8: Comparing game 6 hour 17 with slot hour 9
+ScheduleManagement.tsx:473 Field 8: Comparing game 4 hour 17 with slot hour 9
+ScheduleManagement.tsx:473 Field 8: Comparing game 2 hour 17 with slot hour 9
+ScheduleManagement.tsx:473 Field 9: Comparing game 7 hour 17 with slot hour 9
+ScheduleManagement.tsx:473 Field 9: Comparing game 5 hour 17 with slot hour 9
+ScheduleManagement.tsx:473 Field 9: Comparing game 3 hour 17 with slot hour 9
+ScheduleManagement.tsx:473 Field 9: Comparing game 1 hour 17 with slot hour 9
+ScheduleManagement.tsx:473 Field 8: Comparing game 6 hour 17 with slot hour 10
+ScheduleManagement.tsx:473 Field 8: Comparing game 4 hour 17 with slot hour 10
+ScheduleManagement.tsx:473 Field 8: Comparing game 2 hour 17 with slot hour 10
+ScheduleManagement.tsx:473 Field 9: Comparing game 7 hour 17 with slot hour 10
+ScheduleManagement.tsx:473 Field 9: Comparing game 5 hour 17 with slot hour 10
+ScheduleManagement.tsx:473 Field 9: Comparing game 3 hour 17 with slot hour 10
+ScheduleManagement.tsx:473 Field 9: Comparing game 1 hour 17 with slot hour 10
+ScheduleManagement.tsx:473 Field 8: Comparing game 6 hour 17 with slot hour 11
+ScheduleManagement.tsx:473 Field 8: Comparing game 4 hour 17 with slot hour 11
+ScheduleManagement.tsx:473 Field 8: Comparing game 2 hour 17 with slot hour 11
+ScheduleManagement.tsx:473 Field 9: Comparing game 7 hour 17 with slot hour 11
+ScheduleManagement.tsx:473 Field 9: Comparing game 5 hour 17 with slot hour 11
+ScheduleManagement.tsx:473 Field 9: Comparing game 3 hour 17 with slot hour 11
+ScheduleManagement.tsx:473 Field 9: Comparing game 1 hour 17 with slot hour 11
+ScheduleManagement.tsx:473 Field 8: Comparing game 6 hour 17 with slot hour 12
+ScheduleManagement.tsx:473 Field 8: Comparing game 4 hour 17 with slot hour 12
+ScheduleManagement.tsx:473 Field 8: Comparing game 2 hour 17 with slot hour 12
+ScheduleManagement.tsx:473 Field 9: Comparing game 7 hour 17 with slot hour 12
+ScheduleManagement.tsx:473 Field 9: Comparing game 5 hour 17 with slot hour 12
+ScheduleManagement.tsx:473 Field 9: Comparing game 3 hour 17 with slot hour 12
+ScheduleManagement.tsx:473 Field 9: Comparing game 1 hour 17 with slot hour 12
+ScheduleManagement.tsx:473 Field 8: Comparing game 6 hour 17 with slot hour 13
+ScheduleManagement.tsx:473 Field 8: Comparing game 4 hour 17 with slot hour 13
+ScheduleManagement.tsx:473 Field 8: Comparing game 2 hour 17 with slot hour 13
+ScheduleManagement.tsx:473 Field 9: Comparing game 7 hour 17 with slot hour 13
+ScheduleManagement.tsx:473 Field 9: Comparing game 5 hour 17 with slot hour 13
+ScheduleManagement.tsx:473 Field 9: Comparing game 3 hour 17 with slot hour 13
+ScheduleManagement.tsx:473 Field 9: Comparing game 1 hour 17 with slot hour 13
+ScheduleManagement.tsx:473 Field 8: Comparing game 6 hour 17 with slot hour 14
+ScheduleManagement.tsx:473 Field 8: Comparing game 4 hour 17 with slot hour 14
+ScheduleManagement.tsx:473 Field 8: Comparing game 2 hour 17 with slot hour 14
+ScheduleManagement.tsx:473 Field 9: Comparing game 7 hour 17 with slot hour 14
+ScheduleManagement.tsx:473 Field 9: Comparing game 5 hour 17 with slot hour 14
+ScheduleManagement.tsx:473 Field 9: Comparing game 3 hour 17 with slot hour 14
+ScheduleManagement.tsx:473 Field 9: Comparing game 1 hour 17 with slot hour 14
+ScheduleManagement.tsx:473 Field 8: Comparing game 6 hour 17 with slot hour 15
+ScheduleManagement.tsx:473 Field 8: Comparing game 4 hour 17 with slot hour 15
+ScheduleManagement.tsx:473 Field 8: Comparing game 2 hour 17 with slot hour 15
+ScheduleManagement.tsx:473 Field 9: Comparing game 7 hour 17 with slot hour 15
+ScheduleManagement.tsx:473 Field 9: Comparing game 5 hour 17 with slot hour 15
+ScheduleManagement.tsx:473 Field 9: Comparing game 3 hour 17 with slot hour 15
+ScheduleManagement.tsx:473 Field 9: Comparing game 1 hour 17 with slot hour 15
+ScheduleManagement.tsx:473 Field 8: Comparing game 6 hour 17 with slot hour 16
+ScheduleManagement.tsx:473 Field 8: Comparing game 4 hour 17 with slot hour 16
+ScheduleManagement.tsx:473 Field 8: Comparing game 2 hour 17 with slot hour 16
+ScheduleManagement.tsx:473 Field 9: Comparing game 7 hour 17 with slot hour 16
+ScheduleManagement.tsx:473 Field 9: Comparing game 5 hour 17 with slot hour 16
+ScheduleManagement.tsx:473 Field 9: Comparing game 3 hour 17 with slot hour 16
+ScheduleManagement.tsx:473 Field 9: Comparing game 1 hour 17 with slot hour 16
+ScheduleManagement.tsx:473 Field 8: Comparing game 6 hour 17 with slot hour 17
+ScheduleManagement.tsx:473 Field 9: Comparing game 7 hour 17 with slot hour 17
+ScheduleManagement.tsx:473 Field 8: Comparing game 6 hour 17 with slot hour 18
+ScheduleManagement.tsx:473 Field 8: Comparing game 4 hour 17 with slot hour 18
+ScheduleManagement.tsx:473 Field 8: Comparing game 2 hour 17 with slot hour 18
+ScheduleManagement.tsx:473 Field 9: Comparing game 7 hour 17 with slot hour 18
+ScheduleManagement.tsx:473 Field 9: Comparing game 5 hour 17 with slot hour 18
+ScheduleManagement.tsx:473 Field 9: Comparing game 3 hour 17 with slot hour 18
+ScheduleManagement.tsx:473 Field 9: Comparing game 1 hour 17 with slot hour 18

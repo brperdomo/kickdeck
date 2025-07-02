@@ -245,6 +245,13 @@ export default function ScheduleManagement({ eventId }: ScheduleManagementProps)
   const games = gamesData?.games || [];
   const complexes = complexesData?.complexes || [];
 
+  // SCHEDULE DEBUG: Log the raw data structure
+  console.log("SCHEDULE DEBUG - Raw games data:", gamesData);
+  console.log("SCHEDULE DEBUG - Games array:", games);
+  console.log("SCHEDULE DEBUG - Games count:", games.length);
+  console.log("SCHEDULE DEBUG - First game structure:", games[0]);
+  console.log("SCHEDULE DEBUG - Complexes data:", complexes);
+
   // Generate time slots based on actual game times to ensure all games show up
   const generateTimeSlots = () => {
     const slots = [];
@@ -457,7 +464,17 @@ export default function ScheduleManagement({ eventId }: ScheduleManagementProps)
                             .sort((a, b) => a.name.localeCompare(b.name))
                             .map((field: Field) => {
                             const assignedGame = games.find((game: Game) => {
-                              if (game.fieldId !== field.id) return false;
+                              console.log(`GAME MATCHING DEBUG - Checking game ${game.gameNumber}:`, {
+                                gameFieldId: game.fieldId,
+                                targetFieldId: field.id,
+                                gameStartTime: game.startTime,
+                                timeSlot: timeSlot
+                              });
+                              
+                              if (game.fieldId !== field.id) {
+                                console.log(`Game ${game.gameNumber} field mismatch: ${game.fieldId} !== ${field.id}`);
+                                return false;
+                              }
                               
                               // Check if game has startTime data (API returns startTime directly, not in timeSlot object)
                               if (!game.startTime) {
@@ -470,9 +487,14 @@ export default function ScheduleManagement({ eventId }: ScheduleManagementProps)
                               const gameHour = gameTime.getHours();
                               const slotHour = parseInt(timeSlot.split(':')[0]);
                               
-                              console.log(`Field ${field.id}: Comparing game ${game.gameNumber} hour ${gameHour} with slot hour ${slotHour}`);
+                              console.log(`Field ${field.id}: Game ${game.gameNumber} hour ${gameHour} vs slot hour ${slotHour}`);
                               
-                              return gameHour === slotHour;
+                              const match = gameHour === slotHour;
+                              if (match) {
+                                console.log(`MATCH FOUND: Game ${game.gameNumber} matches time slot ${timeSlot} on field ${field.id}`);
+                              }
+                              
+                              return match;
                             });
 
                             return (
