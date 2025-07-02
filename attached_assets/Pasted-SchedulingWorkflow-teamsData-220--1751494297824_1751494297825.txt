@@ -1,0 +1,1006 @@
+SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+GameCreation.tsx:58 GameCreation workflowData: {flight: {…}, bracket: {…}, seed: {…}, timeblock: {…}}
+GameCreation.tsx:59 GameCreation brackets: [{…}]
+GameCreation.tsx:60 GameCreation seedings: [{…}]
+GameCreation.tsx:61 GameCreation timeBlocks: [{…}]
+GameCreation.tsx:168 generateGamesForBracket - bracket: {id: 'flight_1751494230145_unassigned', flightId: 'flight_1751494230145', flightName: 'U17 A - Director Assignment Needed', teamCount: 4, format: 'round_robin_knockout', …}
+GameCreation.tsx:169 generateGamesForBracket - seeding: {bracketId: 'flight_1751494230145_unassigned', bracketName: 'U17 A - Director Assignment Needed', teams: Array(4), pools: Array(1)}
+GameCreation.tsx:170 generateGamesForBracket - seeding.teams: (4) [{…}, {…}, {…}, {…}]
+GameCreation.tsx:171 generateGamesForBracket - seeding.pools: [{…}]
+GameCreation.tsx:58 GameCreation workflowData: {flight: {…}, bracket: {…}, seed: {…}, timeblock: {…}}
+GameCreation.tsx:59 GameCreation brackets: [{…}]
+GameCreation.tsx:60 GameCreation seedings: [{…}]
+GameCreation.tsx:61 GameCreation timeBlocks: [{…}]
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+GameCreation.tsx:58 GameCreation workflowData: {flight: {…}, bracket: {…}, seed: {…}, timeblock: {…}}
+GameCreation.tsx:59 GameCreation brackets: [{…}]
+GameCreation.tsx:60 GameCreation seedings: [{…}]
+GameCreation.tsx:61 GameCreation timeBlocks: [{…}]
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+GameCreation.tsx:58 GameCreation workflowData: {flight: {…}, bracket: {…}, seed: {…}, timeblock: {…}}
+GameCreation.tsx:59 GameCreation brackets: [{…}]
+GameCreation.tsx:60 GameCreation seedings: [{…}]
+GameCreation.tsx:61 GameCreation timeBlocks: [{…}]
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+GameCreation.tsx:58 GameCreation workflowData: {flight: {…}, bracket: {…}, seed: {…}, timeblock: {…}}
+GameCreation.tsx:59 GameCreation brackets: [{…}]
+GameCreation.tsx:60 GameCreation seedings: [{…}]
+GameCreation.tsx:61 GameCreation timeBlocks: [{…}]
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+ScheduleBuilder.tsx:86 Fetch finished loading: POST "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/admin/events/1656618593/generate-schedule".
+generateAISchedule @ ScheduleBuilder.tsx:86
+Nb @ chunk-E27YX2RL.js?v=80b17ebe:975
+Tb @ chunk-E27YX2RL.js?v=80b17ebe:991
+Ub @ chunk-E27YX2RL.js?v=80b17ebe:994
+nf @ chunk-E27YX2RL.js?v=80b17ebe:2017
+se @ chunk-E27YX2RL.js?v=80b17ebe:2040
+(anonymous) @ chunk-E27YX2RL.js?v=80b17ebe:2312
+Qk @ chunk-E27YX2RL.js?v=80b17ebe:5701
+Jb @ chunk-E27YX2RL.js?v=80b17ebe:927
+hd @ chunk-E27YX2RL.js?v=80b17ebe:2113
+fd @ chunk-E27YX2RL.js?v=80b17ebe:1454
+ed @ chunk-E27YX2RL.js?v=80b17ebe:1437
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+ScheduleManagement.tsx:127 Fetch finished loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/admin/events/1656618593/schedule".
+queryFn @ ScheduleManagement.tsx:127
+fetchFn @ @tanstack_react-query.js?v=80b17ebe:881
+run @ @tanstack_react-query.js?v=80b17ebe:513
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+executeFetch_fn @ @tanstack_react-query.js?v=80b17ebe:2278
+onSubscribe @ @tanstack_react-query.js?v=80b17ebe:1982
+subscribe @ @tanstack_react-query.js?v=80b17ebe:24
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:3145
+ai @ chunk-E27YX2RL.js?v=80b17ebe:3392
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+Wk @ chunk-E27YX2RL.js?v=80b17ebe:6018
+Pk @ chunk-E27YX2RL.js?v=80b17ebe:5964
+Ek @ chunk-E27YX2RL.js?v=80b17ebe:5693
+jg @ chunk-E27YX2RL.js?v=80b17ebe:2527
+(anonymous) @ chunk-E27YX2RL.js?v=80b17ebe:5515
+ScheduleManagement.tsx:130 Schedule Management - Fetched games data: {games: Array(7)}
+ScheduleManagement.tsx:142 Schedule Management - Fetched complexes data: {complexes: Array(1), summary: {…}}
+ScheduleManagement.tsx:249 SCHEDULE DEBUG - Raw games data: {games: Array(7)}
+ScheduleManagement.tsx:250 SCHEDULE DEBUG - Games array: (7) [{…}, {…}, {…}, {…}, {…}, {…}, {…}]
+ScheduleManagement.tsx:251 SCHEDULE DEBUG - Games count: 7
+ScheduleManagement.tsx:252 SCHEDULE DEBUG - First game structure: {id: 265, gameNumber: 7, startTime: '2025-07-02T22:11:05.352Z', endTime: '2025-07-03T00:11:05.352Z', fieldName: 'f2', …}
+ScheduleManagement.tsx:253 SCHEDULE DEBUG - Complexes data: [{…}]
+ScheduleManagement.tsx:266 Actual game start hours: []
+ScheduleManagement.tsx:285 Generated time slots: (11) ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00']
+ScheduleManagement.tsx:292 SCHEDULE DEBUG: {gamesCount: 7, firstGame: {…}, fieldIds: Array(6), timeSlots: Array(11)}
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '08:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '08:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '08:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '08:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '08:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '08:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '08:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '08:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '08:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '08:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '08:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '08:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '08:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '08:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '08:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '08:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '08:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '08:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '08:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '08:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '08:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '08:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '08:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '08:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '08:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 13
+ScheduleManagement.tsx:139 Fetch finished loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/admin/schedule/complexes/1656618593".
+queryFn @ ScheduleManagement.tsx:139
+fetchFn @ @tanstack_react-query.js?v=80b17ebe:881
+run @ @tanstack_react-query.js?v=80b17ebe:513
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+executeFetch_fn @ @tanstack_react-query.js?v=80b17ebe:2278
+onSubscribe @ @tanstack_react-query.js?v=80b17ebe:1982
+subscribe @ @tanstack_react-query.js?v=80b17ebe:24
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:3145
+ai @ chunk-E27YX2RL.js?v=80b17ebe:3392
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+Wk @ chunk-E27YX2RL.js?v=80b17ebe:6018
+Pk @ chunk-E27YX2RL.js?v=80b17ebe:5964
+Ek @ chunk-E27YX2RL.js?v=80b17ebe:5693
+jg @ chunk-E27YX2RL.js?v=80b17ebe:2527
+(anonymous) @ chunk-E27YX2RL.js?v=80b17ebe:5515
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '08:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '08:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '08:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '08:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '08:00'}
+ScheduleManagement.tsx:490 Field 8: Game 6 hour 18 vs slot hour 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '08:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '08:00'}
+ScheduleManagement.tsx:490 Field 8: Game 4 hour 18 vs slot hour 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '08:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '08:00'}
+ScheduleManagement.tsx:490 Field 8: Game 2 hour 18 vs slot hour 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '08:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '08:00'}
+ScheduleManagement.tsx:490 Field 9: Game 7 hour 18 vs slot hour 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '08:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 9
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '08:00'}
+ScheduleManagement.tsx:490 Field 9: Game 5 hour 18 vs slot hour 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '08:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 9
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '08:00'}
+ScheduleManagement.tsx:490 Field 9: Game 3 hour 18 vs slot hour 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '08:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 9
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '08:00'}
+ScheduleManagement.tsx:490 Field 9: Game 1 hour 18 vs slot hour 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:490 Field 8: Game 6 hour 18 vs slot hour 9
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:490 Field 8: Game 4 hour 18 vs slot hour 9
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:490 Field 8: Game 2 hour 18 vs slot hour 9
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:490 Field 9: Game 7 hour 18 vs slot hour 9
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 9
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:490 Field 9: Game 5 hour 18 vs slot hour 9
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 9
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:490 Field 9: Game 3 hour 18 vs slot hour 9
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 9
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:490 Field 9: Game 1 hour 18 vs slot hour 9
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:490 Field 8: Game 6 hour 18 vs slot hour 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:490 Field 8: Game 4 hour 18 vs slot hour 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:490 Field 8: Game 2 hour 18 vs slot hour 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:490 Field 9: Game 7 hour 18 vs slot hour 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 9
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:490 Field 9: Game 5 hour 18 vs slot hour 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 9
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:490 Field 9: Game 3 hour 18 vs slot hour 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 9
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:490 Field 9: Game 1 hour 18 vs slot hour 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '11:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '11:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '11:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '11:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '11:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '11:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '11:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '11:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '11:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '11:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '11:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '11:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '11:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '11:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '11:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '11:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '11:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '11:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '11:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '11:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '11:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '11:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '11:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '11:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '11:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '11:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '11:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '11:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '11:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '11:00'}
+ScheduleManagement.tsx:490 Field 8: Game 6 hour 18 vs slot hour 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '11:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '11:00'}
+ScheduleManagement.tsx:490 Field 8: Game 4 hour 18 vs slot hour 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '11:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '11:00'}
+ScheduleManagement.tsx:490 Field 8: Game 2 hour 18 vs slot hour 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '11:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '11:00'}
+ScheduleManagement.tsx:490 Field 9: Game 7 hour 18 vs slot hour 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '11:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 9
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '11:00'}
+ScheduleManagement.tsx:490 Field 9: Game 5 hour 18 vs slot hour 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '11:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 9
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '11:00'}
+ScheduleManagement.tsx:490 Field 9: Game 3 hour 18 vs slot hour 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '11:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 9
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '11:00'}
+ScheduleManagement.tsx:490 Field 9: Game 1 hour 18 vs slot hour 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '12:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '12:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '12:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '12:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '12:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '12:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '12:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '12:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '12:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '12:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '12:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '12:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '12:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '12:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '12:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '12:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '12:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '12:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '12:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '12:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '12:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '12:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '12:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '12:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '12:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '12:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '12:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '12:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '12:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '12:00'}
+ScheduleManagement.tsx:490 Field 8: Game 6 hour 18 vs slot hour 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '12:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '12:00'}
+ScheduleManagement.tsx:490 Field 8: Game 4 hour 18 vs slot hour 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '12:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '12:00'}
+ScheduleManagement.tsx:490 Field 8: Game 2 hour 18 vs slot hour 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '12:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '12:00'}
+ScheduleManagement.tsx:490 Field 9: Game 7 hour 18 vs slot hour 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '12:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 9
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '12:00'}
+ScheduleManagement.tsx:490 Field 9: Game 5 hour 18 vs slot hour 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '12:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 9
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '12:00'}
+ScheduleManagement.tsx:490 Field 9: Game 3 hour 18 vs slot hour 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '12:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 9
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '12:00'}
+ScheduleManagement.tsx:490 Field 9: Game 1 hour 18 vs slot hour 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '13:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '13:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '13:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '13:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '13:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '13:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '13:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '13:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '13:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '13:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '13:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '13:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '13:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '13:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '13:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '13:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '13:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '13:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '13:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '13:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '13:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '13:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '13:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '13:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '13:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '13:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '13:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '13:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '13:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '13:00'}
+ScheduleManagement.tsx:490 Field 8: Game 6 hour 18 vs slot hour 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '13:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '13:00'}
+ScheduleManagement.tsx:490 Field 8: Game 4 hour 18 vs slot hour 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '13:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '13:00'}
+ScheduleManagement.tsx:490 Field 8: Game 2 hour 18 vs slot hour 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '13:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '13:00'}
+ScheduleManagement.tsx:490 Field 9: Game 7 hour 18 vs slot hour 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '13:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 9
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '13:00'}
+ScheduleManagement.tsx:490 Field 9: Game 5 hour 18 vs slot hour 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '13:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 9
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '13:00'}
+ScheduleManagement.tsx:490 Field 9: Game 3 hour 18 vs slot hour 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '13:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 9
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '13:00'}
+ScheduleManagement.tsx:490 Field 9: Game 1 hour 18 vs slot hour 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '14:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '14:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '14:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '14:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '14:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '14:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '14:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '14:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '14:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '14:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '14:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '14:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '14:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '14:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '14:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '14:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '14:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '14:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '14:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '14:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '14:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '14:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '14:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '14:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '14:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '14:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '14:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '14:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '14:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '14:00'}
+ScheduleManagement.tsx:490 Field 8: Game 6 hour 18 vs slot hour 14
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '14:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '14:00'}
+ScheduleManagement.tsx:490 Field 8: Game 4 hour 18 vs slot hour 14
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '14:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '14:00'}
+ScheduleManagement.tsx:490 Field 8: Game 2 hour 18 vs slot hour 14
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '14:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '14:00'}
+ScheduleManagement.tsx:490 Field 9: Game 7 hour 18 vs slot hour 14
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '14:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 9
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '14:00'}
+ScheduleManagement.tsx:490 Field 9: Game 5 hour 18 vs slot hour 14
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '14:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 9
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '14:00'}
+ScheduleManagement.tsx:490 Field 9: Game 3 hour 18 vs slot hour 14
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '14:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 9
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '14:00'}
+ScheduleManagement.tsx:490 Field 9: Game 1 hour 18 vs slot hour 14
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '15:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '15:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '15:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '15:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '15:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '15:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '15:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '15:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '15:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '15:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '15:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '15:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '15:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '15:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '15:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '15:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '15:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '15:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '15:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '15:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '15:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '15:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '15:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '15:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '15:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '15:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '15:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '15:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '15:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '15:00'}
+ScheduleManagement.tsx:490 Field 8: Game 6 hour 18 vs slot hour 15
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '15:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '15:00'}
+ScheduleManagement.tsx:490 Field 8: Game 4 hour 18 vs slot hour 15
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '15:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '15:00'}
+ScheduleManagement.tsx:490 Field 8: Game 2 hour 18 vs slot hour 15
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '15:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '15:00'}
+ScheduleManagement.tsx:490 Field 9: Game 7 hour 18 vs slot hour 15
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '15:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 9
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '15:00'}
+ScheduleManagement.tsx:490 Field 9: Game 5 hour 18 vs slot hour 15
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '15:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 9
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '15:00'}
+ScheduleManagement.tsx:490 Field 9: Game 3 hour 18 vs slot hour 15
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '15:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 9
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '15:00'}
+ScheduleManagement.tsx:490 Field 9: Game 1 hour 18 vs slot hour 15
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '16:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '16:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '16:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '16:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '16:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '16:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '16:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '16:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '16:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '16:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '16:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '16:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '16:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '16:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '16:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '16:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '16:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '16:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '16:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '16:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '16:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '16:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '16:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '16:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '16:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '16:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '16:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '16:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '16:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '16:00'}
+ScheduleManagement.tsx:490 Field 8: Game 6 hour 18 vs slot hour 16
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '16:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '16:00'}
+ScheduleManagement.tsx:490 Field 8: Game 4 hour 18 vs slot hour 16
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '16:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '16:00'}
+ScheduleManagement.tsx:490 Field 8: Game 2 hour 18 vs slot hour 16
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '16:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '16:00'}
+ScheduleManagement.tsx:490 Field 9: Game 7 hour 18 vs slot hour 16
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '16:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 9
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '16:00'}
+ScheduleManagement.tsx:490 Field 9: Game 5 hour 18 vs slot hour 16
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '16:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 9
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '16:00'}
+ScheduleManagement.tsx:490 Field 9: Game 3 hour 18 vs slot hour 16
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '16:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 9
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '16:00'}
+ScheduleManagement.tsx:490 Field 9: Game 1 hour 18 vs slot hour 16
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '17:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '17:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '17:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '17:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '17:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '17:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '17:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '17:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '17:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '17:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '17:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '17:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '17:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '17:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '17:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '17:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '17:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '17:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '17:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '17:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '17:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '17:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '17:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '17:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '17:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '17:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '17:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '17:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '17:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '17:00'}
+ScheduleManagement.tsx:490 Field 8: Game 6 hour 18 vs slot hour 17
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '17:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '17:00'}
+ScheduleManagement.tsx:490 Field 8: Game 4 hour 18 vs slot hour 17
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '17:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '17:00'}
+ScheduleManagement.tsx:490 Field 8: Game 2 hour 18 vs slot hour 17
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '17:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '17:00'}
+ScheduleManagement.tsx:490 Field 9: Game 7 hour 18 vs slot hour 17
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '17:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 9
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '17:00'}
+ScheduleManagement.tsx:490 Field 9: Game 5 hour 18 vs slot hour 17
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '17:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 9
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '17:00'}
+ScheduleManagement.tsx:490 Field 9: Game 3 hour 18 vs slot hour 17
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '17:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 9
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '17:00'}
+ScheduleManagement.tsx:490 Field 9: Game 1 hour 18 vs slot hour 17
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '18:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '18:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '18:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '18:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '18:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '18:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 10, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '18:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 10
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '18:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '18:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '18:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '18:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '18:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '18:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 11, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '18:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 11
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '18:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '18:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '18:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '18:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '18:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '18:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 12, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '18:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 12
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '18:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '18:00'}
+ScheduleManagement.tsx:475 Game 6 field mismatch: 8 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '18:00'}
+ScheduleManagement.tsx:475 Game 5 field mismatch: 9 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '18:00'}
+ScheduleManagement.tsx:475 Game 4 field mismatch: 8 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '18:00'}
+ScheduleManagement.tsx:475 Game 3 field mismatch: 9 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '18:00'}
+ScheduleManagement.tsx:475 Game 2 field mismatch: 8 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 13, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '18:00'}
+ScheduleManagement.tsx:475 Game 1 field mismatch: 9 !== 13
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '18:00'}
+ScheduleManagement.tsx:475 Game 7 field mismatch: 9 !== 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 8, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '18:00'}
+ScheduleManagement.tsx:490 Field 8: Game 6 hour 18 vs slot hour 18
+ScheduleManagement.tsx:494 MATCH FOUND: Game 6 matches time slot 18:00 on field 8
+ScheduleManagement.tsx:467 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-02T22:11:05.352Z', timeSlot: '18:00'}
+ScheduleManagement.tsx:490 Field 9: Game 7 hour 18 vs slot hour 18
+ScheduleManagement.tsx:494 MATCH FOUND: Game 7 matches time slot 18:00 on field 9
+NewRegistrationsBanner.tsx:27 Fetch finished loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/admin/registrations/new-count".
+queryFn @ NewRegistrationsBanner.tsx:27
+fetchFn @ @tanstack_react-query.js?v=80b17ebe:881
+run @ @tanstack_react-query.js?v=80b17ebe:513
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+executeFetch_fn @ @tanstack_react-query.js?v=80b17ebe:2278
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:2312
