@@ -67,6 +67,7 @@ export class SimpleScheduler {
           // Generate realistic game times with proper rest time (will be resolved during async processing)
           startTime: '', // Will be set during async processing
           endTime: '', // Will be set during async processing
+          fieldId: await SimpleScheduler.assignRealFieldId(gameCounter - 1, bracketData.bracketName, realComplexes),
           field: await SimpleScheduler.assignRealField(gameCounter, bracketData.bracketName, realComplexes),
           complexName: await SimpleScheduler.getComplexForField(gameCounter, bracketData.bracketName, realComplexes),
           // Add field size information for display
@@ -186,6 +187,47 @@ export class SimpleScheduler {
       console.error('Error fetching team coach info:', error);
       return {};
     }
+  }
+
+  /**
+   * Assign real field ID based on age group requirements and availability
+   */
+  static async assignRealFieldId(gameNumber: number, bracketName: string, realComplexes: any[]): Promise<number | null> {
+    if (!realComplexes || realComplexes.length === 0) {
+      return null;
+    }
+
+    // Get the appropriate field size for the age group
+    const requiredFieldSize = SimpleScheduler.getFieldSizeForAgeGroup(bracketName);
+    
+    // Find suitable fields
+    const suitableFields: any[] = [];
+    
+    for (const complex of realComplexes) {
+      if (complex.fields && Array.isArray(complex.fields)) {
+        const matchingFields = complex.fields.filter((field: any) => 
+          field.fieldSize === requiredFieldSize
+        );
+        suitableFields.push(...matchingFields);
+      }
+    }
+    
+    if (suitableFields.length === 0) {
+      // Fallback to any available field
+      for (const complex of realComplexes) {
+        if (complex.fields && Array.isArray(complex.fields)) {
+          suitableFields.push(...complex.fields);
+        }
+      }
+    }
+    
+    if (suitableFields.length === 0) {
+      return null;
+    }
+    
+    // Simple round-robin field assignment
+    const fieldIndex = gameNumber % suitableFields.length;
+    return suitableFields[fieldIndex].id;
   }
 
   /**

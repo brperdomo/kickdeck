@@ -113,6 +113,13 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
+- July 2, 2025: CRITICAL FIELD ASSIGNMENT FIX - Resolved games not appearing as assigned in Step 7 visual interface
+  - IDENTIFIED: Critical bug where SimpleScheduler generated field names but database insertion required field IDs
+  - ROOT CAUSE: Generated games had `field` property (string names like "Field 1") but database expected `fieldId` (numeric IDs)  
+  - FIXED: Enhanced SimpleScheduler.generateSchedule() to include both `fieldId` (numeric) and `field` (string) properties
+  - IMPLEMENTED: New assignRealFieldId() function that returns actual database field IDs instead of just names
+  - VERIFIED: Test confirmed all games now receive proper field IDs (e.g., Field ID 9, 8) during generation
+  - PRODUCTION READY: Games will now appear as properly assigned in Step 7 scheduling interface instead of showing as unassigned
 - July 2, 2025: CRITICAL OPERATING HOURS FIX - Resolved games being scheduled outside field operating hours (8 AM-10 PM)
   - IDENTIFIED: Critical bug where games were scheduled at 7:30 AM (before opening) and extending past 10 PM closing
   - FIXED: Time generation logic now properly calculates games per day based on available operating hours
