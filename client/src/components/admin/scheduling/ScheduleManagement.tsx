@@ -68,9 +68,11 @@ export default function ScheduleManagement({ eventId }: ScheduleManagementProps)
   const { data: gamesData, isLoading: gamesLoading } = useQuery({
     queryKey: ['schedule-games', eventId],
     queryFn: async () => {
-      const response = await fetch(`/api/admin/games/${eventId}`);
+      const response = await fetch(`/api/admin/events/${eventId}/schedule`);
       if (!response.ok) throw new Error('Failed to fetch games');
-      return response.json();
+      const data = await response.json();
+      console.log('Schedule Management - Fetched games data:', data);
+      return data;
     }
   });
 
@@ -80,7 +82,9 @@ export default function ScheduleManagement({ eventId }: ScheduleManagementProps)
     queryFn: async () => {
       const response = await fetch(`/api/admin/schedule/complexes/${eventId}`);
       if (!response.ok) throw new Error('Failed to fetch complexes');
-      return response.json();
+      const data = await response.json();
+      console.log('Schedule Management - Fetched complexes data:', data);
+      return data;
     }
   });
 
