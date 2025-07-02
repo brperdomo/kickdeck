@@ -281,28 +281,17 @@ export default function ScheduleManagement({ eventId }: ScheduleManagementProps)
 
   const timeSlots = generateTimeSlots();
   
-  console.log('Schedule Management - Games array:', games);
-  console.log('Schedule Management - Games length:', games.length);
-  console.log('Schedule Management - Sample game data:', games[0]);
-  console.log('Schedule Management - Games with field IDs:', games.filter(g => g.fieldId));
-  console.log('Schedule Management - Games without field IDs:', games.filter(g => !g.fieldId));
-  console.log('Schedule Management - Complexes array:', complexes);
-  
-  // Debug game time slot data
-  games.forEach((game, index) => {
-    console.log(`Game ${index + 1}:`, {
-      id: game.id,
-      gameNumber: game.gameNumber,
-      fieldId: game.fieldId,
-      timeSlot: game.timeSlot,
-      homeTeam: game.homeTeam,
-      awayTeam: game.awayTeam
-    });
-  });
-  
-  // Debug field data
-  complexes.forEach(complex => {
-    console.log(`Complex ${complex.name} fields:`, complex.fields.map(f => ({ id: f.id, name: f.name })));
+  // Debug: Show key data to identify why games aren't displaying
+  console.log('SCHEDULE DEBUG:', {
+    gamesCount: games.length,
+    firstGame: games[0] ? {
+      id: games[0].id,
+      fieldId: games[0].fieldId,
+      timeSlot: games[0].timeSlot,
+      gameNumber: games[0].gameNumber
+    } : null,
+    fieldIds: complexes.flatMap(c => c.fields.map(f => f.id)),
+    timeSlots: timeSlots
   });
 
   return (
@@ -439,79 +428,88 @@ export default function ScheduleManagement({ eventId }: ScheduleManagementProps)
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto">
-                  <div className="grid grid-cols-6 gap-2 min-w-[800px]">
-                    {/* Time headers */}
-                    <div className="font-semibold text-sm">Time</div>
-                    {complex.fields.map((field: Field) => (
-                      <div key={field.id} className="font-semibold text-sm text-center">
-                        <div>{field.name}</div>
-                        <Badge variant="outline" className="text-xs mt-1">
-                          {field.fieldSize}
-                        </Badge>
-                      </div>
-                    ))}
-                    
-                    {/* Time slots with games */}
-                    {timeSlots.map((timeSlot) => (
-                      <React.Fragment key={timeSlot}>
-                        <div className="text-sm py-2 font-medium">
-                          {timeSlot} {getTimezoneAbbreviation(complex.timezone)}
-                        </div>
-                        {complex.fields.map((field: Field) => {
-                          const assignedGame = games.find((game: Game) => {
-                            if (game.fieldId !== field.id) return false;
-                            
-                            // Check if game has timeSlot data
-                            if (!game.timeSlot || !game.timeSlot.startTime) {
-                              console.log(`Game ${game.gameNumber || game.matchNumber} has no timeSlot data`);
-                              return false;
-                            }
-                            
-                            // Get hour from game timeSlot start time
-                            const gameTime = new Date(game.timeSlot.startTime);
-                            const gameHour = gameTime.getHours();
-                            const slotHour = parseInt(timeSlot.split(':')[0]);
-                            
-                            console.log(`Field ${field.id}: Comparing game ${game.gameNumber || game.matchNumber} hour ${gameHour} with slot hour ${slotHour}`);
-                            
-                            return gameHour === slotHour;
-                          });
+                  {/* Proper table layout with time column on left */}
+                  <table className="w-full min-w-[800px] border-collapse">
+                    <thead>
+                      <tr>
+                        <th className="font-semibold text-sm p-3 border text-left bg-gray-50">Time</th>
+                        {/* Sort fields by name for consistent ordering */}
+                        {complex.fields
+                          .sort((a, b) => a.name.localeCompare(b.name))
+                          .map((field: Field) => (
+                          <th key={field.id} className="font-semibold text-sm text-center p-3 border bg-gray-50">
+                            <div>{field.name}</div>
+                            <Badge variant="outline" className="text-xs mt-1">
+                              {field.fieldSize}
+                            </Badge>
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {timeSlots.map((timeSlot) => (
+                        <tr key={timeSlot}>
+                          <td className="text-sm py-4 px-3 font-medium border bg-gray-50 whitespace-nowrap">
+                            {timeSlot} {getTimezoneAbbreviation(complex.timezone)}
+                          </td>
+                          {/* Sort fields same way for consistent column alignment */}
+                          {complex.fields
+                            .sort((a, b) => a.name.localeCompare(b.name))
+                            .map((field: Field) => {
+                            const assignedGame = games.find((game: Game) => {
+                              if (game.fieldId !== field.id) return false;
+                              
+                              // Check if game has timeSlot data
+                              if (!game.timeSlot || !game.timeSlot.startTime) {
+                                console.log(`Game ${game.gameNumber || game.matchNumber} has no timeSlot data`);
+                                return false;
+                              }
+                              
+                              // Get hour from game timeSlot start time
+                              const gameTime = new Date(game.timeSlot.startTime);
+                              const gameHour = gameTime.getHours();
+                              const slotHour = parseInt(timeSlot.split(':')[0]);
+                              
+                              console.log(`Field ${field.id}: Comparing game ${game.gameNumber || game.matchNumber} hour ${gameHour} with slot hour ${slotHour}`);
+                              
+                              return gameHour === slotHour;
+                            });
 
-                          return (
-                            <div
-                              key={`field-${field.id}-${timeSlot}`}
-                              className="min-h-[80px] p-2 border-2 border-dashed border-gray-200 bg-gray-50 rounded-lg"
-                            >
-                              {assignedGame ? (
-                                <div
-                                  className="p-2 bg-white border rounded shadow-sm cursor-pointer hover:shadow-md transition-shadow"
-                                  onClick={() => handleGameClick(assignedGame)}
-                                >
-                                  <div className="text-xs font-semibold">
-                                    Game {assignedGame.gameNumber}
-                                  </div>
-                                  <div className="text-xs text-gray-600">
-                                    {typeof assignedGame.homeTeam === 'object' ? (assignedGame.homeTeam?.name || 'Team') : String(assignedGame.homeTeam || 'Team')} vs {typeof assignedGame.awayTeam === 'object' ? (assignedGame.awayTeam?.name || 'Team') : String(assignedGame.awayTeam || 'Team')}
-                                  </div>
-                                  <Badge variant="secondary" className="text-xs mt-1">
-                                    {assignedGame.bracket}
-                                  </Badge>
-                                  <div className="text-xs text-blue-600 mt-1 flex items-center">
-                                    <Move className="h-3 w-3 mr-1" />
-                                    Click to edit
-                                  </div>
+                            return (
+                              <td key={`field-${field.id}-${timeSlot}`} className="p-2 border">
+                                <div className="min-h-[80px] border-2 border-dashed border-gray-200 bg-gray-50 rounded-lg">
+                                  {assignedGame ? (
+                                    <div
+                                      className="p-2 bg-white border rounded shadow-sm cursor-pointer hover:shadow-md transition-shadow h-full"
+                                      onClick={() => handleGameClick(assignedGame)}
+                                    >
+                                      <div className="text-xs font-semibold">
+                                        Game {assignedGame.gameNumber}
+                                      </div>
+                                      <div className="text-xs text-gray-600">
+                                        {typeof assignedGame.homeTeam === 'object' ? (assignedGame.homeTeam?.name || 'Team') : String(assignedGame.homeTeam || 'Team')} vs {typeof assignedGame.awayTeam === 'object' ? (assignedGame.awayTeam?.name || 'Team') : String(assignedGame.awayTeam || 'Team')}
+                                      </div>
+                                      <Badge variant="secondary" className="text-xs mt-1">
+                                        {assignedGame.bracket}
+                                      </Badge>
+                                      <div className="text-xs text-blue-600 mt-1 flex items-center">
+                                        <Move className="h-3 w-3 mr-1" />
+                                        Click to edit
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <div className="h-full flex items-center justify-center text-xs text-gray-500">
+                                      Available
+                                    </div>
+                                  )}
                                 </div>
-                              ) : (
-                                <div className="text-xs text-gray-400 text-center py-4">
-                                  Available
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </React.Fragment>
-                    ))}
-                  </div>
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </CardContent>
             </Card>
