@@ -3,11 +3,12 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { AlertCircle, CheckCircle, AlertTriangle, Clock, MapPin, Move } from 'lucide-react';
+import { AlertCircle, CheckCircle, AlertTriangle, Clock, MapPin, Move, Calendar, Users, Timer } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { formatGameTimeWithTimezone, getFieldTimezone, getTimezoneAbbreviation } from '@/utils/timezone';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 interface Game {
   id: number;
@@ -63,8 +64,61 @@ export default function ScheduleManagement({ eventId }: ScheduleManagementProps)
   const [conflicts, setConflicts] = useState<Conflict[]>([]);
   const [showConflicts, setShowConflicts] = useState(false);
   const [showGameEditor, setShowGameEditor] = useState(false);
+  const [isDragEnabled, setIsDragEnabled] = useState(false);
   
   const queryClient = useQueryClient();
+
+  // Enable drag functionality after component mount to avoid SSR issues
+  useEffect(() => {
+    setIsDragEnabled(true);
+  }, []);
+
+  // Handle drag and drop operations for schedule adjustments
+  const handleDragEnd = (result: any) => {
+    if (!result.destination) return;
+
+    const { source, destination, draggableId } = result;
+    
+    // Get the game that was dragged
+    const gameId = parseInt(draggableId.replace('game-', ''));
+    const game = games?.find((g: Game) => g.id === gameId);
+    
+    if (!game) return;
+
+    // If dropped on a field, update the game's field assignment
+    if (destination.droppableId.startsWith('field-')) {
+      const fieldId = parseInt(destination.droppableId.replace('field-', ''));
+      const field = complexes?.flatMap((c: any) => c.fields)?.find((f: any) => f.id === fieldId);
+      const complex = complexes?.find((c: any) => c.fields.some((f: any) => f.id === fieldId));
+      
+      if (field && complex) {
+        updateGameMutation.mutate({
+          gameId: game.id,
+          fieldId,
+          complexId: complex.id,
+          startTime: game.startTime,
+          endTime: game.endTime
+        });
+      }
+    }
+  };
+
+  // Function to get age group color coding
+  const getAgeGroupColor = (ageGroup: string) => {
+    const colors = {
+      'U17': 'bg-blue-100 border-blue-300 text-blue-800',
+      'U16': 'bg-green-100 border-green-300 text-green-800',
+      'U15': 'bg-purple-100 border-purple-300 text-purple-800',
+      'U14': 'bg-yellow-100 border-yellow-300 text-yellow-800',
+      'U13': 'bg-red-100 border-red-300 text-red-800',
+      'U12': 'bg-indigo-100 border-indigo-300 text-indigo-800',
+      'U11': 'bg-pink-100 border-pink-300 text-pink-800',
+      'U10': 'bg-orange-100 border-orange-300 text-orange-800',
+    };
+    
+    const ageKey = Object.keys(colors).find(age => ageGroup.includes(age));
+    return ageKey ? colors[ageKey as keyof typeof colors] : 'bg-gray-100 border-gray-300 text-gray-800';
+  };
 
   // Fetch current schedule
   const { data: gamesData, isLoading: gamesLoading } = useQuery({

@@ -6136,41 +6136,44 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       try {
         const eventId = parseInt(req.params.id);
 
-        // Fetch all games for this event with related data
+        // Fetch all games for this event with related data including gameTimeSlots
         const schedule = await db
           .select({
             game: games,
             homeTeam: teams,
             awayTeam: sql<{ id: number; name: string }>`json_build_object('id', ${sql.raw('away_teams')}.id, 'name', ${sql.raw('away_teams')}.name)`,
             field: fields,
-            timeSlot: gameTimeSlots,
+            complex: complexes,
             ageGroup: eventAgeGroups,
+            timeSlot: gameTimeSlots,
           })
           .from(games)
           .leftJoin(teams, eq(games.homeTeamId, teams.id))
           .leftJoin(sql.raw('teams as away_teams'), eq(games.awayTeamId, sql.raw('away_teams.id')))
           .leftJoin(fields, eq(games.fieldId, fields.id))
-          .leftJoin(gameTimeSlots, eq(games.timeSlotId, gameTimeSlots.id))
+          .leftJoin(complexes, eq(fields.complexId, complexes.id))
           .leftJoin(eventAgeGroups, eq(games.ageGroupId, eventAgeGroups.id))
+          .leftJoin(gameTimeSlots, eq(games.timeSlotId, gameTimeSlots.id))
           .where(eq(games.eventId, eventId))
           .orderBy(gameTimeSlots.startTime);
 
-        // Format the schedule for frontend display with enhanced data - no filtering to ensure all games are displayed
-        const formattedSchedule = schedule.map(item => ({
+        console.log(`Found ${schedule.length} games for event ${eventId}`);
+
+        // Format the schedule for frontend display with enhanced data
+        const formattedSchedule = schedule.map((item, index) => ({
             id: item.game.id,
-            startTime: item.timeSlot?.startTime || item.game.createdAt, // Fallback to game creation time
-            endTime: item.timeSlot?.endTime || '', // Empty string fallback
+            gameNumber: item.game.matchNumber || index + 1,
+            startTime: item.timeSlot?.startTime || new Date().toISOString(),
+            endTime: item.timeSlot?.endTime || new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(), // 2 hours later
             fieldName: item.field?.name || 'Unassigned', 
-            fieldId: item.field?.id || 0,
-            complexId: item.field?.complexId || 0,
-            complexName: item.field?.complexName || 'Unassigned',
+            fieldId: item.game.fieldId || null,
+            fieldSize: item.field?.fieldSize || 'Unknown',
+            complexId: item.complex?.id || null,
+            complexName: item.complex?.name || 'Unassigned',
             ageGroup: item.ageGroup?.ageGroup || 'Unassigned',
             ageGroupId: item.ageGroup?.id || 0,
-            bracket: item.game.bracketId ? { 
-              id: item.game.bracketId,
-              name: item.game.bracketName || 'Default Bracket'
-            } : null,
-            round: item.game.round || 'Group Stage',
+            bracket: `${item.ageGroup?.ageGroup || 'Unknown'} Flight A`,
+            round: item.game.round || 'Pool Play',
             homeTeam: item.homeTeam ? {
               id: item.homeTeam.id,
               name: item.homeTeam.name || 'TBD',
@@ -6178,15 +6181,15 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
               coach: item.homeTeam.coachName || '',
               status: item.homeTeam.status || 'approved'
             } : {
-              id: 0,
-              name: 'TBD',
+              id: item.game.homeTeamId || 0,
+              name: `Team ${item.game.homeTeamId}` || 'TBD',
               clubName: '',
               coach: '',
               status: 'approved'
             },
             awayTeam: {
-              id: (item.awayTeam as any)?.id || 0,
-              name: (item.awayTeam as { name: string })?.name || 'TBD',
+              id: (item.awayTeam as any)?.id || item.game.awayTeamId || 0,
+              name: (item.awayTeam as { name: string })?.name || `Team ${item.game.awayTeamId}` || 'TBD',
               clubName: (item.awayTeam as any)?.clubName || '',
               coach: (item.awayTeam as any)?.coachName || '',
               status: (item.awayTeam as any)?.status || 'approved'
@@ -6194,6 +6197,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
             status: item.game.status || 'scheduled',
           }));
 
+        console.log(`Returning ${formattedSchedule.length} formatted games`);
         res.json({ games: formattedSchedule });
       } catch (error) {
         console.error('Error fetching schedule:', error);

@@ -62,6 +62,7 @@ export class SimpleScheduler {
           status: 'scheduled' as const,
           breakTime: 15,
           bracketId: bracketData.bracketId, // Include bracket ID for lookup
+          bracketName: bracketData.bracketName, // Store bracket name in database
           ageGroup: bracketData.bracketName.includes('U17') ? 'U17 Boys' : 'Unknown Age Group',
           bracket: bracketData.bracketName,
           // Generate realistic game times with proper rest time (will be resolved during async processing)
