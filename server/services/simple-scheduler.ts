@@ -10,8 +10,17 @@ import { eq, inArray } from "drizzle-orm";
 import { games, eventBrackets, complexes, fields, teams } from "../../db/schema";
 
 export class SimpleScheduler {
-  static async generateSchedule(eventId: string, workflowData: any) {
+  static async generateSchedule(eventId: string, workflowData: any, options: {
+    minRestPeriod?: number;
+    minutesPerGame?: number;
+    breakBetweenGames?: number;
+  } = {}) {
     console.log('🏆 Simple scheduler processing workflow data...');
+    
+    // Set defaults for scheduling parameters
+    const gameDuration = options.minutesPerGame || 90;
+    const restTime = options.minRestPeriod || 60; // User specified 90 minutes rest
+    const breakTime = options.breakBetweenGames || 15;
     
     const { workflowGames } = workflowData;
     
@@ -55,9 +64,9 @@ export class SimpleScheduler {
           bracketId: bracketData.bracketId, // Include bracket ID for lookup
           ageGroup: bracketData.bracketName.includes('U17') ? 'U17 Boys' : 'Unknown Age Group',
           bracket: bracketData.bracketName,
-          // Generate realistic game times with proper rest time (60 minutes minimum)
-          startTime: SimpleScheduler.generateGameTime(gameCounter - 1), // gameCounter starts at 1, so use gameCounter-1 for indexing
-          endTime: SimpleScheduler.generateGameTime(gameCounter - 1, 90), // 90 minutes later
+          // Generate realistic game times with proper rest time
+          startTime: SimpleScheduler.generateGameTime(gameCounter - 1, 0, gameDuration, restTime),
+          endTime: SimpleScheduler.generateGameTime(gameCounter - 1, gameDuration, gameDuration, restTime),
           field: await SimpleScheduler.assignRealField(gameCounter, bracketData.bracketName, realComplexes),
           complexName: await SimpleScheduler.getComplexForField(gameCounter, bracketData.bracketName, realComplexes),
           // Add field size information for display
@@ -224,13 +233,15 @@ export class SimpleScheduler {
 
   /**
    * Generate realistic game time scheduling
-   * Starting from next Saturday at 9 AM, with configurable rest time between games
+   * Starting from next Saturday at field opening time, with configurable rest time between games
    */
   static generateGameTime(gameNumber: number, additionalMinutes: number = 0, gameDuration: number = 90, restTime: number = 60): string {
     const nextSaturday = new Date();
     const daysUntilSaturday = (6 - nextSaturday.getDay()) % 7;
     nextSaturday.setDate(nextSaturday.getDate() + (daysUntilSaturday || 7));
-    nextSaturday.setHours(9, 0, 0, 0); // Start at 9 AM
+    
+    // Set to 8:00 AM (field opening time for Galway Downs)
+    nextSaturday.setHours(8, 0, 0, 0);
     
     // Calculate time interval: game duration + minimum rest time (default: 90 + 60 = 150 minutes)
     const timeInterval = gameDuration + restTime;

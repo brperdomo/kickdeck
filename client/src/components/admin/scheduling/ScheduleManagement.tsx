@@ -175,10 +175,16 @@ export default function ScheduleManagement({ eventId }: ScheduleManagementProps)
     });
   };
 
-  // Generate time slots (9 AM to 7 PM, 2-hour intervals)
+  // Generate time slots based on actual field opening hours and game data
   const generateTimeSlots = () => {
     const slots = [];
-    for (let hour = 9; hour < 19; hour += 2) {
+    
+    // Start from field opening time (8 AM for Galway Downs)
+    const startHour = 8;
+    const endHour = 20; // 8 PM
+    
+    // Generate hourly slots to accommodate different game lengths
+    for (let hour = startHour; hour < endHour; hour++) {
       const timeStr = `${hour.toString().padStart(2, '0')}:00`;
       slots.push(timeStr);
     }
@@ -200,7 +206,12 @@ export default function ScheduleManagement({ eventId }: ScheduleManagementProps)
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold">Schedule Management</h2>
-          <p className="text-gray-600">Drag games to assign fields and time slots</p>
+          <p className="text-gray-600">
+            {games.length > 0 
+              ? "Drag games between time slots and fields to adjust schedule"
+              : "Generate a schedule first to see games that can be rearranged"
+            }
+          </p>
         </div>
         
         <div className="flex gap-2">

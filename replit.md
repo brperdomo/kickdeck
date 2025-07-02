@@ -113,6 +113,15 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
+- July 2, 2025: COMPREHENSIVE SCHEDULING SYSTEM FIXES - Resolved critical timing, timezone, and interface issues in tournament scheduling system
+  - FIXED: Galway Downs timezone corrected from Eastern to Pacific Time (America/Los_Angeles) for accurate California scheduling
+  - ENHANCED: Field opening time enforcement - games now start at 8 AM (field opening time) instead of incorrect 7:30 AM scheduling
+  - IMPLEMENTED: User-specified rest time honor - system now properly respects 90-minute minimum rest periods between games for same teams
+  - UPDATED: SimpleScheduler service to accept dynamic parameters (minRestPeriod, minutesPerGame, breakBetweenGames) from user interface
+  - IMPROVED: Schedule Management interface clarity - shows helpful message when no games exist vs functional drag-and-drop for existing games
+  - ENHANCED: Time slot generation from hardcoded 9 AM-7 PM to dynamic 8 AM-8 PM based on actual field operating hours
+  - VERIFIED: API endpoint passes user scheduling parameters to SimpleScheduler for proper rest time and field hour enforcement
+  - PRODUCTION READY: Scheduling system now respects complex operating hours, user preferences, and proper timezone handling
 - July 1, 2025: TOURNAMENT DIRECTOR ACCESS RESTRICTION SETUP - Successfully implemented event-specific user access control for external tournament directors
   - CREATED: Complete user account for darrell.johnson@rebelssoccerclub.com with tournament director role
   - CONFIGURED: Event-specific access restriction to only Event ID 1825427780 (no access to other events)  

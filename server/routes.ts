@@ -6292,8 +6292,12 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         
         console.log('🏆 Starting simple deterministic tournament scheduling...');
         
-        // Generate schedule using workflow data
-        const scheduleResult = await SimpleScheduler.generateSchedule(eventId, req.body);
+        // Generate schedule using workflow data with user parameters
+        const scheduleResult = await SimpleScheduler.generateSchedule(eventId, req.body, {
+          minRestPeriod: minRestPeriod || 60,  // Default to 60 minutes if not specified
+          minutesPerGame: minutesPerGame || 90,
+          breakBetweenGames: breakBetweenGames || 15
+        });
 
         // Save the generated schedule to the database
         await db.transaction(async (tx) => {
