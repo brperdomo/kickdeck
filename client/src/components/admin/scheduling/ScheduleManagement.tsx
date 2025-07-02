@@ -252,23 +252,58 @@ export default function ScheduleManagement({ eventId }: ScheduleManagementProps)
   console.log("SCHEDULE DEBUG - First game structure:", games[0]);
   console.log("SCHEDULE DEBUG - Complexes data:", complexes);
 
+  // Group games by date and get time slots for multi-day display
+  const getGamesByDate = () => {
+    const gamesByDate = new Map();
+    
+    games.forEach(game => {
+      if (game.startTime) {
+        // Parse the UTC time and convert to Pacific Time
+        const gameTime = new Date(game.startTime);
+        // Get the date in Pacific Time (venue timezone)
+        const pacificDate = new Intl.DateTimeFormat('en-US', {
+          timeZone: 'America/Los_Angeles',
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit'
+        }).format(gameTime);
+        
+        if (!gamesByDate.has(pacificDate)) {
+          gamesByDate.set(pacificDate, []);
+        }
+        gamesByDate.get(pacificDate).push(game);
+      }
+    });
+    
+    return gamesByDate;
+  };
+
   // Generate time slots based on actual game times to ensure all games show up
   const generateTimeSlots = () => {
     const slots = [];
     
-    // Get unique start hours from actual games
+    // Get unique start hours from actual games using Pacific Time
     const gameStartHours = games
-      .filter(game => game.timeSlot && game.timeSlot.startTime)
-      .map(game => new Date(game.timeSlot.startTime).getHours())
+      .filter(game => game.startTime)
+      .map(game => {
+        const gameTime = new Date(game.startTime);
+        // Get hour in Pacific Time
+        const pacificHour = parseInt(new Intl.DateTimeFormat('en-US', {
+          timeZone: 'America/Los_Angeles',
+          hour: '2-digit',
+          hour12: false
+        }).format(gameTime));
+        return pacificHour;
+      })
       .filter((hour, index, arr) => arr.indexOf(hour) === index)
       .sort((a, b) => a - b);
     
-    console.log('Actual game start hours:', gameStartHours);
+    console.log('Actual game start hours (Pacific Time):', gameStartHours);
     
     // If we have games, use their actual hours plus some padding
     if (gameStartHours.length > 0) {
-      const minHour = Math.max(8, gameStartHours[0] - 1); // Start 1 hour before first game, but not before 8 AM
-      const maxHour = Math.min(20, gameStartHours[gameStartHours.length - 1] + 2); // End 2 hours after last game, but not after 8 PM
+      const minHour = Math.max(8, gameStartHours[0]); 
+      const maxHour = Math.min(20, gameStartHours[gameStartHours.length - 1] + 1); 
       
       for (let hour = minHour; hour <= maxHour; hour++) {
         const timeStr = `${hour.toString().padStart(2, '0')}:00`;
@@ -287,14 +322,16 @@ export default function ScheduleManagement({ eventId }: ScheduleManagementProps)
   };
 
   const timeSlots = generateTimeSlots();
+  const gamesByDate = getGamesByDate();
   
   // Debug: Show key data to identify why games aren't displaying
   console.log('SCHEDULE DEBUG:', {
     gamesCount: games.length,
+    gamesByDate: Array.from(gamesByDate.entries()),
     firstGame: games[0] ? {
       id: games[0].id,
       fieldId: games[0].fieldId,
-      timeSlot: games[0].timeSlot,
+      startTime: games[0].startTime,
       gameNumber: games[0].gameNumber
     } : null,
     fieldIds: complexes.flatMap(c => c.fields.map(f => f.id)),
@@ -426,12 +463,19 @@ export default function ScheduleManagement({ eventId }: ScheduleManagementProps)
       {/* Schedule Grid - Click to Edit */}
       {games.length > 0 && (
         <div className="space-y-6">
-          {/* Assigned Games by Complex */}
-          {complexes.map((complex: Complex) => (
-            <Card key={complex.id}>
+          {/* Assigned Games by Date */}
+          {Array.from(gamesByDate.entries()).map(([date, dateGames]) => (
+            <Card key={date}>
               <CardHeader>
-                <CardTitle className="text-lg">{complex.name}</CardTitle>
-                <p className="text-sm text-gray-600">{complex.address}</p>
+                <CardTitle className="text-lg">
+                  {new Date(date).toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                  })}
+                </CardTitle>
+                <p className="text-sm text-gray-600">{dateGames.length} games scheduled</p>
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto">
@@ -440,9 +484,9 @@ export default function ScheduleManagement({ eventId }: ScheduleManagementProps)
                     <thead>
                       <tr>
                         <th className="font-semibold text-sm p-3 border text-left bg-gray-50">Time</th>
-                        {/* Only show fields that have games assigned to them */}
-                        {complex.fields
-                          .filter((field: Field) => games.some((game: Game) => game.fieldId === field.id))
+                        {/* Only show fields that have games assigned to them for this date */}
+                        {complexes.flatMap((complex: Complex) => complex.fields)
+                          .filter((field: Field) => dateGames.some((game: Game) => game.fieldId === field.id))
                           .sort((a, b) => a.name.localeCompare(b.name))
                           .map((field: Field) => (
                           <th key={field.id} className="font-semibold text-sm text-center p-3 border bg-gray-50">
@@ -458,14 +502,14 @@ export default function ScheduleManagement({ eventId }: ScheduleManagementProps)
                       {timeSlots.map((timeSlot) => (
                         <tr key={timeSlot}>
                           <td className="text-sm py-4 px-3 font-medium border bg-gray-50 whitespace-nowrap">
-                            {timeSlot} {getTimezoneAbbreviation(complex.timezone)}
+                            {timeSlot} {getTimezoneAbbreviation('America/Los_Angeles')}
                           </td>
-                          {/* Only show fields that have games assigned, sorted for consistent column alignment */}
-                          {complex.fields
-                            .filter((field: Field) => games.some((game: Game) => game.fieldId === field.id))
+                          {/* Only show fields that have games assigned for this date, sorted for consistent column alignment */}
+                          {complexes.flatMap((complex: Complex) => complex.fields)
+                            .filter((field: Field) => dateGames.some((game: Game) => game.fieldId === field.id))
                             .sort((a, b) => a.name.localeCompare(b.name))
                             .map((field: Field) => {
-                            const assignedGame = games.find((game: Game) => {
+                            const assignedGame = dateGames.find((game: Game) => {
                               console.log(`GAME MATCHING DEBUG - Checking game ${game.gameNumber}:`, {
                                 gameFieldId: game.fieldId,
                                 targetFieldId: field.id,
@@ -478,18 +522,22 @@ export default function ScheduleManagement({ eventId }: ScheduleManagementProps)
                                 return false;
                               }
                               
-                              // Check if game has startTime data (API returns startTime directly, not in timeSlot object)
+                              // Check if game has startTime data
                               if (!game.startTime) {
                                 console.log(`Game ${game.gameNumber} has no startTime data`);
                                 return false;
                               }
                               
-                              // Get hour from game start time
+                              // Get hour from game start time in Pacific Time
                               const gameTime = new Date(game.startTime);
-                              const gameHour = gameTime.getHours();
+                              const gameHour = parseInt(new Intl.DateTimeFormat('en-US', {
+                                timeZone: 'America/Los_Angeles',
+                                hour: '2-digit',
+                                hour12: false
+                              }).format(gameTime));
                               const slotHour = parseInt(timeSlot.split(':')[0]);
                               
-                              console.log(`Field ${field.id}: Game ${game.gameNumber} hour ${gameHour} vs slot hour ${slotHour}`);
+                              console.log(`Field ${field.id}: Game ${game.gameNumber} hour ${gameHour} (PT) vs slot hour ${slotHour}`);
                               
                               const match = gameHour === slotHour;
                               if (match) {

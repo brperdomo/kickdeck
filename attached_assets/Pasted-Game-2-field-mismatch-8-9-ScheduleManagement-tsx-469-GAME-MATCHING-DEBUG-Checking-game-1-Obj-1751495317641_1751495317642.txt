@@ -1,0 +1,157 @@
+Game 2 field mismatch: 8 !== 9
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 1: Object
+ScheduleManagement.tsx:492 Field 9: Game 1 hour 18 vs slot hour 12
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 4: Object
+ScheduleManagement.tsx:492 Field 8: Game 4 hour 18 vs slot hour 13
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 6: Object
+ScheduleManagement.tsx:477 Game 6 field mismatch: 9 !== 8
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 7: Object
+ScheduleManagement.tsx:477 Game 7 field mismatch: 9 !== 8
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 5: Object
+ScheduleManagement.tsx:477 Game 5 field mismatch: 9 !== 8
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 3: Object
+ScheduleManagement.tsx:477 Game 3 field mismatch: 9 !== 8
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 2: Object
+ScheduleManagement.tsx:492 Field 8: Game 2 hour 18 vs slot hour 13
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 1: Object
+ScheduleManagement.tsx:477 Game 1 field mismatch: 9 !== 8
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 4: Object
+ScheduleManagement.tsx:477 Game 4 field mismatch: 8 !== 9
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 6: Object
+ScheduleManagement.tsx:492 Field 9: Game 6 hour 18 vs slot hour 13
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 7: Object
+ScheduleManagement.tsx:492 Field 9: Game 7 hour 18 vs slot hour 13
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 5: Object
+ScheduleManagement.tsx:492 Field 9: Game 5 hour 18 vs slot hour 13
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 3: Object
+ScheduleManagement.tsx:492 Field 9: Game 3 hour 18 vs slot hour 13
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 2: Object
+ScheduleManagement.tsx:477 Game 2 field mismatch: 8 !== 9
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 1: Object
+ScheduleManagement.tsx:492 Field 9: Game 1 hour 18 vs slot hour 13
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 4: Object
+ScheduleManagement.tsx:492 Field 8: Game 4 hour 18 vs slot hour 14
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 6: Object
+ScheduleManagement.tsx:477 Game 6 field mismatch: 9 !== 8
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 7: Object
+ScheduleManagement.tsx:477 Game 7 field mismatch: 9 !== 8
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 5: Object
+ScheduleManagement.tsx:477 Game 5 field mismatch: 9 !== 8
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 3: Object
+ScheduleManagement.tsx:477 Game 3 field mismatch: 9 !== 8
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 2: Object
+ScheduleManagement.tsx:492 Field 8: Game 2 hour 18 vs slot hour 14
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 1: Object
+ScheduleManagement.tsx:477 Game 1 field mismatch: 9 !== 8
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 4: Object
+ScheduleManagement.tsx:477 Game 4 field mismatch: 8 !== 9
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 6: Object
+ScheduleManagement.tsx:492 Field 9: Game 6 hour 18 vs slot hour 14
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 7: Object
+ScheduleManagement.tsx:492 Field 9: Game 7 hour 18 vs slot hour 14
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 5: Object
+ScheduleManagement.tsx:492 Field 9: Game 5 hour 18 vs slot hour 14
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 3: Object
+ScheduleManagement.tsx:492 Field 9: Game 3 hour 18 vs slot hour 14
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 2: Object
+ScheduleManagement.tsx:477 Game 2 field mismatch: 8 !== 9
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 1: Object
+ScheduleManagement.tsx:492 Field 9: Game 1 hour 18 vs slot hour 14
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 4: Object
+ScheduleManagement.tsx:492 Field 8: Game 4 hour 18 vs slot hour 15
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 6: Object
+ScheduleManagement.tsx:477 Game 6 field mismatch: 9 !== 8
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 7: Object
+ScheduleManagement.tsx:477 Game 7 field mismatch: 9 !== 8
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 5: Object
+ScheduleManagement.tsx:477 Game 5 field mismatch: 9 !== 8
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 3: Object
+ScheduleManagement.tsx:477 Game 3 field mismatch: 9 !== 8
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 2: Object
+ScheduleManagement.tsx:492 Field 8: Game 2 hour 18 vs slot hour 15
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 1: Object
+ScheduleManagement.tsx:477 Game 1 field mismatch: 9 !== 8
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 4: Object
+ScheduleManagement.tsx:477 Game 4 field mismatch: 8 !== 9
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 6: Object
+ScheduleManagement.tsx:492 Field 9: Game 6 hour 18 vs slot hour 15
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 7: Object
+ScheduleManagement.tsx:492 Field 9: Game 7 hour 18 vs slot hour 15
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 5: Object
+ScheduleManagement.tsx:492 Field 9: Game 5 hour 18 vs slot hour 15
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 3: Object
+ScheduleManagement.tsx:492 Field 9: Game 3 hour 18 vs slot hour 15
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 2: Object
+ScheduleManagement.tsx:477 Game 2 field mismatch: 8 !== 9
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 1: Object
+ScheduleManagement.tsx:492 Field 9: Game 1 hour 18 vs slot hour 15
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 4: Object
+ScheduleManagement.tsx:492 Field 8: Game 4 hour 18 vs slot hour 16
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 6: Object
+ScheduleManagement.tsx:477 Game 6 field mismatch: 9 !== 8
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 7: Object
+ScheduleManagement.tsx:477 Game 7 field mismatch: 9 !== 8
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 5: Object
+ScheduleManagement.tsx:477 Game 5 field mismatch: 9 !== 8
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 3: Object
+ScheduleManagement.tsx:477 Game 3 field mismatch: 9 !== 8
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 2: Object
+ScheduleManagement.tsx:492 Field 8: Game 2 hour 18 vs slot hour 16
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 1: Object
+ScheduleManagement.tsx:477 Game 1 field mismatch: 9 !== 8
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 4: Object
+ScheduleManagement.tsx:477 Game 4 field mismatch: 8 !== 9
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 6: Object
+ScheduleManagement.tsx:492 Field 9: Game 6 hour 18 vs slot hour 16
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 7: Object
+ScheduleManagement.tsx:492 Field 9: Game 7 hour 18 vs slot hour 16
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 5: Object
+ScheduleManagement.tsx:492 Field 9: Game 5 hour 18 vs slot hour 16
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 3: Object
+ScheduleManagement.tsx:492 Field 9: Game 3 hour 18 vs slot hour 16
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 2: Object
+ScheduleManagement.tsx:477 Game 2 field mismatch: 8 !== 9
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 1: Object
+ScheduleManagement.tsx:492 Field 9: Game 1 hour 18 vs slot hour 16
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 4: Object
+ScheduleManagement.tsx:492 Field 8: Game 4 hour 18 vs slot hour 17
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 6: Object
+ScheduleManagement.tsx:477 Game 6 field mismatch: 9 !== 8
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 7: Object
+ScheduleManagement.tsx:477 Game 7 field mismatch: 9 !== 8
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 5: Object
+ScheduleManagement.tsx:477 Game 5 field mismatch: 9 !== 8
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 3: Object
+ScheduleManagement.tsx:477 Game 3 field mismatch: 9 !== 8
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 2: Object
+ScheduleManagement.tsx:492 Field 8: Game 2 hour 18 vs slot hour 17
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 1: Object
+ScheduleManagement.tsx:477 Game 1 field mismatch: 9 !== 8
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 4: Object
+ScheduleManagement.tsx:477 Game 4 field mismatch: 8 !== 9
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 6: Object
+ScheduleManagement.tsx:492 Field 9: Game 6 hour 18 vs slot hour 17
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 7: Object
+ScheduleManagement.tsx:492 Field 9: Game 7 hour 18 vs slot hour 17
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 5: Object
+ScheduleManagement.tsx:492 Field 9: Game 5 hour 18 vs slot hour 17
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 3: Object
+ScheduleManagement.tsx:492 Field 9: Game 3 hour 18 vs slot hour 17
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 2: Object
+ScheduleManagement.tsx:477 Game 2 field mismatch: 8 !== 9
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 1: Object
+ScheduleManagement.tsx:492 Field 9: Game 1 hour 18 vs slot hour 17
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 4: Object
+ScheduleManagement.tsx:492 Field 8: Game 4 hour 18 vs slot hour 18
+ScheduleManagement.tsx:496 MATCH FOUND: Game 4 matches time slot 18:00 on field 8
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 4: Object
+ScheduleManagement.tsx:477 Game 4 field mismatch: 8 !== 9
+ScheduleManagement.tsx:469 GAME MATCHING DEBUG - Checking game 6: Object
+ScheduleManagement.tsx:492 Field 9: Game 6 hour 18 vs slot hour 18
+ScheduleManagement.tsx:496 MATCH FOUND: Game 6 matches time slot 18:00 on field 9
+
+                
+          
+          
+          
+         Chrome is moving towards a new experience that allows users to choose to browse without third-party cookies.Understand this warning
