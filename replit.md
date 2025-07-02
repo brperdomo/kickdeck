@@ -119,7 +119,7 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
   - IMPLEMENTED: User-specified rest time honor - system now properly respects 90-minute minimum rest periods between games for same teams
   - UPDATED: SimpleScheduler service to accept dynamic parameters (minRestPeriod, minutesPerGame, breakBetweenGames) from user interface
   - IMPROVED: Schedule Management interface clarity - shows helpful message when no games exist vs functional drag-and-drop for existing games
-  - ENHANCED: Time slot generation from hardcoded 9 AM-7 PM to dynamic 8 AM-8 PM based on actual field operating hours
+  - ENHANCED: Time slot generation from hardcoded 9 AM-7 PM to dynamic 8 AM-10 PM based on actual field operating hours
   - VERIFIED: API endpoint passes user scheduling parameters to SimpleScheduler for proper rest time and field hour enforcement
   - PRODUCTION READY: Scheduling system now respects complex operating hours, user preferences, and proper timezone handling
 - July 1, 2025: TOURNAMENT DIRECTOR ACCESS RESTRICTION SETUP - Successfully implemented event-specific user access control for external tournament directors
