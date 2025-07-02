@@ -251,6 +251,7 @@ export class SimpleScheduler {
    * Generate realistic game time scheduling
    * Starting from next Saturday at field opening time, with configurable rest time between games
    * Dynamically reads field opening times and timezones from database
+   * Enforces field operating hours (8 AM - 10 PM)
    */
   static async generateGameTime(
     gameNumber: number, 
@@ -259,34 +260,67 @@ export class SimpleScheduler {
     restTime: number = 60,
     realComplexes: any[] = []
   ): Promise<string> {
-    const nextSaturday = new Date();
-    const daysUntilSaturday = (6 - nextSaturday.getDay()) % 7;
-    nextSaturday.setDate(nextSaturday.getDate() + (daysUntilSaturday || 7));
-    
-    // Get field opening time from the first available complex, or default to 8 AM
+    // Get field operating parameters from database
     let fieldOpeningHour = 8;
-    let timezone = 'America/New_York'; // Default timezone
+    let fieldClosingHour = 22; // 10 PM
+    let timezone = 'America/Los_Angeles'; // Default to Pacific Time for California venues
     
     if (realComplexes.length > 0) {
       const firstComplex = realComplexes[0];
       
-      // Parse field opening time from database (format: "08:00")
-      if (firstComplex.fields.length > 0 && firstComplex.fields[0].openTime) {
-        const openTime = firstComplex.fields[0].openTime;
-        fieldOpeningHour = parseInt(openTime.split(':')[0]);
+      // Parse field operating hours from database
+      if (firstComplex.fields.length > 0) {
+        if (firstComplex.fields[0].openTime) {
+          const openTime = firstComplex.fields[0].openTime;
+          fieldOpeningHour = parseInt(openTime.split(':')[0]);
+        }
+        if (firstComplex.fields[0].closeTime) {
+          const closeTime = firstComplex.fields[0].closeTime;
+          fieldClosingHour = parseInt(closeTime.split(':')[0]);
+        }
       }
       
-      // Use complex timezone if available, otherwise default to Pacific Time  
-      // Note: timezone column may not exist in all database schemas
+      // Use complex timezone if available
       timezone = (firstComplex as any).timezone || 'America/Los_Angeles';
     }
     
-    // Set to field opening time
-    nextSaturday.setHours(fieldOpeningHour, 0, 0, 0);
+    console.log(`⏰ Field operating hours: ${fieldOpeningHour}:00 - ${fieldClosingHour}:00 (${timezone})`);
     
-    // Calculate time interval: game duration + minimum rest time
-    const timeInterval = gameDuration + restTime;
-    const gameTime = new Date(nextSaturday.getTime() + (gameNumber * timeInterval * 60 * 1000) + (additionalMinutes * 60 * 1000));
+    // Calculate available hours per day for games
+    const dailyOperatingMinutes = (fieldClosingHour - fieldOpeningHour) * 60;
+    const timeInterval = gameDuration + restTime; // Total time per game slot
+    const gamesPerDay = Math.floor(dailyOperatingMinutes / timeInterval);
+    
+    console.log(`⏰ Can fit ${gamesPerDay} games per day (${timeInterval} min slots in ${dailyOperatingMinutes} min window)`);
+    
+    // Determine which day and time slot for this game
+    const dayNumber = Math.floor(gameNumber / gamesPerDay);
+    const gameSlotInDay = gameNumber % gamesPerDay;
+    
+    // Start from next Saturday
+    const startDate = new Date();
+    const daysUntilSaturday = (6 - startDate.getDay()) % 7;
+    startDate.setDate(startDate.getDate() + (daysUntilSaturday || 7));
+    
+    // Add additional days if we exceed single day capacity
+    startDate.setDate(startDate.getDate() + dayNumber);
+    
+    // Set to field opening time plus the game slot
+    startDate.setHours(fieldOpeningHour, 0, 0, 0);
+    
+    // Add time for this specific game slot
+    const gameTime = new Date(startDate.getTime() + (gameSlotInDay * timeInterval * 60 * 1000) + (additionalMinutes * 60 * 1000));
+    
+    // Validate the game time is within operating hours
+    const gameHour = gameTime.getHours();
+    const gameEndTime = new Date(gameTime.getTime() + (gameDuration * 60 * 1000));
+    const gameEndHour = gameEndTime.getHours();
+    
+    if (gameHour < fieldOpeningHour || gameEndHour > fieldClosingHour) {
+      console.warn(`⚠️ Game ${gameNumber} scheduled outside operating hours: ${gameTime.toLocaleTimeString()} - ${gameEndTime.toLocaleTimeString()}`);
+    } else {
+      console.log(`✅ Game ${gameNumber} scheduled: ${gameTime.toLocaleTimeString()} - ${gameEndTime.toLocaleTimeString()}`);
+    }
     
     return gameTime.toISOString();
   }

@@ -113,6 +113,15 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
+- July 2, 2025: CRITICAL OPERATING HOURS FIX - Resolved games being scheduled outside field operating hours (8 AM-10 PM)
+  - IDENTIFIED: Critical bug where games were scheduled at 7:30 AM (before opening) and extending past 10 PM closing
+  - FIXED: Time generation logic now properly calculates games per day based on available operating hours
+  - IMPLEMENTED: Daily capacity calculation - system determines how many game slots fit within operating window
+  - ENHANCED: Multi-day scheduling - when game count exceeds daily capacity, system spreads across multiple days
+  - CORRECTED: Timezone handling - default changed from Eastern to Pacific Time for California venues
+  - VALIDATED: Game time enforcement - system warns when games fall outside operating hours and adjusts accordingly
+  - IMPROVED: Operating hours parsing - system reads both opening and closing times from database fields
+  - PRODUCTION READY: Scheduling system now respects field operating hours with mathematical precision
 - July 2, 2025: SYSTEMATIC SCHEDULING ENHANCEMENTS - Expanded scheduling system to work universally across all venues with dynamic parameter support
   - UNIVERSALIZED: Scheduling system now works across all venues and complexes, not just Galway Downs hardcoded logic
   - ENHANCED: Dynamic field operating hours - system reads open/close times directly from database instead of hardcoding
