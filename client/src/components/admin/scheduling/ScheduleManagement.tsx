@@ -238,6 +238,13 @@ export default function ScheduleManagement({ eventId }: ScheduleManagementProps)
     setSelectedGame(null);
   };
 
+  if (gamesLoading || complexesLoading) {
+    return <div className="flex justify-center p-8">Loading schedule management...</div>;
+  }
+
+  const games = gamesData?.games || [];
+  const complexes = complexesData?.complexes || [];
+
   // Generate time slots based on actual game times to ensure all games show up
   const generateTimeSlots = () => {
     const slots = [];
@@ -273,13 +280,6 @@ export default function ScheduleManagement({ eventId }: ScheduleManagementProps)
   };
 
   const timeSlots = generateTimeSlots();
-
-  if (gamesLoading || complexesLoading) {
-    return <div className="flex justify-center p-8">Loading schedule management...</div>;
-  }
-
-  const games = gamesData?.games || [];
-  const complexes = complexesData?.complexes || [];
   
   console.log('Schedule Management - Games array:', games);
   console.log('Schedule Management - Games length:', games.length);
