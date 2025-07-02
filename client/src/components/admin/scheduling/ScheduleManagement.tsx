@@ -181,7 +181,7 @@ export default function ScheduleManagement({ eventId }: ScheduleManagementProps)
     
     // Start from field opening time (8 AM for Galway Downs)
     const startHour = 8;
-    const endHour = 20; // 8 PM
+    const endHour = 22; // 10 PM (22:00)
     
     // Generate hourly slots to accommodate different game lengths
     for (let hour = startHour; hour < endHour; hour++) {
