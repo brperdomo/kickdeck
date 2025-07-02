@@ -265,6 +265,9 @@ export default function ScheduleManagement({ eventId }: ScheduleManagementProps)
   
   console.log('Schedule Management - Games array:', games);
   console.log('Schedule Management - Games length:', games.length);
+  console.log('Schedule Management - Sample game data:', games[0]);
+  console.log('Schedule Management - Games with field IDs:', games.filter(g => g.fieldId));
+  console.log('Schedule Management - Games without field IDs:', games.filter(g => !g.fieldId));
   console.log('Schedule Management - Complexes array:', complexes);
 
   return (
@@ -422,19 +425,11 @@ export default function ScheduleManagement({ eventId }: ScheduleManagementProps)
                         {complex.fields.map((field: Field) => {
                           const assignedGame = games.find((game: Game) => {
                             if (game.fieldId !== field.id) return false;
-                            // Handle both ISO strings and simple date strings
-                            let gameHour;
-                            if (game.startTime.includes('T')) {
-                              // New format: YYYY-MM-DDTHH:MM:SS
-                              const timePart = game.startTime.split('T')[1];
-                              gameHour = parseInt(timePart.split(':')[0]);
-                            } else {
-                              // Legacy format: full ISO string
-                              const gameTime = new Date(game.startTime);
-                              gameHour = gameTime.getHours();
-                            }
-                            const slotTime = `${gameHour.toString().padStart(2, '0')}:00`;
-                            return slotTime === timeSlot;
+                            // Simplified time matching - get hour from game start time
+                            const gameTime = new Date(game.startTime);
+                            const gameHour = gameTime.getHours();
+                            const slotHour = parseInt(timeSlot.split(':')[0]);
+                            return gameHour === slotHour;
                           });
 
                           return (

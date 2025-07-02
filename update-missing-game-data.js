@@ -11,107 +11,97 @@
  */
 
 import { db } from './db/index.ts';
-import { games, gameTimeSlots, eventBrackets } from './db/schema.ts';
+import { games, gameTimeSlots } from './db/schema.ts';
 import { eq } from 'drizzle-orm';
 
 async function updateMissingGameData() {
-  const eventId = '1656618593';
-  
-  console.log('🔍 Finding games with missing data...');
-  
-  // Get all games for the event
-  const allGames = await db
-    .select()
-    .from(games)
-    .where(eq(games.eventId, eventId));
+  try {
+    const eventId = '1656618593';
     
-  console.log(`📊 Found ${allGames.length} total games for event ${eventId}`);
-  
-  // Identify games with missing data
-  const gamesNeedingUpdate = allGames.filter(game => 
-    !game.startTime || !game.endTime || !game.bracketName
-  );
-  
-  console.log(`🔧 ${gamesNeedingUpdate.length} games need data updates`);
-  
-  if (gamesNeedingUpdate.length === 0) {
-    console.log('✅ All games already have complete data!');
-    return;
-  }
-  
-  // Generate systematic time scheduling (8 AM start, 2-hour games, 30-min rest)
-  const fieldOpeningHour = 8; // 8 AM
-  const gameDuration = 120; // 2 hours in minutes
-  const restTime = 30; // 30 minutes between games
-  const timeInterval = gameDuration + restTime; // 150 minutes total per game slot
-  
-  console.log('⏰ Generating proper game times...');
-  
-  for (let i = 0; i < gamesNeedingUpdate.length; i++) {
-    const game = gamesNeedingUpdate[i];
+    console.log('🔍 Checking current games and time slot data...');
     
-    // Calculate game start time (Saturday starting at 8 AM)
-    const today = new Date();
-    const daysUntilSaturday = (6 - today.getDay()) % 7;
-    const gameDate = new Date(today);
-    gameDate.setDate(gameDate.getDate() + (daysUntilSaturday || 7));
-    
-    // Calculate time slot for this game
-    const gameStartMinutes = i * timeInterval; // 0, 150, 300, 450 minutes etc.
-    const gameStartHour = fieldOpeningHour + Math.floor(gameStartMinutes / 60);
-    const gameStartMinute = gameStartMinutes % 60;
-    
-    // Set the time
-    gameDate.setHours(gameStartHour, gameStartMinute, 0, 0);
-    
-    const startTime = gameDate.toISOString();
-    
-    // Calculate end time (2 hours later)
-    const endDate = new Date(gameDate);
-    endDate.setMinutes(endDate.getMinutes() + gameDuration);
-    const endTime = endDate.toISOString();
-    
-    // Generate bracket name based on game context
-    const bracketName = 'U17 Boys Flight A'; // Based on the event data we saw
-    
-    console.log(`🔄 Updating Game ${game.id}:`);
-    console.log(`   Start: ${startTime}`);
-    console.log(`   End: ${endTime}`);
-    console.log(`   Bracket: ${bracketName}`);
-    console.log(`   Field ID: ${game.fieldId}`);
-    
-    // Update the game in the database
-    await db
-      .update(games)
-      .set({
-        startTime: startTime,
-        endTime: endTime,
-        bracketName: bracketName
-      })
-      .where(eq(games.id, game.id));
+    // Get all games for the event
+    const eventGames = await db
+      .select()
+      .from(games)
+      .where(eq(games.eventId, eventId))
+      .orderBy(games.id);
       
-    console.log(`✅ Updated Game ${game.id}`);
-  }
-  
-  console.log('🎉 All games updated successfully!');
-  
-  // Verify the updates
-  console.log('\n🔍 Verifying updates...');
-  const updatedGames = await db
-    .select()
-    .from(games)
-    .where(eq(games.eventId, eventId));
+    console.log(`📊 Found ${eventGames.length} games for event ${eventId}`);
     
-  const stillMissing = updatedGames.filter(game => 
-    !game.startTime || !game.endTime || !game.bracketName
-  );
-  
-  if (stillMissing.length === 0) {
-    console.log('✅ Verification successful - all games now have complete data!');
-    console.log(`📅 Games scheduled from ${fieldOpeningHour}:00 AM with ${gameDuration/60}-hour durations`);
-    console.log(`⏱️  Rest time between games: ${restTime} minutes`);
-  } else {
-    console.log(`❌ ${stillMissing.length} games still missing data`);
+    // Get all time slots for the event
+    const timeSlots = await db
+      .select()
+      .from(gameTimeSlots)
+      .where(eq(gameTimeSlots.eventId, eventId))
+      .orderBy(gameTimeSlots.id);
+      
+    console.log(`⏰ Found ${timeSlots.length} time slots for event ${eventId}`);
+    
+    if (eventGames.length === 0) {
+      console.log('❌ No games found for this event!');
+      return;
+    }
+    
+    if (timeSlots.length === 0) {
+      console.log('❌ No time slots found for this event!');
+      return;
+    }
+    
+    // Display current game data
+    console.log('\n📋 Current Games:');
+    eventGames.forEach(game => {
+      console.log(`   Game ${game.id}: Match ${game.matchNumber || 'N/A'} | Field ID: ${game.fieldId || 'None'} | Time Slot ID: ${game.timeSlotId || 'None'}`);
+    });
+    
+    // Display time slot data
+    console.log('\n⏰ Current Time Slots:');
+    timeSlots.forEach(slot => {
+      const start = new Date(slot.startTime);
+      const end = new Date(slot.endTime);
+      console.log(`   Slot ${slot.id}: ${start.toLocaleString()} - ${end.toLocaleString()}`);
+    });
+    
+    // Link games to time slots if they don't have timeSlotId
+    console.log('\n🔗 Linking games to time slots...');
+    
+    for (let i = 0; i < eventGames.length && i < timeSlots.length; i++) {
+      const game = eventGames[i];
+      const timeSlot = timeSlots[i];
+      
+      if (!game.timeSlotId) {
+        console.log(`🔗 Linking Game ${game.id} to Time Slot ${timeSlot.id}`);
+        
+        await db.update(games)
+          .set({
+            timeSlotId: timeSlot.id,
+            updatedAt: new Date().toISOString()
+          })
+          .where(eq(games.id, game.id));
+          
+        console.log(`   ✓ Updated Game ${game.id} with Time Slot ${timeSlot.id}`);
+      } else {
+        console.log(`   ℹ️ Game ${game.id} already has Time Slot ID: ${game.timeSlotId}`);
+      }
+    }
+    
+    // Show final status
+    console.log('\n📋 Final Status:');
+    const updatedGames = await db
+      .select()
+      .from(games)
+      .where(eq(games.eventId, eventId))
+      .orderBy(games.id);
+      
+    updatedGames.forEach(game => {
+      console.log(`   Game ${game.id}: Field ${game.fieldId || 'Unassigned'} | Time Slot ${game.timeSlotId || 'None'}`);
+    });
+    
+    console.log('\n✅ Game-Time Slot linking complete!');
+    
+  } catch (error) {
+    console.error('❌ Error updating game data:', error);
+    process.exit(1);
   }
 }
 

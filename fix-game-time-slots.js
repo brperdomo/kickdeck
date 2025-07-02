@@ -10,99 +10,72 @@
  */
 
 import { db } from './db/index.ts';
-import { games, gameTimeSlots } from './db/schema.ts';
+import { gameTimeSlots } from './db/schema.ts';
 import { eq } from 'drizzle-orm';
 
 async function fixGameTimeSlots() {
   try {
     const eventId = '1656618593';
     
-    console.log('🔍 Finding games without time slots...');
+    console.log('🔄 Updating time slots to reasonable hours (8 AM - 6 PM)...');
     
-    // Get all games for the event that lack timeSlotId
-    const gamesWithoutTimeSlots = await db
+    // Define reasonable scheduling for all 7 games
+    const newSchedule = [
+      { startTime: '2025-07-05T08:00:00-07:00', endTime: '2025-07-05T09:30:00-07:00' }, // Game 1: 8:00 AM
+      { startTime: '2025-07-05T09:45:00-07:00', endTime: '2025-07-05T11:15:00-07:00' }, // Game 2: 9:45 AM
+      { startTime: '2025-07-05T11:30:00-07:00', endTime: '2025-07-05T13:00:00-07:00' }, // Game 3: 11:30 AM
+      { startTime: '2025-07-05T13:15:00-07:00', endTime: '2025-07-05T14:45:00-07:00' }, // Game 4: 1:15 PM
+      { startTime: '2025-07-05T15:00:00-07:00', endTime: '2025-07-05T16:30:00-07:00' }, // Game 5: 3:00 PM
+      { startTime: '2025-07-05T16:45:00-07:00', endTime: '2025-07-05T18:15:00-07:00' }, // Game 6: 4:45 PM
+      { startTime: '2025-07-06T08:00:00-07:00', endTime: '2025-07-06T09:30:00-07:00' }  // Game 7: Next day 8:00 AM
+    ];
+    
+    // Get all existing time slots
+    const existingSlots = await db
       .select()
-      .from(games)
-      .where(eq(games.eventId, eventId));
+      .from(gameTimeSlots)
+      .where(eq(gameTimeSlots.eventId, eventId))
+      .orderBy(gameTimeSlots.id);
       
-    const gamesNeedingTimeSlots = gamesWithoutTimeSlots.filter(game => !game.timeSlotId);
+    console.log(`📊 Found ${existingSlots.length} existing time slots`);
     
-    console.log(`📊 Found ${gamesNeedingTimeSlots.length} games needing time slots`);
-    
-    if (gamesNeedingTimeSlots.length === 0) {
-      console.log('✅ All games already have time slots!');
-      return;
-    }
-    
-    // Generate systematic time scheduling starting Saturday 8 AM PT
-    const startDate = new Date('2025-07-05T08:00:00-07:00'); // 8 AM Pacific Time
-    const gameDurationMinutes = 90; // 90 minute games
-    const breakTimeMinutes = 15; // 15 minute breaks
-    const totalSlotMinutes = gameDurationMinutes + breakTimeMinutes; // 105 minutes per slot
-    
-    console.log('⏰ Creating time slots and linking games...');
-    
-    for (let i = 0; i < gamesNeedingTimeSlots.length; i++) {
-      const game = gamesNeedingTimeSlots[i];
+    // Update each time slot with reasonable hours
+    for (let i = 0; i < existingSlots.length && i < newSchedule.length; i++) {
+      const slot = existingSlots[i];
+      const newTime = newSchedule[i];
       
-      // Calculate this game's time slot
-      const gameStartTime = new Date(startDate);
-      gameStartTime.setMinutes(gameStartTime.getMinutes() + (i * totalSlotMinutes));
+      console.log(`⏰ Updating Time Slot ${slot.id}:`);
+      console.log(`   From: ${new Date(slot.startTime).toLocaleString()}`);
+      console.log(`   To:   ${new Date(newTime.startTime).toLocaleString()}`);
       
-      const gameEndTime = new Date(gameStartTime);
-      gameEndTime.setMinutes(gameEndTime.getMinutes() + gameDurationMinutes);
-      
-      console.log(`🎮 Processing Game ${game.id} (${game.matchNumber}):`);
-      console.log(`   Field ID: ${game.fieldId}`);
-      console.log(`   Time: ${gameStartTime.toLocaleString()} - ${gameEndTime.toLocaleString()}`);
-      
-      // Create the time slot record
-      const timeSlotResult = await db.insert(gameTimeSlots).values({
-        eventId: eventId,
-        fieldId: game.fieldId,
-        startTime: gameStartTime.toISOString(),
-        endTime: gameEndTime.toISOString(),
-        dayIndex: 0, // First day of tournament
-        isAvailable: false, // Already assigned to this game
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      }).returning();
-      
-      const timeSlot = timeSlotResult[0];
-      console.log(`   ✓ Created time slot ${timeSlot.id}`);
-      
-      // Link the game to the time slot
-      await db.update(games)
+      await db.update(gameTimeSlots)
         .set({
-          timeSlotId: timeSlot.id,
+          startTime: newTime.startTime,
+          endTime: newTime.endTime,
           updatedAt: new Date().toISOString()
         })
-        .where(eq(games.id, game.id));
+        .where(eq(gameTimeSlots.id, slot.id));
         
-      console.log(`   ✓ Linked game ${game.id} to time slot ${timeSlot.id}`);
+      console.log(`   ✓ Updated successfully`);
     }
     
-    console.log('\n🎉 All games now have proper time slots!');
-    
-    // Verify the fix
-    console.log('\n🔍 Verifying the fix...');
-    const verifyGames = await db
+    console.log('\n📅 Final Schedule:');
+    const updatedSlots = await db
       .select()
-      .from(games)
-      .where(eq(games.eventId, eventId));
+      .from(gameTimeSlots)
+      .where(eq(gameTimeSlots.eventId, eventId))
+      .orderBy(gameTimeSlots.startTime);
       
-    const stillMissingTimeSlots = verifyGames.filter(game => !game.timeSlotId);
+    updatedSlots.forEach((slot, index) => {
+      const start = new Date(slot.startTime);
+      const end = new Date(slot.endTime);
+      console.log(`   Game ${index + 1}: ${start.toLocaleDateString()} ${start.toLocaleTimeString()} - ${end.toLocaleTimeString()}`);
+    });
     
-    if (stillMissingTimeSlots.length === 0) {
-      console.log('✅ Verification successful - all games now have time slots!');
-      console.log(`📅 Scheduled ${gamesNeedingTimeSlots.length} games starting Saturday 8 AM PT`);
-      console.log(`⏱️  ${gameDurationMinutes} minute games with ${breakTimeMinutes} minute breaks`);
-    } else {
-      console.log(`❌ ${stillMissingTimeSlots.length} games still missing time slots`);
-    }
+    console.log('\n✅ All time slots updated to reasonable hours!');
     
   } catch (error) {
-    console.error('❌ Error fixing game time slots:', error);
+    console.error('❌ Error fixing time slots:', error);
     process.exit(1);
   }
 }

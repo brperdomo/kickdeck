@@ -113,6 +113,14 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
+- July 2, 2025: CRITICAL DATABASE ARCHITECTURE FIX - Fixed API endpoint to properly join games with gameTimeSlots table
+  - IDENTIFIED: API was trying to access non-existent game.startTime/endTime fields directly from games table
+  - FIXED: Updated `/api/admin/events/:id/schedule` endpoint to join with gameTimeSlots table via timeSlotId
+  - ENHANCED: API now properly retrieves time data from item.timeSlot instead of non-existent direct fields
+  - LINKED: All 7 games now properly connected to their time slots with update-missing-game-data.js script
+  - STATUS: Games have field assignments (fields 8 and 9) but times still run late (until 1:15 AM)
+  - REMAINING: Need to reschedule games to reasonable 8 AM - 8 PM hours instead of starting at 3 PM
+  - PRODUCTION READY: Database structure now correctly implements relational time slot model
 - July 2, 2025: CRITICAL FIELD ASSIGNMENT FIX - Resolved games not appearing as assigned in Step 7 visual interface
   - IDENTIFIED: Critical bug where SimpleScheduler generated field names but database insertion required field IDs
   - ROOT CAUSE: Generated games had `field` property (string names like "Field 1") but database expected `fieldId` (numeric IDs)  
