@@ -113,6 +113,19 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
+- July 2, 2025: CRITICAL FIELD FILTERING FIX - Removed unused field slots from schedule interface to eliminate visual clutter
+  - IDENTIFIED: Schedule interface was showing all 6 fields in complex (8-13) instead of only fields with assigned games
+  - FIXED: Added field filtering to only display fields that have games assigned to them (fields 8 and 9)
+  - ENHANCED: Table headers and body rows now dynamically filter to show only relevant fields
+  - IMPROVED: Clean schedule view shows only f1 and f2 (11v11 fields) instead of cluttered display with unused A1, A2, B1, B2 fields
+  - PRODUCTION READY: Schedule interface now provides focused view of actual game assignments without visual noise
+- July 2, 2025: CRITICAL TIME SLOT ASSOCIATION FIX - Resolved database linking issue causing all games to show current timestamp
+  - IDENTIFIED: Games had NULL timeSlotId values preventing proper schedule display
+  - FIXED: Created and ran fix-time-slot-associations.ts script to link all 7 games to their proper time slots
+  - VERIFIED: All games now show correct scheduled times (8 AM - 6:15 PM on July 5-6, 2025) instead of fallback timestamps
+  - ENHANCED: API endpoint now returns actual game start/end times from gameTimeSlots table join
+  - CONFIRMED: Database structure properly implements relational time slot model with working associations
+  - PRODUCTION READY: Schedule interface displays real game times with timezone abbreviations (PT)
 - July 2, 2025: CRITICAL JAVASCRIPT INITIALIZATION FIX - Resolved "Cannot access 'games' before initialization" error in Schedule Management
   - IDENTIFIED: generateTimeSlots() function was being called before games variable was declared
   - FIXED: Moved games variable declaration and data loading check before timeSlots generation

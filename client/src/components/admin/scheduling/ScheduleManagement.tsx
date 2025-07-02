@@ -440,8 +440,9 @@ export default function ScheduleManagement({ eventId }: ScheduleManagementProps)
                     <thead>
                       <tr>
                         <th className="font-semibold text-sm p-3 border text-left bg-gray-50">Time</th>
-                        {/* Sort fields by name for consistent ordering */}
+                        {/* Only show fields that have games assigned to them */}
                         {complex.fields
+                          .filter((field: Field) => games.some((game: Game) => game.fieldId === field.id))
                           .sort((a, b) => a.name.localeCompare(b.name))
                           .map((field: Field) => (
                           <th key={field.id} className="font-semibold text-sm text-center p-3 border bg-gray-50">
@@ -459,8 +460,9 @@ export default function ScheduleManagement({ eventId }: ScheduleManagementProps)
                           <td className="text-sm py-4 px-3 font-medium border bg-gray-50 whitespace-nowrap">
                             {timeSlot} {getTimezoneAbbreviation(complex.timezone)}
                           </td>
-                          {/* Sort fields same way for consistent column alignment */}
+                          {/* Only show fields that have games assigned, sorted for consistent column alignment */}
                           {complex.fields
+                            .filter((field: Field) => games.some((game: Game) => game.fieldId === field.id))
                             .sort((a, b) => a.name.localeCompare(b.name))
                             .map((field: Field) => {
                             const assignedGame = games.find((game: Game) => {
