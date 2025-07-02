@@ -364,8 +364,18 @@ export default function ScheduleManagement({ eventId }: ScheduleManagementProps)
                         {complex.fields.map((field: Field) => {
                           const assignedGame = games.find((game: Game) => {
                             if (game.fieldId !== field.id) return false;
-                            const gameTime = new Date(game.startTime);
-                            const slotTime = `${gameTime.getHours().toString().padStart(2, '0')}:00`;
+                            // Handle both ISO strings and simple date strings
+                            let gameHour;
+                            if (game.startTime.includes('T')) {
+                              // New format: YYYY-MM-DDTHH:MM:SS
+                              const timePart = game.startTime.split('T')[1];
+                              gameHour = parseInt(timePart.split(':')[0]);
+                            } else {
+                              // Legacy format: full ISO string
+                              const gameTime = new Date(game.startTime);
+                              gameHour = gameTime.getHours();
+                            }
+                            const slotTime = `${gameHour.toString().padStart(2, '0')}:00`;
                             return slotTime === timeSlot;
                           });
 
@@ -383,7 +393,7 @@ export default function ScheduleManagement({ eventId }: ScheduleManagementProps)
                                     Game {assignedGame.gameNumber}
                                   </div>
                                   <div className="text-xs text-gray-600">
-                                    {assignedGame.homeTeam} vs {assignedGame.awayTeam}
+                                    {typeof assignedGame.homeTeam === 'object' ? assignedGame.homeTeam?.name || 'Team' : assignedGame.homeTeam} vs {typeof assignedGame.awayTeam === 'object' ? assignedGame.awayTeam?.name || 'Team' : assignedGame.awayTeam}
                                   </div>
                                   <Badge variant="secondary" className="text-xs mt-1">
                                     {assignedGame.bracket}

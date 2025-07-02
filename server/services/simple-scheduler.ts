@@ -297,36 +297,34 @@ export class SimpleScheduler {
     const dayNumber = Math.floor(gameNumber / gamesPerDay);
     const gameSlotInDay = gameNumber % gamesPerDay;
     
-    // Create date in local timezone to avoid UTC conversion issues
-    const startDate = new Date();
-    const daysUntilSaturday = (6 - startDate.getDay()) % 7;
-    
-    // Calculate the target date
-    const targetDate = new Date(startDate);
+    // Create a simple date string in YYYY-MM-DD format (Saturday)
+    const today = new Date();
+    const daysUntilSaturday = (6 - today.getDay()) % 7;
+    const targetDate = new Date(today);
     targetDate.setDate(targetDate.getDate() + (daysUntilSaturday || 7) + dayNumber);
+    
+    // Format date as YYYY-MM-DD
+    const dateStr = targetDate.toISOString().split('T')[0];
     
     // Calculate the game start time in minutes from field opening
     const gameStartMinutes = (gameSlotInDay * timeInterval) + additionalMinutes;
     const totalGameHour = fieldOpeningHour + Math.floor(gameStartMinutes / 60);
     const totalGameMinute = gameStartMinutes % 60;
     
-    // Create the final game time
-    const gameTime = new Date(targetDate);
-    gameTime.setHours(totalGameHour, totalGameMinute, 0, 0);
+    // Create time string in HH:MM:SS format
+    const timeStr = `${totalGameHour.toString().padStart(2, '0')}:${totalGameMinute.toString().padStart(2, '0')}:00`;
     
     // Validate the game time is within operating hours
-    const gameHour = gameTime.getHours();
-    const gameEndTime = new Date(gameTime.getTime() + (gameDuration * 60 * 1000));
-    const gameEndHour = gameEndTime.getHours() + (gameEndTime.getMinutes() > 0 ? 1 : 0); // Round up if there are minutes
+    const gameEndHour = totalGameHour + Math.ceil(gameDuration / 60);
     
-    if (gameHour < fieldOpeningHour || gameEndHour > fieldClosingHour) {
-      console.warn(`⚠️ Game ${gameNumber} scheduled outside operating hours: ${gameTime.toLocaleTimeString()} - ${gameEndTime.toLocaleTimeString()}`);
+    if (totalGameHour < fieldOpeningHour || gameEndHour > fieldClosingHour) {
+      console.warn(`⚠️ Game ${gameNumber} scheduled outside operating hours: ${timeStr}`);
     } else {
-      console.log(`✅ Game ${gameNumber} scheduled: ${gameTime.toLocaleTimeString()} - ${gameEndTime.toLocaleTimeString()}`);
+      console.log(`✅ Game ${gameNumber} scheduled: ${timeStr}`);
     }
     
-    // Return ISO string in local timezone format
-    return gameTime.toISOString();
+    // Return as YYYY-MM-DDTHH:MM:SS (without timezone to avoid UTC conversion)
+    return `${dateStr}T${timeStr}`;
   }
 
   /**
