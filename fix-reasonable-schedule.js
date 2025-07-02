@@ -1,8 +1,11 @@
 /**
- * Fix Reasonable Schedule
+ * Fix Reasonable Schedule Script
  * 
- * This script redistributes games to reasonable hours (8 AM - 8 PM)
- * spreading across multiple days when necessary.
+ * This script reschedules all 7 games to reasonable hours (8 AM - 6 PM)
+ * instead of the current 3 PM - 1:15 AM schedule that creates display issues.
+ * 
+ * The goal is to have games scheduled during normal operating hours
+ * so they display properly in the scheduling interface grid.
  */
 
 import { db } from './db/index.ts';
@@ -15,91 +18,121 @@ async function fixReasonableSchedule() {
     
     console.log('🔍 Finding all time slots for event...');
     
-    // Get all time slots for the event
-    const timeSlots = await db
+    // Get all existing time slots for the event
+    const existingSlots = await db
       .select()
       .from(gameTimeSlots)
       .where(eq(gameTimeSlots.eventId, eventId))
       .orderBy(gameTimeSlots.id);
       
-    console.log(`📊 Found ${timeSlots.length} time slots to reschedule`);
+    console.log(`📊 Found ${existingSlots.length} time slots to reschedule`);
     
-    if (timeSlots.length === 0) {
-      console.log('✅ No time slots found!');
-      return;
+    // Define proper schedule starting at 8 AM with 90-minute games and 15-minute breaks
+    const baseDate = '2025-07-05'; // Saturday
+    const timeZone = '-07:00'; // Pacific Time
+    
+    // Calculate operating hours and capacity
+    const operatingHours = 12; // 8 AM to 8 PM = 12 hours = 720 minutes
+    const gameDuration = 90; // minutes
+    const breakTime = 15; // minutes between games
+    const slotDuration = gameDuration + breakTime; // 105 minutes per slot
+    const maxGamesPerDay = Math.floor((operatingHours * 60) / slotDuration); // 6 games per day
+    
+    console.log('⏰ Scheduling parameters:');
+    console.log(`   Operating hours: 8 AM - 8 PM (${operatingHours * 60} minutes)`);
+    console.log(`   Game duration: ${gameDuration} minutes`);
+    console.log(`   Break time: ${breakTime} minutes`);
+    console.log(`   Max games per day: ${maxGamesPerDay} games`);
+    
+    const totalGames = existingSlots.length;
+    const daysNeeded = Math.ceil(totalGames / maxGamesPerDay);
+    console.log(`   Tournament will span ${daysNeeded} days`);
+    
+    // Generate new schedule
+    const newSchedule = [];
+    
+    for (let gameIndex = 0; gameIndex < totalGames; gameIndex++) {
+      const dayIndex = Math.floor(gameIndex / maxGamesPerDay);
+      const gameOfDay = gameIndex % maxGamesPerDay;
+      
+      // Calculate start time: 8 AM + (game number * slot duration)
+      const startMinutes = 8 * 60 + (gameOfDay * slotDuration); // Start at 8 AM
+      const endMinutes = startMinutes + gameDuration;
+      
+      const startHour = Math.floor(startMinutes / 60);
+      const startMin = startMinutes % 60;
+      const endHour = Math.floor(endMinutes / 60);
+      const endMin = endMinutes % 60;
+      
+      // Create date for this day
+      const gameDate = new Date(baseDate);
+      gameDate.setDate(gameDate.getDate() + dayIndex);
+      const dateStr = gameDate.toISOString().split('T')[0];
+      
+      const startTime = `${dateStr}T${String(startHour).padStart(2, '0')}:${String(startMin).padStart(2, '0')}:00${timeZone}`;
+      const endTime = `${dateStr}T${String(endHour).padStart(2, '0')}:${String(endMin).padStart(2, '0')}:00${timeZone}`;
+      
+      newSchedule.push({
+        startTime,
+        endTime,
+        dayIndex,
+        gameOfDay: gameOfDay + 1
+      });
     }
     
-    // Define reasonable scheduling parameters
-    const startDate = new Date('2025-07-05T08:00:00-07:00'); // 8 AM Pacific Time
-    const gameDurationMinutes = 90; // 90 minute games
-    const breakTimeMinutes = 15; // 15 minute breaks
-    const totalSlotMinutes = gameDurationMinutes + breakTimeMinutes; // 105 minutes per slot
-    
-    // Operating hours: 8 AM to 8 PM = 12 hours = 720 minutes
-    const operatingHours = 12 * 60; // 720 minutes
-    const maxGamesPerDay = Math.floor(operatingHours / totalSlotMinutes); // 6 games per day
-    
-    console.log(`⏰ Scheduling parameters:`);
-    console.log(`   Operating hours: 8 AM - 8 PM (${operatingHours} minutes)`);
-    console.log(`   Game duration: ${gameDurationMinutes} minutes`);
-    console.log(`   Break time: ${breakTimeMinutes} minutes`);
-    console.log(`   Max games per day: ${maxGamesPerDay} games`);
-    console.log(`   Tournament will span ${Math.ceil(timeSlots.length / maxGamesPerDay)} days`);
-    
-    for (let i = 0; i < timeSlots.length; i++) {
-      const timeSlot = timeSlots[i];
+    // Update each time slot with reasonable hours
+    for (let i = 0; i < existingSlots.length; i++) {
+      const slot = existingSlots[i];
+      const newTime = newSchedule[i];
       
-      // Calculate which day and game slot within that day
-      const dayIndex = Math.floor(i / maxGamesPerDay);
-      const gameIndexInDay = i % maxGamesPerDay;
+      console.log(`🎮 Updating Time Slot ${slot.id}:`);
+      console.log(`   Day ${newTime.dayIndex + 1}, Game ${newTime.gameOfDay} of day`);
+      console.log(`   Time: ${new Date(slot.startTime).toLocaleString()} - ${new Date(slot.endTime).toLocaleString()}`);
       
-      // Calculate the actual start time
-      const gameDate = new Date(startDate);
-      gameDate.setDate(gameDate.getDate() + dayIndex); // Add days for multi-day tournaments
-      gameDate.setMinutes(gameDate.getMinutes() + (gameIndexInDay * totalSlotMinutes));
-      
-      const gameEndTime = new Date(gameDate);
-      gameEndTime.setMinutes(gameEndTime.getMinutes() + gameDurationMinutes);
-      
-      console.log(`🎮 Updating Time Slot ${timeSlot.id}:`);
-      console.log(`   Day ${dayIndex + 1}, Game ${gameIndexInDay + 1} of day`);
-      console.log(`   Time: ${gameDate.toLocaleString()} - ${gameEndTime.toLocaleString()}`);
-      
-      // Update the time slot
       await db.update(gameTimeSlots)
         .set({
-          startTime: gameDate.toISOString(),
-          endTime: gameEndTime.toISOString(),
-          dayIndex: dayIndex,
+          startTime: newTime.startTime,
+          endTime: newTime.endTime,
           updatedAt: new Date().toISOString()
         })
-        .where(eq(gameTimeSlots.id, timeSlot.id));
+        .where(eq(gameTimeSlots.id, slot.id));
         
-      console.log(`   ✓ Updated time slot ${timeSlot.id}`);
+      console.log(`   ✓ Updated time slot ${slot.id}`);
     }
     
     console.log('\n🎉 All time slots rescheduled to reasonable hours!');
     
-    // Show the final schedule summary
+    // Display final schedule
     console.log('\n📅 Final Schedule Summary:');
-    const updatedTimeSlots = await db
+    
+    const updatedSlots = await db
       .select()
       .from(gameTimeSlots)
       .where(eq(gameTimeSlots.eventId, eventId))
       .orderBy(gameTimeSlots.startTime);
+    
+    // Group by day
+    const scheduleByDay = {};
+    updatedSlots.forEach(slot => {
+      const startDate = new Date(slot.startTime);
+      const dayKey = startDate.toDateString();
       
-    let currentDay = null;
-    updatedTimeSlots.forEach((slot, index) => {
-      const startTime = new Date(slot.startTime);
-      const endTime = new Date(slot.endTime);
-      const dayStr = startTime.toDateString();
-      
-      if (currentDay !== dayStr) {
-        console.log(`\n   📅 ${dayStr}:`);
-        currentDay = dayStr;
+      if (!scheduleByDay[dayKey]) {
+        scheduleByDay[dayKey] = [];
       }
       
-      console.log(`      Game ${index + 1}: ${startTime.toLocaleTimeString()} - ${endTime.toLocaleTimeString()}`);
+      scheduleByDay[dayKey].push({
+        gameNumber: scheduleByDay[dayKey].length + 1,
+        startTime: startDate.toLocaleTimeString(),
+        endTime: new Date(slot.endTime).toLocaleTimeString()
+      });
+    });
+    
+    Object.keys(scheduleByDay).forEach(day => {
+      console.log(`\n   📅 ${day}:`);
+      scheduleByDay[day].forEach(game => {
+        console.log(`      Game ${game.gameNumber}: ${game.startTime} - ${game.endTime}`);
+      });
     });
     
   } catch (error) {
@@ -111,7 +144,7 @@ async function fixReasonableSchedule() {
 // Run the fix
 fixReasonableSchedule()
   .then(() => {
-    console.log('\n✅ Script completed successfully');
+    console.log('✅ Script completed successfully');
     process.exit(0);
   })
   .catch((error) => {

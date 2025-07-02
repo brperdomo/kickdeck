@@ -238,19 +238,37 @@ export default function ScheduleManagement({ eventId }: ScheduleManagementProps)
     setSelectedGame(null);
   };
 
-  // Generate time slots based on actual field opening hours and game data
+  // Generate time slots based on actual game times to ensure all games show up
   const generateTimeSlots = () => {
     const slots = [];
     
-    // Start from field opening time (8 AM for Galway Downs)
-    const startHour = 8;
-    const endHour = 22; // 10 PM (22:00)
+    // Get unique start hours from actual games
+    const gameStartHours = games
+      .filter(game => game.timeSlot && game.timeSlot.startTime)
+      .map(game => new Date(game.timeSlot.startTime).getHours())
+      .filter((hour, index, arr) => arr.indexOf(hour) === index)
+      .sort((a, b) => a - b);
     
-    // Generate hourly slots to accommodate different game lengths
-    for (let hour = startHour; hour < endHour; hour++) {
-      const timeStr = `${hour.toString().padStart(2, '0')}:00`;
-      slots.push(timeStr);
+    console.log('Actual game start hours:', gameStartHours);
+    
+    // If we have games, use their actual hours plus some padding
+    if (gameStartHours.length > 0) {
+      const minHour = Math.max(8, gameStartHours[0] - 1); // Start 1 hour before first game, but not before 8 AM
+      const maxHour = Math.min(20, gameStartHours[gameStartHours.length - 1] + 2); // End 2 hours after last game, but not after 8 PM
+      
+      for (let hour = minHour; hour <= maxHour; hour++) {
+        const timeStr = `${hour.toString().padStart(2, '0')}:00`;
+        slots.push(timeStr);
+      }
+    } else {
+      // Fallback to standard business hours
+      for (let hour = 8; hour <= 18; hour++) {
+        const timeStr = `${hour.toString().padStart(2, '0')}:00`;
+        slots.push(timeStr);
+      }
     }
+    
+    console.log('Generated time slots:', slots);
     return slots;
   };
 
@@ -425,10 +443,20 @@ export default function ScheduleManagement({ eventId }: ScheduleManagementProps)
                         {complex.fields.map((field: Field) => {
                           const assignedGame = games.find((game: Game) => {
                             if (game.fieldId !== field.id) return false;
-                            // Simplified time matching - get hour from game start time
-                            const gameTime = new Date(game.startTime);
+                            
+                            // Check if game has timeSlot data
+                            if (!game.timeSlot || !game.timeSlot.startTime) {
+                              console.log(`Game ${game.gameNumber || game.matchNumber} has no timeSlot data`);
+                              return false;
+                            }
+                            
+                            // Get hour from game timeSlot start time
+                            const gameTime = new Date(game.timeSlot.startTime);
                             const gameHour = gameTime.getHours();
                             const slotHour = parseInt(timeSlot.split(':')[0]);
+                            
+                            console.log(`Field ${field.id}: Comparing game ${game.gameNumber || game.matchNumber} hour ${gameHour} with slot hour ${slotHour}`);
+                            
                             return gameHour === slotHour;
                           });
 
