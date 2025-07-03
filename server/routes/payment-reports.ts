@@ -40,18 +40,18 @@ export function registerPaymentReportRoutes(app: Application) {
 
       // Calculate total event volume for proper fee tier calculation
       const totalEventVolume = paidTeams.reduce((total, team) => {
-        return total + (parseFloat(String(team.registrationFee || '0')) * 100); // Convert to cents
+        return total + (parseInt(String(team.registrationFee || '0')) || 0); // Already in cents
       }, 0);
 
       const dailyMap = new Map();
       
       paidTeams.forEach((team: any) => {
-        const fee = parseFloat(String(team.registrationFee || '0'));
-        const feeInCents = Math.round(fee * 100);
+        const feeInCents = parseInt(String(team.registrationFee || '0')) || 0; // Already in cents
+        const fee = feeInCents / 100; // Convert to dollars for display
         
         // Use proper fee calculation with volume-based rates
         const feeCalculation = calculateFeeBreakdown(feeInCents, totalEventVolume);
-        const platformFee = feeCalculation.platformFeeAmount / 100; // Convert back to dollars
+        const platformFee = feeCalculation.platformFeeAmount / 100; // Convert to dollars
         const netAmount = fee - platformFee;
 
         summary.totalRevenue += fee;

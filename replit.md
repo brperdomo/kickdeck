@@ -115,7 +115,9 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 ## Changelog
 - July 3, 2025: CRITICAL FINANCIAL DATA FIX - Resolved cent/dollar conversion issue causing 100x inflated revenue display
   - IDENTIFIED: Financial APIs returning raw cent values but frontend treating them as dollars (showing $99,500 instead of $995)
-  - FIXED: Updated financial-overview, event-financial, and revenue-forecast API endpoints to convert cents to dollars
+  - FIXED: Updated financial-overview, event-financial, revenue-forecast, AND payment-reports API endpoints to convert cents to dollars
+  - ROOT CAUSE: Database stores registration_fee and total_amount in cents (99500 = $995.00) but multiple APIs treated them as dollars
+  - COMPREHENSIVE FIX: Applied cent-to-dollar conversion across ALL financial reporting endpoints universally
   - VERIFIED: Event 1844329078 actual revenue is $21,072.50 (NOT $99,500+), July 2025 payouts total $8,730.80
   - CONFIRMED: Payment processing workflows completely unaffected - issue was purely in financial reporting display
   - PRODUCTION READY: All financial dashboards now display accurate dollar amounts instead of inflated cent values
