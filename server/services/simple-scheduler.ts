@@ -94,7 +94,10 @@ export class SimpleScheduler {
       allGames[i].endTime = endTime;
     }
 
-    console.log(`💾 Prepared ${allGames.length} games for database`);
+    // Create time slots for all games with proper database associations
+    await SimpleScheduler.createTimeSlots(eventId, allGames, eventData, gameDuration, restTime);
+
+    console.log(`💾 Prepared ${allGames.length} games for database with time slot associations`);
     
     return {
       games: allGames,
@@ -120,7 +123,7 @@ export class SimpleScheduler {
     
     try {
       // Clear existing time slots for this event to avoid conflicts
-      await db.delete(gameTimeSlots).where(eq(gameTimeSlots.eventId, parseInt(eventId)));
+      await db.delete(gameTimeSlots).where(eq(gameTimeSlots.eventId, eventId));
       
       // Group games by their scheduled dates
       const gamesByDate = new Map();
@@ -145,7 +148,7 @@ export class SimpleScheduler {
           const [timeSlot] = await db
             .insert(gameTimeSlots)
             .values({
-              eventId: parseInt(eventId),
+              eventId: eventId,
               fieldId: game.fieldId || null,
               startTime: game.startTime,
               endTime: game.endTime,
