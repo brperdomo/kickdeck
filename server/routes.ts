@@ -6316,6 +6316,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         });
 
         // Create time slots for the games before saving to database
+        // Create time slots BEFORE saving games to database so timeSlotId is available
         if (scheduleResult.games && scheduleResult.games.length > 0) {
           console.log('🕒 Creating time slots for generated games...');
           await SimpleScheduler.createTimeSlots(eventId, scheduleResult.games, null, 
