@@ -22,7 +22,8 @@ export function registerPaymentReportRoutes(app: Application) {
       const paidTeams = allTeams.filter(team => 
         team.status === 'approved' && 
         team.paymentIntentId && 
-        team.registrationFee
+        team.totalAmount && 
+        team.totalAmount > 0
       );
 
       // Calculate summary metrics from teams
@@ -40,13 +41,13 @@ export function registerPaymentReportRoutes(app: Application) {
 
       // Calculate total event volume for proper fee tier calculation
       const totalEventVolume = paidTeams.reduce((total, team) => {
-        return total + (parseInt(String(team.registrationFee || '0')) || 0); // Already in cents
+        return total + (parseInt(String(team.totalAmount || '0')) || 0); // Already in cents
       }, 0);
 
       const dailyMap = new Map();
       
       paidTeams.forEach((team: any) => {
-        const feeInCents = parseInt(String(team.registrationFee || '0')) || 0; // Already in cents
+        const feeInCents = parseInt(String(team.totalAmount || '0')) || 0; // Already in cents
         const fee = feeInCents / 100; // Convert to dollars for display
         
         // Use proper fee calculation with volume-based rates
@@ -144,12 +145,12 @@ export function registerPaymentReportRoutes(app: Application) {
 
         // Calculate total volume for proper fee rates
         const totalVolume = paidTeams.reduce((total, team) => {
-          return total + (parseFloat(String(team.registrationFee || '0')) * 100);
+          return total + (parseInt(String(team.totalAmount || '0')) || 0);
         }, 0);
 
         const csvRows = paidTeams.map(team => {
-          const fee = parseFloat(String(team.registrationFee || '0'));
-          const feeInCents = Math.round(fee * 100);
+          const feeInCents = parseInt(String(team.totalAmount || '0')) || 0;
+          const fee = feeInCents / 100; // Convert to dollars
           
           // Use proper fee calculation with volume-based rates
           const feeCalculation = calculateFeeBreakdown(feeInCents, totalVolume);
