@@ -113,6 +113,11 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
+- July 3, 2025: TEAM COUNT BADGES ENHANCEMENT - Added clear team counts to each tab in Teams component
+  - IMPLEMENTED: Badge component displays counts for each status (Pending Review, Approved, Waitlisted, Rejected)
+  - CALCULATED: Team counts automatically update based on normalized teams data from API
+  - UI ENHANCEMENT: Small secondary badges with team counts improve admin workflow visibility
+  - PRODUCTION READY: Team management interface now shows clear counts for better admin decision making
 - July 3, 2025: CRITICAL SCHEDULING REGENERATION FIX - Resolved endless game regeneration causing Step 6/7 communication breakdown
   - IDENTIFIED: Schedule generation endpoint deletes ALL existing games every time it's called, wiping out manual time slot associations
   - ROOT CAUSE: Step 6 and Step 7 lack proper state management - each page load triggers new game generation

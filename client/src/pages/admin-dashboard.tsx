@@ -3879,6 +3879,23 @@ function TeamsView() {
     });
   }, [normalizedTeams, searchTerm]);
 
+  // Calculate team counts by status
+  const teamCounts = useMemo(() => {
+    if (!normalizedTeams.length) return {
+      registered: 0,
+      approved: 0,
+      waitlisted: 0,
+      rejected: 0
+    };
+    
+    return {
+      registered: normalizedTeams.filter(team => team?.status === 'registered').length,
+      approved: normalizedTeams.filter(team => team?.status === 'approved').length,
+      waitlisted: normalizedTeams.filter(team => team?.status === 'waitlisted').length,
+      rejected: normalizedTeams.filter(team => team?.status === 'rejected').length
+    };
+  }, [normalizedTeams]);
+
   // Format currency for display
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', { 
@@ -4100,6 +4117,9 @@ function TeamsView() {
                     <span className="flex items-center gap-2">
                       <ListFilter className="h-4 w-4" />
                       Pending Review
+                      <Badge variant="secondary" className="ml-1 text-xs">
+                        {teamCounts.registered}
+                      </Badge>
                     </span>
                   </TabsTrigger>
                   <TabsTrigger 
@@ -4109,6 +4129,9 @@ function TeamsView() {
                     <span className="flex items-center gap-2">
                       <Check className="h-4 w-4" />
                       Approved
+                      <Badge variant="secondary" className="ml-1 text-xs">
+                        {teamCounts.approved}
+                      </Badge>
                     </span>
                   </TabsTrigger>
                   <TabsTrigger 
@@ -4118,6 +4141,9 @@ function TeamsView() {
                     <span className="flex items-center gap-2">
                       <Clock className="h-4 w-4" />
                       Waitlisted
+                      <Badge variant="secondary" className="ml-1 text-xs">
+                        {teamCounts.waitlisted}
+                      </Badge>
                     </span>
                   </TabsTrigger>
                   <TabsTrigger 
@@ -4127,6 +4153,9 @@ function TeamsView() {
                     <span className="flex items-center gap-2">
                       <X className="h-4 w-4" />
                       Rejected
+                      <Badge variant="secondary" className="ml-1 text-xs">
+                        {teamCounts.rejected}
+                      </Badge>
                     </span>
                   </TabsTrigger>
                 </TabsList>
