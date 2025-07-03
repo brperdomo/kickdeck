@@ -96,9 +96,6 @@ export class SimpleScheduler {
 
     console.log(`💾 Prepared ${allGames.length} games for database`);
     
-    // Create time slots and link games for robust scheduling
-    await SimpleScheduler.createTimeSlots(eventId, allGames, eventData, gameDuration, restTime);
-    
     return {
       games: allGames,
       summary: {
