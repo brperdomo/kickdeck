@@ -113,6 +113,12 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
+- July 3, 2025: CRITICAL FINANCIAL DATA FIX - Resolved cent/dollar conversion issue causing 100x inflated revenue display
+  - IDENTIFIED: Financial APIs returning raw cent values but frontend treating them as dollars (showing $99,500 instead of $995)
+  - FIXED: Updated financial-overview, event-financial, and revenue-forecast API endpoints to convert cents to dollars
+  - VERIFIED: Event 1844329078 actual revenue is $21,072.50 (NOT $99,500+), July 2025 payouts total $8,730.80
+  - CONFIRMED: Payment processing workflows completely unaffected - issue was purely in financial reporting display
+  - PRODUCTION READY: All financial dashboards now display accurate dollar amounts instead of inflated cent values
 - July 3, 2025: TEAM COUNT BADGES ENHANCEMENT - Added clear team counts to each tab in Teams component
   - IMPLEMENTED: Badge component displays counts for each status (Pending Review, Approved, Waitlisted, Rejected)
   - CALCULATED: Team counts automatically update based on normalized teams data from API

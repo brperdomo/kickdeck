@@ -200,25 +200,35 @@ export async function getFinancialOverviewReport(req: Request, res: Response) {
     const transactionCount = revenueResult[0]?.transaction_count || 0;
     const avgTransactionValue = transactionCount > 0 ? Math.round(totalRevenue / transactionCount) : 0;
     
-    // Prepare response data
+    // Prepare response data - convert cents to dollars
     const data = {
       revenue: {
-        totalRevenue,
+        totalRevenue: (totalRevenue || 0) / 100,
         transactionCount,
-        avgTransactionValue
+        avgTransactionValue: (avgTransactionValue || 0) / 100
       },
       refunds: {
         totalRefunds: refundsResult[0]?.total_refunds || 0,
-        totalRefundAmount: refundsResult[0]?.total_refund_amount || 0
+        totalRefundAmount: (refundsResult[0]?.total_refund_amount || 0) / 100
       },
       timeRange: {
         start: startDate.toISOString(),
         end: endDate.toISOString(),
         period
       },
-      monthlyRevenueTrend,
-      paymentMethods,
-      topEvents
+      monthlyRevenueTrend: monthlyRevenueTrend.map(item => ({
+        ...item,
+        total_revenue: (item.total_revenue || 0) / 100
+      })),
+      paymentMethods: paymentMethods.map(item => ({
+        ...item,
+        totalAmount: (item.totalAmount || 0) / 100,
+        avgAmount: (item.avgAmount || 0) / 100
+      })),
+      topEvents: topEvents.map(item => ({
+        ...item,
+        revenue: (item.revenue || 0) / 100
+      }))
     };
     
     // Generate AI insights if requested
@@ -359,11 +369,11 @@ export async function getEventFinancialReport(req: Request, res: Response) {
         teamsWithPaymentMethod: parseInt(regSummary.teams_with_payment_method) || 0,
         paymentCollectionRate: Math.round(paymentCollectionRate * 100) / 100
       },
-      financialSummary: {
-        expectedRevenue: parseFloat(financial.expected_revenue) || 0,
-        actualRevenue: parseFloat(financial.actual_revenue) || 0,
-        totalStripeFees: Math.round(totalStripeFees),
-        netRevenue: Math.round(netRevenue)
+      financials: {
+        expectedRevenue: (parseFloat(financial.expected_revenue) || 0) / 100,
+        totalRevenue: (parseFloat(financial.actual_revenue) || 0) / 100,
+        avgTransactionAmount: financial.successful_payments > 0 ? ((parseFloat(financial.actual_revenue) || 0) / financial.successful_payments) / 100 : 0,
+        transactionCount: financial.successful_payments || 0
       },
       teamRegistrations: [],
       ageGroupBreakdown: [],

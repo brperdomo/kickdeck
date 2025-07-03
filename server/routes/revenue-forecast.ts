@@ -110,38 +110,38 @@ export async function getRevenueForecastReport(req: Request, res: Response) {
       db.execute(summaryQuery)
     ]);
     
-    // Process results
+    // Process results - convert cents to dollars
     const capturedByEvent = capturedResults.map((row: any) => ({
       eventId: row.event_id,
       eventName: row.event_name,
       capturedCount: parseInt(row.captured_count) || 0,
-      capturedAmount: parseInt(row.captured_amount) || 0,
-      estimatedStripeFees: parseInt(row.estimated_stripe_fees) || 0,
+      capturedAmount: (parseInt(row.captured_amount) || 0) / 100,
+      estimatedStripeFees: (parseInt(row.estimated_stripe_fees) || 0) / 100,
       pendingApprovalCount: parseInt(row.pending_approval_count) || 0,
       approvedCount: parseInt(row.approved_count) || 0,
       rejectedCount: parseInt(row.rejected_count) || 0,
-      netCapturedAmount: (parseInt(row.captured_amount) || 0) - (parseInt(row.estimated_stripe_fees) || 0)
+      netCapturedAmount: ((parseInt(row.captured_amount) || 0) - (parseInt(row.estimated_stripe_fees) || 0)) / 100
     }));
     
     const pendingByEvent = pendingResults.map((row: any) => ({
       eventId: row.event_id,
       eventName: row.event_name,
       pendingRegistrations: parseInt(row.pending_registrations) || 0,
-      potentialRevenue: parseInt(row.potential_revenue) || 0,
-      estimatedStripeFees: Math.round((parseInt(row.potential_revenue) || 0) * 0.029 + 30),
-      netPotentialRevenue: (parseInt(row.potential_revenue) || 0) - Math.round((parseInt(row.potential_revenue) || 0) * 0.029 + 30)
+      potentialRevenue: (parseInt(row.potential_revenue) || 0) / 100,
+      estimatedStripeFees: (Math.round((parseInt(row.potential_revenue) || 0) * 0.029 + 30)) / 100,
+      netPotentialRevenue: ((parseInt(row.potential_revenue) || 0) - Math.round((parseInt(row.potential_revenue) || 0) * 0.029 + 30)) / 100
     }));
     
     const summary = summaryResults[0] ? {
       totalCaptured: parseInt(summaryResults[0].total_captured) || 0,
-      totalCapturedAmount: parseInt(summaryResults[0].total_captured_amount) || 0,
+      totalCapturedAmount: (parseInt(summaryResults[0].total_captured_amount) || 0) / 100,
       pendingCharges: parseInt(summaryResults[0].pending_charges) || 0,
-      pendingChargeAmount: parseInt(summaryResults[0].pending_charge_amount) || 0,
+      pendingChargeAmount: (parseInt(summaryResults[0].pending_charge_amount) || 0) / 100,
       potentialRegistrations: parseInt(summaryResults[0].potential_registrations) || 0,
-      potentialAmount: parseInt(summaryResults[0].potential_amount) || 0,
-      forecastedTotal: parseInt(summaryResults[0].forecasted_total) || 0,
-      estimatedTotalFees: Math.round((parseInt(summaryResults[0].forecasted_total) || 0) * 0.029 + 30),
-      forecastedNetRevenue: (parseInt(summaryResults[0].forecasted_total) || 0) - Math.round((parseInt(summaryResults[0].forecasted_total) || 0) * 0.029 + 30)
+      potentialAmount: (parseInt(summaryResults[0].potential_amount) || 0) / 100,
+      forecastedTotal: (parseInt(summaryResults[0].forecasted_total) || 0) / 100,
+      estimatedTotalFees: (Math.round((parseInt(summaryResults[0].forecasted_total) || 0) * 0.029 + 30)) / 100,
+      forecastedNetRevenue: ((parseInt(summaryResults[0].forecasted_total) || 0) - Math.round((parseInt(summaryResults[0].forecasted_total) || 0) * 0.029 + 30)) / 100
     } : {
       totalCaptured: 0,
       totalCapturedAmount: 0,
