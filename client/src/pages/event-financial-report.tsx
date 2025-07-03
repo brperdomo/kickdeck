@@ -555,19 +555,7 @@ export default function EventFinancialReport({ eventId }: EventFinancialReportPr
                       <span className="text-sm">Transaction Count</span>
                       <span className="text-sm font-medium">{reportData?.financials.transactionCount || 0}</span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-sm">Avg Transaction Value</span>
-                      <span className="text-sm font-medium">{formatCurrency(reportData?.financials.avgTransactionAmount || 0)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-sm">Revenue per Team</span>
-                      <span className="text-sm font-medium">
-                        {reportData?.registrations.paidTeams ?
-                          formatCurrency(reportData.financials.totalRevenue / reportData.registrations.paidTeams) :
-                          '$0.00'
-                        }
-                      </span>
-                    </div>
+
                   </div>
                 </div>
                 

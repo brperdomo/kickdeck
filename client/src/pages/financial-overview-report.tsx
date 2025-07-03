@@ -341,17 +341,7 @@ export default function FinancialOverviewReport() {
           </CardContent>
         </Card>
         
-        <Card className="bg-white">
-          <CardContent className="pt-6 flex flex-col">
-            <div className="rounded-full w-12 h-12 flex items-center justify-center bg-primary/10 mb-4">
-              <BarChart2 className="h-6 w-6 text-primary" />
-            </div>
-            <div className="text-2xl font-bold mb-1">
-              {formatCurrency(financialData?.revenue.avgTransactionValue || 0)}
-            </div>
-            <p className="text-muted-foreground text-sm">Avg Transaction Value</p>
-          </CardContent>
-        </Card>
+
         
         <Card className="bg-white">
           <CardContent className="pt-6 flex flex-col">

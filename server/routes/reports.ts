@@ -140,8 +140,7 @@ export async function getFinancialOverviewReport(req: Request, res: Response) {
       SELECT 
         payment_method_type as "paymentMethod",
         COUNT(id) as count,
-        SUM(amount) as "totalAmount",
-        AVG(amount) as "avgAmount"
+        SUM(amount) as "totalAmount"
       FROM payment_transactions
       WHERE created_at BETWEEN ${startDate.toISOString()} AND ${endDate.toISOString()}
       AND status = 'succeeded'
@@ -195,17 +194,14 @@ export async function getFinancialOverviewReport(req: Request, res: Response) {
     `;
     const topEvents = await db.execute(topEventsQuery);
     
-    // Calculate average transaction value
+    // Prepare response data - convert cents to dollars
     const totalRevenue = revenueResult[0]?.total_revenue || 0;
     const transactionCount = revenueResult[0]?.transaction_count || 0;
-    const avgTransactionValue = transactionCount > 0 ? Math.round(totalRevenue / transactionCount) : 0;
     
-    // Prepare response data - convert cents to dollars
     const data = {
       revenue: {
         totalRevenue: (totalRevenue || 0) / 100,
-        transactionCount,
-        avgTransactionValue: (avgTransactionValue || 0) / 100
+        transactionCount
       },
       refunds: {
         totalRefunds: refundsResult[0]?.total_refunds || 0,
@@ -222,8 +218,7 @@ export async function getFinancialOverviewReport(req: Request, res: Response) {
       })),
       paymentMethods: paymentMethods.map(item => ({
         ...item,
-        totalAmount: (item.totalAmount || 0) / 100,
-        avgAmount: (item.avgAmount || 0) / 100
+        totalAmount: (item.totalAmount || 0) / 100
       })),
       topEvents: topEvents.map(item => ({
         ...item,
