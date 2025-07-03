@@ -298,33 +298,28 @@ export default function ScheduleManagement({ eventId }: ScheduleManagementProps)
   const generateTimeSlots = () => {
     const slots = [];
     
-    // Get unique start hours from actual games using Pacific Time
-    const gameStartHours = games
+    // Get unique start times from actual games using Pacific Time
+    const gameStartTimes = games
       .filter(game => game.startTime)
       .map(game => {
         const gameTime = new Date(game.startTime);
-        // Get hour in Pacific Time
-        const pacificHour = parseInt(new Intl.DateTimeFormat('en-US', {
+        // Get exact time in Pacific Time (HH:MM format)
+        const pacificTime = new Intl.DateTimeFormat('en-US', {
           timeZone: 'America/Los_Angeles',
           hour: '2-digit',
+          minute: '2-digit',
           hour12: false
-        }).format(gameTime));
-        return pacificHour;
+        }).format(gameTime);
+        return pacificTime;
       })
-      .filter((hour, index, arr) => arr.indexOf(hour) === index)
-      .sort((a, b) => a - b);
+      .filter((time, index, arr) => arr.indexOf(time) === index)
+      .sort();
     
-    console.log('Actual game start hours (Pacific Time):', gameStartHours);
+    console.log('Actual game start times (Pacific Time):', gameStartTimes);
     
-    // If we have games, use their actual hours plus some padding
-    if (gameStartHours.length > 0) {
-      const minHour = Math.max(8, gameStartHours[0]); 
-      const maxHour = Math.min(20, gameStartHours[gameStartHours.length - 1] + 1); 
-      
-      for (let hour = minHour; hour <= maxHour; hour++) {
-        const timeStr = `${hour.toString().padStart(2, '0')}:00`;
-        slots.push(timeStr);
-      }
+    // If we have games, use their actual start times
+    if (gameStartTimes.length > 0) {
+      slots.push(...gameStartTimes);
     } else {
       // Fallback to standard business hours
       for (let hour = 8; hour <= 18; hour++) {
@@ -544,18 +539,18 @@ export default function ScheduleManagement({ eventId }: ScheduleManagementProps)
                                 return false;
                               }
                               
-                              // Get hour from game start time in Pacific Time
+                              // Get exact time from game start time in Pacific Time
                               const gameTime = new Date(game.startTime);
-                              const gameHour = parseInt(new Intl.DateTimeFormat('en-US', {
+                              const gameTimeStr = new Intl.DateTimeFormat('en-US', {
                                 timeZone: 'America/Los_Angeles',
                                 hour: '2-digit',
+                                minute: '2-digit',
                                 hour12: false
-                              }).format(gameTime));
-                              const slotHour = parseInt(timeSlot.split(':')[0]);
+                              }).format(gameTime);
                               
-                              console.log(`Field ${field.id}: Game ${game.gameNumber} hour ${gameHour} (PT) vs slot hour ${slotHour}`);
+                              console.log(`Field ${field.id}: Game ${game.gameNumber} time ${gameTimeStr} (PT) vs slot time ${timeSlot}`);
                               
-                              const match = gameHour === slotHour;
+                              const match = gameTimeStr === timeSlot;
                               if (match) {
                                 console.log(`MATCH FOUND: Game ${game.gameNumber} matches time slot ${timeSlot} on field ${field.id}`);
                               }
