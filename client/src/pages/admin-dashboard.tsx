@@ -3879,7 +3879,7 @@ function TeamsView() {
     });
   }, [normalizedTeams, searchTerm]);
 
-  // Calculate team counts by status
+  // Calculate team counts by status (always show real counts, not filtered)
   const teamCounts = useMemo(() => {
     if (!normalizedTeams.length) return {
       registered: 0,
@@ -3888,6 +3888,8 @@ function TeamsView() {
       rejected: 0
     };
     
+    // If "all" events is selected, these are the real totals
+    // If a specific event is selected, these are the totals for that event
     return {
       registered: normalizedTeams.filter(team => team?.status === 'registered').length,
       approved: normalizedTeams.filter(team => team?.status === 'approved').length,
