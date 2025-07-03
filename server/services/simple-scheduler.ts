@@ -7,7 +7,7 @@
 
 import { db } from "../../db";
 import { eq, inArray } from "drizzle-orm";
-import { games, eventBrackets, complexes, fields, teams } from "../../db/schema";
+import { games, eventBrackets, complexes, fields, teams, events } from "../../db/schema";
 
 export class SimpleScheduler {
   static async generateSchedule(eventId: string, workflowData: any, options: {
@@ -23,6 +23,9 @@ export class SimpleScheduler {
     const breakTime = options.breakBetweenGames || 15;
     
     const { workflowGames } = workflowData;
+    
+    // Get event dates from database
+    const eventData = await SimpleScheduler.getEventData(eventId);
     
     if (!workflowGames || workflowGames.length === 0) {
       throw new Error('No game data found in workflow');
@@ -84,8 +87,8 @@ export class SimpleScheduler {
     // Now generate proper game times for all games using systematic approach
     console.log(`⏰ Generating game times with ${restTime}-minute rest periods from actual field operating hours...`);
     for (let i = 0; i < allGames.length; i++) {
-      const startTime = await SimpleScheduler.generateGameTime(i, 0, gameDuration, restTime, realComplexes);
-      const endTime = await SimpleScheduler.generateGameTime(i, gameDuration, gameDuration, restTime, realComplexes);
+      const startTime = await SimpleScheduler.generateGameTime(i, 0, gameDuration, restTime, realComplexes, eventData);
+      const endTime = await SimpleScheduler.generateGameTime(i, gameDuration, gameDuration, restTime, realComplexes, eventData);
       
       allGames[i].startTime = startTime;
       allGames[i].endTime = endTime;
@@ -159,6 +162,23 @@ export class SimpleScheduler {
       console.error('Error fetching complexes:', error);
       return [];
     }
+  }
+
+  /**
+   * Get event data including start and end dates
+   */
+  static async getEventData(eventId: string) {
+    const eventRecord = await db
+      .select()
+      .from(events)
+      .where(eq(events.id, parseInt(eventId)))
+      .limit(1);
+    
+    if (eventRecord.length === 0) {
+      throw new Error(`Event ${eventId} not found`);
+    }
+    
+    return eventRecord[0];
   }
 
   /**
@@ -293,7 +313,7 @@ export class SimpleScheduler {
 
   /**
    * Generate realistic game time scheduling
-   * Starting from next Saturday at field opening time, with configurable rest time between games
+   * Starting from event start date at field opening time, with configurable rest time between games
    * Dynamically reads field opening times and timezones from database
    * Enforces field operating hours (8 AM - 10 PM)
    */
@@ -302,7 +322,8 @@ export class SimpleScheduler {
     additionalMinutes: number = 0, 
     gameDuration: number = 90, 
     restTime: number = 60,
-    realComplexes: any[] = []
+    realComplexes: any[] = [],
+    eventData: any = null
   ): Promise<string> {
     // Get field operating parameters from database
     let fieldOpeningHour = 8;
@@ -341,11 +362,18 @@ export class SimpleScheduler {
     const dayNumber = Math.floor(gameNumber / gamesPerDay);
     const gameSlotInDay = gameNumber % gamesPerDay;
     
-    // Create a simple date string in YYYY-MM-DD format (Saturday)
-    const today = new Date();
-    const daysUntilSaturday = (6 - today.getDay()) % 7;
-    const targetDate = new Date(today);
-    targetDate.setDate(targetDate.getDate() + (daysUntilSaturday || 7) + dayNumber);
+    // Use event start date instead of calculating from current date
+    let targetDate;
+    if (eventData && eventData.startDate) {
+      targetDate = new Date(eventData.startDate);
+      targetDate.setDate(targetDate.getDate() + dayNumber);
+    } else {
+      // Fallback to next Saturday if no event data
+      const today = new Date();
+      const daysUntilSaturday = (6 - today.getDay()) % 7;
+      targetDate = new Date(today);
+      targetDate.setDate(targetDate.getDate() + (daysUntilSaturday || 7) + dayNumber);
+    }
     
     // Format date as YYYY-MM-DD
     const dateStr = targetDate.toISOString().split('T')[0];

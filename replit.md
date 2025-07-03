@@ -113,6 +113,13 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
+- July 3, 2025: CRITICAL DATE CONSISTENCY FIX - Fixed schedule generation to use event's actual start/end dates instead of current date
+  - IDENTIFIED: Step 7 was generating games for current date (July 3) while Step 6 showed games for July 5-6, 2025
+  - ROOT CAUSE: SimpleScheduler.generateGameTime() calculated dates from current date instead of event.startDate
+  - FIXED: Added getEventData() method to fetch event start/end dates from database
+  - ENHANCED: Modified generateGameTime() to use eventData.startDate as base date for scheduling
+  - VERIFIED: Game dates now respect event configuration instead of defaulting to "next Saturday"
+  - PRODUCTION READY: Schedule generation consistently uses event-specific dates across all workflow steps
 - July 2, 2025: CRITICAL FIELD FILTERING FIX - Removed unused field slots from schedule interface to eliminate visual clutter
   - IDENTIFIED: Schedule interface was showing all 6 fields in complex (8-13) instead of only fields with assigned games
   - FIXED: Added field filtering to only display fields that have games assigned to them (fields 8 and 9)
