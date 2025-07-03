@@ -256,10 +256,21 @@ export default function ScheduleManagement({ eventId }: ScheduleManagementProps)
   const getGamesByDate = () => {
     const gamesByDate = new Map();
     
-    games.forEach(game => {
+    console.log('DATE GROUPING DEBUG - Processing games:', games.length);
+    
+    games.forEach((game, index) => {
+      console.log(`Game ${index + 1}:`, {
+        id: game.id,
+        gameNumber: game.gameNumber,
+        startTime: game.startTime,
+        rawStartTime: game.startTime
+      });
+      
       if (game.startTime) {
         // Parse the UTC time and convert to Pacific Time
         const gameTime = new Date(game.startTime);
+        console.log(`Game ${index + 1} parsed date:`, gameTime);
+        
         // Get the date in Pacific Time (venue timezone)
         const pacificDate = new Intl.DateTimeFormat('en-US', {
           timeZone: 'America/Los_Angeles',
@@ -268,13 +279,18 @@ export default function ScheduleManagement({ eventId }: ScheduleManagementProps)
           day: '2-digit'
         }).format(gameTime);
         
+        console.log(`Game ${index + 1} Pacific date:`, pacificDate);
+        
         if (!gamesByDate.has(pacificDate)) {
           gamesByDate.set(pacificDate, []);
         }
         gamesByDate.get(pacificDate).push(game);
+      } else {
+        console.log(`Game ${index + 1} has no startTime`);
       }
     });
     
+    console.log('Final gamesByDate:', Array.from(gamesByDate.entries()));
     return gamesByDate;
   };
 

@@ -1,0 +1,570 @@
+util.js:39 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+Wwa @ util.js:39
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1485
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1485
+setTimeout
+Vca @ js?libraries=places&v=beta&callback=Function.prototype:1485
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1734
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1734Understand this warning
+env.ts:10 Google Maps API key length: 0 characters
+env.ts:11 Mapbox API key length: 93 characters
+env.ts:17 Google Maps API already loaded
+RouteDebugger.tsx:13 Current route location (Wouter): /admin/scheduling
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin/scheduling
+RouteDebugger.tsx:15 Current pathname: /admin/scheduling
+RouteDebugger.tsx:16 Current search: 
+use-user.ts:59 Fetching user with emulation token: not present
+
+                
+          
+          
+          
+         Chrome is moving towards a new experience that allows users to choose to browse without third-party cookies.Understand this warning
+13Fetch finished loading: GET "<URL>".
+use-user.ts:76 User data fetched: {id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: '$2b$12$d6n1CBWgsWFm0fh77F1OX.YxDZy7/O3aLSuJOuq4QkvOtFmSit7BC', firstName: 'Bryan', …}
+9Failed to decode downloaded font: <URL>Understand this warning
+9OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+shared-24a197091605bf6b5db10cb218dc9ed9.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+(anonymous) @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+e @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+l @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+k @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+e @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+value @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+e @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+6261 @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+e @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+(anonymous) @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+e.O @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+(anonymous) @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+(anonymous) @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+shared-24a197091605bf6b5db10cb218dc9ed9.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+(anonymous) @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+e @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+l @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+k @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+log @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+log @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+e @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+6261 @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+e @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+(anonymous) @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+e.O @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+(anonymous) @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+(anonymous) @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+use-auth.tsx:85 Fetch failed loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user".
+queryFn @ use-auth.tsx:85
+fetchFn @ @tanstack_react-query.js?v=80b17ebe:881
+run @ @tanstack_react-query.js?v=80b17ebe:513
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+executeFetch_fn @ @tanstack_react-query.js?v=80b17ebe:2278
+onSubscribe @ @tanstack_react-query.js?v=80b17ebe:1982
+subscribe @ @tanstack_react-query.js?v=80b17ebe:24
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:3145
+ai @ chunk-E27YX2RL.js?v=80b17ebe:3392
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+Ek @ chunk-E27YX2RL.js?v=80b17ebe:5681
+jg @ chunk-E27YX2RL.js?v=80b17ebe:2527
+Wk @ chunk-E27YX2RL.js?v=80b17ebe:6021
+Pk @ chunk-E27YX2RL.js?v=80b17ebe:5964
+Gk @ chunk-E27YX2RL.js?v=80b17ebe:5620
+J @ chunk-E27YX2RL.js?v=80b17ebe:97
+R @ chunk-E27YX2RL.js?v=80b17ebe:129
+queryClient.ts:72 Fetch failed loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/admin/organization-settings".
+queryFn @ queryClient.ts:72
+fetchFn @ @tanstack_react-query.js?v=80b17ebe:881
+run @ @tanstack_react-query.js?v=80b17ebe:513
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+executeFetch_fn @ @tanstack_react-query.js?v=80b17ebe:2278
+onSubscribe @ @tanstack_react-query.js?v=80b17ebe:1982
+subscribe @ @tanstack_react-query.js?v=80b17ebe:24
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:3145
+ai @ chunk-E27YX2RL.js?v=80b17ebe:3392
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+Wk @ chunk-E27YX2RL.js?v=80b17ebe:6018
+Pk @ chunk-E27YX2RL.js?v=80b17ebe:5964
+Ek @ chunk-E27YX2RL.js?v=80b17ebe:5693
+jg @ chunk-E27YX2RL.js?v=80b17ebe:2527
+(anonymous) @ chunk-E27YX2RL.js?v=80b17ebe:5515
+setTimeout
+defaultScheduler @ @tanstack_react-query.js?v=80b17ebe:565
+flush @ @tanstack_react-query.js?v=80b17ebe:589
+batch @ @tanstack_react-query.js?v=80b17ebe:607
+dispatch_fn @ @tanstack_react-query.js?v=80b17ebe:1039
+setData @ @tanstack_react-query.js?v=80b17ebe:718
+onSuccess @ @tanstack_react-query.js?v=80b17ebe:940
+resolve @ @tanstack_react-query.js?v=80b17ebe:475
+Promise.then
+run @ @tanstack_react-query.js?v=80b17ebe:517
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+executeFetch_fn @ @tanstack_react-query.js?v=80b17ebe:2278
+onSubscribe @ @tanstack_react-query.js?v=80b17ebe:1982
+subscribe @ @tanstack_react-query.js?v=80b17ebe:24
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:3145
+ai @ chunk-E27YX2RL.js?v=80b17ebe:3392
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+Ek @ chunk-E27YX2RL.js?v=80b17ebe:5681
+jg @ chunk-E27YX2RL.js?v=80b17ebe:2527
+Wk @ chunk-E27YX2RL.js?v=80b17ebe:6021
+Pk @ chunk-E27YX2RL.js?v=80b17ebe:5964
+Gk @ chunk-E27YX2RL.js?v=80b17ebe:5620
+J @ chunk-E27YX2RL.js?v=80b17ebe:97
+R @ chunk-E27YX2RL.js?v=80b17ebe:129
+12Invalid keyframe value for property filter: blur(-0.08136px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.16063px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.22707px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.28173px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.32564px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.3598px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.38521px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.40278px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.41343px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.41799px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.41726px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.41199px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.40286px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.39052px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.37556px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.35849px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.33982px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.31996px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.2993px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.27819px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.25693px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.23576px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.21492px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.19459px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.17493px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.15606px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.13808px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.12106px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.10507px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.09014px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.07628px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.0635px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.0518px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.04115px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.03153px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.02289px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.01521px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.00842px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.00249px)Understand this warning
+queryClient.ts:72 Fetch failed loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/admin/events".
+queryFn @ queryClient.ts:72
+fetchFn @ @tanstack_react-query.js?v=80b17ebe:881
+run @ @tanstack_react-query.js?v=80b17ebe:513
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+fetchQuery @ @tanstack_react-query.js?v=80b17ebe:1827
+prefetchQuery @ @tanstack_react-query.js?v=80b17ebe:1830
+(anonymous) @ admin-dashboard.tsx:5914
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+Wk @ chunk-E27YX2RL.js?v=80b17ebe:6018
+Pk @ chunk-E27YX2RL.js?v=80b17ebe:5964
+Ek @ chunk-E27YX2RL.js?v=80b17ebe:5693
+jg @ chunk-E27YX2RL.js?v=80b17ebe:2527
+(anonymous) @ chunk-E27YX2RL.js?v=80b17ebe:5515
+setTimeout
+defaultScheduler @ @tanstack_react-query.js?v=80b17ebe:565
+flush @ @tanstack_react-query.js?v=80b17ebe:589
+batch @ @tanstack_react-query.js?v=80b17ebe:607
+dispatch_fn @ @tanstack_react-query.js?v=80b17ebe:1039
+setData @ @tanstack_react-query.js?v=80b17ebe:718
+onSuccess @ @tanstack_react-query.js?v=80b17ebe:940
+resolve @ @tanstack_react-query.js?v=80b17ebe:475
+Promise.then
+run @ @tanstack_react-query.js?v=80b17ebe:517
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+executeFetch_fn @ @tanstack_react-query.js?v=80b17ebe:2278
+onSubscribe @ @tanstack_react-query.js?v=80b17ebe:1982
+subscribe @ @tanstack_react-query.js?v=80b17ebe:24
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:3145
+ai @ chunk-E27YX2RL.js?v=80b17ebe:3392
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+Ek @ chunk-E27YX2RL.js?v=80b17ebe:5681
+jg @ chunk-E27YX2RL.js?v=80b17ebe:2527
+Wk @ chunk-E27YX2RL.js?v=80b17ebe:6021
+Pk @ chunk-E27YX2RL.js?v=80b17ebe:5964
+Gk @ chunk-E27YX2RL.js?v=80b17ebe:5620
+J @ chunk-E27YX2RL.js?v=80b17ebe:97
+R @ chunk-E27YX2RL.js?v=80b17ebe:129
+queryClient.ts:72 Fetch failed loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/admin/organization-settings".
+queryFn @ queryClient.ts:72
+fetchFn @ @tanstack_react-query.js?v=80b17ebe:881
+run @ @tanstack_react-query.js?v=80b17ebe:513
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+executeFetch_fn @ @tanstack_react-query.js?v=80b17ebe:2278
+onSubscribe @ @tanstack_react-query.js?v=80b17ebe:1982
+subscribe @ @tanstack_react-query.js?v=80b17ebe:24
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:3145
+ai @ chunk-E27YX2RL.js?v=80b17ebe:3392
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+Ek @ chunk-E27YX2RL.js?v=80b17ebe:5681
+jg @ chunk-E27YX2RL.js?v=80b17ebe:2527
+Wk @ chunk-E27YX2RL.js?v=80b17ebe:6021
+Pk @ chunk-E27YX2RL.js?v=80b17ebe:5964
+Gk @ chunk-E27YX2RL.js?v=80b17ebe:5620
+J @ chunk-E27YX2RL.js?v=80b17ebe:97
+R @ chunk-E27YX2RL.js?v=80b17ebe:129
+shared-24a197091605bf6b5db10cb218dc9ed9.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+e @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+l @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+(anonymous) @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+setTimeout
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+(anonymous) @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+(anonymous) @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+Promise.then
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+e @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+value @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+e @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+6261 @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+e @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+(anonymous) @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+e.O @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+(anonymous) @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+(anonymous) @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+shared-24a197091605bf6b5db10cb218dc9ed9.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+e @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+l @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+(anonymous) @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+setTimeout
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+(anonymous) @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+(anonymous) @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+Promise.then
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+log @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+log @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+e @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+6261 @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+e @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+(anonymous) @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+e.O @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+(anonymous) @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+(anonymous) @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+SchedulingWorkflow.tsx:57 Fetching teams for event: 1656618593
+SchedulingWorkflow.tsx:61 Teams API response: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+Promise.then
+S @ out-4.5.44.js:1
+y @ out-4.5.44.js:1
+E @ out-4.5.44.js:1
+e.onload @ inner.html:1
+script
+(anonymous) @ inner.html:1
+(anonymous) @ inner.html:1
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: undefined
+FlightManager.tsx:111 Final extracted age groups: []
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: undefined
+FlightManager.tsx:111 Final extracted age groups: []
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+h @ out-4.5.44.js:1
+e @ inner.html:1
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: undefined
+FlightManager.tsx:111 Final extracted age groups: []
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:94 Extracted age group IDs: (220) [10064, 10066, 10066, 10064, 10066, 10066, 10064, 10066, 10056, 10048, 10065, 10064, 10064, 10064, 10064, 10065, 10065, 10065, 10065, 10065, 10065, 10065, 10065, 10066, 10066, 10066, 10066, 10064, 10064, 10061, 10061, 10061, 10061, 10062, 10062, 10062, 10062, 10062, 10062, 10062, 10062, 10062, 10063, 10063, 10063, 10063, 10063, 10063, 10063, 10063, 10063, 10061, 10060, 10060, 10061, 10061, 10061, 10061, 10059, 10060, 10060, 10060, 10060, 10060, 10060, 10060, 10059, 10059, 10057, 10057, 10057, 10057, 10057, 10058, 10058, 10059, 10059, 10059, 10059, 10059, 10059, 10058, 10058, 10058, 10058, 10058, 10058, 10058, 10057, 10054, 10054, 10054, 10054, 10054, 10054, 10055, 10055, 10055, 10055, 10055, …]
+FlightManager.tsx:106 Age groups with names: (24) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:111 Final extracted age groups: (24) ['U17', 'U19', 'U13', 'U9', 'U19', 'U16', 'U16', 'U17', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U11', 'U12', 'U11', 'U10', 'U9', 'U10', 'U8', 'U8', 'U7', 'U7']
+shared-24a197091605bf6b5db10cb218dc9ed9.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+e @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+l @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+(anonymous) @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+setTimeout
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+(anonymous) @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+value @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+log @ shared-24a197091605bf6b5db10cb218dc9ed9.js:1
+log @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+value @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+value @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+(anonymous) @ controller-with-preconnect-bd1115239135fa0258473753f618f378.js:1
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:111 Final extracted age groups: (24) ['U17', 'U19', 'U13', 'U9', 'U19', 'U16', 'U16', 'U17', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U11', 'U12', 'U11', 'U10', 'U9', 'U10', 'U8', 'U8', 'U7', 'U7']
+chunk-J2F67UGW.js?v=80b17ebe:340 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ chunk-J2F67UGW.js?v=80b17ebe:340
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+Wk @ chunk-E27YX2RL.js?v=80b17ebe:6018
+Pk @ chunk-E27YX2RL.js?v=80b17ebe:5964
+Ek @ chunk-E27YX2RL.js?v=80b17ebe:5693
+jg @ chunk-E27YX2RL.js?v=80b17ebe:2527
+(anonymous) @ chunk-E27YX2RL.js?v=80b17ebe:5515Understand this warning
+chunk-UVKO6OCU.js:6 [Violation] Added non-passive event listener to a scroll-blocking 'wheel' event. Consider marking event handler as 'passive' to make the page more responsive. See https://www.chromestatus.com/feature/5745543795965952
+re @ chunk-UVKO6OCU.js:6
+m @ menu.js:101
+ge @ chunk-UVKO6OCU.js:6
+m @ menu.js:101
+ge @ chunk-UVKO6OCU.js:6
+m @ menu.js:101
+p @ menu.js:101
+pe @ chunk-UVKO6OCU.js:6
+Y @ chunk-UVKO6OCU.js:6
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:111 Final extracted age groups: (24) ['U17', 'U19', 'U13', 'U9', 'U19', 'U16', 'U16', 'U17', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U11', 'U12', 'U11', 'U10', 'U9', 'U10', 'U8', 'U8', 'U7', 'U7']
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:111 Final extracted age groups: (24) ['U17', 'U19', 'U13', 'U9', 'U19', 'U16', 'U16', 'U17', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U11', 'U12', 'U11', 'U10', 'U9', 'U10', 'U8', 'U8', 'U7', 'U7']
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:111 Final extracted age groups: (24) ['U17', 'U19', 'U13', 'U9', 'U19', 'U16', 'U16', 'U17', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U11', 'U12', 'U11', 'U10', 'U9', 'U10', 'U8', 'U8', 'U7', 'U7']
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:111 Final extracted age groups: (24) ['U17', 'U19', 'U13', 'U9', 'U19', 'U16', 'U16', 'U17', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U11', 'U12', 'U11', 'U10', 'U9', 'U10', 'U8', 'U8', 'U7', 'U7']
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:111 Final extracted age groups: (24) ['U17', 'U19', 'U13', 'U9', 'U19', 'U16', 'U16', 'U17', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U11', 'U12', 'U11', 'U10', 'U9', 'U10', 'U8', 'U8', 'U7', 'U7']
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:111 Final extracted age groups: (24) ['U17', 'U19', 'U13', 'U9', 'U19', 'U16', 'U16', 'U17', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U11', 'U12', 'U11', 'U10', 'U9', 'U10', 'U8', 'U8', 'U7', 'U7']
+FlightManager.tsx:67 FlightManager teamsData: (2) [{…}, {…}]
+FlightManager.tsx:68 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+FlightManager.tsx:111 Final extracted age groups: (24) ['U17', 'U19', 'U13', 'U9', 'U19', 'U16', 'U16', 'U17', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U11', 'U12', 'U11', 'U10', 'U9', 'U10', 'U8', 'U8', 'U7', 'U7']
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+GameCreation.tsx:58 GameCreation workflowData: {flight: {…}, bracket: {…}, seed: {…}, timeblock: {…}}
+GameCreation.tsx:59 GameCreation brackets: [{…}]
+GameCreation.tsx:60 GameCreation seedings: [{…}]
+GameCreation.tsx:61 GameCreation timeBlocks: [{…}]
+GameCreation.tsx:168 generateGamesForBracket - bracket: {id: 'flight_1751558512203_unassigned', flightId: 'flight_1751558512203', flightName: 'U17 Boys A - Director Assignment Needed', teamCount: 4, format: 'round_robin_knockout', …}
+GameCreation.tsx:169 generateGamesForBracket - seeding: {bracketId: 'flight_1751558512203_unassigned', bracketName: 'U17 Boys A - Director Assignment Needed', teams: Array(4), pools: Array(1)}
+GameCreation.tsx:170 generateGamesForBracket - seeding.teams: (4) [{…}, {…}, {…}, {…}]
+GameCreation.tsx:171 generateGamesForBracket - seeding.pools: [{…}]
+GameCreation.tsx:58 GameCreation workflowData: {flight: {…}, bracket: {…}, seed: {…}, timeblock: {…}}
+GameCreation.tsx:59 GameCreation brackets: [{…}]
+GameCreation.tsx:60 GameCreation seedings: [{…}]
+GameCreation.tsx:61 GameCreation timeBlocks: [{…}]
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+GameCreation.tsx:58 GameCreation workflowData: {flight: {…}, bracket: {…}, seed: {…}, timeblock: {…}}
+GameCreation.tsx:59 GameCreation brackets: [{…}]
+GameCreation.tsx:60 GameCreation seedings: [{…}]
+GameCreation.tsx:61 GameCreation timeBlocks: [{…}]
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+ScheduleBuilder.tsx:86 Fetch finished loading: POST "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/admin/events/1656618593/generate-schedule".
+generateAISchedule @ ScheduleBuilder.tsx:86
+Nb @ chunk-E27YX2RL.js?v=80b17ebe:975
+Tb @ chunk-E27YX2RL.js?v=80b17ebe:991
+Ub @ chunk-E27YX2RL.js?v=80b17ebe:994
+nf @ chunk-E27YX2RL.js?v=80b17ebe:2017
+se @ chunk-E27YX2RL.js?v=80b17ebe:2040
+(anonymous) @ chunk-E27YX2RL.js?v=80b17ebe:2312
+Qk @ chunk-E27YX2RL.js?v=80b17ebe:5701
+Jb @ chunk-E27YX2RL.js?v=80b17ebe:927
+hd @ chunk-E27YX2RL.js?v=80b17ebe:2113
+fd @ chunk-E27YX2RL.js?v=80b17ebe:1454
+ed @ chunk-E27YX2RL.js?v=80b17ebe:1437
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+ScheduleManagement.tsx:142 Schedule Management - Fetched complexes data: {complexes: Array(1), summary: {…}}
+ScheduleManagement.tsx:130 Schedule Management - Fetched games data: {games: Array(7)}
+ScheduleManagement.tsx:249 SCHEDULE DEBUG - Raw games data: {games: Array(7)}
+ScheduleManagement.tsx:250 SCHEDULE DEBUG - Games array: (7) [{…}, {…}, {…}, {…}, {…}, {…}, {…}]
+ScheduleManagement.tsx:251 SCHEDULE DEBUG - Games count: 7
+ScheduleManagement.tsx:252 SCHEDULE DEBUG - First game structure: {id: 308, gameNumber: 1, startTime: '2025-07-03T16:02:22.834Z', endTime: '2025-07-03T18:02:22.834Z', fieldName: 'f2', …}
+ScheduleManagement.tsx:253 SCHEDULE DEBUG - Complexes data: [{…}]
+ScheduleManagement.tsx:301 Actual game start hours (Pacific Time): [9]
+ScheduleManagement.tsx:320 Generated time slots: (2) ['09:00', '10:00']
+ScheduleManagement.tsx:328 SCHEDULE DEBUG: {gamesCount: 7, gamesByDate: Array(1), firstGame: {…}, fieldIds: Array(6), timeSlots: Array(2)}
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:521 Game 1 field mismatch: 9 !== 8
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 8, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:540 Field 8: Game 2 hour 9 (PT) vs slot hour 9
+ScheduleManagement.tsx:544 MATCH FOUND: Game 2 matches time slot 09:00 on field 8
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:540 Field 9: Game 1 hour 9 (PT) vs slot hour 9
+ScheduleManagement.tsx:544 MATCH FOUND: Game 1 matches time slot 09:00 on field 9
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:521 Game 1 field mismatch: 9 !== 8
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 8, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:540 Field 8: Game 2 hour 9 (PT) vs slot hour 10
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:521 Game 3 field mismatch: 9 !== 8
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 8, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:540 Field 8: Game 4 hour 9 (PT) vs slot hour 10
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:521 Game 5 field mismatch: 9 !== 8
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 8, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:540 Field 8: Game 6 hour 9 (PT) vs slot hour 10
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:521 Game 7 field mismatch: 9 !== 8
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:540 Field 9: Game 1 hour 9 (PT) vs slot hour 10
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 9, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:521 Game 2 field mismatch: 8 !== 9
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:540 Field 9: Game 3 hour 9 (PT) vs slot hour 10
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 9, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:521 Game 4 field mismatch: 8 !== 9
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:540 Field 9: Game 5 hour 9 (PT) vs slot hour 10
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 9, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:521 Game 6 field mismatch: 8 !== 9
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:540 Field 9: Game 7 hour 9 (PT) vs slot hour 10
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+ScheduleManagement.tsx:249 SCHEDULE DEBUG - Raw games data: {games: Array(7)}
+ScheduleManagement.tsx:250 SCHEDULE DEBUG - Games array: (7) [{…}, {…}, {…}, {…}, {…}, {…}, {…}]
+ScheduleManagement.tsx:251 SCHEDULE DEBUG - Games count: 7
+ScheduleManagement.tsx:252 SCHEDULE DEBUG - First game structure: {id: 308, gameNumber: 1, startTime: '2025-07-03T16:02:22.834Z', endTime: '2025-07-03T18:02:22.834Z', fieldName: 'f2', …}
+ScheduleManagement.tsx:253 SCHEDULE DEBUG - Complexes data: [{…}]
+ScheduleManagement.tsx:301 Actual game start hours (Pacific Time): [9]
+ScheduleManagement.tsx:320 Generated time slots: (2) ['09:00', '10:00']
+ScheduleManagement.tsx:328 SCHEDULE DEBUG: {gamesCount: 7, gamesByDate: Array(1), firstGame: {…}, fieldIds: Array(6), timeSlots: Array(2)}
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:521 Game 1 field mismatch: 9 !== 8
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 8, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:540 Field 8: Game 2 hour 9 (PT) vs slot hour 9
+ScheduleManagement.tsx:544 MATCH FOUND: Game 2 matches time slot 09:00 on field 8
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:540 Field 9: Game 1 hour 9 (PT) vs slot hour 9
+ScheduleManagement.tsx:544 MATCH FOUND: Game 1 matches time slot 09:00 on field 9
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:521 Game 1 field mismatch: 9 !== 8
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 8, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:540 Field 8: Game 2 hour 9 (PT) vs slot hour 10
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:521 Game 3 field mismatch: 9 !== 8
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 8, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:540 Field 8: Game 4 hour 9 (PT) vs slot hour 10
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:521 Game 5 field mismatch: 9 !== 8
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 8, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:540 Field 8: Game 6 hour 9 (PT) vs slot hour 10
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:521 Game 7 field mismatch: 9 !== 8
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:540 Field 9: Game 1 hour 9 (PT) vs slot hour 10
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 9, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:521 Game 2 field mismatch: 8 !== 9
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:540 Field 9: Game 3 hour 9 (PT) vs slot hour 10
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 9, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:521 Game 4 field mismatch: 8 !== 9
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:540 Field 9: Game 5 hour 9 (PT) vs slot hour 10
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 9, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:521 Game 6 field mismatch: 8 !== 9
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:540 Field 9: Game 7 hour 9 (PT) vs slot hour 10
+SchedulingWorkflow.tsx:197 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+ScheduleManagement.tsx:249 SCHEDULE DEBUG - Raw games data: {games: Array(7)}
+ScheduleManagement.tsx:250 SCHEDULE DEBUG - Games array: (7) [{…}, {…}, {…}, {…}, {…}, {…}, {…}]
+ScheduleManagement.tsx:251 SCHEDULE DEBUG - Games count: 7
+ScheduleManagement.tsx:252 SCHEDULE DEBUG - First game structure: {id: 308, gameNumber: 1, startTime: '2025-07-03T16:02:22.834Z', endTime: '2025-07-03T18:02:22.834Z', fieldName: 'f2', …}
+ScheduleManagement.tsx:253 SCHEDULE DEBUG - Complexes data: [{…}]
+ScheduleManagement.tsx:301 Actual game start hours (Pacific Time): [9]
+ScheduleManagement.tsx:320 Generated time slots: (2) ['09:00', '10:00']
+ScheduleManagement.tsx:328 SCHEDULE DEBUG: {gamesCount: 7, gamesByDate: Array(1), firstGame: {…}, fieldIds: Array(6), timeSlots: Array(2)}
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:521 Game 1 field mismatch: 9 !== 8
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 8, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:540 Field 8: Game 2 hour 9 (PT) vs slot hour 9
+ScheduleManagement.tsx:544 MATCH FOUND: Game 2 matches time slot 09:00 on field 8
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '09:00'}
+ScheduleManagement.tsx:540 Field 9: Game 1 hour 9 (PT) vs slot hour 9
+ScheduleManagement.tsx:544 MATCH FOUND: Game 1 matches time slot 09:00 on field 9
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:521 Game 1 field mismatch: 9 !== 8
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 8, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:540 Field 8: Game 2 hour 9 (PT) vs slot hour 10
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:521 Game 3 field mismatch: 9 !== 8
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 8, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:540 Field 8: Game 4 hour 9 (PT) vs slot hour 10
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:521 Game 5 field mismatch: 9 !== 8
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 8, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:540 Field 8: Game 6 hour 9 (PT) vs slot hour 10
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 8, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:521 Game 7 field mismatch: 9 !== 8
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 1: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:540 Field 9: Game 1 hour 9 (PT) vs slot hour 10
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 2: {gameFieldId: 8, targetFieldId: 9, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:521 Game 2 field mismatch: 8 !== 9
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 3: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:540 Field 9: Game 3 hour 9 (PT) vs slot hour 10
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 4: {gameFieldId: 8, targetFieldId: 9, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:521 Game 4 field mismatch: 8 !== 9
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 5: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:540 Field 9: Game 5 hour 9 (PT) vs slot hour 10
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 6: {gameFieldId: 8, targetFieldId: 9, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:521 Game 6 field mismatch: 8 !== 9
+ScheduleManagement.tsx:513 GAME MATCHING DEBUG - Checking game 7: {gameFieldId: 9, targetFieldId: 9, gameStartTime: '2025-07-03T16:02:22.834Z', timeSlot: '10:00'}
+ScheduleManagement.tsx:540 Field 9: Game 7 hour 9 (PT) vs slot hour 10
