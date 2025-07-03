@@ -6159,6 +6159,18 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
 
         console.log(`Found ${schedule.length} games for event ${eventId}`);
 
+        // Debug time slot data
+        schedule.forEach((item, index) => {
+          console.log(`Game ${index + 1} time slot debug:`, {
+            gameId: item.game.id,
+            timeSlotId: item.game.timeSlotId,
+            timeSlotData: item.timeSlot,
+            hasTimeSlot: !!item.timeSlot,
+            startTime: item.timeSlot?.startTime,
+            endTime: item.timeSlot?.endTime
+          });
+        });
+
         // Format the schedule for frontend display with enhanced data
         const formattedSchedule = schedule.map((item, index) => ({
             id: item.game.id,
