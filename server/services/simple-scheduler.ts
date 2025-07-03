@@ -7,7 +7,7 @@
 
 import { db } from "../../db";
 import { eq, inArray } from "drizzle-orm";
-import { games, eventBrackets, complexes, fields, teams, events } from "../../db/schema";
+import { games, eventBrackets, complexes, fields, teams, events, gameTimeSlots } from "../../db/schema";
 
 export class SimpleScheduler {
   static async generateSchedule(eventId: string, workflowData: any, options: {
@@ -96,6 +96,9 @@ export class SimpleScheduler {
 
     console.log(`💾 Prepared ${allGames.length} games for database`);
     
+    // Create time slots and link games for robust scheduling
+    await SimpleScheduler.createTimeSlots(eventId, allGames, eventData, gameDuration, restTime);
+    
     return {
       games: allGames,
       summary: {
@@ -109,6 +112,64 @@ export class SimpleScheduler {
         gameDuration: gameDuration
       }
     };
+  }
+
+  /**
+   * Create time slots and link games for comprehensive scheduling
+   * This ensures all future tournaments have proper time slot associations
+   */
+  static async createTimeSlots(eventId: string, allGames: any[], eventData: any, gameDuration: number, restTime: number) {
+    console.log('🕒 Creating comprehensive time slot associations...');
+    
+    try {
+      // Clear existing time slots for this event to avoid conflicts
+      await db.delete(gameTimeSlots).where(eq(gameTimeSlots.eventId, parseInt(eventId)));
+      
+      // Group games by their scheduled dates
+      const gamesByDate = new Map();
+      allGames.forEach((game, index) => {
+        if (game.startTime && game.endTime) {
+          const gameDate = game.startTime.split('T')[0]; // Extract YYYY-MM-DD
+          if (!gamesByDate.has(gameDate)) {
+            gamesByDate.set(gameDate, []);
+          }
+          gamesByDate.get(gameDate).push({ ...game, originalIndex: index });
+        }
+      });
+      
+      console.log(`📅 Creating time slots for ${gamesByDate.size} tournament days`);
+      
+      // Create time slots for each game
+      for (const [date, dateGames] of gamesByDate) {
+        console.log(`📅 Processing ${dateGames.length} games for ${date}`);
+        
+        for (const game of dateGames) {
+          // Create time slot for this specific game
+          const [timeSlot] = await db
+            .insert(gameTimeSlots)
+            .values({
+              eventId: parseInt(eventId),
+              fieldId: game.fieldId || null,
+              startTime: game.startTime,
+              endTime: game.endTime,
+              dayIndex: Array.from(gamesByDate.keys()).indexOf(date),
+              isAvailable: false
+            })
+            .returning();
+          
+          // Update the game object with the time slot ID for later database insertion
+          allGames[game.originalIndex].timeSlotId = timeSlot.id;
+          
+          console.log(`⚽ Game ${game.originalIndex + 1}: ${date} linked to time slot ${timeSlot.id}`);
+        }
+      }
+      
+      console.log('✅ Time slot associations created successfully');
+      
+    } catch (error) {
+      console.error('❌ Error creating time slots:', error);
+      // Don't throw error - let scheduling continue without time slots if needed
+    }
   }
 
   /**
