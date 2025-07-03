@@ -113,6 +113,14 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
+- July 3, 2025: CRITICAL SCHEDULING REGENERATION FIX - Resolved endless game regeneration causing Step 6/7 communication breakdown
+  - IDENTIFIED: Schedule generation endpoint deletes ALL existing games every time it's called, wiping out manual time slot associations
+  - ROOT CAUSE: Step 6 and Step 7 lack proper state management - each page load triggers new game generation
+  - FIXED: Manual linking of games (357-363) to proper October time slots (5185-5191) for immediate display
+  - ENHANCED: Schedule generation timing fixed to create time slots BEFORE database transaction
+  - SYSTEMATIC: Implemented proper game preservation logic to prevent data loss during schedule adjustments
+  - VERIFIED: All 7 games now properly linked to October 1-2, 2025 schedule with correct PT times
+  - PRODUCTION READY: Schedule system now maintains data integrity between workflow steps
 - July 3, 2025: COMPREHENSIVE SCHEDULING SYSTEM ENHANCEMENT - Fixed current event and future-proofed all tournaments
   - CURRENT EVENT FIX: Event is scheduled for October 1-4, 2025, but schedule displayed July/current dates
   - ROOT CAUSE: Time slots in database had wrong July dates, games lacked time slot associations
