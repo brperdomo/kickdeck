@@ -113,6 +113,14 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
+- July 4, 2025: BULK TEAM REJECTION FEATURE - Implemented comprehensive bulk rejection functionality for efficient team management
+  - BACKEND: Created bulkRejectTeams() function in server/routes/admin/teams.ts with proper error handling and email notifications
+  - FRONTEND: Added bulk rejection UI components including state management, mutation handling, and dialog interface
+  - VALIDATION: Implemented proper team status validation to prevent rejection of already processed teams
+  - EMAIL INTEGRATION: Automated rejection notification emails sent to team submitters and managers
+  - UI ENHANCEMENT: Added red "Reject Selected Teams" button alongside existing approval functionality
+  - CONFIRMATION DIALOG: Built user-friendly confirmation dialog with optional notes field for rejection reasons
+  - PRODUCTION READY: Complete bulk rejection workflow operational with proper error handling and user feedback
 - July 3, 2025: CRITICAL FINANCIAL DATA FIX - Resolved cent/dollar conversion issue causing 100x inflated revenue display
   - IDENTIFIED: Financial APIs returning raw cent values but frontend treating them as dollars (showing $99,500 instead of $995)
   - FIXED: Updated financial-overview, event-financial, revenue-forecast, AND payment-reports API endpoints to convert cents to dollars

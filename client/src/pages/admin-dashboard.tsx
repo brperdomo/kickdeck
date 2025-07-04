@@ -3297,6 +3297,8 @@ function TeamsView() {
   const [selectedTeamIds, setSelectedTeamIds] = useState<number[]>([]);
   const [isBulkApprovalDialogOpen, setIsBulkApprovalDialogOpen] = useState(false);
   const [bulkApprovalNotes, setBulkApprovalNotes] = useState("");
+  const [isBulkRejectionDialogOpen, setIsBulkRejectionDialogOpen] = useState(false);
+  const [bulkRejectionNotes, setBulkRejectionNotes] = useState("");
   const queryClient = useQueryClient();
   const { toast } = useToast();
   
@@ -3450,6 +3452,60 @@ function TeamsView() {
     onError: (error: Error) => {
       toast({
         title: "Bulk Approval Failed",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  });
+
+  const bulkRejectTeamsMutation = useMutation({
+    mutationFn: async ({ teamIds, notes }: { teamIds: number[], notes?: string }) => {
+      console.log('Bulk rejecting teams:', teamIds, 'with notes:', notes);
+      
+      const response = await fetch('/api/admin/teams/bulk-reject', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ teamIds, notes })
+      });
+      
+      const responseText = await response.text();
+      console.log('Bulk rejection response:', responseText);
+      
+      let responseData;
+      try {
+        responseData = responseText ? JSON.parse(responseText) : {};
+      } catch (parseError) {
+        console.error('Error parsing bulk rejection response:', parseError);
+        throw new Error('Server returned invalid response. Please try again.');
+      }
+      
+      if (!response.ok) {
+        throw new Error(responseData.message || 'Failed to bulk reject teams');
+      }
+      
+      return responseData;
+    },
+    onSuccess: (data) => {
+      const { summary, results } = data;
+      
+      toast({
+        title: "Bulk Rejection Complete",
+        description: `${summary.successful} teams rejected successfully. ${summary.failed > 0 ? `${summary.failed} failed.` : ''}`,
+      });
+      
+      // Show detailed results if there were warnings or failures
+      if (summary.warnings > 0 || summary.failed > 0) {
+        console.log('Bulk rejection results:', results);
+      }
+      
+      setIsBulkRejectionDialogOpen(false);
+      setSelectedTeamIds([]);
+      setBulkRejectionNotes("");
+      teamsQuery.refetch();
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Bulk Rejection Failed",
         description: error.message,
         variant: "destructive"
       });
@@ -3722,6 +3778,27 @@ function TeamsView() {
     bulkApproveTeamsMutation.mutate({
       teamIds: selectedTeamIds,
       notes: bulkApprovalNotes || undefined
+    });
+  };
+
+  // Handle bulk rejection dialog
+  const handleBulkRejection = () => {
+    if (selectedTeamIds.length === 0) {
+      toast({
+        title: "No teams selected",
+        description: "Please select teams to reject",
+        variant: "destructive"
+      });
+      return;
+    }
+    setIsBulkRejectionDialogOpen(true);
+  };
+
+  // Confirm bulk rejection
+  const confirmBulkRejection = () => {
+    bulkRejectTeamsMutation.mutate({
+      teamIds: selectedTeamIds,
+      notes: bulkRejectionNotes || undefined
     });
   };
 
@@ -4179,15 +4256,26 @@ function TeamsView() {
                             Clear Selection
                           </Button>
                         </div>
-                        <Button
-                          onClick={handleBulkApproval}
-                          className="bg-green-600 hover:bg-green-700 text-white"
-                          disabled={bulkApproveTeamsMutation.isPending}
-                        >
-                          {bulkApproveTeamsMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                          <Check className="h-4 w-4 mr-2" />
-                          Approve Selected Teams
-                        </Button>
+                        <div className="flex gap-2">
+                          <Button
+                            onClick={handleBulkApproval}
+                            className="bg-green-600 hover:bg-green-700 text-white"
+                            disabled={bulkApproveTeamsMutation.isPending}
+                          >
+                            {bulkApproveTeamsMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                            <Check className="h-4 w-4 mr-2" />
+                            Approve Selected Teams
+                          </Button>
+                          <Button
+                            onClick={handleBulkRejection}
+                            className="bg-red-600 hover:bg-red-700 text-white"
+                            disabled={bulkRejectTeamsMutation.isPending}
+                          >
+                            {bulkRejectTeamsMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                            <X className="h-4 w-4 mr-2" />
+                            Reject Selected Teams
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   )}
@@ -5824,6 +5912,50 @@ function TeamsView() {
               {bulkApproveTeamsMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
               <Check className="h-4 w-4 mr-2" />
               Confirm Bulk Approval
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Bulk Rejection Dialog */}
+      <Dialog open={isBulkRejectionDialogOpen} onOpenChange={setIsBulkRejectionDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Bulk Reject Teams</DialogTitle>
+            <DialogDescription>
+              You are about to reject {selectedTeamIds.length} team{selectedTeamIds.length !== 1 ? 's' : ''}. 
+              This will send rejection notification emails to team managers.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="bulkRejectionNotes">Notes (optional)</Label>
+              <Textarea
+                id="bulkRejectionNotes"
+                placeholder="Add notes that will be included in rejection emails..."
+                value={bulkRejectionNotes}
+                onChange={(e) => setBulkRejectionNotes(e.target.value)}
+                className="mt-1"
+              />
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={() => setIsBulkRejectionDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={confirmBulkRejection}
+              disabled={bulkRejectTeamsMutation.isPending}
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
+              {bulkRejectTeamsMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+              <X className="h-4 w-4 mr-2" />
+              Confirm Bulk Rejection
             </Button>
           </DialogFooter>
         </DialogContent>
