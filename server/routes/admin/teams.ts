@@ -1495,6 +1495,173 @@ async function bulkApproveTeams(req: Request, res: Response) {
 }
 
 /**
+ * Bulk reject multiple teams
+ */
+async function bulkRejectTeams(req: Request, res: Response) {
+  try {
+    const { teamIds, notes } = req.body;
+    
+    if (!Array.isArray(teamIds) || teamIds.length === 0) {
+      return res.status(400).json({
+        status: 'error',
+        error: 'Team IDs array is required'
+      });
+    }
+
+    log(`Processing bulk rejection for ${teamIds.length} teams: ${teamIds.join(', ')}`, 'admin');
+    
+    const results: {
+      successful: Array<{ teamId: any; teamName: string; message: string }>;
+      failed: Array<{ teamId: any; teamName?: string; error: string }>;
+      warnings: Array<{ teamId: any; teamName: string; message: string }>;
+    } = {
+      successful: [],
+      failed: [],
+      warnings: []
+    };
+
+    // Process each team individually
+    for (const teamId of teamIds) {
+      try {
+        // Get team details first
+        const teamResult = await db
+          .select()
+          .from(teams)
+          .where(eq(teams.id, parseInt(teamId, 10)));
+        
+        if (!teamResult || teamResult.length === 0) {
+          results.failed.push({
+            teamId,
+            error: 'Team not found'
+          });
+          continue;
+        }
+
+        const team = teamResult[0];
+        
+        // Check if team is already rejected
+        if (team.status === 'rejected') {
+          results.warnings.push({
+            teamId,
+            teamName: team.name,
+            message: 'Team was already rejected'
+          });
+          continue;
+        }
+
+        // Check if team can be rejected (not already approved with payment, etc.)
+        if (['approved', 'withdrawn', 'refunded'].includes(team.status)) {
+          results.failed.push({
+            teamId,
+            teamName: team.name,
+            error: `Cannot reject team with status: ${team.status}`
+          });
+          continue;
+        }
+
+        // Update team status to rejected
+        await db.update(teams)
+          .set({ 
+            status: 'rejected',
+            notes: notes ? `${team.notes ? team.notes + '\n' : ''}Bulk rejection: ${notes}` : team.notes
+          })
+          .where(eq(teams.id, parseInt(teamId, 10)));
+
+        results.successful.push({
+          teamId,
+          teamName: team.name,
+          message: 'Team rejected successfully'
+        });
+
+        log(`Team ${teamId} (${team.name}) rejected in bulk operation`, 'admin');
+
+      } catch (error) {
+        results.failed.push({
+          teamId,
+          error: error instanceof Error ? error.message : 'Unknown error occurred'
+        });
+        log(`Error rejecting team ${teamId} in bulk operation: ${error}`, 'admin');
+      }
+    }
+
+    // Send email notifications for successful rejections
+    try {
+      for (const success of results.successful) {
+        const teamResult = await db
+          .select({
+            team: teams,
+            event: {
+              id: events.id,
+              name: events.name
+            }
+          })
+          .from(teams)
+          .leftJoin(events, eq(teams.eventId, events.id))
+          .where(eq(teams.id, parseInt(success.teamId, 10)));
+
+        if (teamResult && teamResult.length > 0) {
+          const { team, event } = teamResult[0];
+          
+          const recipients = [];
+          if (team.submitterEmail) recipients.push(team.submitterEmail);
+          if (team.managerEmail && team.managerEmail !== team.submitterEmail) {
+            recipients.push(team.managerEmail);
+          }
+
+          for (const recipient of recipients) {
+            if (recipient) {
+              await sendTemplatedEmail(
+                recipient,
+                'team_rejected',
+                {
+                  teamName: team.name || 'your team',
+                  eventName: event?.name || 'the event',
+                  submitterName: team.submitterName || team.managerName || 'Team Manager',
+                  notes: notes || '',
+                  
+                  // Standard template data
+                  loginLink: `${process.env.FRONTEND_URL || 'https://app.matchpro.ai'}/dashboard`,
+                  supportEmail: 'support@matchpro.ai',
+                  organizationName: 'MatchPro',
+                  currentYear: new Date().getFullYear().toString()
+                }
+              );
+            }
+          }
+        }
+      }
+    } catch (emailError) {
+      log(`Error sending bulk rejection notification emails: ${emailError}`, 'admin');
+      // Don't fail the whole operation for email issues
+    }
+
+    const summary = {
+      total: teamIds.length,
+      successful: results.successful.length,
+      failed: results.failed.length,
+      warnings: results.warnings.length
+    };
+
+    log(`Bulk rejection completed: ${summary.successful} successful, ${summary.failed} failed, ${summary.warnings} warnings`, 'admin');
+
+    return res.json({
+      status: 'success',
+      message: `Bulk rejection completed: ${summary.successful} teams rejected`,
+      summary,
+      results
+    });
+
+  } catch (error) {
+    log(`Error in bulk team rejection: ${error}`, 'admin');
+    return res.status(500).json({
+      status: 'error',
+      error: 'Failed to process bulk rejection',
+      message: error instanceof Error ? error.message : 'Unknown error occurred'
+    });
+  }
+}
+
+/**
  * Delete a team registration (only allowed for teams in 'registered' status)
  */
 async function deleteTeam(req: Request, res: Response) {
@@ -1656,4 +1823,4 @@ async function deleteTeam(req: Request, res: Response) {
   }
 }
 
-export { updateTeamStatus, processRefund, processTeamPaymentAfterSetup, generatePaymentCompletionUrl, deleteTeam, bulkApproveTeams };
+export { updateTeamStatus, processRefund, processTeamPaymentAfterSetup, generatePaymentCompletionUrl, deleteTeam, bulkApproveTeams, bulkRejectTeams };
