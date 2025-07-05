@@ -76,29 +76,33 @@ export function calculateStripeFees(totalAmount: number): number {
 
 /**
  * Calculate comprehensive fee breakdown
- * Simple 4% platform fee structure (not over-charging to guarantee MatchPro margin)
+ * Fee structure: Tournament Cost + 4% + $0.30 total fee
+ * Where: Stripe gets 2.9% + $0.30, MatchPro gets 1.1%
  */
 export function calculateFeeBreakdown(
   tournamentCost: number,
   eventVolume?: number
 ): FeeCalculation {
-  // Determine platform fee rate based on volume
-  const basePlatformFeeRate = eventVolume ? getPlatformFeeRate(eventVolume) : DEFAULT_PLATFORM_FEE_RATE;
+  // Total fee structure: 4% + $0.30
+  const totalFeePercentage = 0.04; // 4%
+  const totalFixedFee = 30; // $0.30 in cents
   
-  // Simple fee structure: Tournament Cost + 4% Platform Fee
-  const platformFeeAmount = Math.round(tournamentCost * basePlatformFeeRate);
+  // Calculate total platform fee: 4% + $0.30
+  const platformFeeAmount = Math.round(tournamentCost * totalFeePercentage + totalFixedFee);
   const totalChargedAmount = tournamentCost + platformFeeAmount;
   
-  // Calculate actual platform fee rate (should be exactly the base rate)
+  // Calculate actual platform fee rate for reporting
   const platformFeeRate = platformFeeAmount / tournamentCost;
   
-  // Calculate Stripe fees on the total charged amount
-  const stripeFeeAmount = calculateStripeFees(totalChargedAmount);
+  // Stripe gets exactly 2.9% + $0.30 of the tournament cost
+  const stripeFeeAmount = Math.round(tournamentCost * STRIPE_PERCENTAGE_FEE + STRIPE_FIXED_FEE);
+  
+  // MatchPro gets the remaining 1.1% of tournament cost
+  const matchproReceives = platformFeeAmount - stripeFeeAmount;
   
   // Distribution calculation
   const tournamentReceives = tournamentCost; // Tournament gets their base amount
-  const stripeReceives = stripeFeeAmount; // Stripe gets their processing fee
-  const matchproReceives = platformFeeAmount - stripeFeeAmount; // MatchPro gets platform fee minus Stripe costs
+  const stripeReceives = stripeFeeAmount; // Stripe gets 2.9% + $0.30
   
   // Validation
   const totalAccounted = tournamentReceives + stripeReceives + matchproReceives;
