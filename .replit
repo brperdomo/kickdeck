@@ -14,6 +14,10 @@ run = ["sh", "-c", "NODE_OPTIONS='--import tsx' node server/index.ts"]
 localPort = 5000
 externalPort = 80
 
+[[ports]]
+localPort = 5001
+externalPort = 3000
+
 [workflows]
 runButton = "Start application"
 
