@@ -113,6 +113,12 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
+- July 5, 2025: PRICING STANDARDIZATION COMPLETE - Corrected Rise Cup pricing to match Empire Super Cup realistic cent amounts
+  - FIXED: Rise Cup pricing changed from rounded dollars ($900→$936, $1,025→$1,066) to realistic cents ($895→$930.80, $995→$1,034.80)
+  - STANDARDIZED: All events now use Empire Super Cup pricing structure (7v7: $895, 9v9: $995, 11v11: $1,195)
+  - DOCUMENTED: Created STANDARDIZED_PRICING_GUIDE.md for consistent pricing across all future events
+  - VERIFIED: Platform fee collection working perfectly with $8.50-$11.50 MatchPro revenue per transaction
+  - PRODUCTION READY: All new registrations produce realistic cent amounts instead of rounded dollars
 - July 4, 2025: BULK TEAM REJECTION FEATURE - Implemented comprehensive bulk rejection functionality for efficient team management
   - BACKEND: Created bulkRejectTeams() function in server/routes/admin/teams.ts with proper error handling and email notifications
   - FRONTEND: Added bulk rejection UI components including state management, mutation handling, and dialog interface
