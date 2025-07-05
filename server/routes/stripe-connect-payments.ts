@@ -173,6 +173,17 @@ export async function processDestinationCharge(
     } else {
       console.log(`Processing regular payment method - using destination charge`);
       
+      // CRITICAL PLATFORM FEE VALIDATION
+      if (!feeCalculation.platformFeeAmount || feeCalculation.platformFeeAmount <= 0) {
+        throw new Error(`Invalid platform fee amount: ${feeCalculation.platformFeeAmount}. Fee calculation may be broken.`);
+      }
+      
+      console.log(`🔥 PLATFORM FEE DEBUG - Team ${teamId}:`);
+      console.log(`  Total Charge Amount: $${(chargeAmount / 100).toFixed(2)}`);
+      console.log(`  Platform Fee Amount: $${(feeCalculation.platformFeeAmount / 100).toFixed(2)}`);
+      console.log(`  MatchPro Revenue: $${(feeCalculation.matchproReceives / 100).toFixed(2)}`);
+      console.log(`  Tournament Receives: $${(feeCalculation.tournamentReceives / 100).toFixed(2)}`);
+      
       // For regular payment methods, use destination charge as before
       const paymentIntentParams: any = {
         amount: chargeAmount,
@@ -185,7 +196,7 @@ export async function processDestinationCharge(
         transfer_data: {
           destination: connectAccountId,
         },
-        application_fee_amount: feeCalculation.platformFeeAmount,
+        application_fee_amount: feeCalculation.platformFeeAmount, // This is the critical line that collects MatchPro revenue
         automatic_payment_methods: {
           enabled: true,
           allow_redirects: 'never'
@@ -197,9 +208,21 @@ export async function processDestinationCharge(
           type: 'team_registration',
           tournamentCost: totalAmountCents.toString(),
           platformFeeRate: feeCalculation.platformFeeRate.toString(),
-          stripeFeeAmount: feeCalculation.stripeFeeAmount.toString()
+          stripeFeeAmount: feeCalculation.stripeFeeAmount.toString(),
+          // Add the calculated values to metadata for debugging
+          calculatedPlatformFee: feeCalculation.platformFeeAmount.toString(),
+          calculatedMatchProRevenue: feeCalculation.matchproReceives.toString()
         }
       };
+      
+      console.log(`✅ STRIPE CONNECT PARAMETERS - Team ${teamId}:`);
+      console.log(`  application_fee_amount: ${paymentIntentParams.application_fee_amount} cents ($${(paymentIntentParams.application_fee_amount / 100).toFixed(2)})`);
+      console.log(`  Connect account: ${connectAccountId}`);
+      console.log(`  Total amount: ${paymentIntentParams.amount} cents ($${(paymentIntentParams.amount / 100).toFixed(2)})`);
+      
+      if (paymentIntentParams.application_fee_amount !== feeCalculation.platformFeeAmount) {
+        throw new Error(`Platform fee mismatch: params=${paymentIntentParams.application_fee_amount} vs calculated=${feeCalculation.platformFeeAmount}`);
+      }
 
       // Include customer if we have one
       if (customerId) {
@@ -237,10 +260,25 @@ export async function processDestinationCharge(
       // Continue without card details rather than failing the entire transaction
     }
 
+    // CRITICAL DATABASE VALIDATION - Ensure platform fees are recorded
+    if (!feeCalculation.platformFeeAmount || feeCalculation.platformFeeAmount <= 0) {
+      throw new Error(`Cannot record transaction: Invalid platform fee amount ${feeCalculation.platformFeeAmount}`);
+    }
+    
+    if (!feeCalculation.matchproReceives && feeCalculation.matchproReceives !== 0) {
+      throw new Error(`Cannot record transaction: Invalid MatchPro revenue ${feeCalculation.matchproReceives}`);
+    }
+    
+    console.log(`💾 RECORDING TRANSACTION - Team ${teamId}:`);
+    console.log(`  Payment Intent: ${paymentIntent.id}`);
+    console.log(`  Platform Fee to Record: $${(feeCalculation.platformFeeAmount / 100).toFixed(2)}`);
+    console.log(`  MatchPro Revenue to Record: $${(feeCalculation.matchproReceives / 100).toFixed(2)}`);
+    console.log(`  Application Fee Amount: $${(feeCalculation.platformFeeAmount / 100).toFixed(2)}`);
+    
     // Record comprehensive transaction in database with detailed fee breakdown
     await db.insert(paymentTransactions).values({
-      teamId: teamId,
-      eventId: eventId,
+      teamId: parseInt(teamId.toString()),
+      eventId: parseInt(eventId.toString()),
       paymentIntentId: paymentIntent.id,
       transactionType: 'payment',
       amount: chargeAmount, // Use the actual amount charged
@@ -248,6 +286,7 @@ export async function processDestinationCharge(
       stripeFee: feeCalculation.stripeFeeAmount,
       netAmount: feeCalculation.tournamentReceives,
       matchproRevenue: feeCalculation.matchproReceives, // ✓ Add MatchPro revenue field
+      applicationFeeAmount: feeCalculation.platformFeeAmount, // ✓ Record what was sent to Stripe
       status: paymentIntent.status,
       cardBrand: cardBrand, // ✓ Add card brand (visa, mastercard, etc.)
       cardLastFour: cardLastFour, // ✓ Add last 4 digits
@@ -257,10 +296,15 @@ export async function processDestinationCharge(
         platformFeeRate: feeCalculation.platformFeeRate,
         platformFeeAmount: feeCalculation.platformFeeAmount,
         connectAccountId: connectAccountId,
-        feeCalculationBreakdown: feeCalculation
+        feeCalculationBreakdown: feeCalculation,
+        // Add verification data
+        stripeApplicationFeeAmount: feeCalculation.platformFeeAmount,
+        recordedAt: new Date().toISOString()
       },
       createdAt: new Date()
     });
+    
+    console.log(`✅ TRANSACTION RECORDED - Platform fee: $${(feeCalculation.platformFeeAmount / 100).toFixed(2)}, MatchPro revenue: $${(feeCalculation.matchproReceives / 100).toFixed(2)}`);
 
     // Update team payment status and card details
     await db.update(teams)

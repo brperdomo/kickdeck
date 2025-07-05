@@ -398,6 +398,9 @@ export const paymentTransactions = pgTable("payment_transactions", {
   errorMessage: text("error_message"), // Error message if transaction failed
   settlementDate: timestamp("settlement_date"), // When funds settle to account
   payoutId: text("payout_id"), // Stripe payout ID when settled
+  platformFeeAmount: integer("platform_fee_amount"), // MatchPro platform fee in cents
+  matchproRevenue: integer("matchpro_revenue"), // MatchPro net revenue after Stripe fees
+  applicationFeeAmount: integer("application_fee_amount"), // Application fee sent to Stripe Connect
   metadata: jsonb("metadata"), // Additional data about the transaction
   notes: text("notes"), // Admin notes about the transaction
   refundedAt: timestamp("refunded_at"), // When the transaction was refunded (null if not refunded)
