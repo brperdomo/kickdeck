@@ -670,3 +670,40 @@ export async function sendPasswordResetEmail(
     console.error(`Failed to send password reset email to ${to}: ${errorMessage}`);
   }
 }
+
+/**
+ * Sends a newsletter subscription confirmation email
+ */
+export async function sendNewsletterConfirmationEmail(to: string): Promise<void> {
+  const isDevelopment = process.env.NODE_ENV !== 'production';
+  
+  try {
+    const appUrl = getAppUrl(isDevelopment);
+    const unsubscribeLink = `${appUrl}/newsletter/unsubscribe?email=${encodeURIComponent(to)}`;
+    
+    // Prepare template context data
+    const context = {
+      email: to,
+      unsubscribeLink,
+      appUrl,
+      subscriptionDate: new Date().toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      })
+    };
+    
+    await sendTemplatedEmail(to, 'newsletter_confirmation', context);
+  } catch (error) {
+    console.error('Error sending newsletter confirmation email:', error);
+    
+    if (isDevelopment) {
+      // Rethrow errors in development mode for easier debugging
+      throw error;
+    }
+    
+    // In production, log error but don't crash the application
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error(`Failed to send newsletter confirmation email to ${to}: ${errorMessage}`);
+  }
+}

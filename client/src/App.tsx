@@ -37,6 +37,7 @@ import FeeManagementPage from "@/pages/fee-management";
 import FormEditorPage from "@/pages/form-editor";
 import CouponManagerPage from "@/pages/coupon-manager";
 import EventClubsPage from "@/pages/event-clubs";
+import Newsletter from "@/pages/newsletter";
 import RegistrationOrdersReport from "@/pages/registration-orders-report";
 import PaymentLogs from "@/pages/payment-logs";
 import FinancialOverviewReport from "@/pages/financial-overview-report";
@@ -126,6 +127,7 @@ function Router() {
         <Route path="/forgot-password" component={ForgotPassword} />
         <Route path="/reset-password" component={ResetPassword} />
         <Route path="/product-updates" component={ProductUpdatesPage} />
+        <Route path="/newsletter" component={Newsletter} />
 
         {/* Main landing page for the root path */}
         <Route path="/">

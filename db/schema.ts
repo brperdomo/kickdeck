@@ -998,6 +998,27 @@ export const adminFormSchema = z.object({
 
 export type AdminFormValues = z.infer<typeof adminFormSchema>;
 
+// Newsletter subscriptions table
+export const newsletterSubscriptions = pgTable("newsletter_subscriptions", {
+  id: serial("id").primaryKey(),
+  email: text("email").notNull().unique(),
+  subscribedAt: timestamp("subscribed_at").notNull().defaultNow(),
+  isActive: boolean("is_active").notNull().default(true),
+  confirmationSent: boolean("confirmation_sent").notNull().default(false),
+  confirmationSentAt: timestamp("confirmation_sent_at"),
+  source: text("source").default("website"), // Track where subscription came from
+});
+
+export const insertNewsletterSubscriptionSchema = createInsertSchema(newsletterSubscriptions, {
+  email: z.string().email("Please enter a valid email address"),
+  source: z.string().optional(),
+});
+
+export const selectNewsletterSubscriptionSchema = createSelectSchema(newsletterSubscriptions);
+
+export type InsertNewsletterSubscription = typeof newsletterSubscriptions.$inferInsert;
+export type SelectNewsletterSubscription = typeof newsletterSubscriptions.$inferSelect;
+
 export const updates = pgTable("updates", {
   id: serial("id").primaryKey(),
   content: text("content").notNull(),

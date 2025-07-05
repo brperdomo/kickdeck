@@ -48,6 +48,7 @@ import { registerStripeConnectRoutes } from "./routes/stripe-connect";
 import { registerPaymentReportRoutes } from "./routes/payment-reports";
 import { registerConnectPaymentRoutes } from "./routes/stripe-connect-payments";
 import { registerFeeCalculatorRoutes } from "./routes/admin/fee-calculator-router";
+import { subscribeToNewsletter, unsubscribeFromNewsletter, getSubscriptionStatus } from "./routes/newsletter";
 import { registerRegistrationAnalyticsRoutes } from "./routes/registration-analytics";
 import { getPaymentLogs, getPaymentTransactionDetail, getRecentPaymentFailures } from "./routes/admin/payment-logs-simple";
 import tournamentDirectorRoutes from "./routes/tournament-director-routes";
@@ -911,6 +912,11 @@ export function registerRoutes(app: Express): Server {
       }
       hasEventAccess(req, res, next);
     }, deleteCoupon);
+
+    // Newsletter subscription routes (public endpoints)
+    app.post('/api/newsletter/subscribe', subscribeToNewsletter);
+    app.post('/api/newsletter/unsubscribe', unsubscribeFromNewsletter);
+    app.get('/api/newsletter/status', getSubscriptionStatus);
 
     // Email check endpoint for registration authentication
     app.post('/api/auth/check-email', async (req, res) => {
