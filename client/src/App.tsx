@@ -231,6 +231,7 @@ function Router() {
           <Route path="/register" component={Register} />
           <Route path="/forgot-password" component={ForgotPassword} />
           <Route path="/reset-password" component={ResetPassword} />
+          <Route path="/newsletter" component={Newsletter} />
           {/* Redirect all other routes to auth page */}
           <Route>
             <AuthPage />
