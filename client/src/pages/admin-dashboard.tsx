@@ -498,7 +498,7 @@ function isAdminUser(user: SelectUser | null): user is SelectUser & { isAdmin: t
 
 type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports' | 'account' | 'complexes' | 'scheduling' | 'files' | 'formTemplates' | 'roles' | 'members';
 type SettingsView = 'general';
-type ReportType = 'financial' | 'manager' | 'player' | 'schedule' | 'guest-player' | 'platform-fees';
+type ReportType = 'financial' | 'manager' | 'player' | 'schedule' | 'guest-player';
 type RoleType = 'super_admin' | 'tournament_admin' | 'score_admin' | 'finance_admin';
 
 function EventsView() {
@@ -1065,6 +1065,7 @@ function ReportsView() {
                   <option value="accounting-codes">Accounting Codes</option>
                   <option value="registration-orders">Registration Orders</option>
                   <option value="payment-logs">Payment Logs</option>
+                  <option value="platform-fees">Platform Fee Reports</option>
                   <option value="financial-overview">Financial Overview</option>
                   <option value="fees-analysis">Fees Analysis</option>
                   <option value="bookkeeping">Bookkeeping Report</option>
@@ -1216,6 +1217,12 @@ function ReportsView() {
                     </div>
                   </CardContent>
                 </Card>
+              </div>
+            )}
+            
+            {selectedFinancialReport === 'platform-fees' && (
+              <div className="space-y-4">
+                <PlatformFeeReports />
               </div>
             )}
             
@@ -1434,8 +1441,6 @@ function ReportsView() {
             </Card>
           </div>
         );
-      case 'platform-fees':
-        return <PlatformFeeReports className="col-span-3" />;
       default:
         return null;
     }
@@ -1465,16 +1470,7 @@ function ReportsView() {
                 <FileText className="mr-2 h-4 w-4" />
                 Financial Reports
               </Button>
-              <Button
-                variant={selectedReport === 'platform-fees' ? 'secondary' : 'ghost'}
-                data-variant={selectedReport === 'platform-fees' ? 'secondary' : 'ghost'}
-                className="w-full justify-start"
-                onClick={() => setSelectedReport('platform-fees')}
-                disabled={isExporting !== null}
-              >
-                <DollarSign className="mr-2 h-4 w-4" />
-                Platform Fee Reports
-              </Button>
+
               <Button
                 variant={selectedReport === 'manager' ? 'secondary' : 'ghost'}
                 data-variant={selectedReport === 'manager' ? 'secondary' : 'ghost'}
