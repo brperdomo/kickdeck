@@ -48,6 +48,7 @@ import { registerStripeConnectRoutes } from "./routes/stripe-connect";
 import { registerPaymentReportRoutes } from "./routes/payment-reports";
 import { registerConnectPaymentRoutes } from "./routes/stripe-connect-payments";
 import { registerFeeCalculatorRoutes } from "./routes/admin/fee-calculator-router";
+import { registerPlatformFeeReports } from "./routes/platform-fee-reports";
 import { subscribeToNewsletter, unsubscribeFromNewsletter, getSubscriptionStatus } from "./routes/newsletter";
 import { registerRegistrationAnalyticsRoutes } from "./routes/registration-analytics";
 import { getPaymentLogs, getPaymentTransactionDetail, getRecentPaymentFailures } from "./routes/admin/payment-logs-simple";
@@ -9223,6 +9224,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
     try {
       registerConnectPaymentRoutes(app);
       registerFeeCalculatorRoutes(app);
+      registerPlatformFeeReports(app);
       console.log('Stripe Connect payment routes registered successfully');
     } catch (error) {
       console.error('Error registering Connect payment routes:', error);

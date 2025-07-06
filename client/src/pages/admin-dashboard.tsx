@@ -30,6 +30,7 @@ import { TeamModal } from "@/components/teams/TeamModal";
 import { TeamCsvUploader } from "@/components/teams/TeamCsvUploader";
 import { BracketAssignmentModal } from "@/components/BracketAssignmentModal";
 import { ScheduleVisualization } from "@/components/ScheduleVisualization";
+import { PlatformFeeReports } from "@/components/admin/reports/PlatformFeeReports";
 import BracketSelector from "@/components/admin/scheduling/BracketSelector";
 import { SchedulingWorkflow } from "@/components/admin/scheduling/SchedulingWorkflow";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -1433,6 +1434,8 @@ function ReportsView() {
             </Card>
           </div>
         );
+      case 'platform-fees':
+        return <PlatformFeeReports className="col-span-3" />;
       default:
         return null;
     }
@@ -1501,6 +1504,16 @@ function ReportsView() {
               >
                 <FileText className="mr-2 h-4 w-4" />
                 Guest Player Reports
+              </Button>
+              <Button
+                variant={selectedReport === 'platform-fees' ? 'secondary' : 'ghost'}
+                data-variant={selectedReport === 'platform-fees' ? 'secondary' : 'ghost'}
+                className="w-full justify-start"
+                onClick={() => setSelectedReport('platform-fees')}
+                disabled={isExporting !== null}
+              >
+                <FileText className="mr-2 h-4 w-4" />
+                Platform Fee Reports
               </Button>
             </div>
           </CardContent>
