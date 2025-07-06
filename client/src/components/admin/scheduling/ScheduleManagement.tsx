@@ -16,6 +16,8 @@ interface Game {
   bracket: string;
   homeTeam: string;
   awayTeam: string;
+  homeTeamId?: number;
+  awayTeamId?: number;
   startTime: string;
   endTime: string;
   fieldId?: number;
@@ -569,8 +571,20 @@ export default function ScheduleManagement({ eventId }: ScheduleManagementProps)
                                       <div className="text-xs font-semibold">
                                         Game {assignedGame.gameNumber}
                                       </div>
-                                      <div className="text-xs text-gray-600">
-                                        {typeof assignedGame.homeTeam === 'object' ? (assignedGame.homeTeam?.name || 'Team') : String(assignedGame.homeTeam || 'Team')} vs {typeof assignedGame.awayTeam === 'object' ? (assignedGame.awayTeam?.name || 'Team') : String(assignedGame.awayTeam || 'Team')}
+                                      <div className="text-xs text-gray-600 space-y-1">
+                                        <div>
+                                          {typeof assignedGame.homeTeam === 'object' ? (assignedGame.homeTeam?.name || 'Team') : String(assignedGame.homeTeam || 'Team')}
+                                          {assignedGame.homeTeamId && (
+                                            <span className="text-blue-600 font-mono ml-1">(#{assignedGame.homeTeamId})</span>
+                                          )}
+                                        </div>
+                                        <div className="text-center">vs</div>
+                                        <div>
+                                          {typeof assignedGame.awayTeam === 'object' ? (assignedGame.awayTeam?.name || 'Team') : String(assignedGame.awayTeam || 'Team')}
+                                          {assignedGame.awayTeamId && (
+                                            <span className="text-blue-600 font-mono ml-1">(#{assignedGame.awayTeamId})</span>
+                                          )}
+                                        </div>
                                       </div>
                                       <Badge variant="secondary" className="text-xs mt-1">
                                         {assignedGame.bracket}
@@ -615,8 +629,20 @@ export default function ScheduleManagement({ eventId }: ScheduleManagementProps)
                       onClick={() => handleGameClick(game)}
                     >
                       <div className="font-semibold">Game {game.gameNumber}</div>
-                      <div className="text-sm text-gray-600">
-                        {typeof game.homeTeam === 'object' ? (game.homeTeam?.name || 'Team') : String(game.homeTeam || 'Team')} vs {typeof game.awayTeam === 'object' ? (game.awayTeam?.name || 'Team') : String(game.awayTeam || 'Team')}
+                      <div className="text-sm text-gray-600 space-y-1">
+                        <div>
+                          {typeof game.homeTeam === 'object' ? (game.homeTeam?.name || 'Team') : String(game.homeTeam || 'Team')}
+                          {game.homeTeamId && (
+                            <span className="text-blue-600 font-mono ml-1">(#{game.homeTeamId})</span>
+                          )}
+                        </div>
+                        <div className="text-center">vs</div>
+                        <div>
+                          {typeof game.awayTeam === 'object' ? (game.awayTeam?.name || 'Team') : String(game.awayTeam || 'Team')}
+                          {game.awayTeamId && (
+                            <span className="text-blue-600 font-mono ml-1">(#{game.awayTeamId})</span>
+                          )}
+                        </div>
                       </div>
                       <Badge variant="outline" className="mt-1">
                         {game.bracket}
@@ -652,7 +678,21 @@ export default function ScheduleManagement({ eventId }: ScheduleManagementProps)
           {selectedGame && (
             <div className="space-y-4">
               <div className="bg-gray-50 p-3 rounded-lg">
-                <div className="font-semibold">{typeof selectedGame.homeTeam === 'object' ? (selectedGame.homeTeam?.name || 'Team') : String(selectedGame.homeTeam || 'Team')} vs {typeof selectedGame.awayTeam === 'object' ? (selectedGame.awayTeam?.name || 'Team') : String(selectedGame.awayTeam || 'Team')}</div>
+                <div className="font-semibold space-y-1">
+                  <div>
+                    {typeof selectedGame.homeTeam === 'object' ? (selectedGame.homeTeam?.name || 'Team') : String(selectedGame.homeTeam || 'Team')}
+                    {selectedGame.homeTeamId && (
+                      <span className="text-blue-600 font-mono ml-1">(#{selectedGame.homeTeamId})</span>
+                    )}
+                  </div>
+                  <div className="text-center text-sm">vs</div>
+                  <div>
+                    {typeof selectedGame.awayTeam === 'object' ? (selectedGame.awayTeam?.name || 'Team') : String(selectedGame.awayTeam || 'Team')}
+                    {selectedGame.awayTeamId && (
+                      <span className="text-blue-600 font-mono ml-1">(#{selectedGame.awayTeamId})</span>
+                    )}
+                  </div>
+                </div>
                 <Badge variant="outline" className="mt-1">{selectedGame.bracket}</Badge>
               </div>
               

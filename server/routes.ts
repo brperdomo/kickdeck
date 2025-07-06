@@ -6205,6 +6205,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
               coach: '',
               status: 'approved'
             },
+            homeTeamId: item.homeTeam?.id || item.game.homeTeamId || 0,
             awayTeam: {
               id: (item.awayTeam as any)?.id || item.game.awayTeamId || 0,
               name: (item.awayTeam as { name: string })?.name || `Team ${item.game.awayTeamId}` || 'TBD',
@@ -6212,6 +6213,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
               coach: (item.awayTeam as any)?.coachName || '',
               status: (item.awayTeam as any)?.status || 'approved'
             },
+            awayTeamId: (item.awayTeam as any)?.id || item.game.awayTeamId || 0,
             status: item.game.status || 'scheduled',
           }));
 
