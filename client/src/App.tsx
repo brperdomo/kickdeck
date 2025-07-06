@@ -13,6 +13,7 @@ import ForgotPassword from "@/pages/forgot-password";
 import ResetPassword from "@/pages/reset-password";
 import AuthLoggedOut from "@/pages/auth-logged-out";
 import AdminDashboard from "@/pages/admin-dashboard";
+import PlatformFeeReportsStandalone from "@/pages/platform-fee-reports-standalone";
 import CreateEvent from "@/pages/create-event";
 import CouponManagement from "@/pages/coupon-management";
 import AccountingCodeManagement from "@/pages/accounting-code-management";
@@ -355,7 +356,7 @@ function Router() {
             {user.isAdmin ? <AdminDashboard initialView="events" /> : <NotFound />}
           </Route>
           <Route path="/platform-fee-reports">
-            {user.isAdmin ? React.createElement(lazy(() => import('./pages/platform-fee-reports-standalone'))) : <NotFound />}
+            {user.isAdmin ? <PlatformFeeReportsStandalone /> : <NotFound />}
           </Route>
 
           {/* User routes */}
