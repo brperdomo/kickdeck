@@ -6147,7 +6147,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           .select({
             game: games,
             homeTeam: teams,
-            awayTeam: sql<{ id: number; name: string }>`json_build_object('id', ${sql.raw('away_teams')}.id, 'name', ${sql.raw('away_teams')}.name)`,
+            awayTeam: sql<{ id: number; name: string; team_reference_id: string }>`json_build_object('id', ${sql.raw('away_teams')}.id, 'name', ${sql.raw('away_teams')}.name, 'team_reference_id', ${sql.raw('away_teams')}.team_reference_id)`,
             field: fields,
             complex: complexes,
             ageGroup: eventAgeGroups,
@@ -6197,23 +6197,28 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
               name: item.homeTeam.name || 'TBD',
               clubName: item.homeTeam.clubName || '',
               coach: item.homeTeam.coachName || '',
-              status: item.homeTeam.status || 'approved'
+              status: item.homeTeam.status || 'approved',
+              referenceId: item.homeTeam.teamReferenceId || 'TEMP'
             } : {
               id: item.game.homeTeamId || 0,
               name: `Team ${item.game.homeTeamId}` || 'TBD',
               clubName: '',
               coach: '',
-              status: 'approved'
+              status: 'approved',
+              referenceId: 'TEMP'
             },
             homeTeamId: item.homeTeam?.id || item.game.homeTeamId || 0,
+            homeTeamRefId: item.homeTeam?.teamReferenceId || 'TEMP',
             awayTeam: {
               id: (item.awayTeam as any)?.id || item.game.awayTeamId || 0,
               name: (item.awayTeam as { name: string })?.name || `Team ${item.game.awayTeamId}` || 'TBD',
               clubName: (item.awayTeam as any)?.clubName || '',
               coach: (item.awayTeam as any)?.coachName || '',
-              status: (item.awayTeam as any)?.status || 'approved'
+              status: (item.awayTeam as any)?.status || 'approved',
+              referenceId: (item.awayTeam as any)?.team_reference_id || 'TEMP'
             },
             awayTeamId: (item.awayTeam as any)?.id || item.game.awayTeamId || 0,
+            awayTeamRefId: (item.awayTeam as any)?.team_reference_id || 'TEMP',
             status: item.game.status || 'scheduled',
           }));
 
