@@ -354,6 +354,9 @@ function Router() {
           <Route path="/admin">
             {user.isAdmin ? <AdminDashboard initialView="events" /> : <NotFound />}
           </Route>
+          <Route path="/platform-fee-reports">
+            {user.isAdmin ? React.createElement(lazy(() => import('./pages/platform-fee-reports-standalone'))) : <NotFound />}
+          </Route>
 
           {/* User routes */}
           <Route path="/household" component={HouseholdPage} />
