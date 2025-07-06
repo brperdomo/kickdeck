@@ -446,4 +446,9 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 
 ## User Preferences
 
+### Administrative Communication Policy
+- Payment failure notifications and team communications must be handled by administrators
+- Do not send automated emails for payment issues or team status changes
+- Create resolution scripts and documentation for admins to handle manually
+
 Preferred communication style: Simple, everyday language.
