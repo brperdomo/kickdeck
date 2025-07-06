@@ -40,13 +40,58 @@ async function checkStripeApiVersion() {
  */
 export async function createPaymentIntent(amount: number, teamId: number | string, metadata?: Record<string, string>) {
   try {
+    // Fetch team details to create meaningful description
+    let description = 'Team Registration Payment';
+    let enhancedMetadata = {
+      teamId: teamId.toString(),
+      ...metadata
+    };
+
+    // Only query team details if it's a real team ID (not temp)
+    if (typeof teamId === 'number' || (!teamId.toString().startsWith('temp-') && !isNaN(Number(teamId)))) {
+      try {
+        const numericTeamId = typeof teamId === 'number' ? teamId : parseInt(teamId.toString());
+        const teamResult = await db
+          .select({
+            teamName: teams.name,
+            eventName: events.name,
+            ageGroupName: ageGroups.name,
+            submitterEmail: teams.submitterEmail,
+            managerEmail: teams.managerEmail
+          })
+          .from(teams)
+          .leftJoin(events, eq(teams.eventId, events.id))
+          .leftJoin(ageGroups, eq(teams.ageGroupId, ageGroups.id))
+          .where(eq(teams.id, numericTeamId))
+          .limit(1);
+
+        if (teamResult.length > 0) {
+          const team = teamResult[0];
+          description = `${team.eventName || 'Tournament'} - ${team.teamName || 'Team Registration'}`;
+          if (team.ageGroupName) {
+            description += ` (${team.ageGroupName})`;
+          }
+
+          // Enhanced metadata for better tracking
+          enhancedMetadata = {
+            ...enhancedMetadata,
+            teamName: team.teamName || '',
+            eventName: team.eventName || '',
+            ageGroup: team.ageGroupName || '',
+            contactEmail: team.managerEmail || team.submitterEmail || ''
+          };
+        }
+      } catch (dbError) {
+        console.warn(`Could not fetch team details for description: ${dbError.message}`);
+        // Continue with default description
+      }
+    }
+
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(amount * 100), // Convert to cents
       currency: "usd",
-      metadata: {
-        teamId: teamId.toString(),
-        ...metadata
-      }
+      description: description,
+      metadata: enhancedMetadata
     });
 
     // Only update the team in the database if it's a numeric ID (not a temp ID)

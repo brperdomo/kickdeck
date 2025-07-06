@@ -117,10 +117,14 @@ export async function processDestinationCharge(
         submitterName: team?.submitterName
       });
       
+      // Create meaningful description for Stripe dashboard
+      const description = `${event.name} - ${team.name}${teamInfo.ageGroup ? ` (${teamInfo.ageGroup.name})` : ''}`;
+
       // For Link payments, use standard payment intent (no destination charge)
       const paymentIntentParams: any = {
         amount: chargeAmount,
         currency: 'usd',
+        description: description, // Add meaningful description
         payment_method: paymentMethodId,
         confirm: true,
         // NOTE: Removed receipt_email to ensure consistent receipt handling
@@ -131,6 +135,8 @@ export async function processDestinationCharge(
         },
         metadata: {
           teamId: teamId.toString(),
+          teamName: team.name || '',
+          eventName: event.name || '',
           eventId: eventId,
           connectAccountId: connectAccountId,
           type: 'team_registration_link',
@@ -184,10 +190,14 @@ export async function processDestinationCharge(
       console.log(`  MatchPro Revenue: $${(feeCalculation.matchproReceives / 100).toFixed(2)}`);
       console.log(`  Tournament Receives: $${(feeCalculation.tournamentReceives / 100).toFixed(2)}`);
       
+      // Create meaningful description for Stripe dashboard
+      const description = `${event.name} - ${team.name}${teamInfo.ageGroup ? ` (${teamInfo.ageGroup.name})` : ''}`;
+
       // For regular payment methods, use destination charge as before
       const paymentIntentParams: any = {
         amount: chargeAmount,
         currency: 'usd',
+        description: description, // Add meaningful description
         payment_method: paymentMethodId,
         confirm: true,
         on_behalf_of: connectAccountId,
@@ -203,6 +213,8 @@ export async function processDestinationCharge(
         },
         metadata: {
           teamId: teamId.toString(),
+          teamName: team.name || '',
+          eventName: event.name || '',
           eventId: eventId,
           connectAccountId: connectAccountId,
           type: 'team_registration',

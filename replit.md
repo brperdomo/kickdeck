@@ -113,6 +113,13 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
+- July 5, 2025: STRIPE PAYMENT DESCRIPTIONS ENHANCEMENT - Added meaningful transaction descriptions and enhanced metadata for better financial tracking
+  - ENHANCED: Payment descriptions now include event name, team name, and age group (e.g., "Rise Cup - Arsenal Academy (U12 Boys)")
+  - UPGRADED: Both createPaymentIntent() and chargeApprovedTeam() functions include comprehensive payment information
+  - METADATA: Enhanced with team name, event name, age group, and contact email for better transaction tracking
+  - APPLIED: Covers registration payments, approval payments, Connect charges, and Link payment flows
+  - BENEFITS: Stripe dashboard now shows professional, identifiable transaction descriptions instead of generic entries
+  - PRODUCTION READY: All future payments will display meaningful information for easier financial management and dispute resolution
 - July 5, 2025: CORRECTED FEE STRUCTURE IMPLEMENTATION - Fixed platform fee model to proper 4% + $0.30 structure
   - CORRECTED: Updated fee calculation from basic 4% to proper 4% + $0.30 total fee structure
   - STRUCTURE: Total fee 4% + $0.30 where Stripe gets 2.9% + $0.30, MatchPro gets exactly 1.1% of tournament cost
