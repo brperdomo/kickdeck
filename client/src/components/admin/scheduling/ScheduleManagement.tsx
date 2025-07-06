@@ -18,6 +18,8 @@ interface Game {
   awayTeam: string;
   homeTeamId?: number;
   awayTeamId?: number;
+  homeTeamRefId?: string;
+  awayTeamRefId?: string;
   startTime: string;
   endTime: string;
   fieldId?: number;
@@ -574,15 +576,15 @@ export default function ScheduleManagement({ eventId }: ScheduleManagementProps)
                                       <div className="text-xs text-gray-600 space-y-1">
                                         <div>
                                           {typeof assignedGame.homeTeam === 'object' ? (assignedGame.homeTeam?.name || 'Team') : String(assignedGame.homeTeam || 'Team')}
-                                          {assignedGame.homeTeamId && (
-                                            <span className="text-blue-600 font-mono ml-1">(#{assignedGame.homeTeamId})</span>
+                                          {assignedGame.homeTeamRefId && assignedGame.homeTeamRefId !== 'TEMP' && (
+                                            <span className="text-blue-600 font-mono ml-1">({assignedGame.homeTeamRefId})</span>
                                           )}
                                         </div>
                                         <div className="text-center">vs</div>
                                         <div>
                                           {typeof assignedGame.awayTeam === 'object' ? (assignedGame.awayTeam?.name || 'Team') : String(assignedGame.awayTeam || 'Team')}
-                                          {assignedGame.awayTeamId && (
-                                            <span className="text-blue-600 font-mono ml-1">(#{assignedGame.awayTeamId})</span>
+                                          {assignedGame.awayTeamRefId && assignedGame.awayTeamRefId !== 'TEMP' && (
+                                            <span className="text-blue-600 font-mono ml-1">({assignedGame.awayTeamRefId})</span>
                                           )}
                                         </div>
                                       </div>
@@ -632,15 +634,15 @@ export default function ScheduleManagement({ eventId }: ScheduleManagementProps)
                       <div className="text-sm text-gray-600 space-y-1">
                         <div>
                           {typeof game.homeTeam === 'object' ? (game.homeTeam?.name || 'Team') : String(game.homeTeam || 'Team')}
-                          {game.homeTeamId && (
-                            <span className="text-blue-600 font-mono ml-1">(#{game.homeTeamId})</span>
+                          {game.homeTeamRefId && game.homeTeamRefId !== 'TEMP' && (
+                            <span className="text-blue-600 font-mono ml-1">({game.homeTeamRefId})</span>
                           )}
                         </div>
                         <div className="text-center">vs</div>
                         <div>
                           {typeof game.awayTeam === 'object' ? (game.awayTeam?.name || 'Team') : String(game.awayTeam || 'Team')}
-                          {game.awayTeamId && (
-                            <span className="text-blue-600 font-mono ml-1">(#{game.awayTeamId})</span>
+                          {game.awayTeamRefId && game.awayTeamRefId !== 'TEMP' && (
+                            <span className="text-blue-600 font-mono ml-1">({game.awayTeamRefId})</span>
                           )}
                         </div>
                       </div>
@@ -681,15 +683,15 @@ export default function ScheduleManagement({ eventId }: ScheduleManagementProps)
                 <div className="font-semibold space-y-1">
                   <div>
                     {typeof selectedGame.homeTeam === 'object' ? (selectedGame.homeTeam?.name || 'Team') : String(selectedGame.homeTeam || 'Team')}
-                    {selectedGame.homeTeamId && (
-                      <span className="text-blue-600 font-mono ml-1">(#{selectedGame.homeTeamId})</span>
+                    {selectedGame.homeTeamRefId && selectedGame.homeTeamRefId !== 'TEMP' && (
+                      <span className="text-blue-600 font-mono ml-1">({selectedGame.homeTeamRefId})</span>
                     )}
                   </div>
                   <div className="text-center text-sm">vs</div>
                   <div>
                     {typeof selectedGame.awayTeam === 'object' ? (selectedGame.awayTeam?.name || 'Team') : String(selectedGame.awayTeam || 'Team')}
-                    {selectedGame.awayTeamId && (
-                      <span className="text-blue-600 font-mono ml-1">(#{selectedGame.awayTeamId})</span>
+                    {selectedGame.awayTeamRefId && selectedGame.awayTeamRefId !== 'TEMP' && (
+                      <span className="text-blue-600 font-mono ml-1">({selectedGame.awayTeamRefId})</span>
                     )}
                   </div>
                 </div>
