@@ -113,6 +113,14 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
+- July 6, 2025: STRIPE CONNECT CUSTOMER IMPLEMENTATION - Moved customer creation to tournament Connect accounts for full director access
+  - IMPLEMENTED: Connect customer service creates customers directly in tournament Stripe accounts instead of main MatchPro account
+  - BENEFITS: Tournament directors now have full customer visibility, refund management, chargeback handling, and branded receipts
+  - DATABASE: Added connect_customer_account_id and connect_setup_intent_account_id tracking fields
+  - MIGRATION: Successfully migrated Boys 2017 Blue team to Connect customer (cus_Scx8wG1XjpoMoB)
+  - ENHANCED: Payment processing now uses Connect customers for destination charges with proper fee distribution
+  - CORRECTED: Platform fees properly included in payment links ($974.05 total vs $900.00 base for Boys 2017 Blue)
+  - PRODUCTION READY: Complete Connect customer workflow operational with graceful fallbacks
 - July 6, 2025: PROFESSIONAL TEAM REFERENCE ID SYSTEM - Implemented 10-character randomized team IDs for security and professional scheduling display
   - CREATED: team_reference_id column with unique 10-character alphanumeric IDs (e.g., GDYYGWA9HK, I20OK8PMD5)
   - MIGRATED: All 440 existing teams now have professional reference IDs instead of exposed database integers
