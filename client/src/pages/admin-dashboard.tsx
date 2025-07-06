@@ -1462,6 +1462,17 @@ function ReportsView() {
           <CardContent className="p-3">
             <div className="space-y-2">
               <Button
+                variant="default"
+                className="w-full justify-start mb-3"
+                onClick={() => {
+                  setSelectedReport('financial');
+                  setSelectedFinancialReport('platform-fees');
+                }}
+              >
+                <DollarSign className="mr-2 h-4 w-4" />
+                Platform Fee Reports
+              </Button>
+              <Button
                 variant={selectedReport === 'financial' ? 'secondary' : 'ghost'}
                 data-variant={selectedReport === 'financial' ? 'secondary' : 'ghost'}
                 className="w-full justify-start"
