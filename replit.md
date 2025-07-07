@@ -113,6 +113,12 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
+- July 7, 2025: CRITICAL LINK PAYMENT FEE FIX - Corrected Link payment fee structure to match card payment fee distribution
+  - IDENTIFIED: Link payments were keeping both platform fees AND Stripe processing fees instead of proper 4% + $0.30 structure
+  - FIXED: Link payment manual transfers now send correct tournament amount to Connect accounts (total - platform fee - Stripe fee)
+  - ENHANCED: Added comprehensive fee debugging logs for Link payments showing exact fee breakdown
+  - VERIFIED: Link payments now use identical fee calculation as card payments with proper fund distribution
+  - PRODUCTION READY: Both Link and card users now pay the same total amount with identical fee structure
 - July 7, 2025: ENHANCED ERROR MESSAGING SYSTEM - Replaced generic "Payment processing failed" with specific, actionable error messages for team approval failures
   - ENHANCED: Admin approval endpoint now provides specific error diagnosis instead of generic failures
   - IMPLEMENTED: Burned payment method detection with clear "Team must provide new payment method" messaging

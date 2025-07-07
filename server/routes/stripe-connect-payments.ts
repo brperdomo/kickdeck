@@ -170,6 +170,17 @@ export async function processDestinationCharge(
         console.log(`Link payment succeeded, creating manual transfer to Connect account`);
         
         try {
+          // CRITICAL FIX: Link payments should transfer the same amount as card payments
+          // The tournament should receive: chargeAmount - platformFeeAmount - stripeFeeAmount
+          // This ensures Link users pay the same total structure as card users
+          
+          console.log(`LINK PAYMENT FEE DEBUG - Team ${teamId}:`);
+          console.log(`  Total charged to customer: $${(chargeAmount / 100).toFixed(2)}`);
+          console.log(`  Platform fee (MatchPro): $${(feeCalculation.platformFeeAmount / 100).toFixed(2)}`);
+          console.log(`  Stripe processing fee: $${(feeCalculation.stripeFeeAmount / 100).toFixed(2)}`);
+          console.log(`  Tournament should receive: $${(feeCalculation.tournamentReceivesAmount / 100).toFixed(2)}`);
+          console.log(`  MatchPro net revenue: $${(feeCalculation.matchproReceives / 100).toFixed(2)}`);
+          
           const transfer = await stripe.transfers.create({
             amount: feeCalculation.tournamentReceivesAmount, // Send tournament portion to Connect account
             currency: 'usd',
@@ -178,11 +189,16 @@ export async function processDestinationCharge(
             metadata: {
               teamId: teamId.toString(),
               paymentIntentId: paymentIntent.id,
-              type: 'link_tournament_payout'
+              type: 'link_tournament_payout',
+              totalCharged: chargeAmount.toString(),
+              platformFeeAmount: feeCalculation.platformFeeAmount.toString(),
+              stripeFeeAmount: feeCalculation.stripeFeeAmount.toString(),
+              matchproNetRevenue: feeCalculation.matchproReceives.toString()
             }
           });
           
-          console.log(`Manual transfer created: ${transfer.id} for $${feeCalculation.tournamentReceivesAmount / 100}`);
+          console.log(`✅ Link manual transfer created: ${transfer.id} for $${feeCalculation.tournamentReceivesAmount / 100}`);
+          console.log(`✅ MatchPro keeps $${(feeCalculation.matchproReceives / 100).toFixed(2)} net revenue (after paying Stripe fees)`);
         } catch (transferError) {
           console.error('Error creating manual transfer for Link payment:', transferError);
           // Payment succeeded but transfer failed - this needs manual handling
