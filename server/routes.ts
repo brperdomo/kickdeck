@@ -7893,10 +7893,13 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
             
           // Create new fields
           for (const [index, field] of fields.entries()) {
+            const fieldId = field.fieldId || field.label?.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '_').substring(0, 50) || `field_${index}`;
+            
             const [newField] = await tx
               .insert(formFields)
               .values({
                 templateId: templateId,
+                fieldId: fieldId,
                 label: field.label,
                 type: field.type,
                 required: field.required || false,
@@ -8494,15 +8497,18 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
 
           // Create fields
           if (fields?.length) {
-            for (const field of fields) {
+            for (const [index, field] of fields.entries()) {
+              const fieldId = field.fieldId || field.label?.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '_').substring(0, 50) || `field_${index}`;
+              
               const [newField] = await tx
                 .insert(formFields)
                 .values({
                   templateId: template.id,
+                  fieldId: fieldId,
                   label: field.label,
                   type: field.type,
                   required: field.required,
-                  order: field.order,
+                  order: field.order || index,
                   placeholder: field.placeholder,
                   helpText: field.helpText,
                   validation: field.validation
@@ -8555,10 +8561,13 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
 
           // Create fields
           for (const [index, field] of fields.entries()) {
+            const fieldId = field.fieldId || field.label?.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '_').substring(0, 50) || `field_${index}`;
+            
             const [newField] = await tx
               .insert(formFields)
               .values({
                 templateId: template.id,
+                fieldId: fieldId,
                 label: field.label,
                 type: field.type,
                 required: field.required || false,
@@ -8630,10 +8639,13 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
 
           // Create new fields
           for (const [index, field] of fields.entries()) {
+            const fieldId = field.fieldId || field.label?.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '_').substring(0, 50) || `field_${index}`;
+            
             const [newField] = await tx
               .insert(formFields)
               .values({
                 templateId: id,
+                fieldId: fieldId,
                 label: field.label,
                 type: field.type,
                 required: field.required || false,

@@ -186,10 +186,19 @@ export function EnhancedFormTemplateManagement() {
   // Create template mutation
   const createTemplateMutation = useMutation({
     mutationFn: async (templateData: typeof templateForm) => {
+      // Ensure all fields have valid fieldIds before submission
+      const processedData = {
+        ...templateData,
+        fields: templateData.fields.map((field, index) => ({
+          ...field,
+          fieldId: field.fieldId || generateFieldId(field.label) || `field_${index}`
+        }))
+      };
+
       const response = await fetch('/api/admin/enhanced-form-templates', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(templateData)
+        body: JSON.stringify(processedData)
       });
       if (!response.ok) throw new Error('Failed to create template');
       return response.json();
@@ -215,10 +224,19 @@ export function EnhancedFormTemplateManagement() {
   // Update template mutation
   const updateTemplateMutation = useMutation({
     mutationFn: async ({ id, ...templateData }: { id: number } & typeof templateForm) => {
+      // Ensure all fields have valid fieldIds before submission
+      const processedData = {
+        ...templateData,
+        fields: templateData.fields.map((field, index) => ({
+          ...field,
+          fieldId: field.fieldId || generateFieldId(field.label) || `field_${index}`
+        }))
+      };
+
       const response = await fetch(`/api/admin/enhanced-form-templates/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(templateData)
+        body: JSON.stringify(processedData)
       });
       if (!response.ok) throw new Error('Failed to update template');
       return response.json();
@@ -340,6 +358,10 @@ export function EnhancedFormTemplateManagement() {
           // Auto-generate fieldId when label changes
           if (updates.label && updates.label !== field.label) {
             updated.fieldId = generateFieldId(updates.label);
+          }
+          // Ensure fieldId is never empty
+          if (!updated.fieldId && updated.label) {
+            updated.fieldId = generateFieldId(updated.label);
           }
           return updated;
         }
