@@ -28,6 +28,7 @@ import {
   AlertTriangle,
   CheckCircle,
   Clock,
+  Loader2,
   Target
 } from "lucide-react";
 import {
@@ -701,25 +702,41 @@ export function EnhancedFormTemplateManagement() {
 
               <div className="space-y-2">
                 <Label htmlFor="eventId">Assign to Event (Optional)</Label>
-                <Select
-                  value={templateForm.eventId?.toString() || ""}
-                  onValueChange={(value) => setTemplateForm(prev => ({ 
-                    ...prev, 
-                    eventId: value ? parseInt(value) : undefined 
-                  }))}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select an event..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="">No specific event</SelectItem>
-                    {eventsQuery.data?.map((event) => (
-                      <SelectItem key={event.id} value={event.id.toString()}>
-                        {event.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                {eventsQuery.isLoading ? (
+                  <div className="flex items-center space-x-2 p-2 border rounded">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span>Loading events...</span>
+                  </div>
+                ) : eventsQuery.error ? (
+                  <div className="text-red-500 text-sm p-2 border border-red-200 rounded">
+                    Error loading events: {eventsQuery.error.message}
+                  </div>
+                ) : (
+                  <Select
+                    value={templateForm.eventId?.toString() || ""}
+                    onValueChange={(value) => setTemplateForm(prev => ({ 
+                      ...prev, 
+                      eventId: value ? parseInt(value) : undefined 
+                    }))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select an event..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="">No specific event</SelectItem>
+                      {eventsQuery.data?.map((event) => (
+                        <SelectItem key={event.id} value={event.id.toString()}>
+                          {event.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+                {eventsQuery.data && (
+                  <p className="text-xs text-muted-foreground">
+                    Found {eventsQuery.data.length} events available for assignment
+                  </p>
+                )}
               </div>
 
               <Separator />
