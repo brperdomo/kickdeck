@@ -39,3 +39,6 @@ export function DatePicker({ date, onDateChange, placeholder = "Pick a date", cl
     </Popover>
   );
 }
+
+// Default export for compatibility
+export default DatePicker;
