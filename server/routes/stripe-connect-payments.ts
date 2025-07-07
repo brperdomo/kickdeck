@@ -261,10 +261,19 @@ export async function processDestinationCharge(
           
           if (!paymentMethod.customer) {
             console.log(`Attaching payment method ${paymentMethodId} to customer ${customerIdToUse}`);
-            await stripe.paymentMethods.attach(paymentMethodId, {
-              customer: customerIdToUse,
-            });
-            console.log(`Successfully attached payment method to customer`);
+            try {
+              await stripe.paymentMethods.attach(paymentMethodId, {
+                customer: customerIdToUse,
+              });
+              console.log(`Successfully attached payment method to customer`);
+            } catch (attachError) {
+              if (attachError.message && attachError.message.includes('was previously used without being attached')) {
+                console.log(`Payment method ${paymentMethodId} is burned (previously used without customer), cannot be reused`);
+                throw new Error(`Payment method ${paymentMethodId} was previously used and cannot be reused. Team needs to provide new payment method.`);
+              } else {
+                throw attachError;
+              }
+            }
           } else if (paymentMethod.customer !== customerIdToUse) {
             console.log(`Payment method attached to different customer: ${paymentMethod.customer}, expected: ${customerIdToUse}`);
             // Detach from old customer and attach to correct one
@@ -304,10 +313,19 @@ export async function processDestinationCharge(
               .where(eq(teams.id, teamId));
             
             // Attach payment method to new customer
-            await stripe.paymentMethods.attach(paymentMethodId, {
-              customer: newCustomer.id,
-            });
-            console.log(`Attached payment method to new customer ${newCustomer.id}`);
+            try {
+              await stripe.paymentMethods.attach(paymentMethodId, {
+                customer: newCustomer.id,
+              });
+              console.log(`Attached payment method to new customer ${newCustomer.id}`);
+            } catch (attachError) {
+              if (attachError.message && attachError.message.includes('was previously used without being attached')) {
+                console.log(`Payment method ${paymentMethodId} is burned (previously used without customer), cannot be reused`);
+                throw new Error(`Payment method ${paymentMethodId} was previously used and cannot be reused. Team needs to provide new payment method.`);
+              } else {
+                throw attachError;
+              }
+            }
             
             paymentIntentParams.customer = newCustomer.id;
             console.log(`Using new customer: ${newCustomer.id}`);
