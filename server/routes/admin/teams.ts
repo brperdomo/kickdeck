@@ -596,10 +596,36 @@ async function updateTeamStatus(req: Request, res: Response) {
             })
             .where(eq(teams.id, parseInt(teamId, 10)));
           
-          return res.status(500).json({
+          // Determine specific error message and action required
+          let specificError = 'Payment processing failed';
+          let actionRequired = 'Please check team payment details.';
+          
+          if (paymentError instanceof Error) {
+            const errorMessage = paymentError.message;
+            
+            if (errorMessage.includes('was previously used and cannot be reused')) {
+              specificError = 'Payment method unusable (burned)';
+              actionRequired = 'Team must provide new payment method through registration';
+            } else if (errorMessage.includes('No such customer')) {
+              specificError = 'Customer record missing from Stripe';
+              actionRequired = 'Team needs to resubmit payment information';
+            } else if (errorMessage.includes('payment_method_id IS NOT NULL') || errorMessage.includes('Missing payment method')) {
+              specificError = 'No payment method on file';
+              actionRequired = 'Team needs to complete payment setup';
+            } else if (errorMessage.includes('No such setup_intent')) {
+              specificError = 'Setup Intent expired or missing';
+              actionRequired = 'Team needs to resubmit payment information';
+            } else {
+              specificError = errorMessage;
+              actionRequired = 'Contact support for payment assistance';
+            }
+          }
+          
+          return res.status(400).json({
             status: 'error',
-            error: 'Payment processing failed',
-            message: paymentError instanceof Error ? paymentError.message : 'Unknown payment error occurred',
+            error: specificError,
+            message: `${specificError}. ${actionRequired}`,
+            actionRequired: actionRequired,
             paymentStatus: paymentStatus,
             teamStatus: currentTeam.status
           });
