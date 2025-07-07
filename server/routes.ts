@@ -7652,6 +7652,88 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       }
     });
 
+    // Enhanced form templates endpoints
+    
+    // Get all enhanced form templates with comprehensive data
+    app.get('/api/admin/enhanced-form-templates', isAdmin, async (req, res) => {
+      try {
+        console.log('Fetching enhanced form templates...');
+
+        const templates = await db
+          .select({
+            id: eventFormTemplates.id,
+            eventId: eventFormTemplates.eventId,
+            name: eventFormTemplates.name,
+            description: eventFormTemplates.description,
+            isPublished: eventFormTemplates.isPublished,
+            version: eventFormTemplates.version,
+            isActive: eventFormTemplates.isActive,
+            createdBy: eventFormTemplates.createdBy,
+            createdAt: eventFormTemplates.createdAt,
+            updatedAt: eventFormTemplates.updatedAt,
+            event: sql`
+              CASE WHEN ${events.id} IS NOT NULL THEN
+                json_build_object('id', ${events.id}, 'name', ${events.name})
+              ELSE NULL END
+            `.mapWith(event => event || null),
+            creator: sql`
+              CASE WHEN ${users.id} IS NOT NULL THEN
+                json_build_object('id', ${users.id}, 'firstName', ${users.firstName}, 'lastName', ${users.lastName})
+              ELSE NULL END
+            `.mapWith(creator => creator || null),
+            fieldCount: sql`COUNT(DISTINCT ${formFields.id})`.mapWith(Number),
+            teamUsageCount: sql`
+              (SELECT COUNT(DISTINCT ${teamTemplateUsage.teamId}) 
+               FROM ${teamTemplateUsage} 
+               WHERE ${teamTemplateUsage.templateId} = ${eventFormTemplates.id})
+            `.mapWith(Number),
+            fields: sql`
+              COALESCE(
+                json_agg(
+                  CASE 
+                    WHEN ${formFields.id} IS NOT NULL 
+                    THEN json_build_object(
+                      'id', ${formFields.id},
+                      'templateId', ${formFields.templateId},
+                      'fieldId', ${formFields.fieldId},
+                      'label', ${formFields.label},
+                      'type', ${formFields.type},
+                      'required', ${formFields.required},
+                      'order', ${formFields.order},
+                      'placeholder', ${formFields.placeholder},
+                      'helpText', ${formFields.helpText},
+                      'validation', ${formFields.validation}
+                    )
+                    ELSE NULL
+                  END
+                  ORDER BY ${formFields.order}
+                ) 
+                FILTER (WHERE ${formFields.id} IS NOT NULL), 
+                '[]'::json
+              )
+            `.mapWith(fields => fields || [])
+          })
+          .from(eventFormTemplates)
+          .leftJoin(events, eq(events.id, eventFormTemplates.eventId))
+          .leftJoin(users, eq(users.id, eventFormTemplates.createdBy))
+          .leftJoin(formFields, eq(formFields.templateId, eventFormTemplates.id))
+          .groupBy(
+            eventFormTemplates.id,
+            events.id,
+            events.name,
+            users.id,
+            users.firstName,
+            users.lastName
+          )
+          .orderBy(eventFormTemplates.updatedAt);
+
+        res.json(templates);
+      } catch (error) {
+        console.error('Error fetching enhanced form templates:', error);
+        res.status(500).json({ error: "Failed to fetch enhanced form templates" });
+      }
+    });
+
     app.get('/api/admin/form-templates', isAdmin, async (req, res) => {
       try {
         const templates = await db
@@ -7885,6 +7967,421 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       } catch (error) {
         console.error('Error deleting form template:', error);
         res.status(500).json({ error: "Failed to delete form template" });
+      }
+    });
+
+    // Enhanced Form Template Additional Endpoints
+
+    // Create new enhanced form template
+    app.post('/api/admin/enhanced-form-templates', isAdmin, async (req, res) => {
+      try {
+        const { name, description, isPublished, fields = [] } = req.body;
+        const userId = req.user?.id;
+
+        if (!name) {
+          return res.status(400).json({ error: "Template name is required" });
+        }
+
+        // Start transaction
+        const result = await db.transaction(async (tx) => {
+          // Create template
+          const [template] = await tx
+            .insert(eventFormTemplates)
+            .values({
+              name,
+              description,
+              isPublished: isPublished || false,
+              version: 1,
+              isActive: true,
+              createdBy: userId,
+              createdAt: new Date(),
+              updatedAt: new Date()
+            })
+            .returning();
+
+          // Create audit log
+          await tx
+            .insert(templateAuditLog)
+            .values({
+              templateId: template.id,
+              action: 'created',
+              changeDetails: {
+                templateName: name,
+                fieldCount: fields.length,
+                isPublished
+              },
+              affectedTeamCount: 0,
+              performedBy: userId,
+              createdAt: new Date()
+            });
+
+          // Add fields if provided
+          if (fields.length > 0) {
+            const fieldsToInsert = fields.map((field: any, index: number) => ({
+              templateId: template.id,
+              fieldId: field.fieldId,
+              label: field.label,
+              type: field.type,
+              required: field.required || false,
+              order: field.order || index,
+              placeholder: field.placeholder,
+              helpText: field.helpText,
+              validation: field.validation,
+              createdAt: new Date(),
+              updatedAt: new Date()
+            }));
+
+            const insertedFields = await tx.insert(formFields).values(fieldsToInsert).returning();
+
+            // Add field options if any
+            for (let i = 0; i < fields.length; i++) {
+              const field = fields[i];
+              const insertedField = insertedFields[i];
+              
+              if (field.options && field.options.length > 0) {
+                const optionsToInsert = field.options.map((option: any, optIndex: number) => ({
+                  fieldId: insertedField.id,
+                  label: option.label,
+                  value: option.value,
+                  order: option.order || optIndex,
+                  createdAt: new Date()
+                }));
+
+                await tx.insert(formFieldOptions).values(optionsToInsert);
+              }
+            }
+          }
+
+          return template;
+        });
+
+        res.json(result);
+      } catch (error) {
+        console.error('Error creating enhanced form template:', error);
+        res.status(500).json({ error: "Failed to create enhanced form template" });
+      }
+    });
+
+    // Update enhanced form template
+    app.put('/api/admin/enhanced-form-templates/:id', isAdmin, async (req, res) => {
+      try {
+        const templateId = parseInt(req.params.id);
+        const { name, description, isPublished, fields = [] } = req.body;
+        const userId = req.user?.id;
+
+        // Check if template has existing usage
+        const usageCheck = await db
+          .select({ count: sql`COUNT(*)`.mapWith(Number) })
+          .from(teamTemplateUsage)
+          .where(eq(teamTemplateUsage.templateId, templateId));
+
+        const affectedTeamCount = usageCheck[0]?.count || 0;
+
+        // Start transaction
+        const result = await db.transaction(async (tx) => {
+          // Get current version
+          const [currentTemplate] = await tx
+            .select({ version: eventFormTemplates.version })
+            .from(eventFormTemplates)
+            .where(eq(eventFormTemplates.id, templateId))
+            .limit(1);
+
+          const currentVersion = currentTemplate?.version || 1;
+
+          // Update template with new version
+          const [updatedTemplate] = await tx
+            .update(eventFormTemplates)
+            .set({
+              name,
+              description,
+              isPublished,
+              version: currentVersion + 1,
+              updatedAt: new Date()
+            })
+            .where(eq(eventFormTemplates.id, templateId))
+            .returning();
+
+          // Create audit log
+          await tx
+            .insert(templateAuditLog)
+            .values({
+              templateId,
+              action: 'updated',
+              changeDetails: {
+                templateName: name,
+                fieldCount: fields.length,
+                previousVersion: currentVersion,
+                newVersion: currentVersion + 1
+              },
+              affectedTeamCount,
+              performedBy: userId,
+              createdAt: new Date()
+            });
+
+          // Clear existing fields and rebuild
+          await tx.delete(formFieldOptions)
+            .where(sql`${formFieldOptions.fieldId} IN (
+              SELECT ${formFields.id} FROM ${formFields} 
+              WHERE ${formFields.templateId} = ${templateId}
+            )`);
+          
+          await tx.delete(formFields).where(eq(formFields.templateId, templateId));
+
+          // Add updated fields
+          if (fields.length > 0) {
+            const fieldsToInsert = fields.map((field: any, index: number) => ({
+              templateId,
+              fieldId: field.fieldId,
+              label: field.label,
+              type: field.type,
+              required: field.required || false,
+              order: field.order || index,
+              placeholder: field.placeholder,
+              helpText: field.helpText,
+              validation: field.validation,
+              createdAt: new Date(),
+              updatedAt: new Date()
+            }));
+
+            const insertedFields = await tx.insert(formFields).values(fieldsToInsert).returning();
+
+            // Add field options
+            for (let i = 0; i < fields.length; i++) {
+              const field = fields[i];
+              const insertedField = insertedFields[i];
+              
+              if (field.options && field.options.length > 0) {
+                const optionsToInsert = field.options.map((option: any, optIndex: number) => ({
+                  fieldId: insertedField.id,
+                  label: option.label,
+                  value: option.value,
+                  order: option.order || optIndex,
+                  createdAt: new Date()
+                }));
+
+                await tx.insert(formFieldOptions).values(optionsToInsert);
+              }
+            }
+          }
+
+          return updatedTemplate;
+        });
+
+        res.json(result);
+      } catch (error) {
+        console.error('Error updating enhanced form template:', error);
+        res.status(500).json({ error: "Failed to update enhanced form template" });
+      }
+    });
+
+    // Assign template to event
+    app.post('/api/admin/enhanced-form-templates/:id/assign-event', isAdmin, async (req, res) => {
+      try {
+        const templateId = parseInt(req.params.id);
+        const { eventId } = req.body;
+        const userId = req.user?.id;
+
+        if (!eventId) {
+          return res.status(400).json({ error: "Event ID is required" });
+        }
+
+        // Start transaction
+        const result = await db.transaction(async (tx) => {
+          // Deactivate any existing active templates for this event
+          await tx
+            .update(eventFormTemplates)
+            .set({ isActive: false })
+            .where(sql`${eventFormTemplates.eventId} = ${eventId} AND ${eventFormTemplates.isActive} = true`);
+
+          // Assign template to event and make it active
+          const [updatedTemplate] = await tx
+            .update(eventFormTemplates)
+            .set({
+              eventId,
+              isActive: true,
+              updatedAt: new Date()
+            })
+            .where(eq(eventFormTemplates.id, templateId))
+            .returning();
+
+          // Get event info for audit log
+          const [event] = await tx
+            .select({ name: events.name })
+            .from(events)
+            .where(eq(events.id, eventId))
+            .limit(1);
+
+          // Create audit log
+          await tx
+            .insert(templateAuditLog)
+            .values({
+              templateId,
+              action: 'assigned',
+              changeDetails: {
+                eventId,
+                eventName: event?.name,
+                assignedToEvent: true
+              },
+              affectedTeamCount: 0,
+              performedBy: userId,
+              createdAt: new Date()
+            });
+
+          return updatedTemplate;
+        });
+
+        res.json(result);
+      } catch (error) {
+        console.error('Error assigning template to event:', error);
+        res.status(500).json({ error: "Failed to assign template to event" });
+      }
+    });
+
+    // Get template usage statistics
+    app.get('/api/admin/form-templates/:id/usage', isAdmin, async (req, res) => {
+      try {
+        const templateId = parseInt(req.params.id);
+
+        const usage = await db
+          .select({
+            teamCount: sql`COUNT(DISTINCT ${teamTemplateUsage.teamId})`.mapWith(Number),
+            responseCount: sql`COUNT(DISTINCT ${formResponses.teamId})`.mapWith(Number),
+            versions: sql`
+              json_agg(DISTINCT ${teamTemplateUsage.templateVersion} ORDER BY ${teamTemplateUsage.templateVersion})
+            `.mapWith(versions => versions || [])
+          })
+          .from(teamTemplateUsage)
+          .leftJoin(formResponses, eq(formResponses.templateId, teamTemplateUsage.templateId))
+          .where(eq(teamTemplateUsage.templateId, templateId));
+
+        res.json(usage[0] || { teamCount: 0, responseCount: 0, versions: [] });
+      } catch (error) {
+        console.error('Error fetching template usage:', error);
+        res.status(500).json({ error: "Failed to fetch template usage" });
+      }
+    });
+
+    // Get template audit logs
+    app.get('/api/admin/form-templates/:id/audit-logs', isAdmin, async (req, res) => {
+      try {
+        const templateId = parseInt(req.params.id);
+
+        const auditLogs = await db
+          .select({
+            id: templateAuditLog.id,
+            action: templateAuditLog.action,
+            changeDetails: templateAuditLog.changeDetails,
+            affectedTeamCount: templateAuditLog.affectedTeamCount,
+            createdAt: templateAuditLog.createdAt,
+            performedBy: sql`
+              json_build_object(
+                'id', ${users.id}, 
+                'firstName', ${users.firstName}, 
+                'lastName', ${users.lastName}
+              )
+            `.mapWith(user => user || null)
+          })
+          .from(templateAuditLog)
+          .leftJoin(users, eq(users.id, templateAuditLog.performedBy))
+          .where(eq(templateAuditLog.templateId, templateId))
+          .orderBy(templateAuditLog.createdAt);
+
+        res.json(auditLogs);
+      } catch (error) {
+        console.error('Error fetching template audit logs:', error);
+        res.status(500).json({ error: "Failed to fetch template audit logs" });
+      }
+    });
+
+    // Export form data as CSV
+    app.get('/api/admin/form-templates/:id/export-data', isAdmin, async (req, res) => {
+      try {
+        const templateId = parseInt(req.params.id);
+
+        // Get template info
+        const [template] = await db
+          .select({
+            name: eventFormTemplates.name,
+            eventName: events.name
+          })
+          .from(eventFormTemplates)
+          .leftJoin(events, eq(events.id, eventFormTemplates.eventId))
+          .where(eq(eventFormTemplates.id, templateId))
+          .limit(1);
+
+        if (!template) {
+          return res.status(404).json({ error: "Template not found" });
+        }
+
+        // Get form responses with team details
+        const responses = await db
+          .select({
+            teamId: formResponses.teamId,
+            teamName: teams.name,
+            submitterEmail: teams.submitterEmail,
+            responses: formResponses.responses,
+            templateVersion: formResponses.templateVersion,
+            submittedAt: formResponses.createdAt,
+            teamStatus: teams.status
+          })
+          .from(formResponses)
+          .leftJoin(teams, eq(teams.id, formResponses.teamId))
+          .where(eq(formResponses.templateId, templateId))
+          .orderBy(formResponses.createdAt);
+
+        if (responses.length === 0) {
+          return res.status(404).json({ error: "No form responses found for this template" });
+        }
+
+        // Build CSV content
+        const allKeys = new Set<string>();
+        responses.forEach(response => {
+          if (response.responses) {
+            Object.keys(response.responses).forEach(key => allKeys.add(key));
+          }
+        });
+
+        const headers = [
+          'Team ID',
+          'Team Name', 
+          'Submitter Email',
+          'Team Status',
+          'Template Version',
+          'Submitted At',
+          ...Array.from(allKeys)
+        ];
+
+        const csvRows = [headers.join(',')];
+
+        responses.forEach(response => {
+          const row = [
+            response.teamId,
+            `"${response.teamName || ''}"`,
+            response.submitterEmail || '',
+            response.teamStatus || '',
+            response.templateVersion,
+            response.submittedAt,
+            ...Array.from(allKeys).map(key => {
+              const value = response.responses?.[key];
+              if (typeof value === 'string') {
+                return `"${value.replace(/"/g, '""')}"`;
+              }
+              return value || '';
+            })
+          ];
+          csvRows.push(row.join(','));
+        });
+
+        const csvContent = csvRows.join('\n');
+        const filename = `form-data-${template.name.replace(/[^a-zA-Z0-9]/g, '-')}-${new Date().toISOString().split('T')[0]}.csv`;
+
+        res.setHeader('Content-Type', 'text/csv');
+        res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+        res.send(csvContent);
+
+      } catch (error) {
+        console.error('Error exporting form data:', error);
+        res.status(500).json({ error: "Failed to export form data" });
       }
     });
 

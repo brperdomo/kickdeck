@@ -1156,6 +1156,9 @@ export const eventFormTemplates = pgTable("event_form_templates", {
   name: text("name").notNull(),
   description: text("description"),
   isPublished: boolean("is_published").default(false).notNull(),
+  version: integer("version").default(1).notNull(), // Track template versions
+  isActive: boolean("is_active").default(true).notNull(), // Only one active template per event
+  createdBy: integer("created_by").references(() => users.id),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
@@ -1163,8 +1166,9 @@ export const eventFormTemplates = pgTable("event_form_templates", {
 export const formFields = pgTable("form_fields", {
   id: serial("id").primaryKey(),
   templateId: integer("template_id").notNull().references(() => eventFormTemplates.id, { onDelete: 'cascade' }),
+  fieldId: text("field_id").notNull(), // Auto-generated from label (e.g., "team_colors", "dietary_restrictions")
   label: text("label").notNull(),
-  type: text("type").notNull(), // 'dropdown', 'paragraph', 'input'
+  type: text("type").notNull(), // 'dropdown', 'paragraph', 'input', 'checkbox', 'radio', 'textarea'
   required: boolean("required").default(false).notNull(),
   order: integer("order").notNull(),
   placeholder: text("placeholder"),
@@ -1187,9 +1191,30 @@ export const formResponses = pgTable("form_responses", {
   id: serial("id").primaryKey(),
   templateId: integer("template_id").notNull().references(() => eventFormTemplates.id),
   teamId: integer("team_id").notNull().references(() => teams.id),
+  templateVersion: integer("template_version").notNull(), // Track which version was used
   responses: jsonb("responses").notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// Template change audit table
+export const templateAuditLog = pgTable("template_audit_log", {
+  id: serial("id").primaryKey(),
+  templateId: integer("template_id").notNull().references(() => eventFormTemplates.id),
+  action: text("action").notNull(), // 'created', 'updated', 'assigned', 'deactivated'
+  changeDetails: jsonb("change_details"), // What specific changes were made
+  affectedTeamCount: integer("affected_team_count").default(0), // How many teams had already submitted data
+  performedBy: integer("performed_by").notNull().references(() => users.id),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+// Track which template version each team used
+export const teamTemplateUsage = pgTable("team_template_usage", {
+  id: serial("id").primaryKey(),
+  teamId: integer("team_id").notNull().references(() => teams.id),
+  templateId: integer("template_id").notNull().references(() => eventFormTemplates.id),
+  templateVersion: integer("template_version").notNull(),
+  submittedAt: timestamp("submitted_at").notNull().defaultNow(),
 });
 
 // Add Zod schemas for the new tables
@@ -1241,8 +1266,14 @@ export const eventFormTemplatesRelations = relations(eventFormTemplates, ({ one,
     fields: [eventFormTemplates.eventId],
     references: [events.id],
   }),
+  createdBy: one(users, {
+    fields: [eventFormTemplates.createdBy],
+    references: [users.id],
+  }),
   fields: many(formFields),
   responses: many(formResponses),
+  auditLogs: many(templateAuditLog),
+  teamUsage: many(teamTemplateUsage),
 }));
 
 export const formFieldsRelations = relations(formFields, ({ one, many }) => ({
@@ -1268,6 +1299,28 @@ export const formResponsesRelations = relations(formResponses, ({ one }) => ({
   team: one(teams, {
     fields: [formResponses.teamId],
     references: [teams.id],
+  }),
+}));
+
+export const templateAuditLogRelations = relations(templateAuditLog, ({ one }) => ({
+  template: one(eventFormTemplates, {
+    fields: [templateAuditLog.templateId],
+    references: [eventFormTemplates.id],
+  }),
+  performedBy: one(users, {
+    fields: [templateAuditLog.performedBy],
+    references: [users.id],
+  }),
+}));
+
+export const teamTemplateUsageRelations = relations(teamTemplateUsage, ({ one }) => ({
+  team: one(teams, {
+    fields: [teamTemplateUsage.teamId],
+    references: [teams.id],
+  }),
+  template: one(eventFormTemplates, {
+    fields: [teamTemplateUsage.templateId],
+    references: [eventFormTemplates.id],
   }),
 }));
 // Add email provider settings schema
