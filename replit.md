@@ -113,6 +113,12 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
+- July 7, 2025: ENHANCED ERROR MESSAGING SYSTEM - Replaced generic "Payment processing failed" with specific, actionable error messages for team approval failures
+  - ENHANCED: Admin approval endpoint now provides specific error diagnosis instead of generic failures
+  - IMPLEMENTED: Burned payment method detection with clear "Team must provide new payment method" messaging
+  - IMPROVED: Missing customer/payment method errors now show exact action required ("Team needs to complete payment setup")
+  - ACTIONABLE: Each error message includes specific next steps for resolving payment issues
+  - PRODUCTION READY: Admins now receive clear guidance on why specific team approvals fail and what teams need to do
 - July 7, 2025: CRITICAL PAYMENT PROCESSING RESTORATION - Fixed systematic payment failure affecting all teams by implementing automatic customer recovery system
   - IDENTIFIED: Root cause was missing Stripe customers (e.g., "No such customer: 'cus_SdM7zOQlMalnBR'") preventing payment method attachment
   - IMPLEMENTED: Automatic customer recovery system that creates new customers in main MatchPro account when existing ones are missing
