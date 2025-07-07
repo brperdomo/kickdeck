@@ -30,7 +30,6 @@ import { TeamModal } from "@/components/teams/TeamModal";
 import { TeamCsvUploader } from "@/components/teams/TeamCsvUploader";
 import { BracketAssignmentModal } from "@/components/BracketAssignmentModal";
 import { ScheduleVisualization } from "@/components/ScheduleVisualization";
-import { PlatformFeeReports } from "@/components/admin/reports/PlatformFeeReports";
 import BracketSelector from "@/components/admin/scheduling/BracketSelector";
 import { SchedulingWorkflow } from "@/components/admin/scheduling/SchedulingWorkflow";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -992,7 +991,7 @@ function AdministratorsView() {
 
 function ReportsView() {
   const [selectedReport, setSelectedReport] = useState<ReportType>('financial');
-  const [selectedFinancialReport, setSelectedFinancialReport] = useState<string>('platform-fees');
+  const [selectedFinancialReport, setSelectedFinancialReport] = useState<string>('accounting-codes');
   const { isExporting, startExport } = useExportProcess();
   const navigate = useLocation()[1];
   const [isAccountingCodeModalOpen, setIsAccountingCodeModalOpen] = useState(false);
@@ -1065,8 +1064,6 @@ function ReportsView() {
                   <option value="accounting-codes">Accounting Codes</option>
                   <option value="registration-orders">Registration Orders</option>
                   <option value="payment-logs">Payment Logs</option>
-                  <option value="platform-fees">Platform Fee Reports</option>
-                  {/* Force rebuild */}
                   <option value="financial-overview">Financial Overview</option>
                   <option value="fees-analysis">Fees Analysis</option>
                   <option value="bookkeeping">Bookkeeping Report</option>
@@ -1218,12 +1215,6 @@ function ReportsView() {
                     </div>
                   </CardContent>
                 </Card>
-              </div>
-            )}
-            
-            {selectedFinancialReport === 'platform-fees' && (
-              <div className="space-y-4">
-                <PlatformFeeReports />
               </div>
             )}
             
@@ -1461,7 +1452,6 @@ function ReportsView() {
           </CardHeader>
           <CardContent className="p-3">
             <div className="space-y-2">
-
               <Button
                 variant={selectedReport === 'financial' ? 'secondary' : 'ghost'}
                 data-variant={selectedReport === 'financial' ? 'secondary' : 'ghost'}
@@ -1472,7 +1462,6 @@ function ReportsView() {
                 <FileText className="mr-2 h-4 w-4" />
                 Financial Reports
               </Button>
-
               <Button
                 variant={selectedReport === 'manager' ? 'secondary' : 'ghost'}
                 data-variant={selectedReport === 'manager' ? 'secondary' : 'ghost'}

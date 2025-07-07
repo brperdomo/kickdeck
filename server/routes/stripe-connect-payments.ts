@@ -10,7 +10,6 @@ import Stripe from 'stripe';
 import { db } from "@db";
 import { teams, events, paymentTransactions } from "@db/schema";
 import { eq, and } from "drizzle-orm";
-import { getOrCreateConnectCustomer, createConnectSetupIntent } from "../services/connectCustomerService";
 
 if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
@@ -78,27 +77,14 @@ export async function processDestinationCharge(
     // For pre-calculated amounts, use the provided total; otherwise use calculated total
     const chargeAmount = isPreCalculated ? totalAmountCents : feeCalculation.totalChargedAmount;
     
-    // Get or create Connect customer for this team
-    console.log(`CONNECT CUSTOMER: Getting or creating Connect customer for team ${teamId}`);
-    let connectCustomer;
-    
-    try {
-      connectCustomer = await getOrCreateConnectCustomer(teamId);
-      console.log(`✅ Connect customer ready: ${connectCustomer.customerId} in account ${connectCustomer.connectAccountId}`);
-    } catch (connectError) {
-      console.warn(`Could not create Connect customer, falling back to platform payment: ${connectError.message}`);
-      connectCustomer = null;
-    }
-
-    // Get the payment method to check type
+    // Get the customer from the payment method to ensure proper association
     const paymentMethod = await stripe.paymentMethods.retrieve(paymentMethodId);
-    let customerId = connectCustomer?.customerId || paymentMethod.customer as string | null;
+    let customerId = paymentMethod.customer as string | null;
     
     console.log(`PAYMENT METHOD DEBUG: Retrieved payment method ${paymentMethodId}`);
     console.log(`  - type: ${paymentMethod.type}`);
-    console.log(`  - original customer: ${paymentMethod.customer}`);
-    console.log(`  - connect customer: ${connectCustomer?.customerId || 'none'}`);
-    console.log(`  - final customerId: ${customerId}`);
+    console.log(`  - customer: ${paymentMethod.customer}`);
+    console.log(`  - customerId variable: ${customerId}`);
 
     // Handle Link payment methods which fundamentally cannot be used with customers
     if (paymentMethod.type === 'link') {
@@ -250,31 +236,10 @@ export async function processDestinationCharge(
         throw new Error(`Platform fee mismatch: params=${paymentIntentParams.application_fee_amount} vs calculated=${feeCalculation.platformFeeAmount}`);
       }
 
-      // For Connect customers, we need to attach the payment method to the Connect account's customer
-      if (connectCustomer && paymentMethod.type !== 'link') {
-        try {
-          // Attach payment method to Connect customer if not already attached
-          if (paymentMethod.customer !== connectCustomer.customerId) {
-            console.log(`Attaching payment method ${paymentMethodId} to Connect customer ${connectCustomer.customerId}`);
-            await stripe.paymentMethods.attach(
-              paymentMethodId,
-              { customer: connectCustomer.customerId },
-              { stripeAccount: connectCustomer.connectAccountId }
-            );
-          }
-          paymentIntentParams.customer = connectCustomer.customerId;
-          console.log(`Using Connect customer: ${connectCustomer.customerId}`);
-        } catch (attachError) {
-          console.warn(`Could not attach payment method to Connect customer: ${attachError.message}`);
-          // Fall back to regular customer handling
-          if (customerId) {
-            paymentIntentParams.customer = customerId;
-            console.log(`Falling back to platform customer: ${customerId}`);
-          }
-        }
-      } else if (customerId) {
+      // Include customer if we have one
+      if (customerId) {
         paymentIntentParams.customer = customerId;
-        console.log(`Using platform customer: ${customerId}`);
+        console.log(`Using customer: ${customerId}`);
       }
 
       paymentIntent = await stripe.paymentIntents.create(paymentIntentParams);
