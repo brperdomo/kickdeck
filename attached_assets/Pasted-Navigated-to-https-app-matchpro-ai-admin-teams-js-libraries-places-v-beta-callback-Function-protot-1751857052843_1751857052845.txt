@@ -1,0 +1,443 @@
+Navigated to https://app.matchpro.ai/admin/teams
+js?libraries=places&v=beta&callback=Function.prototype:1483 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+Vca @ js?libraries=places&v=beta&callback=Function.prototype:1483
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1734
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1734Understand this warning
+js?libraries=places&v=beta&callback=Function.prototype:1512 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+_.B.send @ js?libraries=places&v=beta&callback=Function.prototype:1512
+Tca @ js?libraries=places&v=beta&callback=Function.prototype:1492
+Vca @ js?libraries=places&v=beta&callback=Function.prototype:1484
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1734
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1734
+index-BABDz9N7.js:898 Google Maps API key length: 0 characters
+index-BABDz9N7.js:898 Mapbox API key length: 93 characters
+index-BABDz9N7.js:898 Google Maps API already loaded
+index-BABDz9N7.js:656 Current route location (Wouter): /admin/teams
+index-BABDz9N7.js:656 Current URL: https://app.matchpro.ai/admin/teams
+index-BABDz9N7.js:656 Current pathname: /admin/teams
+index-BABDz9N7.js:656 Current search: 
+index-BABDz9N7.js:656 Fetching user with emulation token: not present
+9Fetch finished loading: GET "<URL>".
+index-BABDz9N7.js:656 User data fetched: {id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: '$2b$12$d6n1CBWgsWFm0fh77F1OX.YxDZy7/O3aLSuJOuq4QkvOtFmSit7BC', firstName: 'Bryan', …}
+teams:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+teams:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+index-BABDz9N7.js:648 Fetch failed loading: GET "https://app.matchpro.ai/api/user".
+queryFn @ index-BABDz9N7.js:648
+i @ index-BABDz9N7.js:40
+f @ index-BABDz9N7.js:40
+start @ index-BABDz9N7.js:40
+fetch @ index-BABDz9N7.js:40
+Vg @ index-BABDz9N7.js:40
+onSubscribe @ index-BABDz9N7.js:40
+subscribe @ index-BABDz9N7.js:40
+(anonymous) @ index-BABDz9N7.js:40
+sW @ index-BABDz9N7.js:38
+f1 @ index-BABDz9N7.js:40
+zh @ index-BABDz9N7.js:40
+FM @ index-BABDz9N7.js:40
+Gd @ index-BABDz9N7.js:38
+she @ index-BABDz9N7.js:40
+pu @ index-BABDz9N7.js:40
+FW @ index-BABDz9N7.js:40
+N @ index-BABDz9N7.js:25
+O @ index-BABDz9N7.js:25
+
+                
+          
+          
+          
+         Chrome is moving towards a new experience that allows users to choose to browse without third-party cookies.Understand this warning
+index-BABDz9N7.js:40 Fetch failed loading: GET "https://app.matchpro.ai/api/admin/organization-settings".
+queryFn @ index-BABDz9N7.js:40
+i @ index-BABDz9N7.js:40
+f @ index-BABDz9N7.js:40
+start @ index-BABDz9N7.js:40
+fetch @ index-BABDz9N7.js:40
+Vg @ index-BABDz9N7.js:40
+onSubscribe @ index-BABDz9N7.js:40
+subscribe @ index-BABDz9N7.js:40
+(anonymous) @ index-BABDz9N7.js:40
+sW @ index-BABDz9N7.js:38
+f1 @ index-BABDz9N7.js:40
+zh @ index-BABDz9N7.js:40
+she @ index-BABDz9N7.js:40
+pu @ index-BABDz9N7.js:40
+FM @ index-BABDz9N7.js:40
+Gd @ index-BABDz9N7.js:38
+(anonymous) @ index-BABDz9N7.js:40
+setTimeout
+Nhe @ index-BABDz9N7.js:40
+o @ index-BABDz9N7.js:40
+batch @ index-BABDz9N7.js:40
+Hl @ index-BABDz9N7.js:40
+setData @ index-BABDz9N7.js:40
+onSuccess @ index-BABDz9N7.js:40
+m @ index-BABDz9N7.js:40
+Promise.then
+f @ index-BABDz9N7.js:40
+start @ index-BABDz9N7.js:40
+fetch @ index-BABDz9N7.js:40
+Vg @ index-BABDz9N7.js:40
+onSubscribe @ index-BABDz9N7.js:40
+subscribe @ index-BABDz9N7.js:40
+(anonymous) @ index-BABDz9N7.js:40
+sW @ index-BABDz9N7.js:38
+f1 @ index-BABDz9N7.js:40
+zh @ index-BABDz9N7.js:40
+FM @ index-BABDz9N7.js:40
+Gd @ index-BABDz9N7.js:38
+she @ index-BABDz9N7.js:40
+pu @ index-BABDz9N7.js:40
+FW @ index-BABDz9N7.js:40
+N @ index-BABDz9N7.js:25
+O @ index-BABDz9N7.js:25
+12Invalid keyframe value for property filter: blur(-0.08136px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.16063px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.22707px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.28173px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.32564px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.3598px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.38521px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.40278px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.41343px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.41799px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.41726px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.41199px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.40286px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.39052px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.37556px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.35849px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.33982px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.31996px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.2993px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.27819px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.25693px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.23576px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.21492px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.19459px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.17493px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.15606px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.13808px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.12106px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.10507px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.09014px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.07628px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.0635px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.0518px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.04115px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.03153px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.02289px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.01521px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.00842px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.00249px)Understand this warning
+index-BABDz9N7.js:40 Fetch failed loading: GET "https://app.matchpro.ai/api/admin/events".
+queryFn @ index-BABDz9N7.js:40
+i @ index-BABDz9N7.js:40
+f @ index-BABDz9N7.js:40
+start @ index-BABDz9N7.js:40
+fetch @ index-BABDz9N7.js:40
+fetchQuery @ index-BABDz9N7.js:40
+prefetchQuery @ index-BABDz9N7.js:40
+(anonymous) @ index-BABDz9N7.js:917
+f1 @ index-BABDz9N7.js:40
+zh @ index-BABDz9N7.js:40
+she @ index-BABDz9N7.js:40
+pu @ index-BABDz9N7.js:40
+FM @ index-BABDz9N7.js:40
+Gd @ index-BABDz9N7.js:38
+(anonymous) @ index-BABDz9N7.js:40
+setTimeout
+Nhe @ index-BABDz9N7.js:40
+o @ index-BABDz9N7.js:40
+batch @ index-BABDz9N7.js:40
+Hl @ index-BABDz9N7.js:40
+setData @ index-BABDz9N7.js:40
+onSuccess @ index-BABDz9N7.js:40
+m @ index-BABDz9N7.js:40
+Promise.then
+f @ index-BABDz9N7.js:40
+start @ index-BABDz9N7.js:40
+fetch @ index-BABDz9N7.js:40
+Vg @ index-BABDz9N7.js:40
+onSubscribe @ index-BABDz9N7.js:40
+subscribe @ index-BABDz9N7.js:40
+(anonymous) @ index-BABDz9N7.js:40
+sW @ index-BABDz9N7.js:38
+f1 @ index-BABDz9N7.js:40
+zh @ index-BABDz9N7.js:40
+FM @ index-BABDz9N7.js:40
+Gd @ index-BABDz9N7.js:38
+she @ index-BABDz9N7.js:40
+pu @ index-BABDz9N7.js:40
+FW @ index-BABDz9N7.js:40
+N @ index-BABDz9N7.js:25
+O @ index-BABDz9N7.js:25
+shared-52bde51db9135adabfcaed2c8db801ae.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+(anonymous) @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+e @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+c @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+g @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+value @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+value @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+value @ controller-with-preconnect-e0721a5fd37acf455c81d78da89aab65.js:1
+e @ controller-with-preconnect-e0721a5fd37acf455c81d78da89aab65.js:1
+value @ controller-with-preconnect-e0721a5fd37acf455c81d78da89aab65.js:1
+e @ controller-with-preconnect-e0721a5fd37acf455c81d78da89aab65.js:1
+33306 @ controller-with-preconnect-e0721a5fd37acf455c81d78da89aab65.js:1
+e @ controller-with-preconnect-e0721a5fd37acf455c81d78da89aab65.js:1
+(anonymous) @ controller-with-preconnect-e0721a5fd37acf455c81d78da89aab65.js:1
+e.O @ controller-with-preconnect-e0721a5fd37acf455c81d78da89aab65.js:1
+(anonymous) @ controller-with-preconnect-e0721a5fd37acf455c81d78da89aab65.js:1
+(anonymous) @ controller-with-preconnect-e0721a5fd37acf455c81d78da89aab65.js:1
+shared-52bde51db9135adabfcaed2c8db801ae.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+(anonymous) @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+e @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+c @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+g @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+value @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+value @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+log @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+log @ controller-with-preconnect-e0721a5fd37acf455c81d78da89aab65.js:1
+e @ controller-with-preconnect-e0721a5fd37acf455c81d78da89aab65.js:1
+33306 @ controller-with-preconnect-e0721a5fd37acf455c81d78da89aab65.js:1
+e @ controller-with-preconnect-e0721a5fd37acf455c81d78da89aab65.js:1
+(anonymous) @ controller-with-preconnect-e0721a5fd37acf455c81d78da89aab65.js:1
+e.O @ controller-with-preconnect-e0721a5fd37acf455c81d78da89aab65.js:1
+(anonymous) @ controller-with-preconnect-e0721a5fd37acf455c81d78da89aab65.js:1
+(anonymous) @ controller-with-preconnect-e0721a5fd37acf455c81d78da89aab65.js:1
+index-BABDz9N7.js:40 Fetch failed loading: GET "https://app.matchpro.ai/api/admin/organization-settings".
+queryFn @ index-BABDz9N7.js:40
+i @ index-BABDz9N7.js:40
+f @ index-BABDz9N7.js:40
+start @ index-BABDz9N7.js:40
+fetch @ index-BABDz9N7.js:40
+Vg @ index-BABDz9N7.js:40
+onSubscribe @ index-BABDz9N7.js:40
+subscribe @ index-BABDz9N7.js:40
+(anonymous) @ index-BABDz9N7.js:40
+sW @ index-BABDz9N7.js:38
+f1 @ index-BABDz9N7.js:40
+zh @ index-BABDz9N7.js:40
+FM @ index-BABDz9N7.js:40
+Gd @ index-BABDz9N7.js:38
+she @ index-BABDz9N7.js:40
+pu @ index-BABDz9N7.js:40
+FW @ index-BABDz9N7.js:40
+N @ index-BABDz9N7.js:25
+O @ index-BABDz9N7.js:25
+index-BABDz9N7.js:917 Import eligible events: (5) [{…}, {…}, {…}, {…}, {…}]
+index-BABDz9N7.js:917 Teams data received: (447) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+index-BABDz9N7.js:917 Teams data from API: (447) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+index-BABDz9N7.js:917 Normalized teams data: (447) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+shared-52bde51db9135adabfcaed2c8db801ae.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+e @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+c @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+value @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+value @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+value @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+value @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+value @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+(anonymous) @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+setTimeout
+value @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+value @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+value @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+(anonymous) @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+value @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+value @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+(anonymous) @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+Promise.then
+value @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+value @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+value @ controller-with-preconnect-e0721a5fd37acf455c81d78da89aab65.js:1
+e @ controller-with-preconnect-e0721a5fd37acf455c81d78da89aab65.js:1
+value @ controller-with-preconnect-e0721a5fd37acf455c81d78da89aab65.js:1
+e @ controller-with-preconnect-e0721a5fd37acf455c81d78da89aab65.js:1
+33306 @ controller-with-preconnect-e0721a5fd37acf455c81d78da89aab65.js:1
+e @ controller-with-preconnect-e0721a5fd37acf455c81d78da89aab65.js:1
+(anonymous) @ controller-with-preconnect-e0721a5fd37acf455c81d78da89aab65.js:1
+e.O @ controller-with-preconnect-e0721a5fd37acf455c81d78da89aab65.js:1
+(anonymous) @ controller-with-preconnect-e0721a5fd37acf455c81d78da89aab65.js:1
+(anonymous) @ controller-with-preconnect-e0721a5fd37acf455c81d78da89aab65.js:1
+shared-52bde51db9135adabfcaed2c8db801ae.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+e @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+c @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+value @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+value @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+value @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+value @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+value @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+(anonymous) @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+setTimeout
+value @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+value @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+value @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+(anonymous) @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+value @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+value @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+(anonymous) @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+Promise.then
+value @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+value @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+log @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+log @ controller-with-preconnect-e0721a5fd37acf455c81d78da89aab65.js:1
+e @ controller-with-preconnect-e0721a5fd37acf455c81d78da89aab65.js:1
+33306 @ controller-with-preconnect-e0721a5fd37acf455c81d78da89aab65.js:1
+e @ controller-with-preconnect-e0721a5fd37acf455c81d78da89aab65.js:1
+(anonymous) @ controller-with-preconnect-e0721a5fd37acf455c81d78da89aab65.js:1
+e.O @ controller-with-preconnect-e0721a5fd37acf455c81d78da89aab65.js:1
+(anonymous) @ controller-with-preconnect-e0721a5fd37acf455c81d78da89aab65.js:1
+(anonymous) @ controller-with-preconnect-e0721a5fd37acf455c81d78da89aab65.js:1
+index-BABDz9N7.js:737 Fetched age groups for event: 1825427780
+index-BABDz9N7.js:737 Fetching brackets for event 1825427780 and age group 9985
+util.js:39 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+Wwa @ util.js:39
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1485
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1485
+setTimeout
+Vca @ js?libraries=places&v=beta&callback=Function.prototype:1485
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1734
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1734Understand this warning
+index-BABDz9N7.js:917 Sending status update with data: {teamId: 475, status: 'approved', notes: 'Approval attempted but payment failed (payment_err…eam has completed payment setup before approving.'}
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+Promise.then
+S @ out-4.5.44.js:1
+y @ out-4.5.44.js:1
+E @ out-4.5.44.js:1
+e.onload @ inner.html:1
+script
+(anonymous) @ inner.html:1
+(anonymous) @ inner.html:1
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+h @ out-4.5.44.js:1
+e @ inner.html:1
+index-BABDz9N7.js:917 
+            
+            
+           PUT https://app.matchpro.ai/api/admin/teams/475/status 400 (Bad Request)
+mutationFn @ index-BABDz9N7.js:917
+fn @ index-BABDz9N7.js:40
+f @ index-BABDz9N7.js:40
+start @ index-BABDz9N7.js:40
+execute @ index-BABDz9N7.js:40
+await in execute
+mutate @ index-BABDz9N7.js:40
+(anonymous) @ index-BABDz9N7.js:40
+Er @ index-BABDz9N7.js:917
+onClick @ index-BABDz9N7.js:917
+Nue @ index-BABDz9N7.js:37
+Cue @ index-BABDz9N7.js:37
+Eue @ index-BABDz9N7.js:37
+iM @ index-BABDz9N7.js:37
+Uq @ index-BABDz9N7.js:37
+(anonymous) @ index-BABDz9N7.js:37
+gO @ index-BABDz9N7.js:40
+mq @ index-BABDz9N7.js:37
+j2 @ index-BABDz9N7.js:37
+G4 @ index-BABDz9N7.js:37
+Uue @ index-BABDz9N7.js:37Understand this error
+index-BABDz9N7.js:917 Raw response text: {"status":"error","error":"Payment processing failed","message":"Payment processing failed. Please check team payment details.","paymentStatus":"payment_error","teamStatus":"registered"}
+index-BABDz9N7.js:917 Error response: {status: 'error', error: 'Payment processing failed', message: 'Payment processing failed. Please check team payment details.', paymentStatus: 'payment_error', teamStatus: 'registered'}
+mutationFn @ index-BABDz9N7.js:917
+await in mutationFn
+fn @ index-BABDz9N7.js:40
+f @ index-BABDz9N7.js:40
+start @ index-BABDz9N7.js:40
+execute @ index-BABDz9N7.js:40
+await in execute
+mutate @ index-BABDz9N7.js:40
+(anonymous) @ index-BABDz9N7.js:40
+Er @ index-BABDz9N7.js:917
+onClick @ index-BABDz9N7.js:917
+Nue @ index-BABDz9N7.js:37
+Cue @ index-BABDz9N7.js:37
+Eue @ index-BABDz9N7.js:37
+iM @ index-BABDz9N7.js:37
+Uq @ index-BABDz9N7.js:37
+(anonymous) @ index-BABDz9N7.js:37
+gO @ index-BABDz9N7.js:40
+mq @ index-BABDz9N7.js:37
+j2 @ index-BABDz9N7.js:37
+G4 @ index-BABDz9N7.js:37
+Uue @ index-BABDz9N7.js:37Understand this error
+index-BABDz9N7.js:917 Error in updateTeamStatus mutation: Error: Payment processing failed
+    at Object.mutationFn (index-BABDz9N7.js:917:82995)
+mutationFn @ index-BABDz9N7.js:917
+await in mutationFn
+fn @ index-BABDz9N7.js:40
+f @ index-BABDz9N7.js:40
+start @ index-BABDz9N7.js:40
+execute @ index-BABDz9N7.js:40
+await in execute
+mutate @ index-BABDz9N7.js:40
+(anonymous) @ index-BABDz9N7.js:40
+Er @ index-BABDz9N7.js:917
+onClick @ index-BABDz9N7.js:917
+Nue @ index-BABDz9N7.js:37
+Cue @ index-BABDz9N7.js:37
+Eue @ index-BABDz9N7.js:37
+iM @ index-BABDz9N7.js:37
+Uq @ index-BABDz9N7.js:37
+(anonymous) @ index-BABDz9N7.js:37
+gO @ index-BABDz9N7.js:40
+mq @ index-BABDz9N7.js:37
+j2 @ index-BABDz9N7.js:37
+G4 @ index-BABDz9N7.js:37
+Uue @ index-BABDz9N7.js:37Understand this error
+index-BABDz9N7.js:917 Fetch failed loading: PUT "https://app.matchpro.ai/api/admin/teams/475/status".
+mutationFn @ index-BABDz9N7.js:917
+fn @ index-BABDz9N7.js:40
+f @ index-BABDz9N7.js:40
+start @ index-BABDz9N7.js:40
+execute @ index-BABDz9N7.js:40
+await in execute
+mutate @ index-BABDz9N7.js:40
+(anonymous) @ index-BABDz9N7.js:40
+Er @ index-BABDz9N7.js:917
+onClick @ index-BABDz9N7.js:917
+Nue @ index-BABDz9N7.js:37
+Cue @ index-BABDz9N7.js:37
+Eue @ index-BABDz9N7.js:37
+iM @ index-BABDz9N7.js:37
+Uq @ index-BABDz9N7.js:37
+(anonymous) @ index-BABDz9N7.js:37
+gO @ index-BABDz9N7.js:40
+mq @ index-BABDz9N7.js:37
+j2 @ index-BABDz9N7.js:37
+G4 @ index-BABDz9N7.js:37
+Uue @ index-BABDz9N7.js:37
+shared-52bde51db9135adabfcaed2c8db801ae.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+e @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+c @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+value @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+value @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+value @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+value @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+value @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+(anonymous) @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+setTimeout
+value @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+value @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+value @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+(anonymous) @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+value @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+log @ shared-52bde51db9135adabfcaed2c8db801ae.js:1
+log @ controller-with-preconnect-e0721a5fd37acf455c81d78da89aab65.js:1
+value @ controller-with-preconnect-e0721a5fd37acf455c81d78da89aab65.js:1
+value @ controller-with-preconnect-e0721a5fd37acf455c81d78da89aab65.js:1
+(anonymous) @ controller-with-preconnect-e0721a5fd37acf455c81d78da89aab65.js:1
