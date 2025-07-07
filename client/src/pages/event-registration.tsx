@@ -37,6 +37,7 @@ import { SoccerFieldBackground } from "@/components/ui/SoccerFieldBackground";
 import { AnimatedEventBackground } from "@/components/ui/AnimatedEventBackground";
 import { useAuth } from "@/hooks/use-auth";
 import { useHouseholdDetails } from "@/hooks/use-household-details";
+import { CustomFormStep } from "@/components/registration/CustomFormStep";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -412,7 +413,7 @@ interface Fee {
   isRequired?: boolean; // Whether the fee is mandatory
 }
 
-type RegistrationStep = 'auth' | 'personal' | 'team' | 'payment' | 'review' | 'success' | 'complete';
+type RegistrationStep = 'auth' | 'personal' | 'team' | 'custom-form' | 'payment' | 'review' | 'success' | 'complete';
 
 // Animation variants for step transitions
 const fadeInUp = {
@@ -2827,9 +2828,9 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
       }
     }
     
-    // Now proceed to the payment step instead of submitting right away
-    console.log("Form validation passed, proceeding to payment step");
-    setCurrentStep('payment');
+    // Now proceed to the custom form step, then payment step
+    console.log("Form validation passed, proceeding to custom form step");
+    setCurrentStep('custom-form');
   };
 
   if (loading || authLoading) {
@@ -4228,6 +4229,32 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                   </div>
                 </form>
               </Form>
+              </motion.div>
+            )}
+
+            {currentStep === 'custom-form' && user && (
+              <motion.div 
+                key="custom-form-step"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+                className="space-y-6">
+                <CustomFormStep
+                  eventId={parseInt(eventId!)}
+                  teamId={teamForm?.getValues('teamId')}
+                  onComplete={(formData) => {
+                    // Store custom form data and proceed to payment
+                    console.log('Custom form completed with data:', formData);
+                    sessionStorage.setItem(`custom-form-data-${eventId}`, JSON.stringify(formData));
+                    setCurrentStep('payment');
+                  }}
+                  onSkip={() => {
+                    // Skip custom form and proceed to payment
+                    console.log('Custom form skipped');
+                    setCurrentStep('payment');
+                  }}
+                />
               </motion.div>
             )}
 

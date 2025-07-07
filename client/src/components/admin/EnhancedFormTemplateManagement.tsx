@@ -131,11 +131,13 @@ export function EnhancedFormTemplateManagement() {
     name: string;
     description: string;
     isPublished: boolean;
+    eventId?: number;
     fields: FormField[];
   }>({
     name: '',
     description: '',
     isPublished: false,
+    eventId: undefined,
     fields: []
   });
 
@@ -155,7 +157,8 @@ export function EnhancedFormTemplateManagement() {
     queryFn: async () => {
       const response = await fetch('/api/admin/events');
       if (!response.ok) throw new Error('Failed to fetch events');
-      return response.json() as Promise<Event[]>;
+      const data = await response.json();
+      return data.events as Event[];
     }
   });
 
@@ -328,9 +331,12 @@ export function EnhancedFormTemplateManagement() {
       name: '',
       description: '',
       isPublished: false,
+      eventId: undefined,
       fields: []
     });
   };
+
+
 
   const addField = () => {
     const newField: FormField = {
@@ -691,6 +697,29 @@ export function EnhancedFormTemplateManagement() {
                   placeholder="Enter template description..."
                   rows={3}
                 />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="eventId">Assign to Event (Optional)</Label>
+                <Select
+                  value={templateForm.eventId?.toString() || ""}
+                  onValueChange={(value) => setTemplateForm(prev => ({ 
+                    ...prev, 
+                    eventId: value ? parseInt(value) : undefined 
+                  }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select an event..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">No specific event</SelectItem>
+                    {eventsQuery.data?.map((event) => (
+                      <SelectItem key={event.id} value={event.id.toString()}>
+                        {event.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               <Separator />

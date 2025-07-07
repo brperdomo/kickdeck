@@ -8062,6 +8062,105 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       }
     });
 
+    // Assign template to event
+    app.post('/api/admin/enhanced-form-templates/:id/assign-event', isAdmin, async (req, res) => {
+      try {
+        const templateId = parseInt(req.params.id);
+        const { eventId } = req.body;
+        const userId = req.user?.id;
+
+        const result = await db.transaction(async (tx) => {
+          // Update template with event assignment
+          await tx
+            .update(eventFormTemplates)
+            .set({ 
+              eventId: eventId || null,
+              updatedAt: new Date()
+            })
+            .where(eq(eventFormTemplates.id, templateId));
+
+          // Log the assignment
+          await tx.insert(formTemplateAuditLogs).values({
+            templateId,
+            action: eventId ? 'event_assigned' : 'event_unassigned',
+            changeDetails: { eventId, previousEventId: null },
+            affectedTeamCount: 0,
+            performedBy: userId,
+            createdAt: new Date()
+          });
+
+          return { success: true };
+        });
+
+        res.json(result);
+      } catch (error) {
+        console.error('Error assigning template to event:', error);
+        res.status(500).json({ error: "Failed to assign template to event" });
+      }
+    });
+
+    // Get form template for specific event
+    app.get('/api/events/:eventId/form-template', async (req, res) => {
+      try {
+        const eventId = parseInt(req.params.eventId);
+
+        const template = await db
+          .select({
+            id: eventFormTemplates.id,
+            name: eventFormTemplates.name,
+            description: eventFormTemplates.description,
+            isPublished: eventFormTemplates.isPublished,
+            fields: sql<any[]>`json_agg(
+              CASE WHEN ${formFields.id} IS NOT NULL THEN
+                json_build_object(
+                  'id', ${formFields.id},
+                  'fieldId', ${formFields.fieldId},
+                  'label', ${formFields.label},
+                  'type', ${formFields.type},
+                  'required', ${formFields.required},
+                  'order', ${formFields.order},
+                  'placeholder', ${formFields.placeholder},
+                  'helpText', ${formFields.helpText},
+                  'validation', ${formFields.validation},
+                  'options', (
+                    SELECT json_agg(
+                      json_build_object(
+                        'id', ${formFieldOptions.id},
+                        'label', ${formFieldOptions.label},
+                        'value', ${formFieldOptions.value},
+                        'order', ${formFieldOptions.order}
+                      ) ORDER BY ${formFieldOptions.order}
+                    )
+                    FROM ${formFieldOptions}
+                    WHERE ${formFieldOptions.fieldId} = ${formFields.id}
+                  )
+                )
+              ELSE NULL END
+            ) FILTER (WHERE ${formFields.id} IS NOT NULL)`.mapWith(f => f || [])
+          })
+          .from(eventFormTemplates)
+          .leftJoin(formFields, eq(formFields.templateId, eventFormTemplates.id))
+          .where(and(
+            eq(eventFormTemplates.eventId, eventId),
+            eq(eventFormTemplates.isPublished, true)
+          ))
+          .groupBy(eventFormTemplates.id)
+          .limit(1);
+
+        if (template.length === 0) {
+          return res.json(null);
+        }
+
+        // Sort fields by order
+        template[0].fields.sort((a: any, b: any) => a.order - b.order);
+
+        res.json(template[0]);
+      } catch (error) {
+        console.error('Error fetching event form template:', error);
+        res.status(500).json({ error: "Failed to fetch event form template" });
+      }
+    });
+
     // Enhanced Form Template Additional Endpoints
 
     // Create new enhanced form template
