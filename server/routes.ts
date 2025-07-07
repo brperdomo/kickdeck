@@ -7970,6 +7970,95 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       }
     });
 
+    // Events endpoint for form template management
+    app.get('/api/admin/events', isAdmin, async (req, res) => {
+      try {
+        const eventsList = await db
+          .select({
+            id: events.id,
+            name: events.name,
+            startDate: events.startDate,
+            endDate: events.endDate
+          })
+          .from(events)
+          .orderBy(events.startDate);
+
+        res.json(eventsList);
+      } catch (error) {
+        console.error('Error fetching events:', error);
+        res.status(500).json({ error: "Failed to fetch events" });
+      }
+    });
+
+    // Enhanced form template endpoints - get all templates with enhanced data
+    app.get('/api/admin/enhanced-form-templates', isAdmin, async (req, res) => {
+      try {
+        const templates = await db
+          .select({
+            id: eventFormTemplates.id,
+            eventId: eventFormTemplates.eventId,
+            name: eventFormTemplates.name,
+            description: eventFormTemplates.description,
+            isPublished: eventFormTemplates.isPublished,
+            version: eventFormTemplates.version,
+            isActive: eventFormTemplates.isActive,
+            createdBy: eventFormTemplates.createdBy,
+            createdAt: eventFormTemplates.createdAt,
+            updatedAt: eventFormTemplates.updatedAt,
+            event: sql`
+              json_build_object(
+                'id', ${events.id},
+                'name', ${events.name}
+              )
+            `.mapWith(event => event || null),
+            creator: sql`
+              json_build_object(
+                'id', ${users.id},
+                'firstName', ${users.firstName},
+                'lastName', ${users.lastName}
+              )
+            `.mapWith(user => user || null),
+            fieldCount: sql`COUNT(${formFields.id})`.mapWith(Number),
+            teamUsageCount: sql`COUNT(DISTINCT ${teamTemplateUsage.teamId})`.mapWith(Number)
+          })
+          .from(eventFormTemplates)
+          .leftJoin(events, eq(events.id, eventFormTemplates.eventId))
+          .leftJoin(users, eq(users.id, eventFormTemplates.createdBy))
+          .leftJoin(formFields, eq(formFields.templateId, eventFormTemplates.id))
+          .leftJoin(teamTemplateUsage, eq(teamTemplateUsage.templateId, eventFormTemplates.id))
+          .groupBy(
+            eventFormTemplates.id,
+            events.id,
+            events.name,
+            users.id,
+            users.firstName,
+            users.lastName
+          )
+          .orderBy(eventFormTemplates.createdAt);
+
+        // Get fields for each template
+        const templatesWithFields = await Promise.all(
+          templates.map(async (template) => {
+            const fields = await db
+              .select()
+              .from(formFields)
+              .where(eq(formFields.templateId, template.id))
+              .orderBy(formFields.order);
+
+            return {
+              ...template,
+              fields
+            };
+          })
+        );
+
+        res.json(templatesWithFields);
+      } catch (error) {
+        console.error('Error fetching enhanced form templates:', error);
+        res.status(500).json({ error: "Failed to fetch enhanced form templates" });
+      }
+    });
+
     // Enhanced Form Template Additional Endpoints
 
     // Create new enhanced form template
@@ -8019,7 +8108,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           if (fields.length > 0) {
             const fieldsToInsert = fields.map((field: any, index: number) => ({
               templateId: template.id,
-              fieldId: field.fieldId,
+              fieldId: field.fieldId || field.label?.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '_').substring(0, 50) || `field_${index}`,
               label: field.label,
               type: field.type,
               required: field.required || false,
@@ -8131,7 +8220,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           if (fields.length > 0) {
             const fieldsToInsert = fields.map((field: any, index: number) => ({
               templateId,
-              fieldId: field.fieldId,
+              fieldId: field.fieldId || field.label?.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '_').substring(0, 50) || `field_${index}`,
               label: field.label,
               type: field.type,
               required: field.required || false,
