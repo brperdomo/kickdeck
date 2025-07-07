@@ -1,38 +1,42 @@
-import { Calendar } from "@/components/ui/calendar";
-import { Button } from "@/components/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
+import * as React from "react";
 import { format } from "date-fns";
+import { Calendar as CalendarIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 interface DatePickerProps {
-  date: Date | null;
-  onDateChange: (date: Date | null) => void;
-  placeholder?: string;
+  date: Date | undefined;
+  setDate: (date: Date | undefined) => void;
   className?: string;
 }
 
-export function DatePicker({ date, onDateChange, placeholder = "Pick a date", className }: DatePickerProps) {
+export function DatePicker({ date, setDate, className }: DatePickerProps) {
   return (
     <Popover>
       <PopoverTrigger asChild>
         <Button
           variant="outline"
           className={cn(
-            "w-[200px] justify-start text-left font-normal",
+            "w-full justify-start text-left font-normal",
             !date && "text-muted-foreground",
             className
           )}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
-          {date ? format(date, "PPP") : <span>{placeholder}</span>}
+          {date ? format(date, "PPP") : <span>Pick a date</span>}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
         <Calendar
           mode="single"
-          selected={date || undefined}
-          onSelect={(selectedDate) => onDateChange(selectedDate || null)}
+          selected={date}
+          onSelect={setDate}
           initialFocus
         />
       </PopoverContent>
@@ -40,5 +44,4 @@ export function DatePicker({ date, onDateChange, placeholder = "Pick a date", cl
   );
 }
 
-// Default export for compatibility
 export default DatePicker;
