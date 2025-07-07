@@ -1,0 +1,196 @@
+teams:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+teams:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+index-DM1juf8I.js:840 Sending status update with data: {teamId: 474, status: 'approved', notes: 'Approval attempted but payment failed (payment_err…tem now handles broken customer IDs automatically'}
+index-DM1juf8I.js:840 
+            
+            
+           PUT https://app.matchpro.ai/api/admin/teams/474/status 400 (Bad Request)
+mutationFn @ index-DM1juf8I.js:840
+fn @ index-DM1juf8I.js:40
+f @ index-DM1juf8I.js:40
+start @ index-DM1juf8I.js:40
+execute @ index-DM1juf8I.js:40
+await in execute
+mutate @ index-DM1juf8I.js:40
+(anonymous) @ index-DM1juf8I.js:40
+Cr @ index-DM1juf8I.js:840
+onClick @ index-DM1juf8I.js:840
+Sue @ index-DM1juf8I.js:37
+Eue @ index-DM1juf8I.js:37
+kue @ index-DM1juf8I.js:37
+aF @ index-DM1juf8I.js:37
+Uq @ index-DM1juf8I.js:37
+(anonymous) @ index-DM1juf8I.js:37
+fO @ index-DM1juf8I.js:40
+mq @ index-DM1juf8I.js:37
+x2 @ index-DM1juf8I.js:37
+U4 @ index-DM1juf8I.js:37
+Vue @ index-DM1juf8I.js:37Understand this error
+index-DM1juf8I.js:840 Raw response text: {"status":"error","error":"Payment processing failed","message":"Payment processing failed. Please check team payment details.","paymentStatus":"payment_error","teamStatus":"registered"}
+index-DM1juf8I.js:840 Error response: {status: 'error', error: 'Payment processing failed', message: 'Payment processing failed. Please check team payment details.', paymentStatus: 'payment_error', teamStatus: 'registered'}
+mutationFn @ index-DM1juf8I.js:840
+await in mutationFn
+fn @ index-DM1juf8I.js:40
+f @ index-DM1juf8I.js:40
+start @ index-DM1juf8I.js:40
+execute @ index-DM1juf8I.js:40
+await in execute
+mutate @ index-DM1juf8I.js:40
+(anonymous) @ index-DM1juf8I.js:40
+Cr @ index-DM1juf8I.js:840
+onClick @ index-DM1juf8I.js:840
+Sue @ index-DM1juf8I.js:37
+Eue @ index-DM1juf8I.js:37
+kue @ index-DM1juf8I.js:37
+aF @ index-DM1juf8I.js:37
+Uq @ index-DM1juf8I.js:37
+(anonymous) @ index-DM1juf8I.js:37
+fO @ index-DM1juf8I.js:40
+mq @ index-DM1juf8I.js:37
+x2 @ index-DM1juf8I.js:37
+U4 @ index-DM1juf8I.js:37
+Vue @ index-DM1juf8I.js:37Understand this error
+index-DM1juf8I.js:840 Error in updateTeamStatus mutation: Error: Payment processing failed
+    at Object.mutationFn (index-DM1juf8I.js:840:82845)
+mutationFn @ index-DM1juf8I.js:840
+await in mutationFn
+fn @ index-DM1juf8I.js:40
+f @ index-DM1juf8I.js:40
+start @ index-DM1juf8I.js:40
+execute @ index-DM1juf8I.js:40
+await in execute
+mutate @ index-DM1juf8I.js:40
+(anonymous) @ index-DM1juf8I.js:40
+Cr @ index-DM1juf8I.js:840
+onClick @ index-DM1juf8I.js:840
+Sue @ index-DM1juf8I.js:37
+Eue @ index-DM1juf8I.js:37
+kue @ index-DM1juf8I.js:37
+aF @ index-DM1juf8I.js:37
+Uq @ index-DM1juf8I.js:37
+(anonymous) @ index-DM1juf8I.js:37
+fO @ index-DM1juf8I.js:40
+mq @ index-DM1juf8I.js:37
+x2 @ index-DM1juf8I.js:37
+U4 @ index-DM1juf8I.js:37
+Vue @ index-DM1juf8I.js:37Understand this error
+index-DM1juf8I.js:840 Fetch failed loading: PUT "https://app.matchpro.ai/api/admin/teams/474/status".
+mutationFn @ index-DM1juf8I.js:840
+fn @ index-DM1juf8I.js:40
+f @ index-DM1juf8I.js:40
+start @ index-DM1juf8I.js:40
+execute @ index-DM1juf8I.js:40
+await in execute
+mutate @ index-DM1juf8I.js:40
+(anonymous) @ index-DM1juf8I.js:40
+Cr @ index-DM1juf8I.js:840
+onClick @ index-DM1juf8I.js:840
+Sue @ index-DM1juf8I.js:37
+Eue @ index-DM1juf8I.js:37
+kue @ index-DM1juf8I.js:37
+aF @ index-DM1juf8I.js:37
+Uq @ index-DM1juf8I.js:37
+(anonymous) @ index-DM1juf8I.js:37
+fO @ index-DM1juf8I.js:40
+mq @ index-DM1juf8I.js:37
+x2 @ index-DM1juf8I.js:37
+U4 @ index-DM1juf8I.js:37
+Vue @ index-DM1juf8I.js:37
+teams:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+teams:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+index-DM1juf8I.js:840 Sending status update with data: {teamId: 472, status: 'approved', notes: 'Approval attempted but payment failed (payment_err…tem now handles broken customer IDs automatically'}
+index-DM1juf8I.js:840 
+            
+            
+           PUT https://app.matchpro.ai/api/admin/teams/472/status 400 (Bad Request)
+mutationFn @ index-DM1juf8I.js:840
+fn @ index-DM1juf8I.js:40
+f @ index-DM1juf8I.js:40
+start @ index-DM1juf8I.js:40
+execute @ index-DM1juf8I.js:40
+await in execute
+mutate @ index-DM1juf8I.js:40
+(anonymous) @ index-DM1juf8I.js:40
+Cr @ index-DM1juf8I.js:840
+onClick @ index-DM1juf8I.js:840
+Sue @ index-DM1juf8I.js:37
+Eue @ index-DM1juf8I.js:37
+kue @ index-DM1juf8I.js:37
+aF @ index-DM1juf8I.js:37
+Uq @ index-DM1juf8I.js:37
+(anonymous) @ index-DM1juf8I.js:37
+fO @ index-DM1juf8I.js:40
+mq @ index-DM1juf8I.js:37
+x2 @ index-DM1juf8I.js:37
+U4 @ index-DM1juf8I.js:37
+Vue @ index-DM1juf8I.js:37Understand this error
+index-DM1juf8I.js:840 Raw response text: {"status":"error","error":"Payment processing failed","message":"Payment processing failed. Please check team payment details.","paymentStatus":"payment_error","teamStatus":"registered"}
+index-DM1juf8I.js:840 Error response: {status: 'error', error: 'Payment processing failed', message: 'Payment processing failed. Please check team payment details.', paymentStatus: 'payment_error', teamStatus: 'registered'}
+mutationFn @ index-DM1juf8I.js:840
+await in mutationFn
+fn @ index-DM1juf8I.js:40
+f @ index-DM1juf8I.js:40
+start @ index-DM1juf8I.js:40
+execute @ index-DM1juf8I.js:40
+await in execute
+mutate @ index-DM1juf8I.js:40
+(anonymous) @ index-DM1juf8I.js:40
+Cr @ index-DM1juf8I.js:840
+onClick @ index-DM1juf8I.js:840
+Sue @ index-DM1juf8I.js:37
+Eue @ index-DM1juf8I.js:37
+kue @ index-DM1juf8I.js:37
+aF @ index-DM1juf8I.js:37
+Uq @ index-DM1juf8I.js:37
+(anonymous) @ index-DM1juf8I.js:37
+fO @ index-DM1juf8I.js:40
+mq @ index-DM1juf8I.js:37
+x2 @ index-DM1juf8I.js:37
+U4 @ index-DM1juf8I.js:37
+Vue @ index-DM1juf8I.js:37Understand this error
+index-DM1juf8I.js:840 Error in updateTeamStatus mutation: Error: Payment processing failed
+    at Object.mutationFn (index-DM1juf8I.js:840:82845)
+mutationFn @ index-DM1juf8I.js:840
+await in mutationFn
+fn @ index-DM1juf8I.js:40
+f @ index-DM1juf8I.js:40
+start @ index-DM1juf8I.js:40
+execute @ index-DM1juf8I.js:40
+await in execute
+mutate @ index-DM1juf8I.js:40
+(anonymous) @ index-DM1juf8I.js:40
+Cr @ index-DM1juf8I.js:840
+onClick @ index-DM1juf8I.js:840
+Sue @ index-DM1juf8I.js:37
+Eue @ index-DM1juf8I.js:37
+kue @ index-DM1juf8I.js:37
+aF @ index-DM1juf8I.js:37
+Uq @ index-DM1juf8I.js:37
+(anonymous) @ index-DM1juf8I.js:37
+fO @ index-DM1juf8I.js:40
+mq @ index-DM1juf8I.js:37
+x2 @ index-DM1juf8I.js:37
+U4 @ index-DM1juf8I.js:37
+Vue @ index-DM1juf8I.js:37Understand this error
+index-DM1juf8I.js:840 Fetch failed loading: PUT "https://app.matchpro.ai/api/admin/teams/472/status".
+mutationFn @ index-DM1juf8I.js:840
+fn @ index-DM1juf8I.js:40
+f @ index-DM1juf8I.js:40
+start @ index-DM1juf8I.js:40
+execute @ index-DM1juf8I.js:40
+await in execute
+mutate @ index-DM1juf8I.js:40
+(anonymous) @ index-DM1juf8I.js:40
+Cr @ index-DM1juf8I.js:840
+onClick @ index-DM1juf8I.js:840
+Sue @ index-DM1juf8I.js:37
+Eue @ index-DM1juf8I.js:37
+kue @ index-DM1juf8I.js:37
+aF @ index-DM1juf8I.js:37
+Uq @ index-DM1juf8I.js:37
+(anonymous) @ index-DM1juf8I.js:37
+fO @ index-DM1juf8I.js:40
+mq @ index-DM1juf8I.js:37
+x2 @ index-DM1juf8I.js:37
+U4 @ index-DM1juf8I.js:37
+Vue @ index-DM1juf8I.js:37
