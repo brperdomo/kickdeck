@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/collapsible";
 import { TeamModal } from "@/components/teams/TeamModal";
 import { TeamCsvUploader } from "@/components/teams/TeamCsvUploader";
+import { FormSubmissionsCard } from "@/components/admin/FormSubmissionsCard";
 import { BracketAssignmentModal } from "@/components/BracketAssignmentModal";
 import { ScheduleVisualization } from "@/components/ScheduleVisualization";
 import BracketSelector from "@/components/admin/scheduling/BracketSelector";
@@ -241,7 +242,8 @@ import { UpdatesLogModal } from "@/components/admin/UpdatesLogModal";
 import { useDropzone } from 'react-dropzone';
 import { FileManager } from "@/components/admin/FileManager.tsx";
 import Members from "@/components/admin/Members";
-import { FormTemplatesView } from "@/components/admin/FormTemplatesView"; // Import the component
+import { FormTemplatesView } from "@/components/admin/FormTemplatesView";
+import { FormSubmissionsReport } from "@/pages/FormSubmissionsReport"; // Import the component
 import { AccountingCodeModal } from "@/components/admin/AccountingCodeModal";
 import FormTemplateEditPage from "@/pages/form-template-edit";
 import FormTemplateCreatePage from "@/pages/form-template-create";
@@ -495,7 +497,7 @@ function isAdminUser(user: SelectUser | null): user is SelectUser & { isAdmin: t
   return user !== null && user.isAdmin === true;
 }
 
-type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports' | 'account' | 'complexes' | 'scheduling' | 'files' | 'formTemplates' | 'roles' | 'members';
+type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports' | 'account' | 'complexes' | 'scheduling' | 'files' | 'formTemplates' | 'formSubmissions' | 'roles' | 'members';
 type SettingsView = 'general';
 type ReportType = 'financial' | 'manager' | 'player' | 'schedule' | 'guest-player';
 type RoleType = 'super_admin' | 'tournament_admin' | 'score_admin' | 'finance_admin';
@@ -5096,6 +5098,9 @@ function TeamsView() {
                 </CardContent>
               </Card>
                 
+              {/* Form Template Submissions */}
+              <FormSubmissionsCard teamId={selectedTeam.id} />
+              
               {/* Additional notes or special requirements */}
               {selectedTeam.specialRequirements && (
                 <Card>
@@ -6188,6 +6193,7 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
       'files': 'view_files',
       'coupons': 'view_coupons',
       'formTemplates': 'view_form_templates',
+      'formSubmissions': 'view_form_templates',
       'roles': 'view_role_permissions',
       'members': 'view_members'
     };
@@ -6272,6 +6278,8 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
       /* Coupons are managed within events, not as a standalone view */
       case 'formTemplates':
         return <FormTemplatesView />;
+      case 'formSubmissions':
+        return <FormSubmissionsReport />;
       case 'roles':
         return (
           <div className="space-y-4">
@@ -6417,6 +6425,15 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
                   icon={<Users className="h-4 w-4" />}
                   label="Members"
                   permission="view_members"
+                />
+                
+                <AnimatedNavigationButton
+                  view="formSubmissions"
+                  activeView={activeView}
+                  onClick={() => setActiveView('formSubmissions')}
+                  icon={<FileText className="h-4 w-4" />}
+                  label="Form Submissions"
+                  permission="view_form_templates"
                 />
                 
                 {/* Coupons are managed within events, so no standalone navigation is needed */}
@@ -7015,6 +7032,7 @@ const getNavigationItems = (isTournamentDirector: boolean, hasRole: (role: strin
     { icon: ImageIcon, label: "File Manager", value: "files" as const },
     { icon: Ticket, label: "Coupons", value: "coupons" as const },
     { icon: FormInput, label: "Form Templates", value: "formTemplates" as const },
+    { icon: FileText, label: "Form Submissions", value: "formSubmissions" as const },
     { icon: KeyRound, label: "Role Permissions", value: "roles" as const },
     { icon: UserRound, label: "Members", value: "members" as const },
     { icon: User, label: "My Account", value: "account" as const },
