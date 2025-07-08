@@ -142,10 +142,7 @@ export async function processDestinationCharge(
         confirm: true,
         // NOTE: Removed receipt_email to ensure consistent receipt handling
         // Tournament organizers should handle their own receipt delivery
-        automatic_payment_methods: {
-          enabled: true,
-          allow_redirects: 'never'
-        },
+        payment_method_types: ['card'],
         metadata: {
           teamId: teamId.toString(),
           teamName: team.name || '',
@@ -236,10 +233,7 @@ export async function processDestinationCharge(
           destination: connectAccountId,
         },
         application_fee_amount: feeCalculation.platformFeeAmount, // This is the critical line that collects MatchPro revenue
-        automatic_payment_methods: {
-          enabled: true,
-          allow_redirects: 'never'
-        },
+        payment_method_types: ['card'],
         metadata: {
           teamId: teamId.toString(),
           teamName: team.name || '',

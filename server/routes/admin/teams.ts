@@ -1253,8 +1253,9 @@ async function generatePaymentCompletionUrl(req: Request, res: Response) {
       }
     }
     
-    // Create new Setup Intent for completion
+    // Create new Setup Intent for completion (card payments only, no Link)
     const newSetupIntent = await stripe.setupIntents.create({
+      payment_method_types: ['card'],
       usage: 'off_session',
       metadata: {
         teamId: teamId,

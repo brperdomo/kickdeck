@@ -113,14 +113,14 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
-- July 7, 2025: LINK PAYMENT RECOVERY SYSTEM IMPLEMENTED - Fixed Empire Surf Academy B2014 payment failure by implementing Link payment method recovery
-  - IDENTIFIED: Team 481 payment failures caused by Stripe Link payment method detachment after initial use
-  - DIAGNOSED: Link payment methods cannot be reused for approval charging due to Stripe limitations
-  - IMPLEMENTED: Payment recovery system creating new customers and Payment Intents for detached Link payments
-  - RESOLVED: Team 481 (Empire Surf Academy B2014) now has fresh Payment Intent (pi_3RiNIjP4BpmZARxt1xHli6oK) for $497.50 completion
-  - SYSTEMATIC: Payment completion URL generation for customers to provide new payment methods
-  - CORRECTED: Stripe payment descriptions now properly reference "Empire Super Cup" instead of incorrect "Rise Cup" reference
-  - PRODUCTION READY: Link payment recovery workflow operational for teams experiencing payment method detachment issues
+- July 7, 2025: STRIPE LINK PAYMENT REMOVAL - Eliminated Link payment support to prevent detachment issues during registration
+  - IDENTIFIED: Link payment methods cause approval failures due to Stripe detachment limitations after initial use
+  - REMOVED: Link payment support from all Setup Intent and Payment Intent creation endpoints
+  - UPDATED: Frontend CardElement already configured for card-only payments (no Link support)
+  - CHANGED: Backend Setup Intent creation now uses payment_method_types: ['card'] instead of automatic_payment_methods
+  - ELIMINATED: All Link payment processing logic and automatic payment method detection
+  - SIMPLIFIED: Payment workflow now only supports reliable card payments that work consistently through approval process
+  - PRODUCTION READY: Registration system prevents Link payment issues by design, ensuring all teams can be approved successfully
 - July 7, 2025: ENHANCED FORM TEMPLATE SYSTEM COMPLETED - Fully implemented comprehensive custom form template management with advanced features
   - CREATED: Enhanced form template management system with versioning, audit trails, and usage tracking
   - IMPLEMENTED: Comprehensive API endpoints for template CRUD operations, event assignment, and CSV export

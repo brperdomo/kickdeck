@@ -420,12 +420,8 @@ export async function createSetupIntent(teamId: number | string, metadata?: Reco
     }
     
     const setupIntentData: any = {
-      // Use automatic_payment_methods instead of payment_method_types
-      // This is the recommended approach by Stripe
-      automatic_payment_methods: {
-        enabled: true,
-        allow_redirects: 'never'
-      },
+      // Use specific payment_method_types to only allow card payments (no Link)
+      payment_method_types: ['card'],
       usage: 'off_session', // This allows for future use without customer being present
       metadata: {
         teamId: teamId.toString(),
