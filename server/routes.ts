@@ -121,6 +121,7 @@ import {
   formFields,
   formFieldOptions,
   formResponses,
+  templateAuditLog,
   players,
   gameTimeSlots,
   eventSettings,
@@ -8088,7 +8089,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
 
           // Create audit log
           await tx
-            .insert(formTemplateAuditLogs)
+            .insert(templateAuditLog)
             .values({
               templateId: template.id,
               action: 'created',
@@ -8190,7 +8191,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
 
           // Create audit log
           await tx
-            .insert(formTemplateAuditLogs)
+            .insert(templateAuditLog)
             .values({
               templateId,
               action: 'updated',
@@ -8294,11 +8295,11 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
 
         const auditLogs = await db
           .select({
-            id: formTemplateAuditLogs.id,
-            action: formTemplateAuditLogs.action,
-            changeDetails: formTemplateAuditLogs.changeDetails,
-            affectedTeamCount: formTemplateAuditLogs.affectedTeamCount,
-            createdAt: formTemplateAuditLogs.createdAt,
+            id: templateAuditLog.id,
+            action: templateAuditLog.action,
+            changeDetails: templateAuditLog.changeDetails,
+            affectedTeamCount: templateAuditLog.affectedTeamCount,
+            createdAt: templateAuditLog.createdAt,
             performedBy: sql`
               json_build_object(
                 'id', ${users.id}, 
@@ -8307,10 +8308,10 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
               )
             `.mapWith(user => user || null)
           })
-          .from(formTemplateAuditLogs)
-          .leftJoin(users, eq(users.id, formTemplateAuditLogs.performedBy))
-          .where(eq(formTemplateAuditLogs.templateId, templateId))
-          .orderBy(formTemplateAuditLogs.createdAt);
+          .from(templateAuditLog)
+          .leftJoin(users, eq(users.id, templateAuditLog.performedBy))
+          .where(eq(templateAuditLog.templateId, templateId))
+          .orderBy(templateAuditLog.createdAt);
 
         res.json(auditLogs);
       } catch (error) {
