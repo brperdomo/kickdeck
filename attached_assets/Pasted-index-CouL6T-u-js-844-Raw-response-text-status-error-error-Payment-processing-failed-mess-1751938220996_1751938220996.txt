@@ -1,0 +1,70 @@
+index-CouL6T-u.js:844 Raw response text: {"status":"error","error":"Payment processing failed","message":"Payment processing failed. Please check team payment details.","paymentStatus":"payment_error","teamStatus":"registered"}
+index-CouL6T-u.js:844 Error response: {status: 'error', error: 'Payment processing failed', message: 'Payment processing failed. Please check team payment details.', paymentStatus: 'payment_error', teamStatus: 'registered'}
+mutationFn @ index-CouL6T-u.js:844
+await in mutationFn
+fn @ index-CouL6T-u.js:40
+f @ index-CouL6T-u.js:40
+start @ index-CouL6T-u.js:40
+execute @ index-CouL6T-u.js:40
+await in execute
+mutate @ index-CouL6T-u.js:40
+(anonymous) @ index-CouL6T-u.js:40
+Cr @ index-CouL6T-u.js:844
+onClick @ index-CouL6T-u.js:844
+Eue @ index-CouL6T-u.js:37
+Pue @ index-CouL6T-u.js:37
+Aue @ index-CouL6T-u.js:37
+lM @ index-CouL6T-u.js:37
+qq @ index-CouL6T-u.js:37
+(anonymous) @ index-CouL6T-u.js:37
+pO @ index-CouL6T-u.js:40
+pq @ index-CouL6T-u.js:37
+v2 @ index-CouL6T-u.js:37
+V4 @ index-CouL6T-u.js:37
+que @ index-CouL6T-u.js:37Understand this error
+index-CouL6T-u.js:844 Error in updateTeamStatus mutation: Error: Payment processing failed
+    at Object.mutationFn (index-CouL6T-u.js:844:82844)
+mutationFn @ index-CouL6T-u.js:844
+await in mutationFn
+fn @ index-CouL6T-u.js:40
+f @ index-CouL6T-u.js:40
+start @ index-CouL6T-u.js:40
+execute @ index-CouL6T-u.js:40
+await in execute
+mutate @ index-CouL6T-u.js:40
+(anonymous) @ index-CouL6T-u.js:40
+Cr @ index-CouL6T-u.js:844
+onClick @ index-CouL6T-u.js:844
+Eue @ index-CouL6T-u.js:37
+Pue @ index-CouL6T-u.js:37
+Aue @ index-CouL6T-u.js:37
+lM @ index-CouL6T-u.js:37
+qq @ index-CouL6T-u.js:37
+(anonymous) @ index-CouL6T-u.js:37
+pO @ index-CouL6T-u.js:40
+pq @ index-CouL6T-u.js:37
+v2 @ index-CouL6T-u.js:37
+V4 @ index-CouL6T-u.js:37
+que @ index-CouL6T-u.js:37Understand this error
+index-CouL6T-u.js:844 Fetch failed loading: PUT "https://app.matchpro.ai/api/admin/teams/489/status".
+mutationFn @ index-CouL6T-u.js:844
+fn @ index-CouL6T-u.js:40
+f @ index-CouL6T-u.js:40
+start @ index-CouL6T-u.js:40
+execute @ index-CouL6T-u.js:40
+await in execute
+mutate @ index-CouL6T-u.js:40
+(anonymous) @ index-CouL6T-u.js:40
+Cr @ index-CouL6T-u.js:844
+onClick @ index-CouL6T-u.js:844
+Eue @ index-CouL6T-u.js:37
+Pue @ index-CouL6T-u.js:37
+Aue @ index-CouL6T-u.js:37
+lM @ index-CouL6T-u.js:37
+qq @ index-CouL6T-u.js:37
+(anonymous) @ index-CouL6T-u.js:37
+pO @ index-CouL6T-u.js:40
+pq @ index-CouL6T-u.js:37
+v2 @ index-CouL6T-u.js:37
+V4 @ index-CouL6T-u.js:37
+que @ index-CouL6T-u.js:37

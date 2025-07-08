@@ -615,11 +615,16 @@ async function updateTeamStatus(req: Request, res: Response) {
             })
             .where(eq(teams.id, parseInt(teamId, 10)));
           
-          // Determine specific error message and action required
+          // Use enhanced Stripe error handling for detailed context
           let specificError = 'Payment processing failed';
           let actionRequired = 'Please check team payment details.';
           
-          if (paymentError instanceof Error) {
+          // Check if we have detailed Stripe error context from our enhanced error handler
+          if (paymentError && typeof paymentError === 'object' && 'detailedContext' in paymentError) {
+            const context = (paymentError as any).detailedContext;
+            specificError = context.summary;
+            actionRequired = context.suggested_solution;
+          } else if (paymentError instanceof Error) {
             const errorMessage = paymentError.message;
             
             if (errorMessage.includes('was previously used and cannot be reused')) {
