@@ -518,6 +518,58 @@ export function registerRoutes(app: Express): Server {
         }
         
         if (paymentIntent.status === 'succeeded') {
+          // Get card details for transaction recording
+          let cardBrand = null;
+          let cardLastFour = null;
+          let paymentMethodType = 'unknown';
+          
+          try {
+            const paymentMethod = await stripe.paymentMethods.retrieve(paymentMethodId);
+            paymentMethodType = paymentMethod.type;
+            if (paymentMethod.type === 'card' && paymentMethod.card) {
+              cardBrand = paymentMethod.card.brand;
+              cardLastFour = paymentMethod.card.last4;
+            } else if (paymentMethod.type === 'link') {
+              cardBrand = 'link';
+              cardLastFour = 'N/A';
+            }
+          } catch (error) {
+            console.log('Error retrieving payment method details:', error);
+          }
+          
+          // Use the correct fee calculation results
+          const totalCharged = feeCalculation.totalAmount || feeCalculation.totalChargedAmount || tournamentCostCents;
+          const platformFeeAmount = feeCalculation.platformFee || feeCalculation.platformFeeAmount || 0;
+          const stripeFee = Math.round(totalCharged * 0.029 + 30); // 2.9% + $0.30
+          const netAmount = totalCharged - stripeFee;
+          
+          // Create transaction record for Payment Logs report
+          await db.insert(paymentTransactions).values({
+            teamId: parseInt(teamId, 10),
+            eventId: team.eventId,
+            userId: null, // No specific user for payment completion
+            paymentIntentId: paymentIntent.id,
+            setupIntentId: team.setupIntentId,
+            transactionType: 'payment',
+            amount: totalCharged,
+            stripeFee: stripeFee,
+            netAmount: netAmount,
+            status: 'succeeded',
+            cardBrand: cardBrand,
+            cardLastFour: cardLastFour,
+            paymentMethodType: paymentMethodType,
+            errorCode: null,
+            description: `Payment completion via URL - ${team.name}`,
+            metadata: JSON.stringify({
+              source: 'payment_completion_url',
+              teamName: team.name,
+              replacingLinkPayment: paymentMethodType === 'card' && team.paymentMethodId ? 'true' : 'false',
+              originalPaymentMethod: team.paymentMethodId
+            }),
+            createdAt: new Date(),
+            updatedAt: new Date()
+          });
+          
           // Update team with payment details
           await db.update(teams)
             .set({
@@ -529,11 +581,7 @@ export function registerRoutes(app: Express): Server {
             })
             .where(eq(teams.id, parseInt(teamId, 10)));
           
-          console.log(`Payment successful for team ${teamId}. Payment Intent: ${paymentIntent.id}`);
-          
-          // Use the correct fee calculation results
-          const totalCharged = feeCalculation.totalAmount || feeCalculation.totalChargedAmount || tournamentCostCents;
-          const platformFeeAmount = feeCalculation.platformFee || feeCalculation.platformFeeAmount || 0;
+          console.log(`Payment successful for team ${teamId}. Payment Intent: ${paymentIntent.id}, Transaction recorded in payment_transactions table`);
           
           console.log(`Total charged: $${(totalCharged / 100).toFixed(2)} (Tournament: $${(tournamentCostCents / 100).toFixed(2)} + Platform Fee: $${(platformFeeAmount / 100).toFixed(2)})`);
           

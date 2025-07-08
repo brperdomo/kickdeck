@@ -119,6 +119,7 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
   - IMPROVED: Clear messaging distinguishes between teams ready for approval vs teams needing Link payment replacement
   - IMPLEMENTED: New Setup Intent creation for Link payment replacement with proper metadata tracking
   - GUIDED: Frontend shows specific messages for Link payment replacement URLs vs regular completion URLs
+  - TRACKED: Payment completion transactions now properly recorded in payment_transactions table for Payment Logs report
   - PRODUCTION READY: Teams with Link payments can seamlessly transition to regular card payments without losing registration data
 - July 8, 2025: ENHANCED PAYMENT COMPLETION URL ERROR MESSAGING - Improved user guidance for teams ready for approval instead of needing new payment URLs
   - ENHANCED: Payment completion URL error messages now provide specific guidance when teams have completed payment setup
