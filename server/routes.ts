@@ -8365,6 +8365,82 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       }
     });
 
+    // Get all form template submissions (collective reporting)
+    app.get('/api/admin/form-submissions/all', isAdmin, async (req, res) => {
+      try {
+        const eventId = req.query.eventId ? parseInt(req.query.eventId as string) : null;
+        
+        // Build query for all form submissions
+        let query = db
+          .select({
+            id: formResponses.id,
+            templateId: formResponses.templateId,
+            templateName: eventFormTemplates.name,
+            teamId: formResponses.teamId,
+            teamName: teams.name,
+            teamStatus: teams.status,
+            submitterEmail: teams.submitterEmail,
+            eventId: teams.eventId,
+            eventName: events.name,
+            responses: formResponses.responses,
+            templateVersion: formResponses.templateVersion,
+            submittedAt: formResponses.createdAt,
+          })
+          .from(formResponses)
+          .leftJoin(eventFormTemplates, eq(eventFormTemplates.id, formResponses.templateId))
+          .leftJoin(teams, eq(teams.id, formResponses.teamId))
+          .leftJoin(events, eq(events.id, teams.eventId));
+        
+        // Filter by event if specified
+        if (eventId) {
+          query = query.where(eq(teams.eventId, eventId));
+        }
+        
+        const submissions = await query.orderBy(formResponses.createdAt);
+        
+        res.json({
+          success: true,
+          submissions: submissions,
+          totalCount: submissions.length
+        });
+        
+      } catch (error) {
+        console.error('Error fetching all form submissions:', error);
+        res.status(500).json({ error: "Failed to fetch form submissions" });
+      }
+    });
+
+    // Get form submissions for a specific team
+    app.get('/api/admin/teams/:teamId/form-submissions', isAdmin, async (req, res) => {
+      try {
+        const teamId = parseInt(req.params.teamId);
+        
+        const submissions = await db
+          .select({
+            id: formResponses.id,
+            templateId: formResponses.templateId,
+            templateName: eventFormTemplates.name,
+            responses: formResponses.responses,
+            templateVersion: formResponses.templateVersion,
+            submittedAt: formResponses.createdAt,
+            fields: eventFormTemplates.fields
+          })
+          .from(formResponses)
+          .leftJoin(eventFormTemplates, eq(eventFormTemplates.id, formResponses.templateId))
+          .where(eq(formResponses.teamId, teamId))
+          .orderBy(formResponses.createdAt);
+        
+        res.json({
+          success: true,
+          submissions: submissions
+        });
+        
+      } catch (error) {
+        console.error('Error fetching team form submissions:', error);
+        res.status(500).json({ error: "Failed to fetch team form submissions" });
+      }
+    });
+
     // Export form data as CSV
     app.get('/api/admin/form-templates/:id/export-data', isAdmin, async (req, res) => {
       try {
@@ -8532,7 +8608,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         // Check if team is approved (only approved teams should get approval emails)
         if (team.status !== 'approved') {
           return res.status(400).json({ 
-            error: 'Can only resend approval emails for approved teams',
+            error: 'Can only resend approval emails to approved teams',
             currentStatus: team.status 
           });
         }
@@ -8616,51 +8692,39 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
               description,
               isPublished: isPublished || false,
               createdAt: new Date(),
-              updatedAt: new Date()
+              updatedAt: new Date(),
+              createdBy: (req as any).user?.id || 1
             })
             .returning();
 
           // Create fields
-          if (fields?.length) {
-            for (const [index, field] of fields.entries()) {
-              const fieldId = field.fieldId || field.label?.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '_').substring(0, 50) || `field_${index}`;
-              
-              const [newField] = await tx
-                .insert(formFields)
-                .values({
-                  templateId: template.id,
-                  fieldId: fieldId,
-                  label: field.label,
-                  type: field.type,
-                  required: field.required,
-                  order: field.order || index,
-                  placeholder: field.placeholder,
-                  helpText: field.helpText,
-                  validation: field.validation
-                })
-                .returning();
-
-              // Create options for dropdown fields
-              if (field.type === 'dropdown' && field.options?.length) {
-                await tx
-                  .insert(formFieldOptions)
-                  .values(
-                    field.options.map((option: any, index: number) => ({
-                      fieldId: newField.id,
-                      label: option.label,
-                      value: option.value,
-                      order: option.order || index
-                    }))
-                  );
-              }
-            }
+          for (const field of fields) {
+            await tx.insert(eventFormTemplateFields).values({
+              templateId: template.id,
+              fieldId: field.id,
+              fieldType: field.type,
+              fieldLabel: field.label,
+              fieldName: field.name,
+              isRequired: field.required || false,
+              fieldOptions: field.options || null,
+              placeholder: field.placeholder || null,
+              helpText: field.helpText || null,
+              sortOrder: field.sortOrder || 0,
+              createdAt: new Date(),
+              updatedAt: new Date()
+            });
           }
+
+          res.json({ 
+            success: true, 
+            template: template,
+            message: 'Form template created successfully' 
+          });
         });
 
-        res.json({ message: "Form template created successfully" });
       } catch (error) {
         console.error('Error creating form template:', error);
-        res.status(500).json({ error: "Failed to create form template" });
+        res.status(500).json({ error: 'Failed to create form template' });
       }
     });
 
