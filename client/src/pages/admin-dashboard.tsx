@@ -3350,14 +3350,14 @@ function TeamsView() {
 
   // Mutation for approving/rejecting team registration
   const updateTeamStatusMutation = useMutation({
-    mutationFn: async ({ teamId, status, notes }: { teamId: number, status: string, notes?: string }) => {
+    mutationFn: async ({ teamId, status, notes, skipPayment }: { teamId: number, status: string, notes?: string, skipPayment?: boolean }) => {
       try {
-        console.log('Sending status update with data:', { teamId, status, notes });
+        console.log('Sending status update with data:', { teamId, status, notes, skipPayment });
         
         const response = await fetch(`/api/admin/teams/${teamId}/status`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ status, notes })
+          body: JSON.stringify({ status, notes, skipPayment })
         });
         
         // First try to get the response text to check for parsing issues
@@ -3835,7 +3835,7 @@ function TeamsView() {
   };
 
   // Handle team status update
-  const handleStatusUpdate = (team: any, status: 'registered' | 'approved' | 'rejected' | 'withdrawn' | 'refunded' | 'waitlisted') => {
+  const handleStatusUpdate = (team: any, status: 'registered' | 'approved' | 'rejected' | 'withdrawn' | 'refunded' | 'waitlisted', notes?: string, skipPayment?: boolean) => {
     const statusDisplayMap = {
       'registered': 'Pending Review',
       'approved': 'Approved',
@@ -3851,7 +3851,9 @@ function TeamsView() {
     
     // Special messaging for specific status transitions
     if (team.status === 'registered' && status === 'approved') {
-      dialogMessage = `Approve team "${team.name}" for participation in the event?`;
+      dialogMessage = skipPayment 
+        ? `Approve team "${team.name}" for participation in the event without processing payment? (Team is already marked as PAID)`
+        : `Approve team "${team.name}" for participation in the event?`;
     } else if (team.status === 'registered' && status === 'rejected') {
       dialogMessage = `Reject team "${team.name}" from participating in the event?`;
     } else if (team.status === 'registered' && status === 'waitlisted') {
@@ -3866,7 +3868,8 @@ function TeamsView() {
       ...team, 
       status,
       dialogTitle,
-      dialogMessage
+      dialogMessage,
+      skipPayment
     });
     setIsApprovalDialogOpen(true);
   };
@@ -3890,7 +3893,8 @@ function TeamsView() {
     updateTeamStatusMutation.mutate({
       teamId: selectedTeam.id,
       status: selectedTeam.status,
-      notes
+      notes,
+      skipPayment: selectedTeam.skipPayment
     });
   };
 
@@ -5399,16 +5403,34 @@ function TeamsView() {
                       <X className="h-4 w-4 mr-1" />
                       Reject Team
                     </Button>
-                    <Button
-                      className="team-status-button"
-                      onClick={() => {
-                        setIsDetailsDialogOpen(false);
-                        handleStatusUpdate(selectedTeam, 'approved');
-                      }}
-                    >
-                      <Check className="h-4 w-4 mr-1" />
-                      Approve Team
-                    </Button>
+                    
+                    {/* Show different approval buttons based on payment status */}
+                    {selectedTeam.payment_status === 'paid' ? (
+                      // For teams already paid - skip payment processing
+                      <Button
+                        className="team-status-button"
+                        onClick={() => {
+                          setIsDetailsDialogOpen(false);
+                          handleStatusUpdate(selectedTeam, 'approved', null, true); // true = skip payment
+                        }}
+                      >
+                        <Check className="h-4 w-4 mr-1" />
+                        Approve Without Payment
+                      </Button>
+                    ) : (
+                      // For teams that need payment processing
+                      <Button
+                        className="team-status-button"
+                        onClick={() => {
+                          setIsDetailsDialogOpen(false);
+                          handleStatusUpdate(selectedTeam, 'approved');
+                        }}
+                      >
+                        <Check className="h-4 w-4 mr-1" />
+                        Approve Team
+                      </Button>
+                    )}
+                    
                     <Button 
                       variant="outline"
                       className="team-status-button"

@@ -492,6 +492,7 @@ async function updateTeamStatus(req: Request, res: Response) {
     const teamId = req.params?.teamId;
     const status = req.body?.status;
     const notes = req.body?.notes;
+    const skipPayment = req.body?.skipPayment;
     
     if (!teamId || !status) {
       return res.status(400).json({ 
@@ -592,8 +593,13 @@ async function updateTeamStatus(req: Request, res: Response) {
     // Process payment if team is being approved
     let paymentStatus = 'not_applicable';
     if (status === 'approved' && currentTeam.totalAmount && currentTeam.totalAmount > 0) {
+      // Check if payment should be skipped (for teams already marked as PAID)
+      if (skipPayment) {
+        log(`Team ${teamId} approval without payment processing (skipPayment=true). Team payment status: ${currentTeam.paymentStatus}`, 'admin');
+        paymentStatus = 'skipped_already_paid';
+      }
       // Check if team has already been charged to prevent duplicate payments
-      if (currentTeam.paymentStatus === 'paid' && currentTeam.paymentIntentId) {
+      else if (currentTeam.paymentStatus === 'paid' && currentTeam.paymentIntentId) {
         log(`WARNING: Team ${teamId} already has payment status 'paid' with PaymentIntent ${currentTeam.paymentIntentId}. Skipping payment processing.`, 'admin');
         paymentStatus = 'already_paid';
       } else if (currentTeam.status === 'approved' && currentTeam.paymentIntentId) {

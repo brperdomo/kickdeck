@@ -113,6 +113,14 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
+- July 8, 2025: APPROVE WITHOUT PAYMENT FEATURE IMPLEMENTED - Added conditional approval functionality for teams with PAID status
+  - CREATED: "Approve Without Payment" button appears only for teams in 'registered' status with 'paid' payment_status
+  - ENHANCED: Frontend admin-dashboard.tsx includes conditional button display and skipPayment parameter handling
+  - IMPLEMENTED: Backend server/routes/admin/teams.ts updated to bypass payment processing when skipPayment=true
+  - SECURED: System logs approval attempts without payment processing for teams already marked as PAID
+  - CUSTOMIZED: Dialog messages differentiate between regular approval and approval without payment processing
+  - PROTECTED: Payment workflow remains intact for teams requiring payment processing during approval
+  - PRODUCTION READY: Teams with PAID status can now be approved without triggering duplicate payment attempts
 - July 8, 2025: TEAM 492 PAYMENT FAILURE DIAGNOSIS - Identified missing Stripe Customer ID as root cause of payment processing failure
   - DIAGNOSED: Team 492 (Legends FC SD B2012 RL) has completed Setup Intent and Payment Method but missing Stripe Customer association
   - IDENTIFIED: Payment failure occurs when approval process cannot find customer to charge payment method against
