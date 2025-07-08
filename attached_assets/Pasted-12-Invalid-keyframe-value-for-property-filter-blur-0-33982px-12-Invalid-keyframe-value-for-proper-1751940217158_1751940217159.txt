@@ -1,0 +1,61 @@
+12
+Invalid keyframe value for property filter: blur(-0.33982px)
+12
+Invalid keyframe value for property filter: blur(-0.31996px)
+12
+Invalid keyframe value for property filter: blur(-0.2993px)
+12
+Invalid keyframe value for property filter: blur(-0.27819px)
+12
+Invalid keyframe value for property filter: blur(-0.25693px)
+12
+Invalid keyframe value for property filter: blur(-0.23576px)
+12
+Invalid keyframe value for property filter: blur(-0.21492px)
+12
+Invalid keyframe value for property filter: blur(-0.19459px)
+12
+Invalid keyframe value for property filter: blur(-0.17493px)
+12
+Invalid keyframe value for property filter: blur(-0.15606px)
+12
+Invalid keyframe value for property filter: blur(-0.13808px)
+12
+Invalid keyframe value for property filter: blur(-0.12106px)
+12
+Invalid keyframe value for property filter: blur(-0.10507px)
+12
+Invalid keyframe value for property filter: blur(-0.09014px)
+12
+Invalid keyframe value for property filter: blur(-0.07628px)
+12
+Invalid keyframe value for property filter: blur(-0.0635px)
+12
+Invalid keyframe value for property filter: blur(-0.0518px)
+12
+Invalid keyframe value for property filter: blur(-0.04115px)
+12
+Invalid keyframe value for property filter: blur(-0.03153px)
+12
+Invalid keyframe value for property filter: blur(-0.02289px)
+12
+Invalid keyframe value for property filter: blur(-0.01521px)
+12
+Invalid keyframe value for property filter: blur(-0.00842px)
+12
+Invalid keyframe value for property filter: blur(-0.00249px)
+index-DJPsxqOE.js:835 
+ GET https://app.matchpro.ai/api/admin/enhanced-form-templates 500 (Internal Server Error)
+
+index-DJPsxqOE.js:711 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+util.js:39 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+index-DJPsxqOE.js:835 
+ POST https://app.matchpro.ai/api/admin/enhanced-form-templates 500 (Internal Server Error)
+index-DJPsxqOE.js:835 Fetch failed loading: POST "https://app.matchpro.ai/api/admin/enhanced-form-templates".
+index-DJPsxqOE.js:835 
+ POST https://app.matchpro.ai/api/admin/enhanced-form-templates 500 (Internal Server Error)
+index-DJPsxqOE.js:835 Fetch failed loading: POST "https://app.matchpro.ai/api/admin/enhanced-form-templates".
+﻿
+
