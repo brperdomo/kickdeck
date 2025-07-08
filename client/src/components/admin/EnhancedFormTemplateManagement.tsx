@@ -713,17 +713,17 @@ export function EnhancedFormTemplateManagement() {
                   </div>
                 ) : (
                   <Select
-                    value={templateForm.eventId?.toString() || ""}
+                    value={templateForm.eventId?.toString() || "none"}
                     onValueChange={(value) => setTemplateForm(prev => ({ 
                       ...prev, 
-                      eventId: value ? parseInt(value) : undefined 
+                      eventId: value === "none" ? undefined : parseInt(value) 
                     }))}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select an event..." />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">No specific event</SelectItem>
+                      <SelectItem value="none">No specific event</SelectItem>
                       {eventsQuery.data?.map((event) => (
                         <SelectItem key={event.id} value={event.id.toString()}>
                           {event.name}

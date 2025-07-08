@@ -1,0 +1,285 @@
+Navigated to https://app.matchpro.ai/admin/form-templates
+js?libraries=places&v=beta&callback=Function.prototype:1483 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+Vca @ js?libraries=places&v=beta&callback=Function.prototype:1483
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1734
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1734Understand this warning
+js?libraries=places&v=beta&callback=Function.prototype:1512 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+_.B.send @ js?libraries=places&v=beta&callback=Function.prototype:1512
+Tca @ js?libraries=places&v=beta&callback=Function.prototype:1492
+Vca @ js?libraries=places&v=beta&callback=Function.prototype:1484
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1734
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1734
+index-CouL6T-u.js:831 Google Maps API key length: 0 characters
+index-CouL6T-u.js:831 Mapbox API key length: 93 characters
+index-CouL6T-u.js:831 Google Maps API already loaded
+index-CouL6T-u.js:661 Current route location (Wouter): /admin/form-templates
+index-CouL6T-u.js:661 Current URL: https://app.matchpro.ai/admin/form-templates
+index-CouL6T-u.js:661 Current pathname: /admin/form-templates
+index-CouL6T-u.js:661 Current search: 
+index-CouL6T-u.js:661 Fetching user with emulation token: not present
+5Fetch finished loading: GET "<URL>".
+index-CouL6T-u.js:661 User data fetched: {id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: '$2b$12$d6n1CBWgsWFm0fh77F1OX.YxDZy7/O3aLSuJOuq4QkvOtFmSit7BC', firstName: 'Bryan', …}
+form-templates:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+form-templates:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+5Fetch failed loading: GET "<URL>".
+12Invalid keyframe value for property filter: blur(-0.08136px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.16063px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.22707px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.28173px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.32564px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.3598px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.38521px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.40278px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.41343px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.41799px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.41726px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.41199px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.40286px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.39052px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.37556px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.35849px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.33982px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.31996px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.2993px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.27819px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.25693px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.23576px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.21492px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.19459px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.17493px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.15606px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.13808px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.12106px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.10507px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.09014px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.07628px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.0635px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.0518px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.04115px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.03153px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.02289px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.01521px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.00842px)Understand this warning
+12Invalid keyframe value for property filter: blur(-0.00249px)Understand this warning
+index-CouL6T-u.js:835 
+            
+            
+           GET https://app.matchpro.ai/api/admin/enhanced-form-templates 500 (Internal Server Error)
+queryFn @ index-CouL6T-u.js:835
+i @ index-CouL6T-u.js:40
+f @ index-CouL6T-u.js:40
+start @ index-CouL6T-u.js:40
+fetch @ index-CouL6T-u.js:40
+Vg @ index-CouL6T-u.js:40
+onSubscribe @ index-CouL6T-u.js:40
+subscribe @ index-CouL6T-u.js:40
+(anonymous) @ index-CouL6T-u.js:40
+oW @ index-CouL6T-u.js:38
+h1 @ index-CouL6T-u.js:40
+$h @ index-CouL6T-u.js:40
+$M @ index-CouL6T-u.js:40
+Gd @ index-CouL6T-u.js:38
+ohe @ index-CouL6T-u.js:40
+hu @ index-CouL6T-u.js:40
+LW @ index-CouL6T-u.js:40
+N @ index-CouL6T-u.js:25
+O @ index-CouL6T-u.js:25Understand this error
+shared-efebc4b1e0d7027177cc34d8a254878d.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+(anonymous) @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+e @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+c @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+g @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+value @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+value @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+log @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+log @ controller-with-preconnect-0459f724e9afe5cd8a990d4c668f672b.js:1
+e @ controller-with-preconnect-0459f724e9afe5cd8a990d4c668f672b.js:1
+36836 @ controller-with-preconnect-0459f724e9afe5cd8a990d4c668f672b.js:1
+e @ controller-with-preconnect-0459f724e9afe5cd8a990d4c668f672b.js:1
+(anonymous) @ controller-with-preconnect-0459f724e9afe5cd8a990d4c668f672b.js:1
+e.O @ controller-with-preconnect-0459f724e9afe5cd8a990d4c668f672b.js:1
+(anonymous) @ controller-with-preconnect-0459f724e9afe5cd8a990d4c668f672b.js:1
+(anonymous) @ controller-with-preconnect-0459f724e9afe5cd8a990d4c668f672b.js:1
+shared-efebc4b1e0d7027177cc34d8a254878d.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+(anonymous) @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+e @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+c @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+g @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+value @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+value @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+value @ controller-with-preconnect-0459f724e9afe5cd8a990d4c668f672b.js:1
+e @ controller-with-preconnect-0459f724e9afe5cd8a990d4c668f672b.js:1
+value @ controller-with-preconnect-0459f724e9afe5cd8a990d4c668f672b.js:1
+e @ controller-with-preconnect-0459f724e9afe5cd8a990d4c668f672b.js:1
+36836 @ controller-with-preconnect-0459f724e9afe5cd8a990d4c668f672b.js:1
+e @ controller-with-preconnect-0459f724e9afe5cd8a990d4c668f672b.js:1
+(anonymous) @ controller-with-preconnect-0459f724e9afe5cd8a990d4c668f672b.js:1
+e.O @ controller-with-preconnect-0459f724e9afe5cd8a990d4c668f672b.js:1
+(anonymous) @ controller-with-preconnect-0459f724e9afe5cd8a990d4c668f672b.js:1
+(anonymous) @ controller-with-preconnect-0459f724e9afe5cd8a990d4c668f672b.js:1
+index-CouL6T-u.js:711 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ index-CouL6T-u.js:711
+h1 @ index-CouL6T-u.js:40
+$h @ index-CouL6T-u.js:40
+ohe @ index-CouL6T-u.js:40
+hu @ index-CouL6T-u.js:40
+$M @ index-CouL6T-u.js:40
+Gd @ index-CouL6T-u.js:38
+(anonymous) @ index-CouL6T-u.js:40Understand this warning
+index-CouL6T-u.js:40 Error: A <Select.Item /> must have a value prop that is not an empty string. This is because the Select value can be set to an empty string to clear the selection and show the placeholder.
+    at index-CouL6T-u.js:707:48345
+    at oO (index-CouL6T-u.js:38:17031)
+    at kM (index-CouL6T-u.js:40:1575)
+    at qW (index-CouL6T-u.js:40:46080)
+    at UW (index-CouL6T-u.js:40:39822)
+    at ahe (index-CouL6T-u.js:40:39748)
+    at Gb (index-CouL6T-u.js:40:39598)
+    at dP (index-CouL6T-u.js:40:35960)
+    at $M (index-CouL6T-u.js:40:36765)
+    at Gd (index-CouL6T-u.js:38:3288)
+Jk @ index-CouL6T-u.js:40
+NW.r.callback @ index-CouL6T-u.js:40
+yM @ index-CouL6T-u.js:38
+RM @ index-CouL6T-u.js:40
+$W @ index-CouL6T-u.js:40
+nhe @ index-CouL6T-u.js:40
+ohe @ index-CouL6T-u.js:40
+hu @ index-CouL6T-u.js:40
+$M @ index-CouL6T-u.js:40
+Gd @ index-CouL6T-u.js:38
+(anonymous) @ index-CouL6T-u.js:40Understand this error
+index-CouL6T-u.js:40 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap
+Jk @ index-CouL6T-u.js:40
+NW.r.callback @ index-CouL6T-u.js:40
+yM @ index-CouL6T-u.js:38
+RM @ index-CouL6T-u.js:40
+$W @ index-CouL6T-u.js:40
+nhe @ index-CouL6T-u.js:40
+ohe @ index-CouL6T-u.js:40
+hu @ index-CouL6T-u.js:40
+$M @ index-CouL6T-u.js:40
+Gd @ index-CouL6T-u.js:38
+(anonymous) @ index-CouL6T-u.js:40Understand this warning
+index-CouL6T-u.js:40 OTS parsing error: invalid sfntVersion: 791289955
+Jk @ index-CouL6T-u.js:40
+NW.r.callback @ index-CouL6T-u.js:40
+yM @ index-CouL6T-u.js:38
+RM @ index-CouL6T-u.js:40
+$W @ index-CouL6T-u.js:40
+nhe @ index-CouL6T-u.js:40
+ohe @ index-CouL6T-u.js:40
+hu @ index-CouL6T-u.js:40
+$M @ index-CouL6T-u.js:40
+Gd @ index-CouL6T-u.js:38
+(anonymous) @ index-CouL6T-u.js:40Understand this warning
+index-CouL6T-u.js:707 Uncaught Error: A <Select.Item /> must have a value prop that is not an empty string. This is because the Select value can be set to an empty string to clear the selection and show the placeholder.
+    at index-CouL6T-u.js:707:48345
+    at oO (index-CouL6T-u.js:38:17031)
+    at kM (index-CouL6T-u.js:40:1575)
+    at qW (index-CouL6T-u.js:40:46080)
+    at UW (index-CouL6T-u.js:40:39822)
+    at ahe (index-CouL6T-u.js:40:39748)
+    at Gb (index-CouL6T-u.js:40:39598)
+    at dP (index-CouL6T-u.js:40:35960)
+    at $M (index-CouL6T-u.js:40:36765)
+    at Gd (index-CouL6T-u.js:38:3288)
+(anonymous) @ index-CouL6T-u.js:707
+oO @ index-CouL6T-u.js:38
+kM @ index-CouL6T-u.js:40
+qW @ index-CouL6T-u.js:40
+UW @ index-CouL6T-u.js:40
+ahe @ index-CouL6T-u.js:40
+Gb @ index-CouL6T-u.js:40
+dP @ index-CouL6T-u.js:40
+$M @ index-CouL6T-u.js:40
+Gd @ index-CouL6T-u.js:38
+(anonymous) @ index-CouL6T-u.js:40Understand this error
+form-templates:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+form-templates:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+util.js:39 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+Wwa @ util.js:39
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1485
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1485
+setTimeout
+Vca @ js?libraries=places&v=beta&callback=Function.prototype:1485
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1734
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1734Understand this warning
+shared-efebc4b1e0d7027177cc34d8a254878d.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+e @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+c @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+value @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+value @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+value @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+value @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+value @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+(anonymous) @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+setTimeout
+value @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+value @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+value @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+(anonymous) @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+value @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+value @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+(anonymous) @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+Promise.then
+value @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+value @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+value @ controller-with-preconnect-0459f724e9afe5cd8a990d4c668f672b.js:1
+e @ controller-with-preconnect-0459f724e9afe5cd8a990d4c668f672b.js:1
+value @ controller-with-preconnect-0459f724e9afe5cd8a990d4c668f672b.js:1
+e @ controller-with-preconnect-0459f724e9afe5cd8a990d4c668f672b.js:1
+36836 @ controller-with-preconnect-0459f724e9afe5cd8a990d4c668f672b.js:1
+e @ controller-with-preconnect-0459f724e9afe5cd8a990d4c668f672b.js:1
+(anonymous) @ controller-with-preconnect-0459f724e9afe5cd8a990d4c668f672b.js:1
+e.O @ controller-with-preconnect-0459f724e9afe5cd8a990d4c668f672b.js:1
+(anonymous) @ controller-with-preconnect-0459f724e9afe5cd8a990d4c668f672b.js:1
+(anonymous) @ controller-with-preconnect-0459f724e9afe5cd8a990d4c668f672b.js:1
+shared-efebc4b1e0d7027177cc34d8a254878d.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+e @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+c @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+value @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+value @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+value @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+value @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+value @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+(anonymous) @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+setTimeout
+value @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+value @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+value @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+(anonymous) @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+value @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+value @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+(anonymous) @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+Promise.then
+value @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+value @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+log @ shared-efebc4b1e0d7027177cc34d8a254878d.js:1
+log @ controller-with-preconnect-0459f724e9afe5cd8a990d4c668f672b.js:1
+e @ controller-with-preconnect-0459f724e9afe5cd8a990d4c668f672b.js:1
+36836 @ controller-with-preconnect-0459f724e9afe5cd8a990d4c668f672b.js:1
+e @ controller-with-preconnect-0459f724e9afe5cd8a990d4c668f672b.js:1
+(anonymous) @ controller-with-preconnect-0459f724e9afe5cd8a990d4c668f672b.js:1
+e.O @ controller-with-preconnect-0459f724e9afe5cd8a990d4c668f672b.js:1
+(anonymous) @ controller-with-preconnect-0459f724e9afe5cd8a990d4c668f672b.js:1
+(anonymous) @ controller-with-preconnect-0459f724e9afe5cd8a990d4c668f672b.js:1
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+Promise.then
+S @ out-4.5.44.js:1
+y @ out-4.5.44.js:1
+E @ out-4.5.44.js:1
+e.onload @ inner.html:1
+script
+(anonymous) @ inner.html:1
+(anonymous) @ inner.html:1
