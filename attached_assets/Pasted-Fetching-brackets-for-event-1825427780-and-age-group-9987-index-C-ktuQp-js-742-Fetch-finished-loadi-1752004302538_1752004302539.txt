@@ -1,0 +1,133 @@
+Fetching brackets for event 1825427780 and age group 9987
+index-C-ktuQp-.js:742 Fetch finished loading: GET "https://app.matchpro.ai/api/brackets?eventId=1825427780&ageGroupId=9987".
+queryFn @ index-C-ktuQp-.js:742
+i @ index-C-ktuQp-.js:40
+f @ index-C-ktuQp-.js:40
+start @ index-C-ktuQp-.js:40
+fetch @ index-C-ktuQp-.js:40
+Vx @ index-C-ktuQp-.js:40
+onSubscribe @ index-C-ktuQp-.js:40
+subscribe @ index-C-ktuQp-.js:40
+(anonymous) @ index-C-ktuQp-.js:40
+lW @ index-C-ktuQp-.js:38
+h1 @ index-C-ktuQp-.js:40
+$h @ index-C-ktuQp-.js:40
+lhe @ index-C-ktuQp-.js:40
+hu @ index-C-ktuQp-.js:40
+$M @ index-C-ktuQp-.js:40
+Gd @ index-C-ktuQp-.js:38
+(anonymous) @ index-C-ktuQp-.js:40
+index-C-ktuQp-.js:742 Fetch finished loading: GET "https://app.matchpro.ai/api/admin/events/1825427780/age-groups".
+queryFn @ index-C-ktuQp-.js:742
+i @ index-C-ktuQp-.js:40
+f @ index-C-ktuQp-.js:40
+start @ index-C-ktuQp-.js:40
+fetch @ index-C-ktuQp-.js:40
+Vx @ index-C-ktuQp-.js:40
+onSubscribe @ index-C-ktuQp-.js:40
+subscribe @ index-C-ktuQp-.js:40
+(anonymous) @ index-C-ktuQp-.js:40
+lW @ index-C-ktuQp-.js:38
+h1 @ index-C-ktuQp-.js:40
+$h @ index-C-ktuQp-.js:40
+lhe @ index-C-ktuQp-.js:40
+hu @ index-C-ktuQp-.js:40
+$M @ index-C-ktuQp-.js:40
+Gd @ index-C-ktuQp-.js:38
+(anonymous) @ index-C-ktuQp-.js:40
+index-C-ktuQp-.js:845 Sending status update with data: {teamId: 492, status: 'approved', notes: 'Approval attempted but payment failed (payment_err…eam has completed payment setup before approving.'}
+index-C-ktuQp-.js:845 
+            
+            
+           PUT https://app.matchpro.ai/api/admin/teams/492/status 400 (Bad Request)
+mutationFn @ index-C-ktuQp-.js:845
+fn @ index-C-ktuQp-.js:40
+f @ index-C-ktuQp-.js:40
+start @ index-C-ktuQp-.js:40
+execute @ index-C-ktuQp-.js:40
+await in execute
+mutate @ index-C-ktuQp-.js:40
+(anonymous) @ index-C-ktuQp-.js:40
+ba @ index-C-ktuQp-.js:845
+onClick @ index-C-ktuQp-.js:845
+kue @ index-C-ktuQp-.js:37
+Aue @ index-C-ktuQp-.js:37
+Tue @ index-C-ktuQp-.js:37
+lM @ index-C-ktuQp-.js:37
+Wq @ index-C-ktuQp-.js:37
+(anonymous) @ index-C-ktuQp-.js:37
+pO @ index-C-ktuQp-.js:40
+xq @ index-C-ktuQp-.js:37
+v2 @ index-C-ktuQp-.js:37
+V4 @ index-C-ktuQp-.js:37
+Wue @ index-C-ktuQp-.js:37Understand this error
+index-C-ktuQp-.js:845 Raw response text: {"status":"error","error":"Payment processing failed","message":"Payment processing failed. Please check team payment details.","paymentStatus":"payment_error","teamStatus":"registered"}
+index-C-ktuQp-.js:845 Error response: {status: 'error', error: 'Payment processing failed', message: 'Payment processing failed. Please check team payment details.', paymentStatus: 'payment_error', teamStatus: 'registered'}error: "Payment processing failed"message: "Payment processing failed. Please check team payment details."paymentStatus: "payment_error"status: "error"teamStatus: "registered"[[Prototype]]: Object
+mutationFn @ index-C-ktuQp-.js:845
+await in mutationFn
+fn @ index-C-ktuQp-.js:40
+f @ index-C-ktuQp-.js:40
+start @ index-C-ktuQp-.js:40
+execute @ index-C-ktuQp-.js:40
+await in execute
+mutate @ index-C-ktuQp-.js:40
+(anonymous) @ index-C-ktuQp-.js:40
+ba @ index-C-ktuQp-.js:845
+onClick @ index-C-ktuQp-.js:845
+kue @ index-C-ktuQp-.js:37
+Aue @ index-C-ktuQp-.js:37
+Tue @ index-C-ktuQp-.js:37
+lM @ index-C-ktuQp-.js:37
+Wq @ index-C-ktuQp-.js:37
+(anonymous) @ index-C-ktuQp-.js:37
+pO @ index-C-ktuQp-.js:40
+xq @ index-C-ktuQp-.js:37
+v2 @ index-C-ktuQp-.js:37
+V4 @ index-C-ktuQp-.js:37
+Wue @ index-C-ktuQp-.js:37Understand this error
+index-C-ktuQp-.js:845 Error in updateTeamStatus mutation: Error: Payment processing failed
+    at Object.mutationFn (index-C-ktuQp-.js:845:82844)
+mutationFn @ index-C-ktuQp-.js:845
+await in mutationFn
+fn @ index-C-ktuQp-.js:40
+f @ index-C-ktuQp-.js:40
+start @ index-C-ktuQp-.js:40
+execute @ index-C-ktuQp-.js:40
+await in execute
+mutate @ index-C-ktuQp-.js:40
+(anonymous) @ index-C-ktuQp-.js:40
+ba @ index-C-ktuQp-.js:845
+onClick @ index-C-ktuQp-.js:845
+kue @ index-C-ktuQp-.js:37
+Aue @ index-C-ktuQp-.js:37
+Tue @ index-C-ktuQp-.js:37
+lM @ index-C-ktuQp-.js:37
+Wq @ index-C-ktuQp-.js:37
+(anonymous) @ index-C-ktuQp-.js:37
+pO @ index-C-ktuQp-.js:40
+xq @ index-C-ktuQp-.js:37
+v2 @ index-C-ktuQp-.js:37
+V4 @ index-C-ktuQp-.js:37
+Wue @ index-C-ktuQp-.js:37Understand this error
+index-C-ktuQp-.js:845 Fetch failed loading: PUT "https://app.matchpro.ai/api/admin/teams/492/status".
+mutationFn @ index-C-ktuQp-.js:845
+fn @ index-C-ktuQp-.js:40
+f @ index-C-ktuQp-.js:40
+start @ index-C-ktuQp-.js:40
+execute @ index-C-ktuQp-.js:40
+await in execute
+mutate @ index-C-ktuQp-.js:40
+(anonymous) @ index-C-ktuQp-.js:40
+ba @ index-C-ktuQp-.js:845
+onClick @ index-C-ktuQp-.js:845
+kue @ index-C-ktuQp-.js:37
+Aue @ index-C-ktuQp-.js:37
+Tue @ index-C-ktuQp-.js:37
+lM @ index-C-ktuQp-.js:37
+Wq @ index-C-ktuQp-.js:37
+(anonymous) @ index-C-ktuQp-.js:37
+pO @ index-C-ktuQp-.js:40
+xq @ index-C-ktuQp-.js:37
+v2 @ index-C-ktuQp-.js:37
+V4 @ index-C-ktuQp-.js:37
+Wue @ index-C-ktuQp-.js:37
