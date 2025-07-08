@@ -6,6 +6,7 @@ import { log } from '../../vite';
 import { sendTemplatedEmail } from '../../services/emailService';
 import { createRefund, createTestPaymentIntent } from '../../services/stripeService';
 import { chargeApprovedTeam } from '../stripe-connect-payments';
+import { parseStripeError, formatErrorForAdmin, type DetailedPaymentError } from '../utils/stripeErrorHandler';
 import Stripe from 'stripe';
 
 type TeamStatus = 'registered' | 'approved' | 'rejected' | 'paid' | 'withdrawn' | 'refunded' | 'waitlisted';
@@ -56,11 +57,20 @@ async function processTeamApprovalPayment(team: any, teamId: string): Promise<st
       return await processTeamApprovalPaymentFallback(team, teamId);
     }
     
-    // Update team to indicate payment issue
+    // Parse detailed Stripe error information for admin context
+    let detailedErrorContext = 'Unknown error';
+    if (error && typeof error === 'object' && 'detailedContext' in error) {
+      const context = (error as any).detailedContext;
+      detailedErrorContext = `${context.summary} | Action: ${context.action_required} | Solution: ${context.suggested_solution}`;
+    } else {
+      detailedErrorContext = error instanceof Error ? error.message : 'Unknown error';
+    }
+    
+    // Update team to indicate payment issue with detailed context
     await db.update(teams)
       .set({
         paymentStatus: 'payment_failed',
-        notes: `Payment processing failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+        notes: `Payment processing failed: ${detailedErrorContext}`
       })
       .where(eq(teams.id, parseInt(teamId, 10)));
     
@@ -276,11 +286,20 @@ async function processTeamApprovalPaymentFallback(team: any, teamId: string): Pr
   } catch (error) {
     log(`Fallback payment processing error for team ${teamId}: ${error}`, 'admin');
     
-    // Update team to indicate payment issue
+    // Parse detailed Stripe error information for admin context
+    let detailedErrorContext = 'Unknown error';
+    if (error && typeof error === 'object' && 'detailedContext' in error) {
+      const context = (error as any).detailedContext;
+      detailedErrorContext = `${context.summary} | Action: ${context.action_required} | Solution: ${context.suggested_solution}`;
+    } else {
+      detailedErrorContext = error instanceof Error ? error.message : 'Unknown error';
+    }
+    
+    // Update team to indicate payment issue with detailed context
     await db.update(teams)
       .set({
         paymentStatus: 'payment_failed',
-        notes: `Fallback payment processing failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+        notes: `Fallback payment processing failed: ${detailedErrorContext}`
       })
       .where(eq(teams.id, parseInt(teamId, 10)));
     

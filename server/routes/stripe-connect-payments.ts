@@ -10,6 +10,7 @@ import Stripe from 'stripe';
 import { db } from "@db";
 import { teams, events, paymentTransactions } from "@db/schema";
 import { eq, and } from "drizzle-orm";
+import { parseStripeError, formatErrorForDatabase, formatErrorForAdmin, type DetailedPaymentError } from '../utils/stripeErrorHandler';
 
 if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
@@ -449,7 +450,15 @@ export async function processDestinationCharge(
 
   } catch (error) {
     console.error('Error processing destination charge:', error);
-    throw error;
+    
+    // Parse Stripe error for detailed context
+    const detailedError = parseStripeError(error);
+    console.log(`DESTINATION CHARGE FAILURE DETAILS for Team ${teamId}:`, formatErrorForAdmin(detailedError));
+    
+    // Throw enhanced error with detailed context
+    const enhancedError = new Error(`Destination charge failed for team ${teamId}: ${detailedError.adminMessage}`);
+    (enhancedError as any).detailedContext = formatErrorForAdmin(detailedError);
+    throw enhancedError;
   }
 }
 
@@ -614,15 +623,24 @@ export async function chargeApprovedTeam(teamId: number) {
   } catch (error) {
     console.error(`Error charging approved team ${teamId}:`, error);
     
-    // Update team payment status to failed
+    // Parse Stripe error for detailed context
+    const detailedError = parseStripeError(error);
+    const errorMessage = formatErrorForDatabase(detailedError);
+    
+    console.log(`PAYMENT FAILURE DETAILS for Team ${teamId}:`, formatErrorForAdmin(detailedError));
+    
+    // Update team payment status to failed with detailed error context
     await db.update(teams)
       .set({
         paymentStatus: 'payment_failed',
-        paymentFailureReason: error instanceof Error ? error.message : 'Unknown error'
+        paymentFailureReason: errorMessage
       })
       .where(eq(teams.id, teamId));
 
-    throw error;
+    // Throw the detailed error with admin-friendly context
+    const enhancedError = new Error(`Team ${teamId} payment failed: ${detailedError.adminMessage}`);
+    (enhancedError as any).detailedContext = formatErrorForAdmin(detailedError);
+    throw enhancedError;
   }
 }
 
@@ -686,11 +704,21 @@ export function registerConnectPaymentRoutes(app: Express) {
           if (failedPayment.metadata?.type === 'team_registration') {
             const teamId = parseInt(failedPayment.metadata.teamId);
             
+            // Parse detailed error information from webhook
+            const webhookError = failedPayment.last_payment_error;
+            let detailedErrorMessage = 'Payment failed';
+            
+            if (webhookError) {
+              const detailedError = parseStripeError(webhookError);
+              detailedErrorMessage = formatErrorForDatabase(detailedError);
+              console.log(`WEBHOOK PAYMENT FAILURE for Team ${teamId}:`, formatErrorForAdmin(detailedError));
+            }
+            
             // Update team status to payment failed
             await db.update(teams)
               .set({
                 paymentStatus: 'payment_failed',
-                paymentFailureReason: failedPayment.last_payment_error?.message || 'Payment failed'
+                paymentFailureReason: detailedErrorMessage
               })
               .where(eq(teams.id, teamId));
 
