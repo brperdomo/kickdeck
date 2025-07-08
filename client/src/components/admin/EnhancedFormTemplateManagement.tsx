@@ -39,6 +39,7 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
+import { FormFieldOptionsEditor } from "./FormFieldOptionsEditor";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface EnhancedFormTemplate {
@@ -381,6 +382,50 @@ export function EnhancedFormTemplateManagement() {
     setTemplateForm(prev => ({
       ...prev,
       fields: prev.fields.filter((_, i) => i !== index)
+    }));
+  };
+
+  const addOption = (fieldIndex: number) => {
+    setTemplateForm(prev => ({
+      ...prev,
+      fields: prev.fields.map((field, i) => 
+        i === fieldIndex
+          ? {
+              ...field,
+              options: [...(field.options || []), { label: "", value: "", order: (field.options?.length || 0) }]
+            }
+          : field
+      )
+    }));
+  };
+
+  const updateOption = (fieldIndex: number, optionIndex: number, updates: any) => {
+    setTemplateForm(prev => ({
+      ...prev,
+      fields: prev.fields.map((field, i) => 
+        i === fieldIndex
+          ? {
+              ...field,
+              options: field.options?.map((option, j) => 
+                j === optionIndex ? { ...option, ...updates } : option
+              ) || []
+            }
+          : field
+      )
+    }));
+  };
+
+  const removeOption = (fieldIndex: number, optionIndex: number) => {
+    setTemplateForm(prev => ({
+      ...prev,
+      fields: prev.fields.map((field, i) => 
+        i === fieldIndex
+          ? {
+              ...field,
+              options: field.options?.filter((_, j) => j !== optionIndex) || []
+            }
+          : field
+      )
     }));
   };
 
@@ -819,6 +864,17 @@ export function EnhancedFormTemplateManagement() {
                         />
                       </div>
                     </div>
+
+                    {/* Options for select, checkbox, and radio fields - CREATE DIALOG */}
+                    {(field.type === 'select' || field.type === 'checkbox' || field.type === 'radio') && (
+                      <div className="mt-4">
+                        <FormFieldOptionsEditor
+                          options={field.options || []}
+                          onOptionsChange={(options) => updateField(index, { options })}
+                        />
+                      </div>
+                    )}
+
                     <div className="flex justify-end mt-4">
                       <Button
                         onClick={() => removeField(index)}
@@ -987,6 +1043,17 @@ export function EnhancedFormTemplateManagement() {
                         />
                       </div>
                     </div>
+
+                    {/* Options for select, checkbox, and radio fields - EDIT DIALOG */}
+                    {(field.type === 'select' || field.type === 'checkbox' || field.type === 'radio') && (
+                      <div className="mt-4">
+                        <FormFieldOptionsEditor
+                          options={field.options || []}
+                          onOptionsChange={(options) => updateField(index, { options })}
+                        />
+                      </div>
+                    )}
+
                     <div className="flex justify-end mt-4">
                       <Button
                         onClick={() => removeField(index)}

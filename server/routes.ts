@@ -7993,44 +7993,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       }
     });
 
-    // Duplicate endpoint removed - using the enhanced version above
-
-    // Assign template to event
-    app.post('/api/admin/enhanced-form-templates/:id/assign-event', isAdmin, async (req, res) => {
-      try {
-        const templateId = parseInt(req.params.id);
-        const { eventId } = req.body;
-        const userId = req.user?.id;
-
-        const result = await db.transaction(async (tx) => {
-          // Update template with event assignment
-          await tx
-            .update(eventFormTemplates)
-            .set({ 
-              eventId: eventId || null,
-              updatedAt: new Date()
-            })
-            .where(eq(eventFormTemplates.id, templateId));
-
-          // Log the assignment
-          await tx.insert(formTemplateAuditLogs).values({
-            templateId,
-            action: eventId ? 'event_assigned' : 'event_unassigned',
-            changeDetails: { eventId, previousEventId: null },
-            affectedTeamCount: 0,
-            performedBy: userId,
-            createdAt: new Date()
-          });
-
-          return { success: true };
-        });
-
-        res.json(result);
-      } catch (error) {
-        console.error('Error assigning template to event:', error);
-        res.status(500).json({ error: "Failed to assign template to event" });
-      }
-    });
+    // Duplicate endpoint removed - functionality handled by enhanced version above
 
     // Get form template for specific event
     app.get('/api/events/:eventId/form-template', async (req, res) => {
@@ -8125,7 +8088,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
 
           // Create audit log
           await tx
-            .insert(templateAuditLog)
+            .insert(formTemplateAuditLogs)
             .values({
               templateId: template.id,
               action: 'created',
@@ -8227,7 +8190,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
 
           // Create audit log
           await tx
-            .insert(templateAuditLog)
+            .insert(formTemplateAuditLogs)
             .values({
               templateId,
               action: 'updated',
@@ -8298,68 +8261,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       }
     });
 
-    // Assign template to event
-    app.post('/api/admin/enhanced-form-templates/:id/assign-event', isAdmin, async (req, res) => {
-      try {
-        const templateId = parseInt(req.params.id);
-        const { eventId } = req.body;
-        const userId = req.user?.id;
-
-        if (!eventId) {
-          return res.status(400).json({ error: "Event ID is required" });
-        }
-
-        // Start transaction
-        const result = await db.transaction(async (tx) => {
-          // Deactivate any existing active templates for this event
-          await tx
-            .update(eventFormTemplates)
-            .set({ isActive: false })
-            .where(sql`${eventFormTemplates.eventId} = ${eventId} AND ${eventFormTemplates.isActive} = true`);
-
-          // Assign template to event and make it active
-          const [updatedTemplate] = await tx
-            .update(eventFormTemplates)
-            .set({
-              eventId,
-              isActive: true,
-              updatedAt: new Date()
-            })
-            .where(eq(eventFormTemplates.id, templateId))
-            .returning();
-
-          // Get event info for audit log
-          const [event] = await tx
-            .select({ name: events.name })
-            .from(events)
-            .where(eq(events.id, eventId))
-            .limit(1);
-
-          // Create audit log
-          await tx
-            .insert(templateAuditLog)
-            .values({
-              templateId,
-              action: 'assigned',
-              changeDetails: {
-                eventId,
-                eventName: event?.name,
-                assignedToEvent: true
-              },
-              affectedTeamCount: 0,
-              performedBy: userId,
-              createdAt: new Date()
-            });
-
-          return updatedTemplate;
-        });
-
-        res.json(result);
-      } catch (error) {
-        console.error('Error assigning template to event:', error);
-        res.status(500).json({ error: "Failed to assign template to event" });
-      }
-    });
+    // Duplicate endpoint removed - functionality merged above
 
     // Get template usage statistics
     app.get('/api/admin/form-templates/:id/usage', isAdmin, async (req, res) => {
@@ -8392,11 +8294,11 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
 
         const auditLogs = await db
           .select({
-            id: templateAuditLog.id,
-            action: templateAuditLog.action,
-            changeDetails: templateAuditLog.changeDetails,
-            affectedTeamCount: templateAuditLog.affectedTeamCount,
-            createdAt: templateAuditLog.createdAt,
+            id: formTemplateAuditLogs.id,
+            action: formTemplateAuditLogs.action,
+            changeDetails: formTemplateAuditLogs.changeDetails,
+            affectedTeamCount: formTemplateAuditLogs.affectedTeamCount,
+            createdAt: formTemplateAuditLogs.createdAt,
             performedBy: sql`
               json_build_object(
                 'id', ${users.id}, 
@@ -8405,10 +8307,10 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
               )
             `.mapWith(user => user || null)
           })
-          .from(templateAuditLog)
-          .leftJoin(users, eq(users.id, templateAuditLog.performedBy))
-          .where(eq(templateAuditLog.templateId, templateId))
-          .orderBy(templateAuditLog.createdAt);
+          .from(formTemplateAuditLogs)
+          .leftJoin(users, eq(users.id, formTemplateAuditLogs.performedBy))
+          .where(eq(formTemplateAuditLogs.templateId, templateId))
+          .orderBy(formTemplateAuditLogs.createdAt);
 
         res.json(auditLogs);
       } catch (error) {
