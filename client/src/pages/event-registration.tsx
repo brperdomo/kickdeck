@@ -50,7 +50,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Checkbox } from "@/components/ui/checkbox";
-import { PaymentElement, CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import StripeProvider from "@/components/StripeProvider";
 import { SetupPaymentForm } from "@/components/payment/SetupPaymentForm";
 import { PaymentSetupWrapper } from "@/components/payment/PaymentSetupWrapper";
