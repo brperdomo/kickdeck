@@ -739,6 +739,15 @@ export async function sendPasswordResetEmail(
 
     const resetUrl = `${appUrl}/reset-password?token=${resetToken}`;
 
+    if (process.env.SENDGRID_API_KEY) {
+      console.log("SendGrid API key found, configuring mail service");
+      console.log(process.env.SENDGRID_API_KEY);
+      //mailService.setApiKey(process.env.SENDGRID_API_KEY);
+    } else {
+      console.log("SendGrid API key not found");
+      console.log(process.env.SENDGRID_API_KEY);
+    }
+
     await sendTemplatedEmail(to, "password_reset", {
       username,
       resetUrl,
