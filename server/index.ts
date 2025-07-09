@@ -7,55 +7,61 @@ import { createAdmin } from "./create-admin";
 import path from "path";
 import uploadRouter from "./routes/upload";
 import memberRosterUploadRouter from "./routes/member-roster-upload";
-import { createEmailTemplatesTable } from './migrations/create_email_templates';
-import { createEmailTemplateRoutingTable } from './migrations/create_email_template_routing';
-import { createTables } from './create-tables';
-import { setupAuth } from './auth';
-import { emulationMiddleware } from './services/emulationService';
-import { initializeStandardFolders } from './utils/initStandardFolders';
-import { verifySuperAdminRoles, logPermissionDetails } from './middleware/role-verification';
-import { phoneFormatterMiddleware } from './middleware/phone-formatter';
-import dotenv from 'dotenv';
+import { createEmailTemplatesTable } from "./migrations/create_email_templates";
+import { createEmailTemplateRoutingTable } from "./migrations/create_email_template_routing";
+import { createTables } from "./create-tables";
+import { setupAuth } from "./auth";
+import { emulationMiddleware } from "./services/emulationService";
+import { initializeStandardFolders } from "./utils/initStandardFolders";
+import {
+  verifySuperAdminRoles,
+  logPermissionDetails,
+} from "./middleware/role-verification";
+import { phoneFormatterMiddleware } from "./middleware/phone-formatter";
+import dotenv from "dotenv";
 
 // Load environment variables based on NODE_ENV
-const nodeEnv = process.env.NODE_ENV || 'development';
+const nodeEnv = process.env.NODE_ENV || "development";
 
-// Force exact mirror of working development configuration
-// This ensures production uses identical SendGrid settings as development
-process.env.SENDGRID_API_KEY = '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';
-process.env.DEFAULT_FROM_EMAIL = 'support@matchpro.ai';
-
-if (nodeEnv === 'production') {
-  dotenv.config({ path: '.env.production' });
+if (nodeEnv === "production") {
+  dotenv.config({ path: ".env.production" });
   log(`Loaded production environment variables from .env.production`);
-  log('Applied exact development SendGrid configuration to production');
+  log("Applied exact development SendGrid configuration to production");
 } else {
   dotenv.config();
   log(`Loaded development environment variables from .env`);
 }
 
+// Force exact mirror of working development configuration
+// This ensures production uses identical SendGrid settings as development
+process.env.SENDGRID_API_KEY =
+  "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";
+process.env.DEFAULT_FROM_EMAIL = "support@matchpro.ai";
+
 // Log critical environment variables for debugging (without exposing secrets)
 log(`Environment: ${nodeEnv}`);
-log(`SendGrid API Key: ${process.env.SENDGRID_API_KEY ? `Present (${process.env.SENDGRID_API_KEY.substring(0, 10)}...)` : 'Missing'}`);
-log(`Database URL: ${process.env.DATABASE_URL ? 'Present' : 'Missing'}`);
-log(`Session Secret: ${process.env.SESSION_SECRET ? 'Present' : 'Missing'}`);
+log(
+  `SendGrid API Key: ${process.env.SENDGRID_API_KEY ? `Present (${process.env.SENDGRID_API_KEY.substring(0, 10)}...)` : "Missing"}`,
+);
+log(`Database URL: ${process.env.DATABASE_URL ? "Present" : "Missing"}`);
+log(`Session Secret: ${process.env.SESSION_SECRET ? "Present" : "Missing"}`);
 
 const app = express();
 
 // Basic middleware setup
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ extended: false, limit: '50mb' }));
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ extended: false, limit: "50mb" }));
 
 // Serve uploaded files
-app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 // Register upload routes
-app.use('/api/files', uploadRouter);
+app.use("/api/files", uploadRouter);
 
 // Health check endpoint - moved below other middleware but before Vite setup
 // Only apply to /_health to avoid conflicts with the frontend routes
-app.get('/_health', (req, res) => {
-  res.status(200).send('OK');
+app.get("/_health", (req, res) => {
+  res.status(200).send("OK");
 });
 
 // Add request logging middleware
@@ -103,14 +109,14 @@ async function testDbConnection() {
 
 (async () => {
   let server: any; // Fix implicit any error
-  
+
   try {
     // Use NODE_ENV from environment or default to development
-    const nodeEnv = process.env.NODE_ENV || 'development';
-    app.set('env', nodeEnv);
-    
+    const nodeEnv = process.env.NODE_ENV || "development";
+    app.set("env", nodeEnv);
+
     log(`Server starting in ${nodeEnv} mode`);
-    
+
     // Test database connection first
     const dbConnected = await testDbConnection();
     if (!dbConnected) {
@@ -122,7 +128,11 @@ async function testDbConnection() {
     // Run database migrations
     const migrationsResult = await createTables();
     if (!migrationsResult.success) {
-      log("Migration failed: " + migrationsResult.error + " - retrying in 5 seconds...");
+      log(
+        "Migration failed: " +
+          migrationsResult.error +
+          " - retrying in 5 seconds...",
+      );
       setTimeout(() => createTables(), 5000);
       return;
     }
@@ -131,57 +141,59 @@ async function testDbConnection() {
     // Create admin user if it doesn't exist
     await createAdmin();
     log("Admin user setup completed");
-    
+
     // Verify super admin role permissions to prevent missing access issues
     await verifySuperAdminRoles();
-    
+
     // Initialize standard folder structure
     await initializeStandardFolders();
 
     // Get port configuration
     const PORT = Number(process.env.PORT) || 5000; // Ensure PORT is a number
-    
+
     // Set up authentication BEFORE registering routes
     setupAuth(app);
     log("Authentication middleware set up successfully");
-    
+
     // Apply emulation middleware after authentication but before routes
     app.use(emulationMiddleware);
     log("User emulation middleware set up successfully");
-    
+
     // Add permission logging middleware to catch and debug 403 errors
     app.use(logPermissionDetails);
     log("Permission logging middleware set up successfully");
-    
+
     // Add phone formatting middleware to ensure consistent phone number formatting
-    app.use('/api', phoneFormatterMiddleware);
+    app.use("/api", phoneFormatterMiddleware);
     log("Phone formatting middleware set up successfully");
-    
+
     // Register API routes BEFORE setting up static file serving or Vite middleware
     const routes = registerRoutes(app);
-    
+
     // Register member roster upload routes after authentication is fully configured
-    app.use('/api/member-roster', memberRosterUploadRouter);
-    
+    app.use("/api/member-roster", memberRosterUploadRouter);
+
     log("API routes registered");
 
     // Set up appropriate middleware based on environment
-    if (nodeEnv === 'production') {
+    if (nodeEnv === "production") {
       try {
         // Try production static files first
         serveStatic(app);
         log("Static file serving configured for production");
       } catch (error) {
         // If production files don't exist, use development mode without HMR WebSockets
-        log("Production files not found, using development mode with stable configuration");
-        const { createServer } = await import('http');
+        log(
+          "Production files not found, using development mode with stable configuration",
+        );
+        const { createServer } = await import("http");
         server = createServer(app);
         await setupVite(app, server);
         log("Development mode configured for production stability");
       }
     } else {
       // In development, create a temporary server for Vite HMR
-      const { createServer } = await import('http');
+      const { createServer } = await import("http");
       server = createServer(app);
       await setupVite(app, server);
       log("Vite middleware setup complete for development");
@@ -201,14 +213,15 @@ async function testDbConnection() {
     const findAvailablePort = async (startPort: number): Promise<number> => {
       return new Promise((resolve, reject) => {
         const tryPort = async (port: number) => {
-          const { createServer } = await import('http');
+          const { createServer } = await import("http");
           const tempServer = createServer();
-          tempServer.listen(port, "0.0.0.0")
-            .on('listening', () => {
+          tempServer
+            .listen(port, "0.0.0.0")
+            .on("listening", () => {
               tempServer.close(() => resolve(port));
             })
-            .on('error', (err: any) => {
-              if (err.code === 'EADDRINUSE') {
+            .on("error", (err: any) => {
+              if (err.code === "EADDRINUSE") {
                 log(`Port ${port} is busy, trying ${port + 1}`);
                 tryPort(port + 1);
               } else {
@@ -222,14 +235,14 @@ async function testDbConnection() {
 
     try {
       const availablePort = await findAvailablePort(PORT);
-      
+
       // Create and start the server properly
-      if (nodeEnv === 'production') {
+      if (nodeEnv === "production") {
         // In production, create a new server instance
-        const { createServer } = await import('http');
+        const { createServer } = await import("http");
         server = createServer(app);
       }
-      
+
       server.listen(availablePort, HOST, () => {
         log(`Server started successfully on ${HOST}:${availablePort}`);
       });
