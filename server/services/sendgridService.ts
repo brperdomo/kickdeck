@@ -124,6 +124,8 @@ export async function sendDynamicTemplateEmail(
         JSON.stringify(params.dynamicTemplateData, null, 2),
       );
     }
+    console.log("Setting API key !!!!!!!!!!!!!!!!!!");
+    mailService.setApiKey(process.env.SENDGRID_API_KEY);
 
     const response = await mailService.send(message);
     console.log(

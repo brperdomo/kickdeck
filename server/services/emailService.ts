@@ -330,12 +330,15 @@ export async function sendTemplatedEmail(
 
         const fromEmail = `${emailTemplate.senderName} <${emailTemplate.senderEmail}>`;
 
-        console.log("🚨 DEBUG: Sending dynamic template email with:", {
-          to,
-          from: fromEmail,
-          templateId: emailTemplate.sendgridTemplateId,
-          dynamicTemplateData: context,
-        });
+        console.log(
+          "🚨 DEBUG2222222222222: Sending dynamic template email with:",
+          {
+            to,
+            from: fromEmail,
+            templateId: emailTemplate.sendgridTemplateId,
+            dynamicTemplateData: context,
+          },
+        );
         // Use SendGrid dynamic template
         const result = await sendgridService.sendDynamicTemplateEmail({
           to,
