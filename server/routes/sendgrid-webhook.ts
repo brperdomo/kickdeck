@@ -107,7 +107,9 @@ async function processWebhookEvent(event: SendGridEvent) {
     } else {
       // Update existing record with new event information
       let updateQuery = `UPDATE email_tracking SET webhook_data = $1, updated_at = $2`;
-      console.log(event);
+      console.log("eventType");
+      console.log(eventType);
+
       const params = [JSON.stringify(event), timestamp];
       let paramIndex = 3;
 
