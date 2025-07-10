@@ -5427,6 +5427,19 @@ function TeamsView() {
                   Approve Without Email
                 </Button>
                 
+                {selectedTeam.payment_status === 'paid' && (
+                  <Button 
+                    variant="outline"
+                    onClick={() => {
+                      setIsDetailsDialogOpen(false);
+                      handleStatusUpdate(selectedTeam, 'approved', null, true); // skipPayment=true
+                    }}
+                  >
+                    <Check className="h-4 w-4 mr-1" />
+                    Approve Without Payment
+                  </Button>
+                )}
+                
                 <Button 
                   variant="outline"
                   onClick={() => {
