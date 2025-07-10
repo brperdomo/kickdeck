@@ -29,6 +29,7 @@ import {
 import { TeamModal } from "@/components/teams/TeamModal";
 import { TeamCsvUploader } from "@/components/teams/TeamCsvUploader";
 import { FormSubmissionsCard } from "@/components/admin/FormSubmissionsCard";
+import { FeeAdjustmentDialog } from "@/components/admin/FeeAdjustmentDialog";
 import { BracketAssignmentModal } from "@/components/BracketAssignmentModal";
 import { ScheduleVisualization } from "@/components/ScheduleVisualization";
 import BracketSelector from "@/components/admin/scheduling/BracketSelector";
@@ -3243,6 +3244,7 @@ function TeamsView() {
   const [bulkApprovalNotes, setBulkApprovalNotes] = useState("");
   const [isBulkRejectionDialogOpen, setIsBulkRejectionDialogOpen] = useState(false);
   const [bulkRejectionNotes, setBulkRejectionNotes] = useState("");
+  const [isFeeAdjustmentDialogOpen, setIsFeeAdjustmentDialogOpen] = useState(false);
   const queryClient = useQueryClient();
   const { toast } = useToast();
   
@@ -5145,6 +5147,25 @@ function TeamsView() {
                       </div>
                     </div>
                     
+                    {/* Fee Adjustment Button - only show for teams not yet approved and paid */}
+                    {(selectedTeam.status !== 'approved' || selectedTeam.paymentStatus !== 'paid') && selectedTeam.totalAmount > 0 && (
+                      <div className="grid grid-cols-3 gap-1">
+                        <div className="font-medium">Fee Adjustment:</div>
+                        <div className="col-span-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setIsFeeAdjustmentDialogOpen(true);
+                            }}
+                          >
+                            <DollarSign className="h-4 w-4 mr-2" />
+                            Adjust Registration Fee
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                    
                     <div className="grid grid-cols-3 gap-1">
                       <div className="font-medium">Payment Method:</div>
                       <div className="col-span-2">
@@ -5923,6 +5944,19 @@ function TeamsView() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Fee Adjustment Dialog */}
+      <FeeAdjustmentDialog
+        team={selectedTeam}
+        open={isFeeAdjustmentDialogOpen}
+        onOpenChange={(open) => {
+          setIsFeeAdjustmentDialogOpen(open);
+          if (!open) {
+            // Refresh teams data when dialog closes to show updated amounts
+            teamsQuery.refetch();
+          }
+        }}
+      />
     </>
   );
 }

@@ -1455,4 +1455,47 @@ export const selectEmailTrackingSchema = createSelectSchema(emailTracking);
 export type InsertEmailTracking = typeof emailTracking.$inferInsert;
 export type SelectEmailTracking = typeof emailTracking.$inferSelect;
 
+// Fee adjustment audit table for tracking registration fee changes
+export const feeAdjustments = pgTable("fee_adjustments", {
+  id: serial("id").primaryKey(),
+  teamId: integer("team_id").notNull().references(() => teams.id, { onDelete: 'cascade' }),
+  originalAmount: integer("original_amount").notNull(), // Original amount in cents
+  adjustedAmount: integer("adjusted_amount").notNull(), // New adjusted amount in cents
+  adjustment: integer("adjustment").notNull(), // Difference (negative for reduction, positive for increase)
+  reason: text("reason").notNull(), // Required reason for adjustment
+  adjustedBy: integer("adjusted_by").notNull().references(() => users.id), // Admin who made the adjustment
+  adjustedAt: timestamp("adjusted_at").notNull().defaultNow(),
+  eventId: text("event_id").notNull(), // For context and filtering
+  teamName: text("team_name").notNull(), // For easy reporting
+  adminEmail: text("admin_email").notNull(), // For audit trails
+});
+
+export const feeAdjustmentsRelations = relations(feeAdjustments, ({ one }) => ({
+  team: one(teams, {
+    fields: [feeAdjustments.teamId],
+    references: [teams.id],
+  }),
+  adjustedByUser: one(users, {
+    fields: [feeAdjustments.adjustedBy],
+    references: [users.id],
+  }),
+}));
+
+export const insertFeeAdjustmentSchema = createInsertSchema(feeAdjustments, {
+  teamId: z.number().positive("Team ID is required"),
+  originalAmount: z.number().int("Original amount must be an integer"),
+  adjustedAmount: z.number().int("Adjusted amount must be an integer"),
+  adjustment: z.number().int("Adjustment must be an integer"),
+  reason: z.string().min(1, "Reason is required").max(500, "Reason must be under 500 characters"),
+  adjustedBy: z.number().positive("Admin ID is required"),
+  eventId: z.string().min(1, "Event ID is required"),
+  teamName: z.string().min(1, "Team name is required"),
+  adminEmail: z.string().email("Valid admin email is required"),
+});
+
+export const selectFeeAdjustmentSchema = createSelectSchema(feeAdjustments);
+
+export type InsertFeeAdjustment = typeof feeAdjustments.$inferInsert;
+export type SelectFeeAdjustment = typeof feeAdjustments.$inferSelect;
+
 // Note: Clubs table already defined at the top of the file
