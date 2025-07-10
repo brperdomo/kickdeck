@@ -1944,4 +1944,86 @@ async function deleteTeam(req: Request, res: Response) {
   }
 }
 
-export { updateTeamStatus, processRefund, processTeamPaymentAfterSetup, generatePaymentCompletionUrl, deleteTeam, bulkApproveTeams, bulkRejectTeams };
+/**
+ * Generate payment completion URL for incomplete payment intents
+ */
+async function generatePaymentIntentCompletionUrl(req: Request, res: Response) {
+  try {
+    const teamId = parseInt(req.params.id);
+    
+    // Get team with payment details
+    const team = await db.query.teams.findFirst({
+      where: eq(teams.id, teamId),
+      columns: {
+        id: true,
+        name: true,
+        payment_status: true,
+        payment_intent_id: true,
+        setup_intent_id: true,
+        total_amount: true,
+        submitter_email: true
+      }
+    });
+
+    if (!team) {
+      return res.status(404).json({ error: 'Team not found' });
+    }
+
+    if (!team.payment_intent_id) {
+      return res.status(400).json({ error: 'No payment intent found for this team' });
+    }
+
+    // Check if payment is already complete
+    if (team.payment_status === 'paid') {
+      return res.status(400).json({ error: 'Payment already completed for this team' });
+    }
+
+    // Retrieve the payment intent from Stripe to get client secret
+    const paymentIntent = await stripe.paymentIntents.retrieve(team.payment_intent_id);
+    
+    if (paymentIntent.status === 'succeeded') {
+      // Payment actually succeeded, update team status
+      await db.update(teams)
+        .set({ payment_status: 'paid' })
+        .where(eq(teams.id, teamId));
+      
+      return res.status(400).json({ 
+        error: 'Payment has already been completed successfully', 
+        shouldRefresh: true 
+      });
+    }
+
+    if (!paymentIntent.client_secret) {
+      return res.status(400).json({ error: 'No client secret available for payment completion' });
+    }
+
+    // Generate completion URL
+    const baseUrl = process.env.NODE_ENV === 'production' 
+      ? 'https://app.matchpro.ai' 
+      : `${req.protocol}://${req.get('host')}`;
+    
+    const completionUrl = `${baseUrl}/complete-payment?payment_intent=${team.payment_intent_id}&payment_intent_client_secret=${paymentIntent.client_secret}`;
+
+    log(`Generated payment completion URL for Team ${teamId} (${team.name}):`, 'admin');
+    log(`Payment Intent: ${team.payment_intent_id} - Status: ${paymentIntent.status}`, 'admin');
+    if (paymentIntent.last_payment_error) {
+      log(`Last Payment Error: ${paymentIntent.last_payment_error.message}`, 'admin');
+    }
+
+    res.json({
+      success: true,
+      completionUrl,
+      paymentIntentStatus: paymentIntent.status,
+      lastPaymentError: paymentIntent.last_payment_error?.message
+    });
+
+  } catch (error) {
+    log(`Error generating payment completion URL: ${error}`, 'admin');
+    res.status(500).json({ 
+      error: 'Failed to generate payment completion URL',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+}
+
+export { updateTeamStatus, processRefund, processTeamPaymentAfterSetup, generatePaymentCompletionUrl, deleteTeam, bulkApproveTeams, bulkRejectTeams, generatePaymentIntentCompletionUrl };

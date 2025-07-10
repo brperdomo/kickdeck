@@ -5483,6 +5483,57 @@ function TeamsView() {
                     Process Refund
                   </Button>
                 )}
+                
+                {(selectedTeam.payment_status === 'payment_pending' || 
+                  selectedTeam.payment_status === 'payment_failed' || 
+                  selectedTeam.payment_status === 'setup_intent_completed') && 
+                 (selectedTeam.paymentIntentId || selectedTeam.setupIntentId) && (
+                  <Button 
+                    variant="outline"
+                    onClick={async () => {
+                      try {
+                        // Determine which endpoint to use based on payment method
+                        const endpoint = selectedTeam.paymentIntentId 
+                          ? `/api/admin/teams/${selectedTeam.id}/generate-payment-intent-completion-url`
+                          : `/api/admin/teams/${selectedTeam.id}/generate-completion-url`;
+                        
+                        const response = await fetch(endpoint, {
+                          method: 'POST',
+                        });
+                        const data = await response.json();
+                        
+                        if (data.success && data.completionUrl) {
+                          navigator.clipboard.writeText(data.completionUrl);
+                          toast({
+                            title: "Success",
+                            description: "Payment completion URL copied to clipboard",
+                          });
+                        } else {
+                          // Check if we should refresh the page
+                          if (data.shouldRefresh) {
+                            teamsQuery.refetch();
+                            setIsDetailsDialogOpen(false);
+                            toast({
+                              title: "Payment Complete",
+                              description: "Payment has been completed successfully",
+                            });
+                            return;
+                          }
+                          throw new Error(data.error || 'Failed to generate completion URL');
+                        }
+                      } catch (error) {
+                        toast({
+                          title: "Error", 
+                          description: error instanceof Error ? error.message : "Failed to generate completion URL",
+                          variant: "destructive",
+                        });
+                      }
+                    }}
+                  >
+                    <Link className="h-4 w-4 mr-1" />
+                    Generate Payment URL
+                  </Button>
+                )}
 
                 
                 <Button 

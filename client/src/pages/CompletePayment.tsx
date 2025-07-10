@@ -9,8 +9,159 @@ import { Loader2, CheckCircle, CreditCard } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface URLParams {
-  setup_intent: string;
+  setup_intent?: string;
+  payment_intent?: string;
+  payment_intent_client_secret?: string;
   team_id: string;
+}
+
+// Component for completing Payment Intents that require action
+function PaymentIntentCompletionForm({ clientSecret, teamId, teamInfo }: { clientSecret: string; teamId: string; teamInfo: any }) {
+  const stripe = useStripe();
+  const elements = useElements();
+  const { toast } = useToast();
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [isComplete, setIsComplete] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    if (!stripe || !elements) {
+      return;
+    }
+
+    setIsProcessing(true);
+    setError(null);
+
+    try {
+      const { error: confirmError, paymentIntent } = await stripe.confirmPayment({
+        clientSecret,
+        redirect: 'if_required'
+      });
+
+      if (confirmError) {
+        setError(confirmError.message || 'Failed to confirm payment');
+      } else if (paymentIntent && paymentIntent.status === 'succeeded') {
+        setIsComplete(true);
+        toast({
+          title: "Payment Completed",
+          description: "Your payment has been successfully processed.",
+        });
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An unexpected error occurred');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  if (isComplete) {
+    return (
+      <Card className="w-full max-w-md mx-auto">
+        <CardHeader className="text-center">
+          <div className="mx-auto w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4">
+            <CheckCircle className="w-6 h-6 text-green-600" />
+          </div>
+          <CardTitle className="text-green-800">Payment Complete!</CardTitle>
+        </CardHeader>
+        <CardContent className="text-center">
+          <p className="text-gray-600 mb-4">
+            Your payment has been successfully processed.
+          </p>
+          
+          {/* Payment Receipt Details */}
+          {teamInfo && (
+            <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg text-left">
+              <div className="text-sm text-green-800 font-medium mb-2">Payment Receipt</div>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-green-700">Team:</span>
+                  <span className="font-medium text-green-900">{teamInfo.name}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-green-700">Event:</span>
+                  <span className="font-medium text-green-900">{teamInfo.eventName}</span>
+                </div>
+                <div className="flex justify-between pt-2 border-t border-green-200">
+                  <span className="text-green-700 font-medium">Amount Paid:</span>
+                  <span className="font-bold text-green-900">
+                    {teamInfo.feeBreakdown ? teamInfo.feeBreakdown.totalAmountFormatted : `$${(teamInfo.totalAmount / 100).toFixed(2)}`}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          <p className="text-sm text-gray-500">
+            You can now close this window. You should receive a confirmation email shortly.
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card className="w-full max-w-md mx-auto">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <CreditCard className="w-5 h-5" />
+          Complete Payment
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        {/* Payment Amount Information */}
+        {teamInfo && (
+          <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <h3 className="font-semibold text-blue-900 mb-3">Payment Summary</h3>
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span className="text-blue-700">Team:</span>
+                <span className="font-medium text-blue-900">{teamInfo.name}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-blue-700">Event:</span>
+                <span className="font-medium text-blue-900">{teamInfo.eventName}</span>
+              </div>
+              <div className="flex justify-between items-center pt-2 mt-3 border-t border-blue-200">
+                <span className="text-blue-700 font-medium">Total Amount:</span>
+                <span className="text-lg font-bold text-blue-900">
+                  {teamInfo.feeBreakdown ? teamInfo.feeBreakdown.totalAmountFormatted : `$${(teamInfo.totalAmount / 100).toFixed(2)}`}
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {error && (
+          <Alert variant="destructive" className="mb-4">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+        
+        <p className="text-sm text-gray-600 mb-4">
+          Your payment requires additional verification. Click the button below to complete the payment process.
+        </p>
+        
+        <Button 
+          onClick={handleSubmit}
+          className="w-full" 
+          disabled={!stripe || isProcessing}
+        >
+          {isProcessing ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Processing Payment...
+            </>
+          ) : (
+            teamInfo 
+              ? `Complete Payment of ${teamInfo.feeBreakdown ? teamInfo.feeBreakdown.totalAmountFormatted : `$${(teamInfo.totalAmount / 100).toFixed(2)}`}`
+              : 'Complete Payment'
+          )}
+        </Button>
+      </CardContent>
+    </Card>
+  );
 }
 
 function PaymentCompletionForm({ clientSecret, teamId, teamInfo }: { clientSecret: string; teamId: string; teamInfo: any }) {
@@ -268,24 +419,33 @@ export default function CompletePayment() {
     // Get URL parameters from window.location.search instead of wouter location
     const urlParams = new URLSearchParams(window.location.search);
     const setupIntent = urlParams.get('setup_intent');
+    const paymentIntent = urlParams.get('payment_intent');
+    const paymentIntentClientSecret = urlParams.get('payment_intent_client_secret');
     const teamId = urlParams.get('team_id');
 
     console.log('CompletePayment URL parsing:', {
       fullUrl: window.location.href,
       search: window.location.search,
       setupIntent,
+      paymentIntent,
+      paymentIntentClientSecret,
       teamId,
       allParams: Object.fromEntries(urlParams.entries())
     });
 
-    if (!setupIntent || !teamId) {
-      console.error('Missing required parameters:', { setupIntent, teamId });
+    if ((!setupIntent && !paymentIntent) || !teamId) {
+      console.error('Missing required parameters:', { setupIntent, paymentIntent, teamId });
       setError('Invalid payment link. Please check the URL and try again.');
       setLoading(false);
       return;
     }
 
-    setParams({ setup_intent: setupIntent, team_id: teamId });
+    setParams({ 
+      setup_intent: setupIntent || undefined, 
+      payment_intent: paymentIntent || undefined,
+      payment_intent_client_secret: paymentIntentClientSecret || undefined,
+      team_id: teamId 
+    });
 
     // Fetch team information using the public payment info endpoint
     fetch(`/api/teams/${teamId}/payment-info`)
@@ -439,29 +599,64 @@ export default function CompletePayment() {
               Complete Payment for {teamInfo.name}
             </h1>
             <p className="text-gray-600">
-              Please provide your payment information to complete your team registration.
+              {params.payment_intent ? 
+                'Your payment requires additional verification to complete.' :
+                'Please provide your payment information to complete your team registration.'
+              }
             </p>
           </div>
         )}
         
-        <Elements
-          stripe={stripe}
-          options={{
-            clientSecret: params.setup_intent,
-            appearance: {
-              theme: 'stripe',
-              variables: {
-                colorPrimary: '#2563eb',
+        {/* Render appropriate component based on whether it's setup intent or payment intent */}
+        {params.payment_intent && params.payment_intent_client_secret ? (
+          // Payment Intent completion - needs Elements wrapper for Stripe authentication
+          <Elements
+            stripe={stripe}
+            options={{
+              clientSecret: params.payment_intent_client_secret,
+              appearance: {
+                theme: 'stripe',
+                variables: {
+                  colorPrimary: '#2563eb',
+                },
               },
-            },
-          }}
-        >
-          <PaymentCompletionForm 
-            clientSecret={params.setup_intent} 
-            teamId={params.team_id}
-            teamInfo={teamInfo}
-          />
-        </Elements>
+            }}
+          >
+            <PaymentIntentCompletionForm 
+              clientSecret={params.payment_intent_client_secret} 
+              teamId={params.team_id}
+              teamInfo={teamInfo}
+            />
+          </Elements>
+        ) : params.setup_intent ? (
+          // Setup Intent completion - needs Elements wrapper
+          <Elements
+            stripe={stripe}
+            options={{
+              clientSecret: params.setup_intent,
+              appearance: {
+                theme: 'stripe',
+                variables: {
+                  colorPrimary: '#2563eb',
+                },
+              },
+            }}
+          >
+            <PaymentCompletionForm 
+              clientSecret={params.setup_intent} 
+              teamId={params.team_id}
+              teamInfo={teamInfo}
+            />
+          </Elements>
+        ) : (
+          <Card className="w-full max-w-md mx-auto">
+            <CardContent>
+              <Alert variant="destructive">
+                <AlertDescription>Invalid payment completion link. Missing required parameters.</AlertDescription>
+              </Alert>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );
