@@ -120,17 +120,38 @@ export async function getMemberById(req: Request, res: Response) {
       );
     
     // Transform team registrations to match the frontend's expected format
-    const formattedRegistrations = teamRegistrations.map(reg => ({
-      id: reg.team.id,
-      teamName: reg.team.name,
-      eventName: reg.event?.name || 'Unknown Event',
-      ageGroup: reg.ageGroup?.ageGroup || 'Unknown Age Group',
-      registrationDate: reg.team.createdAt,
-      status: reg.team.status || 'pending',
-      // Use totalAmount (stored in cents) and convert to dollars, fallback to registrationFee
-      amountPaid: reg.team.totalAmount ? (reg.team.totalAmount / 100) : (reg.team.registrationFee || 0),
-      termsAccepted: reg.team.termsAcknowledged || false,
-      termsAcceptedAt: reg.team.termsAcknowledgedAt || reg.team.createdAt
+    const formattedRegistrations = await Promise.all(teamRegistrations.map(async reg => {
+      // For approved/paid teams, get the actual charged amount from payment_transactions table
+      let actualAmountPaid = reg.team.totalAmount ? (reg.team.totalAmount / 100) : (reg.team.registrationFee ? (reg.team.registrationFee / 100) : 0);
+      
+      if (reg.team.status === 'approved' && reg.team.paymentIntentId) {
+        try {
+          const [paymentTransaction] = await db
+            .select()
+            .from(paymentTransactions)
+            .where(eq(paymentTransactions.paymentIntentId, reg.team.paymentIntentId))
+            .limit(1);
+          
+          if (paymentTransaction && paymentTransaction.amount) {
+            // Use the actual charged amount (includes all fees) from payment transaction
+            actualAmountPaid = paymentTransaction.amount / 100;
+          }
+        } catch (error) {
+          console.error(`Error looking up payment transaction for team ${reg.team.id}:`, error);
+        }
+      }
+      
+      return {
+        id: reg.team.id,
+        teamName: reg.team.name,
+        eventName: reg.event?.name || 'Unknown Event',
+        ageGroup: reg.ageGroup?.ageGroup || 'Unknown Age Group',
+        registrationDate: reg.team.createdAt,
+        status: reg.team.status || 'pending',
+        amountPaid: actualAmountPaid,
+        termsAccepted: reg.team.termsAcknowledged || false,
+        termsAcceptedAt: reg.team.termsAcknowledgedAt || reg.team.createdAt
+      };
     }));
     
     res.json({
