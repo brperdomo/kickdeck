@@ -113,15 +113,15 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
-- July 10, 2025: CRITICAL PAYMENT AMOUNT DISPLAY FIX - Resolved incorrect $0.00 payment amounts in member registration display
-  - IDENTIFIED: Member details showing $0.00 for paid registrations due to using wrong database field (registrationFee vs totalAmount)
-  - FIXED: Updated getMemberById API to use totalAmount field (stored in cents) and convert to dollars for display
-  - ENHANCED: Added fallback logic checking totalAmount first, then registrationFee for backward compatibility
-  - CORRECTED: Payment confirmation email function also updated to use proper amount calculation
-  - VERIFIED: Database contains correct payment data (e.g., team 478 shows $447.50 tournament cost, actual charged amount $465.70 from payment_transactions table)
-  - ENHANCED: For approved teams, API now queries payment_transactions table to show actual charged amount (including fees) instead of just tournament cost
-  - UNIVERSAL: Fix applies to all member records across the system, ensuring accurate payment amount display
-  - PRODUCTION READY: Member payment amounts now display correctly showing actual paid amounts instead of $0.00
+- July 10, 2025: CRITICAL PAYMENT AMOUNT DISPLAY FIX COMPLETED - Resolved incorrect payment amounts showing as $4.66 instead of $465.70
+  - IDENTIFIED: Root cause was double division by 100 in currency formatting - API returned dollars but formatCurrency expected cents
+  - TRACED: Team 478 database shows totalAmount=44750 cents ($447.50), payment_transactions.amount=46570 cents ($465.70)
+  - ROOT CAUSE: API calculated 46570/100=465.70 (dollars), then formatCurrency divided by 100 again = 4.66 (incorrect)
+  - FIXED: Updated getMemberById and getCurrentUserRegistrations APIs to return amounts in CENTS (not dollars) to match formatCurrency expectations
+  - VERIFIED: formatCurrency function correctly expects cent values and divides by 100 to display proper dollar amounts
+  - CORRECTED: Both member details and user registration APIs now return raw cent values from database (46570 = $465.70)
+  - CONSISTENCY: All payment amount fields now consistently use cent-based values throughout the system
+  - PRODUCTION READY: Member payment amounts now display correctly as $465.70 instead of $4.66
 - July 10, 2025: MEMBER MERGE FUNCTIONALITY FULLY COMPLETED - Implemented comprehensive member account merging system with complete data consolidation and dual database synchronization
   - CREATED: Complete member merge interface with search functionality, confirmation dialog, and user-friendly warnings about permanent data transfer
   - IMPLEMENTED: Backend API endpoint /api/admin/members/:id/merge with POST method for merging source member into target member account

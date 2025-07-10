@@ -122,7 +122,8 @@ export async function getMemberById(req: Request, res: Response) {
     // Transform team registrations to match the frontend's expected format
     const formattedRegistrations = await Promise.all(teamRegistrations.map(async reg => {
       // For approved/paid teams, get the actual charged amount from payment_transactions table
-      let actualAmountPaid = reg.team.totalAmount ? (reg.team.totalAmount / 100) : (reg.team.registrationFee ? (reg.team.registrationFee / 100) : 0);
+      // Return amounts in CENTS (not dollars) to match what formatCurrency expects
+      let actualAmountPaid = reg.team.totalAmount || (reg.team.registrationFee || 0);
       
       if (reg.team.status === 'approved' && reg.team.paymentIntentId) {
         try {
@@ -133,8 +134,8 @@ export async function getMemberById(req: Request, res: Response) {
             .limit(1);
           
           if (paymentTransaction && paymentTransaction.amount) {
-            // Use the actual charged amount (includes all fees) from payment transaction
-            actualAmountPaid = paymentTransaction.amount / 100;
+            // Use the actual charged amount (in cents) from payment transaction
+            actualAmountPaid = paymentTransaction.amount;
           }
         } catch (error) {
           console.error(`Error looking up payment transaction for team ${reg.team.id}:`, error);
@@ -408,12 +409,11 @@ export async function getCurrentUserRegistrations(req: Request, res: Response) {
     // Enhanced version of formattedRegistrations with payment details
     const formattedRegistrations = await Promise.all(teamRegistrations.map(async reg => {
       // Get the actual payment amount from payment_transactions table for approved teams
-      // Use totalAmount (in cents) first, then fallback to registrationFee
+      // Return amounts in CENTS (not dollars) to match what formatCurrency expects
       let actualAmountCharged = reg.team.totalAmount || reg.team.registrationFee || 0;
       let transactionData = null;
       
       if (reg.team.status === 'approved' && reg.team.paymentIntentId) {
-        console.log(`Looking up payment for team ${reg.team.id} with payment intent: ${reg.team.paymentIntentId}`);
         try {
           const [paymentTransaction] = await db
             .select()
@@ -422,12 +422,9 @@ export async function getCurrentUserRegistrations(req: Request, res: Response) {
             .limit(1);
           
           if (paymentTransaction) {
-            // Use the actual charged amount from the transaction
+            // Use the actual charged amount from the transaction (already in cents)
             actualAmountCharged = paymentTransaction.amount;
             transactionData = paymentTransaction;
-            console.log(`✓ Found payment transaction for team ${reg.team.id}: $${(actualAmountCharged / 100).toFixed(2)}`);
-          } else {
-            console.log(`✗ No payment transaction found for team ${reg.team.id}`);
           }
         } catch (error) {
           console.error(`Error looking up payment transaction for team ${reg.team.id}:`, error);
