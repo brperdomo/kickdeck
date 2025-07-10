@@ -5408,22 +5408,22 @@ function TeamsView() {
                       Reject Team
                     </Button>
                     
-                    {/* Show different approval buttons based on payment status */}
-                    {selectedTeam.payment_status === 'paid' ? (
-                      // For teams already paid - skip payment processing
-                      <Button
-                        className="team-status-button"
-                        onClick={() => {
-                          setIsDetailsDialogOpen(false);
-                          handleStatusUpdate(selectedTeam, 'approved', null, true); // true = skip payment
-                        }}
-                      >
-                        <Check className="h-4 w-4 mr-1" />
-                        Approve Without Payment
-                      </Button>
-                    ) : (
-                      // For teams that need payment processing - show both approve options
-                      <div className="flex gap-2">
+                    {/* Show approval buttons for all teams */}
+                    <div className="flex gap-2 flex-wrap">
+                      {selectedTeam.payment_status === 'paid' ? (
+                        // For teams already paid - skip payment processing
+                        <Button
+                          className="team-status-button"
+                          onClick={() => {
+                            setIsDetailsDialogOpen(false);
+                            handleStatusUpdate(selectedTeam, 'approved', null, true); // true = skip payment
+                          }}
+                        >
+                          <Check className="h-4 w-4 mr-1" />
+                          Approve Without Payment
+                        </Button>
+                      ) : (
+                        // For teams that need payment processing
                         <Button
                           className="team-status-button"
                           onClick={() => {
@@ -5434,19 +5434,22 @@ function TeamsView() {
                           <Check className="h-4 w-4 mr-1" />
                           Approve Team
                         </Button>
-                        <Button
-                          variant="outline"
-                          className="team-status-button"
-                          onClick={() => {
-                            setIsDetailsDialogOpen(false);
-                            handleStatusUpdate(selectedTeam, 'approved', null, false, true); // skipPayment=false, skipEmail=true
-                          }}
-                        >
-                          <Check className="h-4 w-4 mr-1" />
-                          Approve Without Email
-                        </Button>
-                      </div>
-                    )}
+                      )}
+                      
+                      {/* Always show Approve Without Email option */}
+                      <Button
+                        variant="outline"
+                        className="team-status-button"
+                        onClick={() => {
+                          setIsDetailsDialogOpen(false);
+                          const skipPayment = selectedTeam.payment_status === 'paid';
+                          handleStatusUpdate(selectedTeam, 'approved', null, skipPayment, true); // skipEmail=true
+                        }}
+                      >
+                        <Check className="h-4 w-4 mr-1" />
+                        Approve Without Email
+                      </Button>
+                    </div>
                     
                     <Button 
                       variant="outline"
@@ -5465,15 +5468,28 @@ function TeamsView() {
                 {/* For teams in rejected status */}
                 {selectedTeam.status === 'rejected' && (
                   <>
-                    <Button 
-                      onClick={() => {
-                        setIsDetailsDialogOpen(false);
-                        handleStatusUpdate(selectedTeam, 'approved');
-                      }}
-                    >
-                      <Check className="h-4 w-4 mr-1" />
-                      Approve Team
-                    </Button>
+                    <div className="flex gap-2 flex-wrap">
+                      <Button 
+                        onClick={() => {
+                          setIsDetailsDialogOpen(false);
+                          handleStatusUpdate(selectedTeam, 'approved');
+                        }}
+                      >
+                        <Check className="h-4 w-4 mr-1" />
+                        Approve Team
+                      </Button>
+                      <Button 
+                        variant="outline"
+                        onClick={() => {
+                          setIsDetailsDialogOpen(false);
+                          const skipPayment = selectedTeam.payment_status === 'paid';
+                          handleStatusUpdate(selectedTeam, 'approved', null, skipPayment, true); // skipEmail=true
+                        }}
+                      >
+                        <Check className="h-4 w-4 mr-1" />
+                        Approve Without Email
+                      </Button>
+                    </div>
                     <Button 
                       variant="outline"
                       onClick={() => {
@@ -5500,15 +5516,28 @@ function TeamsView() {
                 {/* For teams in waitlisted status */}
                 {selectedTeam.status === 'waitlisted' && (
                   <>
-                    <Button 
-                      onClick={() => {
-                        setIsDetailsDialogOpen(false);
-                        handleStatusUpdate(selectedTeam, 'approved');
-                      }}
-                    >
-                      <Check className="h-4 w-4 mr-1" />
-                      Approve Team
-                    </Button>
+                    <div className="flex gap-2 flex-wrap">
+                      <Button 
+                        onClick={() => {
+                          setIsDetailsDialogOpen(false);
+                          handleStatusUpdate(selectedTeam, 'approved');
+                        }}
+                      >
+                        <Check className="h-4 w-4 mr-1" />
+                        Approve Team
+                      </Button>
+                      <Button 
+                        variant="outline"
+                        onClick={() => {
+                          setIsDetailsDialogOpen(false);
+                          const skipPayment = selectedTeam.payment_status === 'paid';
+                          handleStatusUpdate(selectedTeam, 'approved', null, skipPayment, true); // skipEmail=true
+                        }}
+                      >
+                        <Check className="h-4 w-4 mr-1" />
+                        Approve Without Email
+                      </Button>
+                    </div>
                     <Button 
                       variant="outline"
                       onClick={() => {
