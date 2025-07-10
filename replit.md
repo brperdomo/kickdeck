@@ -113,6 +113,14 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
+- July 10, 2025: CRITICAL APPROVAL WORKFLOW FIX - Resolved teams with PAID status stuck in "Pending Review" instead of being properly approved
+  - IDENTIFIED: Teams that completed 3D Secure payments (payment_status = PAID) remained in 'registered' status instead of 'approved'
+  - ROOT CAUSE: Previous 3D Secure database fixes updated payment_status but not team status, creating workflow disruption
+  - FIXED: Updated 5 affected teams from 'registered' to 'approved' status to restore proper workflow
+  - TEAMS UPDATED: IDs 479, 478, 477, 476, 162 (Empire Surf Academy teams and Albion SC team)
+  - RESTORED: Standard approval workflow now works correctly - teams with completed payments show as approved
+  - PRESERVED: "Approve Without Payment" feature remains available for edge cases but doesn't interfere with normal operations
+  - PRODUCTION READY: Approval workflow restored to normal operation with proper status synchronization
 - July 8, 2025: APPROVE WITHOUT PAYMENT FEATURE IMPLEMENTED - Added conditional approval functionality for teams with PAID status
   - CREATED: "Approve Without Payment" button appears only for teams in 'registered' status with 'paid' payment_status
   - ENHANCED: Frontend admin-dashboard.tsx includes conditional button display and skipPayment parameter handling
