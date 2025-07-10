@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { db } from '@db/index';
 import { users, teams, events, eventAgeGroups, players, paymentTransactions } from '@db/schema';
+import { passwordResetTokens } from '@db/schema/passwordReset';
 import { eq, like, and, or, desc, asc, inArray } from 'drizzle-orm';
 import { sendTemplatedEmail } from '../../services/emailService';
 import { SQL, sql } from 'drizzle-orm';
@@ -483,6 +484,166 @@ export async function getCurrentUserRegistrations(req: Request, res: Response) {
   } catch (error) {
     console.error('Error fetching user registrations:', error);
     res.status(500).json({ error: 'Failed to fetch registration details' });
+  }
+}
+
+/**
+ * Merge two member accounts - combines all data from source member into target member
+ */
+export async function mergeMembers(req: Request, res: Response) {
+  try {
+    const { id } = req.params; // Target member ID from URL parameter
+    const { sourceMemberId } = req.body; // Source member ID from request body
+    
+    const targetMemberId = parseInt(id);
+    const sourceMemberIdInt = parseInt(sourceMemberId);
+    
+    // Validate input
+    if (!targetMemberId || !sourceMemberIdInt) {
+      return res.status(400).json({ error: 'Both target and source member IDs are required' });
+    }
+    
+    if (targetMemberId === sourceMemberIdInt) {
+      return res.status(400).json({ error: 'Cannot merge a member with themselves' });
+    }
+    
+    // Get both members
+    const [targetMember] = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, targetMemberId))
+      .limit(1);
+    
+    const [sourceMember] = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, sourceMemberIdInt))
+      .limit(1);
+    
+    if (!targetMember) {
+      return res.status(404).json({ error: 'Target member not found' });
+    }
+    
+    if (!sourceMember) {
+      return res.status(404).json({ error: 'Source member not found' });
+    }
+    
+    console.log(`Starting member merge:`);
+    console.log(`  Target: ${targetMember.firstName} ${targetMember.lastName} (${targetMember.email})`);
+    console.log(`  Source: ${sourceMember.firstName} ${sourceMember.lastName} (${sourceMember.email})`);
+    
+    // Start transaction to merge data
+    try {
+      // Update all teams where source member is the submitter
+      const submitterTeamsUpdated = await db
+        .update(teams)
+        .set({ 
+          submitterEmail: targetMember.email,
+          // Also update user_id if it exists and matches source member
+          userId: sql`CASE WHEN ${teams.userId} = ${sourceMember.id} THEN ${targetMember.id} ELSE ${teams.userId} END`
+        })
+        .where(eq(teams.submitterEmail, sourceMember.email));
+      
+      // Update all teams where source member is the manager
+      const managerTeamsUpdated = await db
+        .update(teams)
+        .set({ managerEmail: targetMember.email })
+        .where(eq(teams.managerEmail, sourceMember.email));
+      
+      // Update coach emails in JSON fields
+      const coachTeams = await db
+        .select()
+        .from(teams)
+        .where(sql`${teams.coach}::text LIKE ${'%' + sourceMember.email + '%'}`);
+      
+      let coachTeamsUpdated = 0;
+      for (const team of coachTeams) {
+        if (team.coach) {
+          try {
+            const coachData = JSON.parse(team.coach);
+            if (coachData.headCoachEmail === sourceMember.email) {
+              coachData.headCoachEmail = targetMember.email;
+              await db
+                .update(teams)
+                .set({ coach: JSON.stringify(coachData) })
+                .where(eq(teams.id, team.id));
+              coachTeamsUpdated++;
+            }
+          } catch (error) {
+            console.error(`Error updating coach data for team ${team.id}:`, error);
+          }
+        }
+      }
+      
+      // Update any other tables that might reference the source member
+      // Update password reset tokens
+      await db
+        .update(passwordResetTokens)
+        .set({ userId: targetMember.id })
+        .where(eq(passwordResetTokens.userId, sourceMember.id));
+      
+      // Update target member with any missing information from source member
+      const updateData: any = {};
+      
+      // If target member is missing phone but source has it, copy it
+      if (!targetMember.phone && sourceMember.phone) {
+        updateData.phone = sourceMember.phone;
+      }
+      
+      // Keep the earlier creation date
+      if (new Date(sourceMember.createdAt) < new Date(targetMember.createdAt)) {
+        updateData.createdAt = sourceMember.createdAt;
+      }
+      
+      // Update target member if there's any data to merge
+      if (Object.keys(updateData).length > 0) {
+        await db
+          .update(users)
+          .set(updateData)
+          .where(eq(users.id, targetMember.id));
+      }
+      
+      // Finally, delete the source member
+      await db
+        .delete(users)
+        .where(eq(users.id, sourceMember.id));
+      
+      console.log(`Member merge completed:`);
+      console.log(`  - Submitter teams updated: ${submitterTeamsUpdated.rowCount || 0}`);
+      console.log(`  - Manager teams updated: ${managerTeamsUpdated.rowCount || 0}`);
+      console.log(`  - Coach teams updated: ${coachTeamsUpdated}`);
+      console.log(`  - Source member deleted: ${sourceMember.email}`);
+      
+      res.json({
+        success: true,
+        message: 'Members merged successfully',
+        mergeDetails: {
+          targetMember: {
+            id: targetMember.id,
+            name: `${targetMember.firstName} ${targetMember.lastName}`,
+            email: targetMember.email
+          },
+          sourceMember: {
+            id: sourceMember.id,
+            name: `${sourceMember.firstName} ${sourceMember.lastName}`,
+            email: sourceMember.email
+          },
+          updatedRecords: {
+            submitterTeams: submitterTeamsUpdated.rowCount || 0,
+            managerTeams: managerTeamsUpdated.rowCount || 0,
+            coachTeams: coachTeamsUpdated
+          }
+        }
+      });
+      
+    } catch (dbError) {
+      console.error('Database error during member merge:', dbError);
+      throw dbError;
+    }
+    
+  } catch (error) {
+    console.error('Error merging members:', error);
+    res.status(500).json({ error: 'Failed to merge members' });
   }
 }
 

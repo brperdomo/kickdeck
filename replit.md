@@ -113,6 +113,14 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
+- July 10, 2025: MEMBER MERGE FUNCTIONALITY FULLY COMPLETED - Implemented comprehensive member account merging system with complete data consolidation and dual database synchronization
+  - CREATED: Complete member merge interface with search functionality, confirmation dialog, and user-friendly warnings about permanent data transfer
+  - IMPLEMENTED: Backend API endpoint /api/admin/members/:id/merge with POST method for merging source member into target member account
+  - ENHANCED: Database transaction handling that consolidates all member data including team registrations, password reset tokens, and contact information
+  - COMPREHENSIVE: System updates teams table (submitter_email, manager_email, coach JSON fields), users table merge, and automatic cleanup of source account
+  - FRONTEND: Professional merge dialog with member search, selection interface, visual indicators, and comprehensive confirmation workflow
+  - INTEGRATED: Real-time query invalidation ensuring UI updates immediately after successful merge operations
+  - PRODUCTION READY: Complete member deduplication system operational with proper error handling, comprehensive logging, and data integrity preservation
 - July 10, 2025: MEMBER EMAIL UPDATE FUNCTIONALITY COMPLETED - Implemented comprehensive email update system for all member types with dual database synchronization
   - CREATED: Complete backend API endpoint /api/admin/members/:id/email with PUT method for updating member emails
   - IMPLEMENTED: Comprehensive email validation and duplicate checking to prevent conflicts across member accounts
