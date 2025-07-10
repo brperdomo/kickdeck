@@ -113,6 +113,12 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
+- July 10, 2025: UNIVERSAL APPROVAL BUTTONS IMPLEMENTED - Cleaned up team details dialog to show exactly two approval buttons for ALL team statuses
+  - ELIMINATED: Multiple conditional button sections that created excessive button duplication and UI clutter
+  - SIMPLIFIED: Dialog footer now shows universal action buttons (Reject Team, Approve Team, Approve Without Email, Mark Withdrawn) for all teams
+  - MAINTAINED: Status-specific buttons (Resend Approval Email for approved teams, Process Refund for paid teams) as conditional additions
+  - UNIFIED: Both approval workflows (with/without email) accessible from single clean interface regardless of team status
+  - PRODUCTION READY: Clean, minimal button layout provides consistent admin experience across all team management scenarios
 - July 10, 2025: APPROVE WITHOUT EMAIL FEATURE COMPLETED - Added comprehensive email-optional approval functionality for administrative flexibility
   - IMPLEMENTED: "Approve Without Email" button in team details dialog for teams requiring payment processing
   - ENHANCED: Frontend approval logic to show both standard approval and email-optional approval buttons side by side
