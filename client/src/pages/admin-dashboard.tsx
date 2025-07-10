@@ -7,7 +7,7 @@ import {
   Pencil, PlusCircle, CalendarRange, UserRoundPlus, ClipboardX, ArrowLeft,
   Upload, Wand2, Sparkles, AlertTriangle, CalendarDays, Loader2,
   Trophy, WandSparkles, CheckCircle2, AlertCircle, CreditCard, MapPin, User,
-  TrendingUp, BarChart2, DollarSign, FileText, Edit, Trash, Trash2
+  TrendingUp, BarChart2, DollarSign, FileText, Edit, Trash, Trash2, HelpCircle, ChevronDown
 } from "lucide-react";
 // Removed ClubLogo import as we now display club name as text
 import { ComplexCard } from "@/components/admin/ComplexCard";
@@ -41,6 +41,7 @@ import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { PaymentStatusBadge, TeamStatusBadge } from "@/components/ui/payment-status-badge";
+import { PaymentMethodDisplay, PaymentStatusLegend } from "@/components/ui/payment-method-display";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useUser } from "@/hooks/use-user";
@@ -87,66 +88,7 @@ function getRosterCount(team: any): string {
   return '0';
 }
 
-// Helper function to format the payment method display
-function getPaymentMethodDisplay(team: any): JSX.Element {
-  // Handle nested team structure (item.team or direct item)
-  const teamData = team.team || team;
-  
-  // Check if we have card information
-  if (teamData.cardBrand && teamData.cardLast4) {
-    const brandName = teamData.cardBrand.charAt(0).toUpperCase() + teamData.cardBrand.slice(1);
-    return (
-      <div className="flex items-center gap-1 text-sm">
-        <CreditCard className="w-3 h-3" />
-        <span>{brandName} ••••{teamData.cardLast4}</span>
-      </div>
-    );
-  }
-  
-  // Check for incomplete setup intent (started but not completed)
-  if (teamData.setupIntentId && !teamData.cardBrand && teamData.paymentStatus === 'payment_info_pending') {
-    return (
-      <Badge variant="outline" className="text-amber-600 border-amber-400 whitespace-nowrap font-medium">
-        <AlertCircle className="w-3 h-3 mr-1" /> Setup Incomplete
-      </Badge>
-    );
-  }
-  
-  // Check for completed setup intent (payment method collected but not charged)
-  if (teamData.setupIntentId && teamData.cardBrand && !teamData.paymentIntentId) {
-    return (
-      <Badge variant="outline" className="text-blue-600 border-blue-400 whitespace-nowrap font-medium">
-        <CreditCard className="w-3 h-3 mr-1" /> Payment Pending
-      </Badge>
-    );
-  }
-  
-  // Check for pay later option
-  if (teamData.addRosterLater) {
-    return (
-      <Badge variant="outline" className="text-orange-500 border-orange-500 whitespace-nowrap font-medium">
-        <AlertCircle className="w-3 h-3 mr-1" /> Pay Later
-      </Badge>
-    );
-  }
-  
-  // Check if payment is completed
-  if (teamData.paymentStatus === 'paid' || teamData.paymentIntentId) {
-    return (
-      <Badge className="bg-green-500/90 whitespace-nowrap">
-        <CreditCard className="w-3 h-3 mr-1" /> Paid
-      </Badge>
-    );
-  }
-  
-  // Default case - no payment info
-  return (
-    <Badge variant="outline">
-      <AlertCircle className="w-3 h-3 mr-1" />
-      {teamData.paymentStatus === 'payment_info_pending' || teamData.paymentStatus === 'pending' ? 'Pending' : teamData.paymentStatus || 'Unpaid'}
-    </Badge>
-  );
-}
+
 
 import {
   Calendar,
@@ -4280,6 +4222,24 @@ function TeamsView() {
                 </TabsList>
                 
                 <TabsContent value="registered">
+                  {/* Payment Status Legend */}
+                  <Collapsible className="mb-4">
+                    <CollapsibleTrigger asChild>
+                      <Button variant="outline" className="flex items-center gap-2 mb-3">
+                        <HelpCircle className="h-4 w-4" />
+                        Payment Status Guide
+                        <ChevronDown className="h-4 w-4" />
+                      </Button>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="mb-4">
+                      <Card>
+                        <CardContent className="p-4">
+                          <PaymentStatusLegend />
+                        </CardContent>
+                      </Card>
+                    </CollapsibleContent>
+                  </Collapsible>
+
                   {/* Bulk Actions Toolbar */}
                   {selectedTeamIds.length > 0 && (
                     <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
@@ -4389,9 +4349,7 @@ function TeamsView() {
                                 <TableCell>{getRosterCount(team)}</TableCell>
                                 <TableCell>{formatCurrency(team.totalAmount || team.registrationFee || 0)}</TableCell>
                                 <TableCell>
-                                  <Badge variant={team.paymentStatus === 'paid' ? 'default' : 'outline'}>
-                                    {team.paymentStatus || 'Unpaid'}
-                                  </Badge>
+                                  <PaymentMethodDisplay team={team} showCardDetails={false} />
                                 </TableCell>
                                 <TableCell className="text-right">
                                   <div className="flex justify-end gap-2">
@@ -4491,9 +4449,7 @@ function TeamsView() {
                                 <TableCell>{getRosterCount(team)}</TableCell>
                                 <TableCell>{formatCurrency(team.totalAmount || team.registrationFee || 0)}</TableCell>
                                 <TableCell>
-                                  <Badge variant={team.paymentStatus === 'paid' ? 'default' : 'outline'}>
-                                    {team.paymentStatus || 'Unpaid'}
-                                  </Badge>
+                                  <PaymentMethodDisplay team={team} showCardDetails={false} />
                                 </TableCell>
                                 <TableCell className="text-right">
                                   <div className="flex justify-end gap-2">
@@ -4584,9 +4540,7 @@ function TeamsView() {
                                 <TableCell>{getRosterCount(team)}</TableCell>
                                 <TableCell>{formatCurrency(team.totalAmount || team.registrationFee || 0)}</TableCell>
                                 <TableCell>
-                                  <Badge variant={team.paymentStatus === 'paid' ? 'default' : 'outline'}>
-                                    {team.paymentStatus || 'Unpaid'}
-                                  </Badge>
+                                  <PaymentMethodDisplay team={team} showCardDetails={false} />
                                 </TableCell>
                                 <TableCell className="text-right">
                                   <div className="flex justify-end gap-2">
@@ -5194,7 +5148,7 @@ function TeamsView() {
                     <div className="grid grid-cols-3 gap-1">
                       <div className="font-medium">Payment Method:</div>
                       <div className="col-span-2">
-                        <PaymentStatusBadge status={selectedTeam.paymentStatus} />
+                        <PaymentMethodDisplay team={selectedTeam} showCardDetails={true} />
                       </div>
                     </div>
                     
