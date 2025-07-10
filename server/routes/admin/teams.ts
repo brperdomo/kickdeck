@@ -614,6 +614,21 @@ async function updateTeamStatus(req: Request, res: Response) {
           log(`Payment processing error for team ${teamId}: ${paymentError}`, 'admin');
           paymentStatus = 'payment_error';
           
+          // Log the failed payment attempt to payment_transactions table
+          try {
+            await db.insert(paymentTransactions).values({
+              teamId: parseInt(teamId, 10),
+              transactionType: 'payment',
+              amount: currentTeam.totalAmount,
+              status: 'failed',
+              errorMessage: paymentError instanceof Error ? paymentError.message : 'Unknown payment error',
+              createdAt: new Date()
+            });
+            log(`Logged failed payment attempt for team ${teamId} to payment_transactions table`, 'admin');
+          } catch (logError) {
+            log(`Failed to log payment transaction for team ${teamId}: ${logError}`, 'admin');
+          }
+          
           // Revert the team status back to its previous state if payment failed
           await db.update(teams)
             .set({ 

@@ -455,6 +455,21 @@ export async function processDestinationCharge(
     const detailedError = parseStripeError(error);
     console.log(`DESTINATION CHARGE FAILURE DETAILS for Team ${teamId}:`, formatErrorForAdmin(detailedError));
     
+    // Log the failed payment attempt to payment_transactions table
+    try {
+      await db.insert(paymentTransactions).values({
+        teamId: teamId,
+        transactionType: 'payment',
+        amount: totalAmountCents,
+        status: 'failed',
+        errorMessage: formatErrorForDatabase(detailedError),
+        createdAt: new Date()
+      });
+      console.log(`Logged failed destination charge for team ${teamId} to payment_transactions table`);
+    } catch (logError) {
+      console.error(`Failed to log payment transaction for team ${teamId}:`, logError);
+    }
+    
     // Throw enhanced error with detailed context
     const enhancedError = new Error(`Destination charge failed for team ${teamId}: ${detailedError.adminMessage}`);
     (enhancedError as any).detailedContext = formatErrorForAdmin(detailedError);
@@ -628,6 +643,21 @@ export async function chargeApprovedTeam(teamId: number) {
     const errorMessage = formatErrorForDatabase(detailedError);
     
     console.log(`PAYMENT FAILURE DETAILS for Team ${teamId}:`, formatErrorForAdmin(detailedError));
+    
+    // Log the failed payment attempt to payment_transactions table
+    try {
+      await db.insert(paymentTransactions).values({
+        teamId: teamId,
+        transactionType: 'payment',
+        amount: team.totalAmount,
+        status: 'failed',
+        errorMessage: errorMessage,
+        createdAt: new Date()
+      });
+      console.log(`Logged failed Connect payment attempt for team ${teamId} to payment_transactions table`);
+    } catch (logError) {
+      console.error(`Failed to log payment transaction for team ${teamId}:`, logError);
+    }
     
     // Update team payment status to failed with detailed error context
     await db.update(teams)
