@@ -176,11 +176,17 @@ function TransactionDetailDialog({ transaction }: { transaction: any }) {
             </div>
           )}
 
-          {/* Error Information */}
-          {(transaction.errorCode || transaction.errorMessage) && (
+          {/* Enhanced Error Information */}
+          {(transaction.errorCode || transaction.errorMessage || transaction.errorDescription) && (
             <div>
               <h3 className="font-medium mb-3">Error Details</h3>
-              <div className="space-y-2">
+              <div className="space-y-3">
+                {transaction.errorDescription && (
+                  <div className="p-3 bg-red-50 rounded-lg border-l-4 border-red-400">
+                    <span className="font-medium text-red-900">Error Description:</span>
+                    <p className="text-red-800 mt-1">{transaction.errorDescription}</p>
+                  </div>
+                )}
                 {transaction.errorCode && (
                   <div>
                     <span className="font-medium text-gray-500">Error Code:</span>
@@ -189,8 +195,26 @@ function TransactionDetailDialog({ transaction }: { transaction: any }) {
                 )}
                 {transaction.errorMessage && (
                   <div>
-                    <span className="font-medium text-gray-500">Error Message:</span>
-                    <p className="text-red-600">{transaction.errorMessage}</p>
+                    <span className="font-medium text-gray-500">Technical Message:</span>
+                    <p className="text-red-600 text-sm">{transaction.errorMessage}</p>
+                  </div>
+                )}
+                {transaction.status === 'failed' && (
+                  <div className="p-3 bg-blue-50 rounded-lg border-l-4 border-blue-400">
+                    <h4 className="font-medium text-blue-900 mb-1">Next Steps:</h4>
+                    <div className="text-sm text-blue-800">
+                      {transaction.errorCode?.includes('insufficient_funds') ? (
+                        <p>• Team needs to add funds to their card and retry payment</p>
+                      ) : transaction.errorCode?.includes('card_declined') ? (
+                        <p>• Team should contact their bank or try a different payment method</p>
+                      ) : transaction.errorCode?.includes('expired_card') ? (
+                        <p>• Team needs to update their card information with current expiration date</p>
+                      ) : transaction.errorCode?.includes('incorrect_cvc') ? (
+                        <p>• Team should re-enter their card security code (CVC)</p>
+                      ) : (
+                        <p>• Contact team to resolve payment issue or try alternative payment method</p>
+                      )}
+                    </div>
                   </div>
                 )}
               </div>
@@ -641,13 +665,21 @@ export default function PaymentLogs() {
                         )}
                       </TableCell>
                       <TableCell>
-                        {transaction.errorCode ? (
+                        {transaction.errorCode || transaction.errorMessage ? (
                           <div className="text-sm">
-                            <div className="font-mono text-red-600">{transaction.errorCode}</div>
-                            {transaction.errorMessage && (
-                              <div className="text-xs text-red-500 mt-1 max-w-32 truncate" title={transaction.errorMessage}>
-                                {transaction.errorMessage}
+                            {transaction.errorDescription ? (
+                              <div className="text-red-600 max-w-48 truncate" title={transaction.errorDescription}>
+                                {transaction.errorDescription}
                               </div>
+                            ) : (
+                              <>
+                                <div className="font-mono text-red-600">{transaction.errorCode}</div>
+                                {transaction.errorMessage && (
+                                  <div className="text-xs text-red-500 mt-1 max-w-32 truncate" title={transaction.errorMessage}>
+                                    {transaction.errorMessage}
+                                  </div>
+                                )}
+                              </>
                             )}
                           </div>
                         ) : (
