@@ -5393,255 +5393,71 @@ function TeamsView() {
               </Card>
               
               <DialogFooter className="gap-2 flex-wrap">
-                {/* For teams in registered (pending) status */}
-                {selectedTeam.status === 'registered' && (
-                  <>
-                    <Button 
-                      variant="outline"
-                      className="team-status-button"
-                      onClick={() => {
-                        setIsDetailsDialogOpen(false);
-                        handleStatusUpdate(selectedTeam, 'rejected');
-                      }}
-                    >
-                      <X className="h-4 w-4 mr-1" />
-                      Reject Team
-                    </Button>
-                    
-                    {/* Show approval buttons for all teams */}
-                    <div className="flex gap-2 flex-wrap">
-                      {selectedTeam.payment_status === 'paid' ? (
-                        // For teams already paid - skip payment processing
-                        <Button
-                          className="team-status-button"
-                          onClick={() => {
-                            setIsDetailsDialogOpen(false);
-                            handleStatusUpdate(selectedTeam, 'approved', null, true); // true = skip payment
-                          }}
-                        >
-                          <Check className="h-4 w-4 mr-1" />
-                          Approve Without Payment
-                        </Button>
-                      ) : (
-                        // For teams that need payment processing
-                        <Button
-                          className="team-status-button"
-                          onClick={() => {
-                            setIsDetailsDialogOpen(false);
-                            handleStatusUpdate(selectedTeam, 'approved');
-                          }}
-                        >
-                          <Check className="h-4 w-4 mr-1" />
-                          Approve Team
-                        </Button>
-                      )}
-                      
-                      {/* Always show Approve Without Email option */}
-                      <Button
-                        variant="outline"
-                        className="team-status-button"
-                        onClick={() => {
-                          setIsDetailsDialogOpen(false);
-                          const skipPayment = selectedTeam.payment_status === 'paid';
-                          handleStatusUpdate(selectedTeam, 'approved', null, skipPayment, true); // skipEmail=true
-                        }}
-                      >
-                        <Check className="h-4 w-4 mr-1" />
-                        Approve Without Email
-                      </Button>
-                    </div>
-                    
-                    <Button 
-                      variant="outline"
-                      className="team-status-button"
-                      onClick={() => {
-                        setIsDetailsDialogOpen(false);
-                        handleStatusUpdate(selectedTeam, 'withdrawn');
-                      }}
-                    >
-                      <UserMinus className="h-4 w-4 mr-1" />
-                      Mark Withdrawn
-                    </Button>
-                  </>
-                )}
+                {/* Universal action buttons for all teams */}
+                <Button 
+                  variant="outline"
+                  onClick={() => {
+                    setIsDetailsDialogOpen(false);
+                    handleStatusUpdate(selectedTeam, 'rejected');
+                  }}
+                >
+                  <X className="h-4 w-4 mr-1" />
+                  Reject Team
+                </Button>
                 
-                {/* For teams in rejected status */}
-                {selectedTeam.status === 'rejected' && (
-                  <>
-                    <div className="flex gap-2 flex-wrap">
-                      <Button 
-                        onClick={() => {
-                          setIsDetailsDialogOpen(false);
-                          handleStatusUpdate(selectedTeam, 'approved');
-                        }}
-                      >
-                        <Check className="h-4 w-4 mr-1" />
-                        Approve Team
-                      </Button>
-                      <Button 
-                        variant="outline"
-                        onClick={() => {
-                          setIsDetailsDialogOpen(false);
-                          const skipPayment = selectedTeam.payment_status === 'paid';
-                          handleStatusUpdate(selectedTeam, 'approved', null, skipPayment, true); // skipEmail=true
-                        }}
-                      >
-                        <Check className="h-4 w-4 mr-1" />
-                        Approve Without Email
-                      </Button>
-                    </div>
-                    <Button 
-                      variant="outline"
-                      onClick={() => {
-                        setIsDetailsDialogOpen(false);
-                        handleStatusUpdate(selectedTeam, 'registered');
-                      }}
-                    >
-                      <RotateCcw className="h-4 w-4 mr-1" />
-                      Reset to Pending
-                    </Button>
-                    <Button 
-                      variant="outline"
-                      onClick={() => {
-                        setIsDetailsDialogOpen(false);
-                        handleStatusUpdate(selectedTeam, 'withdrawn');
-                      }}
-                    >
-                      <UserMinus className="h-4 w-4 mr-1" />
-                      Mark Withdrawn
-                    </Button>
-                  </>
-                )}
+                <Button 
+                  onClick={() => {
+                    setIsDetailsDialogOpen(false);
+                    handleStatusUpdate(selectedTeam, 'approved');
+                  }}
+                >
+                  <Check className="h-4 w-4 mr-1" />
+                  Approve Team
+                </Button>
                 
-                {/* For teams in waitlisted status */}
-                {selectedTeam.status === 'waitlisted' && (
-                  <>
-                    <div className="flex gap-2 flex-wrap">
-                      <Button 
-                        onClick={() => {
-                          setIsDetailsDialogOpen(false);
-                          handleStatusUpdate(selectedTeam, 'approved');
-                        }}
-                      >
-                        <Check className="h-4 w-4 mr-1" />
-                        Approve Team
-                      </Button>
-                      <Button 
-                        variant="outline"
-                        onClick={() => {
-                          setIsDetailsDialogOpen(false);
-                          const skipPayment = selectedTeam.payment_status === 'paid';
-                          handleStatusUpdate(selectedTeam, 'approved', null, skipPayment, true); // skipEmail=true
-                        }}
-                      >
-                        <Check className="h-4 w-4 mr-1" />
-                        Approve Without Email
-                      </Button>
-                    </div>
-                    <Button 
-                      variant="outline"
-                      onClick={() => {
-                        setIsDetailsDialogOpen(false);
-                        handleStatusUpdate(selectedTeam, 'registered');
-                      }}
-                    >
-                      <RotateCcw className="h-4 w-4 mr-1" />
-                      Reset to Pending
-                    </Button>
-                    <Button 
-                      variant="outline"
-                      onClick={() => {
-                        setIsDetailsDialogOpen(false);
-                        handleStatusUpdate(selectedTeam, 'rejected');
-                      }}
-                    >
-                      <X className="h-4 w-4 mr-1" />
-                      Reject Team
-                    </Button>
-                  </>
-                )}
+                <Button 
+                  variant="outline"
+                  onClick={() => {
+                    setIsDetailsDialogOpen(false);
+                    const skipPayment = selectedTeam.payment_status === 'paid';
+                    handleStatusUpdate(selectedTeam, 'approved', null, skipPayment, true); // skipEmail=true
+                  }}
+                >
+                  <Check className="h-4 w-4 mr-1" />
+                  Approve Without Email
+                </Button>
                 
-                {/* For teams in approved status */}
+                <Button 
+                  variant="outline"
+                  onClick={() => {
+                    setIsDetailsDialogOpen(false);
+                    handleStatusUpdate(selectedTeam, 'withdrawn');
+                  }}
+                >
+                  <UserMinus className="h-4 w-4 mr-1" />
+                  Mark Withdrawn
+                </Button>
+                
+
+                
+                {/* Status-specific buttons */}
                 {selectedTeam.status === 'approved' && (
-                  <>
-                    <Button 
-                      variant="outline"
-                      onClick={() => {
-                        resendApprovalEmailMutation.mutate(selectedTeam.id);
-                      }}
-                      disabled={resendApprovalEmailMutation.isPending}
-                    >
-                      {resendApprovalEmailMutation.isPending ? (
-                        <Loader2 className="h-4 w-4 mr-1 animate-spin" />
-                      ) : (
-                        <Mail className="h-4 w-4 mr-1" />
-                      )}
-                      Resend Approval Email
-                    </Button>
-                    <Button 
-                      variant="outline"
-                      onClick={() => {
-                        setIsDetailsDialogOpen(false);
-                        handleStatusUpdate(selectedTeam, 'rejected');
-                      }}
-                    >
-                      <X className="h-4 w-4 mr-1" />
-                      Reject Team
-                    </Button>
-                    <Button 
-                      variant="outline"
-                      onClick={() => {
-                        setIsDetailsDialogOpen(false);
-                        handleStatusUpdate(selectedTeam, 'registered');
-                      }}
-                    >
-                      <RotateCcw className="h-4 w-4 mr-1" />
-                      Reset to Pending
-                    </Button>
-                    <Button 
-                      variant="outline"
-                      onClick={() => {
-                        setIsDetailsDialogOpen(false);
-                        handleStatusUpdate(selectedTeam, 'withdrawn');
-                      }}
-                    >
-                      <UserMinus className="h-4 w-4 mr-1" />
-                      Mark Withdrawn
-                    </Button>
-                  </>
-                )}
-                
-                {/* For teams in withdrawn status */}
-                {selectedTeam.status === 'withdrawn' && (
-                  <>
-                    <Button 
-                      variant="outline"
-                      onClick={() => {
-                        setIsDetailsDialogOpen(false);
-                        handleStatusUpdate(selectedTeam, 'registered');
-                      }}
-                    >
-                      <RotateCcw className="h-4 w-4 mr-1" />
-                      Reset to Pending
-                    </Button>
-                  </>
-                )}
-                
-                {/* For teams in refunded status */}
-                {selectedTeam.status === 'refunded' && (
                   <Button 
                     variant="outline"
                     onClick={() => {
-                      setIsDetailsDialogOpen(false);
-                      handleStatusUpdate(selectedTeam, 'registered');
+                      resendApprovalEmailMutation.mutate(selectedTeam.id);
                     }}
+                    disabled={resendApprovalEmailMutation.isPending}
                   >
-                    <RotateCcw className="h-4 w-4 mr-1" />
-                    Reset to Pending
+                    {resendApprovalEmailMutation.isPending ? (
+                      <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                    ) : (
+                      <Mail className="h-4 w-4 mr-1" />
+                    )}
+                    Resend Approval Email
                   </Button>
                 )}
                 
-                {/* For paid teams - show refund option */}
                 {selectedTeam.paymentStatus === 'paid' && (
                   <Button 
                     variant="outline"
@@ -5654,29 +5470,7 @@ function TeamsView() {
                     Process Refund
                   </Button>
                 )}
-                {/* Always show both approval buttons for all teams */}
-                <div className="flex gap-2 flex-wrap">
-                  <Button 
-                    onClick={() => {
-                      setIsDetailsDialogOpen(false);
-                      handleStatusUpdate(selectedTeam, 'approved');
-                    }}
-                  >
-                    <Check className="h-4 w-4 mr-1" />
-                    Approve Team
-                  </Button>
-                  <Button 
-                    variant="outline"
-                    onClick={() => {
-                      setIsDetailsDialogOpen(false);
-                      const skipPayment = selectedTeam.payment_status === 'paid';
-                      handleStatusUpdate(selectedTeam, 'approved', null, skipPayment, true); // skipEmail=true
-                    }}
-                  >
-                    <Check className="h-4 w-4 mr-1" />
-                    Approve Without Email
-                  </Button>
-                </div>
+
                 
                 <Button 
                   variant="outline" 
