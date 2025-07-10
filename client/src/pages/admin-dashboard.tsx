@@ -5654,6 +5654,30 @@ function TeamsView() {
                     Process Refund
                   </Button>
                 )}
+                {/* Always show both approval buttons for all teams */}
+                <div className="flex gap-2 flex-wrap">
+                  <Button 
+                    onClick={() => {
+                      setIsDetailsDialogOpen(false);
+                      handleStatusUpdate(selectedTeam, 'approved');
+                    }}
+                  >
+                    <Check className="h-4 w-4 mr-1" />
+                    Approve Team
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    onClick={() => {
+                      setIsDetailsDialogOpen(false);
+                      const skipPayment = selectedTeam.payment_status === 'paid';
+                      handleStatusUpdate(selectedTeam, 'approved', null, skipPayment, true); // skipEmail=true
+                    }}
+                  >
+                    <Check className="h-4 w-4 mr-1" />
+                    Approve Without Email
+                  </Button>
+                </div>
+                
                 <Button 
                   variant="outline" 
                   onClick={handleEditTeam}
