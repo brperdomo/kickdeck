@@ -113,6 +113,14 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
+- July 10, 2025: APPROVE WITHOUT EMAIL FEATURE COMPLETED - Added comprehensive email-optional approval functionality for administrative flexibility
+  - IMPLEMENTED: "Approve Without Email" button in team details dialog for teams requiring payment processing
+  - ENHANCED: Frontend approval logic to show both standard approval and email-optional approval buttons side by side
+  - UPDATED: handleStatusUpdate function to accept skipEmail parameter with proper dialog messaging
+  - INTEGRATED: Backend skipEmail parameter support with conditional email notification logic and comprehensive logging
+  - USER FLEXIBILITY: Administrators can now approve teams without triggering automatic email notifications when needed
+  - WORKFLOW PRESERVATION: Standard approval process with emails remains intact while providing additional email-optional workflow
+  - PRODUCTION READY: Complete email-optional approval system operational alongside existing payment-optional approval functionality
 - July 10, 2025: 3D SECURE PAYMENT HANDLING CORRECTED - Implemented proper workflow for teams requiring 3D Secure authentication completion
   - IDENTIFIED: Teams with 3D Secure authentication requirements were incorrectly marked as 'paid' when they still needed customer action
   - CORRECTED APPROACH: Teams with successful Setup Intent authentication but incomplete payment should use payment completion URLs

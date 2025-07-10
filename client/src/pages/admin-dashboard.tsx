@@ -3350,14 +3350,14 @@ function TeamsView() {
 
   // Mutation for approving/rejecting team registration
   const updateTeamStatusMutation = useMutation({
-    mutationFn: async ({ teamId, status, notes, skipPayment }: { teamId: number, status: string, notes?: string, skipPayment?: boolean }) => {
+    mutationFn: async ({ teamId, status, notes, skipPayment, skipEmail }: { teamId: number, status: string, notes?: string, skipPayment?: boolean, skipEmail?: boolean }) => {
       try {
-        console.log('Sending status update with data:', { teamId, status, notes, skipPayment });
+        console.log('Sending status update with data:', { teamId, status, notes, skipPayment, skipEmail });
         
         const response = await fetch(`/api/admin/teams/${teamId}/status`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ status, notes, skipPayment })
+          body: JSON.stringify({ status, notes, skipPayment, skipEmail })
         });
         
         // First try to get the response text to check for parsing issues
@@ -3835,7 +3835,7 @@ function TeamsView() {
   };
 
   // Handle team status update
-  const handleStatusUpdate = (team: any, status: 'registered' | 'approved' | 'rejected' | 'withdrawn' | 'refunded' | 'waitlisted', notes?: string, skipPayment?: boolean) => {
+  const handleStatusUpdate = (team: any, status: 'registered' | 'approved' | 'rejected' | 'withdrawn' | 'refunded' | 'waitlisted', notes?: string, skipPayment?: boolean, skipEmail?: boolean) => {
     const statusDisplayMap = {
       'registered': 'Pending Review',
       'approved': 'Approved',
@@ -3853,7 +3853,9 @@ function TeamsView() {
     if (team.status === 'registered' && status === 'approved') {
       dialogMessage = skipPayment 
         ? `Approve team "${team.name}" for participation in the event without processing payment? (Team is already marked as PAID)`
-        : `Approve team "${team.name}" for participation in the event?`;
+        : skipEmail 
+          ? `Approve team "${team.name}" for participation in the event without sending email notification?`
+          : `Approve team "${team.name}" for participation in the event?`;
     } else if (team.status === 'registered' && status === 'rejected') {
       dialogMessage = `Reject team "${team.name}" from participating in the event?`;
     } else if (team.status === 'registered' && status === 'waitlisted') {
@@ -3869,7 +3871,8 @@ function TeamsView() {
       status,
       dialogTitle,
       dialogMessage,
-      skipPayment
+      skipPayment,
+      skipEmail
     });
     setIsApprovalDialogOpen(true);
   };
@@ -3894,7 +3897,8 @@ function TeamsView() {
       teamId: selectedTeam.id,
       status: selectedTeam.status,
       notes,
-      skipPayment: selectedTeam.skipPayment
+      skipPayment: selectedTeam.skipPayment,
+      skipEmail: selectedTeam.skipEmail
     });
   };
 
@@ -5418,17 +5422,30 @@ function TeamsView() {
                         Approve Without Payment
                       </Button>
                     ) : (
-                      // For teams that need payment processing
-                      <Button
-                        className="team-status-button"
-                        onClick={() => {
-                          setIsDetailsDialogOpen(false);
-                          handleStatusUpdate(selectedTeam, 'approved');
-                        }}
-                      >
-                        <Check className="h-4 w-4 mr-1" />
-                        Approve Team
-                      </Button>
+                      // For teams that need payment processing - show both approve options
+                      <div className="flex gap-2">
+                        <Button
+                          className="team-status-button"
+                          onClick={() => {
+                            setIsDetailsDialogOpen(false);
+                            handleStatusUpdate(selectedTeam, 'approved');
+                          }}
+                        >
+                          <Check className="h-4 w-4 mr-1" />
+                          Approve Team
+                        </Button>
+                        <Button
+                          variant="outline"
+                          className="team-status-button"
+                          onClick={() => {
+                            setIsDetailsDialogOpen(false);
+                            handleStatusUpdate(selectedTeam, 'approved', null, false, true); // skipPayment=false, skipEmail=true
+                          }}
+                        >
+                          <Check className="h-4 w-4 mr-1" />
+                          Approve Without Email
+                        </Button>
+                      </div>
                     )}
                     
                     <Button 

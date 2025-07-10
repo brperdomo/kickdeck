@@ -493,6 +493,7 @@ async function updateTeamStatus(req: Request, res: Response) {
     const status = req.body?.status;
     const notes = req.body?.notes;
     const skipPayment = req.body?.skipPayment;
+    const skipEmail = req.body?.skipEmail;
     
     if (!teamId || !status) {
       return res.status(400).json({ 
@@ -502,7 +503,7 @@ async function updateTeamStatus(req: Request, res: Response) {
       });
     }
     
-    log(`Processing team status update. TeamID: ${teamId}, Status: ${status}, Notes: ${notes ? 'provided' : 'none'}`, 'admin');
+    log(`Processing team status update. TeamID: ${teamId}, Status: ${status}, Notes: ${notes ? 'provided' : 'none'}, Skip Email: ${skipEmail || false}`, 'admin');
     
     const validStatuses: TeamStatus[] = ['registered', 'approved', 'rejected', 'paid', 'withdrawn', 'refunded', 'waitlisted'];
     
@@ -718,8 +719,13 @@ async function updateTeamStatus(req: Request, res: Response) {
     let emailStatus = 'not_sent';
     let emailRecipients: string[] = [];
     
-    // Wrap the entire email process in a try-catch to isolate it completely
-    try {
+    // Check if email should be skipped
+    if (skipEmail) {
+      log(`Email notification skipped for team ${teamId} (skipEmail=true)`, 'admin');
+      emailStatus = 'skipped';
+    } else {
+      // Wrap the entire email process in a try-catch to isolate it completely
+      try {
       // Get event details for email
       let event = null;
       try {
@@ -786,11 +792,12 @@ async function updateTeamStatus(req: Request, res: Response) {
         }
       }
       
-      emailStatus = 'sent';
-    } catch (emailError) {
-      // Log email error but don't let it affect the response
-      log(`Failed to send status notification email: ${emailError}`, 'admin');
-      emailStatus = 'failed';
+        emailStatus = 'sent';
+      } catch (emailError) {
+        // Log email error but don't let it affect the response
+        log(`Failed to send status notification email: ${emailError}`, 'admin');
+        emailStatus = 'failed';
+      }
     }
     
     // Ensure we return a consistent JSON response
@@ -804,7 +811,9 @@ async function updateTeamStatus(req: Request, res: Response) {
           ? 'Email notification sent successfully' 
           : emailStatus === 'failed' 
             ? 'Status updated but email notification failed' 
-            : 'No email notification attempted'
+            : emailStatus === 'skipped'
+              ? 'Status updated successfully (email notification skipped)' 
+              : 'No email notification attempted'
       }
     });
   } catch (error) {
