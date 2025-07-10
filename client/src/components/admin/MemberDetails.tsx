@@ -40,6 +40,7 @@ import {
   ClipboardList,
   AlertCircle,
   Edit,
+  Users,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -88,6 +89,9 @@ const MemberDetails: React.FC = () => {
   const [pageSize] = useState(15);
   const [editEmailOpen, setEditEmailOpen] = useState(false);
   const [newEmail, setNewEmail] = useState('');
+  const [mergeDialogOpen, setMergeDialogOpen] = useState(false);
+  const [mergeSearchTerm, setMergeSearchTerm] = useState('');
+  const [selectedSourceMember, setSelectedSourceMember] = useState<Member | null>(null);
 
   // Query to fetch members with pagination and search
   const membersQuery = useQuery({
@@ -186,6 +190,67 @@ const MemberDetails: React.FC = () => {
     },
   });
 
+  // Query for searching members to merge (excluding the current member)
+  const mergeSearchQuery = useQuery({
+    queryKey: ['merge-search', mergeSearchTerm, selectedMemberId],
+    queryFn: async () => {
+      if (!mergeSearchTerm || mergeSearchTerm.length < 2) return { members: [] };
+      
+      const searchParams = new URLSearchParams();
+      searchParams.append('search', mergeSearchTerm);
+      searchParams.append('limit', '10'); // Limit results for the search
+      
+      const response = await fetch(`/api/admin/members?${searchParams.toString()}`);
+      if (!response.ok) {
+        throw new Error('Failed to search members');
+      }
+      const data = await response.json();
+      
+      // Filter out the current member to prevent self-merge
+      const filteredMembers = data.members.filter((member: Member) => member.id !== selectedMemberId);
+      return { members: filteredMembers };
+    },
+    enabled: mergeDialogOpen && mergeSearchTerm.length >= 2,
+  });
+
+  // Mutation for merging members
+  const mergeMembersMutation = useMutation({
+    mutationFn: async ({ targetMemberId, sourceMemberId }: { targetMemberId: number; sourceMemberId: number }) => {
+      const response = await fetch(`/api/admin/members/${targetMemberId}/merge`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ sourceMemberId }),
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to merge members');
+      }
+      return response.json();
+    },
+    onSuccess: (data) => {
+      toast({
+        title: "Members Merged Successfully",
+        description: `${data.mergeDetails.sourceMember.name} has been merged into ${data.mergeDetails.targetMember.name}. Updated ${data.mergeDetails.updatedRecords.submitterTeams + data.mergeDetails.updatedRecords.managerTeams + data.mergeDetails.updatedRecords.coachTeams} team records.`,
+        variant: "default",
+      });
+      setMergeDialogOpen(false);
+      setSelectedSourceMember(null);
+      setMergeSearchTerm('');
+      // Invalidate queries to refresh data
+      queryClient.invalidateQueries({ queryKey: ['member', selectedMemberId] });
+      queryClient.invalidateQueries({ queryKey: ['members'] });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleOpenMemberDetails = (memberId: number) => {
     setSelectedMemberId(memberId);
     setMemberDetailsOpen(true);
@@ -214,6 +279,21 @@ const MemberDetails: React.FC = () => {
       updateEmailMutation.mutate({ 
         memberId: selectedMemberId, 
         newEmail: newEmail.trim() 
+      });
+    }
+  };
+
+  const handleMergeMembers = () => {
+    setMergeDialogOpen(true);
+    setMergeSearchTerm('');
+    setSelectedSourceMember(null);
+  };
+
+  const confirmMergeMembers = () => {
+    if (selectedMemberId && selectedSourceMember) {
+      mergeMembersMutation.mutate({
+        targetMemberId: selectedMemberId,
+        sourceMemberId: selectedSourceMember.id
       });
     }
   };
@@ -486,6 +566,14 @@ const MemberDetails: React.FC = () => {
             <Button variant="outline" onClick={() => setMemberDetailsOpen(false)}>
               Close
             </Button>
+            <Button 
+              variant="secondary"
+              onClick={handleMergeMembers}
+              className="flex items-center gap-2"
+            >
+              <Users className="h-4 w-4" />
+              Merge Member
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -561,6 +649,134 @@ const MemberDetails: React.FC = () => {
                 </>
               ) : (
                 'Update Email'
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Merge Members Dialog */}
+      <Dialog open={mergeDialogOpen} onOpenChange={setMergeDialogOpen}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>Merge Member Accounts</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-md">
+              <div className="flex items-start">
+                <AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5 mr-2" />
+                <div className="text-sm">
+                  <p className="font-medium text-yellow-800">Warning: This action cannot be undone</p>
+                  <p className="text-yellow-700 mt-1">
+                    Merging will combine all registrations and data from the selected member into the current member account. 
+                    The selected member account will be permanently deleted.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {memberDetailsQuery.data?.member && (
+              <div className="p-4 bg-blue-50 border border-blue-200 rounded-md">
+                <h4 className="font-medium text-blue-900 mb-2">Target Member (will keep this account):</h4>
+                <div className="text-sm text-blue-800">
+                  <p><strong>Name:</strong> {memberDetailsQuery.data.member.firstName} {memberDetailsQuery.data.member.lastName}</p>
+                  <p><strong>Email:</strong> {memberDetailsQuery.data.member.email}</p>
+                  <p><strong>Registrations:</strong> {memberDetailsQuery.data.registrations.length}</p>
+                </div>
+              </div>
+            )}
+
+            <div className="space-y-2">
+              <Label htmlFor="mergeSearch">Search for member to merge into this account:</Label>
+              <div className="relative">
+                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="mergeSearch"
+                  placeholder="Type member name or email..."
+                  className="pl-8"
+                  value={mergeSearchTerm}
+                  onChange={(e) => setMergeSearchTerm(e.target.value)}
+                />
+              </div>
+            </div>
+
+            {/* Search Results */}
+            {mergeSearchTerm.length >= 2 && (
+              <div className="border rounded-md max-h-60 overflow-y-auto">
+                {mergeSearchQuery.isLoading ? (
+                  <div className="p-4 text-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mx-auto"></div>
+                    <span className="text-sm text-muted-foreground mt-2">Searching...</span>
+                  </div>
+                ) : mergeSearchQuery.data?.members.length === 0 ? (
+                  <div className="p-4 text-center text-sm text-muted-foreground">
+                    No members found matching your search
+                  </div>
+                ) : (
+                  <div className="divide-y">
+                    {mergeSearchQuery.data?.members.map((member: Member) => (
+                      <div
+                        key={member.id}
+                        className={`p-3 cursor-pointer hover:bg-muted ${
+                          selectedSourceMember?.id === member.id ? 'bg-primary/10 border-l-4 border-primary' : ''
+                        }`}
+                        onClick={() => setSelectedSourceMember(member)}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="font-medium">{member.firstName} {member.lastName}</p>
+                            <p className="text-sm text-muted-foreground">{member.email}</p>
+                          </div>
+                          {selectedSourceMember?.id === member.id && (
+                            <div className="text-xs bg-primary text-primary-foreground px-2 py-1 rounded">
+                              Selected
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {selectedSourceMember && (
+              <div className="p-4 bg-red-50 border border-red-200 rounded-md">
+                <h4 className="font-medium text-red-900 mb-2">Source Member (will be deleted):</h4>
+                <div className="text-sm text-red-800">
+                  <p><strong>Name:</strong> {selectedSourceMember.firstName} {selectedSourceMember.lastName}</p>
+                  <p><strong>Email:</strong> {selectedSourceMember.email}</p>
+                  <p className="mt-2 text-xs">
+                    All registrations and data from this member will be transferred to the target member account above.
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                setMergeDialogOpen(false);
+                setMergeSearchTerm('');
+                setSelectedSourceMember(null);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button 
+              variant="destructive"
+              onClick={confirmMergeMembers}
+              disabled={mergeMembersMutation.isPending || !selectedSourceMember}
+            >
+              {mergeMembersMutation.isPending ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Merging...
+                </>
+              ) : (
+                'Merge Members'
               )}
             </Button>
           </DialogFooter>

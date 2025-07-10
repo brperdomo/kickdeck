@@ -5,7 +5,8 @@ import {
   getTeamRegistrationDetails, 
   resendPaymentConfirmation,
   getCurrentUserRegistrations,
-  updateMemberEmail
+  updateMemberEmail,
+  mergeMembers
 } from './members';
 
 const membersRouter = express.Router();
@@ -21,6 +22,9 @@ membersRouter.get('/:id', getMemberById);
 
 // Update member email (both users table and teams table)
 membersRouter.put('/:id/email', updateMemberEmail);
+
+// Merge two member accounts
+membersRouter.post('/:id/merge', mergeMembers);
 
 // Resend payment confirmation email
 membersRouter.post('/registrations/:teamId/resend-payment-confirmation', resendPaymentConfirmation);
