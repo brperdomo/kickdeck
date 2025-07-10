@@ -1139,23 +1139,89 @@ async function processTeamPaymentAfterSetup(req: Request, res: Response) {
     });
     
     if (paymentIntent.status === 'succeeded') {
-      // Update team with payment details
+      // Update team with payment details and approve automatically
+      const now = new Date().toISOString();
       await db.update(teams)
         .set({
           paymentIntentId: paymentIntent.id,
           paymentStatus: 'paid',
+          status: 'approved',
           paymentMethodId: setupIntent.payment_method,
-          notes: `${team.notes || ''} | Payment completed after Setup Intent confirmation`.trim()
+          approvedAt: sql`${now}`,
+          notes: `${team.notes || ''} | Payment completed via completion URL - automatically approved`.trim()
         })
         .where(eq(teams.id, parseInt(teamId, 10)));
       
-      log(`Payment successful for team ${teamId}. Payment Intent: ${paymentIntent.id}`, 'admin');
+      log(`Payment successful for team ${teamId}. Payment Intent: ${paymentIntent.id}. Team automatically approved.`, 'admin');
+      
+      // Send approval notification email
+      let emailStatus = 'not_sent';
+      let emailRecipients: string[] = [];
+      
+      try {
+        // Get event details for email
+        let event = null;
+        
+        if (team.eventId) {
+          const eventId = typeof team.eventId === 'string' ? 
+            parseInt(team.eventId, 10) : team.eventId;
+            
+          const eventResult = await db
+            .select()
+            .from(events)
+            .where(eq(events.id, eventId));
+            
+          if (eventResult && eventResult.length > 0) {
+            event = eventResult[0];
+          }
+        }
+        
+        // Send to both the submitter and the manager if they're different
+        emailRecipients = [];
+        if (team.submitterEmail) {
+          emailRecipients.push(team.submitterEmail);
+        }
+        
+        // If manager email is different from submitter, add them too
+        if (team.managerEmail && team.submitterEmail && 
+            team.managerEmail !== team.submitterEmail) {
+          emailRecipients.push(team.managerEmail);
+        }
+        
+        // Send approval notification to all recipients
+        for (const recipient of emailRecipients) {
+          if (recipient) {
+            await sendTemplatedEmail(
+              recipient,
+              'team_approved',
+              {
+                teamName: team.name || 'your team',
+                eventName: event?.name || 'the event',
+                approvalDate: new Date().toLocaleDateString(),
+                paymentAmount: ((team.totalAmount || 0) / 100).toFixed(2),
+                paymentIntentId: paymentIntent.id,
+                cardBrand: 'Card',
+                cardLastFour: '****'
+              }
+            );
+            
+            log(`Team approval email sent to ${recipient} after payment completion`, 'admin');
+          }
+        }
+        
+        emailStatus = 'sent';
+      } catch (emailError) {
+        log(`Failed to send approval notification email after payment completion: ${emailError}`, 'admin');
+        emailStatus = 'failed';
+      }
       
       return res.json({
         success: true,
         paymentIntentId: paymentIntent.id,
         amount: team.totalAmount / 100,
-        message: 'Payment processed successfully'
+        message: 'Payment processed successfully and team approved',
+        emailStatus,
+        emailRecipients
       });
     } else {
       log(`Payment failed for team ${teamId}. Status: ${paymentIntent.status}`, 'admin');
@@ -2025,5 +2091,7 @@ async function generatePaymentIntentCompletionUrl(req: Request, res: Response) {
     });
   }
 }
+
+
 
 export { updateTeamStatus, processRefund, processTeamPaymentAfterSetup, generatePaymentCompletionUrl, deleteTeam, bulkApproveTeams, bulkRejectTeams, generatePaymentIntentCompletionUrl };

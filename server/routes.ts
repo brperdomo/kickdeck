@@ -615,6 +615,147 @@ export function registerRoutes(app: Express): Server {
         });
       }
     });
+
+    // Public route for completing payment intents and automatically approving teams
+    app.post('/api/teams/:teamId/complete-payment-intent', async (req, res) => {
+      try {
+        const { teamId } = req.params;
+        const { paymentIntentId } = req.body;
+        
+        if (!teamId || !paymentIntentId) {
+          return res.status(400).json({ 
+            error: 'Team ID and Payment Intent ID are required' 
+          });
+        }
+        
+        console.log(`Completing payment intent ${paymentIntentId} for team ${teamId}`);
+        
+        // Get team details
+        const teamResult = await db
+          .select()
+          .from(teams)
+          .where(eq(teams.id, parseInt(teamId, 10)));
+        
+        if (!teamResult || teamResult.length === 0) {
+          return res.status(404).json({ 
+            error: 'Team not found' 
+          });
+        }
+        
+        const team = teamResult[0];
+        
+        // Verify the payment intent belongs to this team
+        if (team.paymentIntentId !== paymentIntentId) {
+          return res.status(400).json({ 
+            error: 'Payment Intent does not match team record' 
+          });
+        }
+        
+        // Verify payment intent status with Stripe
+        const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+        
+        if (paymentIntent.status !== 'succeeded') {
+          return res.status(400).json({ 
+            error: 'Payment Intent has not succeeded',
+            status: paymentIntent.status
+          });
+        }
+        
+        // Update team status to paid and approved
+        const now = new Date().toISOString();
+        await db.update(teams)
+          .set({
+            paymentStatus: 'paid',
+            status: 'approved',
+            approvedAt: sql`${now}`,
+            notes: `${team.notes || ''} | Payment completed via completion URL - automatically approved`.trim()
+          })
+          .where(eq(teams.id, parseInt(teamId, 10)));
+        
+        console.log(`Team ${teamId} payment completed and automatically approved`);
+        
+        // Send approval notification email
+        let emailStatus = 'not_sent';
+        let emailRecipients: string[] = [];
+        
+        try {
+          // Get event details for email
+          let event = null;
+          
+          if (team.eventId) {
+            const eventId = typeof team.eventId === 'string' ? 
+              parseInt(team.eventId, 10) : team.eventId;
+              
+            const eventResult = await db
+              .select()
+              .from(events)
+              .where(eq(events.id, eventId));
+              
+            if (eventResult && eventResult.length > 0) {
+              event = eventResult[0];
+            }
+          }
+          
+          // Send to both the submitter and the manager if they're different
+          emailRecipients = [];
+          if (team.submitterEmail) {
+            emailRecipients.push(team.submitterEmail);
+          }
+          
+          // If manager email is different from submitter, add them too
+          if (team.managerEmail && team.submitterEmail && 
+              team.managerEmail !== team.submitterEmail) {
+            emailRecipients.push(team.managerEmail);
+          }
+          
+          // Import sendTemplatedEmail from email service
+          const { sendTemplatedEmail } = await import('./services/email-service');
+          
+          // Send approval notification to all recipients
+          for (const recipient of emailRecipients) {
+            if (recipient) {
+              await sendTemplatedEmail(
+                recipient,
+                'team_approved',
+                {
+                  teamName: team.name || 'your team',
+                  eventName: event?.name || 'the event',
+                  approvalDate: new Date().toLocaleDateString(),
+                  paymentAmount: ((team.totalAmount || 0) / 100).toFixed(2),
+                  paymentIntentId: paymentIntentId,
+                  cardBrand: 'Card',
+                  cardLastFour: '****'
+                }
+              );
+              
+              console.log(`Team approval email sent to ${recipient} after payment intent completion`);
+            }
+          }
+          
+          emailStatus = 'sent';
+        } catch (emailError) {
+          console.log(`Failed to send approval notification email after payment intent completion: ${emailError}`);
+          emailStatus = 'failed';
+        }
+        
+        return res.json({
+          success: true,
+          message: 'Payment completed and team approved',
+          teamStatus: 'approved',
+          paymentStatus: 'paid',
+          emailStatus,
+          emailRecipients
+        });
+        
+      } catch (error) {
+        console.log(`Error completing payment intent for team ${teamId}: ${error}`);
+        
+        return res.status(500).json({
+          error: 'Failed to complete payment intent',
+          message: error instanceof Error ? error.message : 'Unknown error occurred'
+        });
+      }
+    });
     
     // Email check endpoint for contextual authentication flow
     app.get("/api/auth/check-email", async (req: Request, res: Response) => {

@@ -48,6 +48,22 @@ function PaymentIntentCompletionForm({ clientSecret, teamId, teamInfo }: { clien
           title: "Payment Completed",
           description: "Your payment has been successfully processed.",
         });
+        
+        // Notify backend to update team status and send emails
+        try {
+          await fetch(`/api/teams/${teamId}/complete-payment-intent`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              paymentIntentId: paymentIntent.id
+            })
+          });
+        } catch (backendError) {
+          console.error('Error notifying backend of payment completion:', backendError);
+          // Don't show error to user since payment succeeded
+        }
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unexpected error occurred');
