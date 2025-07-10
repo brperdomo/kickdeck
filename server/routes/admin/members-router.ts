@@ -4,7 +4,8 @@ import {
   getMemberById, 
   getTeamRegistrationDetails, 
   resendPaymentConfirmation,
-  getCurrentUserRegistrations
+  getCurrentUserRegistrations,
+  updateMemberEmail
 } from './members';
 
 const membersRouter = express.Router();
@@ -17,6 +18,9 @@ membersRouter.get('/registrations/:teamId', getTeamRegistrationDetails);
 
 // Get a specific member by ID with their registrations
 membersRouter.get('/:id', getMemberById);
+
+// Update member email (both users table and teams table)
+membersRouter.put('/:id/email', updateMemberEmail);
 
 // Resend payment confirmation email
 membersRouter.post('/registrations/:teamId/resend-payment-confirmation', resendPaymentConfirmation);

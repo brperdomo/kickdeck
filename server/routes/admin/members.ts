@@ -485,3 +485,131 @@ export async function getCurrentUserRegistrations(req: Request, res: Response) {
     res.status(500).json({ error: 'Failed to fetch registration details' });
   }
 }
+
+/**
+ * Update member email - handles both users table and teams table updates
+ */
+export async function updateMemberEmail(req: Request, res: Response) {
+  try {
+    const { id } = req.params;
+    const { newEmail } = req.body;
+    const memberId = parseInt(id);
+    
+    // Validate input
+    if (!newEmail || typeof newEmail !== 'string') {
+      return res.status(400).json({ error: 'New email is required' });
+    }
+    
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(newEmail)) {
+      return res.status(400).json({ error: 'Invalid email format' });
+    }
+    
+    // Get the existing member
+    const [existingMember] = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, memberId))
+      .limit(1);
+    
+    if (!existingMember) {
+      return res.status(404).json({ error: 'Member not found' });
+    }
+    
+    const oldEmail = existingMember.email;
+    
+    // Check if new email is already in use by another user
+    const [existingUser] = await db
+      .select()
+      .from(users)
+      .where(and(eq(users.email, newEmail), sql`${users.id} != ${memberId}`))
+      .limit(1);
+    
+    if (existingUser) {
+      return res.status(400).json({ error: 'Email is already in use by another member' });
+    }
+    
+    // Start transaction to update both users and teams tables
+    try {
+      // Update users table
+      await db
+        .update(users)
+        .set({ 
+          email: newEmail,
+          username: newEmail // Also update username to match email
+        })
+        .where(eq(users.id, memberId));
+      
+      // Update teams table - submitter email
+      const submitterTeamsUpdated = await db
+        .update(teams)
+        .set({ submitterEmail: newEmail })
+        .where(eq(teams.submitterEmail, oldEmail));
+      
+      // Update teams table - manager email
+      const managerTeamsUpdated = await db
+        .update(teams)
+        .set({ managerEmail: newEmail })
+        .where(eq(teams.managerEmail, oldEmail));
+      
+      // Update teams table - coach email in JSON field (more complex)
+      const coachTeams = await db
+        .select()
+        .from(teams)
+        .where(sql`${teams.coach}::text LIKE ${'%' + oldEmail + '%'}`);
+      
+      let coachTeamsUpdated = 0;
+      for (const team of coachTeams) {
+        if (team.coach) {
+          try {
+            const coachData = JSON.parse(team.coach);
+            if (coachData.headCoachEmail === oldEmail) {
+              coachData.headCoachEmail = newEmail;
+              await db
+                .update(teams)
+                .set({ coach: JSON.stringify(coachData) })
+                .where(eq(teams.id, team.id));
+              coachTeamsUpdated++;
+            }
+          } catch (error) {
+            console.error(`Error updating coach data for team ${team.id}:`, error);
+          }
+        }
+      }
+      
+      // Get the updated member data
+      const [updatedMember] = await db
+        .select()
+        .from(users)
+        .where(eq(users.id, memberId))
+        .limit(1);
+      
+      console.log(`Email update completed for member ${memberId}:`);
+      console.log(`  - Old email: ${oldEmail}`);
+      console.log(`  - New email: ${newEmail}`);
+      console.log(`  - Submitter teams updated: ${submitterTeamsUpdated.rowCount || 0}`);
+      console.log(`  - Manager teams updated: ${managerTeamsUpdated.rowCount || 0}`);
+      console.log(`  - Coach teams updated: ${coachTeamsUpdated}`);
+      
+      res.json({
+        success: true,
+        message: 'Member email updated successfully',
+        member: updatedMember,
+        updatedTeams: {
+          submitterTeams: submitterTeamsUpdated.rowCount || 0,
+          managerTeams: managerTeamsUpdated.rowCount || 0,
+          coachTeams: coachTeamsUpdated
+        }
+      });
+      
+    } catch (dbError) {
+      console.error('Database error during email update:', dbError);
+      throw dbError;
+    }
+    
+  } catch (error) {
+    console.error('Error updating member email:', error);
+    res.status(500).json({ error: 'Failed to update member email' });
+  }
+}

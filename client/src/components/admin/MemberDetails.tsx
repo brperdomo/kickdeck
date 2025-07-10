@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -38,6 +39,7 @@ import {
   CreditCard,
   ClipboardList,
   AlertCircle,
+  Edit,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -84,6 +86,8 @@ const MemberDetails: React.FC = () => {
   const [selectedRegistration, setSelectedRegistration] = useState<Registration | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(15);
+  const [editEmailOpen, setEditEmailOpen] = useState(false);
+  const [newEmail, setNewEmail] = useState('');
 
   // Query to fetch members with pagination and search
   const membersQuery = useQuery({
@@ -145,6 +149,43 @@ const MemberDetails: React.FC = () => {
     },
   });
 
+  // Mutation for updating member email
+  const updateEmailMutation = useMutation({
+    mutationFn: async ({ memberId, newEmail }: { memberId: number; newEmail: string }) => {
+      const response = await fetch(`/api/admin/members/${memberId}/email`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ newEmail }),
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to update email');
+      }
+      return response.json();
+    },
+    onSuccess: (data) => {
+      toast({
+        title: "Email Updated",
+        description: `Member email updated successfully. Updated ${data.updatedTeams.submitterTeams + data.updatedTeams.managerTeams + data.updatedTeams.coachTeams} team records.`,
+        variant: "default",
+      });
+      setEditEmailOpen(false);
+      setNewEmail('');
+      // Invalidate queries to refresh data
+      queryClient.invalidateQueries({ queryKey: ['member', selectedMemberId] });
+      queryClient.invalidateQueries({ queryKey: ['members'] });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleOpenMemberDetails = (memberId: number) => {
     setSelectedMemberId(memberId);
     setMemberDetailsOpen(true);
@@ -158,6 +199,22 @@ const MemberDetails: React.FC = () => {
   const confirmResendPaymentConfirmation = () => {
     if (selectedRegistration) {
       resendPaymentMutation.mutate(selectedRegistration.id);
+    }
+  };
+
+  const handleEditEmail = () => {
+    if (memberDetailsQuery.data?.member) {
+      setNewEmail(memberDetailsQuery.data.member.email);
+      setEditEmailOpen(true);
+    }
+  };
+
+  const confirmEmailUpdate = () => {
+    if (selectedMemberId && newEmail.trim()) {
+      updateEmailMutation.mutate({ 
+        memberId: selectedMemberId, 
+        newEmail: newEmail.trim() 
+      });
     }
   };
 
@@ -341,9 +398,19 @@ const MemberDetails: React.FC = () => {
                     </div>
                     <div className="space-y-2">
                       <div className="text-sm text-muted-foreground">Email</div>
-                      <div className="font-medium flex items-center">
-                        <Mail className="h-4 w-4 mr-2" />
-                        {memberDetailsQuery.data.member.email}
+                      <div className="font-medium flex items-center justify-between">
+                        <div className="flex items-center">
+                          <Mail className="h-4 w-4 mr-2" />
+                          {memberDetailsQuery.data.member.email}
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={handleEditEmail}
+                          className="text-xs p-1 h-auto"
+                        >
+                          <Edit className="h-3 w-3" />
+                        </Button>
                       </div>
                     </div>
                     <div className="space-y-2">
@@ -446,6 +513,54 @@ const MemberDetails: React.FC = () => {
                 </>
               ) : (
                 'Resend Email'
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Email Dialog */}
+      <Dialog open={editEmailOpen} onOpenChange={setEditEmailOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Update Member Email</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-sm text-muted-foreground">
+              This will update the member's email address in their account and all associated team registrations.
+            </p>
+            <div className="space-y-2">
+              <Label htmlFor="newEmail">New Email Address</Label>
+              <Input
+                id="newEmail"
+                type="email"
+                value={newEmail}
+                onChange={(e) => setNewEmail(e.target.value)}
+                placeholder="Enter new email address"
+              />
+            </div>
+          </div>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                setEditEmailOpen(false);
+                setNewEmail('');
+              }}
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={confirmEmailUpdate} 
+              disabled={updateEmailMutation.isPending || !newEmail.trim()}
+            >
+              {updateEmailMutation.isPending ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Updating...
+                </>
+              ) : (
+                'Update Email'
               )}
             </Button>
           </DialogFooter>
