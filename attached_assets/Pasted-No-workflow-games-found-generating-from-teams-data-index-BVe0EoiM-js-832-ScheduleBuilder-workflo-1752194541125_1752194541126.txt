@@ -1,0 +1,47 @@
+No workflow games found, generating from teams data...
+index-BVe0EoiM.js:832 ScheduleBuilder workflowData: {metadata: {…}, flight: {…}, bracket: {…}, seed: {…}, timeblock: {…}}
+index-BVe0EoiM.js:832 ScheduleBuilder games: []
+index-BVe0EoiM.js:832 ScheduleBuilder timeBlocks: [{…}]
+index-BVe0EoiM.js:832 ScheduleBuilder brackets: [{…}]
+index-BVe0EoiM.js:832 Fetch finished loading: GET "https://app.matchpro.ai/api/admin/events/1656618593/teams".
+w @ index-BVe0EoiM.js:832
+Sue @ index-BVe0EoiM.js:37
+Eue @ index-BVe0EoiM.js:37
+Pue @ index-BVe0EoiM.js:37
+iM @ index-BVe0EoiM.js:37
+UG @ index-BVe0EoiM.js:37
+(anonymous) @ index-BVe0EoiM.js:37
+fO @ index-BVe0EoiM.js:40
+mG @ index-BVe0EoiM.js:37
+g2 @ index-BVe0EoiM.js:37
+U4 @ index-BVe0EoiM.js:37
+Vue @ index-BVe0EoiM.js:37
+index-BVe0EoiM.js:832 Error generating schedule: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+w @ index-BVe0EoiM.js:832
+await in w
+Sue @ index-BVe0EoiM.js:37
+Eue @ index-BVe0EoiM.js:37
+Pue @ index-BVe0EoiM.js:37
+iM @ index-BVe0EoiM.js:37
+UG @ index-BVe0EoiM.js:37
+(anonymous) @ index-BVe0EoiM.js:37
+fO @ index-BVe0EoiM.js:40
+mG @ index-BVe0EoiM.js:37
+g2 @ index-BVe0EoiM.js:37
+U4 @ index-BVe0EoiM.js:37
+Vue @ index-BVe0EoiM.js:37Understand this error
+index-BVe0EoiM.js:832 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+index-BVe0EoiM.js:832 ScheduleBuilder workflowData: {metadata: {…}, flight: {…}, bracket: {…}, seed: {…}, timeblock: {…}}
+index-BVe0EoiM.js:832 ScheduleBuilder games: []
+index-BVe0EoiM.js:832 ScheduleBuilder timeBlocks: [{…}]
+index-BVe0EoiM.js:832 ScheduleBuilder brackets: [{…}]
+index-BVe0EoiM.js:832 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+index-BVe0EoiM.js:832 ScheduleBuilder workflowData: {metadata: {…}, flight: {…}, bracket: {…}, seed: {…}, timeblock: {…}}
+index-BVe0EoiM.js:832 ScheduleBuilder games: []
+index-BVe0EoiM.js:832 ScheduleBuilder timeBlocks: [{…}]
+index-BVe0EoiM.js:832 ScheduleBuilder brackets: [{…}]
+index-BVe0EoiM.js:832 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+index-BVe0EoiM.js:832 ScheduleBuilder workflowData: {metadata: {…}, flight: {…}, bracket: {…}, seed: {…}, timeblock: {…}}
+index-BVe0EoiM.js:832 ScheduleBuilder games: []
+index-BVe0EoiM.js:832 ScheduleBuilder timeBlocks: [{…}]
+index-BVe0EoiM.js:832 ScheduleBuilder brackets: [{…}]
