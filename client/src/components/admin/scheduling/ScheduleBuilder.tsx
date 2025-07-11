@@ -89,26 +89,12 @@ export function ScheduleBuilder({ eventId, workflowData, onComplete, onError }: 
     setIsGenerating(true);
     
     try {
-      // If no workflow games exist, generate from teams data
+      // Check if proper workflow games exist
       let workflowGames = games;
       
       if (!workflowGames || workflowGames.length === 0) {
-        console.log('No workflow games found, generating from teams data...');
-        
-        // Fetch teams data and create sample games
-        const teamsResponse = await fetch(`/api/admin/teams?eventId=${eventId}`);
-        if (teamsResponse.ok) {
-          const teamsData = await teamsResponse.json();
-          console.log('Fetched teams data:', teamsData.length, 'teams');
-          
-          // Create sample bracket games from teams
-          workflowGames = await generateSampleWorkflowGames(teamsData);
-          console.log('Generated sample workflow games:', workflowGames.length, 'brackets');
-        } else {
-          console.error('Failed to fetch teams:', teamsResponse.status, teamsResponse.statusText);
-          const errorText = await teamsResponse.text();
-          console.error('Teams API error response:', errorText);
-        }
+        onError('No games found for scheduling. Please complete the previous workflow steps first: Game Metadata → Flight Management → Bracket Creation → Team Seeding → Time Block Assignment. These steps are required to define which age groups and teams should have games scheduled.');
+        return;
       }
 
       const response = await fetch(`/api/admin/events/${eventId}/generate-schedule`, {
@@ -393,6 +379,27 @@ export function ScheduleBuilder({ eventId, workflowData, onComplete, onError }: 
 
   return (
     <div className="space-y-6">
+      {/* Workflow Status Check */}
+      {(!games || games.length === 0) && (
+        <Alert>
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription>
+            <strong>No games ready for scheduling</strong>
+            <p className="mt-2">To generate a schedule, you need to complete the previous workflow steps:</p>
+            <ol className="mt-2 ml-4 list-decimal space-y-1">
+              <li><strong>Game Metadata Setup</strong> - Define tournament rules and game formats</li>
+              <li><strong>Flight Management</strong> - Organize teams into competitive flights</li>
+              <li><strong>Bracket Creation</strong> - Create tournament brackets for each flight</li>
+              <li><strong>Team Seeding</strong> - Assign teams to specific brackets</li>
+              <li><strong>Time Block Assignment</strong> - Set up available time slots</li>
+            </ol>
+            <p className="mt-2 text-sm text-muted-foreground">
+              These steps ensure you only generate games for the age groups and teams you want to include in your tournament.
+            </p>
+          </AlertDescription>
+        </Alert>
+      )}
+
       {/* Scheduling Method Selection */}
       <Card>
         <CardHeader>
