@@ -96,7 +96,7 @@ export function ScheduleBuilder({ eventId, workflowData, onComplete, onError }: 
         console.log('No workflow games found, generating from teams data...');
         
         // Fetch teams data and create sample games
-        const teamsResponse = await fetch(`/api/admin/events/${eventId}/teams`);
+        const teamsResponse = await fetch(`/api/admin/teams?eventId=${eventId}`);
         if (teamsResponse.ok) {
           const teamsData = await teamsResponse.json();
           console.log('Fetched teams data:', teamsData.length, 'teams');
@@ -104,6 +104,10 @@ export function ScheduleBuilder({ eventId, workflowData, onComplete, onError }: 
           // Create sample bracket games from teams
           workflowGames = await generateSampleWorkflowGames(teamsData);
           console.log('Generated sample workflow games:', workflowGames.length, 'brackets');
+        } else {
+          console.error('Failed to fetch teams:', teamsResponse.status, teamsResponse.statusText);
+          const errorText = await teamsResponse.text();
+          console.error('Teams API error response:', errorText);
         }
       }
 
@@ -121,8 +125,22 @@ export function ScheduleBuilder({ eventId, workflowData, onComplete, onError }: 
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || `Failed to generate schedule: ${response.status}`);
+        // Try to parse as JSON first, fallback to text if it fails
+        let errorMessage = `Failed to generate schedule: ${response.status}`;
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorMessage;
+        } catch (e) {
+          // If JSON parsing fails, try to read as text
+          try {
+            const errorText = await response.text();
+            console.error('Schedule generation API error response:', errorText);
+            errorMessage = errorText.substring(0, 200) + '...'; // Truncate long HTML responses
+          } catch (textError) {
+            console.error('Failed to read error response:', textError);
+          }
+        }
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();

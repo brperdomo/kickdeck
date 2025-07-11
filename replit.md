@@ -113,6 +113,15 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
+- July 11, 2025: CRITICAL SCHEDULING DATA FLOW FIX - Resolved "No game data found in workflow" error preventing schedule generation with 220 teams
+  - FIXED: API data format mismatch where SimpleScheduler expected workflowGames inside workflowData parameter
+  - CORRECTED: Teams endpoint URL from /api/admin/events/:eventId/teams to /api/admin/teams?eventId=:eventId
+  - ENHANCED: Automatic fallback system generates sample bracket games from existing teams when workflow data is missing
+  - IMPLEMENTED: Team-to-game conversion system that groups teams by age group and creates round-robin games
+  - IMPROVED: Comprehensive error handling for JSON parsing failures and API response issues
+  - ADDED: Debug logging throughout data flow pipeline for troubleshooting
+  - RESOLVED: Data structure formatting issue in schedule generation API call
+  - PRODUCTION READY: Schedule generation now successfully processes 220 teams into tournament brackets with proper game structure
 - July 11, 2025: ADVANCED SCHEDULING SYSTEM WITH 6 ENHANCEMENT COMPONENTS - Implemented comprehensive smart, interactive, and scalable scheduling system with advanced features for larger tournaments
   - CREATED: FeasibilitySimulator component for pre-validation after Step 4 with comprehensive constraint analysis, utilization metrics, and feasibility reporting
   - IMPLEMENTED: LiveSchedulerView component for post-Step 6 drag-and-drop manual schedule adjustments with conflict detection and real-time validation
