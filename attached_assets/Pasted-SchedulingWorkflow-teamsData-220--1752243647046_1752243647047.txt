@@ -1,0 +1,213 @@
+SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+index-CY3ygOBS.js:765 Fetch finished loading: PUT "https://app.matchpro.ai/api/admin/game-metadata/1656618593/game-formats".
+mutationFn @ index-CY3ygOBS.js:765
+fn @ index-CY3ygOBS.js:40
+f @ index-CY3ygOBS.js:40
+start @ index-CY3ygOBS.js:40
+execute @ index-CY3ygOBS.js:40
+await in execute
+mutate @ index-CY3ygOBS.js:40
+(anonymous) @ index-CY3ygOBS.js:40
+onClick @ index-CY3ygOBS.js:765
+Sue @ index-CY3ygOBS.js:37
+Eue @ index-CY3ygOBS.js:37
+Pue @ index-CY3ygOBS.js:37
+iM @ index-CY3ygOBS.js:37
+UG @ index-CY3ygOBS.js:37
+(anonymous) @ index-CY3ygOBS.js:37
+fO @ index-CY3ygOBS.js:40
+mG @ index-CY3ygOBS.js:37
+g2 @ index-CY3ygOBS.js:37
+U4 @ index-CY3ygOBS.js:37
+Vue @ index-CY3ygOBS.js:37
+index-CY3ygOBS.js:837 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+index-CY3ygOBS.js:765  GET https://app.matchpro.ai/api/admin/game-metadata/1656618593/game-metadata 500 (Internal Server Error)
+queryFn @ index-CY3ygOBS.js:765
+i @ index-CY3ygOBS.js:40
+f @ index-CY3ygOBS.js:40
+start @ index-CY3ygOBS.js:40
+fetch @ index-CY3ygOBS.js:40
+(anonymous) @ index-CY3ygOBS.js:40
+(anonymous) @ index-CY3ygOBS.js:40
+batch @ index-CY3ygOBS.js:40
+refetchQueries @ index-CY3ygOBS.js:40
+(anonymous) @ index-CY3ygOBS.js:40
+batch @ index-CY3ygOBS.js:40
+invalidateQueries @ index-CY3ygOBS.js:40
+onSuccess @ index-CY3ygOBS.js:765
+execute @ index-CY3ygOBS.js:40
+await in execute
+mutate @ index-CY3ygOBS.js:40
+(anonymous) @ index-CY3ygOBS.js:40
+onClick @ index-CY3ygOBS.js:765
+Sue @ index-CY3ygOBS.js:37
+Eue @ index-CY3ygOBS.js:37
+Pue @ index-CY3ygOBS.js:37
+iM @ index-CY3ygOBS.js:37
+UG @ index-CY3ygOBS.js:37
+(anonymous) @ index-CY3ygOBS.js:37
+fO @ index-CY3ygOBS.js:40
+mG @ index-CY3ygOBS.js:37
+g2 @ index-CY3ygOBS.js:37
+U4 @ index-CY3ygOBS.js:37
+Vue @ index-CY3ygOBS.js:37Understand this error
+index-CY3ygOBS.js:765 Fetch failed loading: GET "https://app.matchpro.ai/api/admin/game-metadata/1656618593/game-metadata".
+queryFn @ index-CY3ygOBS.js:765
+i @ index-CY3ygOBS.js:40
+f @ index-CY3ygOBS.js:40
+start @ index-CY3ygOBS.js:40
+fetch @ index-CY3ygOBS.js:40
+(anonymous) @ index-CY3ygOBS.js:40
+(anonymous) @ index-CY3ygOBS.js:40
+batch @ index-CY3ygOBS.js:40
+refetchQueries @ index-CY3ygOBS.js:40
+(anonymous) @ index-CY3ygOBS.js:40
+batch @ index-CY3ygOBS.js:40
+invalidateQueries @ index-CY3ygOBS.js:40
+onSuccess @ index-CY3ygOBS.js:765
+execute @ index-CY3ygOBS.js:40
+await in execute
+mutate @ index-CY3ygOBS.js:40
+(anonymous) @ index-CY3ygOBS.js:40
+onClick @ index-CY3ygOBS.js:765
+Sue @ index-CY3ygOBS.js:37
+Eue @ index-CY3ygOBS.js:37
+Pue @ index-CY3ygOBS.js:37
+iM @ index-CY3ygOBS.js:37
+UG @ index-CY3ygOBS.js:37
+(anonymous) @ index-CY3ygOBS.js:37
+fO @ index-CY3ygOBS.js:40
+mG @ index-CY3ygOBS.js:37
+g2 @ index-CY3ygOBS.js:37
+U4 @ index-CY3ygOBS.js:37
+Vue @ index-CY3ygOBS.js:37
+index-CY3ygOBS.js:837 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+index-CY3ygOBS.js:837 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+index-CY3ygOBS.js:765 FlightManager teamsData: (2) [{…}, {…}]
+index-CY3ygOBS.js:765 FlightManager ageGroupsData: undefined
+index-CY3ygOBS.js:765 Final extracted age groups: []
+index-CY3ygOBS.js:765 FlightManager teamsData: (2) [{…}, {…}]
+index-CY3ygOBS.js:765 FlightManager ageGroupsData: undefined
+index-CY3ygOBS.js:765 Final extracted age groups: []
+index-CY3ygOBS.js:765 Fetch finished loading: GET "https://app.matchpro.ai/api/admin/events/1656618593/age-groups".
+queryFn @ index-CY3ygOBS.js:765
+i @ index-CY3ygOBS.js:40
+f @ index-CY3ygOBS.js:40
+start @ index-CY3ygOBS.js:40
+fetch @ index-CY3ygOBS.js:40
+Ux @ index-CY3ygOBS.js:40
+onSubscribe @ index-CY3ygOBS.js:40
+subscribe @ index-CY3ygOBS.js:40
+(anonymous) @ index-CY3ygOBS.js:40
+sW @ index-CY3ygOBS.js:38
+g1 @ index-CY3ygOBS.js:40
+$h @ index-CY3ygOBS.js:40
+ahe @ index-CY3ygOBS.js:40
+uu @ index-CY3ygOBS.js:40
+RM @ index-CY3ygOBS.js:40
+Vd @ index-CY3ygOBS.js:38
+(anonymous) @ index-CY3ygOBS.js:40
+index-CY3ygOBS.js:765 FlightManager teamsData: (2) [{…}, {…}]
+index-CY3ygOBS.js:765 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+index-CY3ygOBS.js:765 Extracted age group IDs: (220) [10065, 10064, 10064, 10064, 10064, 10064, 10064, 10064, 10064, 10064, 10066, 10066, 10065, 10048, 10056, 10066, 10066, 10066, 10066, 10066, 10066, 10066, 10065, 10065, 10065, 10065, 10065, 10065, 10065, 10061, 10061, 10061, 10063, 10063, 10063, 10063, 10063, 10063, 10063, 10063, 10063, 10062, 10062, 10062, 10062, 10062, 10062, 10062, 10062, 10062, 10061, 10061, 10059, 10060, 10060, 10060, 10060, 10060, 10060, 10060, 10061, 10061, 10061, 10061, 10060, 10060, 10059, 10059, 10058, 10058, 10058, 10058, 10058, 10058, 10058, 10058, 10057, 10057, 10057, 10059, 10058, 10057, 10057, 10059, 10059, 10059, 10059, 10059, 10054, 10054, 10056, 10054, 10054, 10054, 10054, 10055, 10055, 10055, 10055, 10055, …]
+index-CY3ygOBS.js:765 Age groups with names: (24) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-CY3ygOBS.js:765 Final extracted age groups: (24) ['U19', 'U17', 'U19', 'U9', 'U13', 'U16', 'U17', 'U16', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U12', 'U11', 'U10', 'U11', 'U10', 'U9', 'U8', 'U8', 'U7', 'U7']
+index-CY3ygOBS.js:837 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+index-CY3ygOBS.js:765 FlightManager teamsData: (2) [{…}, {…}]
+index-CY3ygOBS.js:765 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+index-CY3ygOBS.js:765 Final extracted age groups: (24) ['U19', 'U17', 'U19', 'U9', 'U13', 'U16', 'U17', 'U16', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U12', 'U11', 'U10', 'U11', 'U10', 'U9', 'U8', 'U8', 'U7', 'U7']
+index-CY3ygOBS.js:765 FlightManager teamsData: (2) [{…}, {…}]
+index-CY3ygOBS.js:765 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+index-CY3ygOBS.js:765 Final extracted age groups: (24) ['U19', 'U17', 'U19', 'U9', 'U13', 'U16', 'U17', 'U16', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U12', 'U11', 'U10', 'U11', 'U10', 'U9', 'U8', 'U8', 'U7', 'U7']
+index-CY3ygOBS.js:716 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ index-CY3ygOBS.js:716
+g1 @ index-CY3ygOBS.js:40
+$h @ index-CY3ygOBS.js:40
+ahe @ index-CY3ygOBS.js:40
+uu @ index-CY3ygOBS.js:40
+RM @ index-CY3ygOBS.js:40
+Vd @ index-CY3ygOBS.js:38
+(anonymous) @ index-CY3ygOBS.js:40Understand this warning
+chunk-UVKO6OCU.js:6 [Violation] Added non-passive event listener to a scroll-blocking 'wheel' event. Consider marking event handler as 'passive' to make the page more responsive. See https://www.chromestatus.com/feature/5745543795965952
+re @ chunk-UVKO6OCU.js:6
+m @ menu.js:101
+ge @ chunk-UVKO6OCU.js:6
+m @ menu.js:101
+ge @ chunk-UVKO6OCU.js:6
+m @ menu.js:101
+p @ menu.js:101
+pe @ chunk-UVKO6OCU.js:6
+Y @ chunk-UVKO6OCU.js:6
+index-CY3ygOBS.js:837 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+index-CY3ygOBS.js:765 FlightManager teamsData: (2) [{…}, {…}]
+index-CY3ygOBS.js:765 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+index-CY3ygOBS.js:765 Final extracted age groups: (24) ['U19', 'U17', 'U19', 'U9', 'U13', 'U16', 'U17', 'U16', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U12', 'U11', 'U10', 'U11', 'U10', 'U9', 'U8', 'U8', 'U7', 'U7']
+chunk-UVKO6OCU.js:6 [Violation] Added non-passive event listener to a scroll-blocking 'wheel' event. Consider marking event handler as 'passive' to make the page more responsive. See https://www.chromestatus.com/feature/5745543795965952
+re @ chunk-UVKO6OCU.js:6
+m @ menu.js:101
+ge @ chunk-UVKO6OCU.js:6
+m @ menu.js:101
+ge @ chunk-UVKO6OCU.js:6
+m @ menu.js:101
+p @ menu.js:101
+pe @ chunk-UVKO6OCU.js:6
+Y @ chunk-UVKO6OCU.js:6
+7Failed to decode downloaded font: <URL>Understand this warning
+7OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+index-CY3ygOBS.js:837 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+index-CY3ygOBS.js:765 FlightManager teamsData: (2) [{…}, {…}]
+index-CY3ygOBS.js:765 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+index-CY3ygOBS.js:765 Final extracted age groups: (24) ['U19', 'U17', 'U19', 'U9', 'U13', 'U16', 'U17', 'U16', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U12', 'U11', 'U10', 'U11', 'U10', 'U9', 'U8', 'U8', 'U7', 'U7']
+index-CY3ygOBS.js:855 Fetch finished loading: GET "https://app.matchpro.ai/api/admin/registrations/new-count".
+queryFn @ index-CY3ygOBS.js:855
+i @ index-CY3ygOBS.js:40
+f @ index-CY3ygOBS.js:40
+start @ index-CY3ygOBS.js:40
+fetch @ index-CY3ygOBS.js:40
+Ux @ index-CY3ygOBS.js:40
+(anonymous) @ index-CY3ygOBS.js:40
+index-CY3ygOBS.js:765 FlightManager teamsData: (2) [{…}, {…}]
+index-CY3ygOBS.js:765 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+index-CY3ygOBS.js:765 Final extracted age groups: (24) ['U19', 'U17', 'U19', 'U9', 'U13', 'U16', 'U17', 'U16', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U12', 'U11', 'U10', 'U11', 'U10', 'U9', 'U8', 'U8', 'U7', 'U7']
+index-CY3ygOBS.js:765 FlightManager teamsData: (2) [{…}, {…}]
+index-CY3ygOBS.js:765 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+index-CY3ygOBS.js:765 Final extracted age groups: (24) ['U19', 'U17', 'U19', 'U9', 'U13', 'U16', 'U17', 'U16', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U12', 'U11', 'U10', 'U11', 'U10', 'U9', 'U8', 'U8', 'U7', 'U7']
+index-CY3ygOBS.js:837 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+index-CY3ygOBS.js:765 FlightManager teamsData: (2) [{…}, {…}]
+index-CY3ygOBS.js:765 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+index-CY3ygOBS.js:765 Final extracted age groups: (24) ['U19', 'U17', 'U19', 'U9', 'U13', 'U16', 'U17', 'U16', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U12', 'U11', 'U10', 'U11', 'U10', 'U9', 'U8', 'U8', 'U7', 'U7']
+index-CY3ygOBS.js:765 FlightManager teamsData: (2) [{…}, {…}]
+index-CY3ygOBS.js:765 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+index-CY3ygOBS.js:765 Final extracted age groups: (24) ['U19', 'U17', 'U19', 'U9', 'U13', 'U16', 'U17', 'U16', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U12', 'U11', 'U10', 'U11', 'U10', 'U9', 'U8', 'U8', 'U7', 'U7']
+index-CY3ygOBS.js:765 FlightManager teamsData: (2) [{…}, {…}]
+index-CY3ygOBS.js:765 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+index-CY3ygOBS.js:765 Final extracted age groups: (24) ['U19', 'U17', 'U19', 'U9', 'U13', 'U16', 'U17', 'U16', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U12', 'U11', 'U10', 'U11', 'U10', 'U9', 'U8', 'U8', 'U7', 'U7']
+index-CY3ygOBS.js:837 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+index-CY3ygOBS.js:765 FlightManager teamsData: (2) [{…}, {…}]
+index-CY3ygOBS.js:765 FlightManager ageGroupsData: (5) [{…}, {…}, {…}, {…}, {…}]
+index-CY3ygOBS.js:765 Final extracted age groups: (24) ['U19', 'U17', 'U19', 'U9', 'U13', 'U16', 'U17', 'U16', 'U15', 'U15', 'U14', 'U14', 'U12', 'U13', 'U12', 'U11', 'U10', 'U11', 'U10', 'U9', 'U8', 'U8', 'U7', 'U7']
+index-CY3ygOBS.js:837 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+index-CY3ygOBS.js:837 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+index-CY3ygOBS.js:837 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+index-CY3ygOBS.js:837 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+index-CY3ygOBS.js:832 ScheduleBuilder workflowData: {metadata: {…}, flight: {…}, bracket: {…}, seed: {…}, timeblock: {…}}
+index-CY3ygOBS.js:832 ScheduleBuilder games: []
+index-CY3ygOBS.js:832 ScheduleBuilder timeBlocks: [{…}]
+index-CY3ygOBS.js:832 ScheduleBuilder brackets: [{…}]
+index-CY3ygOBS.js:832 ScheduleBuilder workflowData: {metadata: {…}, flight: {…}, bracket: {…}, seed: {…}, timeblock: {…}}
+index-CY3ygOBS.js:832 ScheduleBuilder games: []
+index-CY3ygOBS.js:832 ScheduleBuilder timeBlocks: [{…}]
+index-CY3ygOBS.js:832 ScheduleBuilder brackets: [{…}]
+index-CY3ygOBS.js:837 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+index-CY3ygOBS.js:832 ScheduleBuilder workflowData: {metadata: {…}, flight: {…}, bracket: {…}, seed: {…}, timeblock: {…}}
+index-CY3ygOBS.js:832 ScheduleBuilder games: []
+index-CY3ygOBS.js:832 ScheduleBuilder timeBlocks: [{…}]
+index-CY3ygOBS.js:832 ScheduleBuilder brackets: [{…}]
+index-CY3ygOBS.js:855 Fetch finished loading: GET "https://app.matchpro.ai/api/admin/registrations/new-count".
+queryFn @ index-CY3ygOBS.js:855
+i @ index-CY3ygOBS.js:40
+f @ index-CY3ygOBS.js:40
+start @ index-CY3ygOBS.js:40
+fetch @ index-CY3ygOBS.js:40
+Ux @ index-CY3ygOBS.js:40
+(anonymous) @ index-CY3ygOBS.js:40

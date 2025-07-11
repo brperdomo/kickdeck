@@ -276,10 +276,19 @@ export function SchedulingWorkflow({ eventId, onComplete }: SchedulingWorkflowPr
     // Debug teams data structure
     console.log('SchedulingWorkflow teamsData:', teamsData);
     
+    // Ensure teams data is properly formatted
+    const processedTeamsData = Array.isArray(teamsData) ? teamsData : (teamsData?.teams || []);
+    
+    console.log('Processing teams data:', {
+      originalLength: teamsData?.length,
+      processedLength: processedTeamsData.length,
+      firstTeam: processedTeamsData[0]
+    });
+
     const commonProps = {
       eventId,
       eventData,
-      teamsData: Array.isArray(teamsData) ? teamsData : (teamsData?.teams || []),
+      teamsData: processedTeamsData,
       workflowData,
       onComplete: (data: any) => updateStepStatus(currentStepData.id, 'completed', data),
       onError: (error: string) => {

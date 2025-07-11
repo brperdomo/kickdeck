@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { db } from '../../../db';
-import { eq, and } from 'drizzle-orm';
+import { eq, and, asc } from 'drizzle-orm';
 import { events, eventGameFormats, eventScheduleConstraints } from '../../../db/schema';
 import { requireAuth } from '../../middleware/auth';
 
@@ -15,20 +15,26 @@ router.use(requireAuth);
 router.get('/:eventId/game-metadata', async (req, res) => {
   try {
     const { eventId } = req.params;
+    console.log('Fetching game metadata for event:', eventId);
 
     // Get game format rules
     const gameFormats = await db
       .select()
       .from(eventGameFormats)
-      .where(eq(eventGameFormats.eventId, eventId))
-      .orderBy(eventGameFormats.ageGroup);
+      .where(eq(eventGameFormats.eventId, parseInt(eventId)))
+      .orderBy(asc(eventGameFormats.ageGroup));
 
     // Get schedule constraints
     const constraints = await db
       .select()
       .from(eventScheduleConstraints)
-      .where(eq(eventScheduleConstraints.eventId, eventId))
+      .where(eq(eventScheduleConstraints.eventId, parseInt(eventId)))
       .limit(1);
+
+    console.log('Game metadata results:', {
+      gameFormatsCount: gameFormats.length,
+      constraintsCount: constraints.length
+    });
 
     res.json({
       gameFormats,
@@ -53,21 +59,25 @@ router.put('/:eventId/game-formats', async (req, res) => {
       return res.status(400).json({ error: 'Game formats must be an array' });
     }
 
+    const eventIdInt = parseInt(eventId);
+    console.log('Updating game formats for event:', eventIdInt);
+
     // Delete existing game formats for this event
     await db
       .delete(eventGameFormats)
-      .where(eq(eventGameFormats.eventId, eventId));
+      .where(eq(eventGameFormats.eventId, eventIdInt));
 
     // Insert new game formats
     if (gameFormats.length > 0) {
       await db
         .insert(eventGameFormats)
         .values(gameFormats.map(format => ({
-          eventId,
+          eventId: eventIdInt,
           ...format
         })));
     }
 
+    console.log('Game formats updated successfully:', gameFormats.length);
     res.json({ success: true, message: 'Game formats updated successfully' });
   } catch (error) {
     console.error('Error updating game formats:', error);
@@ -83,11 +93,14 @@ router.put('/:eventId/schedule-constraints', async (req, res) => {
     const { eventId } = req.params;
     const constraints = req.body;
 
+    const eventIdInt = parseInt(eventId);
+    console.log('Updating schedule constraints for event:', eventIdInt);
+
     // Check if constraints already exist
     const existing = await db
       .select()
       .from(eventScheduleConstraints)
-      .where(eq(eventScheduleConstraints.eventId, eventId))
+      .where(eq(eventScheduleConstraints.eventId, eventIdInt))
       .limit(1);
 
     if (existing.length > 0) {
@@ -98,17 +111,18 @@ router.put('/:eventId/schedule-constraints', async (req, res) => {
           ...constraints,
           updatedAt: new Date().toISOString()
         })
-        .where(eq(eventScheduleConstraints.eventId, eventId));
+        .where(eq(eventScheduleConstraints.eventId, eventIdInt));
     } else {
       // Insert new constraints
       await db
         .insert(eventScheduleConstraints)
         .values({
-          eventId,
+          eventId: eventIdInt,
           ...constraints
         });
     }
 
+    console.log('Schedule constraints updated successfully');
     res.json({ success: true, message: 'Schedule constraints updated successfully' });
   } catch (error) {
     console.error('Error updating schedule constraints:', error);
