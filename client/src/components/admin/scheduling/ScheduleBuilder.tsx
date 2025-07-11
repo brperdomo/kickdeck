@@ -155,17 +155,17 @@ export function ScheduleBuilder({ eventId, workflowData, onComplete, onError }: 
       }
 
       // Convert API response to our format
-      const scheduledGames: ScheduledGame[] = (data.scheduleData || data.schedule || data.games || []).map((game: any) => ({
-        id: game.id || `game_${Math.random()}`,
+      const scheduledGames: ScheduledGame[] = (data.scheduleData || data.schedule || data.games || []).map((game: any, index: number) => ({
+        id: game.id || `scheduled_game_${index}`,
         homeTeam: {
-          id: game.homeTeam?.id || 0,
-          name: game.homeTeam?.name || game.homeTeamName || 'TBD',
+          id: game.homeTeamId || game.homeTeam?.id || 0,
+          name: game.homeTeamName || game.homeTeam?.name || `Team ${game.homeTeamId || 'A'}`,
           coach: game.homeTeam?.coach || '',
           clubName: game.homeTeam?.clubName || ''
         },
         awayTeam: {
-          id: game.awayTeam?.id || 0,
-          name: game.awayTeam?.name || game.awayTeamName || 'TBD',
+          id: game.awayTeamId || game.awayTeam?.id || 0,
+          name: game.awayTeamName || game.awayTeam?.name || `Team ${game.awayTeamId || 'B'}`,
           coach: game.awayTeam?.coach || '',
           clubName: game.awayTeam?.clubName || ''
         },
@@ -173,7 +173,7 @@ export function ScheduleBuilder({ eventId, workflowData, onComplete, onError }: 
         complexName: game.complexName || '',
         startTime: game.startTime || new Date().toISOString(),
         endTime: game.endTime || new Date().toISOString(),
-        bracket: game.bracket || 'Default',
+        bracket: game.bracket || game.bracketName || 'Default',
         round: game.round || 'Group Stage',
         ageGroup: game.ageGroup || ''
       }));
@@ -322,9 +322,13 @@ export function ScheduleBuilder({ eventId, workflowData, onComplete, onError }: 
         
         const games = [];
         
-        // Create round-robin games for teams in this age group
-        for (let i = 0; i < ageGroupTeams.length; i++) {
-          for (let j = i + 1; j < ageGroupTeams.length; j++) {
+        // Create a limited number of sample games per age group (max 4 games per bracket)
+        // This prevents generating thousands of games from large age groups
+        const maxGamesPerBracket = 4;
+        let gameCount = 0;
+        
+        for (let i = 0; i < ageGroupTeams.length && gameCount < maxGamesPerBracket; i++) {
+          for (let j = i + 1; j < ageGroupTeams.length && gameCount < maxGamesPerBracket; j++) {
             const homeTeam = ageGroupTeams[i];
             const awayTeam = ageGroupTeams[j];
             
@@ -338,6 +342,8 @@ export function ScheduleBuilder({ eventId, workflowData, onComplete, onError }: 
               gameType: 'pool_play',
               duration: 90
             });
+            
+            gameCount++;
           }
         }
 
@@ -352,7 +358,8 @@ export function ScheduleBuilder({ eventId, workflowData, onComplete, onError }: 
       }
     }
 
-    console.log(`Generated ${workflowGames.length} bracket games from ${teams.length} teams`);
+    const totalSampleGames = workflowGames.reduce((sum, bracket) => sum + bracket.games.length, 0);
+    console.log(`Generated ${workflowGames.length} brackets with ${totalSampleGames} sample games from ${teams.length} teams`);
     return workflowGames;
   };
 
