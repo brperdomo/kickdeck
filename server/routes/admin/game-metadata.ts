@@ -1,13 +1,13 @@
 import { Router } from 'express';
 import { db } from '../../../db';
 import { eq, and, asc } from 'drizzle-orm';
-import { events, eventGameFormats, eventScheduleConstraints } from '../../../db/schema';
-import { requireAuth } from '../../middleware/auth';
+import { events, eventGameFormats, eventScheduleConstraints } from '@db/schema';
+import { isAdmin } from '../../middleware/auth';
 
 const router = Router();
 
 // Apply authentication to all routes
-router.use(requireAuth);
+router.use(isAdmin);
 
 /**
  * Get game metadata configuration for an event
@@ -15,34 +15,61 @@ router.use(requireAuth);
 router.get('/:eventId/game-metadata', async (req, res) => {
   try {
     const { eventId } = req.params;
+    console.log('=== GAME METADATA API START ===');
     console.log('Fetching game metadata for event:', eventId);
+    console.log('User authenticated:', !!req.user);
+    console.log('Event ID type:', typeof eventId);
+    console.log('Parsed Event ID:', parseInt(eventId));
+
+    if (!eventId || isNaN(parseInt(eventId))) {
+      console.error('Invalid event ID provided:', eventId);
+      return res.status(400).json({ error: 'Invalid event ID provided' });
+    }
+
+    const eventIdInt = parseInt(eventId);
+    console.log('Querying game formats for event ID:', eventIdInt);
 
     // Get game format rules
     const gameFormats = await db
       .select()
       .from(eventGameFormats)
-      .where(eq(eventGameFormats.eventId, parseInt(eventId)))
+      .where(eq(eventGameFormats.eventId, eventIdInt))
       .orderBy(asc(eventGameFormats.ageGroup));
 
+    console.log('Game formats query completed, count:', gameFormats.length);
+
     // Get schedule constraints
+    console.log('Querying schedule constraints for event ID:', eventIdInt);
     const constraints = await db
       .select()
       .from(eventScheduleConstraints)
-      .where(eq(eventScheduleConstraints.eventId, parseInt(eventId)))
+      .where(eq(eventScheduleConstraints.eventId, eventIdInt))
       .limit(1);
 
-    console.log('Game metadata results:', {
-      gameFormatsCount: gameFormats.length,
-      constraintsCount: constraints.length
-    });
+    console.log('Schedule constraints query completed, count:', constraints.length);
 
-    res.json({
+    const result = {
       gameFormats,
       constraints: constraints[0] || null,
       configured: gameFormats.length > 0 && constraints.length > 0
+    };
+
+    console.log('Game metadata API success:', {
+      gameFormatsCount: gameFormats.length,
+      constraintsCount: constraints.length,
+      configured: result.configured
     });
+    console.log('=== GAME METADATA API END ===');
+
+    res.json(result);
   } catch (error) {
+    console.error('=== GAME METADATA API ERROR ===');
     console.error('Error fetching game metadata:', error);
+    console.error('Error message:', error.message);
+    console.error('Error stack:', error.stack);
+    console.error('Event ID:', req.params.eventId);
+    console.error('User:', req.user?.id);
+    console.error('=== GAME METADATA API ERROR END ===');
     res.status(500).json({ error: 'Failed to fetch game metadata configuration' });
   }
 });
