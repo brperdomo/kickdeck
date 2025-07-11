@@ -479,6 +479,81 @@ export const insertFeeRevenueSchema = createInsertSchema(feeRevenue, {
 export const selectFeeRevenueSchema = createSelectSchema(feeRevenue);
 export type InsertFeeRevenue = typeof feeRevenue.$inferInsert;
 export type SelectFeeRevenue = typeof feeRevenue.$inferSelect;
+
+// Event Game Format Rules - Configurable per tournament/event
+export const eventGameFormats = pgTable("event_game_formats", {
+  id: serial("id").primaryKey(),
+  eventId: text("event_id").notNull().references(() => events.id, { onDelete: 'cascade' }),
+  ageGroup: text("age_group").notNull(), // U6-U8, U9-U10, etc.
+  format: text("format").notNull(), // 4v4, 7v7, 9v9, 11v11
+  gameLength: integer("game_length").notNull(), // Total minutes
+  halves: integer("halves").notNull().default(2),
+  halfLength: integer("half_length").notNull(), // Minutes per half
+  halfTimeBreak: integer("half_time_break").notNull().default(5), // Half-time break minutes
+  bufferTime: integer("buffer_time").notNull().default(10), // Buffer between games (minutes)
+  fieldSize: text("field_size").notNull(), // Required field size: 7v7, 9v9, 11v11
+  allowsLights: boolean("allows_lights").notNull().default(true), // Can use evening games
+  surfacePreference: text("surface_preference").default("either"), // grass, turf, either
+  isActive: boolean("is_active").notNull().default(true),
+  createdAt: text("created_at").notNull().default(new Date().toISOString()),
+  updatedAt: text("updated_at").notNull().default(new Date().toISOString()),
+});
+
+// Event Schedule Constraints - Tournament-specific constraints
+export const eventScheduleConstraints = pgTable("event_schedule_constraints", {
+  id: serial("id").primaryKey(),
+  eventId: text("event_id").notNull().references(() => events.id, { onDelete: 'cascade' }),
+  // Team constraints
+  maxGamesPerTeamPerDay: integer("max_games_per_team_per_day").notNull().default(3),
+  maxHoursSpreadPerTeam: integer("max_hours_spread_per_team").notNull().default(8), // Max hours between first and last game
+  minRestTimeBetweenGames: integer("min_rest_time_between_games").notNull().default(90), // Minutes
+  allowBackToBackGames: boolean("allow_back_to_back_games").notNull().default(false),
+  // Field constraints
+  maxHoursPerFieldPerDay: integer("max_hours_per_field_per_day").notNull().default(12),
+  enforceFieldCompatibility: boolean("enforce_field_compatibility").notNull().default(true), // 7v7 fields can't host 11v11
+  // Tournament preferences
+  prioritizeEvenScheduling: boolean("prioritize_even_scheduling").notNull().default(true), // No team gets all early/late games
+  allowEveningGames: boolean("allow_evening_games").notNull().default(true),
+  earliestGameTime: text("earliest_game_time").notNull().default("08:00"), // 24-hour format
+  latestGameTime: text("latest_game_time").notNull().default("20:00"), // 24-hour format
+  // Playoff constraints
+  minRestBeforePlayoffs: integer("min_rest_before_playoffs").notNull().default(120), // Minutes
+  allowPlayoffBackToBack: boolean("allow_playoff_back_to_back").notNull().default(false),
+  isActive: boolean("is_active").notNull().default(true),
+  createdAt: text("created_at").notNull().default(new Date().toISOString()),
+  updatedAt: text("updated_at").notNull().default(new Date().toISOString()),
+});
+
+// Add validation schemas for the new tables
+export const insertEventGameFormatSchema = createInsertSchema(eventGameFormats, {
+  ageGroup: z.string().min(1, "Age group is required"),
+  format: z.string().min(1, "Game format is required"),
+  gameLength: z.number().min(20).max(120, "Game length must be between 20-120 minutes"),
+  halves: z.number().min(1).max(4, "Must have 1-4 halves"),
+  halfLength: z.number().min(10).max(60, "Half length must be between 10-60 minutes"),
+  halfTimeBreak: z.number().min(0).max(20, "Half-time break must be 0-20 minutes"),
+  bufferTime: z.number().min(5).max(30, "Buffer time must be 5-30 minutes"),
+  fieldSize: z.enum(["7v7", "9v9", "11v11"]),
+  surfacePreference: z.enum(["grass", "turf", "either"]).default("either"),
+});
+
+export const insertEventScheduleConstraintsSchema = createInsertSchema(eventScheduleConstraints, {
+  maxGamesPerTeamPerDay: z.number().min(1).max(10, "Must be 1-10 games per day"),
+  maxHoursSpreadPerTeam: z.number().min(2).max(14, "Must be 2-14 hours spread"),
+  minRestTimeBetweenGames: z.number().min(30).max(240, "Rest time must be 30-240 minutes"),
+  maxHoursPerFieldPerDay: z.number().min(4).max(16, "Field hours must be 4-16 per day"),
+  earliestGameTime: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, "Invalid time format"),
+  latestGameTime: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, "Invalid time format"),
+  minRestBeforePlayoffs: z.number().min(60).max(300, "Playoff rest must be 60-300 minutes"),
+});
+
+export const selectEventGameFormatSchema = createSelectSchema(eventGameFormats);
+export const selectEventScheduleConstraintsSchema = createSelectSchema(eventScheduleConstraints);
+
+export type InsertEventGameFormat = typeof eventGameFormats.$inferInsert;
+export type SelectEventGameFormat = typeof eventGameFormats.$inferSelect;
+export type InsertEventScheduleConstraints = typeof eventScheduleConstraints.$inferInsert;
+export type SelectEventScheduleConstraints = typeof eventScheduleConstraints.$inferSelect;
 export const insertGameSchema = createInsertSchema(games, {
   status: z.enum(['scheduled', 'in_progress', 'completed', 'cancelled']),
   duration: z.number().min(20).max(120),

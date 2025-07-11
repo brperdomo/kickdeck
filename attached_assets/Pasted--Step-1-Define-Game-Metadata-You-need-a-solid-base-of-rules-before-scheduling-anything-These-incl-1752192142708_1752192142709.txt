@@ -1,0 +1,72 @@
+✅ Step 1: Define Game Metadata
+You need a solid base of rules before scheduling anything. These include:
+
+⚽ Game Format Rules:
+Age Group	Format	Game Length	Halves	Half Time	Buffer
+U6–U8	4v4	40 mins	2x20	5 mins	5–10m
+U9–U10	7v7	50 mins	2x25	5 mins	5–10m
+U11–U12	9v9	60 mins	2x30	5–10 mins	5–10m
+U13–U15	11v11	70 mins	2x35	10 mins	5–10m
+U16–U19	11v11	80–90 mins	2x40–45	10–15 mins	5–10m
+
+🎯 Pro Tip: Add buffer times between games to allow for warmups, transitions, and delays.
+
+✅ Step 2: Establish Schedule Constraints
+These will help the system avoid errors or unrealistic bookings.
+
+Tournament Constraints:
+Max games per team per day
+
+Max hours per field per day
+
+Game spread: no more than X hours between first and last game for team
+
+Min rest time between games (especially for playoffs)
+
+Allow or disallow back-to-back games
+
+Field Constraints:
+Lights? → Allow evening games?
+
+Format compatibility (7v7 fields can’t host 11v11 games)
+
+Turf/grass preferences
+
+✅ Step 3: Build the Time Block Engine
+This is the core part of your scheduling system.
+
+Algorithm Steps:
+Group teams by age/division
+
+Assign field compatibility
+
+Create time slots based on game length + buffer
+
+Iterate over available fields/days to assign games
+
+Enforce rest time, fairness (no team gets all early or late games)
+
+🧠 Smart idea: Allow user to define or override default time block templates.
+
+✅ Step 4: Build Input Interfaces
+Create a UI or API where users can:
+
+Enter teams, age groups, and divisions
+
+Set preferred or restricted game days/times
+
+Define field availability and game durations
+
+Choose bracket style (round robin, knockout, etc.)
+
+✅ Step 5: Auto-Scheduler + Manual Overrides
+Create an auto-scheduler that proposes a schedule based on the above rules, but allow manual drag-and-drop or edits for edge cases.
+
+✅ Step 6: Validate & Export
+Once a schedule is generated:
+
+Validate: Check for overlaps, rest violations, overuse
+
+Export to Excel, PDF, or integrate with calendar apps
+
+Allow filtering by team, field, or division

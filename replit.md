@@ -113,6 +113,14 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
+- July 11, 2025: ENHANCED SCHEDULING SYSTEM WITH CONFIGURABLE GAME METADATA - Completed comprehensive scheduling workflow revamp with proper 6-step order and tournament-specific game format rules
+  - CREATED: Complete enhanced scheduling workflow with proper step order: Game Metadata → Flight Management → Bracket Creation → Team Seeding → Time Block Engine → Schedule Generation
+  - IMPLEMENTED: GameMetadataSetup component for configurable tournament rules per event rather than system-wide defaults
+  - ENHANCED: Database schema with eventGameFormats and eventScheduleConstraints tables for tournament-specific game format rules and schedule constraints
+  - INTEGRATED: Game metadata API endpoints for managing tournament-specific game format rules including game length, field sizes, operating hours, and rest periods
+  - WORKFLOW ORDER: Corrected scheduling workflow to follow proper order based on user research instead of previous incorrect sequence
+  - CONFIGURABLE: Tournament organizers can now define custom game format rules, field preferences, timing constraints, and scheduling logic per event
+  - PRODUCTION READY: Enhanced scheduling system operational with configurable metadata driving intelligent schedule generation
 - July 10, 2025: COMPREHENSIVE REGISTRATION FEE ADJUSTMENT SYSTEM COMPLETED - Implemented complete fee adjustment functionality with audit trails and comprehensive integration into team management interface
   - CREATED: FeeAdjustmentDialog component with professional form interface, validation, and adjustment history display
   - INTEGRATED: Fee adjustment button in team details Payment Information section with conditional visibility rules

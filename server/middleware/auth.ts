@@ -64,3 +64,4 @@ export const validateAuth = (req: Request, res: Response, next: NextFunction) =>
 // Legacy support
 export const authenticateAdmin = isAdmin;
 export const validateAdmin = isAdmin;
+export const requireAuth = validateAuth;

@@ -34,6 +34,7 @@ import teamsRouter from "./routes/admin/teams-router";
 import playersRouter from "./routes/admin/players-router";
 import memberMergeRouter from "./routes/admin/member-merge";
 import feeAdjustmentsRouter from "./routes/admin/fee-adjustments";
+import gameMetadataRouter from "./routes/admin/game-metadata";
 import bracketsRouter from "./routes/admin/brackets";
 import gamesRouter from "./routes/admin/games-router";
 import clubsRouter from "./routes/clubs";
@@ -901,6 +902,7 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/folders', isAdmin, foldersRouter); // Folder management router
     app.use('/api/admin/teams', isAdmin, playersRouter); // Player management router
     app.use('/api/admin', isAdmin, bracketsRouter); // Bracket management router
+    app.use('/api/admin/game-metadata', isAdmin, gameMetadataRouter); // Game metadata and scheduling rules router
     app.use('/api/admin/games', isAdmin, gamesRouter); // Game management router
     app.use('/api/admin/schedule', isAdmin, scheduleManagementRouter); // Schedule management with drag-and-drop
     app.use('/api/admin/clubs', isAdmin, adminClubsRouter); // Admin club management router

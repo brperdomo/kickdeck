@@ -7,9 +7,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { 
-  Users, Trophy, Target, Clock, Calendar, Play,
+  Settings, Users, Trophy, Target, Clock, Calendar, Play,
   CheckCircle, Circle, AlertTriangle, ArrowRight
 } from "lucide-react";
+import { GameMetadataSetup } from "./GameMetadataSetup";
 import { FlightManager } from "./FlightManager";
 import { BracketCreator } from "./BracketCreator";
 import { TeamSeeding } from "./TeamSeeding";
@@ -64,55 +65,48 @@ export function SchedulingWorkflow({ eventId, onComplete }: SchedulingWorkflowPr
     enabled: !!eventId
   });
 
-  // Initialize workflow steps
+  // Initialize enhanced 6-step workflow in proper order
   const [workflowSteps, setWorkflowSteps] = useState<WorkflowStep[]>([
     {
+      id: 'metadata',
+      title: 'Game Metadata',
+      description: 'Define game format rules and schedule constraints',
+      icon: Settings,
+      status: 'pending'
+    },
+    {
       id: 'flight',
-      title: 'Flight the Teams',
-      description: 'Group teams into logical flights based on age and skill level',
+      title: 'Flight Management',
+      description: 'Organize teams into competitive flights',
       icon: Users,
       status: 'pending'
     },
     {
       id: 'bracket',
-      title: 'Create Brackets',
-      description: 'Define bracket structure and determine team count per bracket',
+      title: 'Bracket Creation',
+      description: 'Create tournament brackets for each flight',
       icon: Trophy,
       status: 'pending'
     },
     {
       id: 'seed',
-      title: 'Seed the Teams',
-      description: 'Place teams in their brackets and set matchup preferences',
+      title: 'Team Seeding',
+      description: 'Seed teams within brackets for fair competition',
       icon: Target,
       status: 'pending'
     },
     {
       id: 'timeblock',
-      title: 'Assign Time Blocks',
-      description: 'Set game format and time blocks for each age group',
+      title: 'Time Block Engine',
+      description: 'Define game time slots and field assignments',
       icon: Clock,
       status: 'pending'
     },
     {
-      id: 'games',
-      title: 'Create the Games',
-      description: 'Generate matchups based on bracket structure and seeding',
-      icon: Calendar,
-      status: 'pending'
-    },
-    {
       id: 'schedule',
-      title: 'Build Schedule',
-      description: 'Assign times and fields to games using SimpleScheduler',
-      icon: Play,
-      status: 'pending'
-    },
-    {
-      id: 'management',
-      title: 'Manage Schedule',
-      description: 'Fine-tune assignments using drag-and-drop and conflict detection',
-      icon: Target,
+      title: 'Schedule Generation',
+      description: 'Generate and finalize tournament schedule',
+      icon: Calendar,
       status: 'pending'
     }
   ]);
@@ -213,6 +207,8 @@ export function SchedulingWorkflow({ eventId, onComplete }: SchedulingWorkflowPr
     };
 
     switch (currentStepData.id) {
+      case 'metadata':
+        return <GameMetadataSetup {...commonProps} />;
       case 'flight':
         return <FlightManager {...commonProps} />;
       case 'bracket':
@@ -221,12 +217,8 @@ export function SchedulingWorkflow({ eventId, onComplete }: SchedulingWorkflowPr
         return <TeamSeeding {...commonProps} />;
       case 'timeblock':
         return <TimeBlockAssignment {...commonProps} />;
-      case 'games':
-        return <GameCreation {...commonProps} />;
       case 'schedule':
         return <ScheduleBuilder {...commonProps} />;
-      case 'management':
-        return <ScheduleManagement eventId={eventId} />;
       default:
         return <div>Step not implemented</div>;
     }
