@@ -169,40 +169,50 @@ export function SchedulingWorkflow({ eventId, onComplete }: SchedulingWorkflowPr
         console.log('Game metadata check failed:', error);
       }
 
-      // Step 2: Check if flights exist (using teams data as proxy)
-      if (teamsData && teamsData.length > 0) {
-        // If we have teams, assume flight management is ready
+      // Step 2: Check if flights exist - only if Step 1 is complete
+      if (validationResults.metadata && teamsData && teamsData.length > 0) {
+        // If we have teams and metadata, assume flight management is ready
         validationResults.flight = true;
       }
 
-      // Step 3: Check if brackets exist
-      try {
-        const bracketResponse = await fetch(`/api/admin/events/${eventId}/brackets`);
-        if (bracketResponse.ok) {
-          const brackets = await bracketResponse.json();
-          validationResults.bracket = brackets?.length > 0;
+      // Step 3: Check if brackets exist - only if Step 2 is complete
+      if (validationResults.flight) {
+        try {
+          const bracketResponse = await fetch(`/api/admin/events/${eventId}/brackets`);
+          if (bracketResponse.ok) {
+            const brackets = await bracketResponse.json();
+            validationResults.bracket = brackets?.length > 0;
+          }
+        } catch (error) {
+          console.log('Brackets check failed:', error);
         }
-      } catch (error) {
-        console.log('Brackets check failed:', error);
       }
 
-      // Step 4: Check if team seeding exists (simplified - check if workflow data exists)
-      if (workflowData?.seed || workflowData?.bracket?.brackets?.length > 0) {
+      // Step 4: Check if team seeding exists - only if Step 3 is complete
+      if (validationResults.bracket && (workflowData?.seed || workflowData?.bracket?.brackets?.length > 0)) {
         validationResults.seed = true;
       }
 
-      // Step 5: Check if time blocks exist (simplified - check if workflow data exists)
-      if (workflowData?.timeblock?.timeBlocks?.length > 0) {
+      // Step 5: Check if time blocks exist - only if Step 4 is complete
+      if (validationResults.seed && workflowData?.timeblock?.timeBlocks?.length > 0) {
         validationResults.timeblock = true;
       }
 
-      // Update step statuses based on validation
-      setWorkflowSteps(prev => prev.map(step => {
+      // Update step statuses based on validation with proper sequential logic
+      setWorkflowSteps(prev => prev.map((step, index) => {
         const isCompleted = validationResults[step.id as keyof typeof validationResults];
+        
+        // A step can only be completed if all previous steps are completed
+        const previousStepsComplete = Object.entries(validationResults)
+          .slice(0, index)
+          .every(([_, isComplete]) => isComplete);
+        
+        const finalStatus = isCompleted && previousStepsComplete ? 'completed' : 
+                           step.status === 'in-progress' ? 'in-progress' : 'pending';
+        
         return {
           ...step,
-          status: isCompleted ? 'completed' : 
-                  step.status === 'in-progress' ? 'in-progress' : 'pending'
+          status: finalStatus
         };
       }));
 
