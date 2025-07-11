@@ -10,9 +10,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { 
   Users, Plus, Edit2, Trash2, ArrowUpDown, Target, 
-  CheckCircle, Info, AlertTriangle 
+  CheckCircle, Info, AlertTriangle, ChevronDown 
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -395,10 +396,10 @@ export function FlightManager({ eventId, teamsData, workflowData, onComplete, on
 
   return (
     <div className="space-y-8">
-      {/* Age Group Analysis */}
-      <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-blue-50/30 overflow-hidden">
+      {/* Enhanced Age Group Analysis with Gender Split */}
+      <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-slate-50/30 overflow-hidden">
         <div className="h-1 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600"></div>
-        <CardHeader className="bg-gradient-to-r from-blue-50/50 to-purple-50/50">
+        <CardHeader className="bg-gradient-to-r from-slate-50/50 to-purple-50/50">
           <CardTitle className="flex items-center gap-3 text-xl">
             <div className="p-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg shadow-lg">
               <Info className="h-5 w-5 text-white" />
@@ -408,51 +409,160 @@ export function FlightManager({ eventId, teamsData, workflowData, onComplete, on
             </span>
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {ageGroupSummary.map((group) => {
-              // Enhanced gender detection for clear display
+        <CardContent className="space-y-6">
+          {(() => {
+            // Separate age groups by gender
+            const boysGroups = ageGroupSummary.filter(group => {
               const genderInfo = genderAwareAgeGroups.find((g) => g.name === group.ageGroup);
-              const gender = genderInfo?.gender || 'Mixed';
-              const genderColor = gender === 'Boys' ? 'text-blue-700' : gender === 'Girls' ? 'text-pink-700' : 'text-purple-700';
-              const genderBg = gender === 'Boys' 
-                ? 'bg-gradient-to-br from-blue-50 to-blue-100 border-blue-300 shadow-lg shadow-blue-100/50' 
-                : gender === 'Girls' 
-                ? 'bg-gradient-to-br from-pink-50 to-pink-100 border-pink-300 shadow-lg shadow-pink-100/50' 
-                : 'bg-gradient-to-br from-purple-50 to-purple-100 border-purple-300 shadow-lg shadow-purple-100/50';
-              
-              return (
-                <div key={group.ageGroup} className={`p-4 border rounded-lg ${genderBg}`}>
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="font-medium">{group.ageGroup}</h3>
-                    <Badge className={`text-xs font-semibold ${genderColor} ${
-                      gender === 'Boys' 
-                        ? 'bg-gradient-to-r from-blue-100 to-blue-200 border-blue-300' 
-                        : gender === 'Girls' 
-                        ? 'bg-gradient-to-r from-pink-100 to-pink-200 border-pink-300' 
-                        : 'bg-gradient-to-r from-purple-100 to-purple-200 border-purple-300'
-                    } shadow-sm`}>
-                      {gender}
-                    </Badge>
-                  </div>
-                  <div className="space-y-1 text-sm">
-                    <div className="flex justify-between">
-                      <span>Total Teams:</span>
-                      <span className="font-medium">{group.totalTeams}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Approved:</span>
-                      <span className="font-medium text-green-600">{group.approvedTeams}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Suggested Flights:</span>
-                      <span className="font-medium text-blue-600">{group.suggestedFlights}</span>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+              return genderInfo?.gender === 'Boys';
+            });
+            
+            const girlsGroups = ageGroupSummary.filter(group => {
+              const genderInfo = genderAwareAgeGroups.find((g) => g.name === group.ageGroup);
+              return genderInfo?.gender === 'Girls';
+            });
+            
+            const mixedGroups = ageGroupSummary.filter(group => {
+              const genderInfo = genderAwareAgeGroups.find((g) => g.name === group.ageGroup);
+              return genderInfo?.gender !== 'Boys' && genderInfo?.gender !== 'Girls';
+            });
+
+            return (
+              <>
+                {/* Boys Section */}
+                {boysGroups.length > 0 && (
+                  <Collapsible defaultOpen={true}>
+                    <CollapsibleTrigger className="flex items-center gap-3 w-full p-3 rounded-lg bg-gradient-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-150 border border-blue-200 transition-all duration-200">
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-full bg-blue-600"></div>
+                        <span className="font-semibold text-blue-800">Boys Age Groups</span>
+                        <Badge variant="secondary" className="bg-blue-200 text-blue-800">
+                          {boysGroups.length} groups
+                        </Badge>
+                      </div>
+                      <ChevronDown className="h-4 w-4 text-blue-600 ml-auto" />
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="pt-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {boysGroups.map((group) => (
+                          <div key={group.ageGroup} className="p-4 border rounded-lg bg-gradient-to-br from-blue-50 to-blue-100 border-blue-300 shadow-lg shadow-blue-100/50 hover:shadow-blue-200/70 transition-shadow duration-200">
+                            <div className="flex items-center justify-between mb-2">
+                              <h3 className="font-semibold text-blue-900">{group.ageGroup}</h3>
+                              <Badge className="text-xs font-semibold text-blue-700 bg-gradient-to-r from-blue-100 to-blue-200 border-blue-300 shadow-sm">
+                                Boys
+                              </Badge>
+                            </div>
+                            <div className="space-y-2 text-sm">
+                              <div className="flex justify-between items-center">
+                                <span className="text-blue-700">Total Teams:</span>
+                                <span className="font-bold text-blue-900">{group.totalTeams}</span>
+                              </div>
+                              <div className="flex justify-between items-center">
+                                <span className="text-blue-700">Approved:</span>
+                                <span className="font-bold text-green-600">{group.approvedTeams}</span>
+                              </div>
+                              <div className="flex justify-between items-center">
+                                <span className="text-blue-700">Suggested Flights:</span>
+                                <span className="font-bold text-blue-600">{group.suggestedFlights}</span>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
+                )}
+
+                {/* Girls Section */}
+                {girlsGroups.length > 0 && (
+                  <Collapsible defaultOpen={true}>
+                    <CollapsibleTrigger className="flex items-center gap-3 w-full p-3 rounded-lg bg-gradient-to-r from-purple-50 to-purple-100 hover:from-purple-100 hover:to-purple-150 border border-purple-200 transition-all duration-200">
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-full bg-purple-600"></div>
+                        <span className="font-semibold text-purple-800">Girls Age Groups</span>
+                        <Badge variant="secondary" className="bg-purple-200 text-purple-800">
+                          {girlsGroups.length} groups
+                        </Badge>
+                      </div>
+                      <ChevronDown className="h-4 w-4 text-purple-600 ml-auto" />
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="pt-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {girlsGroups.map((group) => (
+                          <div key={group.ageGroup} className="p-4 border rounded-lg bg-gradient-to-br from-purple-50 to-purple-100 border-purple-300 shadow-lg shadow-purple-100/50 hover:shadow-purple-200/70 transition-shadow duration-200">
+                            <div className="flex items-center justify-between mb-2">
+                              <h3 className="font-semibold text-purple-900">{group.ageGroup}</h3>
+                              <Badge className="text-xs font-semibold text-purple-700 bg-gradient-to-r from-purple-100 to-purple-200 border-purple-300 shadow-sm">
+                                Girls
+                              </Badge>
+                            </div>
+                            <div className="space-y-2 text-sm">
+                              <div className="flex justify-between items-center">
+                                <span className="text-purple-700">Total Teams:</span>
+                                <span className="font-bold text-purple-900">{group.totalTeams}</span>
+                              </div>
+                              <div className="flex justify-between items-center">
+                                <span className="text-purple-700">Approved:</span>
+                                <span className="font-bold text-green-600">{group.approvedTeams}</span>
+                              </div>
+                              <div className="flex justify-between items-center">
+                                <span className="text-purple-700">Suggested Flights:</span>
+                                <span className="font-bold text-purple-600">{group.suggestedFlights}</span>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
+                )}
+
+                {/* Mixed/Other Groups Section */}
+                {mixedGroups.length > 0 && (
+                  <Collapsible defaultOpen={false}>
+                    <CollapsibleTrigger className="flex items-center gap-3 w-full p-3 rounded-lg bg-gradient-to-r from-slate-50 to-slate-100 hover:from-slate-100 hover:to-slate-150 border border-slate-200 transition-all duration-200">
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-full bg-slate-600"></div>
+                        <span className="font-semibold text-slate-800">Mixed/Other Groups</span>
+                        <Badge variant="secondary" className="bg-slate-200 text-slate-800">
+                          {mixedGroups.length} groups
+                        </Badge>
+                      </div>
+                      <ChevronDown className="h-4 w-4 text-slate-600 ml-auto" />
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="pt-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {mixedGroups.map((group) => (
+                          <div key={group.ageGroup} className="p-4 border rounded-lg bg-gradient-to-br from-slate-50 to-slate-100 border-slate-300 shadow-lg shadow-slate-100/50 hover:shadow-slate-200/70 transition-shadow duration-200">
+                            <div className="flex items-center justify-between mb-2">
+                              <h3 className="font-semibold text-slate-900">{group.ageGroup}</h3>
+                              <Badge className="text-xs font-semibold text-slate-700 bg-gradient-to-r from-slate-100 to-slate-200 border-slate-300 shadow-sm">
+                                Mixed
+                              </Badge>
+                            </div>
+                            <div className="space-y-2 text-sm">
+                              <div className="flex justify-between items-center">
+                                <span className="text-slate-700">Total Teams:</span>
+                                <span className="font-bold text-slate-900">{group.totalTeams}</span>
+                              </div>
+                              <div className="flex justify-between items-center">
+                                <span className="text-slate-700">Approved:</span>
+                                <span className="font-bold text-green-600">{group.approvedTeams}</span>
+                              </div>
+                              <div className="flex justify-between items-center">
+                                <span className="text-slate-700">Suggested Flights:</span>
+                                <span className="font-bold text-slate-600">{group.suggestedFlights}</span>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
+                )}
+              </>
+            );
+          })()}
         </CardContent>
       </Card>
 
