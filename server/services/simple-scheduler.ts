@@ -71,9 +71,9 @@ export class SimpleScheduler {
           // Generate realistic game times with proper rest time (will be resolved during async processing)
           startTime: '', // Will be set during async processing
           endTime: '', // Will be set during async processing
-          fieldId: await SimpleScheduler.assignRealFieldId(gameCounter - 1, bracketData.bracketName, realComplexes),
-          field: await SimpleScheduler.assignRealField(gameCounter, bracketData.bracketName, realComplexes),
-          complexName: await SimpleScheduler.getComplexForField(gameCounter, bracketData.bracketName, realComplexes),
+          fieldId: SimpleScheduler.assignRealFieldIdSync(gameCounter - 1, bracketData.bracketName, realComplexes),
+          field: SimpleScheduler.assignRealFieldSync(gameCounter, bracketData.bracketName, realComplexes),
+          complexName: SimpleScheduler.getComplexForFieldSync(gameCounter, bracketData.bracketName, realComplexes),
           // Add field size information for display
           fieldSize: SimpleScheduler.getFieldSizeForAgeGroup(bracketData.bracketName),
           createdAt: new Date().toISOString(),
@@ -87,8 +87,8 @@ export class SimpleScheduler {
     // Now generate proper game times for all games using systematic approach
     console.log(`⏰ Generating game times with ${restTime}-minute rest periods from actual field operating hours...`);
     for (let i = 0; i < allGames.length; i++) {
-      const startTime = await SimpleScheduler.generateGameTime(i, 0, gameDuration, restTime, realComplexes, eventData);
-      const endTime = await SimpleScheduler.generateGameTime(i, gameDuration, gameDuration, restTime, realComplexes, eventData);
+      const startTime = SimpleScheduler.generateGameTimeSync(i, 0, gameDuration, restTime, realComplexes, eventData);
+      const endTime = SimpleScheduler.generateGameTimeSync(i, gameDuration, gameDuration, restTime, realComplexes, eventData);
       
       allGames[i].startTime = startTime;
       allGames[i].endTime = endTime;
@@ -272,6 +272,47 @@ export class SimpleScheduler {
   }
 
   /**
+   * Assign real field ID based on age group requirements and availability (synchronous version)
+   */
+  static assignRealFieldIdSync(gameNumber: number, bracketName: string, realComplexes: any[]): number | null {
+    if (!realComplexes || realComplexes.length === 0) {
+      return null;
+    }
+
+    // Get the appropriate field size for the age group
+    const requiredFieldSize = SimpleScheduler.getFieldSizeForAgeGroup(bracketName);
+    
+    // Find suitable fields
+    const suitableFields: any[] = [];
+    
+    for (const complex of realComplexes) {
+      if (complex.fields && Array.isArray(complex.fields)) {
+        const matchingFields = complex.fields.filter((field: any) => 
+          field.fieldSize === requiredFieldSize
+        );
+        suitableFields.push(...matchingFields);
+      }
+    }
+    
+    if (suitableFields.length === 0) {
+      // Fallback to any available field
+      for (const complex of realComplexes) {
+        if (complex.fields && Array.isArray(complex.fields)) {
+          suitableFields.push(...complex.fields);
+        }
+      }
+    }
+    
+    if (suitableFields.length === 0) {
+      return null;
+    }
+    
+    // Round-robin field assignment
+    const selectedField = suitableFields[gameNumber % suitableFields.length];
+    return selectedField.id;
+  }
+
+  /**
    * Assign real field ID based on age group requirements and availability
    */
   static async assignRealFieldId(gameNumber: number, bracketName: string, realComplexes: any[]): Promise<number | null> {
@@ -310,6 +351,70 @@ export class SimpleScheduler {
     // Simple round-robin field assignment
     const fieldIndex = gameNumber % suitableFields.length;
     return suitableFields[fieldIndex].id;
+  }
+
+  /**
+   * Assign real field based on age group requirements and availability (synchronous version)
+   */
+  static assignRealFieldSync(gameNumber: number, bracketName: string, realComplexes: any[]): string {
+    const requiredFieldSize = this.getFieldSizeForAgeGroup(bracketName);
+    
+    // Find fields that match the required field size
+    const suitableFields = [];
+    
+    realComplexes.forEach(complex => {
+      if (complex.fields && Array.isArray(complex.fields)) {
+        complex.fields.forEach(field => {
+          if (field.fieldSize === requiredFieldSize && field.isOpen) {
+            suitableFields.push({
+              name: field.name,
+              complexName: complex.name,
+              fieldSize: field.fieldSize,
+              hasLights: field.hasLights
+            });
+          }
+        });
+      }
+    });
+
+    if (suitableFields.length === 0) {
+      return `No ${requiredFieldSize} fields available`;
+    }
+
+    // Rotate through available fields
+    const selectedField = suitableFields[gameNumber % suitableFields.length];
+    return selectedField.name;
+  }
+
+  /**
+   * Get complex name for assigned field (synchronous version)
+   */
+  static getComplexForFieldSync(gameNumber: number, bracketName: string, realComplexes: any[]): string {
+    const requiredFieldSize = this.getFieldSizeForAgeGroup(bracketName);
+    
+    // Find fields that match the required field size
+    const suitableFields = [];
+    
+    realComplexes.forEach(complex => {
+      if (complex.fields && Array.isArray(complex.fields)) {
+        complex.fields.forEach(field => {
+          if (field.fieldSize === requiredFieldSize && field.isOpen) {
+            suitableFields.push({
+              name: field.name,
+              complexName: complex.name,
+            });
+          }
+        });
+      }
+    });
+
+    if (suitableFields.length === 0) {
+      return 'No Complex Available';
+    }
+
+    // Rotate through available complexes
+    const selectedField = suitableFields[gameNumber % suitableFields.length];
+    return selectedField.complexName;
   }
 
   /**
@@ -370,6 +475,78 @@ export class SimpleScheduler {
     // Return complex name for the assigned field
     const selectedField = suitableFields[gameNumber % suitableFields.length];
     return selectedField.complexName;
+  }
+
+  /**
+   * Generate realistic game time scheduling (synchronous version)
+   */
+  static generateGameTimeSync(
+    gameNumber: number, 
+    additionalMinutes: number = 0, 
+    gameDuration: number = 90, 
+    restTime: number = 60,
+    realComplexes: any[] = [],
+    eventData: any = null
+  ): string {
+    // Get field operating parameters from database
+    let fieldOpeningHour = 8;
+    let fieldClosingHour = 22; // 10 PM
+    let timezone = 'America/Los_Angeles'; // Default to Pacific Time for California venues
+    
+    if (realComplexes.length > 0) {
+      const firstComplex = realComplexes[0];
+      
+      // Parse field operating hours from database
+      if (firstComplex.fields && firstComplex.fields.length > 0) {
+        if (firstComplex.fields[0].openTime) {
+          const openTime = firstComplex.fields[0].openTime;
+          fieldOpeningHour = parseInt(openTime.split(':')[0]);
+        }
+        if (firstComplex.fields[0].closeTime) {
+          const closeTime = firstComplex.fields[0].closeTime;
+          fieldClosingHour = parseInt(closeTime.split(':')[0]);
+        }
+      }
+      
+      // Use complex timezone if available
+      timezone = (firstComplex as any).timezone || 'America/Los_Angeles';
+    }
+    
+    // Calculate available hours per day for games
+    const dailyOperatingMinutes = (fieldClosingHour - fieldOpeningHour) * 60;
+    const timeInterval = gameDuration + restTime; // Total time per game slot
+    const gamesPerDay = Math.floor(dailyOperatingMinutes / timeInterval);
+    
+    // Determine which day and time slot for this game
+    const dayNumber = Math.floor(gameNumber / gamesPerDay);
+    const gameSlotInDay = gameNumber % gamesPerDay;
+    
+    // Use event start date instead of calculating from current date
+    let targetDate;
+    if (eventData && eventData.startDate) {
+      targetDate = new Date(eventData.startDate);
+      targetDate.setDate(targetDate.getDate() + dayNumber);
+    } else {
+      // Fallback to next Saturday if no event data
+      const today = new Date();
+      const daysUntilSaturday = (6 - today.getDay()) % 7;
+      targetDate = new Date(today);
+      targetDate.setDate(targetDate.getDate() + (daysUntilSaturday || 7) + dayNumber);
+    }
+    
+    // Format date as YYYY-MM-DD
+    const dateStr = targetDate.toISOString().split('T')[0];
+    
+    // Calculate the game start time in minutes from field opening
+    const gameStartMinutes = (gameSlotInDay * timeInterval) + additionalMinutes;
+    const totalGameHour = fieldOpeningHour + Math.floor(gameStartMinutes / 60);
+    const totalGameMinute = gameStartMinutes % 60;
+    
+    // Create time string in HH:MM:SS format
+    const timeStr = `${totalGameHour.toString().padStart(2, '0')}:${totalGameMinute.toString().padStart(2, '0')}:00`;
+    
+    // Return as YYYY-MM-DDTHH:MM:SS (without timezone to avoid UTC conversion)
+    return `${dateStr}T${timeStr}`;
   }
 
   /**
