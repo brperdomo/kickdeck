@@ -74,7 +74,7 @@ export function GameMetadataSetup({ eventId, onComplete }: GameMetadataSetupProp
   const { data: metadataData, isLoading } = useQuery({
     queryKey: ['game-metadata', eventId],
     queryFn: async () => {
-      const response = await fetch(`/api/admin/game-metadata/${eventId}/game-metadata`);
+      const response = await fetch(`/api/admin/events/${eventId}/game-metadata`);
       if (!response.ok) throw new Error('Failed to fetch game metadata');
       return response.json();
     }
@@ -105,7 +105,7 @@ export function GameMetadataSetup({ eventId, onComplete }: GameMetadataSetupProp
   // Save game formats mutation
   const saveGameFormatsMutation = useMutation({
     mutationFn: async (formats: GameFormat[]) => {
-      const response = await fetch(`/api/admin/game-metadata/${eventId}/game-formats`, {
+      const response = await fetch(`/api/admin/events/${eventId}/game-formats`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ gameFormats: formats })
@@ -125,7 +125,7 @@ export function GameMetadataSetup({ eventId, onComplete }: GameMetadataSetupProp
   // Save constraints mutation
   const saveConstraintsMutation = useMutation({
     mutationFn: async (constraintsData: ScheduleConstraints) => {
-      const response = await fetch(`/api/admin/game-metadata/${eventId}/schedule-constraints`, {
+      const response = await fetch(`/api/admin/events/${eventId}/schedule-constraints`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(constraintsData)

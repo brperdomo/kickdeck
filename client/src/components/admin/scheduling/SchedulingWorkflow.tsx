@@ -33,6 +33,8 @@ interface WorkflowStep {
   status: 'pending' | 'in-progress' | 'completed' | 'blocked';
   completedCount?: number;
   totalCount?: number;
+  validationDetails?: string;
+  validationErrors?: string[];
 }
 
 export function SchedulingWorkflow({ eventId, onComplete }: SchedulingWorkflowProps) {
@@ -149,75 +151,163 @@ export function SchedulingWorkflow({ eventId, onComplete }: SchedulingWorkflowPr
   // Validate workflow steps based on actual data
   const validateWorkflowSteps = async () => {
     const validationResults = {
-      metadata: false,
-      flight: false,
-      bracket: false,
-      seed: false,
-      timeblock: false,
-      schedule: false
+      metadata: { completed: false, errors: [] as string[], details: '' },
+      flight: { completed: false, errors: [] as string[], details: '' },
+      bracket: { completed: false, errors: [] as string[], details: '' },
+      seed: { completed: false, errors: [] as string[], details: '' },
+      timeblock: { completed: false, errors: [] as string[], details: '' },
+      schedule: { completed: false, errors: [] as string[], details: '' }
     };
 
     try {
       // Step 1: Check if game metadata exists
       try {
-        const gameMetadataResponse = await fetch(`/api/admin/game-metadata/${eventId}/game-metadata`);
+        const gameMetadataResponse = await fetch(`/api/admin/events/${eventId}/game-metadata`);
         if (gameMetadataResponse.ok) {
           const gameMetadata = await gameMetadataResponse.json();
-          validationResults.metadata = gameMetadata.gameFormats?.length > 0;
+          const hasFormats = gameMetadata.gameFormats?.length > 0;
+          const hasConstraints = gameMetadata.constraints;
+          
+          validationResults.metadata.completed = hasFormats && hasConstraints;
+          
+          if (!hasFormats) {
+            validationResults.metadata.errors.push('No game format rules configured');
+          }
+          if (!hasConstraints) {
+            validationResults.metadata.errors.push('No schedule constraints configured');
+          }
+          
+          validationResults.metadata.details = hasFormats && hasConstraints 
+            ? `✓ ${gameMetadata.gameFormats.length} game formats and schedule constraints configured`
+            : `Missing: ${validationResults.metadata.errors.join(', ')}`;
+        } else {
+          validationResults.metadata.errors.push('Failed to fetch game metadata');
+          validationResults.metadata.details = 'API request failed';
         }
       } catch (error) {
         console.log('Game metadata check failed:', error);
+        validationResults.metadata.errors.push('Connection error checking game metadata');
+        validationResults.metadata.details = 'Network or server error';
       }
 
       // Step 2: Check if flights exist - only if Step 1 is complete
-      if (validationResults.metadata && teamsData && teamsData.length > 0) {
-        // If we have teams and metadata, assume flight management is ready
-        validationResults.flight = true;
+      if (validationResults.metadata.completed) {
+        if (teamsData && teamsData.length > 0) {
+          validationResults.flight.completed = true;
+          validationResults.flight.details = `✓ ${teamsData.length} teams available for flight assignment`;
+        } else {
+          validationResults.flight.errors.push('No teams found for flight assignment');
+          validationResults.flight.details = 'Teams must be registered and approved before flight management';
+        }
+      } else {
+        validationResults.flight.errors.push('Game metadata must be completed first');
+        validationResults.flight.details = 'Complete Step 1: Game Metadata Setup';
       }
 
       // Step 3: Check if brackets exist - only if Step 2 is complete
-      if (validationResults.flight) {
+      if (validationResults.flight.completed) {
         try {
           const bracketResponse = await fetch(`/api/admin/events/${eventId}/brackets`);
           if (bracketResponse.ok) {
             const brackets = await bracketResponse.json();
-            validationResults.bracket = brackets?.length > 0;
+            if (brackets?.length > 0) {
+              validationResults.bracket.completed = true;
+              validationResults.bracket.details = `✓ ${brackets.length} brackets created`;
+            } else {
+              validationResults.bracket.errors.push('No brackets created');
+              validationResults.bracket.details = 'Create brackets for age groups in Step 3';
+            }
+          } else {
+            validationResults.bracket.errors.push('Failed to fetch brackets');
+            validationResults.bracket.details = 'API request failed';
           }
         } catch (error) {
           console.log('Brackets check failed:', error);
+          validationResults.bracket.errors.push('Connection error checking brackets');
+          validationResults.bracket.details = 'Network or server error';
         }
+      } else {
+        validationResults.bracket.errors.push('Flight management must be completed first');
+        validationResults.bracket.details = 'Complete Step 2: Flight Management';
       }
 
       // Step 4: Check if team seeding exists - only if Step 3 is complete
-      if (validationResults.bracket && (workflowData?.seed || workflowData?.bracket?.brackets?.length > 0)) {
-        validationResults.seed = true;
+      if (validationResults.bracket.completed) {
+        if (workflowData?.seed || workflowData?.bracket?.brackets?.length > 0) {
+          validationResults.seed.completed = true;
+          validationResults.seed.details = '✓ Team seeding configured';
+        } else {
+          validationResults.seed.errors.push('Team seeding not configured');
+          validationResults.seed.details = 'Assign teams to bracket positions in Step 4';
+        }
+      } else {
+        validationResults.seed.errors.push('Brackets must be created first');
+        validationResults.seed.details = 'Complete Step 3: Bracket Creation';
       }
 
       // Step 5: Check if time blocks exist - only if Step 4 is complete
-      if (validationResults.seed && workflowData?.timeblock?.timeBlocks?.length > 0) {
-        validationResults.timeblock = true;
+      if (validationResults.seed.completed) {
+        if (workflowData?.timeblock?.timeBlocks?.length > 0) {
+          validationResults.timeblock.completed = true;
+          validationResults.timeblock.details = `✓ ${workflowData.timeblock.timeBlocks.length} time blocks configured`;
+        } else {
+          validationResults.timeblock.errors.push('No time blocks configured');
+          validationResults.timeblock.details = 'Set up game time slots in Step 5';
+        }
+      } else {
+        validationResults.timeblock.errors.push('Team seeding must be completed first');
+        validationResults.timeblock.details = 'Complete Step 4: Team Seeding';
+      }
+
+      // Step 6: Check if schedule exists - only if Step 5 is complete
+      if (validationResults.timeblock.completed) {
+        try {
+          const scheduleResponse = await fetch(`/api/admin/events/${eventId}/schedule`);
+          if (scheduleResponse.ok) {
+            const schedule = await scheduleResponse.json();
+            if (schedule?.games?.length > 0) {
+              validationResults.schedule.completed = true;
+              validationResults.schedule.details = `✓ ${schedule.games.length} games scheduled`;
+            } else {
+              validationResults.schedule.errors.push('No games generated');
+              validationResults.schedule.details = 'Generate final schedule in Step 6';
+            }
+          } else {
+            validationResults.schedule.errors.push('Failed to fetch schedule');
+            validationResults.schedule.details = 'Schedule not yet generated';
+          }
+        } catch (error) {
+          validationResults.schedule.errors.push('Connection error checking schedule');
+          validationResults.schedule.details = 'Network or server error';
+        }
+      } else {
+        validationResults.schedule.errors.push('Time blocks must be configured first');
+        validationResults.schedule.details = 'Complete Step 5: Time Block Engine';
       }
 
       // Update step statuses based on validation with proper sequential logic
       setWorkflowSteps(prev => prev.map((step, index) => {
-        const isCompleted = validationResults[step.id as keyof typeof validationResults];
+        const stepResult = validationResults[step.id as keyof typeof validationResults];
+        const isCompleted = stepResult.completed;
         
         // A step can only be completed if all previous steps are completed
-        const previousStepsComplete = Object.entries(validationResults)
+        const previousStepsComplete = Object.values(validationResults)
           .slice(0, index)
-          .every(([_, isComplete]) => isComplete);
+          .every(result => result.completed);
         
         const finalStatus = isCompleted && previousStepsComplete ? 'completed' : 
                            step.status === 'in-progress' ? 'in-progress' : 'pending';
         
         return {
           ...step,
-          status: finalStatus
+          status: finalStatus,
+          validationDetails: stepResult.details,
+          validationErrors: stepResult.errors
         };
       }));
 
       // Find first incomplete step and set as current
-      const firstIncompleteIndex = Object.entries(validationResults).findIndex(([_, isComplete]) => !isComplete);
+      const firstIncompleteIndex = Object.values(validationResults).findIndex(result => !result.completed);
       if (firstIncompleteIndex >= 0) {
         setCurrentStep(firstIncompleteIndex);
         setWorkflowSteps(prev => prev.map((step, index) => 
@@ -383,6 +473,26 @@ export function SchedulingWorkflow({ eventId, onComplete }: SchedulingWorkflowPr
                     </h3>
                   </div>
                   <p className="text-xs text-gray-600 mb-3">{step.description}</p>
+                  
+                  {/* Validation Details */}
+                  {step.validationDetails && (
+                    <div className="mb-3">
+                      <p className={`text-xs ${step.status === 'completed' ? 'text-green-600' : 'text-orange-600'}`}>
+                        {step.validationDetails}
+                      </p>
+                      {step.validationErrors && step.validationErrors.length > 0 && (
+                        <ul className="mt-1 space-y-1">
+                          {step.validationErrors.map((error, errIndex) => (
+                            <li key={errIndex} className="text-xs text-red-600 flex items-center gap-1">
+                              <AlertTriangle className="h-3 w-3" />
+                              {error}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  )}
+                  
                   <div className="flex items-center justify-between">
                     {getStepBadge(step)}
                     {currentStep === index && (
