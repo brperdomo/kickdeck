@@ -93,7 +93,34 @@ export function ScheduleBuilder({ eventId, workflowData, onComplete, onError }: 
       let workflowGames = games;
       
       if (!workflowGames || workflowGames.length === 0) {
-        onError('No games found for scheduling. Please complete the previous workflow steps first: Game Metadata → Flight Management → Bracket Creation → Team Seeding → Time Block Assignment. These steps are required to define which age groups and teams should have games scheduled.');
+        // Provide more detailed guidance about what's missing
+        const missingSteps = [];
+        
+        if (!workflowData?.metadata?.gameFormats?.length) {
+          missingSteps.push('Step 1: Game Metadata - Define game format rules');
+        }
+        
+        if (!workflowData?.flight || !brackets?.length) {
+          missingSteps.push('Step 2: Flight Management - Organize teams into flights');
+        }
+        
+        if (!brackets?.length) {
+          missingSteps.push('Step 3: Bracket Creation - Create tournament brackets');
+        }
+        
+        if (!workflowData?.seed) {
+          missingSteps.push('Step 4: Team Seeding - Assign teams to brackets');
+        }
+        
+        if (!timeBlocks?.length) {
+          missingSteps.push('Step 5: Time Block Assignment - Define game times');
+        }
+        
+        const errorMessage = missingSteps.length > 0 
+          ? `Missing workflow steps:\n\n${missingSteps.join('\n')}\n\nPlease complete these steps first. Use the "Re-validate Steps" button to check your progress.`
+          : 'No games found for scheduling. Please complete the previous workflow steps first: Game Metadata → Flight Management → Bracket Creation → Team Seeding → Time Block Assignment. These steps are required to define which age groups and teams should have games scheduled.';
+        
+        onError(errorMessage);
         return;
       }
 

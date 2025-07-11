@@ -146,14 +146,90 @@ export function SchedulingWorkflow({ eventId, onComplete }: SchedulingWorkflowPr
     }
   };
 
-  // Initialize first step
-  useEffect(() => {
-    if (workflowSteps.length > 0 && workflowSteps[0].status === 'pending') {
-      setWorkflowSteps(prev => prev.map((step, index) => 
-        index === 0 ? { ...step, status: 'in-progress' } : step
-      ));
+  // Validate workflow steps based on actual data
+  const validateWorkflowSteps = async () => {
+    const validationResults = {
+      metadata: false,
+      flight: false,
+      bracket: false,
+      seed: false,
+      timeblock: false,
+      schedule: false
+    };
+
+    try {
+      // Step 1: Check if game metadata exists
+      try {
+        const gameMetadataResponse = await fetch(`/api/admin/game-metadata/${eventId}/game-metadata`);
+        if (gameMetadataResponse.ok) {
+          const gameMetadata = await gameMetadataResponse.json();
+          validationResults.metadata = gameMetadata.gameFormats?.length > 0;
+        }
+      } catch (error) {
+        console.log('Game metadata check failed:', error);
+      }
+
+      // Step 2: Check if flights exist (using teams data as proxy)
+      if (teamsData && teamsData.length > 0) {
+        // If we have teams, assume flight management is ready
+        validationResults.flight = true;
+      }
+
+      // Step 3: Check if brackets exist
+      try {
+        const bracketResponse = await fetch(`/api/admin/events/${eventId}/brackets`);
+        if (bracketResponse.ok) {
+          const brackets = await bracketResponse.json();
+          validationResults.bracket = brackets?.length > 0;
+        }
+      } catch (error) {
+        console.log('Brackets check failed:', error);
+      }
+
+      // Step 4: Check if team seeding exists (simplified - check if workflow data exists)
+      if (workflowData?.seed || workflowData?.bracket?.brackets?.length > 0) {
+        validationResults.seed = true;
+      }
+
+      // Step 5: Check if time blocks exist (simplified - check if workflow data exists)
+      if (workflowData?.timeblock?.timeBlocks?.length > 0) {
+        validationResults.timeblock = true;
+      }
+
+      // Update step statuses based on validation
+      setWorkflowSteps(prev => prev.map(step => {
+        const isCompleted = validationResults[step.id as keyof typeof validationResults];
+        return {
+          ...step,
+          status: isCompleted ? 'completed' : 
+                  step.status === 'in-progress' ? 'in-progress' : 'pending'
+        };
+      }));
+
+      // Find first incomplete step and set as current
+      const firstIncompleteIndex = Object.entries(validationResults).findIndex(([_, isComplete]) => !isComplete);
+      if (firstIncompleteIndex >= 0) {
+        setCurrentStep(firstIncompleteIndex);
+        setWorkflowSteps(prev => prev.map((step, index) => 
+          index === firstIncompleteIndex ? { ...step, status: 'in-progress' } : step
+        ));
+      }
+
+      // Log validation results for debugging
+      console.log('Workflow validation results:', validationResults);
+      console.log('Current workflow data:', workflowData);
+
+    } catch (error) {
+      console.error('Error validating workflow steps:', error);
     }
-  }, []);
+  };
+
+  // Initialize and validate steps
+  useEffect(() => {
+    if (eventId && teamsData) {
+      validateWorkflowSteps();
+    }
+  }, [eventId, teamsData]);
 
   const getStepIcon = (step: WorkflowStep) => {
     const IconComponent = step.icon;
@@ -244,9 +320,19 @@ export function SchedulingWorkflow({ eventId, onComplete }: SchedulingWorkflowPr
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle>Scheduling Workflow Progress</CardTitle>
-            <Badge variant="outline">
-              {completedSteps} of {workflowSteps.length} steps completed
-            </Badge>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={validateWorkflowSteps}
+                className="text-xs"
+              >
+                Re-validate Steps
+              </Button>
+              <Badge variant="outline">
+                {completedSteps} of {workflowSteps.length} steps completed
+              </Badge>
+            </div>
           </div>
         </CardHeader>
         <CardContent>
