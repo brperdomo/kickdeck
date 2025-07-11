@@ -322,28 +322,52 @@ export function ScheduleBuilder({ eventId, workflowData, onComplete, onError }: 
         
         const games = [];
         
-        // Create a limited number of sample games per age group (max 4 games per bracket)
-        // This prevents generating thousands of games from large age groups
-        const maxGamesPerBracket = 4;
+        // Calculate appropriate number of games based on team count
+        // Small age groups get round-robin, larger groups get limited sampling
         let gameCount = 0;
         
-        for (let i = 0; i < ageGroupTeams.length && gameCount < maxGamesPerBracket; i++) {
-          for (let j = i + 1; j < ageGroupTeams.length && gameCount < maxGamesPerBracket; j++) {
-            const homeTeam = ageGroupTeams[i];
-            const awayTeam = ageGroupTeams[j];
-            
-            games.push({
-              id: `game_${bracketId}_${i}_${j}`,
-              homeTeamId: homeTeam.id,
-              homeTeamName: homeTeam.name,
-              awayTeamId: awayTeam.id,
-              awayTeamName: awayTeam.name,
-              round: 'Pool Play',
-              gameType: 'pool_play',
-              duration: 90
-            });
-            
-            gameCount++;
+        if (ageGroupTeams.length <= 4) {
+          // Round robin for 4 or fewer teams
+          for (let i = 0; i < ageGroupTeams.length; i++) {
+            for (let j = i + 1; j < ageGroupTeams.length; j++) {
+              const homeTeam = ageGroupTeams[i];
+              const awayTeam = ageGroupTeams[j];
+              
+              games.push({
+                id: `game_${bracketId}_${i}_${j}`,
+                homeTeamId: homeTeam.id,
+                homeTeamName: homeTeam.name,
+                awayTeamId: awayTeam.id,
+                awayTeamName: awayTeam.name,
+                round: 'Pool Play',
+                gameType: 'pool_play',
+                duration: 90
+              });
+              gameCount++;
+            }
+          }
+        } else {
+          // Limited sampling for larger age groups (max 6 games)
+          const maxGamesPerBracket = 6;
+          
+          for (let i = 0; i < ageGroupTeams.length && gameCount < maxGamesPerBracket; i++) {
+            for (let j = i + 1; j < ageGroupTeams.length && gameCount < maxGamesPerBracket; j++) {
+              const homeTeam = ageGroupTeams[i];
+              const awayTeam = ageGroupTeams[j];
+              
+              games.push({
+                id: `game_${bracketId}_${i}_${j}`,
+                homeTeamId: homeTeam.id,
+                homeTeamName: homeTeam.name,
+                awayTeamId: awayTeam.id,
+                awayTeamName: awayTeam.name,
+                round: 'Pool Play',
+                gameType: 'pool_play',
+                duration: 90
+              });
+              
+              gameCount++;
+            }
           }
         }
 

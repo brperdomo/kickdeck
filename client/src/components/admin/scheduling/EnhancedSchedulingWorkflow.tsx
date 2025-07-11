@@ -20,6 +20,7 @@ import { RefereeAssignmentEngine } from "./RefereeAssignmentEngine";
 
 // Import existing workflow components
 import { GameMetadataSetup } from "./GameMetadataSetup";
+import { FieldCapacityAnalyzer } from "./FieldCapacityAnalyzer";
 
 interface EnhancedSchedulingWorkflowProps {
   eventId: string;
@@ -63,8 +64,16 @@ export function EnhancedSchedulingWorkflow({ eventId, onComplete }: EnhancedSche
     }
   });
 
-  // Define the enhanced 6-step workflow with advanced components
+  // Define the enhanced 7-step workflow with field capacity analysis
   const workflowSteps: WorkflowStep[] = [
+    {
+      id: 'field-capacity',
+      title: 'Field Capacity Analysis',
+      description: 'Validate field availability and capacity before scheduling',
+      component: FieldCapacityAnalyzer,
+      status: 'pending',
+      requiresCompletion: true
+    },
     {
       id: 'game-metadata',
       title: 'Game Metadata Setup',
