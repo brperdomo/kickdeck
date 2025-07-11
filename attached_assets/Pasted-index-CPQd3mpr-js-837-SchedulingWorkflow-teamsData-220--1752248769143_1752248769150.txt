@@ -1,0 +1,66 @@
+index-CPQd3mpr.js:837 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+index-CPQd3mpr.js:837 Processing teams data: {originalLength: 220, processedLength: 220, firstTeam: {…}}
+index-CPQd3mpr.js:765  GET https://app.matchpro.ai/api/admin/game-metadata/1656618593/game-metadata 500 (Internal Server Error)
+queryFn @ index-CPQd3mpr.js:765
+i @ index-CPQd3mpr.js:40
+f @ index-CPQd3mpr.js:40
+start @ index-CPQd3mpr.js:40
+fetch @ index-CPQd3mpr.js:40
+(anonymous) @ index-CPQd3mpr.js:40
+(anonymous) @ index-CPQd3mpr.js:40
+batch @ index-CPQd3mpr.js:40
+refetchQueries @ index-CPQd3mpr.js:40
+(anonymous) @ index-CPQd3mpr.js:40
+batch @ index-CPQd3mpr.js:40
+invalidateQueries @ index-CPQd3mpr.js:40
+onSuccess @ index-CPQd3mpr.js:765
+execute @ index-CPQd3mpr.js:40
+await in execute
+mutate @ index-CPQd3mpr.js:40
+(anonymous) @ index-CPQd3mpr.js:40
+onClick @ index-CPQd3mpr.js:765
+Sue @ index-CPQd3mpr.js:37
+Eue @ index-CPQd3mpr.js:37
+Pue @ index-CPQd3mpr.js:37
+iM @ index-CPQd3mpr.js:37
+UG @ index-CPQd3mpr.js:37
+(anonymous) @ index-CPQd3mpr.js:37
+fO @ index-CPQd3mpr.js:40
+mG @ index-CPQd3mpr.js:37
+g2 @ index-CPQd3mpr.js:37
+U4 @ index-CPQd3mpr.js:37
+Vue @ index-CPQd3mpr.js:37Understand this error
+index-CPQd3mpr.js:765 Fetch failed loading: GET "https://app.matchpro.ai/api/admin/game-metadata/1656618593/game-metadata".
+queryFn @ index-CPQd3mpr.js:765
+i @ index-CPQd3mpr.js:40
+f @ index-CPQd3mpr.js:40
+start @ index-CPQd3mpr.js:40
+fetch @ index-CPQd3mpr.js:40
+(anonymous) @ index-CPQd3mpr.js:40
+(anonymous) @ index-CPQd3mpr.js:40
+batch @ index-CPQd3mpr.js:40
+refetchQueries @ index-CPQd3mpr.js:40
+(anonymous) @ index-CPQd3mpr.js:40
+batch @ index-CPQd3mpr.js:40
+invalidateQueries @ index-CPQd3mpr.js:40
+onSuccess @ index-CPQd3mpr.js:765
+execute @ index-CPQd3mpr.js:40
+await in execute
+mutate @ index-CPQd3mpr.js:40
+(anonymous) @ index-CPQd3mpr.js:40
+onClick @ index-CPQd3mpr.js:765
+Sue @ index-CPQd3mpr.js:37
+Eue @ index-CPQd3mpr.js:37
+Pue @ index-CPQd3mpr.js:37
+iM @ index-CPQd3mpr.js:37
+UG @ index-CPQd3mpr.js:37
+(anonymous) @ index-CPQd3mpr.js:37
+fO @ index-CPQd3mpr.js:40
+mG @ index-CPQd3mpr.js:37
+g2 @ index-CPQd3mpr.js:37
+U4 @ index-CPQd3mpr.js:37
+Vue @ index-CPQd3mpr.js:37
+index-CPQd3mpr.js:837 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+index-CPQd3mpr.js:837 Processing teams data: {originalLength: 220, processedLength: 220, firstTeam: {…}}
+index-CPQd3mpr.js:837 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+index-CPQd3mpr.js:837 Processing teams data: {originalLength: 220, processedLength: 220, firstTeam: {…}}

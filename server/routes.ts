@@ -905,7 +905,7 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/teams', isAdmin, playersRouter); // Player management router
     app.use('/api/admin', isAdmin, bracketsRouter); // Bracket management router
     app.use('/api/admin', isAdmin, fieldCapacityRouter); // Field capacity analysis router
-    app.use('/api/admin/game-metadata', isAdmin, gameMetadataRouter); // Game metadata and scheduling rules router
+    app.use('/api/admin/events', isAdmin, gameMetadataRouter); // Game metadata and scheduling rules router
     app.use('/api/admin/games', isAdmin, gamesRouter); // Game management router
     app.use('/api/admin/schedule', isAdmin, scheduleManagementRouter); // Schedule management with drag-and-drop
     app.use('/api/admin/scheduling', isAdmin, schedulingSimulationRouter); // Advanced scheduling simulation and analysis
