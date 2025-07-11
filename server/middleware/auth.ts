@@ -61,6 +61,25 @@ export const validateAuth = (req: Request, res: Response, next: NextFunction) =>
   next();
 };
 
+// Permission-based middleware
+export const requirePermission = (permission: string) => {
+  return async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { checkPermission } = await import('./permissions');
+      const hasPermission = await checkPermission(req, permission);
+      
+      if (!hasPermission) {
+        return res.status(403).json({ error: `Permission required: ${permission}` });
+      }
+      
+      next();
+    } catch (error) {
+      console.error('Permission check error:', error);
+      res.status(500).json({ error: 'Permission check failed' });
+    }
+  };
+};
+
 // Legacy support
 export const authenticateAdmin = isAdmin;
 export const validateAdmin = isAdmin;

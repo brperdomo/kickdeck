@@ -7,7 +7,8 @@
 
 import { Request } from 'express';
 import { db } from '@db';
-import { adminRoles, roles, rolePermissions } from '@db/schema';
+import { adminRoles, roles } from '@db/schema';
+import { rolePermissions } from '@db/schema/permissions';
 import { eq, and, inArray } from 'drizzle-orm';
 
 /**
