@@ -1,22 +1,24 @@
 /**
  * SendGrid Template Service
  * 
- * This service handles all SendGrid template operations including
- * fetching templates from SendGrid API and mapping them to email types.
+ * This service provides functionality to interact with SendGrid's dynamic templates API
+ * and map them to our application's email templates.
  */
 
-import sgMail from '@sendgrid/mail';
-import { db } from '@db/index';
-import { emailTemplates } from '@db/schema/emailTemplates';
-import { eq } from 'drizzle-orm';
+import fetch from 'node-fetch';
+import { db } from '@db';
+import { emailTemplates } from '@db/schema';
+import { emailProviderSettings } from '@db/schema';
+import { eq, and, isNull, ne } from 'drizzle-orm';
 
-// Initialize SendGrid with API key
-if (process.env.SENDGRID_API_KEY) {
-  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+// Ensure the SendGrid API key is available
+if (!process.env.SENDGRID_API_KEY) {
+  console.warn('SENDGRID_API_KEY environment variable is not set. SendGrid template features will be unavailable.');
 }
 
 /**
- * Fetch all dynamic templates from SendGrid
+ * Get all dynamic templates from SendGrid
+ * @returns {Promise<Array>} Array of template objects
  */
 export async function getTemplatesFromSendGrid() {
   try {
@@ -24,160 +26,171 @@ export async function getTemplatesFromSendGrid() {
       throw new Error('SENDGRID_API_KEY environment variable is not set');
     }
 
-    console.log('Making request to SendGrid API for templates...');
-    
-    const response = await (sgMail as any).request({
-      url: '/v3/templates',
-      method: 'GET'
+    const response = await fetch('https://api.sendgrid.com/v3/templates?generations=dynamic', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${process.env.SENDGRID_API_KEY}`,
+        'Content-Type': 'application/json'
+      }
     });
 
-    const templates = response[1]?.templates || [];
-    console.log(`Successfully fetched ${templates.length} templates from SendGrid`);
-    
-    return templates.map((template: any) => ({
-      id: template.id,
-      name: template.name,
-      generation: template.generation,
-      updated_at: template.updated_at,
-      versions: template.versions || []
-    }));
-
-  } catch (error: any) {
-    console.error('SendGrid API Error:', error);
-    
-    // Handle different types of SendGrid errors
-    if (error.response) {
-      const statusCode = error.response.statusCode;
-      const body = error.response.body;
-      
-      console.error('SendGrid API Response:', {
-        statusCode,
-        body: JSON.stringify(body, null, 2)
-      });
-      
-      if (statusCode === 401) {
-        throw new Error('SendGrid API authentication failed. Please check your API key.');
-      } else if (statusCode === 403) {
-        throw new Error('SendGrid API access forbidden. Please check your API key permissions.');
-      } else {
-        throw new Error(`SendGrid API error: ${statusCode} - ${body?.errors?.[0]?.message || 'Unknown error'}`);
-      }
-    } else if (error.code === 'ENOTFOUND' || error.code === 'ECONNREFUSED') {
-      throw new Error('Unable to connect to SendGrid API. Please check your internet connection.');
-    } else {
-      throw new Error(`SendGrid service error: ${error.message}`);
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('SendGrid API error:', errorText);
+      throw new Error(`SendGrid API returned ${response.status}: ${errorText}`);
     }
+
+    const data = await response.json();
+    return data.templates || [];
+  } catch (error) {
+    console.error('Error fetching SendGrid templates:', error);
+    throw error;
   }
 }
 
 /**
- * Map a SendGrid template to an email type
+ * Get all email templates with their SendGrid template mappings
+ * @returns {Promise<Array>} Array of email templates with SendGrid mappings
  */
-export async function mapSendGridTemplateToEmailType(
-  emailType: string, 
-  sendgridTemplateId: string | null
-) {
-  try {
-    console.log(`Mapping SendGrid template ${sendgridTemplateId} to email type: ${emailType}`);
-    
-    // Find the email template by type
-    const existingTemplates = await db
-      .select()
-      .from(emailTemplates)
-      .where(eq(emailTemplates.type, emailType));
-    
-    if (existingTemplates.length === 0) {
-      throw new Error(`Email template type '${emailType}' not found`);
-    }
-    
-    const template = existingTemplates[0];
-    
-    // Update the template with the SendGrid template ID
-    await db
-      .update(emailTemplates)
-      .set({ 
-        sendgridTemplateId: sendgridTemplateId
-      })
-      .where(eq(emailTemplates.id, template.id));
-    
-    console.log(`Successfully mapped SendGrid template to ${emailType}`);
-    
-    return {
-      success: true,
-      message: `SendGrid template ${sendgridTemplateId ? 'assigned' : 'removed'} for ${emailType}`,
-      templateType: emailType,
-      sendgridTemplateId
-    };
-    
-  } catch (error: any) {
-    console.error('Error mapping SendGrid template:', error);
-    throw new Error(`Failed to map template: ${error.message}`);
-  }
-}
-
-/**
- * Test a SendGrid template by sending a test email
- */
-export async function testSendGridTemplate(
-  templateId: string,
-  recipientEmail: string,
-  testData: Record<string, any> = {}
-) {
-  try {
-    if (!process.env.SENDGRID_API_KEY) {
-      throw new Error('SendGrid API key not configured');
-    }
-    
-    console.log(`Testing SendGrid template ${templateId} to ${recipientEmail}`);
-    
-    const msg = {
-      to: recipientEmail,
-      from: process.env.FROM_EMAIL || 'noreply@matchpro.ai',
-      templateId: templateId,
-      dynamicTemplateData: {
-        ...testData,
-        subject: testData.subject || 'Test Email from MatchPro',
-        test_mode: true
-      }
-    };
-    
-    await sgMail.send(msg);
-    console.log(`Test email sent successfully to ${recipientEmail}`);
-    
-    return true;
-    
-  } catch (error: any) {
-    console.error('Error sending test email:', error);
-    
-    if (error.response) {
-      const statusCode = error.response.statusCode;
-      const body = error.response.body;
-      console.error('SendGrid Send Error:', { statusCode, body });
-    }
-    
-    throw new Error(`Failed to send test email: ${error.message}`);
-  }
-}
-
-/**
- * Get template mappings for all email types
- */
-export async function getTemplateMappings() {
+export async function listEmailTemplatesWithSendGridMapping() {
   try {
     const templates = await db
-      .select({
-        id: emailTemplates.id,
-        name: emailTemplates.name,
-        type: emailTemplates.type,
-        sendgridTemplateId: emailTemplates.sendgridTemplateId,
-        isActive: emailTemplates.isActive
-      })
-      .from(emailTemplates);
-    
+      .select()
+      .from(emailTemplates)
+      .orderBy(emailTemplates.name);
     return templates;
-    
-  } catch (error: any) {
-    console.error('Error fetching template mappings:', error);
-    throw new Error(`Failed to fetch template mappings: ${error.message}`);
+  } catch (error) {
+    console.error('Error fetching email templates with mappings:', error);
+    throw error;
+  }
+}
+
+/**
+ * Map a SendGrid template to an email template type
+ * @param {string} templateType - Email template type (e.g., 'welcome', 'password_reset')
+ * @param {string|null} sendgridTemplateId - SendGrid template ID or null to remove mapping
+ * @returns {Promise<Object>} Updated template
+ */
+export async function mapSendGridTemplateToEmailType(templateType: string, sendgridTemplateId: string | null) {
+  try {
+    // Find all templates of this type
+    const templatesOfType = await db
+      .select()
+      .from(emailTemplates)
+      .where(eq(emailTemplates.type, templateType));
+
+    if (templatesOfType.length === 0) {
+      throw new Error(`No email templates found with type: ${templateType}`);
+    }
+
+    // Update all templates of this type
+    const updatePromises = templatesOfType.map(template => 
+      db.update(emailTemplates)
+        .set({ 
+          sendgridTemplateId: sendgridTemplateId,
+          updatedAt: new Date()
+        })
+        .where(eq(emailTemplates.id, template.id))
+        .returning()
+    );
+
+    const results = await Promise.all(updatePromises);
+    return {
+      success: true,
+      updatedCount: results.length,
+      templateType,
+      sendgridTemplateId
+    };
+  } catch (error) {
+    console.error('Error mapping SendGrid template:', error);
+    throw error;
+  }
+}
+
+/**
+ * Get SendGrid provider status and metrics
+ * @returns {Promise<Object>} Provider status information
+ */
+export async function getSendGridStatus() {
+  try {
+    // Get SendGrid provider from email_provider_settings table
+    const providers = await db
+      .select()
+      .from(emailProviderSettings)
+      .where(and(
+        eq(emailProviderSettings.providerType, 'sendgrid'),
+        eq(emailProviderSettings.isActive, true)
+      ));
+
+    const provider = providers.length > 0 ? providers[0] : null;
+
+    // Get count of templates with SendGrid mappings
+    const templatesWithSendGrid = await db
+      .select()
+      .from(emailTemplates)
+      .where(isNull(emailTemplates.sendgridTemplateId).not());
+
+    return {
+      provider,
+      templatesWithSendGrid,
+      hasApiKey: !!process.env.SENDGRID_API_KEY
+    };
+  } catch (error) {
+    console.error('Error getting SendGrid status:', error);
+    throw error;
+  }
+}
+
+/**
+ * Send a test email using a SendGrid dynamic template
+ * @param {string} templateId - SendGrid template ID
+ * @param {string} recipientEmail - Email address to send the test to
+ * @param {Object} testData - Test data to use in the template
+ * @returns {Promise<boolean>} True if email was sent successfully
+ */
+export async function testSendGridTemplate(templateId: string, recipientEmail: string, testData: any) {
+  try {
+    if (!process.env.SENDGRID_API_KEY) {
+      throw new Error('SENDGRID_API_KEY environment variable is not set');
+    }
+
+    // Default sender email to support@matchpro.ai if not specified
+    const senderEmail = process.env.DEFAULT_FROM_EMAIL || 'support@matchpro.ai';
+
+    const mailData = {
+      personalizations: [
+        {
+          to: [{ email: recipientEmail }],
+          dynamic_template_data: testData || {}
+        }
+      ],
+      from: { email: senderEmail, name: 'MatchPro.ai' },
+      template_id: templateId
+    };
+
+    const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.SENDGRID_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(mailData)
+    });
+
+    if (!response.ok) {
+      let errorMessage;
+      try {
+        const errorData = await response.json();
+        errorMessage = JSON.stringify(errorData);
+      } catch (e) {
+        errorMessage = await response.text();
+      }
+      throw new Error(`SendGrid API returned ${response.status}: ${errorMessage}`);
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Error sending test email with SendGrid:', error);
+    throw error;
   }
 }
