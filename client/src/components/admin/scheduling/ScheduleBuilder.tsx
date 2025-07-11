@@ -69,6 +69,12 @@ export function ScheduleBuilder({ eventId, workflowData, onComplete, onError }: 
   const timeBlocks = workflowData?.timeblock?.timeBlocks || [];
   const brackets = workflowData?.bracket?.brackets || [];
 
+  // Debug logging to see what data we actually have
+  console.log('ScheduleBuilder workflowData:', workflowData);
+  console.log('ScheduleBuilder games:', games);
+  console.log('ScheduleBuilder timeBlocks:', timeBlocks);
+  console.log('ScheduleBuilder brackets:', brackets);
+
   useEffect(() => {
     // Initialize constraints with workflow data
     if (brackets.length > 0) {
@@ -83,6 +89,24 @@ export function ScheduleBuilder({ eventId, workflowData, onComplete, onError }: 
     setIsGenerating(true);
     
     try {
+      // If no workflow games exist, generate from teams data
+      let workflowGames = games;
+      
+      if (!workflowGames || workflowGames.length === 0) {
+        console.log('No workflow games found, generating from teams data...');
+        
+        // Fetch teams data and create sample games
+        const teamsResponse = await fetch(`/api/admin/events/${eventId}/teams`);
+        if (teamsResponse.ok) {
+          const teamsData = await teamsResponse.json();
+          console.log('Fetched teams data:', teamsData.length, 'teams');
+          
+          // Create sample bracket games from teams
+          workflowGames = await generateSampleWorkflowGames(teamsData);
+          console.log('Generated sample workflow games:', workflowGames.length, 'brackets');
+        }
+      }
+
       const response = await fetch(`/api/admin/events/${eventId}/generate-schedule`, {
         method: 'POST',
         headers: {
@@ -91,7 +115,7 @@ export function ScheduleBuilder({ eventId, workflowData, onComplete, onError }: 
         body: JSON.stringify({
           ...constraints,
           useWorkflowData: true,
-          workflowGames: games,
+          workflowGames: workflowGames,
           workflowTimeBlocks: timeBlocks
         })
       });
@@ -256,6 +280,62 @@ export function ScheduleBuilder({ eventId, workflowData, onComplete, onError }: 
     };
 
     onComplete(scheduleData);
+  };
+
+  // Helper function to generate sample workflow games from teams
+  const generateSampleWorkflowGames = async (teams: any[]) => {
+    // Group teams by age group
+    const ageGroups = teams.reduce((acc: any, team: any) => {
+      const ageGroup = team.ageGroup?.ageGroup || 'Unknown';
+      if (!acc[ageGroup]) {
+        acc[ageGroup] = [];
+      }
+      acc[ageGroup].push(team);
+      return acc;
+    }, {});
+
+    const workflowGames = [];
+
+    // Create bracket games for each age group
+    for (const [ageGroupName, ageGroupTeams] of Object.entries(ageGroups) as [string, any[]][]) {
+      if (ageGroupTeams.length >= 2) {
+        const bracketId = `bracket_${ageGroupName.replace(/\s+/g, '_').toLowerCase()}_${Date.now()}`;
+        const bracketName = `${ageGroupName} Flight A`;
+        
+        const games = [];
+        
+        // Create round-robin games for teams in this age group
+        for (let i = 0; i < ageGroupTeams.length; i++) {
+          for (let j = i + 1; j < ageGroupTeams.length; j++) {
+            const homeTeam = ageGroupTeams[i];
+            const awayTeam = ageGroupTeams[j];
+            
+            games.push({
+              id: `game_${bracketId}_${i}_${j}`,
+              homeTeamId: homeTeam.id,
+              homeTeamName: homeTeam.name,
+              awayTeamId: awayTeam.id,
+              awayTeamName: awayTeam.name,
+              round: 'Pool Play',
+              gameType: 'pool_play',
+              duration: 90
+            });
+          }
+        }
+
+        if (games.length > 0) {
+          workflowGames.push({
+            bracketId,
+            bracketName,
+            format: 'round_robin',
+            games
+          });
+        }
+      }
+    }
+
+    console.log(`Generated ${workflowGames.length} bracket games from ${teams.length} teams`);
+    return workflowGames;
   };
 
   const totalGamesFromWorkflow = games.reduce((sum: number, bg: any) => 
