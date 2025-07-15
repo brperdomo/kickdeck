@@ -1271,6 +1271,7 @@ async function processTeamPaymentAfterSetup(req: Request, res: Response) {
 async function generatePaymentCompletionUrl(req: Request, res: Response) {
   try {
     const teamId = req.params?.teamId;
+    const { forceGenerate } = req.body; // Add override flag
     
     if (!teamId) {
       return res.status(400).json({ 
@@ -1278,7 +1279,7 @@ async function generatePaymentCompletionUrl(req: Request, res: Response) {
       });
     }
     
-    log(`Generating payment completion URL for team ${teamId}`, 'admin');
+    log(`Generating payment completion URL for team ${teamId}${forceGenerate ? ' (FORCE OVERRIDE)' : ''}`, 'admin');
     
     // Define frontend URL - use app.matchpro.ai for production
     const frontendUrl = process.env.NODE_ENV === 'production' 
@@ -1305,6 +1306,7 @@ async function generatePaymentCompletionUrl(req: Request, res: Response) {
     // 2. approved status but no payment (payment failed during approval)
     // 3. any team with total amount > 0 but no successful payment
     // 4. teams with Link payment methods (no longer supported)
+    // 5. FORCE OVERRIDE - admin wants to regenerate regardless of status
     
     let hasLinkPayment = false;
     if (team.paymentMethodId) {
@@ -1319,14 +1321,16 @@ async function generatePaymentCompletionUrl(req: Request, res: Response) {
       }
     }
     
-    const needsPayment = (
+    const needsPayment = forceGenerate || (
       team.paymentStatus === 'payment_required' ||
+      team.paymentStatus === 'payment_failed' ||
+      team.paymentStatus === 'setup_intent_completed' ||
       (team.status === 'approved' && team.paymentStatus !== 'paid') ||
       (team.totalAmount && team.totalAmount > 0 && team.paymentStatus !== 'paid') ||
       hasLinkPayment  // Allow Link payments to be replaced with card payments
     );
     
-    if (!needsPayment) {
+    if (!needsPayment && !forceGenerate) {
       // Provide specific helpful messages based on team status
       let message = 'Team does not need payment setup';
       let guidance = '';
@@ -1367,7 +1371,7 @@ async function generatePaymentCompletionUrl(req: Request, res: Response) {
         existingSetupIntent = await stripe.setupIntents.retrieve(team.setupIntentId);
         setupIntentStatus = existingSetupIntent.status;
         
-        if (existingSetupIntent.status === 'succeeded' && existingSetupIntent.payment_method) {
+        if (existingSetupIntent.status === 'succeeded' && existingSetupIntent.payment_method && !forceGenerate) {
           // Check if this is a Link payment method that needs to be replaced
           let isLinkPayment = false;
           try {
@@ -1399,6 +1403,11 @@ async function generatePaymentCompletionUrl(req: Request, res: Response) {
               actionNeeded: 'approval'
             });
           }
+        }
+        
+        // Force override - create new Setup Intent regardless of existing status
+        if (forceGenerate) {
+          log(`Force override requested - creating new Setup Intent regardless of existing status`, 'admin');
         }
         
         if (existingSetupIntent.status === 'requires_payment_method' && existingSetupIntent.client_secret) {
@@ -2041,6 +2050,9 @@ async function deleteTeam(req: Request, res: Response) {
 async function generatePaymentIntentCompletionUrl(req: Request, res: Response) {
   try {
     const teamId = parseInt(req.params.id);
+    const { forceGenerate } = req.body; // Add override flag
+    
+    log(`Generating payment intent completion URL for team ${teamId}${forceGenerate ? ' (FORCE OVERRIDE)' : ''}`, 'admin');
     
     // Get team with payment details
     const team = await db.query.teams.findFirst({
@@ -2064,8 +2076,8 @@ async function generatePaymentIntentCompletionUrl(req: Request, res: Response) {
       return res.status(400).json({ error: 'No payment intent found for this team' });
     }
 
-    // Check if payment is already complete
-    if (team.payment_status === 'paid') {
+    // Check if payment is already complete (unless force override)
+    if (team.payment_status === 'paid' && !forceGenerate) {
       return res.status(400).json({ error: 'Payment already completed for this team' });
     }
 

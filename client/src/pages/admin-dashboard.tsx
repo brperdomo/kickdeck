@@ -5509,6 +5509,52 @@ function TeamsView() {
                     Generate Payment URL
                   </Button>
                 )}
+                
+                {/* Force Payment URL Generation - Override for problematic teams */}
+                <Button 
+                  variant="outline"
+                  className="border-orange-500 text-orange-600 hover:bg-orange-50"
+                  onClick={async () => {
+                    if (!confirm(`Force generate payment URL for "${selectedTeam.name}"?\n\nThis will bypass all payment status checks and create a new payment URL regardless of current status.`)) {
+                      return;
+                    }
+                    
+                    try {
+                      // Determine which endpoint to use based on payment method
+                      const endpoint = selectedTeam.paymentIntentId 
+                        ? `/api/admin/teams/${selectedTeam.id}/generate-payment-intent-completion-url`
+                        : `/api/admin/teams/${selectedTeam.id}/generate-completion-url`;
+                      
+                      const response = await fetch(endpoint, {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ forceGenerate: true }),
+                      });
+                      const data = await response.json();
+                      
+                      if (data.success && data.completionUrl) {
+                        navigator.clipboard.writeText(data.completionUrl);
+                        toast({
+                          title: "Success - Override Applied",
+                          description: "Payment URL generated (bypassed status checks) and copied to clipboard",
+                        });
+                      } else {
+                        throw new Error(data.error || 'Failed to generate completion URL');
+                      }
+                    } catch (error) {
+                      toast({
+                        title: "Error", 
+                        description: error instanceof Error ? error.message : "Failed to force generate completion URL",
+                        variant: "destructive",
+                      });
+                    }
+                  }}
+                >
+                  <AlertTriangle className="h-4 w-4 mr-1" />
+                  Force Payment URL
+                </Button>
 
                 
                 <Button 
