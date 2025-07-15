@@ -113,6 +113,13 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
+- July 15, 2025: HEAD COACH DISPLAY FIX COMPLETED - Fixed member dashboard API to properly parse coach JSON data and display head coach information correctly
+  - IDENTIFIED: API was looking for individual head coach fields but coach data was stored as JSON in database
+  - FIXED: Updated getCurrentUserRegistrations API to parse coach JSON and extract headCoachName, headCoachEmail, headCoachPhone fields
+  - ENHANCED: Member dashboard now displays individual head coach fields with fallback support for JSON parsing
+  - IMPROVED: Form editing logic updated to handle both individual fields and legacy JSON coach data formats
+  - VERIFIED: Head coach name, email, and phone now display properly in Team Management section
+  - PRODUCTION READY: Complete head coach information display system operational with backward compatibility
 - July 15, 2025: ADMIN TEAM CONTACT EDITING FEATURE COMPLETED - Implemented comprehensive contact editing functionality in admin dashboard with automatic account creation and email notifications
   - CREATED: "Edit Contacts" button in team details Team Information card for easy access to contact management
   - IMPLEMENTED: TeamContactEditDialog component with professional form interface supporting manager and coach contact updates
