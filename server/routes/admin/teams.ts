@@ -357,7 +357,9 @@ export async function getTeams(req: Request, res: Response) {
         rosterUploadMethod: teams.rosterUploadMethod,
         initialRosterComplete: teams.initialRosterComplete,
         appliedCoupon: teams.appliedCoupon,
-        notes: teams.notes
+        notes: teams.notes,
+        approvedAt: teams.approvedAt,
+        approvedByUserId: teams.approvedByUserId
       },
       event: {
         id: events.id,
@@ -406,7 +408,12 @@ export async function getTeams(req: Request, res: Response) {
         query = query.orderBy(sortOrder === 'asc' ? asc(teams.createdAt) : desc(teams.createdAt));
       } else if (sortBy === 'name') {
         query = query.orderBy(sortOrder === 'asc' ? asc(teams.name) : desc(teams.name));
+      } else if (sortBy === 'approvedAt') {
+        query = query.orderBy(sortOrder === 'asc' ? asc(teams.approvedAt) : desc(teams.approvedAt));
       }
+    } else if (status === 'approved') {
+      // Default sort for approved teams: most recent approval first
+      query = query.orderBy(desc(teams.approvedAt));
     }
     
     const result = await query;

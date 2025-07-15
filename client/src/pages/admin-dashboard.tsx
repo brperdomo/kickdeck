@@ -4500,7 +4500,7 @@ function TeamsView() {
                           <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Event</TableHead>
                           <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Age Group</TableHead>
                           <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Submitter</TableHead>
-                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Registered Date</TableHead>
+                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Date Approved</TableHead>
                           <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Roster Count</TableHead>
                           <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Final Total</TableHead>
                           <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Payment Method</TableHead>
@@ -4538,7 +4538,7 @@ function TeamsView() {
                                 <TableCell>{team.event?.name || "N/A"}</TableCell>
                                 <TableCell>{team.ageGroup?.ageGroup || "N/A"}</TableCell>
                                 <TableCell>{team.submitterEmail || team.managerEmail}</TableCell>
-                                <TableCell>{formatDate(team.createdAt)}</TableCell>
+                                <TableCell>{team.approvedAt ? formatDate(team.approvedAt) : "N/A"}</TableCell>
                                 <TableCell>{getRosterCount(team)}</TableCell>
                                 <TableCell>{formatCurrency(team.totalAmount || team.registrationFee || 0)}</TableCell>
                                 <TableCell>
