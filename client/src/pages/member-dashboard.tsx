@@ -45,6 +45,9 @@ interface TeamRegistration {
   managerName?: string;
   managerPhone?: string;
   coach?: string;
+  headCoachName?: string;
+  headCoachEmail?: string;
+  headCoachPhone?: string;
   submitterEmail?: string;
 }
 
@@ -207,9 +210,15 @@ export default function MemberDashboard() {
   const handleEditTeamContacts = (team: TeamRegistration) => {
     setEditingTeam(team);
     
-    // Parse coach data if it exists
-    let coachData = { name: '', email: '', phone: '' };
-    if (team.coach) {
+    // Use individual head coach fields if available, otherwise parse coach JSON data
+    let coachData = { 
+      name: team.headCoachName || '', 
+      email: team.headCoachEmail || '', 
+      phone: team.headCoachPhone || '' 
+    };
+    
+    // If individual fields are empty but coach JSON exists, parse it
+    if (!coachData.name && !coachData.email && !coachData.phone && team.coach) {
       try {
         const parsedCoach = JSON.parse(team.coach);
         coachData = {
@@ -331,7 +340,13 @@ export default function MemberDashboard() {
                           Head Coach
                         </h4>
                         <div className="pl-6 space-y-1">
-                          {registration.coach ? (() => {
+                          {registration.headCoachName || registration.headCoachEmail || registration.headCoachPhone ? (
+                            <>
+                              <p><strong>Name:</strong> {registration.headCoachName || 'Not provided'}</p>
+                              <p><strong>Email:</strong> {registration.headCoachEmail || 'Not provided'}</p>
+                              <p><strong>Phone:</strong> {registration.headCoachPhone || 'Not provided'}</p>
+                            </>
+                          ) : registration.coach ? (() => {
                             try {
                               const coachData = JSON.parse(registration.coach);
                               return (

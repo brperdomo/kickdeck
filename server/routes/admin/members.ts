@@ -456,10 +456,40 @@ export async function getCurrentUserRegistrations(req: Request, res: Response) {
         paymentMethodId: reg.team.paymentMethodId || undefined,
         stripeCustomerId: reg.team.stripeCustomerId || undefined,
         
-        // Enhanced team information
-        headCoachName: reg.team.headCoachName || undefined,
-        headCoachEmail: reg.team.headCoachEmail || undefined,
-        headCoachPhone: reg.team.headCoachPhone || undefined,
+        // Enhanced team information - parse coach JSON data
+        headCoachName: (() => {
+          if (reg.team.coach) {
+            try {
+              const coachData = JSON.parse(reg.team.coach);
+              return coachData.headCoachName || undefined;
+            } catch (e) {
+              return undefined;
+            }
+          }
+          return undefined;
+        })(),
+        headCoachEmail: (() => {
+          if (reg.team.coach) {
+            try {
+              const coachData = JSON.parse(reg.team.coach);
+              return coachData.headCoachEmail || undefined;
+            } catch (e) {
+              return undefined;
+            }
+          }
+          return undefined;
+        })(),
+        headCoachPhone: (() => {
+          if (reg.team.coach) {
+            try {
+              const coachData = JSON.parse(reg.team.coach);
+              return coachData.headCoachPhone || undefined;
+            } catch (e) {
+              return undefined;
+            }
+          }
+          return undefined;
+        })(),
         managerName: reg.team.managerName || undefined,
         managerEmail: reg.team.managerEmail || undefined,
         managerPhone: reg.team.managerPhone || undefined,
