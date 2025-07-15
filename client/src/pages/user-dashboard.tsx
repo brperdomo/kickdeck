@@ -8,7 +8,7 @@ import UserRegistrationsView from "@/components/UserRegistrationsView";
 import { MyTeams } from "@/components/member/MyTeams";
 import { MemberLayout } from "@/components/layouts/MemberLayout";
 import { motion } from "framer-motion";
-import { Calendar, User, UserPlus, ExternalLink, Upload } from "lucide-react";
+import { Calendar, User, UserPlus, ExternalLink, Upload, Users } from "lucide-react";
 import { useBreakpoint } from "@/hooks/use-mobile";
 import {
   Dialog,
@@ -44,10 +44,10 @@ export default function UserDashboard() {
       href: "/dashboard/registrations",
     },
     {
-      title: "Team Roster Upload",
-      description: "Upload player rosters for teams registered without initial rosters",
-      icon: <Upload className="h-8 w-8 text-primary" />,
-      href: "/member-roster-upload",
+      title: "Team Management",
+      description: "Manage your team registrations and update contact information",
+      icon: <Users className="h-8 w-8 text-primary" />,
+      href: "/dashboard/member-roster",
     },
   ];
 
