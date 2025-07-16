@@ -9,7 +9,7 @@ import { Separator } from '@/components/ui/separator';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Upload, FileText, Calendar, Users, CheckCircle, Clock, AlertCircle, Edit, Mail, User, UserCheck, Plus } from 'lucide-react';
+import { Upload, FileText, Calendar, Users, CheckCircle, Clock, AlertCircle, Edit, Mail, User, UserCheck, Plus, Download } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface Team {
@@ -78,6 +78,39 @@ export default function MemberDashboard() {
   });
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Function to generate and download CSV template
+  const downloadCSVTemplate = () => {
+    const csvHeaders = [
+      'firstName',
+      'lastName', 
+      'jerseyNumber',
+      'dateOfBirth',
+      'medicalNotes',
+      'emergencyContactFirstName',
+      'emergencyContactLastName',
+      'emergencyContactPhone'
+    ];
+
+    const csvContent = csvHeaders.join(',') + '\n' +
+      'John,Doe,10,2010-05-15,None,Jane,Doe,(555) 123-4567\n' +
+      'Jane,Smith,7,2011-08-22,Asthma inhaler,Bob,Smith,(555) 987-6543';
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'roster_template.csv');
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    toast({
+      title: 'Template downloaded',
+      description: 'CSV template has been downloaded to your computer.',
+    });
+  };
 
   // Fetch teams that need roster uploads
   const { data: teams, isLoading: teamsLoading } = useQuery({
@@ -405,10 +438,21 @@ export default function MemberDashboard() {
         <>
           <Alert>
             <FileText className="h-4 w-4" />
-            <AlertDescription>
-              <strong>CSV Format Required:</strong> Your file should include columns for firstName, lastName, 
-              jerseyNumber, dateOfBirth, medicalNotes, emergencyContactFirstName, emergencyContactLastName, 
-              and emergencyContactPhone.
+            <AlertDescription className="flex items-center justify-between">
+              <div>
+                <strong>CSV Format Required:</strong> Your file should include columns for firstName, lastName, 
+                jerseyNumber, dateOfBirth, medicalNotes, emergencyContactFirstName, emergencyContactLastName, 
+                and emergencyContactPhone.
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={downloadCSVTemplate}
+                className="ml-4 flex items-center gap-2"
+              >
+                <Download className="h-4 w-4" />
+                Download Template
+              </Button>
             </AlertDescription>
           </Alert>
 
