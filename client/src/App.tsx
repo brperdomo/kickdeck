@@ -359,7 +359,7 @@ function Router() {
           {/* User routes */}
           <Route path="/household" component={HouseholdPage} />
           <Route path="/dashboard/my-household" component={HouseholdPage} />
-          <Route path="/dashboard/member-roster" component={MemberDashboard} />
+          <Route path="/dashboard/member-roster" component={MemberRosterUpload} />
           <Route path="/dashboard/my-account">
             <Suspense fallback={<div className="flex items-center justify-center min-h-screen">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
