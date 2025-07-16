@@ -438,10 +438,13 @@ export async function getCurrentUserRegistrations(req: Request, res: Response) {
         eventName: reg.event?.name || 'Unknown Event',
         eventId: reg.event?.id.toString() || '',
         ageGroup: reg.ageGroup?.ageGroup || 'Unknown Age Group',
+        registrationDate: reg.team.createdAt,
         registeredAt: reg.team.createdAt,
         status: reg.team.status || 'registered',
         amount: actualAmountCharged,
+        amountPaid: actualAmountCharged,
         paymentId: reg.team.paymentIntentId || undefined,
+        submitterEmail: reg.team.submitterEmail || undefined,
         
         // Additional payment details
         paymentDate: reg.team.paidAt || undefined,
