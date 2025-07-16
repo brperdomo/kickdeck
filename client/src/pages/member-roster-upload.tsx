@@ -196,7 +196,7 @@ export default function MemberRosterUpload() {
       <div className="container mx-auto p-6 space-y-6">
         {/* Navigation Breadcrumbs */}
         <div className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
-          <Link href="/dashboard/member-roster" className="flex items-center gap-1 hover:text-primary transition-colors">
+          <Link href="/dashboard/member" className="flex items-center gap-1 hover:text-primary transition-colors">
             <Home className="h-4 w-4" />
             Member Dashboard
           </Link>
@@ -208,7 +208,7 @@ export default function MemberRosterUpload() {
         <div className="bg-white/60 backdrop-blur-sm rounded-lg border border-white/20 shadow-lg p-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Link href="/dashboard/member-roster">
+              <Link href="/dashboard/member">
                 <Button variant="outline" size="sm" className="flex items-center gap-2">
                   <ArrowLeft className="h-4 w-4" />
                   Back to Member Dashboard
