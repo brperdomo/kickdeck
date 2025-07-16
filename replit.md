@@ -113,6 +113,14 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
+- July 16, 2025: EDIT CONTACTS EMAIL SEARCH FUNCTIONALITY COMPLETED - Enhanced TeamContactEditDialog with intelligent email search and autocomplete
+  - IMPLEMENTED: Searchable dropdown for manager and coach email fields using Command component with Popover interface
+  - ENHANCED: Real-time email search that queries existing users from /api/admin/members endpoint
+  - INTELLIGENT: Auto-fills name fields when selecting existing users from search results
+  - FLEXIBLE: Allows using new email addresses that don't exist in system yet
+  - VISUAL: Shows user details including team count badges and clear "Use new email" option
+  - SEARCHABLE: Live search with 2+ character minimum for performance optimization
+  - PRODUCTION READY: Complete email search and autocomplete system operational in admin contact editing workflow
 - July 15, 2025: MEMBER ROSTER UPLOAD PAGE REDESIGN COMPLETED - Enhanced styling, navigation, and user experience for the team roster upload interface
   - REDESIGNED: Complete visual overhaul with gradient backgrounds, glass morphism effects, and MatchPro color scheme
   - NAVIGATION: Added breadcrumb navigation, back button, and clear link to member dashboard
