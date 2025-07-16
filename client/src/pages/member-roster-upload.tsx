@@ -456,6 +456,5 @@ export default function MemberRosterUpload() {
         )}
       </div>
     </div>
-    </div>
   );
 }
