@@ -11,6 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Upload, FileText, Calendar, Users, CheckCircle, Clock, AlertCircle, Edit, Mail, User, UserCheck, Plus } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { TeamContactEditDialog } from '@/components/TeamContactEditDialog';
 
 interface Team {
   id: number;
@@ -66,16 +67,8 @@ interface Player {
 export default function MemberDashboard() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploadingTeamId, setUploadingTeamId] = useState<number | null>(null);
-  const [editingTeam, setEditingTeam] = useState<TeamRegistration | null>(null);
+  const [editingTeam, setEditingTeam] = useState<any>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [managerForm, setManagerForm] = useState({
-    managerName: '',
-    managerEmail: '',
-    managerPhone: '',
-    coachName: '',
-    coachEmail: '',
-    coachPhone: ''
-  });
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -173,13 +166,13 @@ export default function MemberDashboard() {
 
   // Update team contact information mutation
   const updateTeamContactsMutation = useMutation({
-    mutationFn: async ({ teamId, contacts }: { teamId: number; contacts: typeof managerForm }) => {
-      const response = await fetch(`/api/member-teams/${teamId}/contacts`, {
+    mutationFn: async (contactData: any) => {
+      const response = await fetch(`/api/member-teams/${editingTeam?.id}/contacts`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(contacts),
+        body: JSON.stringify(contactData),
       });
 
       if (!response.ok) {
@@ -208,47 +201,42 @@ export default function MemberDashboard() {
   });
 
   const handleEditTeamContacts = (team: TeamRegistration) => {
-    setEditingTeam(team);
-    
-    // Use individual head coach fields if available, otherwise parse coach JSON data
-    let coachData = { 
-      name: team.headCoachName || '', 
-      email: team.headCoachEmail || '', 
-      phone: team.headCoachPhone || '' 
+    // Transform TeamRegistration to match what TeamContactEditDialog expects
+    const transformedTeam = {
+      name: team.teamName,
+      managerName: team.managerName,
+      managerEmail: team.managerEmail,
+      managerPhone: team.managerPhone,
+      ageGroup: { name: team.ageGroup },
+      coachData: {
+        headCoachName: team.headCoachName || '',
+        headCoachEmail: team.headCoachEmail || '',
+        headCoachPhone: team.headCoachPhone || ''
+      }
     };
     
-    // If individual fields are empty but coach JSON exists, parse it
-    if (!coachData.name && !coachData.email && !coachData.phone && team.coach) {
+    // If individual coach fields are empty but coach JSON exists, parse it
+    if (!transformedTeam.coachData.headCoachName && !transformedTeam.coachData.headCoachEmail && !transformedTeam.coachData.headCoachPhone && team.coach) {
       try {
         const parsedCoach = JSON.parse(team.coach);
-        coachData = {
-          name: parsedCoach.headCoachName || parsedCoach.name || '',
-          email: parsedCoach.headCoachEmail || parsedCoach.email || '',
-          phone: parsedCoach.headCoachPhone || parsedCoach.phone || ''
+        transformedTeam.coachData = {
+          headCoachName: parsedCoach.headCoachName || parsedCoach.name || '',
+          headCoachEmail: parsedCoach.headCoachEmail || parsedCoach.email || '',
+          headCoachPhone: parsedCoach.headCoachPhone || parsedCoach.phone || ''
         };
       } catch (e) {
         console.error('Error parsing coach data:', e);
       }
     }
 
-    setManagerForm({
-      managerName: team.managerName || '',
-      managerEmail: team.managerEmail || '',
-      managerPhone: team.managerPhone || '',
-      coachName: coachData.name,
-      coachEmail: coachData.email,
-      coachPhone: coachData.phone
-    });
+    setEditingTeam(transformedTeam);
     setIsEditDialogOpen(true);
   };
 
-  const handleSaveContacts = () => {
+  const handleSaveContacts = (contactData: any) => {
     if (!editingTeam) return;
     
-    updateTeamContactsMutation.mutate({
-      teamId: editingTeam.id,
-      contacts: managerForm
-    });
+    updateTeamContactsMutation.mutate(contactData);
   };
 
   if (teamsLoading || registrationsLoading) {
@@ -499,118 +487,13 @@ export default function MemberDashboard() {
       </Tabs>
 
       {/* Edit Team Contacts Dialog */}
-      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Edit Team Contacts</DialogTitle>
-            <DialogDescription>
-              Update the manager and coach information for {editingTeam?.teamName}. 
-              If you enter an email that doesn't exist, we'll create a new account and send a welcome email.
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="grid gap-6">
-            <div className="space-y-4">
-              <h4 className="font-medium flex items-center gap-2">
-                <User className="h-4 w-4" />
-                Team Manager
-              </h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="managerName">Manager Name</Label>
-                  <Input
-                    id="managerName"
-                    value={managerForm.managerName}
-                    onChange={(e) => setManagerForm({ ...managerForm, managerName: e.target.value })}
-                    placeholder="Enter manager name"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="managerPhone">Manager Phone</Label>
-                  <Input
-                    id="managerPhone"
-                    value={managerForm.managerPhone}
-                    onChange={(e) => setManagerForm({ ...managerForm, managerPhone: e.target.value })}
-                    placeholder="(555) 123-4567"
-                  />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="managerEmail">Manager Email *</Label>
-                <Input
-                  id="managerEmail"
-                  type="email"
-                  value={managerForm.managerEmail}
-                  onChange={(e) => setManagerForm({ ...managerForm, managerEmail: e.target.value })}
-                  placeholder="manager@example.com"
-                  required
-                />
-              </div>
-            </div>
-
-            <Separator />
-
-            <div className="space-y-4">
-              <h4 className="font-medium flex items-center gap-2">
-                <UserCheck className="h-4 w-4" />
-                Head Coach
-              </h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="coachName">Coach Name</Label>
-                  <Input
-                    id="coachName"
-                    value={managerForm.coachName}
-                    onChange={(e) => setManagerForm({ ...managerForm, coachName: e.target.value })}
-                    placeholder="Enter coach name"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="coachPhone">Coach Phone</Label>
-                  <Input
-                    id="coachPhone"
-                    value={managerForm.coachPhone}
-                    onChange={(e) => setManagerForm({ ...managerForm, coachPhone: e.target.value })}
-                    placeholder="(555) 123-4567"
-                  />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="coachEmail">Coach Email</Label>
-                <Input
-                  id="coachEmail"
-                  type="email"
-                  value={managerForm.coachEmail}
-                  onChange={(e) => setManagerForm({ ...managerForm, coachEmail: e.target.value })}
-                  placeholder="coach@example.com"
-                />
-              </div>
-            </div>
-          </div>
-
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button 
-              onClick={handleSaveContacts}
-              disabled={updateTeamContactsMutation.isPending || !managerForm.managerEmail}
-            >
-              {updateTeamContactsMutation.isPending ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  Updating...
-                </>
-              ) : (
-                <>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Update Contacts
-                </>
-              )}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <TeamContactEditDialog
+        team={editingTeam}
+        open={isEditDialogOpen}
+        onOpenChange={setIsEditDialogOpen}
+        onSubmit={handleSaveContacts}
+        isSubmitting={updateTeamContactsMutation.isPending}
+      />
     </div>
   );
 }
