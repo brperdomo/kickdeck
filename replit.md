@@ -113,6 +113,15 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
+- July 17, 2025: CRITICAL DUPLICATE REFUND BUG FIXED - Resolved severe financial loss issue where teams received multiple refunds for same amount
+  - DUPLICATE REFUND ISSUE: Team 488 received two $447.50 refunds instead of one, totaling $895.00 in excessive refunds
+  - ROOT CAUSE: Development mode logic flaw processed BOTH real Stripe refund AND test refund when paymentIntentId existed
+  - LOGIC SEPARATION: Fixed conditional logic to prevent double processing (else if isDevelopment && !team.paymentIntentId)
+  - DUPLICATE PREVENTION: Added refundDate existence check to block multiple refund attempts on same team
+  - PARTIAL REFUND VISIBILITY: Teams with partial refunds now maintain 'approved' status instead of disappearing from approved list
+  - ENHANCED VALIDATION: Multiple safeguards prevent duplicate refunds while maintaining proper refund functionality
+  - FINANCIAL PROTECTION: System now prevents accidental duplicate refunds that could cause significant financial losses
+  - PRODUCTION READY: Refund system secured against duplicate processing with comprehensive validation and proper status management
 - July 17, 2025: CRITICAL REFUND PROCESSING BUG FIXED - Resolved 500 Internal Server Error preventing admins from processing partial refunds
   - ROOT CAUSE IDENTIFIED: Database schema mismatch where refundDate field expected Date object but received ISO string, plus non-existent updatedAt field in teams table
   - ERROR RESOLUTION: Fixed "value.toISOString is not a function" by using new Date() instead of new Date().toISOString() for timestamp fields

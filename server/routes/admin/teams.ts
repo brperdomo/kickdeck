@@ -1057,6 +1057,14 @@ async function processRefund(req: Request, res: Response) {
       });
     }
     
+    // Check if team already has a refund date (indicating previous refund)
+    if (team.refundDate) {
+      return res.status(400).json({ 
+        status: 'error',
+        error: 'This team has already been refunded. Multiple refunds are not allowed.' 
+      });
+    }
+    
     log(`Team found. Current status: ${team.status}. Processing refund...`, 'admin');
     
     // If there's a paymentIntentId field, use it for the refund 
@@ -1085,7 +1093,7 @@ async function processRefund(req: Request, res: Response) {
         stripeRefundStatus = 'failed';
         log(`Stripe refund failed: ${stripeError}. Proceeding with manual refund tracking.`, 'admin');
       }
-    } else if (isDevelopment) {
+    } else if (isDevelopment && !team.paymentIntentId) {
       try {
         // Use the imported createTestPaymentIntent function from the top of file
         
@@ -1125,11 +1133,19 @@ async function processRefund(req: Request, res: Response) {
     
     // Update the team record with refund details
     const now = new Date();
+    
+    // For partial refunds, keep status as 'approved' since team is still participating
+    // For full refunds, change status to 'refunded'
+    const newStatus = isPartialRefund ? 'approved' : 'refunded';
+    const refundNote = isPartialRefund ? 
+      `Partial refund of $${(amount / 100).toFixed(2)} processed${reason ? ` - ${reason}` : ''}` :
+      `Full refund processed${reason ? ` - ${reason}` : ''}`;
+    
     const updatedTeamResult = await db.update(teams)
       .set({ 
-        status: 'refunded',
+        status: newStatus,
         refundDate: now,
-        notes: reason ? `${team.notes || ''} \nRefund reason: ${reason}`.trim() : team.notes
+        notes: team.notes ? `${team.notes}\n${refundNote}` : refundNote
       })
       .where(eq(teams.id, parseInt(teamId, 10)))
       .returning();
