@@ -249,7 +249,7 @@ export async function scanAllTeamsForPaymentIssues(): Promise<PaymentIntegrityRe
 /**
  * Prevention middleware for team approval
  */
-export async function preventApprovalWithoutPaymentSetup(teamId: number): Promise<{ canApprove: boolean; reason?: string; fixUrl?: string }> {
+async function preventApprovalWithoutPaymentSetup(teamId: number): Promise<{ canApprove: boolean; reason?: string; fixUrl?: string }> {
   try {
     const report = await validateTeamPaymentSetup(teamId);
     
@@ -269,3 +269,6 @@ export async function preventApprovalWithoutPaymentSetup(teamId: number): Promis
     };
   }
 }
+
+// Export functions for use in other modules
+export { preventApprovalWithoutPaymentSetup };

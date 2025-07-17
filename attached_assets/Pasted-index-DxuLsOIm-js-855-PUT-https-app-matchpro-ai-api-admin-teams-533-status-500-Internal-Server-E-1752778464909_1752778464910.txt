@@ -1,0 +1,72 @@
+index-DxuLsOIm.js:855  PUT https://app.matchpro.ai/api/admin/teams/533/status 500 (Internal Server Error)
+mutationFn @ index-DxuLsOIm.js:855
+fn @ index-DxuLsOIm.js:40
+f @ index-DxuLsOIm.js:40
+start @ index-DxuLsOIm.js:40
+execute @ index-DxuLsOIm.js:40
+await in execute
+mutate @ index-DxuLsOIm.js:40
+(anonymous) @ index-DxuLsOIm.js:40
+Eo @ index-DxuLsOIm.js:855
+onClick @ index-DxuLsOIm.js:855
+Sue @ index-DxuLsOIm.js:37
+Eue @ index-DxuLsOIm.js:37
+Pue @ index-DxuLsOIm.js:37
+lM @ index-DxuLsOIm.js:37
+qG @ index-DxuLsOIm.js:37
+(anonymous) @ index-DxuLsOIm.js:37
+gO @ index-DxuLsOIm.js:40
+fG @ index-DxuLsOIm.js:37
+b2 @ index-DxuLsOIm.js:37
+G4 @ index-DxuLsOIm.js:37
+Vue @ index-DxuLsOIm.js:37Understand this error
+index-DxuLsOIm.js:855 Fetch failed loading: PUT "https://app.matchpro.ai/api/admin/teams/533/status".
+mutationFn @ index-DxuLsOIm.js:855
+fn @ index-DxuLsOIm.js:40
+f @ index-DxuLsOIm.js:40
+start @ index-DxuLsOIm.js:40
+execute @ index-DxuLsOIm.js:40
+await in execute
+mutate @ index-DxuLsOIm.js:40
+(anonymous) @ index-DxuLsOIm.js:40
+Eo @ index-DxuLsOIm.js:855
+onClick @ index-DxuLsOIm.js:855
+Sue @ index-DxuLsOIm.js:37
+Eue @ index-DxuLsOIm.js:37
+Pue @ index-DxuLsOIm.js:37
+lM @ index-DxuLsOIm.js:37
+qG @ index-DxuLsOIm.js:37
+(anonymous) @ index-DxuLsOIm.js:37
+gO @ index-DxuLsOIm.js:40
+fG @ index-DxuLsOIm.js:37
+b2 @ index-DxuLsOIm.js:37
+G4 @ index-DxuLsOIm.js:37
+Vue @ index-DxuLsOIm.js:37
+index-DxuLsOIm.js:855 Raw response text: Internal Server Error
+index-DxuLsOIm.js:855 Error parsing JSON response: SyntaxError: Unexpected token 'I', "Internal S"... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Object.mutationFn (index-DxuLsOIm.js:855:82812) Response text: Internal Server Error
+mutationFn @ index-DxuLsOIm.js:855
+await in mutationFn
+fn @ index-DxuLsOIm.js:40
+f @ index-DxuLsOIm.js:40
+start @ index-DxuLsOIm.js:40
+execute @ index-DxuLsOIm.js:40
+await in execute
+mutate @ index-DxuLsOIm.js:40
+(anonymous) @ index-DxuLsOIm.js:40
+Eo @ index-DxuLsOIm.js:855
+onClick @ index-DxuLsOIm.js:855
+Sue @ index-DxuLsOIm.js:37
+Eue @ index-DxuLsOIm.js:37
+Pue @ index-DxuLsOIm.js:37
+lM @ index-DxuLsOIm.js:37
+qG @ index-DxuLsOIm.js:37
+(anonymous) @ index-DxuLsOIm.js:37
+gO @ index-DxuLsOIm.js:40
+fG @ index-DxuLsOIm.js:37
+b2 @ index-DxuLsOIm.js:37
+G4 @ index-DxuLsOIm.js:37
+Vue @ index-DxuLsOIm.js:37Understand this error
+index-DxuLsOIm.js:855 Error in updateTeamStatus mutation: Error: Server returned invalid JSON response. Please try again.
+    at Object.mutationFn (index-DxuLsOIm.js:855:82910)
