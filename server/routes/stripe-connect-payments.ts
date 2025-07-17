@@ -94,46 +94,11 @@ export async function processDestinationCharge(
     const paymentMethod = await stripe.paymentMethods.retrieve(paymentMethodId);
     let customerIdToUse = customerId || paymentMethod.customer as string | null;
     
-    console.log(`🔍 PAYMENT METHOD DEBUG for Team ${teamId}:`);
-    console.log(`  - Payment Method ID: ${paymentMethodId}`);
-    console.log(`  - Type: ${paymentMethod.type}`);
-    console.log(`  - Customer attached to PM: ${paymentMethod.customer || 'NONE'}`);
-    console.log(`  - CustomerId parameter: ${customerId || 'NONE'}`);
-    console.log(`  - CustomerIdToUse: ${customerIdToUse || 'NONE'}`);
-    
-    // CRITICAL FIX: If no customer is attached, create one now
-    if (!customerIdToUse && paymentMethod.type !== 'link') {
-      console.log(`⚠️  MISSING CUSTOMER - Creating customer for Team ${teamId} (${team.name})`);
-      const customer = await stripe.customers.create({
-        email: team.submitterEmail || team.managerEmail,
-        name: team.managerName || team.name,
-        metadata: {
-          teamId: teamId.toString(),
-          teamName: team.name || 'Unknown Team',
-          eventId: eventId,
-          autoRecovery: 'true',
-          created_reason: 'payment_method_customer_missing'
-        }
-      });
-      
-      console.log(`✅ Created customer ${customer.id} for Team ${teamId}`);
-      
-      // Attach the payment method to the customer
-      await stripe.paymentMethods.attach(paymentMethodId, {
-        customer: customer.id
-      });
-      
-      console.log(`✅ Attached payment method ${paymentMethodId} to customer ${customer.id}`);
-      
-      // Update team record with the customer ID
-      await db.update(teams)
-        .set({ stripeCustomerId: customer.id })
-        .where(eq(teams.id, teamId));
-        
-      console.log(`✅ Updated Team ${teamId} database record with customer ID ${customer.id}`);
-      
-      customerIdToUse = customer.id;
-    }
+    console.log(`PAYMENT METHOD DEBUG: Retrieved payment method ${paymentMethodId}`);
+    console.log(`  - type: ${paymentMethod.type}`);
+    console.log(`  - customer: ${paymentMethod.customer}`);
+    console.log(`  - customerId parameter: ${customerId}`);
+    console.log(`  - customerIdToUse: ${customerIdToUse}`);
 
     // Handle Link payment methods which fundamentally cannot be used with customers
     if (paymentMethod.type === 'link') {
@@ -671,19 +636,13 @@ export async function chargeApprovedTeam(teamId: number) {
     return result;
 
   } catch (error) {
-    console.error(`❌ ERROR charging approved team ${teamId} (${team?.name || 'Unknown Team'}):`, error);
+    console.error(`Error charging approved team ${teamId}:`, error);
     
     // Parse Stripe error for detailed context
     const detailedError = parseStripeError(error);
     const errorMessage = formatErrorForDatabase(detailedError);
     
-    console.log(`🚨 PAYMENT FAILURE DETAILS for Team ${teamId}:`);
-    console.log(`   Team Name: ${team?.name || 'Unknown'}`);
-    console.log(`   Amount: $${((team?.totalAmount || 0) / 100).toFixed(2)}`);
-    console.log(`   Setup Intent: ${team?.setupIntentId || 'None'}`);
-    console.log(`   Payment Method: ${team?.paymentMethodId || 'None'}`);
-    console.log(`   Customer ID: ${team?.stripeCustomerId || 'None'}`);
-    console.log(`   Error Details:`, formatErrorForAdmin(detailedError));
+    console.log(`PAYMENT FAILURE DETAILS for Team ${teamId}:`, formatErrorForAdmin(detailedError));
     
     // Log the failed payment attempt to payment_transactions table
     try {

@@ -7,7 +7,6 @@ import { sendTemplatedEmail } from '../../services/emailService';
 import { createRefund, createTestPaymentIntent } from '../../services/stripeService';
 import { chargeApprovedTeam } from '../stripe-connect-payments';
 import { parseStripeError, formatErrorForAdmin, type DetailedPaymentError } from '../utils/stripeErrorHandler';
-import { preventApprovalWithoutPaymentSetup, autoFixTeamPaymentSetup } from '../../services/payment-integrity-service';
 import Stripe from 'stripe';
 
 type TeamStatus = 'registered' | 'approved' | 'rejected' | 'paid' | 'withdrawn' | 'refunded' | 'waitlisted';
@@ -502,7 +501,6 @@ async function updateTeamStatus(req: Request, res: Response) {
     const notes = req.body?.notes;
     const skipPayment = req.body?.skipPayment;
     const skipEmail = req.body?.skipEmail;
-    const forceApprove = req.body?.forceApprove;
     
     if (!teamId || !status) {
       return res.status(400).json({ 
@@ -616,65 +614,6 @@ async function updateTeamStatus(req: Request, res: Response) {
         log(`WARNING: Team ${teamId} was already approved with PaymentIntent ${currentTeam.paymentIntentId}. This may be a duplicate approval attempt.`, 'admin');
         paymentStatus = 'already_charged';
       } else {
-        // PREVENTION SYSTEM: Validate payment setup before processing payment (unless force approved)
-        if (!forceApprove) {
-          const paymentValidation = await preventApprovalWithoutPaymentSetup(parseInt(teamId, 10));
-          
-          if (!paymentValidation.canApprove) {
-            log(`🚨 PAYMENT VALIDATION FAILED for team ${teamId}: ${paymentValidation.reason}`, 'admin');
-            
-            // Attempt automatic fix
-            const autoFix = await autoFixTeamPaymentSetup(parseInt(teamId, 10));
-            
-            if (autoFix.success && autoFix.actions.length > 0) {
-              log(`🔧 AUTO-FIXED payment setup for team ${teamId}: ${autoFix.actions.join(', ')}`, 'admin');
-              
-              // Re-validate after fix
-              const revalidation = await preventApprovalWithoutPaymentSetup(parseInt(teamId, 10));
-              if (!revalidation.canApprove) {
-                // Revert status change
-                await db.update(teams)
-                  .set({ 
-                    status: currentTeam.status,
-                    notes: `Payment setup incomplete after auto-fix: ${revalidation.reason}. Auto-fix actions: ${autoFix.actions.join(', ')}. ${notes ? 'Admin notes: ' + notes : ''}`
-                  })
-                  .where(eq(teams.id, parseInt(teamId, 10)));
-                
-                return res.status(400).json({
-                  status: 'error',
-                  error: 'Payment setup validation failed',
-                  message: `Payment setup incomplete after auto-fix: ${revalidation.reason}`,
-                  autoFixActions: autoFix.actions,
-                  recommendedAction: 'Use "Force Approve" to override validation or generate new payment completion URL',
-                  canForceApprove: true
-                });
-              }
-              log(`✅ Payment validation passed after auto-fix for team ${teamId}`, 'admin');
-            } else {
-              // Revert status change
-              await db.update(teams)
-                .set({ 
-                  status: currentTeam.status,
-                  notes: `Payment validation failed: ${paymentValidation.reason}. ${autoFix.errors.length > 0 ? 'Auto-fix errors: ' + autoFix.errors.join(', ') : ''} ${notes ? 'Admin notes: ' + notes : ''}`
-                })
-                .where(eq(teams.id, parseInt(teamId, 10)));
-              
-              return res.status(400).json({
-                status: 'error',
-                error: 'Payment setup validation failed',
-                message: paymentValidation.reason,
-                autoFixErrors: autoFix.errors,
-                recommendedAction: 'Use "Force Approve" to override validation or fix payment setup before approval',
-                canForceApprove: true
-              });
-            }
-          } else {
-            log(`✅ Payment validation passed for team ${teamId}`, 'admin');
-          }
-        } else {
-          log(`🔧 FORCE APPROVE: Bypassing payment validation for team ${teamId} (forceApprove=true)`, 'admin');
-        }
-        
         try {
           paymentStatus = await processTeamApprovalPayment(currentTeam, teamId);
           log(`Payment processing result for team ${teamId}: ${paymentStatus}`, 'admin');
