@@ -1124,14 +1124,12 @@ async function processRefund(req: Request, res: Response) {
     }
     
     // Update the team record with refund details
-    const now = new Date().toISOString();
+    const now = new Date();
     const updatedTeamResult = await db.update(teams)
       .set({ 
         status: 'refunded',
         refundDate: now,
-        notes: reason ? `${team.notes || ''} \nRefund reason: ${reason}`.trim() : team.notes,
-        // Set updated timestamp
-        updatedAt: now
+        notes: reason ? `${team.notes || ''} \nRefund reason: ${reason}`.trim() : team.notes
       })
       .where(eq(teams.id, parseInt(teamId, 10)))
       .returning();

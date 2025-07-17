@@ -114,11 +114,11 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 
 ## Changelog
 - July 17, 2025: CRITICAL REFUND PROCESSING BUG FIXED - Resolved 500 Internal Server Error preventing admins from processing partial refunds
-  - ROOT CAUSE IDENTIFIED: createRefund function in stripeService.ts had database schema mismatch using non-existent 'paymentDate' field
-  - FUNCTION SIGNATURE FIX: Corrected createRefund function calls in admin teams route (was passing 'reason' string instead of 'amount' number)
-  - DATABASE SCHEMA ALIGNMENT: Fixed paymentTransactions insertion to use proper fields (refundedAt, transactionType) matching actual schema
-  - PARAMETER CORRECTIONS: Fixed createTestPaymentIntent function calls with correct parameter order and types
-  - SQL TEMPLATE REMOVAL: Eliminated invalid SQL template usage in team record updates
+  - ROOT CAUSE IDENTIFIED: Database schema mismatch where refundDate field expected Date object but received ISO string, plus non-existent updatedAt field in teams table
+  - ERROR RESOLUTION: Fixed "value.toISOString is not a function" by using new Date() instead of new Date().toISOString() for timestamp fields
+  - SCHEMA ALIGNMENT: Removed invalid updatedAt field reference that doesn't exist in teams table schema
+  - FUNCTION FIXES: Corrected createRefund function calls and createTestPaymentIntent parameter orders
+  - ENHANCED DEBUGGING: Added comprehensive error logging with detailed stack traces and request context
   - VERIFIED OPERATIONAL: All refund processing errors resolved, Team 488 and other partial refund issues now functional
   - PRODUCTION READY: Complete refund system operational for both full and partial refunds with proper Stripe integration and database logging
 - July 17, 2025: BREAKTHROUGH INTELLIGENT PAYMENT RECOVERY SYSTEM COMPLETED - Implemented comprehensive automatic recovery for burned payment methods eliminating need for teams to re-enter payment information
