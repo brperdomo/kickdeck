@@ -151,39 +151,52 @@ export async function createCoachAccount(
 
 export function setupAuth(app: Express) {
   const MemoryStore = createMemoryStore(session);
+  
+  // Enhanced session secret for production security
+  const sessionSecret = process.env.SESSION_SECRET || process.env.REPL_ID || "soccer-registration-secret-key-enhanced";
+  
   const sessionSettings: session.SessionOptions = {
-    secret: process.env.REPL_ID || "soccer-registration-secret",
-    resave: true, // Changed to true to ensure session is saved on every request
-    saveUninitialized: false,
+    secret: sessionSecret,
+    resave: false, // Don't save session if unmodified
+    saveUninitialized: false, // Don't create session until something stored
     cookie: {
-      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days for longer sessions
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days (shorter for better security)
       httpOnly: true,
       sameSite: 'lax',
-      path: '/'
+      path: '/',
+      secure: false // Always false for Replit environments
     },
     store: new MemoryStore({
       checkPeriod: 86400000, // 24 hours cleanup interval
-      // Don't refresh/ping inactive sessions in the background
       stale: false
     }),
     rolling: true, // Reset expiration countdown on every response
-    unset: 'destroy' // Immediately destroy when unset
+    unset: 'destroy',
+    name: 'matchpro.session' // Custom session name
   };
 
+  // Production-specific optimizations
   if (app.get("env") === "production") {
     app.set("trust proxy", 1);
+    
+    // Enhanced production session settings
     sessionSettings.cookie = {
       ...sessionSettings.cookie,
-      secure: false, // Disable secure for Replit environment
-      sameSite: 'lax', // Use lax for better compatibility
+      secure: false, // Never use secure on Replit
+      sameSite: 'lax',
+      domain: undefined // Let browser determine domain
     };
+    
+    console.log('[Auth Setup] Production session configured with enhanced security');
   } else {
-    // Development environment settings
+    // Development environment settings  
     sessionSettings.cookie = {
       ...sessionSettings.cookie,
       secure: false,
       sameSite: 'lax',
     };
+    
+    console.log('[Auth Setup] Development session configured');
   }
 
   app.use(session(sessionSettings));
@@ -519,7 +532,37 @@ export function setupAuth(app: Express) {
   });
 
   app.get("/api/user", async (req: Request, res) => {
-    if (req.isAuthenticated()) {
+    const debugInfo = {
+      sessionID: req.sessionID,
+      isAuthenticated: req.isAuthenticated(),
+      hasUser: !!req.user,
+      userId: req.user?.id,
+      userEmail: req.user?.email,
+      userAgent: req.headers['user-agent']?.substring(0, 50),
+      timestamp: new Date().toISOString()
+    };
+    
+    console.log(`[API User] ${req.method} ${req.path} - Debug:`, debugInfo);
+    
+    if (!req.isAuthenticated()) {
+      console.log(`[API User] FAILED - User not authenticated`);
+      return res.status(401).json({ 
+        error: "Authentication required. Please log in.",
+        debug: debugInfo,
+        action: "redirect_to_login"
+      });
+    }
+    
+    if (!req.user) {
+      console.log(`[API User] FAILED - User object missing despite authentication`);
+      return res.status(401).json({ 
+        error: "Session invalid. Please log in again.",
+        debug: debugInfo,
+        action: "redirect_to_login"
+      });
+    }
+
+    try {
       // Access the emulatedUserId that we attached in the middleware
       const emulatedUserId = (req as any).emulatedUserId;
       const actualUserId = (req as any).actualUserId;
@@ -567,14 +610,16 @@ export function setupAuth(app: Express) {
       }
       
       // Return the actual user
+      console.log(`[API User] SUCCESS - Returning user data for ${req.user.email}`);
       return res.json(req.user);
+    } catch (error) {
+      console.error(`[API User] ERROR - Exception in user endpoint:`, error);
+      return res.status(500).json({ 
+        error: "Internal server error",
+        debug: debugInfo,
+        message: "Failed to retrieve user data"
+      });
     }
-
-    // For unauthenticated requests, add cache headers to prevent frequent refreshes
-    // This is key to solving the login page refresh issue
-    res.set('Cache-Control', 'private, max-age=3600');
-    res.set('Expires', new Date(Date.now() + 3600000).toUTCString());
-    res.status(401).send("Not logged in");
   });
 
   // Email availability check is handled in routes.ts

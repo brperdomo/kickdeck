@@ -2,22 +2,45 @@ import { Request, Response, NextFunction } from "express";
 
 // Enhanced admin authentication middleware with role-based access
 export const isAdmin = async (req: Request, res: Response, next: NextFunction) => {
-  console.log(`[Admin Auth] Session ID: ${req.sessionID}`);
-  console.log(`[Admin Auth] isAuthenticated: ${req.isAuthenticated()}`);
-  console.log(`[Admin Auth] User: ${req.user ? 'exists' : 'null'}`);
-  console.log(`[Admin Auth] User ID: ${req.user?.id}`);
-  console.log(`[Admin Auth] isAdmin flag: ${req.user?.isAdmin}`);
+  const sessionInfo = {
+    sessionID: req.sessionID,
+    isAuthenticated: req.isAuthenticated(),
+    hasUser: !!req.user,
+    userId: req.user?.id,
+    userEmail: req.user?.email,
+    isAdmin: req.user?.isAdmin
+  };
+  
+  console.log(`[Admin Auth] ${req.method} ${req.path} - Session info:`, sessionInfo);
   
   if (!req.isAuthenticated()) {
-    console.log(`[Admin Auth] Authentication failed - not authenticated`);
-    return res.status(401).json({ error: "Authentication required. Please log in as an admin." });
+    console.log(`[Admin Auth] FAILED - User not authenticated`);
+    return res.status(401).json({ 
+      error: "Authentication required. Please log in as an admin.",
+      debug: {
+        sessionID: req.sessionID,
+        path: req.path,
+        method: req.method
+      }
+    });
   }
 
   const user = req.user as any;
   
+  if (!user) {
+    console.log(`[Admin Auth] FAILED - User object is null despite isAuthenticated=true`);
+    return res.status(401).json({ 
+      error: "User session invalid. Please log in again.",
+      debug: {
+        sessionID: req.sessionID,
+        isAuthenticated: req.isAuthenticated()
+      }
+    });
+  }
+  
   // First check the isAdmin flag
   if (user?.isAdmin) {
-    console.log(`[Admin Auth] Authentication successful via isAdmin flag`);
+    console.log(`[Admin Auth] SUCCESS - Admin access granted via isAdmin flag for user ${user.email}`);
     return next();
   }
 

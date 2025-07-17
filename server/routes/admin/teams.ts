@@ -4,7 +4,7 @@ import { teams, events, users, players, eventAgeGroups, paymentTransactions } fr
 import { eq, and, or, like, asc, desc, sql } from 'drizzle-orm';
 import { log } from '../../vite';
 import { sendTemplatedEmail } from '../../services/emailService';
-import { createRefund, createTestPaymentIntent } from '../../services/stripeService';
+import { createRefund, createTestPaymentIntent, intelligentPaymentRecovery } from '../../services/stripeService';
 import { chargeApprovedTeam } from '../stripe-connect-payments';
 import { parseStripeError, formatErrorForAdmin, type DetailedPaymentError } from '../utils/stripeErrorHandler';
 import Stripe from 'stripe';
@@ -59,18 +59,43 @@ async function processTeamApprovalPayment(team: any, teamId: string): Promise<st
     
     // Check if this is a burned payment method issue
     if (error instanceof Error && error.message.includes('was previously used and cannot be reused')) {
-      log(`ADMIN MAIN: Burned payment method detected for team ${teamId} - team needs new payment method`, 'admin');
+      log(`ADMIN MAIN: Burned payment method detected for team ${teamId} - attempting intelligent recovery`, 'admin');
       
-      // Mark payment method as unusable and require new one
-      await db.update(teams)
-        .set({
-          paymentStatus: 'payment_method_invalid',
-          paymentMethodId: null, // Clear the burned payment method
-          notes: `Payment method was previously used without customer and cannot be reused. Team needs to provide new payment method.`
-        })
-        .where(eq(teams.id, parseInt(teamId, 10)));
-      
-      return 'burned_payment_method';
+      try {
+        // Attempt intelligent payment recovery
+        const recoveryResult = await intelligentPaymentRecovery(team, parseInt(teamId, 10));
+        
+        if (recoveryResult.success) {
+          log(`✅ INTELLIGENT RECOVERY SUCCESS for team ${teamId}: ${recoveryResult.paymentIntentId}`, 'admin');
+          return 'payment_successful';
+        } else {
+          log(`❌ INTELLIGENT RECOVERY FAILED for team ${teamId}: ${recoveryResult.error}`, 'admin');
+          
+          // Fall back to marking as invalid only if recovery fails
+          await db.update(teams)
+            .set({
+              paymentStatus: 'payment_method_invalid',
+              paymentMethodId: null,
+              notes: `Payment method recovery failed: ${recoveryResult.error}. Team needs to provide new payment method.`
+            })
+            .where(eq(teams.id, parseInt(teamId, 10)));
+          
+          return 'burned_payment_method';
+        }
+      } catch (recoveryError) {
+        log(`❌ RECOVERY SYSTEM ERROR for team ${teamId}: ${recoveryError}`, 'admin');
+        
+        // Fall back to original behavior if recovery system fails
+        await db.update(teams)
+          .set({
+            paymentStatus: 'payment_method_invalid',
+            paymentMethodId: null,
+            notes: `Payment method was previously used without customer and cannot be reused. Team needs to provide new payment method.`
+          })
+          .where(eq(teams.id, parseInt(teamId, 10)));
+        
+        return 'burned_payment_method';
+      }
     }
     
     // Parse detailed Stripe error information for admin context

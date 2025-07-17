@@ -859,3 +859,197 @@ export async function handleRefund(charge: Stripe.Charge, refund: Stripe.Refund)
     throw new Error(`Error handling refund: ${error.message}`);
   }
 }
+
+/**
+ * Intelligent Payment Recovery System
+ * Automatically recovers burned payment methods by creating direct payments
+ * without customer association requirements
+ */
+export async function intelligentPaymentRecovery(team: any, teamId: number): Promise<{
+  success: boolean;
+  paymentIntentId?: string;
+  error?: string;
+  amount?: number;
+}> {
+  try {
+    log(`🔧 INTELLIGENT RECOVERY: Starting recovery for team ${teamId} (${team.name})`, 'admin');
+    
+    // 1. Verify team has Setup Intent with payment method
+    if (!team.setupIntentId) {
+      return {
+        success: false,
+        error: 'No Setup Intent found for team'
+      };
+    }
+    
+    log(`🔍 RECOVERY: Analyzing Setup Intent ${team.setupIntentId}`, 'admin');
+    
+    // 2. Retrieve Setup Intent to extract payment method
+    const setupIntent = await stripe.setupIntents.retrieve(team.setupIntentId);
+    
+    if (!setupIntent.payment_method) {
+      return {
+        success: false,
+        error: 'No payment method found in Setup Intent'
+      };
+    }
+    
+    const paymentMethodId = setupIntent.payment_method as string;
+    log(`💳 RECOVERY: Found payment method ${paymentMethodId}`, 'admin');
+    
+    // 3. Get team event and calculate amount
+    const [eventData] = await db
+      .select()
+      .from(events)
+      .where(eq(events.id, team.eventId))
+      .limit(1);
+    
+    if (!eventData) {
+      return {
+        success: false,
+        error: 'Event not found for team'
+      };
+    }
+    
+    const totalAmount = team.totalAmount || eventData.registrationFee;
+    const platformFeeAmount = Math.round(totalAmount * 0.04 + 30); // 4% + $0.30
+    const totalWithFees = totalAmount + platformFeeAmount;
+    
+    log(`💰 RECOVERY: Amount to charge $${(totalWithFees / 100).toFixed(2)} (tournament: $${(totalAmount / 100).toFixed(2)} + fees: $${(platformFeeAmount / 100).toFixed(2)})`, 'admin');
+    
+    // 4. Create direct payment intent without customer association
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: totalWithFees,
+      currency: 'usd',
+      payment_method: paymentMethodId,
+      confirm: true, // Automatically confirm the payment
+      payment_method_types: ['card'],
+      description: `${eventData.name} - ${team.name} (Intelligent Recovery)`,
+      metadata: {
+        teamId: teamId.toString(),
+        teamName: team.name,
+        eventName: eventData.name,
+        recoveryType: 'burned_payment_method',
+        originalSetupIntent: team.setupIntentId,
+        tournamentAmount: totalAmount.toString(),
+        platformFee: platformFeeAmount.toString()
+      },
+      // Handle Connect account destination if available
+      ...(eventData.stripeConnectAccountId && {
+        application_fee_amount: platformFeeAmount,
+        transfer_data: {
+          destination: eventData.stripeConnectAccountId
+        }
+      })
+    });
+    
+    log(`✅ RECOVERY SUCCESS: Payment Intent created ${paymentIntent.id} with status ${paymentIntent.status}`, 'admin');
+    
+    // 5. Record transaction in database
+    await db.insert(paymentTransactions).values({
+      teamId: teamId,
+      paymentIntentId: paymentIntent.id,
+      amount: totalWithFees,
+      status: paymentIntent.status as any,
+      transactionType: 'team_approval_recovery',
+      platformFee: platformFeeAmount,
+      tournamentAmount: totalAmount,
+      cardBrand: 'recovered', // Mark as recovered payment
+      cardLast4: 'recovery',
+      metadata: JSON.stringify({
+        recoveryType: 'intelligent_burned_method',
+        originalSetupIntent: team.setupIntentId,
+        recoveredPaymentMethod: paymentMethodId
+      })
+    });
+    
+    // 6. Update team status
+    await db.update(teams)
+      .set({
+        status: 'approved',
+        paymentStatus: 'paid',
+        paymentIntentId: paymentIntent.id,
+        paymentMethodId: paymentMethodId,
+        approvedAt: new Date(),
+        notes: `Payment recovered via intelligent recovery system from Setup Intent ${team.setupIntentId}`
+      })
+      .where(eq(teams.id, teamId));
+    
+    log(`📊 RECOVERY: Team ${teamId} updated to approved status with payment ${paymentIntent.id}`, 'admin');
+    
+    // 7. Send approval email
+    try {
+      await sendApprovalEmailWithPaymentDetails(team, paymentIntent, eventData);
+      log(`📧 RECOVERY: Approval email sent to team ${teamId}`, 'admin');
+    } catch (emailError) {
+      log(`⚠️  RECOVERY: Email failed but payment succeeded for team ${teamId}: ${emailError}`, 'admin');
+    }
+    
+    return {
+      success: true,
+      paymentIntentId: paymentIntent.id,
+      amount: totalWithFees
+    };
+    
+  } catch (error: any) {
+    log(`❌ RECOVERY ERROR for team ${teamId}: ${error.message}`, 'admin');
+    
+    // Check if this is a different type of payment error
+    if (error.message.includes('Your card was declined')) {
+      return {
+        success: false,
+        error: 'Card declined - customer needs to contact bank or use different payment method'
+      };
+    }
+    
+    if (error.message.includes('insufficient funds')) {
+      return {
+        success: false,
+        error: 'Insufficient funds - customer needs to add funds to account'
+      };
+    }
+    
+    return {
+      success: false,
+      error: `Recovery failed: ${error.message}`
+    };
+  }
+}
+
+/**
+ * Send approval email with payment details after successful recovery
+ */
+async function sendApprovalEmailWithPaymentDetails(team: any, paymentIntent: Stripe.PaymentIntent, eventData: any) {
+  try {
+    // Get payment method details for receipt
+    const paymentMethod = await stripe.paymentMethods.retrieve(paymentIntent.payment_method as string);
+    
+    const emailData = {
+      teamName: team.name,
+      eventName: eventData.name,
+      managerName: team.managerName || team.submitterName || 'Team Manager',
+      approvalDate: new Date().toLocaleDateString(),
+      paymentAmount: (paymentIntent.amount / 100).toFixed(2),
+      tournamentCost: ((paymentIntent.amount - (paymentIntent.application_fee_amount || 0)) / 100).toFixed(2),
+      platformFee: ((paymentIntent.application_fee_amount || 0) / 100).toFixed(2),
+      transactionId: paymentIntent.id,
+      cardBrand: paymentMethod.card?.brand || 'Card',
+      cardLast4: paymentMethod.card?.last4 || '****',
+      receiptNumber: `REC-${paymentIntent.id.slice(-8).toUpperCase()}`,
+      recoveryNote: 'Payment was automatically recovered using intelligent payment recovery system'
+    };
+    
+    // Send to both submitter and manager
+    const emailRecipients = [team.submitterEmail, team.managerEmail].filter(Boolean);
+    
+    for (const email of emailRecipients) {
+      await sendTemplatedEmail(email, 'team_approved_with_payment', emailData);
+    }
+    
+    log(`Approval email sent to ${emailRecipients.join(', ')} for recovered payment`, 'admin');
+    
+  } catch (error) {
+    log(`Error sending approval email: ${error}`, 'admin');
+    throw error;
+  }
+}
