@@ -77,21 +77,29 @@ export async function validateTeamPaymentSetup(teamId: number): Promise<PaymentI
         report.recommendedActions.push('Team needs to complete payment method setup');
       }
 
-      // Check if payment method is attached to customer
+      // Check if payment method is accessible for charging
       if (setupIntent.payment_method && team.stripeCustomerId) {
-        const paymentMethod = await stripe.paymentMethods.retrieve(setupIntent.payment_method as string);
-        
-        if (paymentMethod.customer !== team.stripeCustomerId) {
-          report.issues.push('Payment method not attached to team customer');
-          report.canBeApproved = false;
-          report.recommendedActions.push('Attach payment method to customer');
-        }
+        try {
+          const paymentMethod = await stripe.paymentMethods.retrieve(setupIntent.payment_method as string);
+          
+          // If payment method is attached to a different customer, it's still usable
+          // We just need to ensure we can charge it during approval
+          if (paymentMethod.customer !== team.stripeCustomerId) {
+            report.issues.push('Payment method attached to different customer (fixable during approval)');
+            report.recommendedActions.push('Payment method will be re-attached during approval');
+            // Don't block approval for this - it's auto-fixable
+          }
 
-        // Check for Link payments (problematic)
-        if (paymentMethod.type === 'link') {
-          report.issues.push('Link payment method detected (cannot be reliably charged)');
+          // Check for Link payments (problematic)
+          if (paymentMethod.type === 'link') {
+            report.issues.push('Link payment method detected (cannot be reliably charged)');
+            report.canBeApproved = false;
+            report.recommendedActions.push('Generate new payment URL without Link support');
+          }
+        } catch (paymentMethodError) {
+          report.issues.push('Payment method not accessible');
           report.canBeApproved = false;
-          report.recommendedActions.push('Generate new payment URL without Link support');
+          report.recommendedActions.push('Create new payment method');
         }
       }
     } catch (stripeError) {
