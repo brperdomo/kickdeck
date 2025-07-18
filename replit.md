@@ -113,6 +113,15 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
+- July 18, 2025: GENDER-SPECIFIC FLIGHT CREATION ENHANCEMENT COMPLETED - Implemented comprehensive gender-aware flight management system for tournament organization
+  - FLIGHT INTERFACE ENHANCED: Added gender and ageGroupId fields to Flight interface for proper gender separation tracking
+  - GENDER-AWARE AGE GROUPS: Updated age group processing to use actual gender field from database instead of string parsing
+  - SMART FLIGHT CREATION: Enhanced CreateFlightForm with "Age Group & Gender" selection dropdown showing options like "U17 Boys" and "U17 Girls"
+  - AUTO-GENERATED NAMES: Flight names now auto-generate with gender inclusion (e.g., "U17 Boys Flight 1", "U17 Girls Flight 1")
+  - VISUAL GENDER BADGES: FlightCard component displays color-coded gender badges (Boys=blue, Girls=purple, Coed=green)
+  - GENDER-FILTERED TEAMS: Team assignment now filters by both age group AND gender, preventing Boys and Girls from mixing in same flights
+  - COMPREHENSIVE WORKFLOW: Both CreateFlightForm and EditFlightForm support gender-aware age group selection with field size information
+  - PRODUCTION READY: Flight creation system ensures Boys and Girls teams are kept in separate flights as required for tournament organization
 - July 18, 2025: CRITICAL PRODUCTION SCHEDULING API FIX COMPLETED - Resolved all database schema issues preventing game metadata operations in production
   - ROOT CAUSE IDENTIFIED: Missing 'is_active' column in production event_schedule_constraints table that schema definition expected
   - PRODUCTION SCHEMA VERIFIED: Added missing columns to align actual database structure with Drizzle schema definitions
