@@ -12,21 +12,29 @@ The scheduling system was experiencing **500 Internal Server Error** on `/api/ad
 The API was attempting to query these tables using integer eventId values but the foreign key fields expected string values.
 
 ## Technical Fix Applied
-Updated `/server/routes/admin/game-metadata.ts` to handle eventId as string consistently:
+**COMPREHENSIVE SOLUTION**: Fixed both database schema and API code to align data types properly.
 
-### Before (Causing 500 Error):
+### Database Schema Fix:
+```sql
+-- Fixed foreign key data type mismatch
+ALTER TABLE event_game_formats 
+ALTER COLUMN event_id TYPE bigint USING event_id::bigint;
+
+ALTER TABLE event_schedule_constraints 
+ALTER COLUMN event_id TYPE bigint USING event_id::bigint;
+```
+
+### API Code Fix:
 ```typescript
+// Now correctly using integers to match bigint schema
 const eventIdInt = parseInt(eventId);
-// Query with integer - FAILED
 .where(eq(eventGameFormats.eventId, eventIdInt))
 ```
 
-### After (Working):
-```typescript
-const eventIdStr = eventId.toString();
-// Query with string - SUCCESS
-.where(eq(eventGameFormats.eventId, eventIdStr))
-```
+### Root Cause Resolution:
+- `events.id`: `bigint` (number)
+- `eventGameFormats.eventId`: `bigint` (number) ✅ FIXED
+- `eventScheduleConstraints.eventId`: `bigint` (number) ✅ FIXED
 
 ## Files Modified
 - `server/routes/admin/game-metadata.ts` - All 4 functions updated:

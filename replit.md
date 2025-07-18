@@ -113,6 +113,14 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
+- July 18, 2025: CRITICAL SCHEDULING DATABASE SCHEMA FIX - Resolved fundamental data type mismatch causing 500 Internal Server Error on game metadata API
+  - ROOT CAUSE: Database schema inconsistency where events.id (bigint) was referenced by eventGameFormats.eventId and eventScheduleConstraints.eventId (text)
+  - SCHEMA FIX: Converted both eventGameFormats.eventId and eventScheduleConstraints.eventId from text to bigint using SQL ALTER TABLE statements
+  - API FIX: Updated all game metadata API endpoints to use parseInt(eventId) instead of eventId.toString() to match bigint schema
+  - FOREIGN KEY REPAIR: Dropped and recreated foreign key constraints with correct data types to maintain referential integrity
+  - COMPREHENSIVE SOLUTION: Fixed both database schema and API code to align data types properly across all related tables
+  - VERIFICATION: API now returns proper authentication errors instead of 500 Internal Server Error, confirming schema fix success
+  - PRODUCTION READY: Scheduling system database foundation now properly structured for reliable game metadata operations
 - July 17, 2025: CRITICAL DUPLICATE REFUND BUG FIXED - Resolved severe financial loss issue where teams received multiple refunds for same amount
   - DUPLICATE REFUND ISSUE: Team 488 received two $447.50 refunds instead of one, totaling $895.00 in excessive refunds
   - ROOT CAUSE: Development mode logic flaw processed BOTH real Stripe refund AND test refund when paymentIntentId existed

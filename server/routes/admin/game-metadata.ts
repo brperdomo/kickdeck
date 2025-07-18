@@ -26,24 +26,24 @@ router.get('/:eventId/game-metadata', async (req, res) => {
       return res.status(400).json({ error: 'Invalid event ID provided' });
     }
 
-    const eventIdStr = eventId.toString(); // eventGameFormats.eventId is text type
-    console.log('Querying game formats for event ID (as string):', eventIdStr);
+    const eventIdInt = parseInt(eventId); // eventGameFormats.eventId is bigint type
+    console.log('Querying game formats for event ID (as number):', eventIdInt);
 
     // Get game format rules
     const gameFormats = await db
       .select()
       .from(eventGameFormats)
-      .where(eq(eventGameFormats.eventId, eventIdStr))
+      .where(eq(eventGameFormats.eventId, eventIdInt))
       .orderBy(asc(eventGameFormats.ageGroup));
 
     console.log('Game formats query completed, count:', gameFormats.length);
 
     // Get schedule constraints
-    console.log('Querying schedule constraints for event ID (as string):', eventIdStr);
+    console.log('Querying schedule constraints for event ID (as number):', eventIdInt);
     const constraints = await db
       .select()
       .from(eventScheduleConstraints)
-      .where(eq(eventScheduleConstraints.eventId, eventIdStr))
+      .where(eq(eventScheduleConstraints.eventId, eventIdInt))
       .limit(1);
 
     console.log('Schedule constraints query completed, count:', constraints.length);
@@ -86,20 +86,20 @@ router.put('/:eventId/game-formats', async (req, res) => {
       return res.status(400).json({ error: 'Game formats must be an array' });
     }
 
-    const eventIdStr = eventId.toString();
-    console.log('Updating game formats for event:', eventIdStr);
+    const eventIdInt = parseInt(eventId);
+    console.log('Updating game formats for event:', eventIdInt);
 
     // Delete existing game formats for this event
     await db
       .delete(eventGameFormats)
-      .where(eq(eventGameFormats.eventId, eventIdStr));
+      .where(eq(eventGameFormats.eventId, eventIdInt));
 
     // Insert new game formats
     if (gameFormats.length > 0) {
       await db
         .insert(eventGameFormats)
         .values(gameFormats.map(format => ({
-          eventId: eventIdStr,
+          eventId: eventIdInt,
           ...format
         })));
     }
@@ -120,14 +120,14 @@ router.put('/:eventId/schedule-constraints', async (req, res) => {
     const { eventId } = req.params;
     const constraints = req.body;
 
-    const eventIdStr = eventId.toString();
-    console.log('Updating schedule constraints for event:', eventIdStr);
+    const eventIdInt = parseInt(eventId);
+    console.log('Updating schedule constraints for event:', eventIdInt);
 
     // Check if constraints already exist
     const existing = await db
       .select()
       .from(eventScheduleConstraints)
-      .where(eq(eventScheduleConstraints.eventId, eventIdStr))
+      .where(eq(eventScheduleConstraints.eventId, eventIdInt))
       .limit(1);
 
     if (existing.length > 0) {
@@ -138,13 +138,13 @@ router.put('/:eventId/schedule-constraints', async (req, res) => {
           ...constraints,
           updatedAt: new Date().toISOString()
         })
-        .where(eq(eventScheduleConstraints.eventId, eventIdStr));
+        .where(eq(eventScheduleConstraints.eventId, eventIdInt));
     } else {
       // Insert new constraints
       await db
         .insert(eventScheduleConstraints)
         .values({
-          eventId: eventIdStr,
+          eventId: eventIdInt,
           ...constraints
         });
     }
@@ -238,17 +238,17 @@ router.get('/default-templates', async (req, res) => {
 router.get('/:eventId/validate', async (req, res) => {
   try {
     const { eventId } = req.params;
-    const eventIdStr = eventId.toString();
+    const eventIdInt = parseInt(eventId);
 
     const gameFormats = await db
       .select()
       .from(eventGameFormats)
-      .where(eq(eventGameFormats.eventId, eventIdStr));
+      .where(eq(eventGameFormats.eventId, eventIdInt));
 
     const constraints = await db
       .select()
       .from(eventScheduleConstraints)
-      .where(eq(eventScheduleConstraints.eventId, eventIdStr));
+      .where(eq(eventScheduleConstraints.eventId, eventIdInt));
 
     const validation = {
       isValid: true,
