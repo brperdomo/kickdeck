@@ -1,0 +1,202 @@
+Teams API response: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+index-BJY61HG0.js:837 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+index-BJY61HG0.js:837 Processing teams data: {originalLength: 220, processedLength: 220, firstTeam: {…}}
+index-BJY61HG0.js:837 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+index-BJY61HG0.js:837 Processing teams data: {originalLength: 220, processedLength: 220, firstTeam: {…}}
+index-BJY61HG0.js:837  GET https://app.matchpro.ai/api/admin/events/1656618593/game-metadata 500 (Internal Server Error)
+b @ index-BJY61HG0.js:837
+(anonymous) @ index-BJY61HG0.js:837
+j1 @ index-BJY61HG0.js:40
+qh @ index-BJY61HG0.js:40
+ahe @ index-BJY61HG0.js:40
+gu @ index-BJY61HG0.js:40
+$M @ index-BJY61HG0.js:40
+Qd @ index-BJY61HG0.js:38
+(anonymous) @ index-BJY61HG0.js:40
+setTimeout
+She @ index-BJY61HG0.js:40
+o @ index-BJY61HG0.js:40
+batch @ index-BJY61HG0.js:40
+Jl @ index-BJY61HG0.js:40
+setData @ index-BJY61HG0.js:40
+onSuccess @ index-BJY61HG0.js:40
+m @ index-BJY61HG0.js:40
+Promise.then
+f @ index-BJY61HG0.js:40
+start @ index-BJY61HG0.js:40
+fetch @ index-BJY61HG0.js:40
+Hx @ index-BJY61HG0.js:40
+onSubscribe @ index-BJY61HG0.js:40
+subscribe @ index-BJY61HG0.js:40
+(anonymous) @ index-BJY61HG0.js:40
+iW @ index-BJY61HG0.js:38
+j1 @ index-BJY61HG0.js:40
+qh @ index-BJY61HG0.js:40
+ahe @ index-BJY61HG0.js:40
+gu @ index-BJY61HG0.js:40
+$M @ index-BJY61HG0.js:40
+Qd @ index-BJY61HG0.js:38
+(anonymous) @ index-BJY61HG0.js:40Understand this error
+index-BJY61HG0.js:837 Workflow validation results: {metadata: {…}, flight: {…}, bracket: {…}, seed: {…}, timeblock: {…}, …}
+index-BJY61HG0.js:837 Current workflow data: {}
+index-BJY61HG0.js:837 SchedulingWorkflow teamsData: (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+index-BJY61HG0.js:837 Processing teams data: {originalLength: 220, processedLength: 220, firstTeam: {…}}
+index-BJY61HG0.js:837 Fetch failed loading: GET "https://app.matchpro.ai/api/admin/events/1656618593/game-metadata".
+b @ index-BJY61HG0.js:837
+(anonymous) @ index-BJY61HG0.js:837
+j1 @ index-BJY61HG0.js:40
+qh @ index-BJY61HG0.js:40
+ahe @ index-BJY61HG0.js:40
+gu @ index-BJY61HG0.js:40
+$M @ index-BJY61HG0.js:40
+Qd @ index-BJY61HG0.js:38
+(anonymous) @ index-BJY61HG0.js:40
+setTimeout
+She @ index-BJY61HG0.js:40
+o @ index-BJY61HG0.js:40
+batch @ index-BJY61HG0.js:40
+Jl @ index-BJY61HG0.js:40
+setData @ index-BJY61HG0.js:40
+onSuccess @ index-BJY61HG0.js:40
+m @ index-BJY61HG0.js:40
+Promise.then
+f @ index-BJY61HG0.js:40
+start @ index-BJY61HG0.js:40
+fetch @ index-BJY61HG0.js:40
+Hx @ index-BJY61HG0.js:40
+onSubscribe @ index-BJY61HG0.js:40
+subscribe @ index-BJY61HG0.js:40
+(anonymous) @ index-BJY61HG0.js:40
+iW @ index-BJY61HG0.js:38
+j1 @ index-BJY61HG0.js:40
+qh @ index-BJY61HG0.js:40
+ahe @ index-BJY61HG0.js:40
+gu @ index-BJY61HG0.js:40
+$M @ index-BJY61HG0.js:40
+Qd @ index-BJY61HG0.js:38
+(anonymous) @ index-BJY61HG0.js:40
+index-BJY61HG0.js:765  GET https://app.matchpro.ai/api/admin/events/1656618593/game-metadata 500 (Internal Server Error)
+queryFn @ index-BJY61HG0.js:765
+i @ index-BJY61HG0.js:40
+f @ index-BJY61HG0.js:40
+start @ index-BJY61HG0.js:40
+fetch @ index-BJY61HG0.js:40
+Hx @ index-BJY61HG0.js:40
+onSubscribe @ index-BJY61HG0.js:40
+subscribe @ index-BJY61HG0.js:40
+(anonymous) @ index-BJY61HG0.js:40
+iW @ index-BJY61HG0.js:38
+j1 @ index-BJY61HG0.js:40
+qh @ index-BJY61HG0.js:40
+ahe @ index-BJY61HG0.js:40
+gu @ index-BJY61HG0.js:40
+$M @ index-BJY61HG0.js:40
+Qd @ index-BJY61HG0.js:38
+(anonymous) @ index-BJY61HG0.js:40
+setTimeout
+She @ index-BJY61HG0.js:40
+o @ index-BJY61HG0.js:40
+batch @ index-BJY61HG0.js:40
+Jl @ index-BJY61HG0.js:40
+setData @ index-BJY61HG0.js:40
+onSuccess @ index-BJY61HG0.js:40
+m @ index-BJY61HG0.js:40
+Promise.then
+f @ index-BJY61HG0.js:40
+start @ index-BJY61HG0.js:40
+fetch @ index-BJY61HG0.js:40
+Hx @ index-BJY61HG0.js:40
+onSubscribe @ index-BJY61HG0.js:40
+subscribe @ index-BJY61HG0.js:40
+(anonymous) @ index-BJY61HG0.js:40
+iW @ index-BJY61HG0.js:38
+j1 @ index-BJY61HG0.js:40
+qh @ index-BJY61HG0.js:40
+ahe @ index-BJY61HG0.js:40
+gu @ index-BJY61HG0.js:40
+$M @ index-BJY61HG0.js:40
+Qd @ index-BJY61HG0.js:38
+(anonymous) @ index-BJY61HG0.js:40Understand this error
+index-BJY61HG0.js:765 Fetch failed loading: GET "https://app.matchpro.ai/api/admin/events/1656618593/game-metadata".
+queryFn @ index-BJY61HG0.js:765
+i @ index-BJY61HG0.js:40
+f @ index-BJY61HG0.js:40
+start @ index-BJY61HG0.js:40
+fetch @ index-BJY61HG0.js:40
+Hx @ index-BJY61HG0.js:40
+onSubscribe @ index-BJY61HG0.js:40
+subscribe @ index-BJY61HG0.js:40
+(anonymous) @ index-BJY61HG0.js:40
+iW @ index-BJY61HG0.js:38
+j1 @ index-BJY61HG0.js:40
+qh @ index-BJY61HG0.js:40
+ahe @ index-BJY61HG0.js:40
+gu @ index-BJY61HG0.js:40
+$M @ index-BJY61HG0.js:40
+Qd @ index-BJY61HG0.js:38
+(anonymous) @ index-BJY61HG0.js:40
+setTimeout
+She @ index-BJY61HG0.js:40
+o @ index-BJY61HG0.js:40
+batch @ index-BJY61HG0.js:40
+Jl @ index-BJY61HG0.js:40
+setData @ index-BJY61HG0.js:40
+onSuccess @ index-BJY61HG0.js:40
+m @ index-BJY61HG0.js:40
+Promise.then
+f @ index-BJY61HG0.js:40
+start @ index-BJY61HG0.js:40
+fetch @ index-BJY61HG0.js:40
+Hx @ index-BJY61HG0.js:40
+onSubscribe @ index-BJY61HG0.js:40
+subscribe @ index-BJY61HG0.js:40
+(anonymous) @ index-BJY61HG0.js:40
+iW @ index-BJY61HG0.js:38
+j1 @ index-BJY61HG0.js:40
+qh @ index-BJY61HG0.js:40
+ahe @ index-BJY61HG0.js:40
+gu @ index-BJY61HG0.js:40
+$M @ index-BJY61HG0.js:40
+Qd @ index-BJY61HG0.js:38
+(anonymous) @ index-BJY61HG0.js:40
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+Promise.then
+S @ out-4.5.44.js:1
+y @ out-4.5.44.js:1
+E @ out-4.5.44.js:1
+e.onload @ inner.html:1
+script
+(anonymous) @ inner.html:1
+(anonymous) @ inner.html:1
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+h @ out-4.5.44.js:1
+e @ inner.html:1
+shared-fe24ea89c35f39d3ca63bd57861e66f9.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-fe24ea89c35f39d3ca63bd57861e66f9.js:1
+e @ shared-fe24ea89c35f39d3ca63bd57861e66f9.js:1
+c @ shared-fe24ea89c35f39d3ca63bd57861e66f9.js:1
+value @ shared-fe24ea89c35f39d3ca63bd57861e66f9.js:1
+value @ shared-fe24ea89c35f39d3ca63bd57861e66f9.js:1
+value @ shared-fe24ea89c35f39d3ca63bd57861e66f9.js:1
+value @ shared-fe24ea89c35f39d3ca63bd57861e66f9.js:1
+value @ shared-fe24ea89c35f39d3ca63bd57861e66f9.js:1
+(anonymous) @ shared-fe24ea89c35f39d3ca63bd57861e66f9.js:1
+setTimeout
+value @ shared-fe24ea89c35f39d3ca63bd57861e66f9.js:1
+value @ shared-fe24ea89c35f39d3ca63bd57861e66f9.js:1
+value @ shared-fe24ea89c35f39d3ca63bd57861e66f9.js:1
+(anonymous) @ shared-fe24ea89c35f39d3ca63bd57861e66f9.js:1
+value @ shared-fe24ea89c35f39d3ca63bd57861e66f9.js:1
+log @ shared-fe24ea89c35f39d3ca63bd57861e66f9.js:1
+log @ controller-with-preconnect-7bfd19062792b8719f2fd77206b26fea.js:1
+value @ controller-with-preconnect-7bfd19062792b8719f2fd77206b26fea.js:1
+value @ controller-with-preconnect-7bfd19062792b8719f2fd77206b26fea.js:1
+(anonymous) @ controller-with-preconnect-7bfd19062792b8719f2fd77206b26fea.js:1
