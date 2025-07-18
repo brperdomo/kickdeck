@@ -29,6 +29,8 @@ interface Flight {
   id: string;
   name: string;
   ageGroup: string;
+  gender?: string;
+  ageGroupId?: number;
   level: 'top_flight' | 'middle_flight' | 'bottom_flight' | 'other';
   description?: string;
   teams: any[];
@@ -64,55 +66,37 @@ export function FlightManager({ eventId, teamsData, workflowData, onComplete, on
     enabled: !!eventId
   });
 
-  // Debug: Log teams data structure to understand age group extraction
-  console.log('FlightManager teamsData:', teamsData?.slice(0, 2));
-  console.log('FlightManager ageGroupsData:', ageGroupsData?.slice(0, 5));
-  
-  // Enhanced gender-aware age group extraction
+  // Gender-aware age group extraction with comprehensive team mapping
   const genderAwareAgeGroups = useMemo(() => {
     if (!ageGroupsData) return [];
     
     return ageGroupsData.map(ag => ({
       id: ag.id,
       name: ag.ageGroup,
-      gender: ag.ageGroup.toLowerCase().includes('girls') || ag.ageGroup.toLowerCase().includes('girl') ? 'Girls' :
-              ag.ageGroup.toLowerCase().includes('boys') || ag.ageGroup.toLowerCase().includes('boy') ? 'Boys' : 'Mixed',
-      ageOnly: ag.ageGroup.replace(/[-\s]*(girls?|boys?)/gi, '').trim()
+      gender: ag.gender, // Use actual gender field from database
+      ageOnly: ag.ageGroup,
+      fullDisplayName: `${ag.ageGroup} ${ag.gender}` // e.g., "U17 Boys", "U17 Girls"
     }));
   }, [ageGroupsData]);
   
-  // Extract unique age groups from teams data and map to names
-  const extractedAgeGroups = useMemo(() => {
+  // Get age groups that have teams registered
+  const ageGroupsWithTeams = useMemo(() => {
     if (!teamsData || !Array.isArray(teamsData) || !ageGroupsData) {
       return [];
     }
     
-    // Extract unique age group IDs from teams (teams data structure: [{team: {...}}, ...])
+    // Extract age group IDs that have teams
     const ageGroupIds = teamsData
       .map(teamObj => teamObj.team?.ageGroupId)
       .filter(Boolean);
     
-    console.log('Extracted age group IDs:', ageGroupIds);
-    
     const uniqueAgeGroupIds = Array.from(new Set(ageGroupIds));
     
-    // Map IDs to age group names
-    const ageGroupsWithNames = uniqueAgeGroupIds
-      .map(id => {
-        const ageGroup = ageGroupsData.find(ag => ag.id === id);
-        return ageGroup ? { id, name: ageGroup.ageGroup } : null;
-      })
-      .filter(Boolean);
-    
-    console.log('Age groups with names:', ageGroupsWithNames);
-    
-    return ageGroupsWithNames.map(ag => ag.name);
+    // Return full age group objects for those with teams
+    return ageGroupsData.filter(ag => uniqueAgeGroupIds.includes(ag.id));
   }, [teamsData, ageGroupsData]);
-  
-  console.log('Final extracted age groups:', extractedAgeGroups);
-  const uniqueAgeGroups = Array.from(new Set(extractedAgeGroups));
 
-  // Group teams by age group for analysis
+  // Group teams by age group AND gender for analysis
   const ageGroupSummary: AgeGroupSummary[] = useMemo(() => {
     if (!teamsData || !ageGroupsData) return [];
     
@@ -120,25 +104,35 @@ export function FlightManager({ eventId, teamsData, workflowData, onComplete, on
       const team = teamObj.team;
       if (!team) return acc;
       
-      // Find age group name by ID
+      // Find age group data by ID
       const ageGroupData = ageGroupsData.find(ag => ag.id === team.ageGroupId);
-      const ageGroup = ageGroupData?.ageGroup || 'Unknown';
+      if (!ageGroupData) return acc;
       
-      const existing = acc.find(item => item.ageGroup === ageGroup);
+      const ageGroupKey = `${ageGroupData.ageGroup} ${ageGroupData.gender}`;
+      
+      const existing = acc.find(item => item.ageGroup === ageGroupKey);
       
       if (existing) {
         existing.totalTeams++;
         if (team.status === 'approved') existing.approvedTeams++;
       } else {
         acc.push({
-          ageGroup,
+          ageGroup: ageGroupKey,
           totalTeams: 1,
           approvedTeams: team.status === 'approved' ? 1 : 0,
           suggestedFlights: 0
         });
       }
       return acc;
-    }, []);
+    }, []).sort((a, b) => {
+      // Sort by age group then gender (Boys before Girls)
+      const aAge = a.ageGroup.replace(/[^U\d]/g, '');
+      const bAge = b.ageGroup.replace(/[^U\d]/g, '');
+      if (aAge !== bAge) return aAge.localeCompare(bAge);
+      if (a.ageGroup.includes('Boys') && b.ageGroup.includes('Girls')) return -1;
+      if (a.ageGroup.includes('Girls') && b.ageGroup.includes('Boys')) return 1;
+      return 0;
+    });
   }, [teamsData, ageGroupsData]);
 
   // Calculate suggested flights based on team count
@@ -223,6 +217,8 @@ export function FlightManager({ eventId, teamsData, workflowData, onComplete, on
       id: `flight_${Date.now()}`,
       name: flightData.name || '',
       ageGroup: flightData.ageGroup || '',
+      gender: flightData.gender || '',
+      ageGroupId: flightData.ageGroupId || 0,
       level: flightData.level || 'middle_flight',
       description: flightData.description || '',
       teams: [],
@@ -328,19 +324,21 @@ export function FlightManager({ eventId, teamsData, workflowData, onComplete, on
       .map(teamObj => teamObj.team);
   };
 
-  // Get unassigned teams for a specific age group
-  const getUnassignedTeamsForAgeGroup = (targetAgeGroup: string) => {
-    const assignedTeamIds = flights.flatMap(flight => flight.teams.map(t => t.id));
+  // Get unassigned teams for a specific flight (matching age group AND gender)
+  const getUnassignedTeamsForFlight = (flight: Flight) => {
+    const assignedTeamIds = flights.flatMap(f => f.teams.map(t => t.id));
     return teamsData
       .filter(teamObj => {
         if (!teamObj.team || teamObj.team.status !== 'approved') return false;
         if (assignedTeamIds.includes(teamObj.team.id)) return false;
         
-        // Find the age group name for this team
+        // Find the age group data for this team
         const ageGroupData = ageGroupsData?.find(ag => ag.id === teamObj.team.ageGroupId);
-        const teamAgeGroup = ageGroupData?.ageGroup || '';
+        if (!ageGroupData) return false;
         
-        return teamAgeGroup === targetAgeGroup;
+        // Match both age group and gender
+        const teamAgeGroupKey = `${ageGroupData.ageGroup} ${ageGroupData.gender}`;
+        return teamAgeGroupKey === flight.ageGroup;
       })
       .map(teamObj => teamObj.team);
   };
@@ -625,7 +623,7 @@ export function FlightManager({ eventId, teamsData, workflowData, onComplete, on
                   <DialogTitle>Create New Flight</DialogTitle>
                 </DialogHeader>
                 <CreateFlightForm
-                  ageGroups={uniqueAgeGroups}
+                  ageGroups={ageGroupsWithTeams}
                   onSubmit={createFlight}
                   onCancel={() => setIsCreateDialogOpen(false)}
                 />
@@ -641,7 +639,7 @@ export function FlightManager({ eventId, teamsData, workflowData, onComplete, on
                 {editingFlight && (
                   <EditFlightForm
                     flight={editingFlight}
-                    ageGroups={uniqueAgeGroups}
+                    ageGroups={ageGroupsWithTeams}
                     onSubmit={updateFlight}
                     onCancel={() => {
                       setIsEditDialogOpen(false);
@@ -665,7 +663,7 @@ export function FlightManager({ eventId, teamsData, workflowData, onComplete, on
                 <FlightCard 
                   key={flight.id}
                   flight={flight}
-                  availableTeams={getUnassignedTeamsForAgeGroup(flight.ageGroup)}
+                  availableTeams={getUnassignedTeamsForFlight(flight)}
                   onAssignTeam={assignTeamToFlight}
                   onRemoveTeam={removeTeamFromFlight}
                   onEditFlight={(flight) => {
@@ -701,45 +699,75 @@ function CreateFlightForm({ ageGroups, onSubmit, onCancel }: any) {
   const [formData, setFormData] = useState({
     name: '',
     ageGroup: '',
+    ageGroupId: '',
+    gender: '',
     level: 'middle_flight',
     description: '',
     minTeams: 4,
     maxTeams: 8
   });
 
+  const selectedAgeGroup = ageGroups.find((ag: any) => ag.id === parseInt(formData.ageGroupId));
+
+  // Auto-generate flight name when age group changes
+  const updateFlightName = (ageGroupId: string) => {
+    const ageGroup = ageGroups.find((ag: any) => ag.id === parseInt(ageGroupId));
+    if (ageGroup) {
+      const flightNumber = 1; // Could be improved to check existing flights
+      const suggestedName = `${ageGroup.ageGroup} ${ageGroup.gender} Flight ${flightNumber}`;
+      setFormData(prev => ({ 
+        ...prev, 
+        ageGroupId,
+        ageGroup: `${ageGroup.ageGroup} ${ageGroup.gender}`,
+        gender: ageGroup.gender,
+        name: suggestedName
+      }));
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+    onSubmit({
+      ...formData,
+      ageGroupId: parseInt(formData.ageGroupId)
+    });
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <Label htmlFor="ageGroupSelect">Age Group & Gender</Label>
+        <Select 
+          value={formData.ageGroupId} 
+          onValueChange={updateFlightName}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select age group and gender" />
+          </SelectTrigger>
+          <SelectContent>
+            {ageGroups.map((group: any) => (
+              <SelectItem key={group.id} value={group.id.toString()}>
+                {group.ageGroup} {group.gender}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        {selectedAgeGroup && (
+          <p className="text-sm text-gray-600 mt-1">
+            Field Size: {selectedAgeGroup.fieldSize}
+          </p>
+        )}
+      </div>
+      
       <div>
         <Label htmlFor="name">Flight Name</Label>
         <Input 
           id="name"
           value={formData.name}
           onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-          placeholder="e.g., 2014 Boys Flight 1"
+          placeholder="e.g., U17 Boys Flight 1"
           required
         />
-      </div>
-      
-      <div>
-        <Label htmlFor="ageGroup">Age Group</Label>
-        <Select 
-          value={formData.ageGroup} 
-          onValueChange={(value) => setFormData(prev => ({ ...prev, ageGroup: value }))}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Select age group" />
-          </SelectTrigger>
-          <SelectContent>
-            {ageGroups.map((group: string) => (
-              <SelectItem key={group} value={group}>{group}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
       </div>
 
       <div>
@@ -826,12 +854,30 @@ function FlightCard({ flight, availableTeams, onAssignTeam, onRemoveTeam, onEdit
     );
   };
 
+  const getGenderBadge = (gender: string) => {
+    const colors = {
+      'Boys': 'bg-blue-100 text-blue-800 border-blue-200',
+      'Girls': 'bg-purple-100 text-purple-800 border-purple-200',
+      'Coed': 'bg-green-100 text-green-800 border-green-200'
+    };
+    
+    return (
+      <Badge variant="outline" className={colors[gender as keyof typeof colors] || 'bg-gray-100 text-gray-800'}>
+        {gender}
+      </Badge>
+    );
+  };
+
   return (
     <div className="border rounded-lg p-4">
       <div className="flex items-center justify-between mb-4">
         <div>
           <h3 className="font-medium text-lg">{flight.name}</h3>
           <p className="text-sm text-gray-600">{flight.description}</p>
+          <div className="flex items-center gap-2 mt-1">
+            <Badge variant="secondary">{flight.ageGroup}</Badge>
+            {flight.gender && getGenderBadge(flight.gender)}
+          </div>
         </div>
         <div className="flex items-center gap-2">
           {getFlightLevelBadge(flight.level)}
@@ -978,15 +1024,35 @@ function EditFlightForm({ flight, ageGroups, onSubmit, onCancel }: any) {
   const [formData, setFormData] = useState({
     name: flight.name,
     ageGroup: flight.ageGroup,
+    ageGroupId: flight.ageGroupId || '',
+    gender: flight.gender || '',
     level: flight.level,
     description: flight.description || '',
     minTeams: flight.minTeams,
     maxTeams: flight.maxTeams
   });
 
+  const selectedAgeGroup = ageGroups.find((ag: any) => ag.id === parseInt(formData.ageGroupId));
+
+  // Update flight details when age group changes
+  const updateAgeGroup = (ageGroupId: string) => {
+    const ageGroup = ageGroups.find((ag: any) => ag.id === parseInt(ageGroupId));
+    if (ageGroup) {
+      setFormData(prev => ({ 
+        ...prev, 
+        ageGroupId,
+        ageGroup: `${ageGroup.ageGroup} ${ageGroup.gender}`,
+        gender: ageGroup.gender
+      }));
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+    onSubmit({
+      ...formData,
+      ageGroupId: parseInt(formData.ageGroupId)
+    });
   };
 
   return (
@@ -997,23 +1063,30 @@ function EditFlightForm({ flight, ageGroups, onSubmit, onCancel }: any) {
           id="editName"
           value={formData.name}
           onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-          placeholder="e.g., 2014 Boys Flight 1"
+          placeholder="e.g., U17 Boys Flight 1"
           required
         />
       </div>
       
       <div>
-        <Label htmlFor="editAgeGroup">Age Group</Label>
-        <Select value={formData.ageGroup} onValueChange={(value) => setFormData(prev => ({ ...prev, ageGroup: value }))}>
+        <Label htmlFor="editAgeGroup">Age Group & Gender</Label>
+        <Select value={formData.ageGroupId} onValueChange={updateAgeGroup}>
           <SelectTrigger>
-            <SelectValue placeholder="Select age group" />
+            <SelectValue placeholder="Select age group and gender" />
           </SelectTrigger>
           <SelectContent>
-            {ageGroups.map((ag: string) => (
-              <SelectItem key={ag} value={ag}>{ag}</SelectItem>
+            {ageGroups.map((group: any) => (
+              <SelectItem key={group.id} value={group.id.toString()}>
+                {group.ageGroup} {group.gender}
+              </SelectItem>
             ))}
           </SelectContent>
         </Select>
+        {selectedAgeGroup && (
+          <p className="text-sm text-gray-600 mt-1">
+            Field Size: {selectedAgeGroup.fieldSize}
+          </p>
+        )}
       </div>
 
       <div>
