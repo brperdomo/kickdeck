@@ -483,7 +483,7 @@ export type SelectFeeRevenue = typeof feeRevenue.$inferSelect;
 // Event Game Format Rules - Configurable per tournament/event
 export const eventGameFormats = pgTable("event_game_formats", {
   id: serial("id").primaryKey(),
-  eventId: text("event_id").notNull().references(() => events.id, { onDelete: 'cascade' }),
+  eventId: bigint("event_id", { mode: "number" }).notNull().references(() => events.id, { onDelete: 'cascade' }),
   ageGroup: text("age_group").notNull(), // U6-U8, U9-U10, etc.
   format: text("format").notNull(), // 4v4, 7v7, 9v9, 11v11
   gameLength: integer("game_length").notNull(), // Total minutes
@@ -502,7 +502,7 @@ export const eventGameFormats = pgTable("event_game_formats", {
 // Event Schedule Constraints - Tournament-specific constraints
 export const eventScheduleConstraints = pgTable("event_schedule_constraints", {
   id: serial("id").primaryKey(),
-  eventId: text("event_id").notNull().references(() => events.id, { onDelete: 'cascade' }),
+  eventId: bigint("event_id", { mode: "number" }).notNull().references(() => events.id, { onDelete: 'cascade' }),
   // Team constraints
   maxGamesPerTeamPerDay: integer("max_games_per_team_per_day").notNull().default(3),
   maxHoursSpreadPerTeam: integer("max_hours_spread_per_team").notNull().default(8), // Max hours between first and last game
