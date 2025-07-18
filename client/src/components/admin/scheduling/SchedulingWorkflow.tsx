@@ -450,19 +450,42 @@ export function SchedulingWorkflow({ eventId, onComplete }: SchedulingWorkflowPr
             
             {/* Step Overview */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {workflowSteps.map((step, index) => (
+              {workflowSteps.map((step, index) => {
+                // Determine if step is accessible
+                const canAccess = index === 0 || // First step is always accessible
+                  (index === currentStep) || // Current step is always accessible
+                  (workflowSteps.slice(0, index).every(prevStep => prevStep.status === 'completed')); // All previous steps must be completed
+                
+                const isBlocked = !canAccess;
+                
+                return (
                 <div
                   key={step.id}
-                  className={`p-4 border rounded-lg cursor-pointer transition-colors ${
-                    currentStep === index 
-                      ? 'border-blue-500 bg-blue-50' 
+                  className={`p-4 border rounded-lg transition-colors ${
+                    isBlocked
+                      ? 'border-gray-300 bg-gray-50 opacity-60 cursor-not-allowed'
+                      : currentStep === index 
+                      ? 'border-blue-500 bg-blue-50 cursor-pointer' 
                       : step.status === 'completed'
-                      ? 'border-green-500 bg-green-50'
-                      : 'border-gray-200 hover:border-gray-300'
+                      ? 'border-green-500 bg-green-50 cursor-pointer hover:bg-green-100'
+                      : 'border-gray-200 hover:border-gray-300 cursor-pointer'
                   }`}
                   onClick={() => {
-                    if (step.status !== 'pending') {
+                    // Only allow access if all previous steps are completed OR this is the current active step
+                    const canAccess = index === 0 || // First step is always accessible
+                      (index === currentStep) || // Current step is always accessible
+                      (workflowSteps.slice(0, index).every(prevStep => prevStep.status === 'completed')); // All previous steps must be completed
+                    
+                    if (canAccess) {
                       setCurrentStep(index);
+                    } else {
+                      // Show error for blocked steps
+                      const previousIncompleteStep = workflowSteps.slice(0, index).find(prevStep => prevStep.status !== 'completed');
+                      toast({
+                        title: "Step Blocked",
+                        description: `Complete "${previousIncompleteStep?.title}" before accessing this step.`,
+                        variant: "destructive"
+                      });
                     }
                   }}
                 >
@@ -493,14 +516,28 @@ export function SchedulingWorkflow({ eventId, onComplete }: SchedulingWorkflowPr
                     </div>
                   )}
                   
+                  {/* Blocked Step Indicator */}
+                  {isBlocked && (
+                    <div className="mb-3">
+                      <p className="text-xs text-gray-500 flex items-center gap-1">
+                        <AlertTriangle className="h-3 w-3" />
+                        Complete previous steps to unlock
+                      </p>
+                    </div>
+                  )}
+                  
                   <div className="flex items-center justify-between">
                     {getStepBadge(step)}
-                    {currentStep === index && (
+                    {currentStep === index && !isBlocked && (
                       <ArrowRight className="h-4 w-4 text-blue-600" />
+                    )}
+                    {isBlocked && (
+                      <Badge variant="secondary" className="text-xs">Locked</Badge>
                     )}
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </CardContent>
@@ -529,10 +566,21 @@ export function SchedulingWorkflow({ eventId, onComplete }: SchedulingWorkflowPr
           Previous Step
         </Button>
         <Button 
-          onClick={() => setCurrentStep(Math.min(workflowSteps.length - 1, currentStep + 1))}
+          onClick={() => {
+            // Only allow advancing if current step is completed
+            if (workflowSteps[currentStep]?.status === 'completed') {
+              setCurrentStep(Math.min(workflowSteps.length - 1, currentStep + 1));
+            } else {
+              toast({
+                title: "Step Not Complete",
+                description: `Complete "${workflowSteps[currentStep]?.title}" before advancing to the next step.`,
+                variant: "destructive"
+              });
+            }
+          }}
           disabled={
             currentStep === workflowSteps.length - 1 || 
-            workflowSteps[currentStep + 1]?.status === 'pending'
+            workflowSteps[currentStep]?.status !== 'completed'
           }
         >
           Next Step

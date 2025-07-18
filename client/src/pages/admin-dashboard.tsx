@@ -2300,6 +2300,36 @@ function SchedulingView() {
     }
   };
   
+  // Helper function to validate workflow completion before allowing schedule generation
+  const validateWorkflowCompletion = async (eventId: string): Promise<boolean> => {
+    try {
+      // Check if game metadata exists
+      const metadataResponse = await fetch(`/api/admin/events/${eventId}/game-metadata`);
+      if (!metadataResponse.ok) {
+        return false;
+      }
+      
+      const metadataData = await metadataResponse.json();
+      if (!metadataData || !metadataData.gameFormats || metadataData.gameFormats.length === 0) {
+        return false;
+      }
+      
+      return true;
+    } catch (error) {
+      return false;
+    }
+  };
+
+  // Function to show workflow validation error and guide user
+  const showWorkflowValidationError = () => {
+    toast({
+      title: "Complete Workflow Steps First",
+      description: "Schedule generation requires completing the sequential workflow. Click 'Scheduling System' in the sidebar to set up game metadata, flights, and brackets first.",
+      variant: "destructive",
+      duration: 8000
+    });
+  };
+
   // Function to generate AI schedule
   const queryClient = useQueryClient();
   
@@ -2308,6 +2338,15 @@ function SchedulingView() {
     try {
       if (!selectedEvent) {
         throw new Error("No event selected");
+      }
+      
+      // CRITICAL: Check if workflow steps are completed before allowing schedule generation
+      const isWorkflowValid = await validateWorkflowCompletion(selectedEvent);
+      if (!isWorkflowValid) {
+        setIsGenerating(false);
+        showWorkflowValidationError();
+        setAiSchedulingModalOpen(false);
+        return;
       }
       
       // Call the actual API endpoint
@@ -2642,7 +2681,18 @@ function SchedulingView() {
               </Button>
               <Button 
                 variant="outline"
-                onClick={() => setAiSchedulingModalOpen(true)}
+                onClick={async () => {
+                  if (!selectedEvent) return;
+                  
+                  // Validate workflow completion before opening modal
+                  const isWorkflowValid = await validateWorkflowCompletion(selectedEvent);
+                  if (!isWorkflowValid) {
+                    showWorkflowValidationError();
+                    return;
+                  }
+                  
+                  setAiSchedulingModalOpen(true);
+                }}
                 disabled={!selectedEvent}
               >
                 <Wand2 className="mr-2 h-4 w-4" />
@@ -2862,7 +2912,18 @@ function SchedulingView() {
                       Use the AI Schedule Generator to create a schedule for this event
                     </p>
                   </div>
-                  <Button onClick={() => setAiSchedulingModalOpen(true)}>
+                  <Button onClick={async () => {
+                    if (!selectedEvent) return;
+                    
+                    // Validate workflow completion before opening modal
+                    const isWorkflowValid = await validateWorkflowCompletion(selectedEvent);
+                    if (!isWorkflowValid) {
+                      showWorkflowValidationError();
+                      return;
+                    }
+                    
+                    setAiSchedulingModalOpen(true);
+                  }}>
                     <Wand2 className="mr-2 h-4 w-4" />
                     Generate Schedule
                   </Button>
