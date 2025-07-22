@@ -123,19 +123,337 @@ export function RefereeAssignmentEngine({ eventId, scheduleData, onComplete }: R
   }, [assignments, referees]);
 
   const detectAssignmentConflicts = (): AssignmentConflict[] => {
-    const conflictList: AssignmentConflict[] = [];
+    const conflicts: AssignmentConflict[] = [];
     const games = scheduleData?.games || [];
     
+    // Check for conflicts in current assignments
     assignments.forEach(assignment => {
       if (!assignment.refereeId) return;
       
       const referee = referees.find(r => r.id === assignment.refereeId);
-      const game = games.find((g: any) => g.id === assignment.gameId);
+      const game = games.find(g => g.id === assignment.gameId);
       
       if (!referee || !game) return;
       
-      // Check availability conflict
+      // Check availability conflicts
       const gameDate = new Date(game.startTime).toDateString();
+      const availability = referee.timeAvailability[gameDate];
+      
+      if (!availability?.isAvailable) {
+        conflicts.push({
+          type: 'availability',
+          gameId: assignment.gameId,
+          refereeId: assignment.refereeId,
+          message: `${referee.name} is not available on ${gameDate}`,
+          severity: 'error'
+        });
+      }
+      
+      // Check team conflicts
+      const homeTeam = game.homeTeamName || game.homeTeamId;
+      const awayTeam = game.awayTeamName || game.awayTeamId;
+      
+      if (referee.conflictTeams.includes(homeTeam) || referee.conflictTeams.includes(awayTeam)) {
+        conflicts.push({
+          type: 'team_conflict',
+          gameId: assignment.gameId,
+          refereeId: assignment.refereeId,
+          message: `${referee.name} has a conflict with one of the teams`,
+          severity: 'error'
+        });
+      }
+      
+      // Check workload (games per day)
+      const sameDay = assignments.filter(a => 
+        a.refereeId === assignment.refereeId && 
+        games.find(g => g.id === a.gameId && 
+          new Date(g.startTime).toDateString() === gameDate
+        )
+      );
+      
+      if (sameDay.length > referee.maxGamesPerDay) {
+        conflicts.push({
+          type: 'workload',
+          gameId: assignment.gameId,
+          refereeId: assignment.refereeId,
+          message: `${referee.name} exceeds max games per day (${referee.maxGamesPerDay})`,
+          severity: 'warning'
+        });
+      }
+    });
+    
+    return conflicts;
+  };
+
+  const runAutoAssignment = async () => {
+    setIsAutoAssigning(true);
+    
+    try {
+      // Enhanced auto-assignment algorithm with conflict avoidance
+      const games = scheduleData?.games || [];
+      const newAssignments = [...assignments];
+      
+      // Sort games by priority (age group, time, field)
+      const sortedGames = games.sort((a, b) => {
+        // Prioritize youth games, then by start time
+        const aTime = new Date(a.startTime).getTime();
+        const bTime = new Date(b.startTime).getTime();
+        return aTime - bTime;
+      });
+      
+      // Assign referees to each game
+      for (const game of sortedGames) {
+        const existingAssignment = newAssignments.find(a => a.gameId === game.id);
+        if (existingAssignment?.refereeId) continue; // Already assigned
+        
+        // Find best available referee
+        const availableReferees = referees.filter(referee => {
+          const gameDate = new Date(game.startTime).toDateString();
+          const availability = referee.timeAvailability[gameDate];
+          
+          // Check basic availability
+          if (!availability?.isAvailable) return false;
+          
+          // Check team conflicts
+          const homeTeam = game.homeTeamName || game.homeTeamId;
+          const awayTeam = game.awayTeamName || game.awayTeamId;
+          if (referee.conflictTeams.includes(homeTeam) || referee.conflictTeams.includes(awayTeam)) {
+            return false;
+          }
+          
+          // Check workload for the day
+          const sameDay = newAssignments.filter(a => 
+            a.refereeId === referee.id && 
+            games.find(g => g.id === a.gameId && 
+              new Date(g.startTime).toDateString() === gameDate
+            )
+          );
+          
+          return sameDay.length < referee.maxGamesPerDay;
+        });
+        
+        // Assign best referee (prioritize by certification level and workload)
+        if (availableReferees.length > 0) {
+          const bestReferee = availableReferees.sort((a, b) => {
+            const certificationOrder = { 'national': 4, 'regional': 3, 'adult': 2, 'youth': 1 };
+            const aCert = certificationOrder[a.certificationLevel] || 0;
+            const bCert = certificationOrder[b.certificationLevel] || 0;
+            
+            if (aCert !== bCert) return bCert - aCert; // Higher certification first
+            
+            // Then by current workload (less assigned = better)
+            const aAssigned = newAssignments.filter(assign => assign.refereeId === a.id).length;
+            const bAssigned = newAssignments.filter(assign => assign.refereeId === b.id).length;
+            return aAssigned - bAssigned;
+          })[0];
+          
+          const assignmentIndex = newAssignments.findIndex(a => a.gameId === game.id);
+          if (assignmentIndex >= 0) {
+            newAssignments[assignmentIndex] = {
+              ...newAssignments[assignmentIndex],
+              refereeId: bestReferee.id,
+              centerReferee: bestReferee.name,
+              status: 'assigned'
+            };
+          }
+        }
+      }
+      
+      setAssignments(newAssignments);
+      
+      toast({
+        title: "Auto-Assignment Complete",
+        description: `Assigned referees to ${newAssignments.filter(a => a.refereeId).length} games`
+      });
+      
+    } catch (error) {
+      console.error('Auto-assignment failed:', error);
+      toast({
+        title: "Assignment Failed",
+        description: "Failed to auto-assign referees. Please try manual assignment.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsAutoAssigning(false);
+    }
+  };
+
+  const handleSaveAssignments = async () => {
+    try {
+      await saveAssignmentsMutation.mutateAsync({
+        eventId,
+        assignments,
+        conflicts: conflicts.filter(c => c.severity === 'error')
+      });
+      
+      if (onComplete) {
+        onComplete(assignments);
+      }
+    } catch (error) {
+      toast({
+        title: "Save Failed",
+        description: "Failed to save referee assignments.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <Card>
+        <CardContent className="p-6">
+          <div className="flex items-center justify-center">
+            <RefreshCw className="h-6 w-6 animate-spin mr-2" />
+            Loading referee data...
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <UserCheck className="h-6 w-6" />
+            Referee Assignment Engine
+          </CardTitle>
+          <p className="text-muted-foreground">
+            Intelligent referee assignment with conflict detection and workload balancing.
+          </p>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="flex gap-2">
+              <Button 
+                onClick={runAutoAssignment} 
+                disabled={isAutoAssigning || referees.length === 0}
+                className="flex items-center gap-2"
+              >
+                {isAutoAssigning ? (
+                  <>
+                    <RefreshCw className="h-4 w-4 animate-spin" />
+                    Auto-Assigning...
+                  </>
+                ) : (
+                  <>
+                    <Target className="h-4 w-4" />
+                    Auto-Assign Referees
+                  </>
+                )}
+              </Button>
+              
+              <Button 
+                onClick={handleSaveAssignments}
+                disabled={saveAssignmentsMutation.isPending}
+                variant="outline"
+              >
+                <CheckCircle className="h-4 w-4 mr-2" />
+                Save Assignments
+              </Button>
+            </div>
+
+            {/* Assignment Summary */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="bg-blue-50 p-3 rounded-lg">
+                <div className="text-2xl font-bold text-blue-600">
+                  {assignments.filter(a => a.refereeId).length}
+                </div>
+                <div className="text-sm text-blue-600">Assigned Games</div>
+              </div>
+              <div className="bg-orange-50 p-3 rounded-lg">
+                <div className="text-2xl font-bold text-orange-600">
+                  {assignments.filter(a => !a.refereeId).length}
+                </div>
+                <div className="text-sm text-orange-600">Unassigned</div>
+              </div>
+              <div className="bg-red-50 p-3 rounded-lg">
+                <div className="text-2xl font-bold text-red-600">
+                  {conflicts.filter(c => c.severity === 'error').length}
+                </div>
+                <div className="text-sm text-red-600">Conflicts</div>
+              </div>
+              <div className="bg-green-50 p-3 rounded-lg">
+                <div className="text-2xl font-bold text-green-600">
+                  {referees.length}
+                </div>
+                <div className="text-sm text-green-600">Available Referees</div>
+              </div>
+            </div>
+
+            {/* Conflicts Display */}
+            {conflicts.length > 0 && (
+              <Alert>
+                <AlertTriangle className="h-4 w-4" />
+                <AlertDescription>
+                  <div className="space-y-2">
+                    <div className="font-medium">Assignment Conflicts Detected:</div>
+                    {conflicts.slice(0, 3).map((conflict, index) => (
+                      <div key={index} className="text-sm">
+                        • {conflict.message}
+                      </div>
+                    ))}
+                    {conflicts.length > 3 && (
+                      <div className="text-sm text-muted-foreground">
+                        +{conflicts.length - 3} more conflicts
+                      </div>
+                    )}
+                  </div>
+                </AlertDescription>
+              </Alert>
+            )}
+
+            {/* Assignment Grid */}
+            <div className="space-y-3 max-h-96 overflow-y-auto">
+              {assignments.map((assignment, index) => {
+                const game = scheduleData?.games?.find(g => g.id === assignment.gameId);
+                const referee = referees.find(r => r.id === assignment.refereeId);
+                const gameConflicts = conflicts.filter(c => c.gameId === assignment.gameId);
+                
+                return (
+                  <div key={index} className="border rounded-lg p-3 space-y-2">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <div className="font-medium">
+                          {game?.homeTeamName || 'Team A'} vs {game?.awayTeamName || 'Team B'}
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          {game?.startTime ? new Date(game.startTime).toLocaleString() : 'Time TBD'} 
+                          • Field {game?.field || 'TBD'}
+                        </div>
+                      </div>
+                      <Badge variant={assignment.refereeId ? 'default' : 'secondary'}>
+                        {assignment.refereeId ? 'Assigned' : 'Unassigned'}
+                      </Badge>
+                    </div>
+                    
+                    {assignment.refereeId && referee && (
+                      <div className="flex items-center justify-between bg-gray-50 p-2 rounded">
+                        <div className="flex items-center gap-2">
+                          <UserCheck className="h-4 w-4" />
+                          <span className="font-medium">{referee.name}</span>
+                          <Badge variant="outline" className="text-xs">
+                            {referee.certificationLevel}
+                          </Badge>
+                        </div>
+                        {gameConflicts.length > 0 && (
+                          <Badge variant="destructive" className="text-xs">
+                            {gameConflicts.length} conflict{gameConflicts.length > 1 ? 's' : ''}
+                          </Badge>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
       const gameStartTime = new Date(game.startTime);
       const gameEndTime = new Date(game.endTime);
       

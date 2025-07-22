@@ -7,7 +7,8 @@ import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { 
   Calculator, CheckCircle, AlertTriangle, XCircle, Clock, 
-  Users, MapPin, Calendar, TrendingUp, BarChart3
+  Users, MapPin, Calendar, TrendingUp, BarChart3, Target,
+  Zap, AlertCircle, Activity
 } from "lucide-react";
 
 interface FeasibilitySimulatorProps {
@@ -29,6 +30,18 @@ interface FeasibilityReport {
     fieldUtilization: number;
     timeUtilization: number;
     gameDistribution: number;
+  };
+  bottleneckAnalysis: {
+    fieldBottlenecks: string[];
+    timeBottlenecks: string[];
+    flightImbalances: string[];
+    riskLevel: 'low' | 'medium' | 'high';
+  };
+  predictiveInsights: {
+    optimalFieldCount: number;
+    recommendedBufferTime: number;
+    peakUtilizationHours: string[];
+    worstCaseScenario: string;
   };
 }
 
@@ -70,84 +83,97 @@ export function FeasibilitySimulator({ eventId, workflowData, onComplete }: Feas
     setIsSimulating(true);
     
     try {
-      // Simulate scheduling feasibility based on current constraints
-      const simulationData = {
-        eventId,
-        workflowData,
-        gameMetadata,
-        fieldsData,
-        teams: workflowData.flight?.teams || [],
-        brackets: workflowData.bracket?.brackets || [],
-        seedings: workflowData.seed?.seedings || []
-      };
-
-      const response = await fetch('/api/admin/scheduling/simulate-feasibility', {
+      // Enhanced feasibility simulation with predictive conflict detection
+      const response = await fetch(`/api/admin/events/${eventId}/feasibility-check`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(simulationData)
+        body: JSON.stringify({
+          workflowData,
+          gameMetadata,
+          fieldsData,
+          predictiveAnalysis: true
+        })
       });
 
-      if (!response.ok) throw new Error('Simulation failed');
-      
+      if (!response.ok) {
+        throw new Error('Feasibility simulation failed');
+      }
+
       const report = await response.json();
       setFeasibilityReport(report);
       
-      if (onComplete) {
+      // Auto-advance workflow if feasible
+      if (report.isFeasible && onComplete) {
         onComplete(report);
       }
     } catch (error) {
       console.error('Feasibility simulation error:', error);
-      // Create fallback simulation based on available data
-      const fallbackReport = generateFallbackSimulation();
+      // Generate client-side fallback analysis
+      const fallbackReport = generateClientSideFeasibilityCheck();
       setFeasibilityReport(fallbackReport);
     } finally {
       setIsSimulating(false);
     }
   };
 
-  const generateFallbackSimulation = (): FeasibilityReport => {
-    const teamsCount = workflowData.flight?.teams?.length || 0;
-    const bracketsCount = workflowData.bracket?.brackets?.length || 1;
+  const generateClientSideFeasibilityCheck = (): FeasibilityReport => {
+    // Enhanced client-side feasibility analysis with predictive insights
+    const totalTeams = workflowData?.flight?.teams?.length || 0;
+    const totalFields = fieldsData?.length || 0;
+    const estimatedGamesPerTeam = 4; // Average tournament games
+    const totalGamesRequired = Math.ceil(totalTeams * estimatedGamesPerTeam / 2);
     
-    // Estimate games based on team count and bracket structure
-    const estimatedGamesPerBracket = Math.max(teamsCount - 1, 0); // Simple elimination estimate
-    const totalGamesRequired = estimatedGamesPerBracket * bracketsCount;
+    // Predictive bottleneck analysis
+    const gamesPerField = Math.ceil(totalGamesRequired / totalFields);
+    const operatingHours = 12; // 8 AM to 8 PM
+    const gameDuration = gameMetadata?.gameDuration || 90;
+    const bufferTime = gameMetadata?.bufferTime || 15;
+    const timePerGame = gameDuration + bufferTime; // minutes
+    const maxGamesPerFieldPerDay = Math.floor((operatingHours * 60) / timePerGame);
     
-    // Calculate available time slots
-    const gameDuration = gameMetadata?.gameFormats?.[0]?.gameLength || 90; // minutes
-    const bufferTime = gameMetadata?.gameFormats?.[0]?.bufferTime || 15; // minutes
-    const slotDuration = gameDuration + bufferTime;
+    // Risk assessment
+    const isFieldBottleneck = gamesPerField > maxGamesPerFieldPerDay;
+    const fieldUtilization = (gamesPerField / maxGamesPerFieldPerDay) * 100;
+    const riskLevel = fieldUtilization > 90 ? 'high' : fieldUtilization > 70 ? 'medium' : 'low';
     
-    const operatingHours = 12; // 8 AM to 8 PM default
-    const slotsPerDay = Math.floor((operatingHours * 60) / slotDuration);
-    const tournamentDays = eventData ? 
-      Math.ceil((new Date(eventData.endDate).getTime() - new Date(eventData.startDate).getTime()) / (1000 * 60 * 60 * 24)) + 1 : 3;
-    
-    const fieldsAvailable = fieldsData?.length || 2;
-    const totalTimeSlotsAvailable = slotsPerDay * tournamentDays * fieldsAvailable;
-    
-    const isFeasible = totalGamesRequired <= totalTimeSlotsAvailable;
-    
+    // Generate actionable recommendations
+    const recommendations = [];
+    if (isFieldBottleneck) {
+      const additionalFields = Math.ceil(gamesPerField / maxGamesPerFieldPerDay) - 1;
+      recommendations.push(`Add ${additionalFields} more field(s) to prevent scheduling conflicts`);
+    }
+    if (totalFields < 2) {
+      recommendations.push('Consider using multiple fields for better time distribution');
+    }
+    if (gameDuration > 90) {
+      recommendations.push('Reduce game duration to 90 minutes for better field utilization');
+    }
+
     return {
-      isFeasible,
+      isFeasible: !isFieldBottleneck,
       totalGamesRequired,
-      totalTimeSlotsAvailable,
-      fieldsRequired: Math.ceil(totalGamesRequired / (slotsPerDay * tournamentDays)),
-      fieldsAvailable,
-      estimatedDuration: `${tournamentDays} days`,
-      conflicts: isFeasible ? [] : [
-        'Insufficient time slots for all games',
-        'Consider adding more fields or extending tournament duration'
-      ],
-      recommendations: [
-        isFeasible ? 'Schedule appears feasible with current constraints' : 'Reduce game duration or add more fields',
-        'Consider staggering start times across age groups',
-        'Plan for weather contingencies'
-      ],
+      totalTimeSlotsAvailable: maxGamesPerFieldPerDay * totalFields,
+      fieldsRequired: Math.ceil(totalGamesRequired / maxGamesPerFieldPerDay),
+      fieldsAvailable: totalFields,
+      estimatedDuration: `${Math.ceil(totalGamesRequired / (maxGamesPerFieldPerDay * totalFields))} day(s)`,
+      conflicts: isFieldBottleneck ? ['Insufficient fields for required games'] : [],
+      recommendations,
       utilizationMetrics: {
-        fieldUtilization: Math.min((totalGamesRequired / totalTimeSlotsAvailable) * 100, 100),
-        timeUtilization: Math.min((totalGamesRequired / (slotsPerDay * tournamentDays)) * 100, 100),
-        gameDistribution: 85 // Placeholder for game distribution quality
+        fieldUtilization: Math.min(fieldUtilization, 100),
+        timeUtilization: Math.min((totalGamesRequired / (maxGamesPerFieldPerDay * totalFields)) * 100, 100),
+        gameDistribution: totalTeams > 0 ? (totalGamesRequired / totalTeams) : 0
+      },
+      bottleneckAnalysis: {
+        fieldBottlenecks: isFieldBottleneck ? [`Need ${Math.ceil(gamesPerField / maxGamesPerFieldPerDay)} fields per game queue`] : [],
+        timeBottlenecks: fieldUtilization > 80 ? ['Peak hours may be overbooked'] : [],
+        flightImbalances: [],
+        riskLevel
+      },
+      predictiveInsights: {
+        optimalFieldCount: Math.ceil(totalGamesRequired / maxGamesPerFieldPerDay),
+        recommendedBufferTime: fieldUtilization > 80 ? 10 : 15,
+        peakUtilizationHours: ['10:00 AM - 2:00 PM', '3:00 PM - 6:00 PM'],
+        worstCaseScenario: isFieldBottleneck ? 'Games will extend beyond operating hours' : 'Minor scheduling compression expected'
       }
     };
   };
