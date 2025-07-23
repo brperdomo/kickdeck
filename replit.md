@@ -113,6 +113,16 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
+- July 23, 2025: TOURNAMENT SCHEDULING HUB WITH MANUAL SAVE COMPLETED - Implemented comprehensive tournament selection interface with manual save functionality and admin session isolation
+  - MANUAL SAVE SYSTEM: Converted auto-save workflow to manual save with user-controlled progress management using prominent "Save Progress" button
+  - TOURNAMENT SELECTION INTERFACE: Created TournamentSelectionInterface component with Challonge/Battlefy-inspired design using #2E86AB primary and #A23B72 accent colors
+  - ADMIN SESSION ISOLATION: Implemented tournament-selection API routes enabling multiple administrators to work independently on different tournaments
+  - TOURNAMENT SELECTION API: Built comprehensive /api/admin/tournaments/scheduling endpoint with progress tracking, status filtering, and session management
+  - TOURNAMENT SCHEDULING HUB: Created TournamentSchedulingHub page integrating tournament selection with enhanced scheduling workflow for seamless user experience
+  - ENHANCED WORKFLOW INTEGRATION: Updated EnhancedSchedulingWorkflow to use manual save controls with toast notifications and proper error handling
+  - CONTINUE OR START FRESH: Tournament selection offers option to continue existing work or start fresh with proper workflow state management
+  - VISUAL DESIGN: Professional card-based layout with color-coded status badges, progress indicators, and clean typography matching design requirements
+  - PRODUCTION READY: Complete tournament scheduling system operational with manual save controls, multi-admin support, and comprehensive session isolation
 - July 23, 2025: CRITICAL UX ENHANCEMENT COMPLETED - Implemented comprehensive progress saving system to prevent user data loss during scheduling workflow
   - PROGRESS TRACKING INFRASTRUCTURE: Created workflowProgress table in database schema with fields for eventId, workflowType, currentStep, steps (JSON), autoSaveEnabled, lastSaved, sessionId
   - REACT HOOK IMPLEMENTATION: Built useWorkflowProgress hook with complete progress management functionality including automatic save, step completion tracking, and session recovery

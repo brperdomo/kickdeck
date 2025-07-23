@@ -78,6 +78,7 @@ import {
 import scheduleManagementRouter from "./routes/admin/schedule-management";
 import schedulingSimulationRouter from "./routes/admin/scheduling-simulation";
 import workflowProgressRouter from "./routes/admin/workflow-progress";
+import tournamentSelectionRouter from "./routes/admin/tournament-selection";
 import { checkCoachEmail } from "./routes/coaches";
 import {
   getEmulatableAdmins,
@@ -912,6 +913,7 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/schedule', isAdmin, scheduleManagementRouter); // Schedule management with drag-and-drop
     app.use('/api/admin/scheduling', isAdmin, schedulingSimulationRouter); // Advanced scheduling simulation and analysis
     app.use('/api/admin', isAdmin, workflowProgressRouter); // Workflow progress tracking for session persistence
+    app.use('/api/admin/tournaments', isAdmin, tournamentSelectionRouter); // Tournament selection with session isolation
     app.use('/api/admin/clubs', isAdmin, adminClubsRouter); // Admin club management router
     app.use('/api/admin/event-clubs', isAdmin, eventClubsRouter); // Event clubs management router
     app.use('/api/admin/email-config', isAdmin, emailConfigRouter); // Email configuration router

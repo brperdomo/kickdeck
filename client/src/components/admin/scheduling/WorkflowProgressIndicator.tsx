@@ -30,43 +30,40 @@ export function WorkflowProgressIndicator({
   workflowType = 'scheduling',
   className = ''
 }: WorkflowProgressIndicatorProps) {
-  const [autoSaveEnabled, setAutoSaveEnabled] = useState(true);
   const { toast } = useToast();
   
   const {
     savedProgress,
     isDirty,
     isSaving,
-    saveProgress,
+    manualSave,
     clearProgress,
-    enableAutoSave,
-    disableAutoSave,
     getCompletionPercentage
   } = useWorkflowProgress(eventId, workflowType);
 
-  const handleToggleAutoSave = () => {
-    if (autoSaveEnabled) {
-      disableAutoSave();
+  const handleManualSave = async () => {
+    if (!isDirty || !savedProgress) {
       toast({
-        title: "Auto-save Disabled",
-        description: "Remember to save your progress manually."
+        title: "No Changes",
+        description: "No changes to save."
+      });
+      return;
+    }
+
+    const result = await manualSave();
+    if (result?.success) {
+      toast({
+        title: "Progress Saved",
+        description: result.message,
+        variant: "default"
       });
     } else {
-      enableAutoSave(30000); // 30 seconds
       toast({
-        title: "Auto-save Enabled",
-        description: "Your progress will be saved automatically every 30 seconds."
+        title: "Save Failed",
+        description: result?.message || "Failed to save progress. Please try again.",
+        variant: "destructive"
       });
     }
-    setAutoSaveEnabled(!autoSaveEnabled);
-  };
-
-  const handleManualSave = () => {
-    saveProgress();
-    toast({
-      title: "Progress Saved",
-      description: "Your workflow progress has been saved successfully."
-    });
   };
 
   const handleResetProgress = async () => {
@@ -128,20 +125,10 @@ export function WorkflowProgressIndicator({
             onClick={handleManualSave}
             disabled={isSaving || !isDirty}
             size="sm"
-            className="flex items-center gap-1"
+            className="flex items-center gap-1 bg-[#2E86AB] hover:bg-blue-700"
           >
             <Save className="h-3 w-3" />
-            {isSaving ? "Saving..." : "Save Now"}
-          </Button>
-
-          <Button
-            onClick={handleToggleAutoSave}
-            variant="outline"
-            size="sm"
-            className="flex items-center gap-1"
-          >
-            {autoSaveEnabled ? <Pause className="h-3 w-3" /> : <Play className="h-3 w-3" />}
-            Auto-save {autoSaveEnabled ? "On" : "Off"}
+            {isSaving ? "Saving..." : "Save Progress"}
           </Button>
 
           <Dialog>
@@ -183,25 +170,13 @@ export function WorkflowProgressIndicator({
                   </div>
                 )}
 
-                {/* Auto-save Settings */}
+                {/* Manual Save Info */}
                 <div className="space-y-3">
-                  <h4 className="font-medium">Auto-save Settings</h4>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">Enable auto-save</span>
-                    <Button
-                      onClick={handleToggleAutoSave}
-                      variant={autoSaveEnabled ? "default" : "outline"}
-                      size="sm"
-                    >
-                      {autoSaveEnabled ? "Enabled" : "Disabled"}
-                    </Button>
+                  <h4 className="font-medium">Save Settings</h4>
+                  <div className="text-xs text-muted-foreground bg-[#F8F9FA] p-3 rounded border-l-4 border-l-[#2E86AB]">
+                    <Info className="h-3 w-3 inline mr-1" />
+                    Manual Save Mode: Use the "Save Progress" button to save your work. Progress is preserved per admin session.
                   </div>
-                  {autoSaveEnabled && (
-                    <div className="text-xs text-muted-foreground bg-blue-50 p-2 rounded">
-                      <Info className="h-3 w-3 inline mr-1" />
-                      Progress is automatically saved every 30 seconds and when you navigate away.
-                    </div>
-                  )}
                 </div>
 
                 {/* Reset Option */}

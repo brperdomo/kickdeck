@@ -74,23 +74,30 @@ export function useWorkflowProgress(eventId: string, workflowType: 'scheduling' 
     }
   });
 
-  // Auto-save functionality
+  // Manual save only (auto-save disabled)
   const enableAutoSave = (intervalMs: number = 30000) => {
-    if (autoSaveInterval) clearInterval(autoSaveInterval);
-    
-    const interval = setInterval(() => {
-      if (isDirty && !saveProgressMutation.isPending) {
-        saveProgress();
-      }
-    }, intervalMs);
-    
-    setAutoSaveInterval(interval);
+    // Manual save mode - no auto-save intervals
+    // Auto-save is disabled for manual save workflow
   };
 
   const disableAutoSave = () => {
     if (autoSaveInterval) {
       clearInterval(autoSaveInterval);
       setAutoSaveInterval(null);
+    }
+  };
+
+  // Manual save with user feedback
+  const manualSave = async () => {
+    if (!isDirty || !savedProgress) return;
+    
+    try {
+      await saveProgressMutation.mutateAsync(savedProgress);
+      setIsDirty(false);
+      return { success: true, message: "Progress saved successfully" };
+    } catch (error) {
+      console.error('Manual save failed:', error);
+      return { success: false, message: "Failed to save progress" };
     }
   };
 
@@ -216,6 +223,7 @@ export function useWorkflowProgress(eventId: string, workflowType: 'scheduling' 
     
     // Actions
     saveProgress,
+    manualSave,
     updateStepData,
     advanceToStep,
     initializeProgress,

@@ -72,6 +72,9 @@ import ComplexLocationsMapPage from "@/pages/complex-locations-map";
 // Member merge interface - lazy loaded for admin use
 const MemberMergeInterface = lazy(() => import("@/components/admin/MemberMergeInterface").then(m => ({ default: m.default })));
 
+// Tournament scheduling hub
+import TournamentSchedulingHub from "@/pages/TournamentSchedulingHub";
+
 // Import landing page components
 import LandingPage from "@/pages/landing-page";
 import { isMainDomain } from "@/lib/domainHelper";
@@ -320,6 +323,9 @@ function Router() {
           </Route>
           <Route path="/admin/households">
             {user.isAdmin ? <AdminDashboard initialView="households" /> : <NotFound />}
+          </Route>
+          <Route path="/admin/tournament-scheduling">
+            {user.isAdmin ? <TournamentSchedulingHub /> : <NotFound />}
           </Route>
           <Route path="/admin/scheduling">
             {user.isAdmin ? <AdminDashboard initialView="scheduling" /> : <NotFound />}
