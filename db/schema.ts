@@ -1573,4 +1573,38 @@ export const selectFeeAdjustmentSchema = createSelectSchema(feeAdjustments);
 export type InsertFeeAdjustment = typeof feeAdjustments.$inferInsert;
 export type SelectFeeAdjustment = typeof feeAdjustments.$inferSelect;
 
+// Workflow progress tracking table for preventing data loss
+export const workflowProgress = pgTable("workflow_progress", {
+  id: serial("id").primaryKey(),
+  eventId: integer("event_id").notNull().references(() => events.id, { onDelete: 'cascade' }),
+  workflowType: text("workflow_type").notNull().default("scheduling"), // 'scheduling', 'registration', etc.
+  currentStep: integer("current_step").notNull().default(0),
+  steps: jsonb("steps").notNull(), // Array of step data with completion status
+  autoSaveEnabled: boolean("auto_save_enabled").notNull().default(true),
+  lastSaved: timestamp("last_saved").notNull().defaultNow(),
+  sessionId: text("session_id").notNull(), // Track browser session
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const workflowProgressRelations = relations(workflowProgress, ({ one }) => ({
+  event: one(events, {
+    fields: [workflowProgress.eventId],
+    references: [events.id],
+  }),
+}));
+
+export const insertWorkflowProgressSchema = createInsertSchema(workflowProgress, {
+  eventId: z.number().positive("Event ID is required"),
+  workflowType: z.string().min(1, "Workflow type is required"),
+  currentStep: z.number().min(0, "Current step must be non-negative"),
+  steps: z.any(), // JSON data
+  sessionId: z.string().min(1, "Session ID is required"),
+});
+
+export const selectWorkflowProgressSchema = createSelectSchema(workflowProgress);
+
+export type InsertWorkflowProgress = typeof workflowProgress.$inferInsert;
+export type SelectWorkflowProgress = typeof workflowProgress.$inferSelect;
+
 // Note: Clubs table already defined at the top of the file

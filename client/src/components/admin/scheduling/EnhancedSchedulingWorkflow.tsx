@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useWorkflowProgress } from '@/hooks/useWorkflowProgress';
+import { WorkflowProgressIndicator } from './WorkflowProgressIndicator';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -53,6 +55,18 @@ export function EnhancedSchedulingWorkflow({ eventId, onComplete }: EnhancedSche
   const [currentStep, setCurrentStep] = useState(0);
   const [workflowData, setWorkflowData] = useState<WorkflowData>({});
   const [stepStatuses, setStepStatuses] = useState<{[key: string]: 'pending' | 'active' | 'completed' | 'skipped'}>({});
+
+  // Initialize progress saving
+  const {
+    savedProgress,
+    updateStepData,
+    advanceToStep,
+    initializeProgress,
+    enableAutoSave,
+    getStepData,
+    isStepComplete,
+    getCurrentStep
+  } = useWorkflowProgress(eventId, 'scheduling');
 
   // Fetch event data for workflow
   const { data: eventData, isLoading } = useQuery({
@@ -220,14 +234,48 @@ export function EnhancedSchedulingWorkflow({ eventId, onComplete }: EnhancedSche
     }
   ];
 
-  // Initialize step statuses
+  // Initialize step statuses and progress saving
   useEffect(() => {
     const initialStatuses: {[key: string]: 'pending' | 'active' | 'completed' | 'skipped'} = {};
-    workflowSteps.forEach((step, index) => {
-      initialStatuses[step.id] = index === 0 ? 'active' : 'pending';
-    });
+    
+    // Check if we have saved progress
+    if (savedProgress && savedProgress.steps.length > 0) {
+      // Restore from saved progress
+      const savedStep = getCurrentStep();
+      setCurrentStep(savedStep);
+      
+      savedProgress.steps.forEach((step: any) => {
+        initialStatuses[step.stepId] = step.isComplete ? 'completed' : 
+          savedProgress.currentStep === savedProgress.steps.findIndex((s: any) => s.stepId === step.stepId) ? 'active' : 'pending';
+      });
+      
+      // Restore workflow data from saved progress
+      const restoredData: WorkflowData = {};
+      savedProgress.steps.forEach((step: any) => {
+        if (step.data) {
+          restoredData[step.stepId as keyof WorkflowData] = step.data;
+        }
+      });
+      setWorkflowData(restoredData);
+    } else {
+      // Initialize fresh workflow
+      workflowSteps.forEach((step, index) => {
+        initialStatuses[step.id] = index === 0 ? 'active' : 'pending';
+      });
+      
+      // Initialize progress tracking
+      const initialSteps = workflowSteps.map(step => ({
+        stepId: step.id,
+        stepName: step.title,
+        isComplete: false,
+        data: {}
+      }));
+      initializeProgress(initialSteps);
+    }
+    
     setStepStatuses(initialStatuses);
-  }, []);
+    enableAutoSave(30000); // Enable auto-save every 30 seconds
+  }, [savedProgress]);
 
   const handleStepComplete = (stepId: string, stepData: any) => {
     console.log(`Step ${stepId} completed with data:`, stepData);
@@ -244,6 +292,9 @@ export function EnhancedSchedulingWorkflow({ eventId, onComplete }: EnhancedSche
       [stepId]: 'completed'
     }));
 
+    // Save progress
+    updateStepData(stepId, stepData, true);
+
     // Move to next step
     const currentIndex = workflowSteps.findIndex(step => step.id === stepId);
     const nextIndex = currentIndex + 1;
@@ -254,6 +305,9 @@ export function EnhancedSchedulingWorkflow({ eventId, onComplete }: EnhancedSche
         ...prev,
         [workflowSteps[nextIndex].id]: 'active'
       }));
+      
+      // Advance progress tracking to next step
+      advanceToStep(nextIndex);
     } else {
       // Workflow complete
       onComplete?.(workflowData);
@@ -369,6 +423,9 @@ export function EnhancedSchedulingWorkflow({ eventId, onComplete }: EnhancedSche
               and visual bracket previews for comprehensive tournament management.
             </AlertDescription>
           </Alert>
+          
+          {/* Progress Saving Indicator */}
+          <WorkflowProgressIndicator eventId={eventId} />
         </CardContent>
       </Card>
 
