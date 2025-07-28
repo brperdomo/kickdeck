@@ -1,0 +1,324 @@
+Navigated to https://app.matchpro.ai/admin/scheduling
+js?libraries=places&v=beta&callback=Function.prototype:1367 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1367
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1612
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1612Understand this warning
+chunk-XPCMTL2X.js:31 orchestration: Initializing config store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-XPCMTL2X.js:31 orchestration: Initializing feature flag store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-XPCMTL2X.js:31 orchestration: Initializing user store with state {pill-player: {…}}
+chunk-XPCMTL2X.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+index-B_rThFw0.js:851 Google Maps API key length: 0 characters
+index-B_rThFw0.js:851 Mapbox API key length: 93 characters
+index-B_rThFw0.js:851 Google Maps API already loaded
+index-B_rThFw0.js:676 Current route location (Wouter): /admin/scheduling
+index-B_rThFw0.js:676 Current URL: https://app.matchpro.ai/admin/scheduling
+index-B_rThFw0.js:676 Current pathname: /admin/scheduling
+index-B_rThFw0.js:676 Current search: 
+index-B_rThFw0.js:676 Fetching user with emulation token: not present
+js?libraries=places&v=beta&callback=Function.prototype:1399 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+_.B.send @ js?libraries=places&v=beta&callback=Function.prototype:1399
+hda @ js?libraries=places&v=beta&callback=Function.prototype:1376
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1368
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1612
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1612
+index-B_rThFw0.js:676 Fetch finished loading: GET "https://app.matchpro.ai/api/user".
+rSe @ index-B_rThFw0.js:676
+i @ index-B_rThFw0.js:40
+f @ index-B_rThFw0.js:40
+start @ index-B_rThFw0.js:40
+fetch @ index-B_rThFw0.js:40
+Zx @ index-B_rThFw0.js:40
+onSubscribe @ index-B_rThFw0.js:40
+subscribe @ index-B_rThFw0.js:40
+(anonymous) @ index-B_rThFw0.js:40
+mW @ index-B_rThFw0.js:38
+S1 @ index-B_rThFw0.js:40
+Qh @ index-B_rThFw0.js:40
+GM @ index-B_rThFw0.js:40
+nu @ index-B_rThFw0.js:38
+xhe @ index-B_rThFw0.js:40
+Cu @ index-B_rThFw0.js:40
+GW @ index-B_rThFw0.js:40
+N @ index-B_rThFw0.js:25
+T @ index-B_rThFw0.js:25
+index-B_rThFw0.js:676 User data fetched: {id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: '$2b$12$d6n1CBWgsWFm0fh77F1OX.YxDZy7/O3aLSuJOuq4QkvOtFmSit7BC', firstName: 'Bryan', …}
+scheduling:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+scheduling:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+index-B_rThFw0.js:668 Fetch failed loading: GET "https://app.matchpro.ai/api/user".
+queryFn @ index-B_rThFw0.js:668
+i @ index-B_rThFw0.js:40
+f @ index-B_rThFw0.js:40
+start @ index-B_rThFw0.js:40
+fetch @ index-B_rThFw0.js:40
+Zx @ index-B_rThFw0.js:40
+onSubscribe @ index-B_rThFw0.js:40
+subscribe @ index-B_rThFw0.js:40
+(anonymous) @ index-B_rThFw0.js:40
+mW @ index-B_rThFw0.js:38
+S1 @ index-B_rThFw0.js:40
+Qh @ index-B_rThFw0.js:40
+GM @ index-B_rThFw0.js:40
+nu @ index-B_rThFw0.js:38
+xhe @ index-B_rThFw0.js:40
+Cu @ index-B_rThFw0.js:40
+GW @ index-B_rThFw0.js:40
+N @ index-B_rThFw0.js:25
+T @ index-B_rThFw0.js:25
+shared-37d457d4fc315f72deea0758214ad886.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+(anonymous) @ shared-37d457d4fc315f72deea0758214ad886.js:1
+e @ shared-37d457d4fc315f72deea0758214ad886.js:1
+c @ shared-37d457d4fc315f72deea0758214ad886.js:1
+g @ shared-37d457d4fc315f72deea0758214ad886.js:1
+value @ shared-37d457d4fc315f72deea0758214ad886.js:1
+value @ shared-37d457d4fc315f72deea0758214ad886.js:1
+value @ controller-with-preconnect-1c5047184f5ad3bdb3a0cabcdc842cec.js:1
+e @ controller-with-preconnect-1c5047184f5ad3bdb3a0cabcdc842cec.js:1
+value @ controller-with-preconnect-1c5047184f5ad3bdb3a0cabcdc842cec.js:1
+e @ controller-with-preconnect-1c5047184f5ad3bdb3a0cabcdc842cec.js:1
+73339 @ controller-with-preconnect-1c5047184f5ad3bdb3a0cabcdc842cec.js:1
+e @ controller-with-preconnect-1c5047184f5ad3bdb3a0cabcdc842cec.js:1
+(anonymous) @ controller-with-preconnect-1c5047184f5ad3bdb3a0cabcdc842cec.js:1
+e.O @ controller-with-preconnect-1c5047184f5ad3bdb3a0cabcdc842cec.js:1
+(anonymous) @ controller-with-preconnect-1c5047184f5ad3bdb3a0cabcdc842cec.js:1
+(anonymous) @ controller-with-preconnect-1c5047184f5ad3bdb3a0cabcdc842cec.js:1
+shared-37d457d4fc315f72deea0758214ad886.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+(anonymous) @ shared-37d457d4fc315f72deea0758214ad886.js:1
+e @ shared-37d457d4fc315f72deea0758214ad886.js:1
+c @ shared-37d457d4fc315f72deea0758214ad886.js:1
+g @ shared-37d457d4fc315f72deea0758214ad886.js:1
+value @ shared-37d457d4fc315f72deea0758214ad886.js:1
+value @ shared-37d457d4fc315f72deea0758214ad886.js:1
+log @ shared-37d457d4fc315f72deea0758214ad886.js:1
+log @ controller-with-preconnect-1c5047184f5ad3bdb3a0cabcdc842cec.js:1
+e @ controller-with-preconnect-1c5047184f5ad3bdb3a0cabcdc842cec.js:1
+73339 @ controller-with-preconnect-1c5047184f5ad3bdb3a0cabcdc842cec.js:1
+e @ controller-with-preconnect-1c5047184f5ad3bdb3a0cabcdc842cec.js:1
+(anonymous) @ controller-with-preconnect-1c5047184f5ad3bdb3a0cabcdc842cec.js:1
+e.O @ controller-with-preconnect-1c5047184f5ad3bdb3a0cabcdc842cec.js:1
+(anonymous) @ controller-with-preconnect-1c5047184f5ad3bdb3a0cabcdc842cec.js:1
+(anonymous) @ controller-with-preconnect-1c5047184f5ad3bdb3a0cabcdc842cec.js:1
+index-B_rThFw0.js:1032 Fetch finished loading: GET "https://app.matchpro.ai/api/admin/tournaments/scheduling?".
+queryFn @ index-B_rThFw0.js:1032
+i @ index-B_rThFw0.js:40
+f @ index-B_rThFw0.js:40
+start @ index-B_rThFw0.js:40
+fetch @ index-B_rThFw0.js:40
+Zx @ index-B_rThFw0.js:40
+onSubscribe @ index-B_rThFw0.js:40
+subscribe @ index-B_rThFw0.js:40
+(anonymous) @ index-B_rThFw0.js:40
+mW @ index-B_rThFw0.js:38
+S1 @ index-B_rThFw0.js:40
+Qh @ index-B_rThFw0.js:40
+xhe @ index-B_rThFw0.js:40
+Cu @ index-B_rThFw0.js:40
+GM @ index-B_rThFw0.js:40
+nu @ index-B_rThFw0.js:38
+(anonymous) @ index-B_rThFw0.js:40
+setTimeout
+Ihe @ index-B_rThFw0.js:40
+o @ index-B_rThFw0.js:40
+batch @ index-B_rThFw0.js:40
+rc @ index-B_rThFw0.js:40
+setData @ index-B_rThFw0.js:40
+onSuccess @ index-B_rThFw0.js:40
+m @ index-B_rThFw0.js:40
+Promise.then
+f @ index-B_rThFw0.js:40
+start @ index-B_rThFw0.js:40
+fetch @ index-B_rThFw0.js:40
+Zx @ index-B_rThFw0.js:40
+onSubscribe @ index-B_rThFw0.js:40
+subscribe @ index-B_rThFw0.js:40
+(anonymous) @ index-B_rThFw0.js:40
+mW @ index-B_rThFw0.js:38
+S1 @ index-B_rThFw0.js:40
+Qh @ index-B_rThFw0.js:40
+GM @ index-B_rThFw0.js:40
+nu @ index-B_rThFw0.js:38
+xhe @ index-B_rThFw0.js:40
+Cu @ index-B_rThFw0.js:40
+GW @ index-B_rThFw0.js:40
+N @ index-B_rThFw0.js:25
+T @ index-B_rThFw0.js:25
+shared-37d457d4fc315f72deea0758214ad886.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-37d457d4fc315f72deea0758214ad886.js:1
+e @ shared-37d457d4fc315f72deea0758214ad886.js:1
+c @ shared-37d457d4fc315f72deea0758214ad886.js:1
+value @ shared-37d457d4fc315f72deea0758214ad886.js:1
+value @ shared-37d457d4fc315f72deea0758214ad886.js:1
+value @ shared-37d457d4fc315f72deea0758214ad886.js:1
+value @ shared-37d457d4fc315f72deea0758214ad886.js:1
+value @ shared-37d457d4fc315f72deea0758214ad886.js:1
+(anonymous) @ shared-37d457d4fc315f72deea0758214ad886.js:1
+setTimeout
+value @ shared-37d457d4fc315f72deea0758214ad886.js:1
+value @ shared-37d457d4fc315f72deea0758214ad886.js:1
+value @ shared-37d457d4fc315f72deea0758214ad886.js:1
+(anonymous) @ shared-37d457d4fc315f72deea0758214ad886.js:1
+value @ shared-37d457d4fc315f72deea0758214ad886.js:1
+value @ shared-37d457d4fc315f72deea0758214ad886.js:1
+(anonymous) @ shared-37d457d4fc315f72deea0758214ad886.js:1
+Promise.then
+value @ shared-37d457d4fc315f72deea0758214ad886.js:1
+value @ shared-37d457d4fc315f72deea0758214ad886.js:1
+value @ controller-with-preconnect-1c5047184f5ad3bdb3a0cabcdc842cec.js:1
+e @ controller-with-preconnect-1c5047184f5ad3bdb3a0cabcdc842cec.js:1
+value @ controller-with-preconnect-1c5047184f5ad3bdb3a0cabcdc842cec.js:1
+e @ controller-with-preconnect-1c5047184f5ad3bdb3a0cabcdc842cec.js:1
+73339 @ controller-with-preconnect-1c5047184f5ad3bdb3a0cabcdc842cec.js:1
+e @ controller-with-preconnect-1c5047184f5ad3bdb3a0cabcdc842cec.js:1
+(anonymous) @ controller-with-preconnect-1c5047184f5ad3bdb3a0cabcdc842cec.js:1
+e.O @ controller-with-preconnect-1c5047184f5ad3bdb3a0cabcdc842cec.js:1
+(anonymous) @ controller-with-preconnect-1c5047184f5ad3bdb3a0cabcdc842cec.js:1
+(anonymous) @ controller-with-preconnect-1c5047184f5ad3bdb3a0cabcdc842cec.js:1
+shared-37d457d4fc315f72deea0758214ad886.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-37d457d4fc315f72deea0758214ad886.js:1
+e @ shared-37d457d4fc315f72deea0758214ad886.js:1
+c @ shared-37d457d4fc315f72deea0758214ad886.js:1
+value @ shared-37d457d4fc315f72deea0758214ad886.js:1
+value @ shared-37d457d4fc315f72deea0758214ad886.js:1
+value @ shared-37d457d4fc315f72deea0758214ad886.js:1
+value @ shared-37d457d4fc315f72deea0758214ad886.js:1
+value @ shared-37d457d4fc315f72deea0758214ad886.js:1
+(anonymous) @ shared-37d457d4fc315f72deea0758214ad886.js:1
+setTimeout
+value @ shared-37d457d4fc315f72deea0758214ad886.js:1
+value @ shared-37d457d4fc315f72deea0758214ad886.js:1
+value @ shared-37d457d4fc315f72deea0758214ad886.js:1
+(anonymous) @ shared-37d457d4fc315f72deea0758214ad886.js:1
+value @ shared-37d457d4fc315f72deea0758214ad886.js:1
+value @ shared-37d457d4fc315f72deea0758214ad886.js:1
+(anonymous) @ shared-37d457d4fc315f72deea0758214ad886.js:1
+Promise.then
+value @ shared-37d457d4fc315f72deea0758214ad886.js:1
+value @ shared-37d457d4fc315f72deea0758214ad886.js:1
+log @ shared-37d457d4fc315f72deea0758214ad886.js:1
+log @ controller-with-preconnect-1c5047184f5ad3bdb3a0cabcdc842cec.js:1
+e @ controller-with-preconnect-1c5047184f5ad3bdb3a0cabcdc842cec.js:1
+73339 @ controller-with-preconnect-1c5047184f5ad3bdb3a0cabcdc842cec.js:1
+e @ controller-with-preconnect-1c5047184f5ad3bdb3a0cabcdc842cec.js:1
+(anonymous) @ controller-with-preconnect-1c5047184f5ad3bdb3a0cabcdc842cec.js:1
+e.O @ controller-with-preconnect-1c5047184f5ad3bdb3a0cabcdc842cec.js:1
+(anonymous) @ controller-with-preconnect-1c5047184f5ad3bdb3a0cabcdc842cec.js:1
+(anonymous) @ controller-with-preconnect-1c5047184f5ad3bdb3a0cabcdc842cec.js:1
+index-B_rThFw0.js:1032  POST https://app.matchpro.ai/api/admin/tournaments/1656618593/scheduling/start 500 (Internal Server Error)
+mutationFn @ index-B_rThFw0.js:1032
+fn @ index-B_rThFw0.js:40
+f @ index-B_rThFw0.js:40
+start @ index-B_rThFw0.js:40
+execute @ index-B_rThFw0.js:40
+await in execute
+mutate @ index-B_rThFw0.js:40
+(anonymous) @ index-B_rThFw0.js:40
+i @ index-B_rThFw0.js:1032
+onClick @ index-B_rThFw0.js:1032
+Iue @ index-B_rThFw0.js:37
+Mue @ index-B_rThFw0.js:37
+$ue @ index-B_rThFw0.js:37
+fM @ index-B_rThFw0.js:37
+Qq @ index-B_rThFw0.js:37
+(anonymous) @ index-B_rThFw0.js:37
+NO @ index-B_rThFw0.js:40
+jq @ index-B_rThFw0.js:37
+E2 @ index-B_rThFw0.js:37
+X4 @ index-B_rThFw0.js:37
+eme @ index-B_rThFw0.js:37Understand this error
+index-B_rThFw0.js:1032 Failed to start scheduling session: {status: 500, statusText: '', error: {…}}
+mutationFn @ index-B_rThFw0.js:1032
+await in mutationFn
+fn @ index-B_rThFw0.js:40
+f @ index-B_rThFw0.js:40
+start @ index-B_rThFw0.js:40
+execute @ index-B_rThFw0.js:40
+await in execute
+mutate @ index-B_rThFw0.js:40
+(anonymous) @ index-B_rThFw0.js:40
+i @ index-B_rThFw0.js:1032
+onClick @ index-B_rThFw0.js:1032
+Iue @ index-B_rThFw0.js:37
+Mue @ index-B_rThFw0.js:37
+$ue @ index-B_rThFw0.js:37
+fM @ index-B_rThFw0.js:37
+Qq @ index-B_rThFw0.js:37
+(anonymous) @ index-B_rThFw0.js:37
+NO @ index-B_rThFw0.js:40
+jq @ index-B_rThFw0.js:37
+E2 @ index-B_rThFw0.js:37
+X4 @ index-B_rThFw0.js:37
+eme @ index-B_rThFw0.js:37Understand this error
+index-B_rThFw0.js:1032 Failed to start scheduling session: Error: Failed to start scheduling session
+    at Object.mutationFn (index-B_rThFw0.js:1032:102386)
+onError @ index-B_rThFw0.js:1032
+execute @ index-B_rThFw0.js:40
+await in execute
+mutate @ index-B_rThFw0.js:40
+(anonymous) @ index-B_rThFw0.js:40
+i @ index-B_rThFw0.js:1032
+onClick @ index-B_rThFw0.js:1032
+Iue @ index-B_rThFw0.js:37
+Mue @ index-B_rThFw0.js:37
+$ue @ index-B_rThFw0.js:37
+fM @ index-B_rThFw0.js:37
+Qq @ index-B_rThFw0.js:37
+(anonymous) @ index-B_rThFw0.js:37
+NO @ index-B_rThFw0.js:40
+jq @ index-B_rThFw0.js:37
+E2 @ index-B_rThFw0.js:37
+X4 @ index-B_rThFw0.js:37
+eme @ index-B_rThFw0.js:37Understand this error
+index-B_rThFw0.js:1032 Fetch failed loading: POST "https://app.matchpro.ai/api/admin/tournaments/1656618593/scheduling/start".
+mutationFn @ index-B_rThFw0.js:1032
+fn @ index-B_rThFw0.js:40
+f @ index-B_rThFw0.js:40
+start @ index-B_rThFw0.js:40
+execute @ index-B_rThFw0.js:40
+await in execute
+mutate @ index-B_rThFw0.js:40
+(anonymous) @ index-B_rThFw0.js:40
+i @ index-B_rThFw0.js:1032
+onClick @ index-B_rThFw0.js:1032
+Iue @ index-B_rThFw0.js:37
+Mue @ index-B_rThFw0.js:37
+$ue @ index-B_rThFw0.js:37
+fM @ index-B_rThFw0.js:37
+Qq @ index-B_rThFw0.js:37
+(anonymous) @ index-B_rThFw0.js:37
+NO @ index-B_rThFw0.js:40
+jq @ index-B_rThFw0.js:37
+E2 @ index-B_rThFw0.js:37
+X4 @ index-B_rThFw0.js:37
+eme @ index-B_rThFw0.js:37
+util.js:31 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+Txa @ util.js:31
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1369
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1369
+setTimeout
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1369
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1612
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1612Understand this warning
+shared-37d457d4fc315f72deea0758214ad886.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-37d457d4fc315f72deea0758214ad886.js:1
+e @ shared-37d457d4fc315f72deea0758214ad886.js:1
+c @ shared-37d457d4fc315f72deea0758214ad886.js:1
+value @ shared-37d457d4fc315f72deea0758214ad886.js:1
+value @ shared-37d457d4fc315f72deea0758214ad886.js:1
+value @ shared-37d457d4fc315f72deea0758214ad886.js:1
+value @ shared-37d457d4fc315f72deea0758214ad886.js:1
+value @ shared-37d457d4fc315f72deea0758214ad886.js:1
+(anonymous) @ shared-37d457d4fc315f72deea0758214ad886.js:1
+setTimeout
+value @ shared-37d457d4fc315f72deea0758214ad886.js:1
+value @ shared-37d457d4fc315f72deea0758214ad886.js:1
+value @ shared-37d457d4fc315f72deea0758214ad886.js:1
+(anonymous) @ shared-37d457d4fc315f72deea0758214ad886.js:1
+value @ shared-37d457d4fc315f72deea0758214ad886.js:1
+log @ shared-37d457d4fc315f72deea0758214ad886.js:1
+log @ controller-with-preconnect-1c5047184f5ad3bdb3a0cabcdc842cec.js:1
+value @ controller-with-preconnect-1c5047184f5ad3bdb3a0cabcdc842cec.js:1
+value @ controller-with-preconnect-1c5047184f5ad3bdb3a0cabcdc842cec.js:1
+(anonymous) @ controller-with-preconnect-1c5047184f5ad3bdb3a0cabcdc842cec.js:1
