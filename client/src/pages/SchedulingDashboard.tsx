@@ -244,7 +244,6 @@ export default function SchedulingDashboard() {
           
           <TournamentSelectionInterface 
             onTournamentSelect={handleTournamentSelect}
-            isLoading={isStarting}
           />
         </div>
       </div>

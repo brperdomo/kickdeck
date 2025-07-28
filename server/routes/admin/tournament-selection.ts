@@ -44,33 +44,51 @@ router.get('/scheduling', async (req, res) => {
     const tournaments = [];
     for (const tournament of basicTournaments) {
       try {
-        // Get teams count
-        const teamsResult = await db
-          .select({ count: sql<number>`count(*)` })
-          .from(teams)
-          .where(and(
-            eq(teams.eventId, tournament.id.toString()),
-            eq(teams.status, 'approved')
-          ));
+        console.log(`Processing tournament ${tournament.id} (${tournament.name})...`);
         
-        const teamsCount = teamsResult[0]?.count || 0;
+        // Get teams count with better error handling
+        let teamsCount = 0;
+        try {
+          const teamsResult = await db
+            .select({ count: sql<number>`count(*)` })
+            .from(teams)
+            .where(and(
+              eq(teams.eventId, tournament.id.toString()),
+              eq(teams.status, 'approved')
+            ));
+          
+          teamsCount = Number(teamsResult[0]?.count || 0);
+          console.log(`Tournament ${tournament.id}: Found ${teamsCount} approved teams`);
+        } catch (teamsError) {
+          console.error(`Error counting teams for tournament ${tournament.id}:`, teamsError);
+        }
 
-        // Check for workflow progress
-        const progressResult = await db
-          .select()
-          .from(workflowProgress)
-          .where(
-            and(
-              eq(workflowProgress.eventId, tournament.id),
-              eq(workflowProgress.workflowType, 'scheduling')
+        // Check for workflow progress with better error handling
+        let hasProgressFlag = false;
+        let lastModified = null;
+        let adminSession = null;
+        
+        try {
+          const progressResult = await db
+            .select()
+            .from(workflowProgress)
+            .where(
+              and(
+                eq(workflowProgress.eventId, Number(tournament.id)),
+                eq(workflowProgress.workflowType, 'scheduling')
+              )
             )
-          )
-          .orderBy(desc(workflowProgress.lastSaved))
-          .limit(1);
+            .orderBy(desc(workflowProgress.lastSaved))
+            .limit(1);
 
-        const hasProgressFlag = progressResult.length > 0;
-        const lastModified = progressResult[0]?.lastSaved || null;
-        const adminSession = progressResult[0]?.sessionId || null;
+          hasProgressFlag = progressResult.length > 0;
+          lastModified = progressResult[0]?.lastSaved || null;
+          adminSession = progressResult[0]?.sessionId || null;
+          
+          console.log(`Tournament ${tournament.id}: Progress check - hasProgress: ${hasProgressFlag}`);
+        } catch (progressError) {
+          console.error(`Error checking progress for tournament ${tournament.id}:`, progressError);
+        }
 
         tournaments.push({
           ...tournament,
@@ -79,6 +97,8 @@ router.get('/scheduling', async (req, res) => {
           lastModified,
           adminSession
         });
+        
+        console.log(`Tournament ${tournament.id} processed successfully`);
       } catch (subError) {
         console.error(`Error processing tournament ${tournament.id}:`, subError);
         // Add tournament with default values
