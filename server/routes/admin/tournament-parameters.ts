@@ -1,0 +1,246 @@
+import { Router } from 'express';
+import { db } from '../../../db';
+import { 
+  events, 
+  eventGameFormats, 
+  eventScheduleConstraints,
+  eventAgeGroups,
+  eventBrackets,
+  fields,
+  complexes
+} from '@db/schema';
+import { eq, and } from 'drizzle-orm';
+import { isAdmin } from '../../middleware/auth';
+
+const router = Router();
+
+// GET /api/admin/events/:eventId/tournament-parameters
+router.get('/events/:eventId/tournament-parameters', isAdmin, async (req, res) => {
+  try {
+    const eventId = parseInt(req.params.eventId);
+    
+    // Get existing age groups for this event
+    const existingAgeGroups = await db.query.eventAgeGroups.findMany({
+      where: eq(eventAgeGroups.eventId, eventId.toString())
+    });
+
+    // Get existing game formats
+    const existingGameFormats = await db.query.eventGameFormats.findMany({
+      where: eq(eventGameFormats.eventId, eventId)
+    });
+
+    // Get existing brackets
+    const existingBrackets = await db.query.eventBrackets.findMany({
+      where: eq(eventBrackets.eventId, eventId.toString())
+    });
+
+    // Get existing schedule constraints
+    const existingConstraints = await db.query.eventScheduleConstraints.findMany({
+      where: eq(eventScheduleConstraints.eventId, eventId)
+    });
+
+    // Get available fields (from complex associated with event)
+    const eventData = await db.query.events.findFirst({
+      where: eq(events.id, eventId),
+      with: {
+        complex: true
+      }
+    });
+
+    const availableFields = eventData?.complex ? await db.query.fields.findMany({
+      where: eq(fields.complexId, eventData.complex.id)
+    }) : [];
+
+    res.json({
+      ageGroups: existingAgeGroups,
+      gameFormats: existingGameFormats,
+      brackets: existingBrackets,
+      scheduleConstraints: existingConstraints,
+      fields: availableFields,
+      event: eventData
+    });
+
+  } catch (error) {
+    console.error('Error fetching tournament parameters:', error);
+    res.status(500).json({ 
+      error: 'Failed to fetch tournament parameters',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
+// PUT /api/admin/events/:eventId/tournament-parameters
+router.put('/events/:eventId/tournament-parameters', isAdmin, async (req, res) => {
+  try {
+    const eventId = parseInt(req.params.eventId);
+    const { ageGroups: ageGroupsData, gameFormats, brackets, fields: fieldsData, timeSlots } = req.body;
+
+    console.log(`Saving tournament parameters for event ${eventId}:`, {
+      ageGroupsCount: ageGroupsData?.length || 0,
+      gameFormatsCount: gameFormats?.length || 0,
+      bracketsCount: brackets?.length || 0,
+      fieldsCount: fieldsData?.length || 0,
+      timeSlotsCount: timeSlots?.length || 0
+    });
+
+    // Save age groups
+    if (ageGroupsData && ageGroupsData.length > 0) {
+      // Delete existing age groups for this event
+      await db.delete(eventAgeGroups).where(eq(eventAgeGroups.eventId, eventId.toString()));
+      
+      // Insert new age groups
+      for (const ageGroup of ageGroupsData) {
+        await db.insert(eventAgeGroups).values({
+          eventId: eventId.toString(),
+          ageGroup: ageGroup.name,
+          birthYear: new Date().getFullYear() - ageGroup.maxAge,
+          gender: 'Both', // Default, can be configured
+          fieldSize: ageGroup.fieldSize,
+          projectedTeams: ageGroup.maxTeams,
+          createdAt: new Date().toISOString()
+        });
+      }
+    }
+
+    // Save game formats
+    if (gameFormats && gameFormats.length > 0) {
+      // Delete existing game formats for this event
+      await db.delete(eventGameFormats).where(eq(eventGameFormats.eventId, eventId));
+      
+      // Insert new game formats
+      for (const format of gameFormats) {
+        await db.insert(eventGameFormats).values({
+          eventId,
+          ageGroup: format.ageGroup,
+          format: format.format || '11v11',
+          gameLength: format.gameLength,
+          halves: format.halves || 2,
+          halfLength: Math.floor(format.gameLength / 2),
+          halfTimeBreak: format.halfTimeBreak || 5,
+          bufferTime: format.bufferTime || 10,
+          fieldSize: format.fieldSize || '11v11',
+          allowsLights: true,
+          surfacePreference: 'either',
+          isActive: true
+        });
+      }
+    }
+
+    // Save brackets
+    if (brackets && brackets.length > 0) {
+      // Delete existing brackets for this event
+      await db.delete(eventBrackets).where(eq(eventBrackets.eventId, eventId.toString()));
+      
+      // Insert new brackets
+      for (const bracket of brackets) {
+        await db.insert(eventBrackets).values({
+          eventId: eventId.toString(),
+          name: bracket.name,
+          ageGroupId: 1, // Default age group ID, should be properly mapped
+          maxTeams: bracket.maxTeams,
+          isActive: true
+        });
+      }
+    }
+
+    // Save schedule constraints (time slots)
+    if (timeSlots && timeSlots.length > 0) {
+      // Delete existing constraints for this event
+      await db.delete(eventScheduleConstraints).where(eq(eventScheduleConstraints.eventId, eventId));
+      
+      // Insert new constraints
+      for (const slot of timeSlots) {
+        await db.insert(eventScheduleConstraints).values({
+          eventId,
+          constraintType: 'operating_hours',
+          constraintValue: JSON.stringify({
+            day: slot.day,
+            startTime: slot.startTime,
+            endTime: slot.endTime,
+            blackoutPeriods: slot.blackoutPeriods || []
+          }),
+          priority: 1,
+          isActive: true
+        });
+      }
+    }
+
+    // Log success
+    console.log(`Tournament parameters saved successfully for event ${eventId}`);
+
+    res.json({ 
+      success: true, 
+      message: 'Tournament parameters saved successfully',
+      savedCounts: {
+        ageGroups: ageGroupsData?.length || 0,
+        gameFormats: gameFormats?.length || 0,
+        brackets: brackets?.length || 0,
+        timeSlots: timeSlots?.length || 0
+      }
+    });
+
+  } catch (error) {
+    console.error('Error saving tournament parameters:', error);
+    res.status(500).json({ 
+      error: 'Failed to save tournament parameters',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
+// GET /api/admin/events/:eventId/parameter-validation
+router.get('/events/:eventId/parameter-validation', isAdmin, async (req, res) => {
+  try {
+    const eventId = parseInt(req.params.eventId);
+    
+    // Check if all required parameters are configured
+    const ageGroupsCount = await db.select().from(eventAgeGroups).where(eq(eventAgeGroups.eventId, eventId.toString()));
+    const gameFormatsCount = await db.select().from(eventGameFormats).where(eq(eventGameFormats.eventId, eventId));
+    const bracketsCount = await db.select().from(eventBrackets).where(eq(eventBrackets.eventId, eventId.toString()));
+    const constraintsCount = await db.select().from(eventScheduleConstraints).where(eq(eventScheduleConstraints.eventId, eventId));
+
+    const validation = {
+      ageGroups: {
+        configured: ageGroupsCount.length > 0,
+        count: ageGroupsCount.length,
+        required: true
+      },
+      gameFormats: {
+        configured: gameFormatsCount.length > 0,
+        count: gameFormatsCount.length,
+        required: true
+      },
+      brackets: {
+        configured: bracketsCount.length > 0,
+        count: bracketsCount.length,
+        required: true
+      },
+      timeSlots: {
+        configured: constraintsCount.length > 0,
+        count: constraintsCount.length,
+        required: true
+      }
+    };
+
+    const isComplete = Object.values(validation).every(item => item.configured);
+    const completedCount = Object.values(validation).filter(item => item.configured).length;
+    const totalCount = Object.keys(validation).length;
+
+    res.json({
+      validation,
+      isComplete,
+      completedCount,
+      totalCount,
+      readyForTeamRegistration: isComplete
+    });
+
+  } catch (error) {
+    console.error('Error validating tournament parameters:', error);
+    res.status(500).json({ 
+      error: 'Failed to validate tournament parameters',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
+export default router;
