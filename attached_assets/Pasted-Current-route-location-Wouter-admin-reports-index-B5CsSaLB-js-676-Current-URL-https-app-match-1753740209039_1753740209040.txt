@@ -1,0 +1,428 @@
+Current route location (Wouter): /admin/reports
+index-B5CsSaLB.js:676 Current URL: https://app.matchpro.ai/admin/reports
+index-B5CsSaLB.js:676 Current pathname: /admin/reports
+index-B5CsSaLB.js:676 Current search: 
+index-B5CsSaLB.js:871 Updating activeView from URL: reports
+chunk-XPCMTL2X.js:31 orchestration: Initializing config store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-XPCMTL2X.js:31 orchestration: Initializing feature flag store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-XPCMTL2X.js:31 orchestration: Initializing user store with state {pill-player: {…}}
+chunk-XPCMTL2X.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+index-B5CsSaLB.js:865 Fetch finished loading: GET "https://app.matchpro.ai/api/admin/accounting-codes".
+queryFn @ index-B5CsSaLB.js:865
+i @ index-B5CsSaLB.js:40
+f @ index-B5CsSaLB.js:40
+start @ index-B5CsSaLB.js:40
+fetch @ index-B5CsSaLB.js:40
+Zx @ index-B5CsSaLB.js:40
+onSubscribe @ index-B5CsSaLB.js:40
+subscribe @ index-B5CsSaLB.js:40
+(anonymous) @ index-B5CsSaLB.js:40
+mW @ index-B5CsSaLB.js:38
+S1 @ index-B5CsSaLB.js:40
+Qh @ index-B5CsSaLB.js:40
+GM @ index-B5CsSaLB.js:40
+nu @ index-B5CsSaLB.js:38
+xhe @ index-B5CsSaLB.js:40
+Cu @ index-B5CsSaLB.js:40
+GW @ index-B5CsSaLB.js:40
+N @ index-B5CsSaLB.js:25
+T @ index-B5CsSaLB.js:25
+index-B5CsSaLB.js:676 Current route location (Wouter): /admin/scheduling
+index-B5CsSaLB.js:676 Current URL: https://app.matchpro.ai/admin/scheduling
+index-B5CsSaLB.js:676 Current pathname: /admin/scheduling
+index-B5CsSaLB.js:676 Current search: 
+index-B5CsSaLB.js:1032 Fetch finished loading: GET "https://app.matchpro.ai/api/admin/tournaments/scheduling?".
+queryFn @ index-B5CsSaLB.js:1032
+i @ index-B5CsSaLB.js:40
+f @ index-B5CsSaLB.js:40
+start @ index-B5CsSaLB.js:40
+fetch @ index-B5CsSaLB.js:40
+Zx @ index-B5CsSaLB.js:40
+onSubscribe @ index-B5CsSaLB.js:40
+subscribe @ index-B5CsSaLB.js:40
+(anonymous) @ index-B5CsSaLB.js:40
+mW @ index-B5CsSaLB.js:38
+S1 @ index-B5CsSaLB.js:40
+Qh @ index-B5CsSaLB.js:40
+xhe @ index-B5CsSaLB.js:40
+Cu @ index-B5CsSaLB.js:40
+GM @ index-B5CsSaLB.js:40
+nu @ index-B5CsSaLB.js:38
+(anonymous) @ index-B5CsSaLB.js:40
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+Promise.then
+S @ out-4.5.44.js:1
+y @ out-4.5.44.js:1
+E @ out-4.5.44.js:1
+e @ inner.html:1
+index-B5CsSaLB.js:1032 Fetch finished loading: POST "https://app.matchpro.ai/api/admin/tournaments/1656618593/scheduling/start".
+mutationFn @ index-B5CsSaLB.js:1032
+fn @ index-B5CsSaLB.js:40
+f @ index-B5CsSaLB.js:40
+start @ index-B5CsSaLB.js:40
+execute @ index-B5CsSaLB.js:40
+await in execute
+mutate @ index-B5CsSaLB.js:40
+(anonymous) @ index-B5CsSaLB.js:40
+i @ index-B5CsSaLB.js:1032
+onClick @ index-B5CsSaLB.js:1032
+Iue @ index-B5CsSaLB.js:37
+Mue @ index-B5CsSaLB.js:37
+$ue @ index-B5CsSaLB.js:37
+fM @ index-B5CsSaLB.js:37
+Qq @ index-B5CsSaLB.js:37
+(anonymous) @ index-B5CsSaLB.js:37
+NO @ index-B5CsSaLB.js:40
+jq @ index-B5CsSaLB.js:37
+E2 @ index-B5CsSaLB.js:37
+X4 @ index-B5CsSaLB.js:37
+eme @ index-B5CsSaLB.js:37
+index-B5CsSaLB.js:1032  GET https://app.matchpro.ai/api/admin/events/1656618593/workflow-progress?type=scheduling 404 (Not Found)
+queryFn @ index-B5CsSaLB.js:1032
+i @ index-B5CsSaLB.js:40
+f @ index-B5CsSaLB.js:40
+start @ index-B5CsSaLB.js:40
+fetch @ index-B5CsSaLB.js:40
+Zx @ index-B5CsSaLB.js:40
+onSubscribe @ index-B5CsSaLB.js:40
+subscribe @ index-B5CsSaLB.js:40
+(anonymous) @ index-B5CsSaLB.js:40
+mW @ index-B5CsSaLB.js:38
+S1 @ index-B5CsSaLB.js:40
+Qh @ index-B5CsSaLB.js:40
+GM @ index-B5CsSaLB.js:40
+nu @ index-B5CsSaLB.js:38
+xhe @ index-B5CsSaLB.js:40
+Cu @ index-B5CsSaLB.js:40
+GW @ index-B5CsSaLB.js:40
+N @ index-B5CsSaLB.js:25
+T @ index-B5CsSaLB.js:25Understand this error
+index-B5CsSaLB.js:1032 Fetch failed loading: GET "https://app.matchpro.ai/api/admin/events/1656618593/workflow-progress?type=scheduling".
+queryFn @ index-B5CsSaLB.js:1032
+i @ index-B5CsSaLB.js:40
+f @ index-B5CsSaLB.js:40
+start @ index-B5CsSaLB.js:40
+fetch @ index-B5CsSaLB.js:40
+Zx @ index-B5CsSaLB.js:40
+onSubscribe @ index-B5CsSaLB.js:40
+subscribe @ index-B5CsSaLB.js:40
+(anonymous) @ index-B5CsSaLB.js:40
+mW @ index-B5CsSaLB.js:38
+S1 @ index-B5CsSaLB.js:40
+Qh @ index-B5CsSaLB.js:40
+GM @ index-B5CsSaLB.js:40
+nu @ index-B5CsSaLB.js:38
+xhe @ index-B5CsSaLB.js:40
+Cu @ index-B5CsSaLB.js:40
+GW @ index-B5CsSaLB.js:40
+N @ index-B5CsSaLB.js:25
+T @ index-B5CsSaLB.js:25
+index-B5CsSaLB.js:1032  POST https://app.matchpro.ai/api/admin/events/1656618593/workflow-progress 500 (Internal Server Error)
+mutationFn @ index-B5CsSaLB.js:1032
+fn @ index-B5CsSaLB.js:40
+f @ index-B5CsSaLB.js:40
+start @ index-B5CsSaLB.js:40
+execute @ index-B5CsSaLB.js:40
+await in execute
+mutate @ index-B5CsSaLB.js:40
+(anonymous) @ index-B5CsSaLB.js:40
+g @ index-B5CsSaLB.js:1032
+(anonymous) @ index-B5CsSaLB.js:1032
+S1 @ index-B5CsSaLB.js:40
+Qh @ index-B5CsSaLB.js:40
+GM @ index-B5CsSaLB.js:40
+nu @ index-B5CsSaLB.js:38
+xhe @ index-B5CsSaLB.js:40
+Cu @ index-B5CsSaLB.js:40
+GW @ index-B5CsSaLB.js:40
+N @ index-B5CsSaLB.js:25
+T @ index-B5CsSaLB.js:25Understand this error
+index-B5CsSaLB.js:1032 Progress save failed: Error: Failed to save progress
+    at Object.mutationFn (index-B5CsSaLB.js:1032:15568)
+onError @ index-B5CsSaLB.js:1032
+execute @ index-B5CsSaLB.js:40
+await in execute
+mutate @ index-B5CsSaLB.js:40
+(anonymous) @ index-B5CsSaLB.js:40
+g @ index-B5CsSaLB.js:1032
+(anonymous) @ index-B5CsSaLB.js:1032
+S1 @ index-B5CsSaLB.js:40
+Qh @ index-B5CsSaLB.js:40
+GM @ index-B5CsSaLB.js:40
+nu @ index-B5CsSaLB.js:38
+xhe @ index-B5CsSaLB.js:40
+Cu @ index-B5CsSaLB.js:40
+GW @ index-B5CsSaLB.js:40
+N @ index-B5CsSaLB.js:25
+T @ index-B5CsSaLB.js:25Understand this error
+index-B5CsSaLB.js:1032 Fetch finished loading: GET "https://app.matchpro.ai/api/admin/events/1656618593".
+queryFn @ index-B5CsSaLB.js:1032
+i @ index-B5CsSaLB.js:40
+f @ index-B5CsSaLB.js:40
+start @ index-B5CsSaLB.js:40
+fetch @ index-B5CsSaLB.js:40
+Zx @ index-B5CsSaLB.js:40
+onSubscribe @ index-B5CsSaLB.js:40
+subscribe @ index-B5CsSaLB.js:40
+(anonymous) @ index-B5CsSaLB.js:40
+mW @ index-B5CsSaLB.js:38
+S1 @ index-B5CsSaLB.js:40
+Qh @ index-B5CsSaLB.js:40
+GM @ index-B5CsSaLB.js:40
+nu @ index-B5CsSaLB.js:38
+xhe @ index-B5CsSaLB.js:40
+Cu @ index-B5CsSaLB.js:40
+GW @ index-B5CsSaLB.js:40
+N @ index-B5CsSaLB.js:25
+T @ index-B5CsSaLB.js:25
+index-B5CsSaLB.js:40 ReferenceError: React is not defined
+    at $de (index-B5CsSaLB.js:1032:87672)
+    at pO (index-B5CsSaLB.js:38:17031)
+    at iP (index-B5CsSaLB.js:40:3143)
+    at QW (index-B5CsSaLB.js:40:44880)
+    at HW (index-B5CsSaLB.js:40:39822)
+    at fhe (index-B5CsSaLB.js:40:39748)
+    at nw (index-B5CsSaLB.js:40:39598)
+    at gP (index-B5CsSaLB.js:40:35960)
+    at GM (index-B5CsSaLB.js:40:36765)
+    at nu (index-B5CsSaLB.js:38:3288)
+aP @ index-B5CsSaLB.js:40
+PW.r.callback @ index-B5CsSaLB.js:40
+CM @ index-B5CsSaLB.js:38
+zM @ index-B5CsSaLB.js:40
+VW @ index-B5CsSaLB.js:40
+uhe @ index-B5CsSaLB.js:40
+xhe @ index-B5CsSaLB.js:40
+Cu @ index-B5CsSaLB.js:40
+GM @ index-B5CsSaLB.js:40
+nu @ index-B5CsSaLB.js:38
+(anonymous) @ index-B5CsSaLB.js:40
+setTimeout
+Ihe @ index-B5CsSaLB.js:40
+o @ index-B5CsSaLB.js:40
+batch @ index-B5CsSaLB.js:40
+rc @ index-B5CsSaLB.js:40
+setData @ index-B5CsSaLB.js:40
+onSuccess @ index-B5CsSaLB.js:40
+m @ index-B5CsSaLB.js:40
+Promise.then
+f @ index-B5CsSaLB.js:40
+start @ index-B5CsSaLB.js:40
+fetch @ index-B5CsSaLB.js:40
+Zx @ index-B5CsSaLB.js:40
+onSubscribe @ index-B5CsSaLB.js:40
+subscribe @ index-B5CsSaLB.js:40
+(anonymous) @ index-B5CsSaLB.js:40
+mW @ index-B5CsSaLB.js:38
+S1 @ index-B5CsSaLB.js:40
+Qh @ index-B5CsSaLB.js:40
+GM @ index-B5CsSaLB.js:40
+nu @ index-B5CsSaLB.js:38
+xhe @ index-B5CsSaLB.js:40
+Cu @ index-B5CsSaLB.js:40
+GW @ index-B5CsSaLB.js:40
+N @ index-B5CsSaLB.js:25
+T @ index-B5CsSaLB.js:25Understand this error
+index-B5CsSaLB.js:1032 Uncaught ReferenceError: React is not defined
+    at $de (index-B5CsSaLB.js:1032:87672)
+    at pO (index-B5CsSaLB.js:38:17031)
+    at iP (index-B5CsSaLB.js:40:3143)
+    at QW (index-B5CsSaLB.js:40:44880)
+    at HW (index-B5CsSaLB.js:40:39822)
+    at fhe (index-B5CsSaLB.js:40:39748)
+    at nw (index-B5CsSaLB.js:40:39598)
+    at gP (index-B5CsSaLB.js:40:35960)
+    at GM (index-B5CsSaLB.js:40:36765)
+    at nu (index-B5CsSaLB.js:38:3288)
+$de @ index-B5CsSaLB.js:1032
+pO @ index-B5CsSaLB.js:38
+iP @ index-B5CsSaLB.js:40
+QW @ index-B5CsSaLB.js:40
+HW @ index-B5CsSaLB.js:40
+fhe @ index-B5CsSaLB.js:40
+nw @ index-B5CsSaLB.js:40
+gP @ index-B5CsSaLB.js:40
+GM @ index-B5CsSaLB.js:40
+nu @ index-B5CsSaLB.js:38
+(anonymous) @ index-B5CsSaLB.js:40
+setTimeout
+Ihe @ index-B5CsSaLB.js:40
+o @ index-B5CsSaLB.js:40
+batch @ index-B5CsSaLB.js:40
+rc @ index-B5CsSaLB.js:40
+setData @ index-B5CsSaLB.js:40
+onSuccess @ index-B5CsSaLB.js:40
+m @ index-B5CsSaLB.js:40
+Promise.then
+f @ index-B5CsSaLB.js:40
+start @ index-B5CsSaLB.js:40
+fetch @ index-B5CsSaLB.js:40
+Zx @ index-B5CsSaLB.js:40
+onSubscribe @ index-B5CsSaLB.js:40
+subscribe @ index-B5CsSaLB.js:40
+(anonymous) @ index-B5CsSaLB.js:40
+mW @ index-B5CsSaLB.js:38
+S1 @ index-B5CsSaLB.js:40
+Qh @ index-B5CsSaLB.js:40
+GM @ index-B5CsSaLB.js:40
+nu @ index-B5CsSaLB.js:38
+xhe @ index-B5CsSaLB.js:40
+Cu @ index-B5CsSaLB.js:40
+GW @ index-B5CsSaLB.js:40
+N @ index-B5CsSaLB.js:25
+T @ index-B5CsSaLB.js:25Understand this error
+index-B5CsSaLB.js:1032  POST https://app.matchpro.ai/api/admin/events/1656618593/workflow-progress 500 (Internal Server Error)
+mutationFn @ index-B5CsSaLB.js:1032
+fn @ index-B5CsSaLB.js:40
+f @ index-B5CsSaLB.js:40
+start @ index-B5CsSaLB.js:40
+execute @ index-B5CsSaLB.js:40
+await in execute
+mutate @ index-B5CsSaLB.js:40
+(anonymous) @ index-B5CsSaLB.js:40
+g @ index-B5CsSaLB.js:1032
+(anonymous) @ index-B5CsSaLB.js:1032
+S1 @ index-B5CsSaLB.js:40
+Qh @ index-B5CsSaLB.js:40
+xhe @ index-B5CsSaLB.js:40
+Cu @ index-B5CsSaLB.js:40
+GM @ index-B5CsSaLB.js:40
+nu @ index-B5CsSaLB.js:38
+(anonymous) @ index-B5CsSaLB.js:40
+setTimeout
+Ihe @ index-B5CsSaLB.js:40
+o @ index-B5CsSaLB.js:40
+batch @ index-B5CsSaLB.js:40
+rc @ index-B5CsSaLB.js:40
+setData @ index-B5CsSaLB.js:40
+onSuccess @ index-B5CsSaLB.js:40
+m @ index-B5CsSaLB.js:40
+Promise.then
+f @ index-B5CsSaLB.js:40
+start @ index-B5CsSaLB.js:40
+fetch @ index-B5CsSaLB.js:40
+Zx @ index-B5CsSaLB.js:40
+onSubscribe @ index-B5CsSaLB.js:40
+subscribe @ index-B5CsSaLB.js:40
+(anonymous) @ index-B5CsSaLB.js:40
+mW @ index-B5CsSaLB.js:38
+S1 @ index-B5CsSaLB.js:40
+Qh @ index-B5CsSaLB.js:40
+GM @ index-B5CsSaLB.js:40
+nu @ index-B5CsSaLB.js:38
+xhe @ index-B5CsSaLB.js:40
+Cu @ index-B5CsSaLB.js:40
+GW @ index-B5CsSaLB.js:40
+N @ index-B5CsSaLB.js:25
+T @ index-B5CsSaLB.js:25Understand this error
+index-B5CsSaLB.js:1032 Progress save failed: Error: Failed to save progress
+    at Object.mutationFn (index-B5CsSaLB.js:1032:15568)
+onError @ index-B5CsSaLB.js:1032
+execute @ index-B5CsSaLB.js:40
+await in execute
+mutate @ index-B5CsSaLB.js:40
+(anonymous) @ index-B5CsSaLB.js:40
+g @ index-B5CsSaLB.js:1032
+(anonymous) @ index-B5CsSaLB.js:1032
+S1 @ index-B5CsSaLB.js:40
+Qh @ index-B5CsSaLB.js:40
+xhe @ index-B5CsSaLB.js:40
+Cu @ index-B5CsSaLB.js:40
+GM @ index-B5CsSaLB.js:40
+nu @ index-B5CsSaLB.js:38
+(anonymous) @ index-B5CsSaLB.js:40
+setTimeout
+Ihe @ index-B5CsSaLB.js:40
+o @ index-B5CsSaLB.js:40
+batch @ index-B5CsSaLB.js:40
+rc @ index-B5CsSaLB.js:40
+setData @ index-B5CsSaLB.js:40
+onSuccess @ index-B5CsSaLB.js:40
+m @ index-B5CsSaLB.js:40
+Promise.then
+f @ index-B5CsSaLB.js:40
+start @ index-B5CsSaLB.js:40
+fetch @ index-B5CsSaLB.js:40
+Zx @ index-B5CsSaLB.js:40
+onSubscribe @ index-B5CsSaLB.js:40
+subscribe @ index-B5CsSaLB.js:40
+(anonymous) @ index-B5CsSaLB.js:40
+mW @ index-B5CsSaLB.js:38
+S1 @ index-B5CsSaLB.js:40
+Qh @ index-B5CsSaLB.js:40
+GM @ index-B5CsSaLB.js:40
+nu @ index-B5CsSaLB.js:38
+xhe @ index-B5CsSaLB.js:40
+Cu @ index-B5CsSaLB.js:40
+GW @ index-B5CsSaLB.js:40
+N @ index-B5CsSaLB.js:25
+T @ index-B5CsSaLB.js:25Understand this error
+index-B5CsSaLB.js:1032 Fetch failed loading: POST "https://app.matchpro.ai/api/admin/events/1656618593/workflow-progress".
+mutationFn @ index-B5CsSaLB.js:1032
+fn @ index-B5CsSaLB.js:40
+f @ index-B5CsSaLB.js:40
+start @ index-B5CsSaLB.js:40
+execute @ index-B5CsSaLB.js:40
+await in execute
+mutate @ index-B5CsSaLB.js:40
+(anonymous) @ index-B5CsSaLB.js:40
+g @ index-B5CsSaLB.js:1032
+(anonymous) @ index-B5CsSaLB.js:1032
+S1 @ index-B5CsSaLB.js:40
+Qh @ index-B5CsSaLB.js:40
+GM @ index-B5CsSaLB.js:40
+nu @ index-B5CsSaLB.js:38
+xhe @ index-B5CsSaLB.js:40
+Cu @ index-B5CsSaLB.js:40
+GW @ index-B5CsSaLB.js:40
+N @ index-B5CsSaLB.js:25
+T @ index-B5CsSaLB.js:25
+index-B5CsSaLB.js:1032 Fetch failed loading: POST "https://app.matchpro.ai/api/admin/events/1656618593/workflow-progress".
+mutationFn @ index-B5CsSaLB.js:1032
+fn @ index-B5CsSaLB.js:40
+f @ index-B5CsSaLB.js:40
+start @ index-B5CsSaLB.js:40
+execute @ index-B5CsSaLB.js:40
+await in execute
+mutate @ index-B5CsSaLB.js:40
+(anonymous) @ index-B5CsSaLB.js:40
+g @ index-B5CsSaLB.js:1032
+(anonymous) @ index-B5CsSaLB.js:1032
+S1 @ index-B5CsSaLB.js:40
+Qh @ index-B5CsSaLB.js:40
+xhe @ index-B5CsSaLB.js:40
+Cu @ index-B5CsSaLB.js:40
+GM @ index-B5CsSaLB.js:40
+nu @ index-B5CsSaLB.js:38
+(anonymous) @ index-B5CsSaLB.js:40
+setTimeout
+Ihe @ index-B5CsSaLB.js:40
+o @ index-B5CsSaLB.js:40
+batch @ index-B5CsSaLB.js:40
+rc @ index-B5CsSaLB.js:40
+setData @ index-B5CsSaLB.js:40
+onSuccess @ index-B5CsSaLB.js:40
+m @ index-B5CsSaLB.js:40
+Promise.then
+f @ index-B5CsSaLB.js:40
+start @ index-B5CsSaLB.js:40
+fetch @ index-B5CsSaLB.js:40
+Zx @ index-B5CsSaLB.js:40
+onSubscribe @ index-B5CsSaLB.js:40
+subscribe @ index-B5CsSaLB.js:40
+(anonymous) @ index-B5CsSaLB.js:40
+mW @ index-B5CsSaLB.js:38
+S1 @ index-B5CsSaLB.js:40
+Qh @ index-B5CsSaLB.js:40
+GM @ index-B5CsSaLB.js:40
+nu @ index-B5CsSaLB.js:38
+xhe @ index-B5CsSaLB.js:40
+Cu @ index-B5CsSaLB.js:40
+GW @ index-B5CsSaLB.js:40
+N @ index-B5CsSaLB.js:25
+T @ index-B5CsSaLB.js:25

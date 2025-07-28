@@ -175,12 +175,15 @@ export function useWorkflowProgress(eventId: string, workflowType: 'scheduling' 
   const clearProgress = async () => {
     try {
       await fetch(`/api/admin/events/${eventId}/workflow-progress?type=${workflowType}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        credentials: 'include'
       });
       queryClient.removeQueries({ queryKey: ['workflow-progress', eventId, workflowType] });
       setIsDirty(false);
+      return { success: true, message: "Progress cleared successfully" };
     } catch (error) {
       console.error('Failed to clear progress:', error);
+      return { success: false, message: "Failed to clear progress" };
     }
   };
 

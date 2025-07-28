@@ -7,7 +7,7 @@ import { eq, and } from 'drizzle-orm';
 const router = Router();
 
 // Get workflow progress
-router.get('/events/:eventId/workflow-progress', async (req, res) => {
+router.get('/events/:eventId/workflow-progress', isAdmin, async (req, res) => {
   try {
     const { eventId } = req.params;
     const { type } = req.query;
@@ -32,7 +32,7 @@ router.get('/events/:eventId/workflow-progress', async (req, res) => {
 });
 
 // Save/update workflow progress
-router.post('/events/:eventId/workflow-progress', async (req, res) => {
+router.post('/events/:eventId/workflow-progress', isAdmin, async (req, res) => {
   try {
     const { eventId } = req.params;
     const progressData = req.body;
@@ -127,6 +127,26 @@ router.get('/events/:eventId/workflow-sessions', async (req, res) => {
   } catch (error) {
     console.error('Failed to get workflow sessions:', error);
     res.status(500).json({ error: 'Failed to load workflow sessions' });
+  }
+});
+
+// Delete workflow progress (start fresh)
+router.delete('/events/:eventId/workflow-progress', isAdmin, async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const { type } = req.query;
+    const workflowType = type as string || 'scheduling';
+
+    await db.delete(workflowProgress)
+      .where(and(
+        eq(workflowProgress.eventId, parseInt(eventId)),
+        eq(workflowProgress.workflowType, workflowType)
+      ));
+
+    res.json({ success: true, message: 'Workflow progress cleared successfully' });
+  } catch (error) {
+    console.error('Failed to clear workflow progress:', error);
+    res.status(500).json({ error: 'Failed to clear workflow progress' });
   }
 });
 
