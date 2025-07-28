@@ -1211,7 +1211,7 @@ export const coupons = pgTable("coupons", {
 
 export const insertCouponSchema = createInsertSchema(coupons, {
   code: z.string().min(1, "Coupon code is required"),
-  discountType: z.enum(['fixed', 'percentage'], "Invalid discount type"),
+  discountType: z.enum(['fixed', 'percentage']),
   amount: z.number().positive("Amount must be positive"),
   expirationDate: z.string().min(1, "Expiration date is required"),
   description: z.string().optional(),
