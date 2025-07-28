@@ -25,6 +25,7 @@ import { RefereeAssignmentEngine } from "./RefereeAssignmentEngine";
 import { GameMetadataSetup } from "./GameMetadataSetup";
 import { FieldCapacityAnalyzer } from "./FieldCapacityAnalyzer";
 import { AutomatedSchedulingEngine } from "./AutomatedSchedulingEngine";
+import { TrueAutomatedScheduler } from "./TrueAutomatedScheduler";
 import { SchedulingWorkflowGuide } from "./SchedulingWorkflowGuide";
 
 interface EnhancedSchedulingWorkflowProps {
@@ -85,13 +86,13 @@ export function EnhancedSchedulingWorkflow({ eventId, onComplete }: EnhancedSche
     }
   });
 
-  // Define the enhanced workflow with automated scheduling option
+  // Define the enhanced workflow with TRUE automated scheduling
   const workflowSteps: WorkflowStep[] = [
     {
-      id: 'automated-scheduling',
-      title: 'Automated Scheduling Engine',
-      description: 'Generate complete tournament schedule automatically for all approved teams',
-      component: AutomatedSchedulingEngine,
+      id: 'true-automated-scheduling',
+      title: 'One-Click Tournament Scheduling',
+      description: 'Generate complete tournament schedule instantly - no configuration required',
+      component: TrueAutomatedScheduler,
       status: 'pending',
       requiresCompletion: false
     },
