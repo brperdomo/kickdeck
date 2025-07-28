@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useWorkflowProgress } from '@/hooks/useWorkflowProgress';
+import { useToast } from '@/hooks/use-toast';
 import { WorkflowProgressIndicator } from './WorkflowProgressIndicator';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -56,6 +57,7 @@ export function EnhancedSchedulingWorkflow({ eventId, onComplete }: EnhancedSche
   const [currentStep, setCurrentStep] = useState(0);
   const [workflowData, setWorkflowData] = useState<WorkflowData>({});
   const [stepStatuses, setStepStatuses] = useState<{[key: string]: 'pending' | 'active' | 'completed' | 'skipped'}>({});
+  const { toast } = useToast();
 
   // Initialize progress saving
   const {
@@ -66,7 +68,8 @@ export function EnhancedSchedulingWorkflow({ eventId, onComplete }: EnhancedSche
     enableAutoSave,
     getStepData,
     isStepComplete,
-    getCurrentStep
+    getCurrentStep,
+    clearProgress
   } = useWorkflowProgress(eventId, 'scheduling');
 
   // Fetch event data for workflow
