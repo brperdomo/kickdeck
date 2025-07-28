@@ -76,6 +76,8 @@ const MemberMergeInterface = lazy(() => import("@/components/admin/MemberMergeIn
 import TournamentSchedulingHub from "@/pages/TournamentSchedulingHub";
 // Standalone scheduling dashboard
 import SchedulingDashboard from "@/pages/SchedulingDashboard";
+// 7-Step Tournament System
+import TournamentSystemPage from "@/pages/admin/TournamentSystemPage";
 
 // Import landing page components
 import LandingPage from "@/pages/landing-page";
@@ -331,6 +333,9 @@ function Router() {
           </Route>
           <Route path="/admin/scheduling">
             {user.isAdmin ? <SchedulingDashboard /> : <NotFound />}
+          </Route>
+          <Route path="/admin/tournament-system">
+            {user.isAdmin ? <TournamentSystemPage /> : <NotFound />}
           </Route>
           <Route path="/admin/reports">
             {user.isAdmin ? <AdminDashboard initialView="reports" /> : <NotFound />}
