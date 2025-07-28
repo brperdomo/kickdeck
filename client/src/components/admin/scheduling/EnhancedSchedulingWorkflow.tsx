@@ -9,7 +9,7 @@ import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { 
   ArrowRight, CheckCircle, Clock, Users, Trophy, 
-  Zap, BarChart3, Settings, Calendar, Target
+  Zap, BarChart3, Settings, Calendar, Target, RotateCcw
 } from "lucide-react";
 
 // Import the advanced scheduling components
@@ -355,6 +355,46 @@ export function EnhancedSchedulingWorkflow({ eventId, onComplete }: EnhancedSche
     }
   };
 
+  const handleStartFresh = async () => {
+    try {
+      // Clear all workflow progress
+      await clearProgress();
+      
+      // Reset all state
+      setCurrentStep(0);
+      setWorkflowData({});
+      
+      // Reset step statuses
+      const freshStatuses: {[key: string]: 'pending' | 'active' | 'completed' | 'skipped'} = {};
+      workflowSteps.forEach((step, index) => {
+        freshStatuses[step.id] = index === 0 ? 'active' : 'pending';
+      });
+      setStepStatuses(freshStatuses);
+      
+      // Initialize fresh progress tracking
+      const initialSteps = workflowSteps.map(step => ({
+        stepId: step.id,
+        stepName: step.title,
+        isComplete: false,
+        data: {}
+      }));
+      initializeProgress(initialSteps);
+      
+      toast({
+        title: "Workflow Reset",
+        description: "Started fresh with a clean scheduling workflow.",
+        variant: "default"
+      });
+    } catch (error) {
+      console.error('Failed to start fresh:', error);
+      toast({
+        title: "Reset Failed",
+        description: "Could not reset the workflow. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+
   const getStepIcon = (step: WorkflowStep) => {
     const status = stepStatuses[step.id];
     
@@ -407,13 +447,27 @@ export function EnhancedSchedulingWorkflow({ eventId, onComplete }: EnhancedSche
       {/* Workflow Header */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Zap className="h-6 w-6" />
-            Enhanced Tournament Scheduling Workflow
-          </CardTitle>
-          <p className="text-muted-foreground">
-            Smart, interactive, and scalable scheduling system with advanced features for comprehensive tournament management.
-          </p>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <Zap className="h-6 w-6" />
+                Enhanced Tournament Scheduling Workflow
+              </CardTitle>
+              <p className="text-muted-foreground">
+                Smart, interactive, and scalable scheduling system with advanced features for comprehensive tournament management.
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                onClick={handleStartFresh}
+                className="text-red-600 hover:text-red-700 hover:bg-red-50"
+              >
+                <RotateCcw className="h-4 w-4 mr-2" />
+                Start Fresh
+              </Button>
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="mb-4">
