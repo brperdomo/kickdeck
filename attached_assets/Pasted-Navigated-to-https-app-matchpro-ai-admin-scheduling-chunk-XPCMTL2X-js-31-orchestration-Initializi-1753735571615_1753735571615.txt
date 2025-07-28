@@ -1,0 +1,250 @@
+Navigated to https://app.matchpro.ai/admin/scheduling
+chunk-XPCMTL2X.js:31 orchestration: Initializing config store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-XPCMTL2X.js:31 orchestration: Initializing feature flag store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-XPCMTL2X.js:31 orchestration: Initializing user store with state {pill-player: {…}}
+chunk-XPCMTL2X.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+js?libraries=places&v=beta&callback=Function.prototype:1367 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1367
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1612
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1612Understand this warning
+index-ByjwIgtM.js:851 Google Maps API key length: 0 characters
+index-ByjwIgtM.js:851 Mapbox API key length: 93 characters
+index-ByjwIgtM.js:851 Google Maps API already loaded
+index-ByjwIgtM.js:676 Current route location (Wouter): /admin/scheduling
+index-ByjwIgtM.js:676 Current URL: https://app.matchpro.ai/admin/scheduling
+index-ByjwIgtM.js:676 Current pathname: /admin/scheduling
+index-ByjwIgtM.js:676 Current search: 
+index-ByjwIgtM.js:676 Fetching user with emulation token: not present
+js?libraries=places&v=beta&callback=Function.prototype:1399 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+_.B.send @ js?libraries=places&v=beta&callback=Function.prototype:1399
+hda @ js?libraries=places&v=beta&callback=Function.prototype:1376
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1368
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1612
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1612
+index-ByjwIgtM.js:676 User data fetched: {id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: '$2b$12$d6n1CBWgsWFm0fh77F1OX.YxDZy7/O3aLSuJOuq4QkvOtFmSit7BC', firstName: 'Bryan', …}
+index-ByjwIgtM.js:676 Fetch finished loading: GET "https://app.matchpro.ai/api/user".
+rSe @ index-ByjwIgtM.js:676
+i @ index-ByjwIgtM.js:40
+f @ index-ByjwIgtM.js:40
+start @ index-ByjwIgtM.js:40
+fetch @ index-ByjwIgtM.js:40
+Zx @ index-ByjwIgtM.js:40
+onSubscribe @ index-ByjwIgtM.js:40
+subscribe @ index-ByjwIgtM.js:40
+(anonymous) @ index-ByjwIgtM.js:40
+mW @ index-ByjwIgtM.js:38
+S1 @ index-ByjwIgtM.js:40
+Qh @ index-ByjwIgtM.js:40
+GM @ index-ByjwIgtM.js:40
+nu @ index-ByjwIgtM.js:38
+xhe @ index-ByjwIgtM.js:40
+Cu @ index-ByjwIgtM.js:40
+GW @ index-ByjwIgtM.js:40
+N @ index-ByjwIgtM.js:25
+T @ index-ByjwIgtM.js:25
+scheduling:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+scheduling:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+index-ByjwIgtM.js:668 Fetch failed loading: GET "https://app.matchpro.ai/api/user".
+queryFn @ index-ByjwIgtM.js:668
+i @ index-ByjwIgtM.js:40
+f @ index-ByjwIgtM.js:40
+start @ index-ByjwIgtM.js:40
+fetch @ index-ByjwIgtM.js:40
+Zx @ index-ByjwIgtM.js:40
+onSubscribe @ index-ByjwIgtM.js:40
+subscribe @ index-ByjwIgtM.js:40
+(anonymous) @ index-ByjwIgtM.js:40
+mW @ index-ByjwIgtM.js:38
+S1 @ index-ByjwIgtM.js:40
+Qh @ index-ByjwIgtM.js:40
+GM @ index-ByjwIgtM.js:40
+nu @ index-ByjwIgtM.js:38
+xhe @ index-ByjwIgtM.js:40
+Cu @ index-ByjwIgtM.js:40
+GW @ index-ByjwIgtM.js:40
+N @ index-ByjwIgtM.js:25
+T @ index-ByjwIgtM.js:25
+index-ByjwIgtM.js:1032  GET https://app.matchpro.ai/api/admin/tournaments/scheduling? 500 (Internal Server Error)
+queryFn @ index-ByjwIgtM.js:1032
+i @ index-ByjwIgtM.js:40
+f @ index-ByjwIgtM.js:40
+start @ index-ByjwIgtM.js:40
+fetch @ index-ByjwIgtM.js:40
+Zx @ index-ByjwIgtM.js:40
+onSubscribe @ index-ByjwIgtM.js:40
+subscribe @ index-ByjwIgtM.js:40
+(anonymous) @ index-ByjwIgtM.js:40
+mW @ index-ByjwIgtM.js:38
+S1 @ index-ByjwIgtM.js:40
+Qh @ index-ByjwIgtM.js:40
+xhe @ index-ByjwIgtM.js:40
+Cu @ index-ByjwIgtM.js:40
+GM @ index-ByjwIgtM.js:40
+nu @ index-ByjwIgtM.js:38
+(anonymous) @ index-ByjwIgtM.js:40
+setTimeout
+Ihe @ index-ByjwIgtM.js:40
+o @ index-ByjwIgtM.js:40
+batch @ index-ByjwIgtM.js:40
+rc @ index-ByjwIgtM.js:40
+setData @ index-ByjwIgtM.js:40
+onSuccess @ index-ByjwIgtM.js:40
+m @ index-ByjwIgtM.js:40
+Promise.then
+f @ index-ByjwIgtM.js:40
+start @ index-ByjwIgtM.js:40
+fetch @ index-ByjwIgtM.js:40
+Zx @ index-ByjwIgtM.js:40
+onSubscribe @ index-ByjwIgtM.js:40
+subscribe @ index-ByjwIgtM.js:40
+(anonymous) @ index-ByjwIgtM.js:40
+mW @ index-ByjwIgtM.js:38
+S1 @ index-ByjwIgtM.js:40
+Qh @ index-ByjwIgtM.js:40
+GM @ index-ByjwIgtM.js:40
+nu @ index-ByjwIgtM.js:38
+xhe @ index-ByjwIgtM.js:40
+Cu @ index-ByjwIgtM.js:40
+GW @ index-ByjwIgtM.js:40
+N @ index-ByjwIgtM.js:25
+T @ index-ByjwIgtM.js:25Understand this error
+index-ByjwIgtM.js:1032 Fetch failed loading: GET "https://app.matchpro.ai/api/admin/tournaments/scheduling?".
+queryFn @ index-ByjwIgtM.js:1032
+i @ index-ByjwIgtM.js:40
+f @ index-ByjwIgtM.js:40
+start @ index-ByjwIgtM.js:40
+fetch @ index-ByjwIgtM.js:40
+Zx @ index-ByjwIgtM.js:40
+onSubscribe @ index-ByjwIgtM.js:40
+subscribe @ index-ByjwIgtM.js:40
+(anonymous) @ index-ByjwIgtM.js:40
+mW @ index-ByjwIgtM.js:38
+S1 @ index-ByjwIgtM.js:40
+Qh @ index-ByjwIgtM.js:40
+xhe @ index-ByjwIgtM.js:40
+Cu @ index-ByjwIgtM.js:40
+GM @ index-ByjwIgtM.js:40
+nu @ index-ByjwIgtM.js:38
+(anonymous) @ index-ByjwIgtM.js:40
+setTimeout
+Ihe @ index-ByjwIgtM.js:40
+o @ index-ByjwIgtM.js:40
+batch @ index-ByjwIgtM.js:40
+rc @ index-ByjwIgtM.js:40
+setData @ index-ByjwIgtM.js:40
+onSuccess @ index-ByjwIgtM.js:40
+m @ index-ByjwIgtM.js:40
+Promise.then
+f @ index-ByjwIgtM.js:40
+start @ index-ByjwIgtM.js:40
+fetch @ index-ByjwIgtM.js:40
+Zx @ index-ByjwIgtM.js:40
+onSubscribe @ index-ByjwIgtM.js:40
+subscribe @ index-ByjwIgtM.js:40
+(anonymous) @ index-ByjwIgtM.js:40
+mW @ index-ByjwIgtM.js:38
+S1 @ index-ByjwIgtM.js:40
+Qh @ index-ByjwIgtM.js:40
+GM @ index-ByjwIgtM.js:40
+nu @ index-ByjwIgtM.js:38
+xhe @ index-ByjwIgtM.js:40
+Cu @ index-ByjwIgtM.js:40
+GW @ index-ByjwIgtM.js:40
+N @ index-ByjwIgtM.js:25
+T @ index-ByjwIgtM.js:25
+shared-20e68424b4e4b805fad66b8bbc59d74c.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+(anonymous) @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+e @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+c @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+g @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+value @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+value @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+log @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+log @ controller-with-preconnect-99e9340d25625d3b5fd47ee9904cd4ba.js:1
+e @ controller-with-preconnect-99e9340d25625d3b5fd47ee9904cd4ba.js:1
+55994 @ controller-with-preconnect-99e9340d25625d3b5fd47ee9904cd4ba.js:1
+e @ controller-with-preconnect-99e9340d25625d3b5fd47ee9904cd4ba.js:1
+(anonymous) @ controller-with-preconnect-99e9340d25625d3b5fd47ee9904cd4ba.js:1
+e.O @ controller-with-preconnect-99e9340d25625d3b5fd47ee9904cd4ba.js:1
+(anonymous) @ controller-with-preconnect-99e9340d25625d3b5fd47ee9904cd4ba.js:1
+(anonymous) @ controller-with-preconnect-99e9340d25625d3b5fd47ee9904cd4ba.js:1
+shared-20e68424b4e4b805fad66b8bbc59d74c.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+(anonymous) @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+e @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+c @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+g @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+value @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+value @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+value @ controller-with-preconnect-99e9340d25625d3b5fd47ee9904cd4ba.js:1
+e @ controller-with-preconnect-99e9340d25625d3b5fd47ee9904cd4ba.js:1
+value @ controller-with-preconnect-99e9340d25625d3b5fd47ee9904cd4ba.js:1
+e @ controller-with-preconnect-99e9340d25625d3b5fd47ee9904cd4ba.js:1
+55994 @ controller-with-preconnect-99e9340d25625d3b5fd47ee9904cd4ba.js:1
+e @ controller-with-preconnect-99e9340d25625d3b5fd47ee9904cd4ba.js:1
+(anonymous) @ controller-with-preconnect-99e9340d25625d3b5fd47ee9904cd4ba.js:1
+e.O @ controller-with-preconnect-99e9340d25625d3b5fd47ee9904cd4ba.js:1
+(anonymous) @ controller-with-preconnect-99e9340d25625d3b5fd47ee9904cd4ba.js:1
+(anonymous) @ controller-with-preconnect-99e9340d25625d3b5fd47ee9904cd4ba.js:1
+shared-20e68424b4e4b805fad66b8bbc59d74c.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+e @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+c @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+value @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+value @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+value @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+value @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+value @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+(anonymous) @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+setTimeout
+value @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+value @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+value @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+(anonymous) @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+value @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+value @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+(anonymous) @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+Promise.then
+value @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+value @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+log @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+log @ controller-with-preconnect-99e9340d25625d3b5fd47ee9904cd4ba.js:1
+e @ controller-with-preconnect-99e9340d25625d3b5fd47ee9904cd4ba.js:1
+55994 @ controller-with-preconnect-99e9340d25625d3b5fd47ee9904cd4ba.js:1
+e @ controller-with-preconnect-99e9340d25625d3b5fd47ee9904cd4ba.js:1
+(anonymous) @ controller-with-preconnect-99e9340d25625d3b5fd47ee9904cd4ba.js:1
+e.O @ controller-with-preconnect-99e9340d25625d3b5fd47ee9904cd4ba.js:1
+(anonymous) @ controller-with-preconnect-99e9340d25625d3b5fd47ee9904cd4ba.js:1
+(anonymous) @ controller-with-preconnect-99e9340d25625d3b5fd47ee9904cd4ba.js:1
+shared-20e68424b4e4b805fad66b8bbc59d74c.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+e @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+c @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+value @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+value @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+value @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+value @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+value @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+(anonymous) @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+setTimeout
+value @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+value @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+value @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+(anonymous) @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+value @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+value @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+(anonymous) @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+Promise.then
+value @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+value @ shared-20e68424b4e4b805fad66b8bbc59d74c.js:1
+value @ controller-with-preconnect-99e9340d25625d3b5fd47ee9904cd4ba.js:1
+e @ controller-with-preconnect-99e9340d25625d3b5fd47ee9904cd4ba.js:1
+value @ controller-with-preconnect-99e9340d25625d3b5fd47ee9904cd4ba.js:1
+e @ controller-with-preconnect-99e9340d25625d3b5fd47ee9904cd4ba.js:1
+55994 @ controller-with-preconnect-99e9340d25625d3b5fd47ee9904cd4ba.js:1
+e @ controller-with-preconnect-99e9340d25625d3b5fd47ee9904cd4ba.js:1
+(anonymous) @ controller-with-preconnect-99e9340d25625d3b5fd47ee9904cd4ba.js:1
+e.O @ controller-with-preconnect-99e9340d25625d3b5fd47ee9904cd4ba.js:1
+(anonymous) @ controller-with-preconnect-99e9340d25625d3b5fd47ee9904cd4ba.js:1
+(anonymous) @ controller-with-preconnect-99e9340d25625d3b5fd47ee9904cd4ba.js:1
