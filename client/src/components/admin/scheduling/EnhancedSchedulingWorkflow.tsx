@@ -23,6 +23,7 @@ import { RefereeAssignmentEngine } from "./RefereeAssignmentEngine";
 // Import existing workflow components
 import { GameMetadataSetup } from "./GameMetadataSetup";
 import { FieldCapacityAnalyzer } from "./FieldCapacityAnalyzer";
+import { AutomatedSchedulingEngine } from "./AutomatedSchedulingEngine";
 
 interface EnhancedSchedulingWorkflowProps {
   eventId: string;
@@ -78,8 +79,16 @@ export function EnhancedSchedulingWorkflow({ eventId, onComplete }: EnhancedSche
     }
   });
 
-  // Define the enhanced 7-step workflow with field capacity analysis
+  // Define the enhanced workflow with automated scheduling option
   const workflowSteps: WorkflowStep[] = [
+    {
+      id: 'automated-scheduling',
+      title: 'Automated Scheduling Engine',
+      description: 'Generate complete tournament schedule automatically for all approved teams',
+      component: AutomatedSchedulingEngine,
+      status: 'pending',
+      requiresCompletion: false
+    },
     {
       id: 'field-capacity',
       title: 'Field Capacity Analysis',

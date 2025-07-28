@@ -8,3 +8,7 @@ app.get('/api/admin/organization-settings', requireAdmin, async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch organization settings' });
   }
 });
+
+// Import and use automated scheduling routes
+import automatedSchedulingRouter from './admin/automated-scheduling.js';
+app.use('/api/admin', automatedSchedulingRouter);

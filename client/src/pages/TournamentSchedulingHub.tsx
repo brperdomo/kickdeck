@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { TournamentSelectionInterface } from '@/components/admin/scheduling/TournamentSelectionInterface';
 import { EnhancedSchedulingWorkflow } from '@/components/admin/scheduling/EnhancedSchedulingWorkflow';
+import { QuickScheduleButton } from '@/components/admin/scheduling/QuickScheduleButton';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from '@/hooks/use-toast';
 import { 
@@ -123,6 +124,15 @@ export default function TournamentSchedulingHub() {
                 </div>
               </div>
               <div className="flex items-center gap-2">
+                <QuickScheduleButton 
+                  eventId={selectedTournament.id}
+                  onScheduleComplete={(data) => {
+                    toast({
+                      title: "Schedule Generated Successfully!",
+                      description: `Created ${data.totalGames} games with optimal field assignments.`
+                    });
+                  }}
+                />
                 <Badge variant="secondary" className="bg-white/20 text-white">
                   Tournament ID: {selectedTournament.id}
                 </Badge>
