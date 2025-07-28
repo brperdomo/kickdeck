@@ -25,6 +25,7 @@ import { RefereeAssignmentEngine } from "./RefereeAssignmentEngine";
 import { GameMetadataSetup } from "./GameMetadataSetup";
 import { FieldCapacityAnalyzer } from "./FieldCapacityAnalyzer";
 import { AutomatedSchedulingEngine } from "./AutomatedSchedulingEngine";
+import { SchedulingWorkflowGuide } from "./SchedulingWorkflowGuide";
 
 interface EnhancedSchedulingWorkflowProps {
   eventId: string;
@@ -57,6 +58,8 @@ export function EnhancedSchedulingWorkflow({ eventId, onComplete }: EnhancedSche
   const [currentStep, setCurrentStep] = useState(0);
   const [workflowData, setWorkflowData] = useState<WorkflowData>({});
   const [stepStatuses, setStepStatuses] = useState<{[key: string]: 'pending' | 'active' | 'completed' | 'skipped'}>({});
+  const [showGuide, setShowGuide] = useState(true);
+  const [selectedPath, setSelectedPath] = useState<'automated' | 'manual' | null>(null);
   const { toast } = useToast();
 
   // Initialize progress saving
@@ -426,6 +429,24 @@ export function EnhancedSchedulingWorkflow({ eventId, onComplete }: EnhancedSche
     return 'text-gray-500';
   };
 
+  const handlePathSelection = (path: 'automated' | 'manual') => {
+    setSelectedPath(path);
+    setShowGuide(false);
+    
+    if (path === 'automated') {
+      // Go directly to automated scheduling
+      setCurrentStep(0); // First step is automated scheduling
+    } else {
+      // Start manual workflow from step 2 (skip automated)
+      setCurrentStep(1); // Skip automated, start at field capacity
+    }
+  };
+
+  const handleBackToGuide = () => {
+    setShowGuide(true);
+    setSelectedPath(null);
+  };
+
   const completedSteps = Object.values(stepStatuses).filter(status => status === 'completed').length;
   const progressPercentage = (completedSteps / workflowSteps.length) * 100;
 
@@ -439,6 +460,17 @@ export function EnhancedSchedulingWorkflow({ eventId, onComplete }: EnhancedSche
           </div>
         </CardContent>
       </Card>
+    );
+  }
+
+  // Show guide if user hasn't selected a path yet
+  if (showGuide && !selectedPath) {
+    return (
+      <div className="space-y-6">
+        <SchedulingWorkflowGuide 
+          onSelectPath={handlePathSelection}
+        />
+      </div>
     );
   }
 
@@ -461,6 +493,14 @@ export function EnhancedSchedulingWorkflow({ eventId, onComplete }: EnhancedSche
               </p>
             </div>
             <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                onClick={handleBackToGuide}
+                className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+              >
+                <ArrowRight className="h-4 w-4 mr-2 rotate-180" />
+                Back to Guide
+              </Button>
               <Button 
                 variant="outline" 
                 onClick={handleStartFresh}
