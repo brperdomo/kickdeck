@@ -44,7 +44,9 @@ export function TournamentSelectionInterface({
       if (statusFilter !== 'all') params.append('status', statusFilter);
       if (showWithProgress) params.append('hasProgress', 'true');
       
-      const response = await fetch(`/api/admin/tournaments/scheduling?${params}`);
+      const response = await fetch(`/api/admin/tournaments/scheduling?${params}`, {
+        credentials: 'include' // Include cookies for authentication
+      });
       if (!response.ok) throw new Error('Failed to fetch tournaments');
       return response.json();
     }
