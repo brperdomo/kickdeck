@@ -120,7 +120,8 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
   - API OPTIMIZATION: Improved tournament selection endpoint with step-by-step processing, proper error handling, and enhanced logging
   - DATA TYPE FIXES: Corrected teams table eventId field handling (string vs number) and proper Drizzle ORM syntax for count queries
   - SMART FILTERING: Added intelligent filtering to show only non-archived tournaments with approved teams (eliminates clutter from draft/empty tournaments)
-  - USER EXPERIENCE: Enhanced interface with clear messaging about smart filtering and team count display for ready-to-schedule tournaments
+  - USER EXPERIENCE: Enhanced interface with clear messaging about smart filtering and team count display for ready-to-schedule tournaments  
+  - AUTHENTICATION FIX: Resolved 500 Internal Server Error by fixing database import paths and adding credentials: 'include' to frontend API calls
   - PRODUCTION READY: Complete standalone scheduling dashboard operational with working tournament selection, session management, and automation features
   - FLAGSHIP POSITIONING: Designed as MatchPro's pride and joy feature with clean UI/UX showcasing AI-powered scheduling capabilities
   - COMPREHENSIVE FEATURES: Includes tournament selection, enhanced scheduling workflow, and all existing automation functionality

@@ -154,6 +154,14 @@ router.get('/scheduling', async (req, res) => {
 // POST /api/admin/tournaments/:id/scheduling/start - Start or continue scheduling
 router.post('/:id/scheduling/start', async (req, res) => {
   try {
+    console.log('Tournament scheduling start request:', {
+      tournamentId: req.params.id,
+      mode: req.body?.mode,
+      sessionId: req.sessionID,
+      userId: req.user?.id,
+      userEmail: req.user?.email
+    });
+    
     const { id } = req.params;
     const { mode } = req.body; // 'continue' | 'fresh'
     const sessionId = req.sessionID;
@@ -211,7 +219,12 @@ router.post('/:id/scheduling/start', async (req, res) => {
       redirectUrl: `/admin/events/${id}/scheduling/enhanced`
     });
   } catch (error) {
-    console.error('Error starting tournament scheduling:', error);
+    console.error('Error starting tournament scheduling:', {
+      error: error instanceof Error ? error.message : error,
+      stack: error instanceof Error ? error.stack : undefined,
+      tournamentId: req.params.id,
+      mode: req.body?.mode
+    });
     res.status(500).json({ 
       error: 'Failed to start scheduling',
       details: error instanceof Error ? error.message : 'Unknown error'

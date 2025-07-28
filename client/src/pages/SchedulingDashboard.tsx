@@ -32,10 +32,19 @@ export default function SchedulingDashboard() {
       const response = await fetch(`/api/admin/tournaments/${tournamentId}/scheduling/start`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include', // Include cookies for authentication
         body: JSON.stringify({ mode })
       });
       
-      if (!response.ok) throw new Error('Failed to start scheduling session');
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('Failed to start scheduling session:', {
+          status: response.status,
+          statusText: response.statusText,
+          error: errorData
+        });
+        throw new Error('Failed to start scheduling session');
+      }
       return response.json();
     },
     onSuccess: (data) => {
