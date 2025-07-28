@@ -8,6 +8,11 @@ import {
   CheckCircle, Clock, ArrowRight, Play
 } from 'lucide-react';
 import { TournamentParametersSetup } from './TournamentParametersSetup';
+import { FlightCreationStep } from './FlightCreationStep';
+import { BracketGenerationStep } from './BracketGenerationStep';
+import { GameSchedulingStep } from './GameSchedulingStep';
+import { FieldAssignmentStep } from './FieldAssignmentStep';
+import { SchedulePublicationStep } from './SchedulePublicationStep';
 
 interface SevenStepTournamentSystemProps {
   eventId: string;
@@ -39,50 +44,47 @@ export function SevenStepTournamentSystem({ eventId }: SevenStepTournamentSystem
     },
     {
       id: 2,
-      title: 'Team Registration & Data Intake',
-      description: 'Process team registrations, collect roster information, and validate team eligibility against defined parameters.',
-      icon: <Users className="h-5 w-5" />,
-      status: currentStep === 2 ? 'current' : completedSteps.includes(2) ? 'completed' : 'pending',
-      estimatedTime: '5-10 min'
-    },
-    {
-      id: 3,
       title: 'Flight Creation & Organization',
       description: 'Organize teams into flights based on age groups, skill levels, and competitive balance requirements.',
       icon: <Trophy className="h-5 w-5" />,
-      status: currentStep === 3 ? 'current' : completedSteps.includes(3) ? 'completed' : 'pending',
+      status: currentStep === 2 ? 'current' : completedSteps.includes(2) ? 'completed' : 'pending',
+      component: FlightCreationStep,
       estimatedTime: '10-15 min'
     },
     {
-      id: 4,
+      id: 3,
       title: 'Bracket Generation & Seeding',
       description: 'Generate tournament brackets with intelligent seeding algorithms and competitive balance optimization.',
       icon: <Calendar className="h-5 w-5" />,
-      status: currentStep === 4 ? 'current' : completedSteps.includes(4) ? 'completed' : 'pending',
+      status: currentStep === 3 ? 'current' : completedSteps.includes(3) ? 'completed' : 'pending',
+      component: BracketGenerationStep,
       estimatedTime: '5-10 min'
     },
     {
-      id: 5,
+      id: 4,
       title: 'Game Scheduling & Time Assignment',
       description: 'Schedule games with optimal time distribution, rest periods, and conflict detection across all brackets.',
       icon: <Clock className="h-5 w-5" />,
-      status: currentStep === 5 ? 'current' : completedSteps.includes(5) ? 'completed' : 'pending',
+      status: currentStep === 4 ? 'current' : completedSteps.includes(4) ? 'completed' : 'pending',
+      component: GameSchedulingStep,
       estimatedTime: '10-15 min'
     },
     {
-      id: 6,
+      id: 5,
       title: 'Field Assignment & Resource Allocation',
       description: 'Assign games to specific fields with capacity analysis, surface preferences, and geographic optimization.',
       icon: <MapPin className="h-5 w-5" />,
-      status: currentStep === 6 ? 'current' : completedSteps.includes(6) ? 'completed' : 'pending',
+      status: currentStep === 5 ? 'current' : completedSteps.includes(5) ? 'completed' : 'pending',
+      component: FieldAssignmentStep,
       estimatedTime: '5-10 min'
     },
     {
-      id: 7,
+      id: 6,
       title: 'Schedule Publication & Distribution',
       description: 'Finalize and publish the complete tournament schedule with team notifications and schedule exports.',
       icon: <Share2 className="h-5 w-5" />,
-      status: currentStep === 7 ? 'current' : completedSteps.includes(7) ? 'completed' : 'pending',
+      status: currentStep === 6 ? 'current' : completedSteps.includes(6) ? 'completed' : 'pending',
+      component: SchedulePublicationStep,
       estimatedTime: '5-10 min'
     }
   ];

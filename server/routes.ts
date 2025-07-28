@@ -81,6 +81,11 @@ import workflowProgressRouter from "./routes/admin/workflow-progress";
 import tournamentSelectionRouter from "./routes/admin/tournament-selection";
 import trueAutomatedSchedulingRouter from "./routes/admin/true-automated-scheduling";
 import tournamentParametersRouter from "./routes/admin/tournament-parameters";
+import flightsRouter from "./routes/admin/flights";
+import bracketsRouter from "./routes/admin/brackets";
+import gamesRouter from "./routes/admin/games";
+import fieldsRouter from "./routes/admin/fields";
+import schedulePublicationRouter from "./routes/admin/schedule-publication";
 import { checkCoachEmail } from "./routes/coaches";
 import {
   getEmulatableAdmins,
@@ -918,6 +923,11 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/tournaments', isAdmin, tournamentSelectionRouter); // Tournament selection with session isolation
     app.use('/api/admin/events', isAdmin, trueAutomatedSchedulingRouter); // True automated scheduling
     app.use('/api/admin/events', isAdmin, tournamentParametersRouter); // Tournament parameters configuration
+    app.use('/api/admin/events', isAdmin, flightsRouter); // Flight creation and management
+    app.use('/api/admin/events', isAdmin, bracketsRouter); // Bracket generation and management
+    app.use('/api/admin/events', isAdmin, gamesRouter); // Game scheduling and management
+    app.use('/api/admin/events', isAdmin, fieldsRouter); // Field assignment and management
+    app.use('/api/admin/events', isAdmin, schedulePublicationRouter); // Schedule publication and distribution
     app.use('/api/admin/clubs', isAdmin, adminClubsRouter); // Admin club management router
     app.use('/api/admin/event-clubs', isAdmin, eventClubsRouter); // Event clubs management router
     app.use('/api/admin/email-config', isAdmin, emailConfigRouter); // Email configuration router
