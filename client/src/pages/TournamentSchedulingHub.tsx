@@ -10,7 +10,7 @@ import { useMutation } from '@tanstack/react-query';
 import { toast } from '@/hooks/use-toast';
 import { 
   ArrowLeft, Calendar, Users, Settings, 
-  Trophy, Clock, ChevronRight 
+  Trophy, Clock, ChevronRight, RotateCcw 
 } from 'lucide-react';
 
 interface SelectedTournament {
@@ -124,6 +124,15 @@ export default function TournamentSchedulingHub() {
                 </div>
               </div>
               <div className="flex items-center gap-2">
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleTournamentSelect(selectedTournament.id, 'fresh')}
+                  className="bg-white/10 text-white border-white/30 hover:bg-white/20"
+                >
+                  <RotateCcw className="h-4 w-4 mr-2" />
+                  Start Fresh
+                </Button>
                 <QuickScheduleButton 
                   eventId={selectedTournament.id}
                   onScheduleComplete={(data) => {
