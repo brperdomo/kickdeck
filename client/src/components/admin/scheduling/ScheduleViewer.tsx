@@ -42,15 +42,23 @@ interface ScheduleData {
   ageGroups: string[];
   dates: string[];
   totalGames: number;
+  scheduleStatus: string;
+  isPreview: boolean;
   actualData: {
     gamesInDatabase: number;
     teamsInDatabase: number;
     ageGroupsConfigured: number;
     realTeamsFound: number;
     scheduledGamesFound: number;
+    scheduleType: string;
   };
   teamsList: Array<{ id: number; name: string; club: string }>;
   eventId: number;
+  eventDetails: {
+    name: string;
+    startDate: string;
+    endDate: string;
+  };
 }
 
 interface ScheduleViewerProps {
@@ -157,6 +165,31 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
 
   return (
     <div className="space-y-6">
+      {/* Schedule Status Warning */}
+      {scheduleData.isPreview && (
+        <Card className="border-amber-200 bg-amber-50">
+          <CardContent className="p-4">
+            <div className="flex items-start space-x-3">
+              <AlertCircle className="h-6 w-6 text-amber-600 mt-0.5" />
+              <div>
+                <h3 className="font-semibold text-amber-800 mb-1">
+                  Auto-Generated Schedule Preview
+                </h3>
+                <p className="text-amber-700 text-sm mb-2">
+                  This is a <strong>preview of automatically generated games</strong> created by the scheduling system. 
+                  These games were created on {new Date(2025, 6, 11).toLocaleDateString()} and distributed across the tournament dates 
+                  ({new Date(scheduleData.eventDetails.startDate).toLocaleDateString()} - {new Date(scheduleData.eventDetails.endDate).toLocaleDateString()}).
+                </p>
+                <p className="text-amber-700 text-sm">
+                  <strong>Note:</strong> Times and field assignments are algorithmic estimates. 
+                  Use the Tournament System to generate the official schedule with proper time slots.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Header Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
@@ -164,7 +197,9 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
             <div className="flex items-center">
               <Database className="h-8 w-8 text-blue-600 mr-3" />
               <div>
-                <p className="text-sm font-medium text-gray-600">Database Games</p>
+                <p className="text-sm font-medium text-gray-600">
+                  {scheduleData.actualData.scheduleType || 'Database Games'}
+                </p>
                 <p className="text-2xl font-bold text-gray-900">{scheduleData.actualData.gamesInDatabase}</p>
               </div>
             </div>

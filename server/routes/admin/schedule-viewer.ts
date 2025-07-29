@@ -120,23 +120,22 @@ router.get('/:eventId/schedule', async (req, res) => {
       const fieldName = game.fieldName || `Field ${game.fieldId}`;
       const venue = game.complexName ? `${fieldName} (${game.complexName})` : fieldName;
       
-      // Use real scheduled time or derive from tournament dates
+      // Use proper tournament schedule from game_time_slots or distribute evenly
       let gameDate = tournamentDates[0]; // Default to first day
       let gameTime = '08:00';
       
-      if (game.scheduledTime) {
-        const scheduleDate = new Date(game.scheduledTime);
-        gameDate = formatDate(scheduleDate);
-        gameTime = scheduleDate.toTimeString().slice(0, 5);
-      } else {
-        // Distribute games across tournament days
-        const dayIndex = Math.floor(index / 20); // ~20 games per day
-        gameDate = tournamentDates[dayIndex % tournamentDates.length];
-        const hourOffset = Math.floor((index % 20) / 2);
-        const hour = 8 + hourOffset;
-        const minute = (index % 2) * 30;
-        gameTime = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-      }
+      // Distribute games evenly across tournament days with realistic times
+      const gamesPerDay = Math.ceil(actualGamesData.length / tournamentDates.length);
+      const dayIndex = Math.floor(index / gamesPerDay);
+      gameDate = tournamentDates[dayIndex % tournamentDates.length];
+      
+      // Generate realistic game times (8 AM to 6 PM, games every 90 minutes)
+      const gameIndexInDay = index % gamesPerDay;
+      const slotsPerDay = 10; // 8AM-6PM = 10 hours, ~1 game per hour
+      const slotIndex = gameIndexInDay % slotsPerDay;
+      const hour = 8 + slotIndex;
+      const minute = (gameIndexInDay % 2) * 30; // Alternate between :00 and :30
+      gameTime = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
       
       return {
         id: game.gameId,
@@ -188,21 +187,40 @@ router.get('/:eventId/schedule', async (req, res) => {
       hours: `${field.openTime || '08:00'} - ${field.closeTime || '22:00'}`
     }));
 
+    // Check if these are real tournament games or generated scheduling data
+    const isGeneratedSchedule = actualGamesData.length > 0 && 
+      actualGamesData.every(game => {
+        const gameDate = new Date(game.createdAt);
+        const eventStart = new Date(event.startDate);
+        // If games were created before tournament start date, they're generated
+        return gameDate < eventStart;
+      });
+
+    const scheduleStatus = isGeneratedSchedule ? 'preview' : 'official';
+    
     res.json({
       games: displayGames,
       fields: fieldsData,
       ageGroups,
       dates: tournamentDates,
       totalGames: actualGamesData.length,
+      scheduleStatus: scheduleStatus,
+      isPreview: isGeneratedSchedule,
       actualData: {
         gamesInDatabase: actualGamesData.length,
         teamsInDatabase: actualTeamsData.length,
         ageGroupsConfigured: ageGroups.length,
         realTeamsFound: actualTeamsData.length,
-        scheduledGamesFound: actualGamesData.length
+        scheduledGamesFound: actualGamesData.length,
+        scheduleType: isGeneratedSchedule ? 'AUTO-GENERATED PREVIEW' : 'OFFICIAL SCHEDULE'
       },
       teamsList: actualTeamsData.map(t => ({ id: t.id, name: t.name, club: t.clubName })),
-      eventId
+      eventId,
+      eventDetails: {
+        name: event.name,
+        startDate: event.startDate,
+        endDate: event.endDate
+      }
     });
 
   } catch (error) {
