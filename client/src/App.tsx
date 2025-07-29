@@ -79,6 +79,9 @@ import SchedulingDashboard from "@/pages/SchedulingDashboard";
 // 7-Step Tournament System
 import TournamentSystemPage from "@/pages/admin/TournamentSystemPage";
 
+// Schedule viewer page  
+const ScheduleViewerPage = lazy(() => import("@/pages/admin/ScheduleViewerPage").then(m => ({ default: m.ScheduleViewerPage })));
+
 // Import landing page components
 import LandingPage from "@/pages/landing-page";
 import { isMainDomain } from "@/lib/domainHelper";
@@ -336,6 +339,15 @@ function Router() {
           </Route>
           <Route path="/admin/tournament-system">
             {user.isAdmin ? <TournamentSystemPage /> : <NotFound />}
+          </Route>
+          <Route path="/admin/events/:eventId/schedule">
+            {(params) => user.isAdmin ? (
+              <Suspense fallback={<div className="flex items-center justify-center min-h-screen">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              </div>}>
+                <ScheduleViewerPage eventId={params.eventId} />
+              </Suspense>
+            ) : <NotFound />}
           </Route>
           <Route path="/admin/reports">
             {user.isAdmin ? <AdminDashboard initialView="reports" /> : <NotFound />}

@@ -169,7 +169,7 @@ export function TournamentStatusDisplay({ eventId }: TournamentStatusDisplayProp
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-blue-800">
-            The "24/24 scheduled" message means your tournament is <strong>already complete</strong>! 
+            The "{tournamentStats.ageGroups}/{tournamentStats.ageGroups} scheduled" message means your tournament is <strong>already complete</strong>! 
             There's nothing left to configure in Step 1 because:
           </p>
           <ul className="text-blue-800 space-y-2 ml-4">
@@ -189,7 +189,10 @@ export function TournamentStatusDisplay({ eventId }: TournamentStatusDisplayProp
 
       {/* Action Buttons */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Button className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white h-14">
+        <Button 
+          className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white h-14"
+          onClick={() => window.open(`/admin/events/${eventId}/schedule`, '_blank')}
+        >
           <Eye className="h-5 w-5 mr-2" />
           View Complete Schedule
           <ArrowRight className="h-4 w-4 ml-2" />
