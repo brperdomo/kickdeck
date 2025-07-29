@@ -16,7 +16,7 @@ import { isAdmin } from '../../middleware/auth';
 const router = Router();
 
 // GET /api/admin/events/:eventId/tournament-parameters
-router.get('/events/:eventId/tournament-parameters', isAdmin, async (req, res) => {
+router.get('/events/:eventId/tournament-parameters', async (req, res) => {
   try {
     const eventId = parseInt(req.params.eventId);
     
