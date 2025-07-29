@@ -36,9 +36,9 @@ import playersRouter from "./routes/admin/players-router";
 import memberMergeRouter from "./routes/admin/member-merge";
 import feeAdjustmentsRouter from "./routes/admin/fee-adjustments";
 import gameMetadataRouter from "./routes/admin/game-metadata";
-import bracketsRouter from "./routes/admin/brackets";
+import adminBracketsRouter from "./routes/admin/brackets";
 import fieldCapacityRouter from "./routes/admin/field-capacity";
-import gamesRouter from "./routes/admin/games-router";
+import adminGamesRouter from "./routes/admin/games-router";
 import clubsRouter from "./routes/clubs";
 import adminClubsRouter from "./routes/admin/clubs";
 import eventClubsRouter from "./routes/admin/event-clubs";
@@ -924,10 +924,10 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/tournaments', isAdmin, tournamentSelectionRouter); // Tournament selection with session isolation
     app.use('/api/admin/events', isAdmin, trueAutomatedSchedulingRouter); // True automated scheduling
     app.use('/api/admin/events', isAdmin, tournamentParametersRouter); // Tournament parameters
-    app.use('/api/admin', isAdmin, flexibleAgeGroupsRoutes); // Flexible age group management configuration
+    app.use('/api/admin', isAdmin, flexibleAgeGroupsRoutes); // Flexible age group management
     app.use('/api/admin/events', isAdmin, flightsRouter); // Flight creation and management
-    app.use('/api/admin/events', isAdmin, bracketsRouter); // Bracket generation and management
-    app.use('/api/admin/events', isAdmin, gamesRouter); // Game scheduling and management
+    app.use('/api/admin/events', isAdmin, adminBracketsRouter); // Bracket generation and management
+    app.use('/api/admin/events', isAdmin, adminGamesRouter); // Game scheduling and management
     app.use('/api/admin/events', isAdmin, fieldsRouter); // Field assignment and management
     app.use('/api/admin/events', isAdmin, schedulePublicationRouter); // Schedule publication and distribution
     app.use('/api/admin/clubs', isAdmin, adminClubsRouter); // Admin club management router

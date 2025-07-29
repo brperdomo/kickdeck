@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { db } from '../../../db';
+import { db } from '@db';
 import { 
   eventAgeGroups,
   teams,
@@ -17,13 +17,12 @@ router.get('/events/:eventId/age-groups-status', isAdmin, async (req, res) => {
   try {
     const eventId = parseInt(req.params.eventId);
     
-    // Get configured age groups
+    // Get configured age groups using existing schema
     const configuredAgeGroups = await db.select({
       id: eventAgeGroups.id,
-      name: eventAgeGroups.name,
+      ageGroup: eventAgeGroups.ageGroup,
       gender: eventAgeGroups.gender,
-      format: eventAgeGroups.format,
-      gameLength: eventAgeGroups.gameLength,
+      fieldSize: eventAgeGroups.fieldSize,
       createdAt: eventAgeGroups.createdAt
     }).from(eventAgeGroups)
     .where(eq(eventAgeGroups.eventId, eventId.toString()));
@@ -55,7 +54,7 @@ router.get('/events/:eventId/age-groups-status', isAdmin, async (req, res) => {
     // Format configured age groups with status
     const configuredWithStatus = await Promise.all(configuredAgeGroups.map(async (ageGroup) => {
       const teamData = teamsInEvent.find(t => 
-        t.ageGroup === ageGroup.name.split(' ')[0] && 
+        t.ageGroup === ageGroup.ageGroup && 
         (t.gender || 'Mixed') === ageGroup.gender
       );
       
@@ -64,9 +63,9 @@ router.get('/events/:eventId/age-groups-status', isAdmin, async (req, res) => {
       
       return {
         id: ageGroup.id.toString(),
-        name: ageGroup.name,
+        name: `${ageGroup.ageGroup} ${ageGroup.gender}`,
         gender: ageGroup.gender,
-        format: ageGroup.format,
+        format: ageGroup.fieldSize,
         teamCount,
         hasSchedule,
         canSchedule: teamCount > 0 && !hasSchedule,
@@ -77,7 +76,7 @@ router.get('/events/:eventId/age-groups-status', isAdmin, async (req, res) => {
 
     // Find team groups that don't have age group configurations
     const configuredCombinations = configuredAgeGroups.map(ag => 
-      `${ag.name.split(' ')[0]}-${ag.gender}`
+      `${ag.ageGroup}-${ag.gender}`
     );
     
     const availableFromTeams = teamsInEvent
@@ -115,12 +114,17 @@ router.post('/events/:eventId/age-groups', isAdmin, async (req, res) => {
     const eventId = parseInt(req.params.eventId);
     const { name, gender, format, gameLength } = req.body;
 
+    // Parse age group from name (e.g., "U12 Boys" -> "U12")
+    const ageGroupMatch = name.match(/U(\d+)/);
+    const ageNumber = ageGroupMatch ? parseInt(ageGroupMatch[1]) : 12;
+    const ageGroup = `U${ageNumber}`;
+
     // Check if this combination already exists
     const existing = await db.select()
       .from(eventAgeGroups)
       .where(and(
         eq(eventAgeGroups.eventId, eventId.toString()),
-        eq(eventAgeGroups.name, name),
+        eq(eventAgeGroups.ageGroup, ageGroup),
         eq(eventAgeGroups.gender, gender)
       ));
 
@@ -128,22 +132,28 @@ router.post('/events/:eventId/age-groups', isAdmin, async (req, res) => {
       return res.status(400).json({ error: 'This age group configuration already exists' });
     }
 
-    // Add the age group
+    // Calculate birth year (approximate)
+    const currentYear = new Date().getFullYear();
+    const birthYear = currentYear - ageNumber;
+
+    // Add the age group using existing schema
     const result = await db.insert(eventAgeGroups).values({
       eventId: eventId.toString(),
-      name,
+      ageGroup,
+      birthYear,
       gender,
-      format,
-      gameLength: gameLength || 90,
-      minAge: parseInt(name.replace(/[^0-9]/g, '')) || 7,
-      maxAge: parseInt(name.replace(/[^0-9]/g, '')) + 1 || 19,
-      createdAt: new Date()
+      fieldSize: format,
+      projectedTeams: 8,
+      scoringRule: 'standard',
+      amountDue: 0,
+      divisionCode: `${ageGroup}${gender.charAt(0)}`,
+      createdAt: new Date().toISOString()
     }).returning();
 
     res.json({ 
       success: true, 
       ageGroup: result[0],
-      message: `Age group ${name} ${gender} added successfully`
+      message: `Age group ${name} added successfully`
     });
 
   } catch (error) {
@@ -174,7 +184,7 @@ router.post('/events/:eventId/age-groups/:ageGroupId/schedule', isAdmin, async (
       .from(teams)
       .where(and(
         eq(teams.eventId, eventId.toString()),
-        eq(teams.ageGroup, ageGroup.name.split(' ')[0]),
+        eq(teams.ageGroup, ageGroup.ageGroup),
         eq(teams.gender, ageGroup.gender === 'Mixed' ? null : ageGroup.gender)
       ));
 
@@ -207,7 +217,7 @@ router.post('/events/:eventId/age-groups/:ageGroupId/schedule', isAdmin, async (
         // Create game
         const game = await db.insert(games).values({
           eventId: eventId.toString(),
-          ageGroup: ageGroup.name,
+          ageGroup: `${ageGroup.ageGroup} ${ageGroup.gender}`,
           homeTeam: ageGroupTeams[i].name,
           awayTeam: ageGroupTeams[j].name,
           homeTeamId: ageGroupTeams[i].id.toString(),
@@ -215,8 +225,8 @@ router.post('/events/:eventId/age-groups/:ageGroupId/schedule', isAdmin, async (
           timeSlotId: timeSlot[0].id,
           fieldId: 1,
           status: 'scheduled',
-          gameLength: ageGroup.gameLength,
-          gameFormat: ageGroup.format
+          gameLength: 90,
+          gameFormat: ageGroup.fieldSize
         }).returning();
 
         generatedGames.push(game[0]);
@@ -225,10 +235,10 @@ router.post('/events/:eventId/age-groups/:ageGroupId/schedule', isAdmin, async (
 
     res.json({
       success: true,
-      ageGroup: ageGroup.name,
+      ageGroup: `${ageGroup.ageGroup} ${ageGroup.gender}`,
       gamesGenerated: generatedGames.length,
       teamCount: ageGroupTeams.length,
-      message: `Schedule generated for ${ageGroup.name} with ${generatedGames.length} games`
+      message: `Schedule generated for ${ageGroup.ageGroup} ${ageGroup.gender} with ${generatedGames.length} games`
     });
 
   } catch (error) {
