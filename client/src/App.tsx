@@ -82,6 +82,9 @@ import TournamentSystemPage from "@/pages/admin/TournamentSystemPage";
 // Schedule viewer page  
 const ScheduleViewerPage = lazy(() => import("@/pages/admin/ScheduleViewerPage").then(m => ({ default: m.ScheduleViewerPage })));
 
+// Comprehensive Schedule Manager
+const ComprehensiveScheduleManagerPage = lazy(() => import("@/pages/admin/ComprehensiveScheduleManagerPage").then(m => ({ default: m.ComprehensiveScheduleManagerPage })));
+
 // Import landing page components
 import LandingPage from "@/pages/landing-page";
 import { isMainDomain } from "@/lib/domainHelper";
@@ -346,6 +349,15 @@ function Router() {
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
               </div>}>
                 <ScheduleViewerPage eventId={params.eventId} />
+              </Suspense>
+            ) : <NotFound />}
+          </Route>
+          <Route path="/admin/events/:eventId/schedule-manager">
+            {(params) => user.isAdmin ? (
+              <Suspense fallback={<div className="flex items-center justify-center min-h-screen">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              </div>}>
+                <ComprehensiveScheduleManagerPage />
               </Suspense>
             ) : <NotFound />}
           </Route>

@@ -38,6 +38,7 @@ import feeAdjustmentsRouter from "./routes/admin/fee-adjustments";
 import gameMetadataRouter from "./routes/admin/game-metadata";
 import adminBracketsRouter from "./routes/admin/brackets";
 import fieldCapacityRouter from "./routes/admin/field-capacity";
+import intelligentSchedulingRouter from "./routes/admin/intelligent-scheduling";
 import adminGamesRouter from "./routes/admin/games-router";
 import clubsRouter from "./routes/clubs";
 import adminClubsRouter from "./routes/admin/clubs";
@@ -918,6 +919,7 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/teams', isAdmin, playersRouter); // Player management router
     app.use('/api/admin', isAdmin, bracketsRouter); // Bracket management router
     app.use('/api/admin', isAdmin, fieldCapacityRouter); // Field capacity analysis router
+    app.use('/api/admin', isAdmin, intelligentSchedulingRouter); // Intelligent scheduling system router
     app.use('/api/admin/events', isAdmin, gameMetadataRouter); // Game metadata and scheduling rules router
     app.use('/api/admin/games', isAdmin, gamesRouter); // Game management router
     app.use('/api/admin/schedule', isAdmin, scheduleManagementRouter); // Schedule management with drag-and-drop
