@@ -491,63 +491,6 @@ export function TournamentParametersSetup({ eventId, onComplete }: TournamentPar
                   <p className="text-gray-500">No fields found in the database. Contact your administrator to add fields to the system.</p>
                 </div>
               )}
-                      <div>
-                        <Label htmlFor={`field-size-${index}`}>Field Size</Label>
-                        <Select
-                          value={field.size}
-                          onValueChange={(value) => {
-                            const updated = [...fields];
-                            updated[index].size = value;
-                            setFields(updated);
-                          }}
-                        >
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="4v4">4v4 Small</SelectItem>
-                            <SelectItem value="7v7">7v7 Medium</SelectItem>
-                            <SelectItem value="9v9">9v9 Large</SelectItem>
-                            <SelectItem value="11v11">11v11 Full</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <Label htmlFor={`field-surface-${index}`}>Surface</Label>
-                        <Select
-                          value={field.surface}
-                          onValueChange={(value) => {
-                            const updated = [...fields];
-                            updated[index].surface = value;
-                            setFields(updated);
-                          }}
-                        >
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="grass">Grass</SelectItem>
-                            <SelectItem value="turf">Turf</SelectItem>
-                            <SelectItem value="either">Either</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Switch
-                          id={`field-lights-${index}`}
-                          checked={field.hasLights}
-                          onCheckedChange={(checked) => {
-                            const updated = [...fields];
-                            updated[index].hasLights = checked;
-                            setFields(updated);
-                          }}
-                        />
-                        <Label htmlFor={`field-lights-${index}`}>Has Lights</Label>
-                      </div>
-                    </div>
-                  </Card>
-                ))}
-              </div>
             </TabsContent>
           </Tabs>
         </CardContent>
