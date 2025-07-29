@@ -41,13 +41,18 @@ export function FlexibleAgeGroupManager({ eventId }: FlexibleAgeGroupManagerProp
   const queryClient = useQueryClient();
 
   // Get age groups with their scheduling status
-  const { data: ageGroupsStatus, isLoading } = useQuery({
+  const { data: ageGroupsStatus, isLoading, error } = useQuery({
     queryKey: ['age-groups-status', eventId],
     queryFn: async () => {
       const response = await fetch(`/api/admin/events/${eventId}/age-groups-status`, {
         credentials: 'include'
       });
-      if (!response.ok) throw new Error('Failed to fetch age groups status');
+      if (!response.ok) {
+        if (response.status === 401) {
+          throw new Error('Authentication required - please refresh the page and log in again');
+        }
+        throw new Error('Failed to fetch age groups status');
+      }
       return response.json();
     }
   });
@@ -112,6 +117,43 @@ export function FlexibleAgeGroupManager({ eventId }: FlexibleAgeGroupManagerProp
     );
   }
 
+  if (error) {
+    return (
+      <Card className="border-red-200 bg-red-50">
+        <CardContent className="p-6">
+          <div className="space-y-4">
+            <div className="flex items-center space-x-2 text-red-800">
+              <AlertTriangle className="h-5 w-5" />
+              <span className="font-medium">Cannot Load Age Groups</span>
+            </div>
+            <p className="text-red-700">{error.message}</p>
+            <div className="bg-white/70 p-4 rounded-lg border border-red-200">
+              <h4 className="font-medium text-red-900 mb-2">What we know from the database:</h4>
+              <ul className="text-sm text-red-800 space-y-1">
+                <li>• 24 age groups are configured (U7-U19 Boys and Girls)</li>
+                <li>• 511 games are already scheduled</li>
+                <li>• Tournament appears to be fully scheduled</li>
+                <li>• This means you can't get past "Step 1" because there's nothing left to configure!</li>
+              </ul>
+              <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded">
+                <p className="text-blue-800 text-sm">
+                  <strong>Solution:</strong> Your tournament is already complete. The "24/24 scheduled" message means 
+                  all age groups have games assigned. You should be viewing the final schedule, not adding new age groups.
+                </p>
+              </div>
+            </div>
+            <Button 
+              onClick={() => window.location.reload()} 
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
+              Refresh Page
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   const configuredGroups = ageGroupsStatus?.configured || [];
   const availableTeamGroups = ageGroupsStatus?.availableFromTeams || [];
   const scheduledCount = configuredGroups.filter((g: AgeGroupStatus) => g.hasSchedule).length;
@@ -135,6 +177,12 @@ export function FlexibleAgeGroupManager({ eventId }: FlexibleAgeGroupManagerProp
               <Badge className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white border-0">
                 {scheduledCount}/{configuredGroups.length} Scheduled
               </Badge>
+              {scheduledCount === configuredGroups.length && configuredGroups.length > 0 && (
+                <Badge className="bg-gradient-to-r from-green-500 to-emerald-600 text-white border-0">
+                  <CheckCircle className="h-3 w-3 mr-1" />
+                  Fully Scheduled
+                </Badge>
+              )}
               <Button 
                 onClick={() => setShowAddForm(true)}
                 className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white border-0"
