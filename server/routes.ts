@@ -56,6 +56,7 @@ import { subscribeToNewsletter, unsubscribeFromNewsletter, getSubscriptionStatus
 import { registerRegistrationAnalyticsRoutes } from "./routes/registration-analytics";
 import { getPaymentLogs, getPaymentTransactionDetail, getRecentPaymentFailures } from "./routes/admin/payment-logs-simple";
 import tournamentDirectorRoutes from "./routes/tournament-director-routes";
+import flexibleAgeGroupsRoutes from "./routes/admin/flexible-age-groups";
 import paymentCompletionRouter from "./routes/payment-completion";
 import { 
   getEnhancedEventFinancialReport, 
@@ -922,7 +923,8 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin', isAdmin, workflowProgressRouter); // Workflow progress tracking for session persistence
     app.use('/api/admin/tournaments', isAdmin, tournamentSelectionRouter); // Tournament selection with session isolation
     app.use('/api/admin/events', isAdmin, trueAutomatedSchedulingRouter); // True automated scheduling
-    app.use('/api/admin/events', isAdmin, tournamentParametersRouter); // Tournament parameters configuration
+    app.use('/api/admin/events', isAdmin, tournamentParametersRouter); // Tournament parameters
+    app.use('/api/admin', isAdmin, flexibleAgeGroupsRoutes); // Flexible age group management configuration
     app.use('/api/admin/events', isAdmin, flightsRouter); // Flight creation and management
     app.use('/api/admin/events', isAdmin, bracketsRouter); // Bracket generation and management
     app.use('/api/admin/events', isAdmin, gamesRouter); // Game scheduling and management

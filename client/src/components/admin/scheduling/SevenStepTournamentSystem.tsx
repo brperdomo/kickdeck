@@ -8,11 +8,13 @@ import {
   CheckCircle, Clock, ArrowRight, Play
 } from 'lucide-react';
 import { TournamentParametersSetup } from './TournamentParametersSetup';
+import { FlexibleAgeGroupManager } from './FlexibleAgeGroupManager';
 import { FlightCreationStep } from './FlightCreationStep';
 import { BracketGenerationStep } from './BracketGenerationStep';
 import { GameSchedulingStep } from './GameSchedulingStep';
 import { FieldAssignmentStep } from './FieldAssignmentStep';
 import { SchedulePublicationStep } from './SchedulePublicationStep';
+import { FlexibleSchedulingGuide } from './FlexibleSchedulingGuide';
 
 interface SevenStepTournamentSystemProps {
   eventId: string;
@@ -35,21 +37,21 @@ export function SevenStepTournamentSystem({ eventId }: SevenStepTournamentSystem
   const steps: StepDefinition[] = [
     {
       id: 1,
-      title: 'Tournament Parameters Definition',
-      description: 'Define age groups, game formats, field requirements, and time constraints with centralized parameter management.',
-      icon: <Settings className="h-5 w-5" />,
+      title: 'Flexible Age Group Management',
+      description: 'Add and schedule individual age groups when ready - no need to configure everything at once',
+      icon: <Users className="h-5 w-5" />,
       status: currentStep === 1 ? 'current' : completedSteps.includes(1) ? 'completed' : 'pending',
-      component: TournamentParametersSetup,
-      estimatedTime: '15-20 min'
+      component: FlexibleAgeGroupManager,
+      estimatedTime: '5-10 min per age group'
     },
     {
       id: 2,
-      title: 'Flight Creation & Organization',
-      description: 'Organize teams into flights based on age groups, skill levels, and competitive balance requirements.',
-      icon: <Trophy className="h-5 w-5" />,
+      title: 'Traditional Tournament Configuration',
+      description: 'For tournaments requiring all age groups configured at once (alternative to flexible approach)',
+      icon: <Settings className="h-5 w-5" />,
       status: currentStep === 2 ? 'current' : completedSteps.includes(2) ? 'completed' : 'pending',
-      component: FlightCreationStep,
-      estimatedTime: '10-15 min'
+      component: TournamentParametersSetup,
+      estimatedTime: '15-30 min (optional)'
     },
     {
       id: 3,
