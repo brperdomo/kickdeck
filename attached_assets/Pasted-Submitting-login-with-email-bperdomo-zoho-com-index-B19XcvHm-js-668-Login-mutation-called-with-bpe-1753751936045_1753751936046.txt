@@ -1,0 +1,288 @@
+Submitting login with email: bperdomo@zoho.com
+index-B19XcvHm.js:668 Login mutation called with: bperdomo@zoho.com
+ Sending login request with data: {email: 'bperdomo@zoho.com', passwordLength: 8}
+ Login response status: 200
+ Login successful, received user data: Yes
+ Fetching current user after login
+ Fetch finished loading: POST "https://app.matchpro.ai/api/login?t=1753751852649".
+mutationFn @ index-B19XcvHm.js:668
+fn @ index-B19XcvHm.js:40
+f @ index-B19XcvHm.js:40
+start @ index-B19XcvHm.js:40
+execute @ index-B19XcvHm.js:40
+await in execute
+mutate @ index-B19XcvHm.js:40
+o @ index-B19XcvHm.js:676
+(anonymous) @ index-B19XcvHm.js:668
+await in (anonymous)
+$ue @ index-B19XcvHm.js:37
+Bue @ index-B19XcvHm.js:37
+zue @ index-B19XcvHm.js:37
+xR @ index-B19XcvHm.js:37
+Jq @ index-B19XcvHm.js:37
+(anonymous) @ index-B19XcvHm.js:37
+CO @ index-B19XcvHm.js:40
+wq @ index-B19XcvHm.js:37
+A2 @ index-B19XcvHm.js:37
+Z4 @ index-B19XcvHm.js:37
+rme @ index-B19XcvHm.js:37
+submit @ injected.js:5
+is @ injected.js:5
+uD @ injected.js:5
+await in uD
+Ox @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+n @ injected.js:5
+ Fetch finished loading: GET "https://app.matchpro.ai/api/user".
+mutationFn @ index-B19XcvHm.js:668
+await in mutationFn
+fn @ index-B19XcvHm.js:40
+f @ index-B19XcvHm.js:40
+start @ index-B19XcvHm.js:40
+execute @ index-B19XcvHm.js:40
+await in execute
+mutate @ index-B19XcvHm.js:40
+o @ index-B19XcvHm.js:676
+(anonymous) @ index-B19XcvHm.js:668
+await in (anonymous)
+$ue @ index-B19XcvHm.js:37
+Bue @ index-B19XcvHm.js:37
+zue @ index-B19XcvHm.js:37
+xR @ index-B19XcvHm.js:37
+Jq @ index-B19XcvHm.js:37
+(anonymous) @ index-B19XcvHm.js:37
+CO @ index-B19XcvHm.js:40
+wq @ index-B19XcvHm.js:37
+A2 @ index-B19XcvHm.js:37
+Z4 @ index-B19XcvHm.js:37
+rme @ index-B19XcvHm.js:37
+submit @ injected.js:5
+is @ injected.js:5
+uD @ injected.js:5
+await in uD
+Ox @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+n @ injected.js:5
+ User data fetched after login: success
+ Login mutation completed successfully
+ Performing explicit user data fetch after login
+ AUTH REDIRECT: User logged in, handling redirect
+ Fetch finished loading: GET "https://app.matchpro.ai/api/user".
+queryFn @ index-B19XcvHm.js:668
+i @ index-B19XcvHm.js:40
+f @ index-B19XcvHm.js:40
+start @ index-B19XcvHm.js:40
+fetch @ index-B19XcvHm.js:40
+(anonymous) @ index-B19XcvHm.js:40
+(anonymous) @ index-B19XcvHm.js:40
+batch @ index-B19XcvHm.js:40
+refetchQueries @ index-B19XcvHm.js:40
+(anonymous) @ index-B19XcvHm.js:40
+batch @ index-B19XcvHm.js:40
+invalidateQueries @ index-B19XcvHm.js:40
+onSuccess @ index-B19XcvHm.js:668
+execute @ index-B19XcvHm.js:40
+await in execute
+mutate @ index-B19XcvHm.js:40
+o @ index-B19XcvHm.js:676
+(anonymous) @ index-B19XcvHm.js:668
+await in (anonymous)
+$ue @ index-B19XcvHm.js:37
+Bue @ index-B19XcvHm.js:37
+zue @ index-B19XcvHm.js:37
+xR @ index-B19XcvHm.js:37
+Jq @ index-B19XcvHm.js:37
+(anonymous) @ index-B19XcvHm.js:37
+CO @ index-B19XcvHm.js:40
+wq @ index-B19XcvHm.js:37
+A2 @ index-B19XcvHm.js:37
+Z4 @ index-B19XcvHm.js:37
+rme @ index-B19XcvHm.js:37
+submit @ injected.js:5
+is @ injected.js:5
+uD @ injected.js:5
+await in uD
+Ox @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+n @ injected.js:5
+ User data retrieved after login: success
+ Fetch finished loading: GET "https://app.matchpro.ai/api/user".
+o @ index-B19XcvHm.js:676
+await in o
+(anonymous) @ index-B19XcvHm.js:668
+await in (anonymous)
+$ue @ index-B19XcvHm.js:37
+Bue @ index-B19XcvHm.js:37
+zue @ index-B19XcvHm.js:37
+xR @ index-B19XcvHm.js:37
+Jq @ index-B19XcvHm.js:37
+(anonymous) @ index-B19XcvHm.js:37
+CO @ index-B19XcvHm.js:40
+wq @ index-B19XcvHm.js:37
+A2 @ index-B19XcvHm.js:37
+Z4 @ index-B19XcvHm.js:37
+rme @ index-B19XcvHm.js:37
+submit @ injected.js:5
+is @ injected.js:5
+uD @ injected.js:5
+await in uD
+Ox @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+n @ injected.js:5
+ Found redirect path: /admin/tournament-system
+ Redirecting to: /admin/tournament-system
+Navigated to https://app.matchpro.ai/admin/tournament-system
+js?libraries=places&v=beta&callback=Function.prototype:1367 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1367
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1612
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1612Understand this warning
+tournament-system:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+tournament-system:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+js?libraries=places&v=beta&callback=Function.prototype:1399 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1399
+hda @ js?libraries=places&v=beta&callback=Function.prototype:1376
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1368
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1612
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1612
+index-B19XcvHm.js:851 Google Maps API key length: 0 characters
+index-B19XcvHm.js:851 Mapbox API key length: 93 characters
+index-B19XcvHm.js:851 Google Maps API already loaded
+index-B19XcvHm.js:676 Current route location (Wouter): /admin/tournament-system
+index-B19XcvHm.js:676 Current URL: https://app.matchpro.ai/admin/tournament-system
+index-B19XcvHm.js:676 Current pathname: /admin/tournament-system
+index-B19XcvHm.js:676 Current search: 
+index-B19XcvHm.js:676 Fetching user with emulation token: not present
+chunk-XPCMTL2X.js:31 orchestration: Initializing config store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-XPCMTL2X.js:31 orchestration: Initializing feature flag store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-XPCMTL2X.js:31 orchestration: Initializing user store with state {pill-player: {…}}
+chunk-XPCMTL2X.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+index-B19XcvHm.js:676 Fetch finished loading: GET "https://app.matchpro.ai/api/user".
+sSe @ index-B19XcvHm.js:676
+i @ index-B19XcvHm.js:40
+f @ index-B19XcvHm.js:40
+start @ index-B19XcvHm.js:40
+fetch @ index-B19XcvHm.js:40
+tg @ index-B19XcvHm.js:40
+onSubscribe @ index-B19XcvHm.js:40
+subscribe @ index-B19XcvHm.js:40
+(anonymous) @ index-B19XcvHm.js:40
+fW @ index-B19XcvHm.js:38
+P1 @ index-B19XcvHm.js:40
+Jh @ index-B19XcvHm.js:40
+WR @ index-B19XcvHm.js:40
+nu @ index-B19XcvHm.js:38
+yhe @ index-B19XcvHm.js:40
+ku @ index-B19XcvHm.js:40
+WW @ index-B19XcvHm.js:40
+w @ index-B19XcvHm.js:25
+T @ index-B19XcvHm.js:25
+index-B19XcvHm.js:676 User data fetched: {id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: '$2b$12$d6n1CBWgsWFm0fh77F1OX.YxDZy7/O3aLSuJOuq4QkvOtFmSit7BC', firstName: 'Bryan', …}
+tournament-system:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this error
+index-B19XcvHm.js:668 Fetch failed loading: GET "https://app.matchpro.ai/api/user".
+queryFn @ index-B19XcvHm.js:668
+i @ index-B19XcvHm.js:40
+f @ index-B19XcvHm.js:40
+start @ index-B19XcvHm.js:40
+fetch @ index-B19XcvHm.js:40
+tg @ index-B19XcvHm.js:40
+onSubscribe @ index-B19XcvHm.js:40
+subscribe @ index-B19XcvHm.js:40
+(anonymous) @ index-B19XcvHm.js:40
+fW @ index-B19XcvHm.js:38
+P1 @ index-B19XcvHm.js:40
+Jh @ index-B19XcvHm.js:40
+WR @ index-B19XcvHm.js:40
+nu @ index-B19XcvHm.js:38
+yhe @ index-B19XcvHm.js:40
+ku @ index-B19XcvHm.js:40
+WW @ index-B19XcvHm.js:40
+w @ index-B19XcvHm.js:25
+T @ index-B19XcvHm.js:25
+index-B19XcvHm.js:1032 Fetch finished loading: GET "https://app.matchpro.ai/api/admin/tournaments/scheduling".
+queryFn @ index-B19XcvHm.js:1032
+i @ index-B19XcvHm.js:40
+f @ index-B19XcvHm.js:40
+start @ index-B19XcvHm.js:40
+fetch @ index-B19XcvHm.js:40
+tg @ index-B19XcvHm.js:40
+onSubscribe @ index-B19XcvHm.js:40
+subscribe @ index-B19XcvHm.js:40
+(anonymous) @ index-B19XcvHm.js:40
+fW @ index-B19XcvHm.js:38
+P1 @ index-B19XcvHm.js:40
+Jh @ index-B19XcvHm.js:40
+yhe @ index-B19XcvHm.js:40
+ku @ index-B19XcvHm.js:40
+WR @ index-B19XcvHm.js:40
+nu @ index-B19XcvHm.js:38
+(anonymous) @ index-B19XcvHm.js:40
+setTimeout
+$he @ index-B19XcvHm.js:40
+o @ index-B19XcvHm.js:40
+batch @ index-B19XcvHm.js:40
+rc @ index-B19XcvHm.js:40
+setData @ index-B19XcvHm.js:40
+onSuccess @ index-B19XcvHm.js:40
+m @ index-B19XcvHm.js:40
+Promise.then
+f @ index-B19XcvHm.js:40
+start @ index-B19XcvHm.js:40
+fetch @ index-B19XcvHm.js:40
+tg @ index-B19XcvHm.js:40
+onSubscribe @ index-B19XcvHm.js:40
+subscribe @ index-B19XcvHm.js:40
+(anonymous) @ index-B19XcvHm.js:40
+fW @ index-B19XcvHm.js:38
+P1 @ index-B19XcvHm.js:40
+Jh @ index-B19XcvHm.js:40
+WR @ index-B19XcvHm.js:40
+nu @ index-B19XcvHm.js:38
+yhe @ index-B19XcvHm.js:40
+ku @ index-B19XcvHm.js:40
+WW @ index-B19XcvHm.js:40
+w @ index-B19XcvHm.js:25
+T @ index-B19XcvHm.js:25
+util.js:31 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+Txa @ util.js:31
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1369
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1369
+setTimeout
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1369
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1612
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1612Understand this warning
+index-B19XcvHm.js:1032 Fetch finished loading: GET "https://app.matchpro.ai/api/admin/events/1656618593/tournament-parameters".
+queryFn @ index-B19XcvHm.js:1032
+i @ index-B19XcvHm.js:40
+f @ index-B19XcvHm.js:40
+start @ index-B19XcvHm.js:40
+fetch @ index-B19XcvHm.js:40
+tg @ index-B19XcvHm.js:40
+onSubscribe @ index-B19XcvHm.js:40
+subscribe @ index-B19XcvHm.js:40
+(anonymous) @ index-B19XcvHm.js:40
+fW @ index-B19XcvHm.js:38
+P1 @ index-B19XcvHm.js:40
+Jh @ index-B19XcvHm.js:40
+yhe @ index-B19XcvHm.js:40
+ku @ index-B19XcvHm.js:40
+WR @ index-B19XcvHm.js:40
+nu @ index-B19XcvHm.js:38
+(anonymous) @ index-B19XcvHm.js:40
+tournament-system:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+tournament-system:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+tournament-system:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+tournament-system:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+tournament-system:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+tournament-system:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
