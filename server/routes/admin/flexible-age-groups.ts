@@ -27,14 +27,13 @@ router.get('/events/:eventId/age-groups-status', isAdmin, async (req, res) => {
     }).from(eventAgeGroups)
     .where(eq(eventAgeGroups.eventId, eventId.toString()));
 
-    // Get teams grouped by age and gender
+    // Get teams grouped by age group ID (teams don't have gender field)
     const teamsInEvent = await db.select({
-      ageGroup: teams.ageGroup,
-      gender: teams.gender,
+      ageGroupId: teams.ageGroupId,
       teamCount: count()
     }).from(teams)
     .where(eq(teams.eventId, eventId.toString()))
-    .groupBy(teams.ageGroup, teams.gender);
+    .groupBy(teams.ageGroupId);
 
     // Check which age groups have schedules generated
     const ageGroupsWithSchedules = new Set();
@@ -43,7 +42,7 @@ router.get('/events/:eventId/age-groups-status', isAdmin, async (req, res) => {
         .from(games)
         .where(and(
           eq(games.eventId, eventId.toString()),
-          eq(games.ageGroup, ageGroup.name)
+          eq(games.ageGroupId, ageGroup.id)
         ));
       
       if (existingGames[0]?.count > 0) {
@@ -54,8 +53,7 @@ router.get('/events/:eventId/age-groups-status', isAdmin, async (req, res) => {
     // Format configured age groups with status
     const configuredWithStatus = await Promise.all(configuredAgeGroups.map(async (ageGroup) => {
       const teamData = teamsInEvent.find(t => 
-        t.ageGroup === ageGroup.ageGroup && 
-        (t.gender || 'Mixed') === ageGroup.gender
+        t.ageGroupId === ageGroup.id
       );
       
       const hasSchedule = ageGroupsWithSchedules.has(ageGroup.id);
@@ -74,19 +72,13 @@ router.get('/events/:eventId/age-groups-status', isAdmin, async (req, res) => {
       };
     }));
 
-    // Find team groups that don't have age group configurations
-    const configuredCombinations = configuredAgeGroups.map(ag => 
-      `${ag.ageGroup}-${ag.gender}`
-    );
+    // Find age groups that have teams but no configuration yet
+    const configuredAgeGroupIds = new Set(configuredAgeGroups.map(ag => ag.id));
     
     const availableFromTeams = teamsInEvent
-      .filter(team => {
-        const combination = `${team.ageGroup}-${team.gender || 'Mixed'}`;
-        return !configuredCombinations.includes(combination);
-      })
+      .filter(team => !configuredAgeGroupIds.has(team.ageGroupId))
       .map(team => ({
-        ageGroup: team.ageGroup,
-        gender: team.gender || 'Mixed',
+        ageGroupId: team.ageGroupId,
         teamCount: team.teamCount
       }));
 
@@ -184,8 +176,7 @@ router.post('/events/:eventId/age-groups/:ageGroupId/schedule', isAdmin, async (
       .from(teams)
       .where(and(
         eq(teams.eventId, eventId.toString()),
-        eq(teams.ageGroup, ageGroup.ageGroup),
-        eq(teams.gender, ageGroup.gender === 'Mixed' ? null : ageGroup.gender)
+        eq(teams.ageGroupId, ageGroupId)
       ));
 
     if (ageGroupTeams.length < 2) {
@@ -205,28 +196,28 @@ router.post('/events/:eventId/age-groups/:ageGroupId/schedule', isAdmin, async (
         const gameTime = new Date(gameDate);
         gameTime.setHours(9 + (generatedGames.length * 2)); // 2 hour slots
 
-        // Create time slot
+        // Create time slot using correct schema
         const timeSlot = await db.insert(gameTimeSlots).values({
-          date: gameTime.toISOString().split('T')[0],
-          startTime: gameTime.toTimeString().split(' ')[0],
-          endTime: new Date(gameTime.getTime() + (ageGroup.gameLength * 60000)).toTimeString().split(' ')[0],
+          eventId: eventId.toString(),
           fieldId: 1, // Default field for now
+          startTime: gameTime.toTimeString().split(' ')[0],
+          endTime: new Date(gameTime.getTime() + 90 * 60000).toTimeString().split(' ')[0],
+          dayIndex: 0,
           isAvailable: false
         }).returning();
 
-        // Create game
+        // Create game using correct schema
         const game = await db.insert(games).values({
           eventId: eventId.toString(),
-          ageGroup: `${ageGroup.ageGroup} ${ageGroup.gender}`,
-          homeTeam: ageGroupTeams[i].name,
-          awayTeam: ageGroupTeams[j].name,
-          homeTeamId: ageGroupTeams[i].id.toString(),
-          awayTeamId: ageGroupTeams[j].id.toString(),
+          ageGroupId: ageGroupId,
+          homeTeamId: ageGroupTeams[i].id,
+          awayTeamId: ageGroupTeams[j].id,
           timeSlotId: timeSlot[0].id,
           fieldId: 1,
           status: 'scheduled',
-          gameLength: 90,
-          gameFormat: ageGroup.fieldSize
+          round: 1,
+          matchNumber: generatedGames.length + 1,
+          duration: 90
         }).returning();
 
         generatedGames.push(game[0]);
