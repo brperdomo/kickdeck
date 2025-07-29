@@ -78,6 +78,8 @@ import TournamentSchedulingHub from "@/pages/TournamentSchedulingHub";
 import SchedulingDashboard from "@/pages/SchedulingDashboard";
 // 7-Step Tournament System
 import TournamentSystemPage from "@/pages/admin/TournamentSystemPage";
+// Offline Tournament Testing
+import OfflineTournamentTesting from "@/pages/OfflineTournamentTesting";
 
 // Import landing page components
 import LandingPage from "@/pages/landing-page";
@@ -336,6 +338,9 @@ function Router() {
           </Route>
           <Route path="/admin/tournament-system">
             {user.isAdmin ? <TournamentSystemPage /> : <NotFound />}
+          </Route>
+          <Route path="/offline-testing">
+            <OfflineTournamentTesting />
           </Route>
           <Route path="/admin/reports">
             {user.isAdmin ? <AdminDashboard initialView="reports" /> : <NotFound />}
