@@ -61,10 +61,10 @@ export function TournamentStatusDisplay({ eventId }: TournamentStatusDisplayProp
                 </p>
                 <div className="mt-4 p-4 bg-white/20 rounded-lg">
                   <p className="text-sm text-white/90">
-                    <strong>What we know from database analysis:</strong><br/>
-                    • Empire Super Cup has 16 age groups and 173 games<br/>
-                    • Rise Cup has 15 age groups configured<br/>
-                    • System contains properly structured tournament data
+                    <strong>Authentication Required:</strong><br/>
+                    • Please log in to view live tournament data<br/>
+                    • Real team names and game counts will display after authentication<br/>
+                    • Database contains properly structured tournament information
                   </p>
                 </div>
               </div>

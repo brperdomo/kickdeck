@@ -9,26 +9,35 @@ const router = express.Router();
 // GET /api/admin/events/:eventId/tournament-status
 router.get('/:eventId/tournament-status', requirePermission('schedule_management'), async (req, res) => {
   try {
-    const eventId = parseInt(req.params.eventId);
+    const eventId = req.params.eventId; // Keep as string to match database schema
     
-    if (isNaN(eventId)) {
+    if (!eventId) {
       return res.status(400).json({ error: 'Invalid event ID' });
     }
 
-    // Get event details
-    const [event] = await db
-      .select({
-        id: events.id,
-        name: events.name
-      })
-      .from(events)
-      .where(eq(events.id, eventId));
+    // Get event details - eventId could be string or need parsing
+    let event;
+    try {
+      // Try as integer first for events table
+      const eventIdInt = parseInt(eventId);
+      if (!isNaN(eventIdInt)) {
+        [event] = await db
+          .select({
+            id: events.id,
+            name: events.name
+          })
+          .from(events)
+          .where(eq(events.id, eventIdInt));
+      }
+    } catch (err) {
+      console.error('Error fetching event:', err);
+    }
 
     if (!event) {
       return res.status(404).json({ error: 'Event not found' });
     }
 
-    // Get age groups count and list
+    // Get age groups count and list - eventAgeGroups uses string eventId
     const ageGroupsData = await db
       .select({
         ageGroup: eventAgeGroups.ageGroup,
@@ -39,7 +48,7 @@ router.get('/:eventId/tournament-status', requirePermission('schedule_management
     const ageGroupsList = Array.from(new Set(ageGroupsData.map(ag => ag.ageGroup))).sort();
     const ageGroupsCount = ageGroupsList.length;
 
-    // Get games count
+    // Get games count - games table uses string eventId
     const [gamesResult] = await db
       .select({ count: count() })
       .from(games)
@@ -47,7 +56,7 @@ router.get('/:eventId/tournament-status', requirePermission('schedule_management
 
     const gamesScheduled = gamesResult?.count || 0;
 
-    // Get teams count
+    // Get teams count - teams table uses string eventId  
     const [teamsResult] = await db
       .select({ count: count() })
       .from(teams)
