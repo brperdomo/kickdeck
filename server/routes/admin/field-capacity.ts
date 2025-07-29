@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { requireAuth, requirePermission } from '../../middleware/auth';
 import { db } from '@db';
-import { complexes, fields } from '@db/schema';
+import { complexes, fields, eventComplexes } from '@db/schema';
 import { eq } from 'drizzle-orm';
 
 const router = Router();
@@ -11,15 +11,57 @@ router.get('/events/:eventId/complexes', requireAuth, requirePermission('view_ev
   try {
     const { eventId } = req.params;
     
-    // Fetch complexes associated with the event
-    const eventComplexes = await db.query.complexes.findMany({
-      where: eq(complexes.eventId, parseInt(eventId)),
-      with: {
-        fields: true
+    // Fetch complexes associated with the event through eventComplexes table
+    const eventComplexesData = await db
+      .select({
+        complexId: complexes.id,
+        complexName: complexes.name,
+        complexAddress: complexes.address,
+        complexOpenTime: complexes.openTime,
+        complexCloseTime: complexes.closeTime,
+        fieldId: fields.id,
+        fieldName: fields.name,
+        fieldSize: fields.fieldSize,
+        hasLights: fields.hasLights,
+        isOpen: fields.isOpen,
+        fieldOpenTime: fields.openTime,
+        fieldCloseTime: fields.closeTime,
+      })
+      .from(eventComplexes)
+      .innerJoin(complexes, eq(eventComplexes.complexId, complexes.id))
+      .leftJoin(fields, eq(complexes.id, fields.complexId))
+      .where(eq(eventComplexes.eventId, eventId));
+
+    // Transform to grouped structure
+    const complexMap = new Map();
+    eventComplexesData.forEach(row => {
+      if (!complexMap.has(row.complexId)) {
+        complexMap.set(row.complexId, {
+          id: row.complexId,
+          name: row.complexName,
+          address: row.complexAddress,
+          openTime: row.complexOpenTime,
+          closeTime: row.complexCloseTime,
+          fields: []
+        });
+      }
+      
+      if (row.fieldId) {
+        complexMap.get(row.complexId).fields.push({
+          id: row.fieldId,
+          name: row.fieldName,
+          fieldSize: row.fieldSize,
+          hasLights: row.hasLights,
+          isOpen: row.isOpen,
+          openTime: row.fieldOpenTime,
+          closeTime: row.fieldCloseTime,
+        });
       }
     });
 
-    res.json(eventComplexes);
+    const eventComplexesList = Array.from(complexMap.values());
+
+    res.json(eventComplexesList);
   } catch (error) {
     console.error('Error fetching complexes:', error);
     res.status(500).json({ error: 'Failed to fetch complexes' });
@@ -32,13 +74,43 @@ router.post('/events/:eventId/analyze-capacity', requireAuth, requirePermission(
     const { eventId } = req.params;
     const { teamsData, gameMetadata } = req.body;
 
-    // Fetch complexes with fields
-    const eventComplexes = await db.query.complexes.findMany({
-      where: eq(complexes.eventId, parseInt(eventId)),
-      with: {
-        fields: true
+    // Fetch complexes with fields (reuse the logic from above)
+    const eventComplexesData = await db
+      .select({
+        complexId: complexes.id,
+        complexName: complexes.name,
+        fieldId: fields.id,
+        fieldName: fields.name,
+        fieldSize: fields.fieldSize,
+        isOpen: fields.isOpen,
+      })
+      .from(eventComplexes)
+      .innerJoin(complexes, eq(eventComplexes.complexId, complexes.id))
+      .leftJoin(fields, eq(complexes.id, fields.complexId))
+      .where(eq(eventComplexes.eventId, eventId));
+
+    // Transform to grouped structure
+    const complexMap = new Map();
+    eventComplexesData.forEach(row => {
+      if (!complexMap.has(row.complexId)) {
+        complexMap.set(row.complexId, {
+          id: row.complexId,
+          name: row.complexName,
+          fields: []
+        });
+      }
+      
+      if (row.fieldId && row.isOpen) {
+        complexMap.get(row.complexId).fields.push({
+          id: row.fieldId,
+          name: row.fieldName,
+          fieldSize: row.fieldSize,
+          isOpen: row.isOpen,
+        });
       }
     });
+
+    const eventComplexesList = Array.from(complexMap.values());
 
     // Calculate operating hours
     const openHour = parseInt(gameMetadata.fieldOpeningTime.split(':')[0]);
@@ -85,7 +157,7 @@ router.post('/events/:eventId/analyze-capacity', requireAuth, requirePermission(
 
     // Analyze field availability by type
     const fieldsByType: { [key: string]: any[] } = {};
-    eventComplexes.forEach(complex => {
+    eventComplexesList.forEach(complex => {
       complex.fields?.forEach((field: any) => {
         const size = field.fieldSize || '11v11';
         if (!fieldsByType[size]) {
@@ -143,7 +215,7 @@ router.post('/events/:eventId/analyze-capacity', requireAuth, requirePermission(
       }
     });
 
-    if (eventComplexes.length === 0) {
+    if (eventComplexesList.length === 0) {
       conflicts.push('No complexes or fields configured for this event');
       recommendations.push('Configure at least one complex with appropriate fields');
     }
