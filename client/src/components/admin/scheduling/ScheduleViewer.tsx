@@ -46,7 +46,10 @@ interface ScheduleData {
     gamesInDatabase: number;
     teamsInDatabase: number;
     ageGroupsConfigured: number;
+    realTeamsFound: number;
+    scheduledGamesFound: number;
   };
+  teamsList: Array<{ id: number; name: string; club: string }>;
   eventId: number;
 }
 

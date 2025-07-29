@@ -8,9 +8,9 @@ const router = Router();
 // GET /api/admin/events/:eventId/schedule - Get complete tournament schedule
 router.get('/:eventId/schedule', async (req, res) => {
   try {
-    const eventId = parseInt(req.params.eventId);
+    const eventId = req.params.eventId; // Keep as string
     
-    if (isNaN(eventId)) {
+    if (!eventId) {
       return res.status(400).json({ error: 'Invalid event ID' });
     }
 
@@ -35,24 +35,80 @@ router.get('/:eventId/schedule', async (req, res) => {
 
     const ageGroups = ageGroupsData.map(ag => ag.ageGroup);
 
-    // Create sample schedule data based on actual counts
-    const sampleGames = [];
-    const gameCount = gamesCount?.count || 0;
-    
-    // Generate sample games to represent the actual tournament structure
-    for (let i = 1; i <= Math.min(gameCount, 20); i++) {
-      sampleGames.push({
-        id: i,
-        homeTeam: `Team ${i}A`,
-        awayTeam: `Team ${i}B`,
-        ageGroup: ageGroups[i % ageGroups.length] || 'U12',
-        field: `Field ${(i % 4) + 1}`,
+    // Get actual team names from database
+    const actualTeamsData = await db
+      .select({
+        id: teams.id,
+        name: teams.name,
+        ageGroupId: teams.ageGroupId,
+        clubName: teams.clubName,
+        status: teams.status
+      })
+      .from(teams)
+      .where(eq(teams.eventId, eventId));
+
+    // Get actual games with real team data
+    const actualGamesData = await db
+      .select({
+        gameId: games.id,
+        homeTeamId: games.homeTeamId,
+        awayTeamId: games.awayTeamId,
+        ageGroupId: games.ageGroupId,
+        fieldId: games.fieldId,
+        status: games.status,
+        homeScore: games.homeScore,
+        awayScore: games.awayScore,
+        createdAt: games.createdAt
+      })
+      .from(games)
+      .where(eq(games.eventId, eventId));
+
+    // Create team lookup map
+    const teamsMap = actualTeamsData.reduce((acc, team) => {
+      acc[team.id] = team;
+      return acc;
+    }, {} as Record<number, any>);
+
+    // Transform actual games with real team names
+    const realGames = actualGamesData.map((game, index) => {
+      const homeTeam = game.homeTeamId ? teamsMap[game.homeTeamId] : null;
+      const awayTeam = game.awayTeamId ? teamsMap[game.awayTeamId] : null;
+      const ageGroup = ageGroups.find((ag, idx) => idx === (game.ageGroupId - 1)) || ageGroups[0] || 'Unknown';
+      
+      return {
+        id: game.gameId,
+        homeTeam: homeTeam?.name || `Team ${game.homeTeamId}`,
+        awayTeam: awayTeam?.name || `Team ${game.awayTeamId}`,
+        homeTeamClub: homeTeam?.clubName || '',
+        awayTeamClub: awayTeam?.clubName || '',
+        ageGroup: ageGroup,
+        field: `Field ${game.fieldId}`,
+        date: '2025-08-01', // TODO: Get from actual time slots
+        time: `${8 + Math.floor(index / 4)}:${(index % 4) * 15}0`, // TODO: Get from actual time slots
+        duration: 90,
+        status: game.status || 'scheduled',
+        homeScore: game.homeScore,
+        awayScore: game.awayScore
+      };
+    });
+
+    // If no actual games exist, show sample with real team names
+    const displayGames = realGames.length > 0 ? realGames : actualTeamsData.slice(0, 20).map((team, index) => {
+      const otherTeam = actualTeamsData[index + 1] || actualTeamsData[0];
+      return {
+        id: index + 1,
+        homeTeam: team.name,
+        awayTeam: otherTeam?.name || 'TBD',
+        homeTeamClub: team.clubName || '',
+        awayTeamClub: otherTeam?.clubName || '',
+        ageGroup: ageGroups[index % ageGroups.length] || 'U12',
+        field: `Field ${(index % 4) + 1}`,
         date: '2025-08-01',
-        time: `${8 + Math.floor(i / 4)}:${(i % 4) * 15}0`,
+        time: `${8 + Math.floor(index / 4)}:${(index % 4) * 15}0`,
         duration: 90,
         status: 'scheduled'
-      });
-    }
+      };
+    });
 
     // Mock field data
     const fields = [
@@ -65,16 +121,19 @@ router.get('/:eventId/schedule', async (req, res) => {
     const dates = ['2025-08-01', '2025-08-02'];
 
     res.json({
-      games: sampleGames,
+      games: displayGames,
       fields,
       ageGroups,
       dates,
-      totalGames: gameCount,
+      totalGames: actualGamesData.length || displayGames.length,
       actualData: {
-        gamesInDatabase: gameCount,
-        teamsInDatabase: teamsCount?.count || 0,
-        ageGroupsConfigured: ageGroups.length
+        gamesInDatabase: actualGamesData.length,
+        teamsInDatabase: actualTeamsData.length,
+        ageGroupsConfigured: ageGroups.length,
+        realTeamsFound: actualTeamsData.length,
+        scheduledGamesFound: actualGamesData.length
       },
+      teamsList: actualTeamsData.map(t => ({ id: t.id, name: t.name, club: t.clubName })),
       eventId
     });
 
