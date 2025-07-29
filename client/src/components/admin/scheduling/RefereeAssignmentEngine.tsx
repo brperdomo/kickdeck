@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -114,13 +114,17 @@ export function RefereeAssignmentEngine({ eventId, scheduleData, onComplete }: R
     }
   }, [refereeData]);
 
-  // Detect conflicts when assignments change
-  useEffect(() => {
+  // Detect conflicts when assignments change - memoized to prevent infinite loops
+  const detectConflicts = useCallback(() => {
     if (assignments.length > 0 && referees.length > 0) {
       const detectedConflicts = detectAssignmentConflicts();
       setConflicts(detectedConflicts);
     }
-  }, [assignments, referees]);
+  }, [assignments, referees, scheduleData?.games]);
+
+  useEffect(() => {
+    detectConflicts();
+  }, [detectConflicts]);
 
   const detectAssignmentConflicts = (): AssignmentConflict[] => {
     const conflicts: AssignmentConflict[] = [];

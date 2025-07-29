@@ -6,8 +6,8 @@ import {
   Link2, X, Ticket, Plus, Mail, KeyRound, Check, RefreshCcw, UserMinus, RotateCcw, 
   Pencil, PlusCircle, CalendarRange, UserRoundPlus, ClipboardX, ArrowLeft,
   Upload, Wand2, Sparkles, AlertTriangle, CalendarDays, Loader2,
-  Trophy, WandSparkles, CheckCircle2, AlertCircle, CreditCard, MapPin, User,
-  TrendingUp, BarChart2, DollarSign, FileText, Edit, Trash, Trash2, HelpCircle, ChevronDown
+  Trophy, WandSparkles, CheckCircle2, AlertCircle, CreditCard, MapPin,
+  TrendingUp, BarChart2, HelpCircle
 } from "lucide-react";
 // Removed ClubLogo import as we now display club name as text
 import { ComplexCard } from "@/components/admin/ComplexCard";
@@ -45,7 +45,7 @@ import { Badge } from "@/components/ui/badge";
 import { PaymentStatusBadge, TeamStatusBadge } from "@/components/ui/payment-status-badge";
 import { PaymentMethodDisplay, PaymentStatusLegend } from "@/components/ui/payment-method-display";
 import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Checkbox as CheckboxComponent } from "@/components/ui/checkbox";
 import { useUser } from "@/hooks/use-user";
 import { usePermissions } from "@/hooks/use-permissions";
 import { useTournamentDirector } from "@/hooks/use-tournament-director";
@@ -123,6 +123,8 @@ import {
   Moon,
   Sun,
   Trash2,
+  FileText,
+  Trash
   CalendarIcon,
   Map,
   Download,
