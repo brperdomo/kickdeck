@@ -58,7 +58,6 @@ import { getPaymentLogs, getPaymentTransactionDetail, getRecentPaymentFailures }
 import tournamentDirectorRoutes from "./routes/tournament-director-routes";
 import flexibleAgeGroupsRoutes from "./routes/admin/flexible-age-groups";
 import paymentCompletionRouter from "./routes/payment-completion";
-import offlineTestingRouter from "./routes/offline-testing";
 import { 
   getEnhancedEventFinancialReport, 
   getOrganizationFinancialSummary, 
@@ -926,9 +925,6 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/events', isAdmin, trueAutomatedSchedulingRouter); // True automated scheduling
     app.use('/api/admin/events', isAdmin, tournamentParametersRouter); // Tournament parameters
     app.use('/api/admin', isAdmin, flexibleAgeGroupsRoutes); // Flexible age group management
-    
-    // Register offline testing routes (NO authentication required for testing)
-    app.use('/api/offline-testing', offlineTestingRouter); // Offline tournament testing system
     app.use('/api/admin/events', isAdmin, flightsRouter); // Flight creation and management
     app.use('/api/admin/events', isAdmin, adminBracketsRouter); // Bracket generation and management
     app.use('/api/admin/events', isAdmin, adminGamesRouter); // Game scheduling and management
