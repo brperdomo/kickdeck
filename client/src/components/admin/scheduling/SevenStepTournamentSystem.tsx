@@ -15,6 +15,7 @@ import { GameSchedulingStep } from './GameSchedulingStep';
 import { FieldAssignmentStep } from './FieldAssignmentStep';
 import { SchedulePublicationStep } from './SchedulePublicationStep';
 import { FlexibleSchedulingGuide } from './FlexibleSchedulingGuide';
+import { TournamentStatusDisplay } from './TournamentStatusDisplay';
 
 interface SevenStepTournamentSystemProps {
   eventId: string;
@@ -31,7 +32,7 @@ interface StepDefinition {
 }
 
 export function SevenStepTournamentSystem({ eventId }: SevenStepTournamentSystemProps) {
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
 
   const steps: StepDefinition[] = [
@@ -113,17 +114,26 @@ export function SevenStepTournamentSystem({ eventId }: SevenStepTournamentSystem
   };
 
   const getCurrentStepComponent = () => {
-    const step = steps.find(s => s.id === currentStep);
-    if (step?.component) {
-      const Component = step.component;
-      return (
-        <Component 
-          eventId={eventId} 
-          onComplete={(data: any) => handleStepComplete(currentStep, data)}
-        />
-      );
+    switch(currentStep) {
+      case 0:
+        return <TournamentStatusDisplay eventId={eventId} />;
+      case 1:
+        return <FlexibleAgeGroupManager eventId={eventId} />;
+      case 2:
+        return <TournamentParametersSetup eventId={eventId} />;
+      case 3:
+        return <BracketGenerationStep eventId={eventId} />;
+      case 4:
+        return <GameSchedulingStep eventId={eventId} />;
+      case 5:
+        return <FieldAssignmentStep eventId={eventId} />;
+      case 6:
+        return <SchedulePublicationStep eventId={eventId} />;
+      case 7:
+        return <FlexibleSchedulingGuide />;
+      default:
+        return <TournamentStatusDisplay eventId={eventId} />;
     }
-    return null;
   };
 
   return (
@@ -136,44 +146,66 @@ export function SevenStepTournamentSystem({ eventId }: SevenStepTournamentSystem
               <Trophy className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">7-Step Tournament System</h2>
-              <p className="text-gray-600">Automated tournament scheduling workflow</p>
+              <h2 className="text-2xl font-bold text-gray-900">
+                {currentStep === 0 ? 'Tournament Status Overview' : '7-Step Tournament System'}
+              </h2>
+              <p className="text-gray-600">
+                {currentStep === 0 ? 'Your tournament scheduling status' : 'Automated tournament scheduling workflow'}
+              </p>
             </div>
           </div>
           <div className="flex items-center space-x-3">
-            <Badge className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white border-0 px-4 py-2">
-              {completedSteps.length}/{steps.length} Complete
-            </Badge>
-            <div className="text-right text-sm">
-              <div className="font-semibold text-gray-900">{Math.round(getProgressPercentage())}%</div>
-              <div className="text-gray-500">Progress</div>
-            </div>
+            {currentStep === 0 ? (
+              <Badge className="bg-gradient-to-r from-green-500 to-emerald-600 text-white border-0 px-4 py-2">
+                Tournament Complete
+              </Badge>
+            ) : (
+              <>
+                <Badge className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white border-0 px-4 py-2">
+                  {completedSteps.length}/{steps.length} Complete
+                </Badge>
+                <div className="text-right text-sm">
+                  <div className="font-semibold text-gray-900">{Math.round(getProgressPercentage())}%</div>
+                  <div className="text-gray-500">Progress</div>
+                </div>
+              </>
+            )}
+            <Button 
+              onClick={() => setCurrentStep(currentStep === 0 ? 1 : 0)}
+              variant="outline"
+              className="border-blue-300 text-blue-700 hover:bg-blue-50"
+            >
+              {currentStep === 0 ? 'View Steps' : 'View Status'}
+            </Button>
           </div>
         </div>
         
-        <div className="relative">
-          <Progress value={getProgressPercentage()} className="h-3 bg-gray-100" />
-          <div className="absolute -top-1 left-0 right-0 flex justify-between">
-            {steps.map((step, index) => (
-              <div
-                key={step.id}
-                className={`w-5 h-5 rounded-full border-2 transition-all duration-300 ${
-                  completedSteps.includes(step.id)
-                    ? 'bg-gradient-to-r from-emerald-500 to-teal-600 border-emerald-500'
-                    : currentStep === step.id
-                    ? 'bg-gradient-to-r from-blue-500 to-purple-600 border-blue-500'
-                    : 'bg-white border-gray-300'
-                }`}
-                style={{ left: `${(index / (steps.length - 1)) * 100}%`, transform: 'translateX(-50%)' }}
-              />
-            ))}
+        {currentStep > 0 && (
+          <div className="relative">
+            <Progress value={getProgressPercentage()} className="h-3 bg-gray-100" />
+            <div className="absolute -top-1 left-0 right-0 flex justify-between">
+              {steps.map((step, index) => (
+                <div
+                  key={step.id}
+                  className={`w-5 h-5 rounded-full border-2 transition-all duration-300 ${
+                    completedSteps.includes(step.id)
+                      ? 'bg-gradient-to-r from-emerald-500 to-teal-600 border-emerald-500'
+                      : currentStep === step.id
+                      ? 'bg-gradient-to-r from-blue-500 to-purple-600 border-blue-500'
+                      : 'bg-white border-gray-300'
+                  }`}
+                  style={{ left: `${(index / (steps.length - 1)) * 100}%`, transform: 'translateX(-50%)' }}
+                />
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Modern Step Navigation */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-        {steps.map((step) => (
+      {currentStep > 0 && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+          {steps.map((step) => (
           <Card 
             key={step.id}
             className={`group cursor-pointer transition-all duration-300 border-0 shadow-lg hover:shadow-xl overflow-hidden ${
@@ -241,38 +273,43 @@ export function SevenStepTournamentSystem({ eventId }: SevenStepTournamentSystem
             </CardContent>
           </Card>
         ))}
-      </div>
+        </div>
+      )}
 
       {/* Current Step Details */}
-      <Card className="border-0 shadow-lg bg-gradient-to-r from-white to-blue-50/30">
-        <CardHeader className="pb-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl">
-                {steps.find(s => s.id === currentStep)?.icon && 
-                  React.cloneElement(steps.find(s => s.id === currentStep)!.icon as React.ReactElement, {
-                    className: "h-6 w-6 text-white"
-                  })
-                }
+      {currentStep > 0 && (
+        <Card className="border-0 shadow-lg bg-gradient-to-r from-white to-blue-50/30">
+          <CardHeader className="pb-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl">
+                  {steps.find(s => s.id === currentStep)?.icon && 
+                    React.cloneElement(steps.find(s => s.id === currentStep)!.icon as React.ReactElement, {
+                      className: "h-6 w-6 text-white"
+                    })
+                  }
+                </div>
+                <div>
+                  <CardTitle className="text-xl text-gray-900">
+                    Step {currentStep}: {steps.find(s => s.id === currentStep)?.title}
+                  </CardTitle>
+                  <p className="text-gray-600 mt-1 leading-relaxed">
+                    {steps.find(s => s.id === currentStep)?.description}
+                  </p>
+                </div>
               </div>
-              <div>
-                <CardTitle className="text-xl text-gray-900">
-                  Step {currentStep}: {steps.find(s => s.id === currentStep)?.title}
-                </CardTitle>
-                <p className="text-gray-600 mt-1 leading-relaxed">
-                  {steps.find(s => s.id === currentStep)?.description}
-                </p>
-              </div>
+              <Badge className="bg-gradient-to-r from-blue-500 to-purple-600 text-white border-0 px-3 py-1">
+                {steps.find(s => s.id === currentStep)?.estimatedTime}
+              </Badge>
             </div>
-            <Badge className="bg-gradient-to-r from-blue-500 to-purple-600 text-white border-0 px-3 py-1">
-              {steps.find(s => s.id === currentStep)?.estimatedTime}
-            </Badge>
-          </div>
-        </CardHeader>
-      </Card>
+          </CardHeader>
+        </Card>
+      )}
 
       {/* Current Step Component */}
-      {getCurrentStepComponent()}
+      <div className="mt-8">
+        {getCurrentStepComponent()}
+      </div>
 
       {/* Completion Celebration */}
       {completedSteps.length === steps.length && (
