@@ -64,28 +64,9 @@ export default function TournamentSystemPage() {
                   </div>
                 </div>
                 <div className="flex items-center space-x-4">
-                  <Badge className="bg-white/20 text-white border-white/30 hover:bg-white/30">
-                    Professional Edition
-                  </Badge>
                   <Badge className="bg-emerald-500/20 text-emerald-100 border-emerald-400/30">
                     Fully Automated
                   </Badge>
-                </div>
-              </div>
-              <div className="hidden lg:block">
-                <div className="grid grid-cols-3 gap-4 text-white">
-                  <div className="text-center p-4 bg-white/10 rounded-xl backdrop-blur-sm">
-                    <div className="text-2xl font-bold">7</div>
-                    <div className="text-sm text-blue-100">Steps</div>
-                  </div>
-                  <div className="text-center p-4 bg-white/10 rounded-xl backdrop-blur-sm">
-                    <div className="text-2xl font-bold">218</div>
-                    <div className="text-sm text-blue-100">Teams</div>
-                  </div>
-                  <div className="text-center p-4 bg-white/10 rounded-xl backdrop-blur-sm">
-                    <div className="text-2xl font-bold">12</div>
-                    <div className="text-sm text-blue-100">Fields</div>
-                  </div>
                 </div>
               </div>
             </div>
