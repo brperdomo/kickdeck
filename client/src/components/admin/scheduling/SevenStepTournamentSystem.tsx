@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { 
   Settings, Users, Trophy, Calendar, MapPin, FileText, Share2,
-  CheckCircle, Clock, ArrowRight, Play
+  CheckCircle, Clock, ArrowRight, Play, Zap
 } from 'lucide-react';
 import { TournamentParametersSetup } from './TournamentParametersSetup';
 import { FlexibleAgeGroupManager } from './FlexibleAgeGroupManager';

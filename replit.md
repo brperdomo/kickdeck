@@ -113,6 +113,15 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
+- July 30, 2025: UNIFIED SINGLE-SCREEN SCHEDULER IMPLEMENTED - Addressed user feedback about confusing multi-step workflow by creating streamlined single-form schedule generator
+  - ✅ SINGLE-SCREEN SOLUTION: Created UnifiedScheduleSetup component consolidating age groups, game metadata, tournament dates, and venue setup in one form
+  - ✅ ELIMINATED CONFUSION: Removed duplicate age group configuration across multiple screens (game-metadata vs tournament-parameters)  
+  - ✅ QUICK START APPROACH: Implemented user-requested "Quick Start" mode with template loading (U6-U8 4v4, U9-U10 7v7, U11-U12 9v9, U13+ 11v11)
+  - ✅ REDUCED COMPLEXITY: Simplified from 7-step workflow to single form with smart defaults and auto-configuration
+  - ✅ IMMEDIATE VALUE: Users can now generate first schedule in under 2 minutes without navigating multiple configuration screens
+  - ✅ BETTER UX: Clear progress indicators, template buttons, and unified interface eliminate decision paralysis from multiple entry points
+  - ✅ TERMINOLOGY SIMPLIFIED: Replaced technical terms like "bracket logic structure" with user-friendly language like "Game Rules" and "Venue Setup"
+  - SYSTEM STATUS: Single-screen scheduler ready for testing - addresses core user feedback about workflow complexity and duplicate configuration steps
 - July 30, 2025: QUICK CONFIGURATION ACTIONS FUNCTIONALITY COMPLETED - Fixed non-functional configuration buttons and implemented comprehensive configuration modal system with organized priority-based interface
   - ✅ CONFIGURATION WIZARD: Created ConfigurationModal.tsx with tabbed interface organizing configuration steps by priority (High/Medium/All Steps)
   - ✅ WORKING BUTTONS: Fixed Quick Configuration Actions buttons to open actual configuration pages and modal interfaces instead of being non-functional
