@@ -19,6 +19,13 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
       .where(eq(games.eventId, eventId));
 
     console.log(`[Schedule Calendar] Found ${allGames.length} total games`);
+    
+    if (allGames.length === 0) {
+      console.log(`[Schedule Calendar] No games found for event ${eventId}, checking database...`);
+      // Check if the event exists
+      const eventCheck = await db.select().from(games).limit(5);
+      console.log(`[Schedule Calendar] Sample games in database:`, eventCheck);
+    }
 
     // Get all time slots for this event
     const allTimeSlots = await db
@@ -92,6 +99,7 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
     }
 
     console.log(`[Schedule Calendar] Processed ${processedGames.length} games with team names`);
+    console.log(`[Schedule Calendar] Sample processed game:`, processedGames[0]);
 
     res.json({
       success: true,

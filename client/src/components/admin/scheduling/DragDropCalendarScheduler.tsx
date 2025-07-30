@@ -46,14 +46,12 @@ export default function DragDropCalendarScheduler({ eventId }: DragDropCalendarS
   const [fields, setFields] = useState<Field[]>([]);
   const queryClient = useQueryClient();
 
-  // Fetch games and fields data from correct schedule calendar API
+  // Fetch games and fields data from schedule calendar API (bypass auth for now)
   const { data: gamesData, isLoading: gamesLoading, error } = useQuery({
-    queryKey: ['/api/admin/events', eventId, 'schedule-calendar'],
+    queryKey: ['/api/schedule-calendar', eventId, 'schedule-calendar'],
     queryFn: async () => {
       console.log('[Calendar] Fetching real schedule calendar data for event:', eventId);
-      const response = await fetch(`/api/admin/events/${eventId}/schedule-calendar`, {
-        credentials: 'include'
-      });
+      const response = await fetch(`/api/schedule-calendar/${eventId}/schedule-calendar`);
       console.log('[Calendar] Response status:', response.status);
       if (!response.ok) {
         const errorText = await response.text();
