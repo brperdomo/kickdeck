@@ -61,7 +61,7 @@ export default function DragDropCalendarScheduler({ eventId }: DragDropCalendarS
       const data = await response.json();
       console.log('[Calendar] Received schedule calendar data:', data);
       
-      // Data is already processed by the API, just return games
+      // Data is already processed by the API, return both games and fields
       const processedGames = data.games?.map((game: any) => ({
         id: game.id,
         homeTeamName: game.homeTeamName,
@@ -74,29 +74,7 @@ export default function DragDropCalendarScheduler({ eventId }: DragDropCalendarS
         status: game.status,
         duration: game.duration
       })) || [];
-      
-      return { games: processedGames, success: true };
-    },
-    retry: false
-  });
 
-  const { data: fieldsData, error: fieldsError } = useQuery({
-    queryKey: ['/api/admin/events', eventId, 'fields'],
-    queryFn: async () => {
-      console.log('[Calendar] Fetching real fields data for event:', eventId);
-      const response = await fetch(`/api/admin/events/${eventId}/fields`, {
-        credentials: 'include'
-      });
-      console.log('[Calendar] Fields response status:', response.status);
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.log('[Calendar] Fields error response:', errorText);
-        throw new Error(`Failed to fetch fields: ${response.status}`);
-      }
-      const data = await response.json();
-      console.log('[Calendar] Received fields data:', data);
-      
-      // Fields data is already processed by the API
       const processedFields = data.fields?.map((field: any) => ({
         id: field.id,
         name: field.name,
@@ -105,10 +83,14 @@ export default function DragDropCalendarScheduler({ eventId }: DragDropCalendarS
         isOpen: true
       })) || [];
       
-      return { fields: processedFields, success: true };
+      return { games: processedGames, fields: processedFields, success: true };
     },
     retry: false
   });
+
+  // Fields data comes from the same API call as games data
+  const fieldsData = gamesData?.fields ? { fields: gamesData.fields, success: true } : null;
+  const fieldsError = null;
 
   // Update game assignment mutation
   const updateGameMutation = useMutation({
