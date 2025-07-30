@@ -6,6 +6,12 @@ import { eq, and } from 'drizzle-orm';
 
 const router = Router();
 
+// Test endpoint to verify routing is working
+router.get('/test-schedule', async (req, res) => {
+  console.log('[Unified Schedule] Test endpoint hit');
+  res.json({ message: 'Unified schedule router is working', timestamp: new Date().toISOString() });
+});
+
 // Generate unified schedule for a single age group
 router.post('/events/:eventId/unified-schedule', requireAuth, async (req, res) => {
   try {
@@ -252,11 +258,11 @@ router.post('/events/:eventId/unified-schedule', requireAuth, async (req, res) =
     // Save games to database
     console.log(`[Database Save] Saving ${scheduledGames.length} games to database...`);
     
-    const savedGames = [];
+    const savedGames: any[] = [];
     for (const game of scheduledGames) {
       // Save the game to database (matching actual schema)
-      const [savedGame] = await db.insert(games).values({
-        eventId: parseInt(eventId),
+      const savedGame = await db.insert(games).values({
+        eventId: parseInt(eventId), // Convert to integer to match schema
         ageGroupId: game.ageGroupId,
         homeTeamId: game.team1Id,
         awayTeamId: game.team2Id,
@@ -269,14 +275,14 @@ router.post('/events/:eventId/unified-schedule', requireAuth, async (req, res) =
 
       // Create a time slot for this game
       await db.insert(gameTimeSlots).values({
-        eventId: parseInt(eventId),
+        eventId: parseInt(eventId), // Convert to integer to match schema
         fieldId: 1, // Default field ID - will be enhanced later
         startTime: game.startTime,
         endTime: game.endTime,
         isAvailable: false
       });
 
-      savedGames.push(savedGame);
+      savedGames.push(savedGame[0]);
     }
 
     console.log(`[Database Save] Successfully saved ${savedGames.length} games to database`);

@@ -1,0 +1,75 @@
+shared-ff47c3d242500…bcf20dbad802fa.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous)	@	shared-ff47c3d242500…bcf20dbad802fa.js:1
+e	@	shared-ff47c3d242500…bcf20dbad802fa.js:1
+c	@	shared-ff47c3d242500…bcf20dbad802fa.js:1
+value	@	shared-ff47c3d242500…bcf20dbad802fa.js:1
+value	@	shared-ff47c3d242500…bcf20dbad802fa.js:1
+value	@	shared-ff47c3d242500…bcf20dbad802fa.js:1
+value	@	shared-ff47c3d242500…bcf20dbad802fa.js:1
+value	@	shared-ff47c3d242500…bcf20dbad802fa.js:1
+(anonymous)	@	shared-ff47c3d242500…bcf20dbad802fa.js:1
+setTimeout		
+value	@	shared-ff47c3d242500…bcf20dbad802fa.js:1
+value	@	shared-ff47c3d242500…bcf20dbad802fa.js:1
+value	@	shared-ff47c3d242500…bcf20dbad802fa.js:1
+(anonymous)	@	shared-ff47c3d242500…bcf20dbad802fa.js:1
+value	@	shared-ff47c3d242500…bcf20dbad802fa.js:1
+log	@	shared-ff47c3d242500…bcf20dbad802fa.js:1
+log	@	controller-with-prec…db91a8e104cfaa.js:1
+value	@	controller-with-prec…db91a8e104cfaa.js:1
+value	@	controller-with-prec…db91a8e104cfaa.js:1
+(anonymous)	@	controller-with-prec…db91a8e104cfaa.js:1
+UnifiedScheduleSetup-BpSeAitb.js:2 AUTO-FORMAT: U7 → 4v4, 60min, Small field
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955
+UnifiedScheduleSetup-BpSeAitb.js:2 AUTO-FORMAT: U19 → 11v11, 90min, Full Size field
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955
+UnifiedScheduleSetup-BpSeAitb.js:2 AUTO-FORMAT: U19 → 11v11, 90min, Full Size field
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955
+UnifiedScheduleSetup-BpSeAitb.js:2 
+ POST https://app.matchpro.ai/api/admin/events/1656618593/unified-schedule 500 (Internal Server Error)
+mutationFn	@	UnifiedScheduleSetup-BpSeAitb.js:2
+fn	@	index-DiKC_Y2g.js:41
+f	@	index-DiKC_Y2g.js:41
+start	@	index-DiKC_Y2g.js:41
+execute	@	index-DiKC_Y2g.js:41
+await in execute		
+mutate	@	index-DiKC_Y2g.js:41
+(anonymous)	@	index-DiKC_Y2g.js:41
+X	@	UnifiedScheduleSetup-BpSeAitb.js:3
+_ue	@	index-DiKC_Y2g.js:38
+Due	@	index-DiKC_Y2g.js:38
+Iue	@	index-DiKC_Y2g.js:38
+pM	@	index-DiKC_Y2g.js:38
+Xq	@	index-DiKC_Y2g.js:38
+(anonymous)	@	index-DiKC_Y2g.js:38
+NO	@	index-DiKC_Y2g.js:41
+bq	@	index-DiKC_Y2g.js:38
+E2	@	index-DiKC_Y2g.js:38
+X4	@	index-DiKC_Y2g.js:38
+Xue	@	index-DiKC_Y2g.js:38
+UnifiedScheduleSetup-BpSeAitb.js:2 Fetch failed loading: POST "https://app.matchpro.ai/api/admin/events/1656618593/unified-schedule".
+mutationFn	@	UnifiedScheduleSetup-BpSeAitb.js:2
+fn	@	index-DiKC_Y2g.js:41
+f	@	index-DiKC_Y2g.js:41
+start	@	index-DiKC_Y2g.js:41
+execute	@	index-DiKC_Y2g.js:41
+await in execute		
+mutate	@	index-DiKC_Y2g.js:41
+(anonymous)	@	index-DiKC_Y2g.js:41
+X	@	UnifiedScheduleSetup-BpSeAitb.js:3
+_ue	@	index-DiKC_Y2g.js:38
+Due	@	index-DiKC_Y2g.js:38
+Iue	@	index-DiKC_Y2g.js:38
+pM	@	index-DiKC_Y2g.js:38
+Xq	@	index-DiKC_Y2g.js:38
+(anonymous)	@	index-DiKC_Y2g.js:38
+NO	@	index-DiKC_Y2g.js:41
+bq	@	index-DiKC_Y2g.js:38
+E2	@	index-DiKC_Y2g.js:38
+X4	@	index-DiKC_Y2g.js:38
+Xue	@	index-DiKC_Y2g.js:38
