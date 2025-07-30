@@ -187,9 +187,9 @@ router.post('/events/:eventId/age-groups/:ageGroupId/schedule', isAdmin, async (
     const analysis = schedulingEngine.getSchedulingAnalysis();
     console.log('Scheduling analysis:', analysis);
     
-    // Generate schedule for this age group
-    console.log(`Generating schedule for age group ${ageGroupId}...`);
-    const generatedGames = await schedulingEngine.generateAgeGroupSchedule(ageGroupId, 'round-robin');
+    // Generate schedule for this age group with constraints
+    console.log(`Generating constraint-aware schedule for age group ${ageGroupId}...`);
+    const generatedGames = await schedulingEngine.generateAgeGroupScheduleWithConstraints(ageGroupId);
     
     console.log(`Generated ${generatedGames.length} games successfully`);
 
@@ -207,7 +207,7 @@ router.post('/events/:eventId/age-groups/:ageGroupId/schedule', isAdmin, async (
       }).returning();
 
       // Create game
-      const game = await db.insert(games).values({
+      const game: any = await db.insert(games).values({
         eventId: eventId.toString(),
         ageGroupId: ageGroupId,
         homeTeamId: gameData.homeTeam.id,

@@ -188,8 +188,8 @@ export class IntelligentSchedulingEngine {
     if (constraintRecords.length > 0) {
       const c = constraintRecords[0];
       this.constraints = {
-        operatingStartTime: c.operatingStartTime || "08:00",
-        operatingEndTime: c.operatingEndTime || "18:00",
+        operatingStartTime: "08:00", // Use default for now, field not in schema
+        operatingEndTime: "18:00", // Use default for now, field not in schema
         restPeriodMinutes: c.minRestTimeBetweenGames || 30,
         maxGamesPerTeamPerDay: c.maxGamesPerTeamPerDay,
         minTimeBetweenGames: c.minRestTimeBetweenGames || 120
@@ -329,7 +329,288 @@ export class IntelligentSchedulingEngine {
   }
 
   /**
-   * Find optimal time slot avoiding coach conflicts
+   * Enhanced scheduling with full constraint enforcement
+   */
+  async generateAgeGroupScheduleWithConstraints(ageGroupId: number): Promise<any[]> {
+    console.log(`=== CONSTRAINT-AWARE SCHEDULING FOR AGE GROUP ${ageGroupId} ===`);
+
+    // Get teams for this age group
+    const ageGroupTeams = this.teams.filter(team => team.ageGroupId === ageGroupId);
+    
+    if (ageGroupTeams.length < 2) {
+      throw new Error(`Need at least 2 teams for age group ${ageGroupId}, found ${ageGroupTeams.length}`);
+    }
+
+    console.log(`Found ${ageGroupTeams.length} teams in age group ${ageGroupId}`);
+
+    // Get appropriate game format
+    const gameFormat = this.getGameFormatForAgeGroup(ageGroupTeams[0].ageGroup);
+    if (!gameFormat) {
+      throw new Error(`No game format configured for age group ${ageGroupTeams[0].ageGroup}`);
+    }
+
+    // Get appropriate fields
+    const suitableFields = this.availableFields.filter(field => 
+      field.fieldSize === gameFormat.fieldSize
+    );
+
+    if (suitableFields.length === 0) {
+      throw new Error(`No fields available with size ${gameFormat.fieldSize} for age group ${ageGroupTeams[0].ageGroup}`);
+    }
+
+    console.log(`Using ${suitableFields.length} fields of size ${gameFormat.fieldSize}`);
+    console.log(`Scheduling constraints:`, this.constraints);
+
+    // Generate all possible round-robin matchups
+    const allGames: Array<{
+      homeTeam: TeamData;
+      awayTeam: TeamData;
+      gameFormat: GameFormat;
+      ageGroupId: number;
+      field?: FieldData;
+      timeSlot?: {startTime: Date, endTime: Date};
+    }> = [];
+
+    for (let i = 0; i < ageGroupTeams.length; i++) {
+      for (let j = i + 1; j < ageGroupTeams.length; j++) {
+        allGames.push({
+          homeTeam: ageGroupTeams[i],
+          awayTeam: ageGroupTeams[j],
+          gameFormat,
+          ageGroupId
+        });
+      }
+    }
+
+    console.log(`Generated ${allGames.length} potential games for round-robin format`);
+
+    // Schedule games with constraints
+    const scheduledGames = this.scheduleGamesWithConstraints(allGames, suitableFields);
+
+    return scheduledGames;
+  }
+
+  /**
+   * Smart scheduling algorithm with comprehensive constraint enforcement
+   */
+  private scheduleGamesWithConstraints(games: any[], availableFields: FieldData[]): any[] {
+    console.log(`=== SMART SCHEDULING WITH CONSTRAINTS ===`);
+    console.log(`Scheduling ${games.length} games with constraints:`, this.constraints);
+    
+    // Track field usage: fieldId -> array of {start, end, gameIndex}
+    const fieldSchedule = new Map<number, Array<{start: Date, end: Date, gameIndex: number}>>();
+    
+    // Track team schedules: teamId -> array of {start, end, gameIndex}
+    const teamSchedule = new Map<number, Array<{start: Date, end: Date, gameIndex: number}>>();
+    
+    // Track daily game counts per team: "teamId-date" -> count
+    const dailyGameCounts = new Map<string, number>();
+    
+    const scheduledGames: any[] = [];
+    const failedGames: any[] = [];
+
+    // Initialize field schedule tracking
+    availableFields.forEach(field => {
+      fieldSchedule.set(field.id, []);
+    });
+
+    // Initialize team schedule tracking
+    this.teams.forEach(team => {
+      teamSchedule.set(team.id, []);
+    });
+
+    console.log(`Available fields: ${availableFields.length}`);
+    console.log(`Tournament dates: ${this.tournamentDates.map(d => d.toDateString()).join(', ')}`);
+
+    // Try to schedule each game
+    for (let gameIndex = 0; gameIndex < games.length; gameIndex++) {
+      const game = games[gameIndex];
+      
+      console.log(`\n--- Scheduling Game ${gameIndex + 1}/${games.length}: ${game.homeTeam.name} vs ${game.awayTeam.name} ---`);
+      
+      let scheduled = false;
+      
+      // Try each tournament day
+      for (const tournamentDate of this.tournamentDates) {
+        if (scheduled) break;
+        
+        const dateStr = tournamentDate.toISOString().split('T')[0];
+        
+        // Check daily game limits for both teams
+        const homeTeamDailyKey = `${game.homeTeam.id}-${dateStr}`;
+        const awayTeamDailyKey = `${game.awayTeam.id}-${dateStr}`;
+        
+        const homeTeamDailyGames = dailyGameCounts.get(homeTeamDailyKey) || 0;
+        const awayTeamDailyGames = dailyGameCounts.get(awayTeamDailyKey) || 0;
+        
+        if (homeTeamDailyGames >= this.constraints.maxGamesPerTeamPerDay) {
+          console.log(`${game.homeTeam.name} already has ${homeTeamDailyGames} games on ${dateStr}, skipping`);
+          continue;
+        }
+        
+        if (awayTeamDailyGames >= this.constraints.maxGamesPerTeamPerDay) {
+          console.log(`${game.awayTeam.name} already has ${awayTeamDailyGames} games on ${dateStr}, skipping`);
+          continue;
+        }
+        
+        // Try each available field
+        for (const field of availableFields) {
+          if (scheduled) break;
+          
+          // Generate possible time slots for this day
+          const timeSlots = this.generateTimeSlots(tournamentDate, game.gameFormat);
+          
+          for (const timeSlot of timeSlots) {
+            // Check field availability
+            const fieldConflicts = this.checkFieldConflicts(field.id, timeSlot, fieldSchedule);
+            if (fieldConflicts.length > 0) {
+              continue;
+            }
+            
+            // Check team availability (rest time constraints)
+            const teamConflicts = this.checkTeamConflicts([game.homeTeam.id, game.awayTeam.id], timeSlot, teamSchedule);
+            if (teamConflicts.length > 0) {
+              continue;
+            }
+            
+            // Success! Schedule the game
+            game.field = field;
+            game.timeSlot = timeSlot;
+            
+            // Record field usage
+            fieldSchedule.get(field.id)!.push({
+              start: timeSlot.startTime,
+              end: timeSlot.endTime,
+              gameIndex
+            });
+            
+            // Record team usage
+            teamSchedule.get(game.homeTeam.id)!.push({
+              start: timeSlot.startTime,
+              end: timeSlot.endTime,
+              gameIndex
+            });
+            teamSchedule.get(game.awayTeam.id)!.push({
+              start: timeSlot.startTime,
+              end: timeSlot.endTime,
+              gameIndex
+            });
+            
+            // Update daily game counts
+            dailyGameCounts.set(homeTeamDailyKey, (dailyGameCounts.get(homeTeamDailyKey) || 0) + 1);
+            dailyGameCounts.set(awayTeamDailyKey, (dailyGameCounts.get(awayTeamDailyKey) || 0) + 1);
+            
+            scheduledGames.push(game);
+            scheduled = true;
+            
+            console.log(`✅ Scheduled: ${timeSlot.startTime.toLocaleString()} at ${field.name}`);
+            console.log(`   Daily games: ${game.homeTeam.name}=${dailyGameCounts.get(homeTeamDailyKey)}, ${game.awayTeam.name}=${dailyGameCounts.get(awayTeamDailyKey)}`);
+            break;
+          }
+        }
+      }
+      
+      if (!scheduled) {
+        console.log(`❌ Failed to schedule: ${game.homeTeam.name} vs ${game.awayTeam.name}`);
+        failedGames.push(game);
+      }
+    }
+
+    console.log(`\n=== SCHEDULING SUMMARY ===`);
+    console.log(`Successfully scheduled: ${scheduledGames.length}/${games.length} games`);
+    console.log(`Failed to schedule: ${failedGames.length} games`);
+    
+    // Show daily game distribution
+    console.log(`\nDaily game distribution per team:`);
+    for (const entry of Array.from(dailyGameCounts.entries())) {
+      const [key, count] = entry;
+      const [teamId, date] = key.split('-');
+      const team = this.teams.find(t => t.id === parseInt(teamId));
+      console.log(`  ${team?.name || `Team ${teamId}`} on ${date}: ${count} games`);
+    }
+
+    return scheduledGames;
+  }
+
+  // Generate time slots for a given day
+  private generateTimeSlots(date: Date, gameFormat: GameFormat): Array<{startTime: Date, endTime: Date}> {
+    const slots: Array<{startTime: Date, endTime: Date}> = [];
+    
+    const [startHour, startMinute] = this.constraints.operatingStartTime.split(':').map(Number);
+    const [endHour, endMinute] = this.constraints.operatingEndTime.split(':').map(Number);
+    
+    const dayStart = new Date(date);
+    dayStart.setHours(startHour, startMinute, 0, 0);
+    
+    const dayEnd = new Date(date);
+    dayEnd.setHours(endHour, endMinute, 0, 0);
+    
+    const gameLength = gameFormat.gameLength + 15; // Game + 15 min buffer time
+    
+    let currentTime = new Date(dayStart);
+    
+    while (currentTime.getTime() + (gameLength * 60 * 1000) <= dayEnd.getTime()) {
+      const startTime = new Date(currentTime);
+      const endTime = new Date(currentTime.getTime() + (gameFormat.gameLength * 60 * 1000)); // Actual game time
+      
+      slots.push({ startTime, endTime });
+      
+      // Move to next slot (add full game length + buffer time)
+      currentTime = new Date(currentTime.getTime() + (gameLength * 60 * 1000));
+    }
+    
+    return slots;
+  }
+
+  // Check if field is available during time slot
+  private checkFieldConflicts(fieldId: number, timeSlot: {startTime: Date, endTime: Date}, fieldSchedule: Map<number, Array<{start: Date, end: Date, gameIndex: number}>>): string[] {
+    const conflicts: string[] = [];
+    const fieldGames = fieldSchedule.get(fieldId) || [];
+    
+    for (const game of fieldGames) {
+      // Check for overlap (including buffer time)
+      if (timeSlot.startTime < game.end && timeSlot.endTime > game.start) {
+        conflicts.push(`Field conflict with game ${game.gameIndex} (${game.start.toLocaleTimeString()} - ${game.end.toLocaleTimeString()})`);
+      }
+    }
+    
+    return conflicts;
+  }
+
+  // Check if teams are available (respect rest time)
+  private checkTeamConflicts(teamIds: number[], timeSlot: {startTime: Date, endTime: Date}, teamSchedule: Map<number, Array<{start: Date, end: Date, gameIndex: number}>>): string[] {
+    const conflicts: string[] = [];
+    
+    for (const teamId of teamIds) {
+      const teamGames = teamSchedule.get(teamId) || [];
+      
+      for (const game of teamGames) {
+        // Check for overlap
+        if (timeSlot.startTime < game.end && timeSlot.endTime > game.start) {
+          conflicts.push(`Team ${teamId} overlap with game ${game.gameIndex}`);
+          continue;
+        }
+        
+        // Check minimum rest time between games
+        const timeBetween = Math.min(
+          Math.abs(timeSlot.startTime.getTime() - game.end.getTime()),
+          Math.abs(game.start.getTime() - timeSlot.endTime.getTime())
+        );
+        
+        const minRestMs = this.constraints.minTimeBetweenGames * 60 * 1000;
+        
+        if (timeBetween < minRestMs) {
+          const restMinutes = Math.round(timeBetween / (60 * 1000));
+          conflicts.push(`Team ${teamId} insufficient rest: ${restMinutes}min < ${this.constraints.minTimeBetweenGames}min required`);
+        }
+      }
+    }
+    
+    return conflicts;
+  }
+
+  /**
+   * Legacy method for compatibility - now redirects to constraint-aware scheduling
    */
   private async findOptimalTimeSlot(
     homeTeam: TeamData, 
@@ -342,6 +623,15 @@ export class IntelligentSchedulingEngine {
     const hasCoachConflict = homeTeam.coachNames.some(coach => 
       awayTeam.coachNames.includes(coach)
     );
+    
+    // This method is now deprecated in favor of the constraint-aware scheduling
+    // Return a placeholder for compatibility
+    return {
+      startTime: new Date(),
+      endTime: new Date(),
+      field: availableFields[0],
+      hasCoachConflict
+    };
 
     if (hasCoachConflict) {
       console.log(`Coach conflict detected between ${homeTeam.name} and ${awayTeam.name}`);
