@@ -1,0 +1,120 @@
+Current URL: https://app.matchpro.ai/admin/events/1656618593/master-schedule
+index-DILG_PhP.js:672 Current pathname: /admin/events/1656618593/master-schedule
+index-DILG_PhP.js:672 Current search: 
+UnifiedScheduleSetup-cL3fpqOq.js:1 QUICK SCHEDULER DEBUG: Fetching teams for event 1656618593
+UnifiedScheduleSetup-cL3fpqOq.js:1 QUICK SCHEDULER DEBUG: API URL: /api/admin/teams?eventId=1656618593
+chunk-FLCULYKI.js:31 orchestration: Initializing config store with state 
+{anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing feature flag store with state 
+{anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state 
+{pill-player: {…}}
+chunk-FLCULYKI.js:31 orchestration: Updating combined state 
+{anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+UnifiedScheduleSetup-cL3fpqOq.js:1 Age Groups Data: 
+(24) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+UnifiedScheduleSetup-cL3fpqOq.js:1 QUICK SCHEDULER DEBUG: Response status: 200
+UnifiedScheduleSetup-cL3fpqOq.js:1 QUICK SCHEDULER DEBUG: Response ok: true
+UnifiedScheduleSetup-cL3fpqOq.js:1 QUICK SCHEDULER DEBUG: Teams Data for event 1656618593 : 
+(220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+UnifiedScheduleSetup-cL3fpqOq.js:1 QUICK SCHEDULER DEBUG: Total teams received: 220
+UnifiedScheduleSetup-cL3fpqOq.js:1 QUICK SCHEDULER DEBUG: Status breakdown: 
+{approved: 217, rejected: 2, waitlisted: 1}
+UnifiedScheduleSetup-cL3fpqOq.js:1 QUICK SCHEDULER DEBUG: Approved teams count: 217
+index-DILG_PhP.js:41 Error: Minified React error #310; visit https://reactjs.org/docs/error-decoder.html?invariant=310 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    at Co (index-DILG_PhP.js:39:17629)
+    at _2 (index-DILG_PhP.js:39:17883)
+    at Object.useState (index-DILG_PhP.js:39:24707)
+    at Tn.useState (index-DILG_PhP.js:10:6427)
+    at $e (index-DILG_PhP.js:41:96779)
+    at Ne (ScheduleViewer-DIhVAueT.js:6:1999)
+    at pO (index-DILG_PhP.js:39:17031)
+    at oP (index-DILG_PhP.js:41:3143)
+    at XW (index-DILG_PhP.js:41:44880)
+    at KW (index-DILG_PhP.js:41:39822)
+iP	@	index-DILG_PhP.js:41
+AW.r.callback	@	index-DILG_PhP.js:41
+kM	@	index-DILG_PhP.js:39
+UM	@	index-DILG_PhP.js:41
+GW	@	index-DILG_PhP.js:41
+lhe	@	index-DILG_PhP.js:41
+hhe	@	index-DILG_PhP.js:41
+ku	@	index-DILG_PhP.js:41
+qM	@	index-DILG_PhP.js:41
+su	@	index-DILG_PhP.js:39
+(anonymous)	@	index-DILG_PhP.js:41
+setTimeout		
+_he	@	index-DILG_PhP.js:41
+o	@	index-DILG_PhP.js:41
+batch	@	index-DILG_PhP.js:41
+ic	@	index-DILG_PhP.js:41
+setData	@	index-DILG_PhP.js:41
+onSuccess	@	index-DILG_PhP.js:41
+m	@	index-DILG_PhP.js:41
+Promise.then		
+f	@	index-DILG_PhP.js:41
+start	@	index-DILG_PhP.js:41
+fetch	@	index-DILG_PhP.js:41
+tg	@	index-DILG_PhP.js:41
+onSubscribe	@	index-DILG_PhP.js:41
+subscribe	@	index-DILG_PhP.js:41
+(anonymous)	@	index-DILG_PhP.js:41
+hW	@	index-DILG_PhP.js:39
+k1	@	index-DILG_PhP.js:41
+Jh	@	index-DILG_PhP.js:41
+hhe	@	index-DILG_PhP.js:41
+ku	@	index-DILG_PhP.js:41
+qM	@	index-DILG_PhP.js:41
+su	@	index-DILG_PhP.js:39
+(anonymous)	@	index-DILG_PhP.js:41
+index-DILG_PhP.js:39 Uncaught Error: Minified React error #310; visit https://reactjs.org/docs/error-decoder.html?invariant=310 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    at Co (index-DILG_PhP.js:39:17629)
+    at _2 (index-DILG_PhP.js:39:17883)
+    at Object.useState (index-DILG_PhP.js:39:24707)
+    at Tn.useState (index-DILG_PhP.js:10:6427)
+    at $e (index-DILG_PhP.js:41:96779)
+    at Ne (ScheduleViewer-DIhVAueT.js:6:1999)
+    at pO (index-DILG_PhP.js:39:17031)
+    at oP (index-DILG_PhP.js:41:3143)
+    at XW (index-DILG_PhP.js:41:44880)
+    at KW (index-DILG_PhP.js:41:39822)
+Co	@	index-DILG_PhP.js:39
+_2	@	index-DILG_PhP.js:39
+useState	@	index-DILG_PhP.js:39
+Tn.useState	@	index-DILG_PhP.js:10
+$e	@	index-DILG_PhP.js:41
+Ne	@	ScheduleViewer-DIhVAueT.js:6
+pO	@	index-DILG_PhP.js:39
+oP	@	index-DILG_PhP.js:41
+XW	@	index-DILG_PhP.js:41
+KW	@	index-DILG_PhP.js:41
+uhe	@	index-DILG_PhP.js:41
+rw	@	index-DILG_PhP.js:41
+vP	@	index-DILG_PhP.js:41
+qM	@	index-DILG_PhP.js:41
+su	@	index-DILG_PhP.js:39
+(anonymous)	@	index-DILG_PhP.js:41
+setTimeout		
+_he	@	index-DILG_PhP.js:41
+o	@	index-DILG_PhP.js:41
+batch	@	index-DILG_PhP.js:41
+ic	@	index-DILG_PhP.js:41
+setData	@	index-DILG_PhP.js:41
+onSuccess	@	index-DILG_PhP.js:41
+m	@	index-DILG_PhP.js:41
+Promise.then		
+f	@	index-DILG_PhP.js:41
+start	@	index-DILG_PhP.js:41
+fetch	@	index-DILG_PhP.js:41
+tg	@	index-DILG_PhP.js:41
+onSubscribe	@	index-DILG_PhP.js:41
+subscribe	@	index-DILG_PhP.js:41
+(anonymous)	@	index-DILG_PhP.js:41
+hW	@	index-DILG_PhP.js:39
+k1	@	index-DILG_PhP.js:41
+Jh	@	index-DILG_PhP.js:41
+hhe	@	index-DILG_PhP.js:41
+ku	@	index-DILG_PhP.js:41
+qM	@	index-DILG_PhP.js:41
+su	@	index-DILG_PhP.js:39
+(anonymous)	@	index-DILG_PhP.js:41

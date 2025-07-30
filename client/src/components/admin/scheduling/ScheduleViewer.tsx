@@ -76,7 +76,8 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
   const [selectedAgeGroup, setSelectedAgeGroup] = useState<string>('all');
   const [selectedGames, setSelectedGames] = useState<number[]>([]);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [deleteTarget, setDeleteTarget] = useState<{ type: 'single' | 'bulk' | 'all', gameId?: number }>({ type: 'single' });
+  const [deleteType, setDeleteType] = useState<'single' | 'bulk' | 'all'>('single');
+  const [deleteGameId, setDeleteGameId] = useState<number | undefined>(undefined);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -204,27 +205,30 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
   });
 
   const handleDeleteGame = (gameId: number) => {
-    setDeleteTarget({ type: 'single', gameId });
+    setDeleteType('single');
+    setDeleteGameId(gameId);
     setShowDeleteConfirm(true);
   };
 
   const handleBulkDelete = () => {
     if (selectedGames.length === 0) return;
-    setDeleteTarget({ type: 'bulk' });
+    setDeleteType('bulk');
+    setDeleteGameId(undefined);
     setShowDeleteConfirm(true);
   };
 
   const handleDeleteAll = () => {
-    setDeleteTarget({ type: 'all' });
+    setDeleteType('all');
+    setDeleteGameId(undefined);
     setShowDeleteConfirm(true);
   };
 
   const executeDelete = () => {
-    if (deleteTarget.type === 'single' && deleteTarget.gameId) {
-      deleteSingleGameMutation.mutate(deleteTarget.gameId);
-    } else if (deleteTarget.type === 'bulk') {
+    if (deleteType === 'single' && deleteGameId) {
+      deleteSingleGameMutation.mutate(deleteGameId);
+    } else if (deleteType === 'bulk') {
       deleteBulkGamesMutation.mutate(selectedGames);
-    } else if (deleteTarget.type === 'all') {
+    } else if (deleteType === 'all') {
       deleteAllGamesMutation.mutate();
     }
   };
@@ -592,9 +596,9 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
             </CardHeader>
             <CardContent>
               <p className="text-gray-700 mb-4">
-                {deleteTarget.type === 'single' && 'Are you sure you want to delete this game? This action cannot be undone.'}
-                {deleteTarget.type === 'bulk' && `Are you sure you want to delete ${selectedGames.length} selected games? This action cannot be undone.`}
-                {deleteTarget.type === 'all' && `Are you sure you want to delete ALL ${scheduleData.games.length} games? This will completely clear the tournament schedule and cannot be undone.`}
+                {deleteType === 'single' && 'Are you sure you want to delete this game? This action cannot be undone.'}
+                {deleteType === 'bulk' && `Are you sure you want to delete ${selectedGames.length} selected games? This action cannot be undone.`}
+                {deleteType === 'all' && `Are you sure you want to delete ALL ${scheduleData.games.length} games? This will completely clear the tournament schedule and cannot be undone.`}
               </p>
               <div className="flex gap-3 justify-end">
                 <Button
@@ -613,9 +617,9 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                   ) : (
                     <Trash2 className="h-4 w-4 mr-2" />
                   )}
-                  {deleteTarget.type === 'single' && 'Delete Game'}
-                  {deleteTarget.type === 'bulk' && `Delete ${selectedGames.length} Games`}
-                  {deleteTarget.type === 'all' && 'Delete All Games'}
+                  {deleteType === 'single' && 'Delete Game'}
+                  {deleteType === 'bulk' && `Delete ${selectedGames.length} Games`}
+                  {deleteType === 'all' && 'Delete All Games'}
                 </Button>
               </div>
             </CardContent>
