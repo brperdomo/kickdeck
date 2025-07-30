@@ -99,7 +99,22 @@ export function UnifiedScheduleSetup({ eventId, onComplete }: UnifiedScheduleSet
       const data = await response.json();
       console.log('QUICK SCHEDULER DEBUG: Teams Data for event', eventId, ':', data);
       console.log('QUICK SCHEDULER DEBUG: Total teams received:', data?.length || 0);
-      console.log('QUICK SCHEDULER DEBUG: Approved teams count:', data?.filter((t: any) => t.status === 'approved')?.length || 0);
+      
+      // Debug all unique status values
+      const statusCounts = data?.reduce((acc: any, team: any) => {
+        const status = team.team?.status || team.status || 'unknown';
+        acc[status] = (acc[status] || 0) + 1;
+        return acc;
+      }, {});
+      console.log('QUICK SCHEDULER DEBUG: Status breakdown:', statusCounts);
+      
+      // Check if teams are nested in team object
+      const approvedCount = data?.filter((t: any) => {
+        const status = t.team?.status || t.status;
+        return status === 'approved';
+      })?.length || 0;
+      
+      console.log('QUICK SCHEDULER DEBUG: Approved teams count:', approvedCount);
       return data;
     }
   });
@@ -149,10 +164,14 @@ export function UnifiedScheduleSetup({ eventId, onComplete }: UnifiedScheduleSet
   useEffect(() => {
     if (teamsData && setupData.selectedAgeGroup && !teamsLoading) {
       const selectedAgeGroupId = parseInt(setupData.selectedAgeGroup);
-      const teamsInAgeGroup = teamsData.filter((team: any) => 
-        team.ageGroupId === selectedAgeGroupId && team.status === 'approved'
-      );
-      const teamNamesList = teamsInAgeGroup.map((team: any) => team.name).join('\n');
+      const teamsInAgeGroup = teamsData.filter((teamData: any) => {
+        const team = teamData.team || teamData;
+        return team.ageGroupId === selectedAgeGroupId && team.status === 'approved';
+      });
+      const teamNamesList = teamsInAgeGroup.map((teamData: any) => {
+        const team = teamData.team || teamData;
+        return team.name;
+      }).join('\n');
       
       setSetupData(prev => ({
         ...prev,
@@ -231,7 +250,10 @@ export function UnifiedScheduleSetup({ eventId, onComplete }: UnifiedScheduleSet
   });
 
   const teamCount = setupData.teamNames.split('\n').filter(name => name.trim()).length;
-  const approvedTeamsCount = teamsData?.filter((t: any) => t.status === 'approved')?.length || 0;
+  const approvedTeamsCount = teamsData?.filter((teamData: any) => {
+    const team = teamData.team || teamData;
+    return team.status === 'approved';
+  })?.length || 0;
   const isReadyToGenerate = setupData.selectedAgeGroup && 
                            teamCount >= 2 && 
                            setupData.startDate && 
@@ -389,7 +411,10 @@ export function UnifiedScheduleSetup({ eventId, onComplete }: UnifiedScheduleSet
                       ) : ageGroupsData?.length > 0 ? (
                         ageGroupsData.map((ageGroup: any) => (
                           <SelectItem key={ageGroup.id} value={ageGroup.id.toString()}>
-                            {ageGroup.ageGroup} ({ageGroup.gender}) - {teamsData?.filter((t: any) => t.ageGroupId === ageGroup.id && t.status === 'approved')?.length || 0} teams
+                            {ageGroup.ageGroup} ({ageGroup.gender}) - {teamsData?.filter((teamData: any) => {
+                              const team = teamData.team || teamData;
+                              return team.ageGroupId === ageGroup.id && team.status === 'approved';
+                            })?.length || 0} teams
                           </SelectItem>
                         ))
                       ) : (
