@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { 
   CheckCircle, Trophy, Calendar, Users, Play, 
-  ArrowRight, Eye, Download, Share2, AlertCircle 
+  ArrowRight, Eye, Download, Share2, AlertCircle, Zap 
 } from 'lucide-react';
 
 interface TournamentStatusDisplayProps {
@@ -188,7 +188,15 @@ export function TournamentStatusDisplay({ eventId }: TournamentStatusDisplayProp
       </Card>
 
       {/* Action Buttons */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <Button 
+          className="bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white h-14"
+          onClick={() => window.open(`/admin/events/${eventId}/quick-schedule`, '_blank')}
+        >
+          <Zap className="h-5 w-5 mr-2" />
+          Start Scheduling
+          <ArrowRight className="h-4 w-4 ml-2" />
+        </Button>
         <Button 
           className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white h-14"
           onClick={() => window.open(`/admin/events/${eventId}/schedule`, '_blank')}

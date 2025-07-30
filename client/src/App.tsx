@@ -377,6 +377,9 @@ function Router() {
           <Route path="/admin/events/:eventId/tournament-parameters">
             {(params) => user.isAdmin ? <TournamentParametersPage /> : <NotFound />}
           </Route>
+          <Route path="/admin/events/:eventId/quick-schedule">
+            {(params) => user.isAdmin ? React.createElement(lazy(() => import('@/pages/admin/QuickSchedulePage'))) : <NotFound />}
+          </Route>
           <Route path="/admin/reports">
             {user.isAdmin ? <AdminDashboard initialView="reports" /> : <NotFound />}
           </Route>
