@@ -6,16 +6,17 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { 
   Calendar, Zap, Eye, Settings, ArrowRight, 
-  CheckCircle, Clock, Users, Trophy, ArrowLeft, Home 
+  CheckCircle, Clock, Users, Trophy, ArrowLeft, Home, FileText 
 } from 'lucide-react';
 import { UnifiedScheduleSetup } from '@/components/admin/scheduling/UnifiedScheduleSetup';
 import { ScheduleViewer } from '@/components/admin/scheduling/ScheduleViewerFixed';
 import DragDropCalendarScheduler from '@/components/admin/scheduling/DragDropCalendarScheduler';
+import GameCardsGenerator from '@/components/admin/scheduling/GameCardsGenerator';
 
 export default function MasterSchedulePage() {
   const { eventId } = useParams<{ eventId: string }>();
   const [, setLocation] = useLocation();
-  const [currentView, setCurrentView] = useState<'quick' | 'view' | 'calendar'>('quick');
+  const [currentView, setCurrentView] = useState<'quick' | 'view' | 'calendar' | 'cards'>('quick');
 
   if (!eventId) {
     return <div>Event ID not found</div>;
@@ -98,6 +99,18 @@ export default function MasterSchedulePage() {
             <Calendar className="h-5 w-5" />
             Calendar Interface
           </Button>
+          <Button
+            variant={currentView === 'cards' ? 'default' : 'outline'}
+            onClick={() => setCurrentView('cards')}
+            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${
+              currentView === 'cards' 
+                ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg scale-105' 
+                : 'bg-white/90 text-gray-700 hover:bg-white hover:shadow-md border-2 border-gray-200'
+            }`}
+          >
+            <FileText className="h-5 w-5" />
+            Game Cards
+          </Button>
         </div>
 
         {/* Content Area */}
@@ -123,7 +136,7 @@ export default function MasterSchedulePage() {
             </Alert>
             <ScheduleViewer eventId={eventId} />
           </div>
-        ) : (
+        ) : currentView === 'calendar' ? (
           <div className="space-y-6">
             <Alert className="border-purple-200 bg-purple-50">
               <Calendar className="h-4 w-4 text-purple-600" />
@@ -133,6 +146,17 @@ export default function MasterSchedulePage() {
               </AlertDescription>
             </Alert>
             <DragDropCalendarScheduler eventId={eventId} />
+          </div>
+        ) : (
+          <div className="space-y-6">
+            <Alert className="border-orange-200 bg-orange-50">
+              <FileText className="h-4 w-4 text-orange-600" />
+              <AlertDescription className="text-orange-800">
+                <strong>Game Cards Generator:</strong> Create professional PDF game cards with team information, 
+                score tracking, disciplinary sections, and QR codes for digital score and card reporting.
+              </AlertDescription>
+            </Alert>
+            <GameCardsGenerator eventId={eventId} />
           </div>
         )}
       </div>

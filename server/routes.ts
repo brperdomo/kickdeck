@@ -86,7 +86,7 @@ import {
   getAllPermissions,
   resetRolePermissions 
 } from "./routes/admin/role-permissions";
-import scheduleManagementRouter from "./routes/admin/schedule-management";
+import gameReportsRouter from "./routes/admin/game-reports";
 import schedulingSimulationRouter from "./routes/admin/scheduling-simulation";
 import workflowProgressRouter from "./routes/admin/workflow-progress";
 import tournamentSelectionRouter from "./routes/admin/tournament-selection";
@@ -942,6 +942,7 @@ export function registerRoutes(app: Express): Server {
     
     // Register schedule management router
     app.use('/api/admin', isAdmin, scheduleManagementRouter); // Schedule management (delete games)
+    app.use('/api/admin/game-reports', gameReportsRouter); // Game reporting (score/card reporting)
     // Enhanced test routes without authentication for calendar interface
     app.get('/api/test-fields', async (req, res) => {
       try {

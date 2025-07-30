@@ -103,6 +103,8 @@ import RegistrationPreview from '@/pages/registration-preview';
 import GameMetadataPage from "@/pages/admin/GameMetadataPage";
 import FlexibleAgeGroupsPage from "@/pages/admin/FlexibleAgeGroupsPage";
 import TournamentParametersPage from "@/pages/admin/TournamentParametersPage";
+import ScoreReportPage from "@/pages/ScoreReportPage";
+import CardReportPage from "@/pages/CardReportPage";
 
 function Router() {
   const { user, isLoading } = useUser();
@@ -199,6 +201,10 @@ function Router() {
       
       {/* Payment completion route for teams with incomplete setup */}
       <Route path="/complete-payment" component={CompletePayment} />
+      
+      {/* QR Code accessible score and card reporting - no auth required */}
+      <Route path="/score-report/:gameId" component={ScoreReportPage} />
+      <Route path="/card-report/:gameId" component={CardReportPage} />
       
       {/* Handle other routes based on auth status */}
       {!user ? (
