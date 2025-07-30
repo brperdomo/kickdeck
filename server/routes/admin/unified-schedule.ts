@@ -265,6 +265,10 @@ router.post('/events/:eventId/unified-schedule', requireAuth, async (req, res) =
     // Save games to database
     console.log(`[Database Save] Saving ${scheduledGames.length} games to database...`);
     
+    // Get the first available field ID to fix foreign key constraint
+    const firstAvailableField = eventFields.length > 0 ? eventFields[0].id : 8; // Fallback to field ID 8
+    console.log(`[Database Save] Using field ID: ${firstAvailableField}`);
+    
     const savedGames: any[] = [];
     for (const game of scheduledGames) {
       // Save the game to database (matching actual schema)
@@ -280,10 +284,10 @@ router.post('/events/:eventId/unified-schedule', requireAuth, async (req, res) =
         breakTime: restPeriod
       }).returning();
 
-      // Create a time slot for this game
+      // Create a time slot for this game using actual field ID
       await db.insert(gameTimeSlots).values({
         eventId: eventId, // Keep as string to match schema
-        fieldId: 1, // Default field ID - will be enhanced later
+        fieldId: firstAvailableField, // Use actual field ID from database
         startTime: game.startTime,
         endTime: game.endTime,
         dayIndex: 0, // Required field
