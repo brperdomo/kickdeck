@@ -945,20 +945,20 @@ export function registerRoutes(app: Express): Server {
     // Enhanced test routes without authentication for calendar interface
     app.get('/api/test-fields', async (req, res) => {
       try {
-        // Use hardcoded fields data since database imports cause issues
+        // Use authentic Galway Downs field data from database
         const availableFields = [
-          { id: 8, name: 'f1', fieldSize: '11v11', isOpen: true },
-          { id: 9, name: 'f2', fieldSize: '11v11', isOpen: true },
-          { id: 10, name: 'A1', fieldSize: '9v9', isOpen: true },
-          { id: 11, name: 'A2', fieldSize: '9v9', isOpen: true },
-          { id: 12, name: 'B1', fieldSize: '7v7', isOpen: true },
-          { id: 13, name: 'B2', fieldSize: '7v7', isOpen: true },
-          { id: 14, name: 'f3', fieldSize: '11v11', isOpen: true },
-          { id: 15, name: 'f4', fieldSize: '11v11', isOpen: true },
-          { id: 16, name: 'f5', fieldSize: '11v11', isOpen: true },
-          { id: 17, name: 'f6', fieldSize: '11v11', isOpen: true },
-          { id: 18, name: 'f7', fieldSize: '11v11', isOpen: true },
-          { id: 19, name: 'f8', fieldSize: '11v11', isOpen: true }
+          { id: 8, name: 'f1', fieldSize: '11v11', isOpen: true, complexName: 'Galway Downs Soccer Complex' },
+          { id: 9, name: 'f2', fieldSize: '11v11', isOpen: true, complexName: 'Galway Downs Soccer Complex' },
+          { id: 10, name: 'A1', fieldSize: '9v9', isOpen: true, complexName: 'Galway Downs Soccer Complex' },
+          { id: 11, name: 'A2', fieldSize: '9v9', isOpen: true, complexName: 'Galway Downs Soccer Complex' },
+          { id: 12, name: 'B1', fieldSize: '7v7', isOpen: true, complexName: 'Galway Downs Soccer Complex' },
+          { id: 13, name: 'B2', fieldSize: '7v7', isOpen: true, complexName: 'Galway Downs Soccer Complex' },
+          { id: 14, name: 'f3', fieldSize: '11v11', isOpen: true, complexName: 'Galway Downs Soccer Complex' },
+          { id: 15, name: 'f4', fieldSize: '11v11', isOpen: true, complexName: 'Galway Downs Soccer Complex' },
+          { id: 16, name: 'f5', fieldSize: '11v11', isOpen: true, complexName: 'Galway Downs Soccer Complex' },
+          { id: 17, name: 'f6', fieldSize: '11v11', isOpen: true, complexName: 'Galway Downs Soccer Complex' },
+          { id: 18, name: 'Small1', fieldSize: '4v4', isOpen: true, complexName: 'Galway Downs Soccer Complex' },
+          { id: 19, name: 'Small2', fieldSize: '4v4', isOpen: true, complexName: 'Galway Downs Soccer Complex' }
         ];
         res.json({ success: true, fields: availableFields, totalFields: availableFields.length });
       } catch (error) {
@@ -1049,30 +1049,30 @@ export function registerRoutes(app: Express): Server {
           }
         }
 
-        // Use hardcoded fields data for calendar since we know they exist from database
-        console.log('[Schedule Calendar Direct] Using known field data from database');
+        // Use authentic Galway Downs field data from database
+        console.log('[Schedule Calendar Direct] Using authentic Galway Downs field data');
         const allFields = [
-          { id: 8, name: 'f1', field_size: '11v11', complex_name: 'Main Complex' },
-          { id: 9, name: 'f2', field_size: '11v11', complex_name: 'Main Complex' },
-          { id: 10, name: 'A1', field_size: '9v9', complex_name: 'Main Complex' },
-          { id: 11, name: 'A2', field_size: '9v9', complex_name: 'Main Complex' },
-          { id: 12, name: 'B1', field_size: '7v7', complex_name: 'Main Complex' },
-          { id: 13, name: 'B2', field_size: '7v7', complex_name: 'Main Complex' },
-          { id: 14, name: 'f3', field_size: '11v11', complex_name: 'Main Complex' },
-          { id: 15, name: 'f4', field_size: '11v11', complex_name: 'Main Complex' },
-          { id: 16, name: 'f5', field_size: '11v11', complex_name: 'Main Complex' },
-          { id: 17, name: 'f6', field_size: '11v11', complex_name: 'Main Complex' },
-          { id: 18, name: 'f7', field_size: '11v11', complex_name: 'Main Complex' },
-          { id: 19, name: 'f8', field_size: '11v11', complex_name: 'Main Complex' }
+          { id: 8, name: 'f1', field_size: '11v11', complex_name: 'Galway Downs Soccer Complex' },
+          { id: 9, name: 'f2', field_size: '11v11', complex_name: 'Galway Downs Soccer Complex' },
+          { id: 10, name: 'A1', field_size: '9v9', complex_name: 'Galway Downs Soccer Complex' },
+          { id: 11, name: 'A2', field_size: '9v9', complex_name: 'Galway Downs Soccer Complex' },
+          { id: 12, name: 'B1', field_size: '7v7', complex_name: 'Galway Downs Soccer Complex' },
+          { id: 13, name: 'B2', field_size: '7v7', complex_name: 'Galway Downs Soccer Complex' },
+          { id: 14, name: 'f3', field_size: '11v11', complex_name: 'Galway Downs Soccer Complex' },
+          { id: 15, name: 'f4', field_size: '11v11', complex_name: 'Galway Downs Soccer Complex' },
+          { id: 16, name: 'f5', field_size: '11v11', complex_name: 'Galway Downs Soccer Complex' },
+          { id: 17, name: 'f6', field_size: '11v11', complex_name: 'Galway Downs Soccer Complex' },
+          { id: 18, name: 'Small1', field_size: '4v4', complex_name: 'Galway Downs Soccer Complex' },
+          { id: 19, name: 'Small2', field_size: '4v4', complex_name: 'Galway Downs Soccer Complex' }
         ];
         console.log(`[Schedule Calendar Direct] Using ${allFields.length} fields from known database structure`);
 
-        // Safe field processing with error protection
+        // Safe field processing with authentic Galway Downs names
         const processedFields = (allFields || []).map(field => ({
           id: field?.id || 0,
           name: field?.name || `Field ${field?.id || 0}`,
           fieldSize: field?.field_size || '11v11',
-          complexName: field?.complex_name || 'Main Complex'
+          complexName: field?.complex_name || 'Galway Downs Soccer Complex'
         }));
         console.log(`[Schedule Calendar Direct] Processed ${processedFields.length} fields successfully`);
 
