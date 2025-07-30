@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { 
   Calendar, 
@@ -18,7 +19,10 @@ import {
   Download,
   Loader2,
   AlertCircle,
-  Database
+  Database,
+  Trash2,
+  X,
+  AlertTriangle
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -70,7 +74,11 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
   const [selectedDate, setSelectedDate] = useState<string>('all');
   const [selectedField, setSelectedField] = useState<string>('all');
   const [selectedAgeGroup, setSelectedAgeGroup] = useState<string>('all');
+  const [selectedGames, setSelectedGames] = useState<number[]>([]);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<{ type: 'single' | 'bulk' | 'all', gameId?: number }>({ type: 'single' });
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const { data: scheduleData, isLoading, error } = useQuery<ScheduleData>({
     queryKey: ['/api/admin/events', eventId, 'schedule'],
@@ -133,6 +141,109 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
     
     return matchesSearch && matchesDate && matchesField && matchesAgeGroup;
   });
+
+  // Delete mutations
+  const deleteSingleGameMutation = useMutation({
+    mutationFn: async (gameId: number) => {
+      const response = await fetch(`/api/admin/events/${eventId}/games/${gameId}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+      if (!response.ok) throw new Error('Failed to delete game');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/events', eventId, 'schedule'] });
+      toast({ title: 'Game deleted successfully', variant: 'default' });
+      setShowDeleteConfirm(false);
+    },
+    onError: () => {
+      toast({ title: 'Failed to delete game', variant: 'destructive' });
+    }
+  });
+
+  const deleteBulkGamesMutation = useMutation({
+    mutationFn: async (gameIds: number[]) => {
+      const response = await fetch(`/api/admin/events/${eventId}/games/bulk`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ gameIds }),
+        credentials: 'include'
+      });
+      if (!response.ok) throw new Error('Failed to delete games');
+      return response.json();
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/events', eventId, 'schedule'] });
+      toast({ title: `Successfully deleted ${data.deletedCount} games`, variant: 'default' });
+      setSelectedGames([]);
+      setShowDeleteConfirm(false);
+    },
+    onError: () => {
+      toast({ title: 'Failed to delete games', variant: 'destructive' });
+    }
+  });
+
+  const deleteAllGamesMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch(`/api/admin/events/${eventId}/games/all`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+      if (!response.ok) throw new Error('Failed to delete all games');
+      return response.json();
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/events', eventId, 'schedule'] });
+      toast({ title: `Successfully deleted all ${data.deletedCount} games`, variant: 'default' });
+      setShowDeleteConfirm(false);
+    },
+    onError: () => {
+      toast({ title: 'Failed to delete all games', variant: 'destructive' });
+    }
+  });
+
+  const handleDeleteGame = (gameId: number) => {
+    setDeleteTarget({ type: 'single', gameId });
+    setShowDeleteConfirm(true);
+  };
+
+  const handleBulkDelete = () => {
+    if (selectedGames.length === 0) return;
+    setDeleteTarget({ type: 'bulk' });
+    setShowDeleteConfirm(true);
+  };
+
+  const handleDeleteAll = () => {
+    setDeleteTarget({ type: 'all' });
+    setShowDeleteConfirm(true);
+  };
+
+  const executeDelete = () => {
+    if (deleteTarget.type === 'single' && deleteTarget.gameId) {
+      deleteSingleGameMutation.mutate(deleteTarget.gameId);
+    } else if (deleteTarget.type === 'bulk') {
+      deleteBulkGamesMutation.mutate(selectedGames);
+    } else if (deleteTarget.type === 'all') {
+      deleteAllGamesMutation.mutate();
+    }
+  };
+
+  const toggleGameSelection = (gameId: number) => {
+    setSelectedGames(prev => 
+      prev.includes(gameId) 
+        ? prev.filter(id => id !== gameId)
+        : [...prev, gameId]
+    );
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedGames.length === filteredGames.length) {
+      setSelectedGames([]);
+    } else {
+      setSelectedGames(filteredGames.map(g => g.id));
+    }
+  };
 
   const handleExportSchedule = () => {
     // Simple CSV export
@@ -243,18 +354,78 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
         </Card>
       </div>
 
-      {/* Filters and Search */}
-      <Card>
+      {/* Enhanced Toolbar with MatchPro Styling */}
+      <Card className="bg-gradient-to-r from-white to-blue-50 border-blue-200 shadow-lg">
         <CardHeader>
-          <CardTitle className="flex items-center">
-            <Filter className="h-5 w-5 mr-2" />
-            Schedule Filters
+          <CardTitle className="flex items-center justify-between">
+            <span className="flex items-center">
+              <Filter className="h-5 w-5 mr-2 text-blue-600" />
+              Schedule Management
+            </span>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={toggleSelectAll}
+                className="text-xs border-blue-200 hover:bg-blue-50"
+              >
+                <Checkbox 
+                  checked={selectedGames.length === filteredGames.length && filteredGames.length > 0}
+                  className="mr-1 h-3 w-3"
+                />
+                Select All
+              </Button>
+              {scheduleData.games.length > 0 && (
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={handleDeleteAll}
+                  className="text-xs"
+                >
+                  <AlertTriangle className="h-3 w-3 mr-1" />
+                  Clear All Games
+                </Button>
+              )}
+            </div>
           </CardTitle>
         </CardHeader>
         <CardContent>
+          {/* Selection and Action Bar */}
+          {selectedGames.length > 0 && (
+            <div className="mb-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+                    {selectedGames.length} games selected
+                  </Badge>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setSelectedGames([])}
+                    className="h-8 text-xs"
+                  >
+                    <X className="h-3 w-3 mr-1" />
+                    Clear Selection
+                  </Button>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={handleBulkDelete}
+                    className="h-8 text-xs"
+                  >
+                    <Trash2 className="h-3 w-3 mr-1" />
+                    Delete Selected ({selectedGames.length})
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
             <div>
-              <Label htmlFor="search">Search Teams</Label>
+              <Label htmlFor="search" className="text-gray-700 font-semibold">Search Teams</Label>
               <div className="relative">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                 <Input
@@ -262,7 +433,7 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                   placeholder="Search teams..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 border-gray-300 focus:border-blue-500"
                 />
               </div>
             </div>
@@ -345,9 +516,19 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
           ) : (
             <div className="space-y-4">
               {filteredGames.map((game) => (
-                <Card key={game.id} className="border-l-4 border-l-blue-500">
+                <Card key={game.id} className={`border-l-4 border-l-blue-500 hover:shadow-md transition-shadow duration-200 ${
+                  selectedGames.includes(game.id) ? 'bg-blue-50 border-blue-300' : ''
+                }`}>
                   <CardContent className="p-4">
-                    <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-center">
+                    <div className="grid grid-cols-1 md:grid-cols-7 gap-4 items-center">
+                      <div className="flex items-center">
+                        <Checkbox
+                          checked={selectedGames.includes(game.id)}
+                          onCheckedChange={() => toggleGameSelection(game.id)}
+                          className="mr-3"
+                        />
+                      </div>
+
                       <div className="md:col-span-2">
                         <div className="flex items-center space-x-2">
                           <Users className="h-4 w-4 text-gray-600" />
@@ -374,11 +555,21 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                       
                       <div className="flex items-center justify-between">
                         <Badge variant="outline">{game.ageGroup}</Badge>
-                        <Badge 
-                          variant={game.status === 'completed' ? 'default' : 'secondary'}
-                        >
-                          {game.status}
-                        </Badge>
+                        <div className="flex items-center gap-2">
+                          <Badge 
+                            variant={game.status === 'completed' ? 'default' : 'secondary'}
+                          >
+                            {game.status}
+                          </Badge>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDeleteGame(game.id)}
+                            className="h-8 w-8 p-0 text-red-600 hover:bg-red-50"
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   </CardContent>
@@ -388,6 +579,49 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
           )}
         </CardContent>
       </Card>
+
+      {/* Delete Confirmation Dialog */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <Card className="w-full max-w-md mx-4">
+            <CardHeader>
+              <CardTitle className="flex items-center text-red-600">
+                <AlertTriangle className="h-5 w-5 mr-2" />
+                Confirm Deletion
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-700 mb-4">
+                {deleteTarget.type === 'single' && 'Are you sure you want to delete this game? This action cannot be undone.'}
+                {deleteTarget.type === 'bulk' && `Are you sure you want to delete ${selectedGames.length} selected games? This action cannot be undone.`}
+                {deleteTarget.type === 'all' && `Are you sure you want to delete ALL ${scheduleData.games.length} games? This will completely clear the tournament schedule and cannot be undone.`}
+              </p>
+              <div className="flex gap-3 justify-end">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowDeleteConfirm(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="destructive"
+                  onClick={executeDelete}
+                  disabled={deleteSingleGameMutation.isPending || deleteBulkGamesMutation.isPending || deleteAllGamesMutation.isPending}
+                >
+                  {(deleteSingleGameMutation.isPending || deleteBulkGamesMutation.isPending || deleteAllGamesMutation.isPending) ? (
+                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  ) : (
+                    <Trash2 className="h-4 w-4 mr-2" />
+                  )}
+                  {deleteTarget.type === 'single' && 'Delete Game'}
+                  {deleteTarget.type === 'bulk' && `Delete ${selectedGames.length} Games`}
+                  {deleteTarget.type === 'all' && 'Delete All Games'}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }

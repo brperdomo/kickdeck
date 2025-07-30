@@ -61,6 +61,7 @@ import flexibleAgeGroupsRoutes from "./routes/admin/flexible-age-groups";
 import tournamentStatusRouter from "./routes/admin/tournament-status";
 import scheduleViewerRouter from "./routes/admin/schedule-viewer";
 import unifiedScheduleRouter from "./routes/admin/unified-schedule";
+import scheduleManagementRouter from "./routes/admin/schedule-management";
 import scheduleCalendarRouter from "./routes/admin/schedule-calendar";
 import fieldsRouter from "./routes/admin/fields";
 import paymentCompletionRouter from "./routes/payment-completion";
@@ -937,6 +938,9 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/events', isAdmin, tournamentStatusRouter); // Tournament status display
     app.use('/api/admin/events', isAdmin, scheduleViewerRouter); // Schedule viewing and management
     app.use('/api/admin', isAdmin, unifiedScheduleRouter); // Unified single-screen schedule generator
+    
+    // Register schedule management router
+    app.use('/api/admin', isAdmin, scheduleManagementRouter); // Schedule management (delete games)
     // Enhanced test routes without authentication for calendar interface
     app.get('/api/test-fields', async (req, res) => {
       try {
