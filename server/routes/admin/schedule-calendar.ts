@@ -5,7 +5,7 @@ import { eq, and } from 'drizzle-orm';
 
 const router = express.Router();
 
-// GET /api/admin/events/:eventId/schedule-calendar - Get calendar schedule data
+// GET /api/admin/events/:eventId/schedule-calendar - Get calendar schedule data  
 router.get('/:eventId/schedule-calendar', async (req, res) => {
   try {
     const { eventId } = req.params;

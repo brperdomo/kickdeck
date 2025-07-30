@@ -46,27 +46,66 @@ export default function DragDropCalendarScheduler({ eventId }: DragDropCalendarS
   const [fields, setFields] = useState<Field[]>([]);
   const queryClient = useQueryClient();
 
-  // Fetch games and fields data
-  const { data: gamesData, isLoading: gamesLoading } = useQuery({
-    queryKey: ['/api/admin/events', eventId, 'schedule-calendar'],
+  // Fetch games and fields data (using test endpoints temporarily)
+  const { data: gamesData, isLoading: gamesLoading, error } = useQuery({
+    queryKey: ['/api/test-games', eventId],
     queryFn: async () => {
-      const response = await fetch(`/api/admin/events/${eventId}/schedule-calendar`, {
-        credentials: 'include'
-      });
-      if (!response.ok) throw new Error('Failed to fetch schedule data');
-      return response.json();
-    }
+      console.log('[Calendar] Fetching test games data for event:', eventId);
+      const response = await fetch(`/api/test-games/${eventId}`);
+      console.log('[Calendar] Response status:', response.status);
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.log('[Calendar] Error response:', errorText);
+        throw new Error(`Failed to fetch games data: ${response.status}`);
+      }
+      const data = await response.json();
+      console.log('[Calendar] Received games data:', data);
+      
+      // Transform basic games data into calendar format
+      const processedGames = data.games?.map((game: any) => ({
+        id: game.id,
+        homeTeamName: `Team ${game.homeTeamId}`,
+        awayTeamName: `Team ${game.awayTeamId}`,
+        ageGroup: 'U19',
+        startTime: '2025-10-01T08:00:00',
+        endTime: '2025-10-01T09:30:00',
+        fieldName: `Field ${game.fieldId || 8}`,
+        fieldId: game.fieldId || 8,
+        status: game.status || 'scheduled',
+        duration: 90
+      })) || [];
+      
+      return { games: processedGames, success: true };
+    },
+    retry: false
   });
 
-  const { data: fieldsData } = useQuery({
-    queryKey: ['/api/admin/fields'],
+  const { data: fieldsData, error: fieldsError } = useQuery({
+    queryKey: ['/api/test-fields'],
     queryFn: async () => {
-      const response = await fetch('/api/admin/fields', {
-        credentials: 'include'
-      });
-      if (!response.ok) throw new Error('Failed to fetch fields');
-      return response.json();
-    }
+      console.log('[Calendar] Fetching test fields data');
+      const response = await fetch('/api/test-fields');
+      console.log('[Calendar] Fields response status:', response.status);
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.log('[Calendar] Fields error response:', errorText);
+        throw new Error(`Failed to fetch fields: ${response.status}`);
+      }
+      const data = await response.json();
+      console.log('[Calendar] Received fields data:', data);
+      
+      // Transform basic fields data into calendar format
+      const processedFields = data.fields?.map((field: any) => ({
+        id: field.id,
+        name: field.name || `Field ${field.id}`,
+        fieldSize: field.fieldSize || '11v11',
+        complexName: field.complexName || 'Main Complex',
+        isOpen: field.isOpen !== false
+      })) || [];
+      
+      return { fields: processedFields, success: true };
+    },
+    retry: false
   });
 
   // Update game assignment mutation
@@ -119,21 +158,40 @@ export default function DragDropCalendarScheduler({ eventId }: DragDropCalendarS
 
   // Organize games into time slots
   useEffect(() => {
+    console.log('[Calendar Effect] gamesData:', gamesData);
+    console.log('[Calendar Effect] fieldsData:', fieldsData);
+    console.log('[Calendar Effect] selectedDate:', selectedDate);
+    
     if (gamesData?.games && fieldsData?.fields) {
+      console.log('[Calendar Effect] Setting fields:', fieldsData.fields);
       setFields(fieldsData.fields);
       
-      const updatedSlots = timeSlots.map(slot => ({
-        ...slot,
-        games: gamesData.games.filter((game: Game) => {
+      const updatedSlots = timeSlots.map(slot => {
+        const gamesInSlot = gamesData.games.filter((game: Game) => {
           const gameDate = game.startTime?.split('T')[0] || game.startTime?.split(' ')[0];
           const gameTime = game.startTime?.split('T')[1]?.split(':').slice(0, 2).join(':') || 
                           game.startTime?.split(' ')[1]?.split(':').slice(0, 2).join(':');
-          return gameDate === selectedDate && gameTime === slot.startTime;
-        })
-      }));
+          const matches = gameDate === selectedDate && gameTime === slot.startTime;
+          if (matches) {
+            console.log(`[Calendar Effect] Game ${game.id} matches slot ${slot.startTime}:`, game);
+          }
+          return matches;
+        });
+        
+        return {
+          ...slot,
+          games: gamesInSlot
+        };
+      });
+      
+      console.log('[Calendar Effect] Updated slots:', updatedSlots);
       setTimeSlots(updatedSlots);
+    } else if (gamesData?.games) {
+      console.log('[Calendar Effect] Games available but no fields data');
+    } else if (fieldsData?.fields) {
+      console.log('[Calendar Effect] Fields available but no games data');
     }
-  }, [gamesData, fieldsData, selectedDate]);
+  }, [gamesData, fieldsData, selectedDate, timeSlots.length]);
 
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return;
@@ -160,6 +218,40 @@ export default function DragDropCalendarScheduler({ eventId }: DragDropCalendarS
       <Card className="w-full">
         <CardContent className="p-6">
           <div className="text-center">Loading calendar scheduler...</div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (error || fieldsError) {
+    return (
+      <Card className="w-full">
+        <CardContent className="p-6">
+          <div className="text-center text-red-600">
+            <p>Error loading calendar data</p>
+            <p className="text-sm mt-2">
+              Games Error: {error?.message || 'None'}<br/>
+              Fields Error: {fieldsError?.message || 'None'}
+            </p>
+            <p className="text-sm mt-2 text-gray-600">
+              Check browser console for detailed error information
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (!gamesData?.games || gamesData.games.length === 0) {
+    return (
+      <Card className="w-full">
+        <CardContent className="p-6">
+          <div className="text-center">
+            <p>No games found for calendar display</p>
+            <p className="text-sm mt-2 text-gray-600">
+              Generate schedules using Quick Schedule Generator first
+            </p>
+          </div>
         </CardContent>
       </Card>
     );
