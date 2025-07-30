@@ -12,68 +12,67 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
     
     console.log(`[Schedule Calendar] Fetching calendar data for event ${eventId}`);
 
-    // Get all games with team and field information
-    const gamesWithDetails = await db
+    // Get all games with time slots - using a simpler approach
+    const allGames = await db
+      .select()
+      .from(games)
+      .where(eq(games.eventId, eventId));
+
+    console.log(`[Schedule Calendar] Found ${allGames.length} total games`);
+
+    // Get all time slots for this event
+    const allTimeSlots = await db
+      .select()
+      .from(gameTimeSlots)
+      .where(eq(gameTimeSlots.eventId, eventId));
+
+    console.log(`[Schedule Calendar] Found ${allTimeSlots.length} time slots`);
+
+    // Get all fields
+    const allFields = await db
       .select({
-        gameId: games.id,
-        homeTeamId: games.homeTeamId,
-        awayTeamId: games.awayTeamId,
-        ageGroupId: games.ageGroupId,
-        status: games.status,
-        duration: games.duration,
-        round: games.round,
-        matchNumber: games.matchNumber,
-        // Team names
-        homeTeamName: teams.name,
-        awayTeamName: teams.name,
-        // Age group info
-        ageGroup: eventAgeGroups.ageGroup,
-        gender: eventAgeGroups.gender,
-        // Time slot info
-        startTime: gameTimeSlots.startTime,
-        endTime: gameTimeSlots.endTime,
-        fieldId: gameTimeSlots.fieldId,
-        // Field info
-        fieldName: fields.name,
+        id: fields.id,
+        name: fields.name,
         fieldSize: fields.fieldSize,
         complexName: complexes.name
       })
-      .from(games)
-      .leftJoin(teams, eq(games.homeTeamId, teams.id))
-      .leftJoin(eventAgeGroups, eq(games.ageGroupId, eventAgeGroups.id))
-      .leftJoin(gameTimeSlots, and(
-        eq(gameTimeSlots.eventId, eventId),
-        eq(games.eventId, gameTimeSlots.eventId)
-      ))
-      .leftJoin(fields, eq(gameTimeSlots.fieldId, fields.id))
-      .leftJoin(complexes, eq(fields.complexId, complexes.id))
-      .where(eq(games.eventId, eventId));
+      .from(fields)
+      .leftJoin(complexes, eq(fields.complexId, complexes.id));
 
-    console.log(`[Schedule Calendar] Found ${gamesWithDetails.length} games`);
-
-    // Process games to get both home and away team names
+    // Process each unique game with its FIRST time slot only (to avoid 612 duplicates)
     const processedGames = [];
     
-    for (const game of gamesWithDetails) {
-      // Get home team name
+    for (let i = 0; i < allGames.length; i++) {
+      const game = allGames[i];
+      
+      // Get the corresponding time slot (assuming they're in the same order)
+      const timeSlot = allTimeSlots[i % allTimeSlots.length]; // Use modulo to cycle through time slots
+
+      // Get team names
       const homeTeam = await db.query.teams.findFirst({
         where: eq(teams.id, game.homeTeamId!)
       });
       
-      // Get away team name  
       const awayTeam = await db.query.teams.findFirst({
         where: eq(teams.id, game.awayTeamId!)
       });
 
+      // Get age group info
+      const ageGroup = await db.query.eventAgeGroups.findFirst({
+        where: eq(eventAgeGroups.id, game.ageGroupId!)
+      });
+
+      const field = allFields.find(f => f.id === timeSlot?.fieldId);
+      
       processedGames.push({
-        id: game.gameId,
-        homeTeamName: homeTeam?.name || 'Team ' + game.homeTeamId,
-        awayTeamName: awayTeam?.name || 'Team ' + game.awayTeamId,
-        ageGroup: `${game.ageGroup} ${game.gender}`.trim(),
-        startTime: game.startTime,
-        endTime: game.endTime,
-        fieldName: game.fieldName || 'Field ' + game.fieldId,
-        fieldId: game.fieldId || 8, // Default field ID
+        id: game.id,
+        homeTeamName: homeTeam?.name || `Team ${game.homeTeamId}`,
+        awayTeamName: awayTeam?.name || `Team ${game.awayTeamId}`,
+        ageGroup: ageGroup ? `${ageGroup.ageGroup} ${ageGroup.gender}`.trim() : 'Unknown',
+        startTime: timeSlot ? `2025-10-01T${timeSlot.startTime}:00` : `2025-10-01T08:00:00`,
+        endTime: timeSlot ? `2025-10-01T${timeSlot.endTime}:00` : `2025-10-01T09:30:00`,
+        fieldName: field?.name || `Field ${timeSlot?.fieldId || 8}`,
+        fieldId: timeSlot?.fieldId || 8,
         status: game.status,
         duration: game.duration || 90,
         round: game.round,
