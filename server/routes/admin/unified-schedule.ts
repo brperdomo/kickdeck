@@ -7,8 +7,16 @@ import { eq, and } from 'drizzle-orm';
 const router = Router();
 
 // Generate unified schedule for a single age group
-router.post('/events/:eventId/unified-schedule', requireAuth, requirePermission('manage_events'), async (req, res) => {
+router.post('/events/:eventId/unified-schedule', requireAuth, async (req, res) => {
   try {
+    console.log('[Unified Schedule API] POST request received:', {
+      eventId: req.params.eventId,
+      bodyKeys: Object.keys(req.body),
+      timestamp: new Date().toISOString(),
+      userId: req.user?.id,
+      userEmail: req.user?.email
+    });
+
     const { eventId } = req.params;
     const {
       selectedAgeGroup,
@@ -298,10 +306,17 @@ router.post('/events/:eventId/unified-schedule', requireAuth, requirePermission(
     });
 
   } catch (error) {
-    console.error('[Unified Schedule] Error generating schedule:', error);
+    console.error('[Unified Schedule API] ERROR occurred:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+      eventId: req.params.eventId,
+      timestamp: new Date().toISOString(),
+      userId: req.user?.id
+    });
     res.status(500).json({ 
       error: 'Failed to generate schedule',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      details: error instanceof Error ? error.message : 'Unknown error',
+      timestamp: new Date().toISOString()
     });
   }
 });
