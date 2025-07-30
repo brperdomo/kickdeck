@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { 
   Zap, Calendar, Clock, Users, MapPin, CheckCircle, 
-  ArrowRight, Settings, Play, Loader2
+  ArrowRight, Settings, Play, Loader2, Lock
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -72,14 +72,20 @@ export function UnifiedScheduleSetup({ eventId, onComplete }: UnifiedScheduleSet
   });
 
   // Fetch real teams data
-  const { data: teamsData, isLoading: teamsLoading } = useQuery({
+  const { data: teamsData, isLoading: teamsLoading, error: teamsError } = useQuery({
     queryKey: ['teams', eventId],
     queryFn: async () => {
       const response = await fetch(`/api/admin/teams?eventId=${eventId}`, {
         credentials: 'include'
       });
-      if (!response.ok) throw new Error('Failed to fetch teams data');
-      return response.json();
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.log('Teams API Error:', errorData);
+        throw new Error(`Failed to fetch teams: ${errorData.error || response.statusText}`);
+      }
+      const data = await response.json();
+      console.log('Teams Data:', data);
+      return data;
     }
   });
 
@@ -96,14 +102,20 @@ export function UnifiedScheduleSetup({ eventId, onComplete }: UnifiedScheduleSet
   });
 
   // Fetch existing age groups for this event
-  const { data: ageGroupsData, isLoading: ageGroupsLoading } = useQuery({
+  const { data: ageGroupsData, isLoading: ageGroupsLoading, error: ageGroupsError } = useQuery({
     queryKey: ['age-groups', eventId],
     queryFn: async () => {
       const response = await fetch(`/api/admin/events/${eventId}/age-groups`, {
         credentials: 'include'
       });
-      if (!response.ok) throw new Error('Failed to fetch age groups data');
-      return response.json();
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.log('Age Groups API Error:', errorData);
+        throw new Error(`Failed to fetch age groups: ${errorData.error || response.statusText}`);
+      }
+      const data = await response.json();
+      console.log('Age Groups Data:', data);
+      return data;
     }
   });
 
@@ -204,6 +216,7 @@ export function UnifiedScheduleSetup({ eventId, onComplete }: UnifiedScheduleSet
   });
 
   const teamCount = setupData.teamNames.split('\n').filter(name => name.trim()).length;
+  const approvedTeamsCount = teamsData?.filter((t: any) => t.status === 'approved')?.length || 0;
   const isReadyToGenerate = setupData.selectedAgeGroup && 
                            teamCount >= 2 && 
                            setupData.startDate && 
@@ -238,22 +251,36 @@ export function UnifiedScheduleSetup({ eventId, onComplete }: UnifiedScheduleSet
           <CardContent className="p-4">
             <div className="flex items-center gap-3 mb-3">
               <CheckCircle className="h-5 w-5 text-green-600" />
-              <h3 className="font-semibold text-green-800">Real Tournament Data Loaded</h3>
+              <h3 className="font-semibold text-green-800">Real Tournament Data Status</h3>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
               <div>
                 <span className="font-medium text-green-700">Event:</span> {eventData.name}
               </div>
               <div>
-                <span className="font-medium text-green-700">Age Groups:</span> {ageGroupsData?.length || 0} configured
+                <span className="font-medium text-green-700">Age Groups:</span> {ageGroupsError ? 'Error loading' : `${ageGroupsData?.length || 0} configured`}
               </div>
               <div>
-                <span className="font-medium text-green-700">Teams:</span> {teamsData?.filter((t: any) => t.status === 'approved')?.length || 0} approved
+                <span className="font-medium text-green-700">Teams:</span> {teamsError ? 'Error loading' : `${approvedTeamsCount} approved`}
               </div>
               <div>
                 <span className="font-medium text-green-700">Venues:</span> {venuesData?.length || 0} complexes, {venuesData?.reduce((total: number, venue: any) => total + (venue.fields?.length || 0), 0)} fields
               </div>
             </div>
+            {(teamsError || ageGroupsError) && (
+              <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="flex items-start gap-2">
+                  <div className="h-4 w-4 rounded-full bg-blue-400 flex-shrink-0 mt-0.5" />
+                  <div className="text-sm">
+                    <div className="font-medium text-blue-900 mb-1">Authentication Required</div>
+                    <p className="text-blue-700 text-xs leading-relaxed">
+                      The Quick Scheduler needs admin access to load your tournament's age groups and approved teams from the database. 
+                      Please log in as an admin to see the real tournament data and generate authentic schedules.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       )}
@@ -331,11 +358,17 @@ export function UnifiedScheduleSetup({ eventId, onComplete }: UnifiedScheduleSet
                       <SelectValue placeholder="Select age group" />
                     </SelectTrigger>
                     <SelectContent>
-                      {ageGroupsData?.map((ageGroup: any) => (
-                        <SelectItem key={ageGroup.id} value={ageGroup.id.toString()}>
-                          {ageGroup.ageGroup} ({ageGroup.gender}) - {teamsData?.filter((t: any) => t.ageGroupId === ageGroup.id && t.status === 'approved')?.length || 0} teams
-                        </SelectItem>
-                      ))}
+                      {ageGroupsError ? (
+                        <SelectItem value="error" disabled>Error loading age groups - authentication required</SelectItem>
+                      ) : ageGroupsData?.length > 0 ? (
+                        ageGroupsData.map((ageGroup: any) => (
+                          <SelectItem key={ageGroup.id} value={ageGroup.id.toString()}>
+                            {ageGroup.ageGroup} ({ageGroup.gender}) - {teamsData?.filter((t: any) => t.ageGroupId === ageGroup.id && t.status === 'approved')?.length || 0} teams
+                          </SelectItem>
+                        ))
+                      ) : (
+                        <SelectItem value="none" disabled>No age groups configured</SelectItem>
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
@@ -369,7 +402,8 @@ export function UnifiedScheduleSetup({ eventId, onComplete }: UnifiedScheduleSet
                   readOnly
                 />
                 <p className="text-xs text-gray-500">
-                  {setupData.selectedAgeGroup ? 
+                  {teamsError ? 'Authentication required to load teams' :
+                   setupData.selectedAgeGroup ? 
                     `${teamCount} approved teams in selected age group • Format: ${setupData.gameFormat}` :
                     'Select an age group above to load approved teams'
                   }
@@ -565,22 +599,29 @@ export function UnifiedScheduleSetup({ eventId, onComplete }: UnifiedScheduleSet
             <div>
               <h3 className="font-semibold text-lg">Ready to Generate Schedule</h3>
               <p className="text-gray-600">
-                {isReadyToGenerate ? 
-                  `Generate ${teamCount} teams • ${setupData.gameFormat} format • ${setupData.gameDuration}min games` :
-                  "Complete the required fields above to generate your schedule"
+                {teamsError || ageGroupsError ? 
+                  'Admin login required to access tournament data for schedule generation' :
+                  isReadyToGenerate ? 
+                    `Generate ${teamCount} teams • ${setupData.gameFormat} format • ${setupData.gameDuration}min games` :
+                    "Complete the required fields above to generate your schedule"
                 }
               </p>
             </div>
             <Button 
               size="lg"
               onClick={handleGenerate}
-              disabled={!isReadyToGenerate || generateScheduleMutation.isPending}
+              disabled={!isReadyToGenerate || generateScheduleMutation.isPending || (teamsError || ageGroupsError)}
               className="bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 px-8"
             >
               {generateScheduleMutation.isPending ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
                   Generating...
+                </>
+              ) : (teamsError || ageGroupsError) ? (
+                <>
+                  <Lock className="h-4 w-4 mr-2" />
+                  Login Required
                 </>
               ) : (
                 <>
