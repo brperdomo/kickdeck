@@ -121,11 +121,19 @@ export default function DragDropCalendarScheduler({ eventId }: DragDropCalendarS
       return response.json();
     },
     onSuccess: () => {
+      // Invalidate both the test endpoints and the real schedule data
+      queryClient.invalidateQueries({ queryKey: ['/api/test-games', eventId] });
       queryClient.invalidateQueries({ queryKey: ['/api/admin/events', eventId, 'schedule-calendar'] });
-      toast({ title: 'Game updated successfully' });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/events', eventId, 'schedule-viewer'] });
+      toast({ title: 'Game rescheduled successfully' });
     },
-    onError: () => {
-      toast({ title: 'Failed to update game', variant: 'destructive' });
+    onError: (error) => {
+      console.error('[Drag Drop] Reschedule error:', error);
+      toast({ 
+        title: 'Failed to reschedule game', 
+        description: error.message || 'Please check the console for details', 
+        variant: 'destructive' 
+      });
     }
   });
 
@@ -366,7 +374,7 @@ export default function DragDropCalendarScheduler({ eventId }: DragDropCalendarS
             <div className="flex items-center gap-4 text-sm text-muted-foreground">
               <div className="flex items-center gap-1">
                 <Users className="h-4 w-4" />
-                {gamesData?.totalGames || 0} games scheduled
+                {gamesData?.games?.length || 0} games scheduled
               </div>
               <div className="flex items-center gap-1">
                 <MapPin className="h-4 w-4" />
