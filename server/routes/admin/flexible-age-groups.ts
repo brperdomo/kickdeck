@@ -159,26 +159,49 @@ router.post('/events/:eventId/age-groups', isAdmin, async (req, res) => {
 // Generate schedule for individual age group
 router.post('/events/:eventId/age-groups/:ageGroupId/schedule', isAdmin, async (req, res) => {
   try {
+    console.log(`Starting schedule generation for event ${req.params.eventId}, age group ${req.params.ageGroupId}`);
     const eventId = parseInt(req.params.eventId);
     const ageGroupId = parseInt(req.params.ageGroupId);
+    
+    console.log(`Parsed IDs: eventId=${eventId}, ageGroupId=${ageGroupId}`);
+    
+    // Validate input parameters
+    if (isNaN(eventId) || isNaN(ageGroupId)) {
+      console.log(`Invalid parameters: eventId=${req.params.eventId}, ageGroupId=${req.params.ageGroupId}`);
+      return res.status(400).json({ 
+        error: 'Invalid event ID or age group ID',
+        providedEventId: req.params.eventId,
+        providedAgeGroupId: req.params.ageGroupId
+      });
+    }
 
     // Get the age group configuration
+    console.log(`Looking up age group with ID: ${ageGroupId}`);
     const ageGroup = await db.select()
       .from(eventAgeGroups)
       .where(eq(eventAgeGroups.id, ageGroupId))
-      .then(results => results[0]);
+      .then(results => {
+        console.log(`Age group query results:`, results);
+        return results[0];
+      });
 
     if (!ageGroup) {
+      console.log(`Age group ${ageGroupId} not found in database`);
       return res.status(404).json({ error: 'Age group not found' });
     }
+    
+    console.log(`Age group found: ${ageGroup.ageGroup} ${ageGroup.gender}`);
 
     // Get teams for this age group
+    console.log(`Looking up teams for event ${eventId.toString()}, age group ${ageGroupId}`);
     const ageGroupTeams = await db.select()
       .from(teams)
       .where(and(
         eq(teams.eventId, eventId.toString()),
         eq(teams.ageGroupId, ageGroupId)
       ));
+    
+    console.log(`Found ${ageGroupTeams.length} teams for this age group`);
 
     if (ageGroupTeams.length < 2) {
       return res.status(400).json({ 
@@ -190,15 +213,37 @@ router.post('/events/:eventId/age-groups/:ageGroupId/schedule', isAdmin, async (
     // Simple round-robin schedule generation for this age group
     const generatedGames = [];
     
+    // Check if required tables exist before proceeding
+    try {
+      console.log('Checking database table accessibility...');
+      await db.select().from(gameTimeSlots).limit(1);
+      await db.select().from(games).limit(1);
+      console.log('Database tables accessible');
+    } catch (tableError: any) {
+      console.error('Database table check failed:', tableError);
+      return res.status(500).json({ 
+        error: 'Database schema issue - required tables not accessible',
+        details: tableError.message,
+        suggestion: 'This may be a production environment schema difference'
+      });
+    }
+    
     // Get event details for proper tournament dates
+    console.log(`Looking up event with ID: ${eventId}`);
     const event = await db.select()
       .from(events)
       .where(eq(events.id, eventId))
-      .then(results => results[0]);
+      .then(results => {
+        console.log(`Event query results:`, results);
+        return results[0];
+      });
     
     if (!event) {
+      console.log(`Event ${eventId} not found in database`);
       return res.status(404).json({ error: 'Event not found' });
     }
+    
+    console.log(`Event found: ${event.name}, start date: ${event.startDate}`);
 
     // Use tournament start date instead of next week
     const tournamentStartDate = new Date(event.startDate);
@@ -216,29 +261,45 @@ router.post('/events/:eventId/age-groups/:ageGroupId/schedule', isAdmin, async (
         
         const endTime = new Date(gameDate.getTime() + 90 * 60000); // 90 minutes later
 
-        // Create time slot with proper timestamp format
-        const timeSlot = await db.insert(gameTimeSlots).values({
-          eventId: eventId.toString(),
-          fieldId: 1, // Default field for now
-          startTime: gameDate.toISOString(),
-          endTime: endTime.toISOString(),
-          dayIndex: dayOffset,
-          isAvailable: false
-        }).returning();
+        // Try to create time slot with error handling
+        let timeSlot;
+        try {
+          console.log(`Creating time slot for game ${gameCounter + 1}`);
+          timeSlot = await db.insert(gameTimeSlots).values({
+            eventId: eventId.toString(),
+            fieldId: 1, // Default field for now
+            startTime: gameDate.toISOString(),
+            endTime: endTime.toISOString(),
+            dayIndex: dayOffset,
+            isAvailable: false
+          }).returning();
+          console.log(`Time slot created successfully: ${timeSlot[0].id}`);
+        } catch (timeSlotError: any) {
+          console.error(`Error creating time slot:`, timeSlotError);
+          throw new Error(`Failed to create time slot: ${timeSlotError.message}`);
+        }
 
-        // Create game using correct schema
-        const game = await db.insert(games).values({
-          eventId: eventId.toString(),
-          ageGroupId: ageGroupId,
-          homeTeamId: ageGroupTeams[i].id,
-          awayTeamId: ageGroupTeams[j].id,
-          timeSlotId: timeSlot[0].id,
-          fieldId: 1,
-          status: 'scheduled',
-          round: 1,
-          matchNumber: gameCounter + 1,
-          duration: 90
-        }).returning();
+        // Try to create game with error handling
+        let game;
+        try {
+          console.log(`Creating game between teams ${ageGroupTeams[i].id} and ${ageGroupTeams[j].id}`);
+          game = await db.insert(games).values({
+            eventId: eventId.toString(),
+            ageGroupId: ageGroupId,
+            homeTeamId: ageGroupTeams[i].id,
+            awayTeamId: ageGroupTeams[j].id,
+            timeSlotId: timeSlot[0].id,
+            fieldId: 1,
+            status: 'scheduled',
+            round: 1,
+            matchNumber: gameCounter + 1,
+            duration: 90
+          }).returning();
+          console.log(`Game created successfully: ${game[0].id}`);
+        } catch (gameError: any) {
+          console.error(`Error creating game:`, gameError);
+          throw new Error(`Failed to create game: ${gameError.message}`);
+        }
 
         generatedGames.push(game[0]);
         gameCounter++;
@@ -253,9 +314,21 @@ router.post('/events/:eventId/age-groups/:ageGroupId/schedule', isAdmin, async (
       message: `Schedule generated for ${ageGroup.ageGroup} ${ageGroup.gender} with ${generatedGames.length} games`
     });
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error generating age group schedule:', error);
-    res.status(500).json({ error: 'Failed to generate schedule' });
+    console.error('Error details:', {
+      message: error?.message || 'Unknown error',
+      stack: error?.stack || 'No stack trace',
+      eventIdParam: req.params.eventId,
+      ageGroupIdParam: req.params.ageGroupId,
+      errorType: error?.constructor?.name || 'Unknown'
+    });
+    res.status(500).json({ 
+      error: 'Failed to generate schedule', 
+      details: error?.message || 'Unknown error',
+      eventId: req.params.eventId,
+      ageGroupId: req.params.ageGroupId
+    });
   }
 });
 
