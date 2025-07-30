@@ -123,6 +123,7 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
   - ✅ ENHANCED GAME CARDS: Improved visual design with better color contrast, coach information, and drag-and-drop indicators
   - ✅ SWAP FEEDBACK: Toast notifications and comprehensive logging for successful game swaps and moves
   - ✅ BACKEND COACH DATA: Schedule calendar API enhanced to extract and provide coach information from team registration JSON
+  - ✅ STABLE COLOR PERSISTENCE: Coach colors remain consistent across game moves and calendar updates for reliable conflict tracking
   - SYSTEM STATUS: Drag-and-drop calendar now provides visual coaching conflict detection and intelligent game swapping functionality
 - July 30, 2025: CRITICAL DRAG-AND-DROP PERSISTENCE BUG FIXED - Successfully resolved issue where drag-and-drop game updates weren't persisting to database
   - ✅ ROOT CAUSE IDENTIFIED: Reschedule API endpoint was only updating fieldId but not startTime/endTime fields in games table

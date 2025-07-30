@@ -95,7 +95,7 @@ export default function DragDropCalendarScheduler({ eventId }: DragDropCalendarS
 
   // Fields data comes from the same API call as games data
   const fieldsData = gamesData?.fields ? { fields: gamesData.fields, success: true } : null;
-  const fieldsError = null;
+  const fieldsError: Error | null = null;
 
   // Color palette for coach coding
   const coachColors = [
@@ -111,18 +111,11 @@ export default function DragDropCalendarScheduler({ eventId }: DragDropCalendarS
     'bg-cyan-100 border-cyan-400 text-cyan-800',       // Cyan
   ];
 
-  // Function to get color for a coach
+  // Function to get color for a coach (stable, non-mutating)
   const getCoachColor = (coachName: string): string => {
     if (!coachName) return 'bg-gray-100 border-gray-400 text-gray-800';
     
-    if (!coachColorMap.has(coachName)) {
-      const colorIndex = coachColorMap.size % coachColors.length;
-      const newMap = new Map(coachColorMap);
-      newMap.set(coachName, coachColors[colorIndex]);
-      setCoachColorMap(newMap);
-      return coachColors[colorIndex];
-    }
-    
+    // Return existing color from stable map, or default if not found
     return coachColorMap.get(coachName) || 'bg-gray-100 border-gray-400 text-gray-800';
   };
 
@@ -232,6 +225,30 @@ export default function DragDropCalendarScheduler({ eventId }: DragDropCalendarS
     }
     setTimeSlots(slots);
   }, [selectedDate]);
+
+  // Initialize coach colors when games data first loads
+  useEffect(() => {
+    if (gamesData?.games && coachColorMap.size === 0) {
+      console.log('[Coach Colors] Initializing coach color assignments');
+      const newCoachColorMap = new Map<string, string>();
+      
+      // Collect all unique coaches from games
+      const allCoaches = new Set<string>();
+      gamesData.games.forEach((game: Game) => {
+        const primaryCoach = game.homeTeamCoach || game.awayTeamCoach || `Team-${game.homeTeamName}`;
+        allCoaches.add(primaryCoach);
+      });
+      
+      // Assign stable colors to each coach
+      Array.from(allCoaches).forEach((coach, index) => {
+        const colorIndex = index % coachColors.length;
+        newCoachColorMap.set(coach, coachColors[colorIndex]);
+        console.log(`[Coach Colors] Assigned ${coachColors[colorIndex]} to ${coach}`);
+      });
+      
+      setCoachColorMap(newCoachColorMap);
+    }
+  }, [gamesData, coachColors]);
 
   // Organize games into time slots
   useEffect(() => {
