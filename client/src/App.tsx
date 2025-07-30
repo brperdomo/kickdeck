@@ -85,6 +85,9 @@ const ScheduleViewerPage = lazy(() => import("@/pages/admin/ScheduleViewerPage")
 // Comprehensive Schedule Manager
 const ComprehensiveScheduleManagerPage = lazy(() => import("@/pages/admin/ComprehensiveScheduleManagerPage").then(m => ({ default: m.ComprehensiveScheduleManagerPage })));
 
+// Quick Schedule Page - lazy loaded for admin use
+const QuickSchedulePage = lazy(() => import("@/pages/admin/QuickSchedulePage"));
+
 // Import landing page components
 import LandingPage from "@/pages/landing-page";
 import { isMainDomain } from "@/lib/domainHelper";
@@ -378,7 +381,13 @@ function Router() {
             {(params) => user.isAdmin ? <TournamentParametersPage /> : <NotFound />}
           </Route>
           <Route path="/admin/events/:eventId/quick-schedule">
-            {(params) => user.isAdmin ? React.createElement(lazy(() => import('@/pages/admin/QuickSchedulePage'))) : <NotFound />}
+            {(params) => user.isAdmin ? (
+              <Suspense fallback={<div className="flex items-center justify-center min-h-screen">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              </div>}>
+                <QuickSchedulePage />
+              </Suspense>
+            ) : <NotFound />}
           </Route>
           <Route path="/admin/reports">
             {user.isAdmin ? <AdminDashboard initialView="reports" /> : <NotFound />}
