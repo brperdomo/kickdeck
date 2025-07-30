@@ -1,0 +1,371 @@
+Submitting login with email: bperdomo@zoho.com
+index-DiKC_Y2g.js:664 Login mutation called with: bperdomo@zoho.com
+index-DiKC_Y2g.js:664 Sending login request with data: {email: 'bperdomo@zoho.com', passwordLength: 8}
+index-DiKC_Y2g.js:664 Login response status: 200
+index-DiKC_Y2g.js:664 Login successful, received user data: Yes
+index-DiKC_Y2g.js:664 Fetching current user after login
+index-DiKC_Y2g.js:664 Fetch finished loading: POST "https://app.matchpro.ai/api/login?t=1753888696570".
+mutationFn @ index-DiKC_Y2g.js:664
+fn @ index-DiKC_Y2g.js:41
+f @ index-DiKC_Y2g.js:41
+start @ index-DiKC_Y2g.js:41
+execute @ index-DiKC_Y2g.js:41
+await in execute
+mutate @ index-DiKC_Y2g.js:41
+o @ index-DiKC_Y2g.js:672
+(anonymous) @ index-DiKC_Y2g.js:664
+await in (anonymous)
+_ue @ index-DiKC_Y2g.js:38
+Due @ index-DiKC_Y2g.js:38
+Iue @ index-DiKC_Y2g.js:38
+pM @ index-DiKC_Y2g.js:38
+Xq @ index-DiKC_Y2g.js:38
+(anonymous) @ index-DiKC_Y2g.js:38
+NO @ index-DiKC_Y2g.js:41
+bq @ index-DiKC_Y2g.js:38
+E2 @ index-DiKC_Y2g.js:38
+X4 @ index-DiKC_Y2g.js:38
+Xue @ index-DiKC_Y2g.js:38
+submit @ injected.js:5
+is @ injected.js:5
+uD @ injected.js:5
+await in uD
+Ox @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+n @ injected.js:5
+index-DiKC_Y2g.js:664 Fetch finished loading: GET "https://app.matchpro.ai/api/user".
+mutationFn @ index-DiKC_Y2g.js:664
+await in mutationFn
+fn @ index-DiKC_Y2g.js:41
+f @ index-DiKC_Y2g.js:41
+start @ index-DiKC_Y2g.js:41
+execute @ index-DiKC_Y2g.js:41
+await in execute
+mutate @ index-DiKC_Y2g.js:41
+o @ index-DiKC_Y2g.js:672
+(anonymous) @ index-DiKC_Y2g.js:664
+await in (anonymous)
+_ue @ index-DiKC_Y2g.js:38
+Due @ index-DiKC_Y2g.js:38
+Iue @ index-DiKC_Y2g.js:38
+pM @ index-DiKC_Y2g.js:38
+Xq @ index-DiKC_Y2g.js:38
+(anonymous) @ index-DiKC_Y2g.js:38
+NO @ index-DiKC_Y2g.js:41
+bq @ index-DiKC_Y2g.js:38
+E2 @ index-DiKC_Y2g.js:38
+X4 @ index-DiKC_Y2g.js:38
+Xue @ index-DiKC_Y2g.js:38
+submit @ injected.js:5
+is @ injected.js:5
+uD @ injected.js:5
+await in uD
+Ox @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+n @ injected.js:5
+index-DiKC_Y2g.js:664 User data fetched after login: success
+index-DiKC_Y2g.js:672 Login mutation completed successfully
+index-DiKC_Y2g.js:672 Performing explicit user data fetch after login
+index-DiKC_Y2g.js:672 AUTH REDIRECT: User logged in, handling redirect
+index-DiKC_Y2g.js:664 Fetch finished loading: GET "https://app.matchpro.ai/api/user".
+queryFn @ index-DiKC_Y2g.js:664
+i @ index-DiKC_Y2g.js:41
+f @ index-DiKC_Y2g.js:41
+start @ index-DiKC_Y2g.js:41
+fetch @ index-DiKC_Y2g.js:41
+(anonymous) @ index-DiKC_Y2g.js:41
+(anonymous) @ index-DiKC_Y2g.js:41
+batch @ index-DiKC_Y2g.js:41
+refetchQueries @ index-DiKC_Y2g.js:41
+(anonymous) @ index-DiKC_Y2g.js:41
+batch @ index-DiKC_Y2g.js:41
+invalidateQueries @ index-DiKC_Y2g.js:41
+onSuccess @ index-DiKC_Y2g.js:664
+execute @ index-DiKC_Y2g.js:41
+await in execute
+mutate @ index-DiKC_Y2g.js:41
+o @ index-DiKC_Y2g.js:672
+(anonymous) @ index-DiKC_Y2g.js:664
+await in (anonymous)
+_ue @ index-DiKC_Y2g.js:38
+Due @ index-DiKC_Y2g.js:38
+Iue @ index-DiKC_Y2g.js:38
+pM @ index-DiKC_Y2g.js:38
+Xq @ index-DiKC_Y2g.js:38
+(anonymous) @ index-DiKC_Y2g.js:38
+NO @ index-DiKC_Y2g.js:41
+bq @ index-DiKC_Y2g.js:38
+E2 @ index-DiKC_Y2g.js:38
+X4 @ index-DiKC_Y2g.js:38
+Xue @ index-DiKC_Y2g.js:38
+submit @ injected.js:5
+is @ injected.js:5
+uD @ injected.js:5
+await in uD
+Ox @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+n @ injected.js:5
+index-DiKC_Y2g.js:672 Found redirect path: /admin/events/1656618593/master-schedule
+index-DiKC_Y2g.js:672 Redirecting to: /admin/events/1656618593/master-schedule
+index-DiKC_Y2g.js:672 Fetch finished loading: GET "https://app.matchpro.ai/api/user".
+o @ index-DiKC_Y2g.js:672
+await in o
+(anonymous) @ index-DiKC_Y2g.js:664
+await in (anonymous)
+_ue @ index-DiKC_Y2g.js:38
+Due @ index-DiKC_Y2g.js:38
+Iue @ index-DiKC_Y2g.js:38
+pM @ index-DiKC_Y2g.js:38
+Xq @ index-DiKC_Y2g.js:38
+(anonymous) @ index-DiKC_Y2g.js:38
+NO @ index-DiKC_Y2g.js:41
+bq @ index-DiKC_Y2g.js:38
+E2 @ index-DiKC_Y2g.js:38
+X4 @ index-DiKC_Y2g.js:38
+Xue @ index-DiKC_Y2g.js:38
+submit @ injected.js:5
+is @ injected.js:5
+uD @ injected.js:5
+await in uD
+Ox @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+n @ injected.js:5
+index-DiKC_Y2g.js:672 User data retrieved after login: success
+Navigated to https://app.matchpro.ai/admin/events/1656618593/master-schedule
+js?libraries=places&v=beta&callback=Function.prototype:1377 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1377
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622Understand this warning
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+js?libraries=places&v=beta&callback=Function.prototype:1409 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+_.B.send @ js?libraries=places&v=beta&callback=Function.prototype:1409
+hda @ js?libraries=places&v=beta&callback=Function.prototype:1386
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1378
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+index-DiKC_Y2g.js:847 Google Maps API key length: 0 characters
+index-DiKC_Y2g.js:847 Mapbox API key length: 93 characters
+index-DiKC_Y2g.js:847 Google Maps API already loaded
+index-DiKC_Y2g.js:672 Current route location (Wouter): /admin/events/1656618593/master-schedule
+index-DiKC_Y2g.js:672 Current URL: https://app.matchpro.ai/admin/events/1656618593/master-schedule
+index-DiKC_Y2g.js:672 Current pathname: /admin/events/1656618593/master-schedule
+index-DiKC_Y2g.js:672 Current search: 
+index-DiKC_Y2g.js:672 Fetching user with emulation token: not present
+chunk-FLCULYKI.js:31 orchestration: Initializing config store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing feature flag store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state {pill-player: {…}}
+chunk-FLCULYKI.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+index-DiKC_Y2g.js:672 User data fetched: {id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: '$2b$12$d6n1CBWgsWFm0fh77F1OX.YxDZy7/O3aLSuJOuq4QkvOtFmSit7BC', firstName: 'Bryan', …}
+5Fetch finished loading: GET "<URL>".
+index-DiKC_Y2g.js:664 Fetch failed loading: GET "https://app.matchpro.ai/api/user".
+queryFn @ index-DiKC_Y2g.js:664
+i @ index-DiKC_Y2g.js:41
+f @ index-DiKC_Y2g.js:41
+start @ index-DiKC_Y2g.js:41
+fetch @ index-DiKC_Y2g.js:41
+tg @ index-DiKC_Y2g.js:41
+onSubscribe @ index-DiKC_Y2g.js:41
+subscribe @ index-DiKC_Y2g.js:41
+(anonymous) @ index-DiKC_Y2g.js:41
+hW @ index-DiKC_Y2g.js:39
+k1 @ index-DiKC_Y2g.js:41
+Jh @ index-DiKC_Y2g.js:41
+qM @ index-DiKC_Y2g.js:41
+su @ index-DiKC_Y2g.js:39
+hhe @ index-DiKC_Y2g.js:41
+ku @ index-DiKC_Y2g.js:41
+qW @ index-DiKC_Y2g.js:41
+N @ index-DiKC_Y2g.js:26
+T @ index-DiKC_Y2g.js:26
+shared-ff47c3d242500066edbcf20dbad802fa.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+(anonymous) @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+e @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+c @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+g @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+value @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+value @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+log @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+log @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+e @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+73339 @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+e @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+(anonymous) @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+e.O @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+(anonymous) @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+(anonymous) @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+shared-ff47c3d242500066edbcf20dbad802fa.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+(anonymous) @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+e @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+c @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+g @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+value @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+value @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+value @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+e @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+value @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+e @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+73339 @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+e @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+(anonymous) @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+e.O @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+(anonymous) @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+(anonymous) @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+UnifiedScheduleSetup-BpSeAitb.js:1 QUICK SCHEDULER DEBUG: Fetching teams for event 1656618593
+UnifiedScheduleSetup-BpSeAitb.js:1 QUICK SCHEDULER DEBUG: API URL: /api/admin/teams?eventId=1656618593
+UnifiedScheduleSetup-BpSeAitb.js:1 QUICK SCHEDULER DEBUG: Response status: 200
+UnifiedScheduleSetup-BpSeAitb.js:1 QUICK SCHEDULER DEBUG: Response ok: true
+UnifiedScheduleSetup-BpSeAitb.js:1 QUICK SCHEDULER DEBUG: Teams Data for event 1656618593 : (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+UnifiedScheduleSetup-BpSeAitb.js:1 QUICK SCHEDULER DEBUG: Total teams received: 220
+UnifiedScheduleSetup-BpSeAitb.js:1 QUICK SCHEDULER DEBUG: Status breakdown: {approved: 217, rejected: 2, waitlisted: 1}
+UnifiedScheduleSetup-BpSeAitb.js:1 QUICK SCHEDULER DEBUG: Approved teams count: 217
+UnifiedScheduleSetup-BpSeAitb.js:1 Age Groups Data: (24) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+shared-ff47c3d242500066edbcf20dbad802fa.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+e @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+c @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+value @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+value @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+value @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+value @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+value @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+(anonymous) @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+setTimeout
+value @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+value @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+value @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+(anonymous) @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+value @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+value @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+(anonymous) @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+Promise.then
+value @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+value @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+value @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+e @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+value @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+e @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+73339 @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+e @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+(anonymous) @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+e.O @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+(anonymous) @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+(anonymous) @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+shared-ff47c3d242500066edbcf20dbad802fa.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+e @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+c @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+value @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+value @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+value @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+value @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+value @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+(anonymous) @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+setTimeout
+value @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+value @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+value @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+(anonymous) @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+value @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+value @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+(anonymous) @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+Promise.then
+value @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+value @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+log @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+log @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+e @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+73339 @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+e @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+(anonymous) @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+e.O @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+(anonymous) @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+(anonymous) @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+util.js:31 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+Yxa @ util.js:31
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1379
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1379
+setTimeout
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1379
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622Understand this warning
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+Promise.then
+S @ out-4.5.44.js:1
+y @ out-4.5.44.js:1
+E @ out-4.5.44.js:1
+e.onload @ inner.html:1
+script
+(anonymous) @ inner.html:1
+(anonymous) @ inner.html:1
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+h @ out-4.5.44.js:1
+e @ inner.html:1
+UnifiedScheduleSetup-BpSeAitb.js:2 AUTO-FORMAT: U19 → 11v11, 90min, Full Size field
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+shared-ff47c3d242500066edbcf20dbad802fa.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+e @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+c @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+value @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+value @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+value @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+value @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+value @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+(anonymous) @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+setTimeout
+value @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+value @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+value @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+(anonymous) @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+value @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+log @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+log @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+value @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+value @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+(anonymous) @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+UnifiedScheduleSetup-BpSeAitb.js:2  POST https://app.matchpro.ai/api/admin/events/1656618593/unified-schedule 500 (Internal Server Error)
+mutationFn @ UnifiedScheduleSetup-BpSeAitb.js:2
+fn @ index-DiKC_Y2g.js:41
+f @ index-DiKC_Y2g.js:41
+start @ index-DiKC_Y2g.js:41
+execute @ index-DiKC_Y2g.js:41
+await in execute
+mutate @ index-DiKC_Y2g.js:41
+(anonymous) @ index-DiKC_Y2g.js:41
+X @ UnifiedScheduleSetup-BpSeAitb.js:3
+_ue @ index-DiKC_Y2g.js:38
+Due @ index-DiKC_Y2g.js:38
+Iue @ index-DiKC_Y2g.js:38
+pM @ index-DiKC_Y2g.js:38
+Xq @ index-DiKC_Y2g.js:38
+(anonymous) @ index-DiKC_Y2g.js:38
+NO @ index-DiKC_Y2g.js:41
+bq @ index-DiKC_Y2g.js:38
+E2 @ index-DiKC_Y2g.js:38
+X4 @ index-DiKC_Y2g.js:38
+Xue @ index-DiKC_Y2g.js:38Understand this error
+UnifiedScheduleSetup-BpSeAitb.js:2 Fetch failed loading: POST "https://app.matchpro.ai/api/admin/events/1656618593/unified-schedule".
