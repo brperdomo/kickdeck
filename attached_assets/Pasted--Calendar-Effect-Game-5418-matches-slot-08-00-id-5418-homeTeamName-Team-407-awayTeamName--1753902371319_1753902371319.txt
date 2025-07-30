@@ -1,0 +1,60 @@
+[Calendar Effect] Game 5418 matches slot 08:00: {id: 5418, homeTeamName: 'Team 407', awayTeamName: 'Team 403', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-U786g5V7.js:1 [Calendar Effect] Game 5419 matches slot 08:00: {id: 5419, homeTeamName: 'Team 405', awayTeamName: 'Team 403', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-U786g5V7.js:1 [Calendar Effect] Updated slots: (8) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-0d3zHAmn.js:41 Error: Minified React error #310; visit https://reactjs.org/docs/error-decoder.html?invariant=310 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    at Co (index-0d3zHAmn.js:39:17629)
+    at _2 (index-0d3zHAmn.js:39:17883)
+    at Object.useState (index-0d3zHAmn.js:39:24707)
+    at Tn.useState (index-0d3zHAmn.js:10:6427)
+    at $e (index-0d3zHAmn.js:41:96779)
+    at be (ScheduleViewer-19DxFjR6.js:6:2019)
+    at pO (index-0d3zHAmn.js:39:17031)
+    at oP (index-0d3zHAmn.js:41:3143)
+    at XW (index-0d3zHAmn.js:41:44880)
+    at KW (index-0d3zHAmn.js:41:39822)
+iP @ index-0d3zHAmn.js:41
+AW.r.callback @ index-0d3zHAmn.js:41
+kM @ index-0d3zHAmn.js:39
+UM @ index-0d3zHAmn.js:41
+GW @ index-0d3zHAmn.js:41
+lhe @ index-0d3zHAmn.js:41
+hhe @ index-0d3zHAmn.js:41
+ku @ index-0d3zHAmn.js:41
+qM @ index-0d3zHAmn.js:41
+su @ index-0d3zHAmn.js:39
+(anonymous) @ index-0d3zHAmn.js:41
+setTimeout
+_he @ index-0d3zHAmn.js:41
+o @ index-0d3zHAmn.js:41
+batch @ index-0d3zHAmn.js:41
+ic @ index-0d3zHAmn.js:41
+setData @ index-0d3zHAmn.js:41
+onSuccess @ index-0d3zHAmn.js:41
+m @ index-0d3zHAmn.js:41
+Promise.then
+f @ index-0d3zHAmn.js:41
+start @ index-0d3zHAmn.js:41
+fetch @ index-0d3zHAmn.js:41
+tg @ index-0d3zHAmn.js:41
+onSubscribe @ index-0d3zHAmn.js:41
+subscribe @ index-0d3zHAmn.js:41
+(anonymous) @ index-0d3zHAmn.js:41
+hW @ index-0d3zHAmn.js:39
+k1 @ index-0d3zHAmn.js:41
+Jh @ index-0d3zHAmn.js:41
+hhe @ index-0d3zHAmn.js:41
+ku @ index-0d3zHAmn.js:41
+qM @ index-0d3zHAmn.js:41
+su @ index-0d3zHAmn.js:39
+(anonymous) @ index-0d3zHAmn.js:41Understand this error
+index-0d3zHAmn.js:39 Uncaught Error: Minified React error #310; visit https://reactjs.org/docs/error-decoder.html?invariant=310 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    at Co (index-0d3zHAmn.js:39:17629)
+    at _2 (index-0d3zHAmn.js:39:17883)
+    at Object.useState (index-0d3zHAmn.js:39:24707)
+    at Tn.useState (index-0d3zHAmn.js:10:6427)
+    at $e (index-0d3zHAmn.js:41:96779)
+    at be (ScheduleViewer-19DxFjR6.js:6:2019)
+    at pO (index-0d3zHAmn.js:39:17031)
+    at oP (index-0d3zHAmn.js:41:3143)
+    at XW (index-0d3zHAmn.js:41:44880)
+    at KW (index-0d3zHAmn.js:41:39822)
