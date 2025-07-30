@@ -93,6 +93,11 @@ import { isMainDomain } from "@/lib/domainHelper";
 import EventPreviewSelector from '@/pages/event-preview-selector';
 import RegistrationPreview from '@/pages/registration-preview';
 
+// Import admin configuration pages
+import GameMetadataPage from "@/pages/admin/GameMetadataPage";
+import FlexibleAgeGroupsPage from "@/pages/admin/FlexibleAgeGroupsPage";
+import TournamentParametersPage from "@/pages/admin/TournamentParametersPage";
+
 function Router() {
   const { user, isLoading } = useUser();
   // Check if we're on the main domain (matchpro.ai)
@@ -360,6 +365,17 @@ function Router() {
                 <ComprehensiveScheduleManagerPage />
               </Suspense>
             ) : <NotFound />}
+          </Route>
+          
+          {/* Configuration routes */}
+          <Route path="/admin/events/:eventId/game-metadata">
+            {(params) => user.isAdmin ? <GameMetadataPage /> : <NotFound />}
+          </Route>
+          <Route path="/admin/events/:eventId/flexible-age-groups">
+            {(params) => user.isAdmin ? <FlexibleAgeGroupsPage /> : <NotFound />}
+          </Route>
+          <Route path="/admin/events/:eventId/tournament-parameters">
+            {(params) => user.isAdmin ? <TournamentParametersPage /> : <NotFound />}
           </Route>
           <Route path="/admin/reports">
             {user.isAdmin ? <AdminDashboard initialView="reports" /> : <NotFound />}

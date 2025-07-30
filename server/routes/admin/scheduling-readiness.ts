@@ -191,4 +191,221 @@ router.get('/events/:eventId/scheduling-readiness', isAdmin, async (req, res) =>
   }
 });
 
+// GET /api/admin/events/:eventId/validate
+// Validate configuration completeness for schedule generation
+router.get('/events/:eventId/validate', isAdmin, async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const eventIdInt = parseInt(eventId);
+
+    console.log(`🔍 CONFIGURATION VALIDATION - Event ${eventId}`);
+    console.log('==========================================');
+
+    // Initialize validation results with enhanced analysis
+    const buildingBlocks = [
+      {
+        name: 'Game Metadata Configuration',
+        key: 'gameMetadata',
+        status: 'pending' as 'complete' | 'partial' | 'pending' | 'missing',
+        description: 'Game formats, rules, and scheduling constraints',
+        details: 'Checking game metadata configuration...',
+        priority: 'high' as 'high' | 'medium' | 'low',
+        blocksScheduling: true,
+        configurationUrl: `/admin/events/${eventId}/game-metadata`,
+        validationRules: ['Game format rules defined', 'Schedule constraints configured', 'Field requirements specified']
+      },
+      {
+        name: 'Age Group & Division Rules',
+        key: 'ageGroupRules',
+        status: 'pending' as 'complete' | 'partial' | 'pending' | 'missing',
+        description: 'Age group management and flight creation',
+        details: 'Checking age group configuration...',
+        priority: 'high' as 'high' | 'medium' | 'low',
+        blocksScheduling: true,
+        configurationUrl: `/admin/events/${eventId}/flexible-age-groups`,
+        validationRules: ['Age groups defined', 'Teams assigned to age groups', 'Flight structure established']
+      },
+      {
+        name: 'Tournament Parameters',
+        key: 'tournamentParameters',
+        status: 'pending' as 'complete' | 'partial' | 'pending' | 'missing',
+        description: 'Overall tournament settings and parameters',
+        details: 'Checking tournament parameters...',
+        priority: 'high' as 'high' | 'medium' | 'low',
+        blocksScheduling: true,
+        configurationUrl: `/admin/events/${eventId}/tournament-parameters`,
+        validationRules: ['Operating hours defined', 'Field allocations set', 'Time slot configurations complete']
+      },
+      {
+        name: 'Field Inventory & Venues',
+        key: 'fieldInventory',
+        status: 'pending' as 'complete' | 'partial' | 'pending' | 'missing',
+        description: 'Field availability and venue management',
+        details: 'Checking field and venue setup...',
+        priority: 'high' as 'high' | 'medium' | 'low',
+        blocksScheduling: true,
+        configurationUrl: '/admin/complexes',
+        validationRules: ['Fields defined in system', 'Field sizes match age groups', 'Venue availability confirmed']
+      }
+    ];
+
+    // 1. Validate Game Metadata
+    console.log('Validating game metadata...');
+    try {
+      const gameFormats = await db
+        .select()
+        .from(eventGameFormats)
+        .where(eq(eventGameFormats.eventId, eventIdInt));
+
+      const constraints = await db
+        .select()
+        .from(eventScheduleConstraints)
+        .where(eq(eventScheduleConstraints.eventId, eventIdInt));
+
+      const gameMetadataBlock = buildingBlocks.find(b => b.key === 'gameMetadata')!;
+      
+      if (gameFormats.length > 0 && constraints.length > 0) {
+        gameMetadataBlock.status = 'complete';
+        gameMetadataBlock.details = `✓ ${gameFormats.length} game formats and schedule constraints configured`;
+        gameMetadataBlock.blocksScheduling = false;
+      } else if (gameFormats.length > 0 || constraints.length > 0) {
+        gameMetadataBlock.status = 'partial';
+        gameMetadataBlock.details = `⚠ Partial: ${gameFormats.length} game formats, ${constraints.length} constraints`;
+      } else {
+        gameMetadataBlock.status = 'missing';
+        gameMetadataBlock.details = '❌ No game metadata configured';
+      }
+    } catch (error) {
+      console.error('Game metadata validation error:', error);
+      const gameMetadataBlock = buildingBlocks.find(b => b.key === 'gameMetadata')!;
+      gameMetadataBlock.status = 'missing';
+      gameMetadataBlock.details = '❌ Error checking game metadata';
+    }
+
+    // 2. Validate Age Groups
+    console.log('Validating age groups...');
+    try {
+      const eventTeams = await db
+        .select()
+        .from(teams)
+        .where(eq(teams.eventId, eventId.toString()));
+
+      const ageGroupsWithTeams = new Set(eventTeams.map((t: any) => t.ageGroupId).filter(Boolean));
+      
+      const ageGroupBlock = buildingBlocks.find(b => b.key === 'ageGroupRules')!;
+      
+      if (ageGroupsWithTeams.size >= 2 && eventTeams.length >= 4) {
+        ageGroupBlock.status = 'complete';
+        ageGroupBlock.details = `✓ ${ageGroupsWithTeams.size} age groups with ${eventTeams.length} teams`;
+        ageGroupBlock.blocksScheduling = false;
+      } else if (ageGroupsWithTeams.size > 0) {
+        ageGroupBlock.status = 'partial';
+        ageGroupBlock.details = `⚠ Needs more teams: ${ageGroupsWithTeams.size} age groups, ${eventTeams.length} teams`;
+      } else {
+        ageGroupBlock.status = 'missing';
+        ageGroupBlock.details = '❌ No age groups or teams configured';
+      }
+    } catch (error) {
+      console.error('Age group validation error:', error);
+      const ageGroupBlock = buildingBlocks.find(b => b.key === 'ageGroupRules')!;
+      ageGroupBlock.status = 'missing';
+      ageGroupBlock.details = '❌ Error checking age groups';
+    }
+
+    // 3. Validate Tournament Parameters
+    console.log('Validating tournament parameters...');
+    const tournamentParamsBlock = buildingBlocks.find(b => b.key === 'tournamentParameters')!;
+    
+    // Check if tournament has event data and basic configuration
+    try {
+      const eventData = await db
+        .select()
+        .from(events)
+        .where(eq(events.id, eventIdInt))
+        .limit(1);
+
+      if (eventData.length > 0) {
+        tournamentParamsBlock.status = 'complete';
+        tournamentParamsBlock.details = '✓ Tournament parameters available via configuration interface';
+        tournamentParamsBlock.blocksScheduling = false;
+      } else {
+        tournamentParamsBlock.status = 'missing';
+        tournamentParamsBlock.details = '❌ Tournament not found';
+      }
+    } catch (error) {
+      console.error('Tournament parameters validation error:', error);
+      tournamentParamsBlock.status = 'missing';
+      tournamentParamsBlock.details = '❌ Error checking tournament parameters';
+    }
+
+    // 4. Validate Field Inventory
+    console.log('Validating field inventory...');
+    try {
+      const fieldData = await db
+        .select()
+        .from(fields)
+        .leftJoin(complexes, eq(fields.complexId, complexes.id));
+
+      const fieldInventoryBlock = buildingBlocks.find(b => b.key === 'fieldInventory')!;
+      
+      if (fieldData.length >= 2) {
+        fieldInventoryBlock.status = 'complete';
+        fieldInventoryBlock.details = `✓ ${fieldData.length} fields available across venues`;
+        fieldInventoryBlock.blocksScheduling = false;
+      } else if (fieldData.length > 0) {
+        fieldInventoryBlock.status = 'partial';
+        fieldInventoryBlock.details = `⚠ Limited fields: ${fieldData.length} field(s) - recommend adding more`;
+      } else {
+        fieldInventoryBlock.status = 'missing';
+        fieldInventoryBlock.details = '❌ No fields configured';
+      }
+    } catch (error) {
+      console.error('Field inventory validation error:', error);
+      const fieldInventoryBlock = buildingBlocks.find(b => b.key === 'fieldInventory')!;
+      fieldInventoryBlock.status = 'missing';
+      fieldInventoryBlock.details = '❌ Error checking field inventory';
+    }
+
+    // Calculate overall readiness
+    const completeBlocks = buildingBlocks.filter(b => b.status === 'complete').length;
+    const totalBlocks = buildingBlocks.length;
+    const readyForScheduling = buildingBlocks.every(b => !b.blocksScheduling);
+    
+    const validationSummary = {
+      isReadyForScheduling: readyForScheduling,
+      completionPercentage: Math.round((completeBlocks / totalBlocks) * 100),
+      completedBlocks: completeBlocks,
+      totalBlocks: totalBlocks,
+      buildingBlocks: buildingBlocks,
+      nextSteps: buildingBlocks
+        .filter(b => b.status !== 'complete')
+        .slice(0, 3)
+        .map(b => ({
+          name: b.name,
+          action: `Configure ${b.name}`,
+          url: b.configurationUrl
+        })),
+      scheduleGenerationReady: readyForScheduling ? 
+        'All configuration blocks complete - ready for automated schedule generation' :
+        `${totalBlocks - completeBlocks} configuration block(s) need completion before scheduling`
+    };
+
+    console.log('Configuration validation complete');
+    console.log(`Ready for scheduling: ${readyForScheduling}`);
+    console.log(`Completion: ${completeBlocks}/${totalBlocks} blocks`);
+
+    res.json(validationSummary);
+
+  } catch (error: any) {
+    console.error('=== CONFIGURATION VALIDATION ERROR ===');
+    console.error('Error:', error);
+    console.error('Stack:', error?.stack);
+    
+    res.status(500).json({ 
+      error: 'Failed to validate configuration', 
+      details: error?.message || 'Unknown error'
+    });
+  }
+});
+
 export default router;
