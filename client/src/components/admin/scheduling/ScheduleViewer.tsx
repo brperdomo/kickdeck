@@ -70,14 +70,15 @@ interface ScheduleViewerProps {
 }
 
 export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedDate, setSelectedDate] = useState<string>('all');
-  const [selectedField, setSelectedField] = useState<string>('all');
-  const [selectedAgeGroup, setSelectedAgeGroup] = useState<string>('all');
+  // Initialize all state with stable references to prevent re-renders
+  const [searchTerm, setSearchTerm] = useState(() => '');
+  const [selectedDate, setSelectedDate] = useState(() => 'all' as string);
+  const [selectedField, setSelectedField] = useState(() => 'all' as string);
+  const [selectedAgeGroup, setSelectedAgeGroup] = useState(() => 'all' as string);
   const [selectedGames, setSelectedGames] = useState(() => [] as number[]);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [deleteType, setDeleteType] = useState<'single' | 'bulk' | 'all'>('single');
-  const [deleteGameId, setDeleteGameId] = useState<number | undefined>(undefined);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(() => false);
+  const [deleteType, setDeleteType] = useState(() => 'single' as 'single' | 'bulk' | 'all');
+  const [deleteGameId, setDeleteGameId] = useState(() => undefined as number | undefined);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
