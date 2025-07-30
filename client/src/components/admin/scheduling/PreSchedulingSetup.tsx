@@ -14,9 +14,11 @@ import {
   Clock,
   Zap,
   Target,
-  Settings
+  Settings,
+  ExternalLink
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
+import ConfigurationModal from './ConfigurationModal';
 
 interface PreSchedulingSetupProps {
   eventId: string | number;
@@ -37,6 +39,7 @@ interface BuildingBlock {
 export default function PreSchedulingSetup({ eventId, onComplete }: PreSchedulingSetupProps) {
   const [buildingBlocks, setBuildingBlocks] = useState<BuildingBlock[]>([]);
   const [overallReadiness, setOverallReadiness] = useState<'ready' | 'needs-attention' | 'not-ready'>('not-ready');
+  const [showConfigModal, setShowConfigModal] = useState(false);
 
   // Fetch tournament data for analysis
   const { data: tournamentData, isLoading } = useQuery({
@@ -405,23 +408,70 @@ export default function PreSchedulingSetup({ eventId, onComplete }: PreSchedulin
             <CardTitle>Quick Configuration Actions</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-2">
-              <Button variant="outline" className="w-full justify-start">
-                Configure Game Formats & Rules
+            <div className="space-y-3">
+              <Button 
+                variant="default" 
+                className="w-full justify-between"
+                onClick={() => setShowConfigModal(true)}
+              >
+                Open Configuration Wizard
+                <ExternalLink className="h-4 w-4" />
               </Button>
-              <Button variant="outline" className="w-full justify-start">
-                Create Flights & Brackets
-              </Button>
-              <Button variant="outline" className="w-full justify-start">
-                Set Schedule Constraints
-              </Button>
-              <Button variant="outline" className="w-full justify-start">
-                Configure Advancement Rules
-              </Button>
+              
+              <div className="grid grid-cols-2 gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => window.open(`/admin/events/${eventId}/game-metadata`, '_blank')}
+                >
+                  Game Formats
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => window.open(`/admin/events/${eventId}/flexible-age-groups`, '_blank')}
+                >
+                  Age Groups
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => window.open('/admin/complexes', '_blank')}
+                >
+                  Fields & Venues
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => window.open(`/admin/events/${eventId}/tournament-parameters`, '_blank')}
+                >
+                  Parameters
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
       )}
+
+      {/* Configuration Modal */}
+      <ConfigurationModal
+        isOpen={showConfigModal}
+        onClose={() => setShowConfigModal(false)}
+        eventId={eventId}
+        missingConfigurations={buildingBlocks
+          .filter(block => block.status !== 'complete')
+          .map(block => block.name)
+        }
+      />
+
+      {/* Instructions */}
+      <Alert>
+        <AlertTriangle className="h-4 w-4" />
+        <AlertDescription>
+          All building blocks must be properly configured before automated scheduling can begin. 
+          This prevents scheduling issues and ensures high-quality tournament schedules.
+        </AlertDescription>
+      </Alert>
     </div>
   );
 }

@@ -1,0 +1,534 @@
+orchestration: Initializing user store with state {pill-player: {…}}
+chunk-FLCULYKI.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state {pill-player: {…}}
+chunk-FLCULYKI.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+Navigated to https://app.matchpro.ai/admin/tournament-system
+chunk-FLCULYKI.js:31 orchestration: Initializing config store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state {pill-player: {…}}
+chunk-FLCULYKI.js:31 orchestration: Initializing feature flag store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+js?libraries=places&v=beta&callback=Function.prototype:1377 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1377
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622Understand this warning
+js?libraries=places&v=beta&callback=Function.prototype:1409 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+_.B.send @ js?libraries=places&v=beta&callback=Function.prototype:1409
+hda @ js?libraries=places&v=beta&callback=Function.prototype:1386
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1378
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+index-CrOFRYey.js:846 Google Maps API key length: 0 characters
+index-CrOFRYey.js:846 Mapbox API key length: 93 characters
+index-CrOFRYey.js:846 Google Maps API already loaded
+index-CrOFRYey.js:671 Current route location (Wouter): /admin/tournament-system
+index-CrOFRYey.js:671 Current URL: https://app.matchpro.ai/admin/tournament-system
+index-CrOFRYey.js:671 Current pathname: /admin/tournament-system
+index-CrOFRYey.js:671 Current search: 
+index-CrOFRYey.js:671 Fetching user with emulation token: not present
+index-CrOFRYey.js:671  GET https://app.matchpro.ai/api/user 401 (Unauthorized)
+nSe @ index-CrOFRYey.js:671
+i @ index-CrOFRYey.js:40
+f @ index-CrOFRYey.js:40
+start @ index-CrOFRYey.js:40
+fetch @ index-CrOFRYey.js:40
+eg @ index-CrOFRYey.js:40
+onSubscribe @ index-CrOFRYey.js:40
+subscribe @ index-CrOFRYey.js:40
+(anonymous) @ index-CrOFRYey.js:40
+mW @ index-CrOFRYey.js:38
+k1 @ index-CrOFRYey.js:40
+Xh @ index-CrOFRYey.js:40
+GM @ index-CrOFRYey.js:40
+nu @ index-CrOFRYey.js:38
+xhe @ index-CrOFRYey.js:40
+Cu @ index-CrOFRYey.js:40
+GW @ index-CrOFRYey.js:40
+N @ index-CrOFRYey.js:25
+T @ index-CrOFRYey.js:25Understand this error
+index-CrOFRYey.js:663 AnimatedBackground initialized with type: particles
+index-CrOFRYey.js:671 Setting redirect based on current protected URL: /admin/tournament-system
+index-CrOFRYey.js:671 Fetch failed loading: GET "https://app.matchpro.ai/api/user".
+nSe @ index-CrOFRYey.js:671
+i @ index-CrOFRYey.js:40
+f @ index-CrOFRYey.js:40
+start @ index-CrOFRYey.js:40
+fetch @ index-CrOFRYey.js:40
+eg @ index-CrOFRYey.js:40
+onSubscribe @ index-CrOFRYey.js:40
+subscribe @ index-CrOFRYey.js:40
+(anonymous) @ index-CrOFRYey.js:40
+mW @ index-CrOFRYey.js:38
+k1 @ index-CrOFRYey.js:40
+Xh @ index-CrOFRYey.js:40
+GM @ index-CrOFRYey.js:40
+nu @ index-CrOFRYey.js:38
+xhe @ index-CrOFRYey.js:40
+Cu @ index-CrOFRYey.js:40
+GW @ index-CrOFRYey.js:40
+N @ index-CrOFRYey.js:25
+T @ index-CrOFRYey.js:25
+tournament-system:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+tournament-system:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+index-CrOFRYey.js:663  GET https://app.matchpro.ai/api/user 401 (Unauthorized)
+queryFn @ index-CrOFRYey.js:663
+i @ index-CrOFRYey.js:40
+f @ index-CrOFRYey.js:40
+start @ index-CrOFRYey.js:40
+fetch @ index-CrOFRYey.js:40
+eg @ index-CrOFRYey.js:40
+onSubscribe @ index-CrOFRYey.js:40
+subscribe @ index-CrOFRYey.js:40
+(anonymous) @ index-CrOFRYey.js:40
+mW @ index-CrOFRYey.js:38
+k1 @ index-CrOFRYey.js:40
+Xh @ index-CrOFRYey.js:40
+GM @ index-CrOFRYey.js:40
+nu @ index-CrOFRYey.js:38
+xhe @ index-CrOFRYey.js:40
+Cu @ index-CrOFRYey.js:40
+GW @ index-CrOFRYey.js:40
+N @ index-CrOFRYey.js:25
+T @ index-CrOFRYey.js:25Understand this error
+index-CrOFRYey.js:663 Fetch failed loading: GET "https://app.matchpro.ai/api/user".
+queryFn @ index-CrOFRYey.js:663
+i @ index-CrOFRYey.js:40
+f @ index-CrOFRYey.js:40
+start @ index-CrOFRYey.js:40
+fetch @ index-CrOFRYey.js:40
+eg @ index-CrOFRYey.js:40
+onSubscribe @ index-CrOFRYey.js:40
+subscribe @ index-CrOFRYey.js:40
+(anonymous) @ index-CrOFRYey.js:40
+mW @ index-CrOFRYey.js:38
+k1 @ index-CrOFRYey.js:40
+Xh @ index-CrOFRYey.js:40
+GM @ index-CrOFRYey.js:40
+nu @ index-CrOFRYey.js:38
+xhe @ index-CrOFRYey.js:40
+Cu @ index-CrOFRYey.js:40
+GW @ index-CrOFRYey.js:40
+N @ index-CrOFRYey.js:25
+T @ index-CrOFRYey.js:25
+chunk-UVKO6OCU.js:6 [Violation] Added non-passive event listener to a scroll-blocking 'wheel' event. Consider marking event handler as 'passive' to make the page more responsive. See https://www.chromestatus.com/feature/5745543795965952
+re @ chunk-UVKO6OCU.js:6
+m @ menu.js:101
+ge @ chunk-UVKO6OCU.js:6
+m @ menu.js:101
+ge @ chunk-UVKO6OCU.js:6
+m @ menu.js:101
+p @ menu.js:101
+pe @ chunk-UVKO6OCU.js:6
+Y @ chunk-UVKO6OCU.js:6
+app.matchpro.ai.png:1  GET https://c.1password.com/richicons/images/login/120/app.matchpro.ai.png 404 (Not Found)
+Image
+J @ chunk-UVKO6OCU.js:6
+c @ menu.js:101
+Ln @ chunk-UVKO6OCU.js:6
+c @ menu.js:101
+c @ menu.js:101
+c @ menu.js:101
+c @ menu.js:101
+Ln @ chunk-UVKO6OCU.js:6
+c @ menu.js:101
+Ln @ chunk-UVKO6OCU.js:6
+c @ menu.js:101
+c @ menu.js:101
+Ln @ chunk-UVKO6OCU.js:6
+c @ menu.js:101
+c @ menu.js:101
+c @ menu.js:101
+c @ menu.js:101
+Ln @ chunk-UVKO6OCU.js:6
+c @ menu.js:101
+Ln @ chunk-UVKO6OCU.js:6
+c @ menu.js:101
+p @ menu.js:101
+pe @ chunk-UVKO6OCU.js:6
+Y @ chunk-UVKO6OCU.js:6
+Promise.then
+Pt @ chunk-UVKO6OCU.js:6
+$e @ chunk-UVKO6OCU.js:6
+(anonymous) @ chunk-UVKO6OCU.js:6
+(anonymous) @ menu.js:101
+o @ chunk-UVKO6OCU.js:6
+i @ chunk-UVKO6OCU.js:6
+(anonymous) @ menu.js:3
+Promise.then
+gr @ menu.js:3
+ve @ menu.js:3
+Lt @ chunk-UVKO6OCU.js:6
+Rn @ menu.js:3
+Eo @ menu.js:101
+yt @ chunk-UVKO6OCU.js:6
+we @ menu.js:3
+Lt @ chunk-UVKO6OCU.js:6
+Ln @ menu.js:3
+Ro @ menu.js:101
+yt @ chunk-UVKO6OCU.js:6
+br @ menu.js:3
+p @ menu.js:3
+pe @ chunk-UVKO6OCU.js:6
+Y @ chunk-UVKO6OCU.js:6
+Promise.then
+Pt @ chunk-UVKO6OCU.js:6
+$e @ chunk-UVKO6OCU.js:6
+(anonymous) @ chunk-UVKO6OCU.js:6
+(anonymous) @ menu.js:3
+Promise.then
+Be @ menu.js:3
+Lt @ chunk-UVKO6OCU.js:6
+jn @ menu.js:3
+Lo @ menu.js:101
+yt @ chunk-UVKO6OCU.js:6
+me @ menu.js:3
+Lt @ chunk-UVKO6OCU.js:6
+zn @ menu.js:3
+jo @ menu.js:101
+yt @ chunk-UVKO6OCU.js:6
+le @ menu.js:3
+Lt @ chunk-UVKO6OCU.js:6
+In @ menu.js:3
+qo @ menu.js:101
+Lt @ chunk-UVKO6OCU.js:6
+Un @ menu.js:101
+Xr @ menu.js:101
+(anonymous) @ menu.js:101Understand this error
+index-CrOFRYey.js:671 Submitting login with email: bperdomo@zoho.com
+index-CrOFRYey.js:663 Login mutation called with: bperdomo@zoho.com
+index-CrOFRYey.js:663 Sending login request with data: {email: 'bperdomo@zoho.com', passwordLength: 8}
+index-CrOFRYey.js:663 Login response status: 200
+index-CrOFRYey.js:663 Login successful, received user data: Yes
+index-CrOFRYey.js:663 Fetching current user after login
+index-CrOFRYey.js:663 Fetch finished loading: POST "https://app.matchpro.ai/api/login?t=1753841569503".
+mutationFn @ index-CrOFRYey.js:663
+fn @ index-CrOFRYey.js:40
+f @ index-CrOFRYey.js:40
+start @ index-CrOFRYey.js:40
+execute @ index-CrOFRYey.js:40
+await in execute
+mutate @ index-CrOFRYey.js:40
+o @ index-CrOFRYey.js:671
+(anonymous) @ index-CrOFRYey.js:663
+await in (anonymous)
+Iue @ index-CrOFRYey.js:37
+Mue @ index-CrOFRYey.js:37
+$ue @ index-CrOFRYey.js:37
+fM @ index-CrOFRYey.js:37
+Qq @ index-CrOFRYey.js:37
+(anonymous) @ index-CrOFRYey.js:37
+NO @ index-CrOFRYey.js:40
+jq @ index-CrOFRYey.js:37
+E2 @ index-CrOFRYey.js:37
+X4 @ index-CrOFRYey.js:37
+eme @ index-CrOFRYey.js:37
+submit @ injected.js:5
+is @ injected.js:5
+uD @ injected.js:5
+await in uD
+Ox @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+n @ injected.js:5
+index-CrOFRYey.js:663 Fetch finished loading: GET "https://app.matchpro.ai/api/user".
+mutationFn @ index-CrOFRYey.js:663
+await in mutationFn
+fn @ index-CrOFRYey.js:40
+f @ index-CrOFRYey.js:40
+start @ index-CrOFRYey.js:40
+execute @ index-CrOFRYey.js:40
+await in execute
+mutate @ index-CrOFRYey.js:40
+o @ index-CrOFRYey.js:671
+(anonymous) @ index-CrOFRYey.js:663
+await in (anonymous)
+Iue @ index-CrOFRYey.js:37
+Mue @ index-CrOFRYey.js:37
+$ue @ index-CrOFRYey.js:37
+fM @ index-CrOFRYey.js:37
+Qq @ index-CrOFRYey.js:37
+(anonymous) @ index-CrOFRYey.js:37
+NO @ index-CrOFRYey.js:40
+jq @ index-CrOFRYey.js:37
+E2 @ index-CrOFRYey.js:37
+X4 @ index-CrOFRYey.js:37
+eme @ index-CrOFRYey.js:37
+submit @ injected.js:5
+is @ injected.js:5
+uD @ injected.js:5
+await in uD
+Ox @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+n @ injected.js:5
+index-CrOFRYey.js:663 User data fetched after login: success
+index-CrOFRYey.js:671 Login mutation completed successfully
+index-CrOFRYey.js:671 Performing explicit user data fetch after login
+index-CrOFRYey.js:671 AUTH REDIRECT: User logged in, handling redirect
+index-CrOFRYey.js:671 Found redirect path: /admin/tournament-system
+index-CrOFRYey.js:671 Redirecting to: /admin/tournament-system
+index-CrOFRYey.js:663 Fetch finished loading: GET "https://app.matchpro.ai/api/user".
+queryFn @ index-CrOFRYey.js:663
+i @ index-CrOFRYey.js:40
+f @ index-CrOFRYey.js:40
+start @ index-CrOFRYey.js:40
+fetch @ index-CrOFRYey.js:40
+(anonymous) @ index-CrOFRYey.js:40
+(anonymous) @ index-CrOFRYey.js:40
+batch @ index-CrOFRYey.js:40
+refetchQueries @ index-CrOFRYey.js:40
+(anonymous) @ index-CrOFRYey.js:40
+batch @ index-CrOFRYey.js:40
+invalidateQueries @ index-CrOFRYey.js:40
+onSuccess @ index-CrOFRYey.js:663
+execute @ index-CrOFRYey.js:40
+await in execute
+mutate @ index-CrOFRYey.js:40
+o @ index-CrOFRYey.js:671
+(anonymous) @ index-CrOFRYey.js:663
+await in (anonymous)
+Iue @ index-CrOFRYey.js:37
+Mue @ index-CrOFRYey.js:37
+$ue @ index-CrOFRYey.js:37
+fM @ index-CrOFRYey.js:37
+Qq @ index-CrOFRYey.js:37
+(anonymous) @ index-CrOFRYey.js:37
+NO @ index-CrOFRYey.js:40
+jq @ index-CrOFRYey.js:37
+E2 @ index-CrOFRYey.js:37
+X4 @ index-CrOFRYey.js:37
+eme @ index-CrOFRYey.js:37
+submit @ injected.js:5
+is @ injected.js:5
+uD @ injected.js:5
+await in uD
+Ox @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+n @ injected.js:5
+index-CrOFRYey.js:671 Fetch finished loading: GET "https://app.matchpro.ai/api/user".
+o @ index-CrOFRYey.js:671
+await in o
+(anonymous) @ index-CrOFRYey.js:663
+await in (anonymous)
+Iue @ index-CrOFRYey.js:37
+Mue @ index-CrOFRYey.js:37
+$ue @ index-CrOFRYey.js:37
+fM @ index-CrOFRYey.js:37
+Qq @ index-CrOFRYey.js:37
+(anonymous) @ index-CrOFRYey.js:37
+NO @ index-CrOFRYey.js:40
+jq @ index-CrOFRYey.js:37
+E2 @ index-CrOFRYey.js:37
+X4 @ index-CrOFRYey.js:37
+eme @ index-CrOFRYey.js:37
+submit @ injected.js:5
+is @ injected.js:5
+uD @ injected.js:5
+await in uD
+Ox @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+n @ injected.js:5
+index-CrOFRYey.js:671 User data retrieved after login: success
+Navigated to https://app.matchpro.ai/admin/tournament-system
+js?libraries=places&v=beta&callback=Function.prototype:1377 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1377
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622Understand this warning
+js?libraries=places&v=beta&callback=Function.prototype:1409 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+_.B.send @ js?libraries=places&v=beta&callback=Function.prototype:1409
+hda @ js?libraries=places&v=beta&callback=Function.prototype:1386
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1378
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+tournament-system:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+tournament-system:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+index-CrOFRYey.js:846 Google Maps API key length: 0 characters
+index-CrOFRYey.js:846 Mapbox API key length: 93 characters
+index-CrOFRYey.js:846 Google Maps API already loaded
+index-CrOFRYey.js:671 Current route location (Wouter): /admin/tournament-system
+index-CrOFRYey.js:671 Current URL: https://app.matchpro.ai/admin/tournament-system
+index-CrOFRYey.js:671 Current pathname: /admin/tournament-system
+index-CrOFRYey.js:671 Current search: 
+index-CrOFRYey.js:671 Fetching user with emulation token: not present
+chunk-FLCULYKI.js:31 orchestration: Initializing config store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing feature flag store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state {pill-player: {…}}
+chunk-FLCULYKI.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+index-CrOFRYey.js:671 Fetch finished loading: GET "https://app.matchpro.ai/api/user".
+nSe @ index-CrOFRYey.js:671
+i @ index-CrOFRYey.js:40
+f @ index-CrOFRYey.js:40
+start @ index-CrOFRYey.js:40
+fetch @ index-CrOFRYey.js:40
+eg @ index-CrOFRYey.js:40
+onSubscribe @ index-CrOFRYey.js:40
+subscribe @ index-CrOFRYey.js:40
+(anonymous) @ index-CrOFRYey.js:40
+mW @ index-CrOFRYey.js:38
+k1 @ index-CrOFRYey.js:40
+Xh @ index-CrOFRYey.js:40
+GM @ index-CrOFRYey.js:40
+nu @ index-CrOFRYey.js:38
+xhe @ index-CrOFRYey.js:40
+Cu @ index-CrOFRYey.js:40
+GW @ index-CrOFRYey.js:40
+N @ index-CrOFRYey.js:25
+T @ index-CrOFRYey.js:25
+index-CrOFRYey.js:671 User data fetched: {id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: '$2b$12$d6n1CBWgsWFm0fh77F1OX.YxDZy7/O3aLSuJOuq4QkvOtFmSit7BC', firstName: 'Bryan', …}
+index-CrOFRYey.js:663 Fetch failed loading: GET "https://app.matchpro.ai/api/user".
+queryFn @ index-CrOFRYey.js:663
+i @ index-CrOFRYey.js:40
+f @ index-CrOFRYey.js:40
+start @ index-CrOFRYey.js:40
+fetch @ index-CrOFRYey.js:40
+eg @ index-CrOFRYey.js:40
+onSubscribe @ index-CrOFRYey.js:40
+subscribe @ index-CrOFRYey.js:40
+(anonymous) @ index-CrOFRYey.js:40
+mW @ index-CrOFRYey.js:38
+k1 @ index-CrOFRYey.js:40
+Xh @ index-CrOFRYey.js:40
+GM @ index-CrOFRYey.js:40
+nu @ index-CrOFRYey.js:38
+xhe @ index-CrOFRYey.js:40
+Cu @ index-CrOFRYey.js:40
+GW @ index-CrOFRYey.js:40
+N @ index-CrOFRYey.js:25
+T @ index-CrOFRYey.js:25
+index-CrOFRYey.js:1027 Fetch finished loading: GET "https://app.matchpro.ai/api/admin/tournaments/scheduling".
+queryFn @ index-CrOFRYey.js:1027
+i @ index-CrOFRYey.js:40
+f @ index-CrOFRYey.js:40
+start @ index-CrOFRYey.js:40
+fetch @ index-CrOFRYey.js:40
+eg @ index-CrOFRYey.js:40
+onSubscribe @ index-CrOFRYey.js:40
+subscribe @ index-CrOFRYey.js:40
+(anonymous) @ index-CrOFRYey.js:40
+mW @ index-CrOFRYey.js:38
+k1 @ index-CrOFRYey.js:40
+Xh @ index-CrOFRYey.js:40
+xhe @ index-CrOFRYey.js:40
+Cu @ index-CrOFRYey.js:40
+GM @ index-CrOFRYey.js:40
+nu @ index-CrOFRYey.js:38
+(anonymous) @ index-CrOFRYey.js:40
+setTimeout
+Ihe @ index-CrOFRYey.js:40
+o @ index-CrOFRYey.js:40
+batch @ index-CrOFRYey.js:40
+sc @ index-CrOFRYey.js:40
+setData @ index-CrOFRYey.js:40
+onSuccess @ index-CrOFRYey.js:40
+m @ index-CrOFRYey.js:40
+Promise.then
+f @ index-CrOFRYey.js:40
+start @ index-CrOFRYey.js:40
+fetch @ index-CrOFRYey.js:40
+eg @ index-CrOFRYey.js:40
+onSubscribe @ index-CrOFRYey.js:40
+subscribe @ index-CrOFRYey.js:40
+(anonymous) @ index-CrOFRYey.js:40
+mW @ index-CrOFRYey.js:38
+k1 @ index-CrOFRYey.js:40
+Xh @ index-CrOFRYey.js:40
+GM @ index-CrOFRYey.js:40
+nu @ index-CrOFRYey.js:38
+xhe @ index-CrOFRYey.js:40
+Cu @ index-CrOFRYey.js:40
+GW @ index-CrOFRYey.js:40
+N @ index-CrOFRYey.js:25
+T @ index-CrOFRYey.js:25
+util.js:31 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+Yxa @ util.js:31
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1379
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1379
+setTimeout
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1379
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622Understand this warning
+index-CrOFRYey.js:1027  GET https://app.matchpro.ai/api/admin/events/1656618593/scheduling-readiness 500 (Internal Server Error)
+queryFn @ index-CrOFRYey.js:1027
+i @ index-CrOFRYey.js:40
+f @ index-CrOFRYey.js:40
+start @ index-CrOFRYey.js:40
+fetch @ index-CrOFRYey.js:40
+eg @ index-CrOFRYey.js:40
+onSubscribe @ index-CrOFRYey.js:40
+subscribe @ index-CrOFRYey.js:40
+(anonymous) @ index-CrOFRYey.js:40
+mW @ index-CrOFRYey.js:38
+k1 @ index-CrOFRYey.js:40
+Xh @ index-CrOFRYey.js:40
+xhe @ index-CrOFRYey.js:40
+Cu @ index-CrOFRYey.js:40
+GM @ index-CrOFRYey.js:40
+nu @ index-CrOFRYey.js:38
+(anonymous) @ index-CrOFRYey.js:40Understand this error
+index-CrOFRYey.js:1027 Fetch failed loading: GET "https://app.matchpro.ai/api/admin/events/1656618593/scheduling-readiness".
+queryFn @ index-CrOFRYey.js:1027
+i @ index-CrOFRYey.js:40
+f @ index-CrOFRYey.js:40
+start @ index-CrOFRYey.js:40
+fetch @ index-CrOFRYey.js:40
+eg @ index-CrOFRYey.js:40
+onSubscribe @ index-CrOFRYey.js:40
+subscribe @ index-CrOFRYey.js:40
+(anonymous) @ index-CrOFRYey.js:40
+mW @ index-CrOFRYey.js:38
+k1 @ index-CrOFRYey.js:40
+Xh @ index-CrOFRYey.js:40
+xhe @ index-CrOFRYey.js:40
+Cu @ index-CrOFRYey.js:40
+GM @ index-CrOFRYey.js:40
+nu @ index-CrOFRYey.js:38
+(anonymous) @ index-CrOFRYey.js:40
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state {pill-player: {…}}
+chunk-FLCULYKI.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+index-CrOFRYey.js:1027  GET https://app.matchpro.ai/api/admin/events/1656618593/scheduling-readiness 500 (Internal Server Error)
+queryFn @ index-CrOFRYey.js:1027
+i @ index-CrOFRYey.js:40
+f @ index-CrOFRYey.js:40
+start @ index-CrOFRYey.js:40
+fetch @ index-CrOFRYey.js:40
+eg @ index-CrOFRYey.js:40
+onSubscribe @ index-CrOFRYey.js:40
+subscribe @ index-CrOFRYey.js:40
+(anonymous) @ index-CrOFRYey.js:40
+mW @ index-CrOFRYey.js:38
+k1 @ index-CrOFRYey.js:40
+Xh @ index-CrOFRYey.js:40
+xhe @ index-CrOFRYey.js:40
+Cu @ index-CrOFRYey.js:40
+GM @ index-CrOFRYey.js:40
+nu @ index-CrOFRYey.js:38
+(anonymous) @ index-CrOFRYey.js:40Understand this error
+index-CrOFRYey.js:1027 Fetch failed loading: GET "https://app.matchpro.ai/api/admin/events/1656618593/scheduling-readiness".
+queryFn @ index-CrOFRYey.js:1027
+i @ index-CrOFRYey.js:40
+f @ index-CrOFRYey.js:40
+start @ index-CrOFRYey.js:40
+fetch @ index-CrOFRYey.js:40
+eg @ index-CrOFRYey.js:40
+onSubscribe @ index-CrOFRYey.js:40
+subscribe @ index-CrOFRYey.js:40
+(anonymous) @ index-CrOFRYey.js:40
+mW @ index-CrOFRYey.js:38
+k1 @ index-CrOFRYey.js:40
+Xh @ index-CrOFRYey.js:40
+xhe @ index-CrOFRYey.js:40
+Cu @ index-CrOFRYey.js:40
+GM @ index-CrOFRYey.js:40
+nu @ index-CrOFRYey.js:38
+(anonymous) @ index-CrOFRYey.js:40
