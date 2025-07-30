@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { requireAuth, requirePermission } from '../../middleware/auth';
 import { db } from '../../../db';
-import { events, teams, complexes, fields, games, gameTimeSlots } from '@db/schema';
+import { events, teams, complexes, fields, games, gameTimeSlots, eventAgeGroups } from '@db/schema';
 import { eq, and } from 'drizzle-orm';
 
 const router = Router();
@@ -27,14 +27,35 @@ router.post('/events/:eventId/unified-schedule', requireAuth, requirePermission(
 
     console.log(`[Unified Schedule] Generating schedule for event ${eventId}, age group: ${selectedAgeGroup}`);
 
-    // Parse team names from the text input
-    const teamsInGroup = teamNames.split('\n').filter((name: string) => name.trim()).map((name: string) => name.trim());
-    
-    if (teamsInGroup.length < 2) {
-      return res.status(400).json({ error: 'At least 2 teams are required for schedule generation' });
+    // Get the actual age group data
+    const ageGroupId = parseInt(selectedAgeGroup);
+    const ageGroup = await db.query.eventAgeGroups.findFirst({
+      where: and(
+        eq(eventAgeGroups.eventId, eventId),
+        eq(eventAgeGroups.id, ageGroupId)
+      )
+    });
+
+    if (!ageGroup) {
+      return res.status(400).json({ error: 'Age group not found' });
     }
 
-    console.log(`[Unified Schedule] Teams in ${selectedAgeGroup}: ${teamsInGroup.length} teams`);
+    // Get approved teams for this age group
+    const approvedTeams = await db.query.teams.findMany({
+      where: and(
+        eq(teams.eventId, eventId),
+        eq(teams.ageGroupId, ageGroupId),
+        eq(teams.status, 'approved')
+      )
+    });
+
+    if (approvedTeams.length < 2) {
+      return res.status(400).json({ 
+        error: `At least 2 approved teams are required for schedule generation. Found ${approvedTeams.length} approved teams in ${ageGroup.ageGroup} (${ageGroup.gender})` 
+      });
+    }
+
+    console.log(`[Unified Schedule] Teams in ${ageGroup.ageGroup} (${ageGroup.gender}): ${approvedTeams.length} approved teams`);
 
     // Get event data to validate
     const event = await db.query.events.findFirst({
@@ -63,14 +84,17 @@ router.post('/events/:eventId/unified-schedule', requireAuth, requirePermission(
     const generatedGames = [];
     const gameId = Date.now(); // Simple ID generation for demo
     
-    // Create round-robin matchups
-    for (let i = 0; i < teamsInGroup.length; i++) {
-      for (let j = i + 1; j < teamsInGroup.length; j++) {
+    // Create round-robin matchups using real team data
+    for (let i = 0; i < approvedTeams.length; i++) {
+      for (let j = i + 1; j < approvedTeams.length; j++) {
         generatedGames.push({
           id: gameId + generatedGames.length,
-          team1: teamsInGroup[i],
-          team2: teamsInGroup[j],
-          ageGroup: selectedAgeGroup,
+          team1: approvedTeams[i].name,
+          team2: approvedTeams[j].name,
+          team1Id: approvedTeams[i].id,
+          team2Id: approvedTeams[j].id,
+          ageGroup: `${ageGroup.ageGroup} (${ageGroup.gender})`,
+          ageGroupId: ageGroupId,
           format: gameFormat,
           duration: gameDuration,
           status: 'scheduled'
@@ -134,17 +158,21 @@ router.post('/events/:eventId/unified-schedule', requireAuth, requirePermission(
     // Return the generated schedule
     res.json({
       success: true,
-      ageGroup: selectedAgeGroup,
+      ageGroup: `${ageGroup.ageGroup} (${ageGroup.gender})`,
+      ageGroupId: ageGroupId,
       gamesCount: scheduledGames.length,
-      teamsCount: teamsInGroup.length,
+      teamsCount: approvedTeams.length,
       schedule: scheduledGames,
+      teams: approvedTeams.map(team => ({ id: team.id, name: team.name })),
       summary: {
         totalGames: scheduledGames.length,
-        teamsInvolved: teamsInGroup.length,
+        teamsInvolved: approvedTeams.length,
         daysUsed: Math.ceil(scheduledGames.length / (availableFields * 6)),
         fieldsUsed: Math.min(availableFields, scheduledGames.length),
         format: gameFormat,
-        duration: gameDuration
+        duration: gameDuration,
+        tournamentDates: `${startDate} to ${endDate}`,
+        operatingHours: `${operatingStart} - ${operatingEnd}`
       }
     });
 
@@ -152,7 +180,7 @@ router.post('/events/:eventId/unified-schedule', requireAuth, requirePermission(
     console.error('[Unified Schedule] Error generating schedule:', error);
     res.status(500).json({ 
       error: 'Failed to generate schedule',
-      details: error.message 
+      details: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 });

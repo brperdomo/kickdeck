@@ -95,6 +95,18 @@ export function UnifiedScheduleSetup({ eventId, onComplete }: UnifiedScheduleSet
     }
   });
 
+  // Fetch existing age groups for this event
+  const { data: ageGroupsData, isLoading: ageGroupsLoading } = useQuery({
+    queryKey: ['age-groups', eventId],
+    queryFn: async () => {
+      const response = await fetch(`/api/admin/events/${eventId}/age-groups`, {
+        credentials: 'include'
+      });
+      if (!response.ok) throw new Error('Failed to fetch age groups data');
+      return response.json();
+    }
+  });
+
   // Auto-populate data when loaded
   useEffect(() => {
     if (eventData && !eventLoading) {
@@ -106,22 +118,21 @@ export function UnifiedScheduleSetup({ eventId, onComplete }: UnifiedScheduleSet
     }
   }, [eventData, eventLoading]);
 
+  // Update team names when age group is selected
   useEffect(() => {
-    if (teamsData && !teamsLoading) {
-      // Get approved teams and their names
-      const approvedTeams = teamsData.filter((team: any) => team.status === 'approved');
-      const teamNamesList = approvedTeams.map((team: any) => team.name).join('\n');
-      
-      // Group teams by age group to suggest age group selection
-      const ageGroups = [...new Set(approvedTeams.map((team: any) => team.ageGroup?.ageGroup || 'Unknown'))];
+    if (teamsData && setupData.selectedAgeGroup && !teamsLoading) {
+      const selectedAgeGroupId = parseInt(setupData.selectedAgeGroup);
+      const teamsInAgeGroup = teamsData.filter((team: any) => 
+        team.ageGroupId === selectedAgeGroupId && team.status === 'approved'
+      );
+      const teamNamesList = teamsInAgeGroup.map((team: any) => team.name).join('\n');
       
       setSetupData(prev => ({
         ...prev,
-        teamNames: teamNamesList,
-        selectedAgeGroup: ageGroups.length === 1 ? ageGroups[0] : prev.selectedAgeGroup
+        teamNames: teamNamesList
       }));
     }
-  }, [teamsData, teamsLoading]);
+  }, [teamsData, setupData.selectedAgeGroup, teamsLoading]);
 
   useEffect(() => {
     if (venuesData && !venuesLoading) {
@@ -203,7 +214,7 @@ export function UnifiedScheduleSetup({ eventId, onComplete }: UnifiedScheduleSet
   };
 
   // Show loading state while data is loading
-  if (eventLoading || teamsLoading || venuesLoading) {
+  if (eventLoading || teamsLoading || venuesLoading || ageGroupsLoading) {
     return (
       <div className="space-y-6">
         <Card>
@@ -229,9 +240,12 @@ export function UnifiedScheduleSetup({ eventId, onComplete }: UnifiedScheduleSet
               <CheckCircle className="h-5 w-5 text-green-600" />
               <h3 className="font-semibold text-green-800">Real Tournament Data Loaded</h3>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
               <div>
                 <span className="font-medium text-green-700">Event:</span> {eventData.name}
+              </div>
+              <div>
+                <span className="font-medium text-green-700">Age Groups:</span> {ageGroupsData?.length || 0} configured
               </div>
               <div>
                 <span className="font-medium text-green-700">Teams:</span> {teamsData?.filter((t: any) => t.status === 'approved')?.length || 0} approved
@@ -309,11 +323,21 @@ export function UnifiedScheduleSetup({ eventId, onComplete }: UnifiedScheduleSet
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Age Group</Label>
-                  <Input
-                    placeholder="e.g., U13 Boys"
-                    value={setupData.selectedAgeGroup}
-                    onChange={(e) => setSetupData(prev => ({ ...prev, selectedAgeGroup: e.target.value }))}
-                  />
+                  <Select 
+                    value={setupData.selectedAgeGroup} 
+                    onValueChange={(value) => setSetupData(prev => ({ ...prev, selectedAgeGroup: value }))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select age group" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {ageGroupsData?.map((ageGroup: any) => (
+                        <SelectItem key={ageGroup.id} value={ageGroup.id.toString()}>
+                          {ageGroup.ageGroup} ({ageGroup.gender}) - {teamsData?.filter((t: any) => t.ageGroupId === ageGroup.id && t.status === 'approved')?.length || 0} teams
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-2">
                   <Label>Game Format</Label>
@@ -335,13 +359,21 @@ export function UnifiedScheduleSetup({ eventId, onComplete }: UnifiedScheduleSet
               </div>
 
               <div className="space-y-2">
-                <Label>Team Names ({teamCount} teams)</Label>
+                <Label>Approved Teams ({teamCount} teams)</Label>
                 <Textarea
-                  placeholder="Enter team names (one per line)&#10;&#10;Arsenal Youth&#10;Barcelona Academy&#10;Chelsea FC&#10;Real Madrid"
+                  placeholder="Select an age group to see approved teams"
                   value={setupData.teamNames}
                   onChange={(e) => setSetupData(prev => ({ ...prev, teamNames: e.target.value }))}
                   rows={6}
+                  className="font-mono text-sm bg-gray-50"
+                  readOnly
                 />
+                <p className="text-xs text-gray-500">
+                  {setupData.selectedAgeGroup ? 
+                    `${teamCount} approved teams in selected age group • Format: ${setupData.gameFormat}` :
+                    'Select an age group above to load approved teams'
+                  }
+                </p>
               </div>
             </CardContent>
           </Card>
