@@ -113,6 +113,15 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
+- July 30, 2025: DRAG-AND-DROP PERSISTENCE FIX COMPLETED - Successfully resolved critical issue where drag-and-drop game rescheduling wasn't persisting to database
+  - ✅ MISSING API ENDPOINT CREATED: Built `/api/admin/games/:gameId/reschedule` endpoint in schedule-management.ts for drag-and-drop calendar functionality
+  - ✅ DATABASE SCHEMA COMPATIBILITY: Fixed timestamp handling and field mapping to align with gameTimeSlots table structure (text fields, proper foreign keys)
+  - ✅ QUERY INVALIDATION ENHANCED: Updated DragDropCalendarScheduler to invalidate all relevant queries after successful rescheduling for immediate UI updates
+  - ✅ ERROR HANDLING IMPROVED: Added comprehensive console logging and user feedback for failed reschedule attempts with detailed error messages
+  - ✅ SCHEDULE VIEWER INTEGRATION: Games rescheduled via drag-and-drop now properly appear with updated times in Schedule Viewer through query invalidation
+  - ✅ LSP DIAGNOSTICS RESOLVED: Fixed all TypeScript compilation errors including totalGames property and Date type assignments
+  - ✅ AUTHENTICATION SECURITY: Proper admin authentication middleware ensures only authorized users can reschedule games
+  - SYSTEM STATUS: Drag-and-drop calendar rescheduling now persists changes to database and updates all schedule views in real-time
 - July 30, 2025: COMPREHENSIVE TOURNAMENT SCHEDULING ENHANCEMENTS COMPLETED - Successfully implemented game deletion functionality, MatchPro aesthetic improvements, and admin dashboard navigation
   - ✅ GAME DELETION SYSTEM: Complete individual and bulk game deletion with confirmation dialogs, checkbox selection, and "Clear All Games" functionality
   - ✅ ENHANCED SCHEDULE MANAGEMENT: Professional toolbar with selection controls, bulk actions, and real-time status updates
