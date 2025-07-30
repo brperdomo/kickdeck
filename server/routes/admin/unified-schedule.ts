@@ -47,7 +47,7 @@ router.post('/events/:eventId/unified-schedule', requireAuth, async (req, res) =
     const ageGroupId = parseInt(selectedAgeGroup);
     const ageGroup = await db.query.eventAgeGroups.findFirst({
       where: and(
-        eq(eventAgeGroups.eventId, eventId),
+        eq(eventAgeGroups.eventId, eventId), // eventAgeGroups.eventId is text, keep as string
         eq(eventAgeGroups.id, ageGroupId)
       )
     });
@@ -73,9 +73,9 @@ router.post('/events/:eventId/unified-schedule', requireAuth, async (req, res) =
 
     console.log(`[Unified Schedule] Teams in ${ageGroup.ageGroup} (${ageGroup.gender}): ${approvedTeams.length} approved teams`);
 
-    // Get event data to validate
+    // Get event data to validate  
     const event = await db.query.events.findFirst({
-      where: eq(events.id, parseInt(eventId))
+      where: eq(events.id, parseInt(eventId)) // Convert to number to match events.id bigint schema
     });
 
     if (!event) {
@@ -315,17 +315,30 @@ router.post('/events/:eventId/unified-schedule', requireAuth, async (req, res) =
     });
 
   } catch (error) {
-    console.error('[Unified Schedule API] ERROR occurred:', {
+    console.error('[Unified Schedule API] ❌ CRITICAL ERROR occurred:', {
       message: error instanceof Error ? error.message : 'Unknown error',
       stack: error instanceof Error ? error.stack : undefined,
       eventId: req.params.eventId,
       timestamp: new Date().toISOString(),
-      userId: req.user?.id
+      userId: req.user?.id,
+      requestBody: req.body
     });
+    
+    // Log the exact line where error occurred
+    if (error instanceof Error && error.stack) {
+      console.error('[Unified Schedule API] 🔍 ERROR STACK TRACE:');
+      console.error(error.stack);
+    }
+    
     res.status(500).json({ 
       error: 'Failed to generate schedule',
       details: error instanceof Error ? error.message : 'Unknown error',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      debug: {
+        eventId: req.params.eventId,
+        hasUser: !!req.user,
+        userId: req.user?.id
+      }
     });
   }
 });
