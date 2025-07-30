@@ -12,15 +12,28 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
     
     console.log(`[Schedule Calendar] Fetching calendar data for event ${eventId}`);
 
-    // Get all games with time slots - using a simpler approach
-    const allGames = await db
-      .select()
+    // Get games with proper age group information using JOIN first
+    const gamesWithDetails = await db
+      .select({
+        gameId: games.id,
+        homeTeamId: games.homeTeamId,
+        awayTeamId: games.awayTeamId,
+        ageGroupId: games.ageGroupId,
+        status: games.status,
+        duration: games.duration,
+        round: games.round,
+        matchNumber: games.matchNumber,
+        ageGroupName: eventAgeGroups.ageGroup,
+        ageGroupGender: eventAgeGroups.gender
+      })
       .from(games)
+      .leftJoin(eventAgeGroups, eq(games.ageGroupId, eventAgeGroups.id))
       .where(eq(games.eventId, eventId));
 
-    console.log(`[Schedule Calendar] Found ${allGames.length} total games`);
+    console.log(`[Schedule Calendar] Found ${gamesWithDetails.length} total games with age group data`);
+    console.log(`[Schedule Calendar] Sample game:`, gamesWithDetails[0]);
     
-    if (allGames.length === 0) {
+    if (gamesWithDetails.length === 0) {
       console.log(`[Schedule Calendar] No games found for event ${eventId}, checking database...`);
       // Check if the event exists
       const eventCheck = await db.select().from(games).limit(5);
@@ -46,11 +59,13 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
       .from(fields)
       .leftJoin(complexes, eq(fields.complexId, complexes.id));
 
+
+    
     // Process each unique game with its FIRST time slot only (to avoid 612 duplicates)
     const processedGames = [];
     
-    for (let i = 0; i < allGames.length; i++) {
-      const game = allGames[i];
+    for (let i = 0; i < gamesWithDetails.length; i++) {
+      const game = gamesWithDetails[i];
       
       // Get the corresponding time slot (assuming they're in the same order)
       const timeSlot = allTimeSlots[i % allTimeSlots.length]; // Use modulo to cycle through time slots
@@ -70,20 +85,19 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
         )
       });
 
-      // Get age group info
-      const ageGroup = await db.query.eventAgeGroups.findFirst({
-        where: eq(eventAgeGroups.id, game.ageGroupId!)
-      });
-
       const field = allFields.find(f => f.id === timeSlot?.fieldId);
       
       // Only include games with both teams found and at least one approved
       if (homeTeam && awayTeam && (homeTeam.status === 'approved' || awayTeam.status === 'approved')) {
+        const ageGroupDisplay = game.ageGroupName ? 
+          `${game.ageGroupName}${game.ageGroupGender ? ` ${game.ageGroupGender}` : ''}`.trim() : 
+          'Unknown';
+          
         processedGames.push({
-          id: game.id,
+          id: game.gameId,
           homeTeamName: homeTeam.name,
           awayTeamName: awayTeam.name,
-          ageGroup: ageGroup ? `${ageGroup.ageGroup} ${ageGroup.gender}`.trim() : 'Unknown',
+          ageGroup: ageGroupDisplay,
           startTime: timeSlot ? `2025-10-01T${timeSlot.startTime}:00` : `2025-10-01T08:00:00`,
           endTime: timeSlot ? `2025-10-01T${timeSlot.endTime}:00` : `2025-10-01T09:30:00`,
           fieldName: field?.name || `Field ${timeSlot?.fieldId || 8}`,
@@ -94,7 +108,7 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
           matchNumber: game.matchNumber
         });
       } else {
-        console.log(`[Schedule Calendar] Skipping game ${game.id} - teams not found or not approved: home=${homeTeam?.name}, away=${awayTeam?.name}`);
+        console.log(`[Schedule Calendar] Skipping game ${game.gameId} - teams not found or not approved: home=${homeTeam?.name}, away=${awayTeam?.name}`);
       }
     }
 
