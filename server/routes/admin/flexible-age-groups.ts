@@ -9,6 +9,7 @@ import {
 } from '@db/schema';
 import { eq, and, count } from 'drizzle-orm';
 import { isAdmin } from '../../middleware/auth';
+import { IntelligentSchedulingEngine } from '../../utils/schedulingEngine';
 
 const router = Router();
 
@@ -156,14 +157,14 @@ router.post('/events/:eventId/age-groups', isAdmin, async (req, res) => {
 });
 
 // POST /api/admin/events/:eventId/age-groups/:ageGroupId/schedule
-// Generate schedule for individual age group
+// Generate schedule for individual age group using intelligent scheduling engine
 router.post('/events/:eventId/age-groups/:ageGroupId/schedule', isAdmin, async (req, res) => {
   try {
-    console.log(`Starting schedule generation for event ${req.params.eventId}, age group ${req.params.ageGroupId}`);
+    console.log(`=== INTELLIGENT SCHEDULE GENERATION START ===`);
+    console.log(`Event: ${req.params.eventId}, Age Group: ${req.params.ageGroupId}`);
+    
     const eventId = parseInt(req.params.eventId);
     const ageGroupId = parseInt(req.params.ageGroupId);
-    
-    console.log(`Parsed IDs: eventId=${eventId}, ageGroupId=${ageGroupId}`);
     
     // Validate input parameters
     if (isNaN(eventId) || isNaN(ageGroupId)) {
@@ -175,159 +176,73 @@ router.post('/events/:eventId/age-groups/:ageGroupId/schedule', isAdmin, async (
       });
     }
 
-    // Get the age group configuration
-    console.log(`Looking up age group with ID: ${ageGroupId}`);
-    const ageGroup = await db.select()
-      .from(eventAgeGroups)
-      .where(eq(eventAgeGroups.id, ageGroupId))
-      .then(results => {
-        console.log(`Age group query results:`, results);
-        return results[0];
-      });
-
-    if (!ageGroup) {
-      console.log(`Age group ${ageGroupId} not found in database`);
-      return res.status(404).json({ error: 'Age group not found' });
-    }
+    // Initialize intelligent scheduling engine
+    console.log('Initializing intelligent scheduling engine...');
+    const schedulingEngine = new IntelligentSchedulingEngine(eventId);
+    await schedulingEngine.initialize();
     
-    console.log(`Age group found: ${ageGroup.ageGroup} ${ageGroup.gender}`);
-
-    // Get teams for this age group
-    console.log(`Looking up teams for event ${eventId.toString()}, age group ${ageGroupId}`);
-    const ageGroupTeams = await db.select()
-      .from(teams)
-      .where(and(
-        eq(teams.eventId, eventId.toString()),
-        eq(teams.ageGroupId, ageGroupId)
-      ));
+    console.log('Scheduling engine initialized successfully');
     
-    console.log(`Found ${ageGroupTeams.length} teams for this age group`);
-
-    if (ageGroupTeams.length < 2) {
-      return res.status(400).json({ 
-        error: 'Need at least 2 teams to generate schedule',
-        teamCount: ageGroupTeams.length
-      });
-    }
-
-    // Simple round-robin schedule generation for this age group
-    const generatedGames = [];
+    // Get scheduling analysis
+    const analysis = schedulingEngine.getSchedulingAnalysis();
+    console.log('Scheduling analysis:', analysis);
     
-    // Check if required tables exist before proceeding
-    try {
-      console.log('Checking database table accessibility...');
-      await db.select().from(gameTimeSlots).limit(1);
-      await db.select().from(games).limit(1);
-      console.log('Database tables accessible');
-    } catch (tableError: any) {
-      console.error('Database table check failed:', tableError);
-      return res.status(500).json({ 
-        error: 'Database schema issue - required tables not accessible',
-        details: tableError.message,
-        suggestion: 'This may be a production environment schema difference'
-      });
-    }
+    // Generate schedule for this age group
+    console.log(`Generating schedule for age group ${ageGroupId}...`);
+    const generatedGames = await schedulingEngine.generateAgeGroupSchedule(ageGroupId, 'round-robin');
     
-    // Get event details for proper tournament dates
-    console.log(`Looking up event with ID: ${eventId}`);
-    const event = await db.select()
-      .from(events)
-      .where(eq(events.id, eventId))
-      .then(results => {
-        console.log(`Event query results:`, results);
-        return results[0];
-      });
-    
-    if (!event) {
-      console.log(`Event ${eventId} not found in database`);
-      return res.status(404).json({ error: 'Event not found' });
-    }
-    
-    console.log(`Event found: ${event.name}, start date: ${event.startDate}`);
+    console.log(`Generated ${generatedGames.length} games successfully`);
 
-    // Use tournament start date instead of next week
-    const tournamentStartDate = new Date(event.startDate);
-    let gameCounter = 0;
+    // Save games to database
+    const savedGames = [];
+    for (const gameData of generatedGames) {
+      // Create time slot
+      const timeSlot = await db.insert(gameTimeSlots).values({
+        eventId: eventId.toString(),
+        fieldId: gameData.field.id,
+        startTime: gameData.timeSlot.startTime.toISOString(),
+        endTime: gameData.timeSlot.endTime.toISOString(),
+        dayIndex: 0,
+        isAvailable: false
+      }).returning();
 
-    for (let i = 0; i < ageGroupTeams.length; i++) {
-      for (let j = i + 1; j < ageGroupTeams.length; j++) {
-        // Calculate game time (distribute throughout tournament days)
-        const gameDate = new Date(tournamentStartDate);
-        const dayOffset = Math.floor(gameCounter / 8); // 8 games per day
-        const hourOffset = gameCounter % 8; // Games throughout the day
-        
-        gameDate.setDate(gameDate.getDate() + dayOffset);
-        gameDate.setHours(8 + hourOffset, 0, 0, 0); // Start at 8 AM
-        
-        const endTime = new Date(gameDate.getTime() + 90 * 60000); // 90 minutes later
+      // Create game
+      const game = await db.insert(games).values({
+        eventId: eventId.toString(),
+        ageGroupId: ageGroupId,
+        homeTeamId: gameData.homeTeam.id,
+        awayTeamId: gameData.awayTeam.id,
+        timeSlotId: timeSlot[0].id,
+        fieldId: gameData.field.id,
+        status: 'scheduled',
+        round: 1,
+        matchNumber: savedGames.length + 1,
+        duration: gameData.gameFormat.gameLength
+      }).returning();
 
-        // Try to create time slot with error handling
-        let timeSlot;
-        try {
-          console.log(`Creating time slot for game ${gameCounter + 1}`);
-          timeSlot = await db.insert(gameTimeSlots).values({
-            eventId: eventId.toString(),
-            fieldId: 1, // Default field for now
-            startTime: gameDate.toISOString(),
-            endTime: endTime.toISOString(),
-            dayIndex: dayOffset,
-            isAvailable: false
-          }).returning();
-          console.log(`Time slot created successfully: ${timeSlot[0].id}`);
-        } catch (timeSlotError: any) {
-          console.error(`Error creating time slot:`, timeSlotError);
-          throw new Error(`Failed to create time slot: ${timeSlotError.message}`);
-        }
-
-        // Try to create game with error handling
-        let game;
-        try {
-          console.log(`Creating game between teams ${ageGroupTeams[i].id} and ${ageGroupTeams[j].id}`);
-          game = await db.insert(games).values({
-            eventId: eventId.toString(),
-            ageGroupId: ageGroupId,
-            homeTeamId: ageGroupTeams[i].id,
-            awayTeamId: ageGroupTeams[j].id,
-            timeSlotId: timeSlot[0].id,
-            fieldId: 1,
-            status: 'scheduled',
-            round: 1,
-            matchNumber: gameCounter + 1,
-            duration: 90
-          }).returning();
-          console.log(`Game created successfully: ${game[0].id}`);
-        } catch (gameError: any) {
-          console.error(`Error creating game:`, gameError);
-          throw new Error(`Failed to create game: ${gameError.message}`);
-        }
-
-        generatedGames.push(game[0]);
-        gameCounter++;
-      }
+      savedGames.push(game[0]);
     }
 
-    res.json({
-      success: true,
-      ageGroup: `${ageGroup.ageGroup} ${ageGroup.gender}`,
-      gamesGenerated: generatedGames.length,
-      teamCount: ageGroupTeams.length,
-      message: `Schedule generated for ${ageGroup.ageGroup} ${ageGroup.gender} with ${generatedGames.length} games`
+    console.log(`=== INTELLIGENT SCHEDULE GENERATION COMPLETE ===`);
+    
+    res.json({ 
+      success: true, 
+      gamesGenerated: savedGames.length,
+      analysis,
+      games: savedGames,
+      message: `Generated ${savedGames.length} games using intelligent scheduling engine`
     });
 
   } catch (error: any) {
-    console.error('Error generating age group schedule:', error);
-    console.error('Error details:', {
-      message: error?.message || 'Unknown error',
-      stack: error?.stack || 'No stack trace',
-      eventIdParam: req.params.eventId,
-      ageGroupIdParam: req.params.ageGroupId,
-      errorType: error?.constructor?.name || 'Unknown'
-    });
+    console.error('=== INTELLIGENT SCHEDULE GENERATION ERROR ===');
+    console.error('Error:', error);
+    console.error('Stack:', error?.stack);
+    console.error('=== ERROR END ===');
+    
     res.status(500).json({ 
-      error: 'Failed to generate schedule', 
+      error: 'Failed to generate intelligent schedule', 
       details: error?.message || 'Unknown error',
-      eventId: req.params.eventId,
-      ageGroupId: req.params.ageGroupId
+      suggestion: 'Check that game formats and constraints are properly configured'
     });
   }
 });
