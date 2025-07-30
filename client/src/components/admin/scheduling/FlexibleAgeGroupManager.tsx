@@ -15,6 +15,7 @@ import {
 
 interface FlexibleAgeGroupManagerProps {
   eventId: string;
+  enforceSetupValidation?: boolean;
 }
 
 interface AgeGroupStatus {
@@ -29,7 +30,7 @@ interface AgeGroupStatus {
   lastUpdated: string;
 }
 
-export function FlexibleAgeGroupManager({ eventId }: FlexibleAgeGroupManagerProps) {
+export function FlexibleAgeGroupManager({ eventId, enforceSetupValidation = false }: FlexibleAgeGroupManagerProps) {
   const [showAddForm, setShowAddForm] = useState(false);
   const [newAgeGroup, setNewAgeGroup] = useState({
     name: '',

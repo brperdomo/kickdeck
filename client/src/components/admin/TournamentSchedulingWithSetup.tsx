@@ -5,7 +5,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowLeft, Settings, Zap } from 'lucide-react';
 import PreSchedulingSetup from './scheduling/PreSchedulingSetup';
-import FlexibleAgeGroupManager from './scheduling/FlexibleAgeGroupManager';
+import { FlexibleAgeGroupManager } from './scheduling/FlexibleAgeGroupManager';
 
 interface TournamentSchedulingWithSetupProps {
   selectedTournament: any;
