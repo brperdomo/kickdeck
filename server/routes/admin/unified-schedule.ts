@@ -209,75 +209,120 @@ router.post('/events/:eventId/unified-schedule', requireAuth, async (req, res) =
     console.log(`[Schedule Logic] Generated ${generatedGames.length} games using ${gameFormat_type} format`);
     console.log(`[Schedule Logic] Average games per team: ${(generatedGames.length * 2 / approvedTeams.length).toFixed(1)}`);
 
-    // Assign time slots and fields
+    // INTELLIGENT FIELD DISTRIBUTION ALGORITHM
+    console.log(`[Smart Field Assignment] Distributing ${generatedGames.length} games across ${eventFields.length} available fields`);
+    console.log(`[Smart Field Assignment] Available fields:`, eventFields.map(f => `${f.name} (${f.fieldSize}, ID: ${f.id})`));
+    
     const scheduledGames = [];
     const currentDate = new Date(startDate);
     const endDateObj = new Date(endDate);
     
+    // Field utilization tracking - each field tracks its schedule
+    const fieldSchedules = new Map();
+    eventFields.forEach(field => {
+      fieldSchedules.set(field.id, []);
+    });
+    
     let gameIndex = 0;
-    let currentField = 0;
+    let dayIndex = 0;
     
     while (currentDate <= endDateObj && gameIndex < generatedGames.length) {
+      console.log(`[Smart Field Assignment] === Scheduling Day ${dayIndex + 1}: ${currentDate.toDateString()} ===`);
+      
       // Parse operating hours
       const [startHour, startMinute] = operatingStart.split(':').map(Number);
       const [endHour, endMinute] = operatingEnd.split(':').map(Number);
       
-      let currentTime = startHour * 60 + startMinute; // Convert to minutes
-      const endTime = endHour * 60 + endMinute;
+      const dailyStartTime = startHour * 60 + startMinute; // Convert to minutes
+      const dailyEndTime = endHour * 60 + endMinute;
+      const availableMinutesPerDay = dailyEndTime - dailyStartTime;
+      const gameSlotDuration = gameDuration + restPeriod;
+      const maxSlotsPerFieldPerDay = Math.floor(availableMinutesPerDay / gameSlotDuration);
       
-      // Schedule games for current day
-      let gamesPerDay = 0;
+      console.log(`[Smart Field Assignment] Daily capacity: ${maxSlotsPerFieldPerDay} games per field × ${eventFields.length} fields = ${maxSlotsPerFieldPerDay * eventFields.length} total games per day`);
       
-      while (currentTime + gameDuration + restPeriod <= endTime && 
-             gameIndex < generatedGames.length && 
-             gamesPerDay < availableFields * 8) { // Max games per field per day
+      // Reset field schedules for this day
+      eventFields.forEach(field => {
+        fieldSchedules.set(field.id, []);
+      });
+      
+      let currentTimeSlot = 0;
+      let gamesScheduledToday = 0;
+      const maxGamesPerDay = maxSlotsPerFieldPerDay * eventFields.length;
+      
+      // Schedule games for current day using round-robin field assignment
+      while (gameIndex < generatedGames.length && 
+             currentTimeSlot < maxSlotsPerFieldPerDay && 
+             gamesScheduledToday < maxGamesPerDay) {
         
-        const game = generatedGames[gameIndex];
-        const selectedField = eventFields[currentField % eventFields.length];
+        // Schedule games in parallel across all fields for this time slot
+        for (let fieldIndex = 0; fieldIndex < eventFields.length && gameIndex < generatedGames.length; fieldIndex++) {
+          const game = generatedGames[gameIndex];
+          const selectedField = eventFields[fieldIndex];
+          
+          // Calculate time for this slot
+          const slotStartTime = dailyStartTime + (currentTimeSlot * gameSlotDuration);
+          const slotEndTime = slotStartTime + gameDuration;
+          
+          const startTimeHours = Math.floor(slotStartTime / 60);
+          const startTimeMinutes = slotStartTime % 60;
+          const endTimeHours = Math.floor(slotEndTime / 60);
+          const endTimeMins = slotEndTime % 60;
+          
+          const scheduledGame = {
+            ...game,
+            date: currentDate.toISOString().split('T')[0],
+            startTime: `${startTimeHours.toString().padStart(2, '0')}:${startTimeMinutes.toString().padStart(2, '0')}`,
+            endTime: `${endTimeHours.toString().padStart(2, '0')}:${endTimeMins.toString().padStart(2, '0')}`,
+            field: selectedField.name,
+            fieldId: selectedField.id,
+            complex: selectedField.complexName || 'Main Complex',
+            timeSlot: currentTimeSlot,
+            dayIndex: dayIndex
+          };
+          
+          scheduledGames.push(scheduledGame);
+          fieldSchedules.get(selectedField.id).push(scheduledGame);
+          
+          console.log(`[Smart Field Assignment] Game ${gameIndex + 1}: ${game.team1} vs ${game.team2} → ${selectedField.name} (ID: ${selectedField.id}) at ${scheduledGame.startTime}-${scheduledGame.endTime}`);
+          
+          gameIndex++;
+          gamesScheduledToday++;
+        }
         
-        const startTimeHours = Math.floor(currentTime / 60);
-        const startTimeMinutes = currentTime % 60;
-        const endTimeMinutes = currentTime + gameDuration;
-        const endTimeHours = Math.floor(endTimeMinutes / 60);
-        const endTimeMins = endTimeMinutes % 60;
-        
-        scheduledGames.push({
-          ...game,
-          date: currentDate.toISOString().split('T')[0],
-          startTime: `${startTimeHours.toString().padStart(2, '0')}:${startTimeMinutes.toString().padStart(2, '0')}`,
-          endTime: `${endTimeHours.toString().padStart(2, '0')}:${endTimeMins.toString().padStart(2, '0')}`,
-          field: selectedField?.name || `Field ${currentField + 1}`,
-          fieldId: selectedField?.id || firstAvailableField, // Assign actual field ID
-          complex: selectedField?.complexName || 'Main Complex'
-        });
-        
-        currentTime += gameDuration + restPeriod;
-        currentField = (currentField + 1) % availableFields;
-        gameIndex++;
-        gamesPerDay++;
+        currentTimeSlot++;
       }
+      
+      console.log(`[Smart Field Assignment] Day ${dayIndex + 1} Complete: Scheduled ${gamesScheduledToday} games across ${eventFields.length} fields`);
       
       // Move to next day
       currentDate.setDate(currentDate.getDate() + 1);
+      dayIndex++;
     }
+    
+    // Display final field distribution statistics
+    console.log(`[Smart Field Assignment] === FINAL DISTRIBUTION SUMMARY ===`);
+    eventFields.forEach(field => {
+      const fieldGames = scheduledGames.filter(g => g.fieldId === field.id).length;
+      console.log(`[Smart Field Assignment] ${field.name} (ID: ${field.id}): ${fieldGames} games scheduled`);
+    });
 
     console.log(`[Unified Schedule] Generated ${scheduledGames.length} scheduled games`);
 
-    // Save games to database
-    console.log(`[Database Save] Saving ${scheduledGames.length} games to database...`);
-    
-    // Get the first available field ID to fix foreign key constraint
-    const firstAvailableField = eventFields.length > 0 ? eventFields[0].id : 8; // Fallback to field ID 8
-    console.log(`[Database Save] Using field ID: ${firstAvailableField}`);
+    // Save games to database with proper field assignments
+    console.log(`[Database Save] Saving ${scheduledGames.length} games to database with distributed field assignments...`);
     
     const savedGames: any[] = [];
     for (const game of scheduledGames) {
-      // Save the game to database (matching actual schema)
+      console.log(`[Database Save] Saving game: ${game.team1} vs ${game.team2} → Field ${game.field} (ID: ${game.fieldId})`);
+      
+      // Save the game to database with the correct field_id
       const savedGame = await db.insert(games).values({
         eventId: eventId, // Keep as string to match schema
         ageGroupId: game.ageGroupId,
         homeTeamId: game.team1Id,
         awayTeamId: game.team2Id,
+        fieldId: game.fieldId, // CRITICAL: Use the distributed field ID, not a fallback
         status: 'scheduled',
         round: 1,
         matchNumber: savedGames.length + 1,
@@ -285,14 +330,13 @@ router.post('/events/:eventId/unified-schedule', requireAuth, async (req, res) =
         breakTime: restPeriod
       }).returning();
 
-      // Create a time slot for this game using the assigned field ID
-      const gameFieldId = game.fieldId || firstAvailableField;
+      // Create a time slot for this game using the correctly distributed field ID
       await db.insert(gameTimeSlots).values({
         eventId: eventId, // Keep as string to match schema
-        fieldId: gameFieldId, // Use the field ID assigned to this specific game
+        fieldId: game.fieldId, // Use the intelligently distributed field ID
         startTime: game.startTime,
         endTime: game.endTime,
-        dayIndex: 0, // Required field
+        dayIndex: game.dayIndex, // Use the actual day index from scheduling
         isAvailable: false
       });
 
