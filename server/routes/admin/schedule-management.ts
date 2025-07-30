@@ -13,11 +13,20 @@ router.delete('/events/:eventId/games/:gameId', requireAuth, async (req, res) =>
     
     console.log(`[Schedule Management] Deleting game ${gameId} from event ${eventId}`);
     
-    // Delete associated time slots first (foreign key constraint)
-    // Note: gameTimeSlots table doesn't have gameId field, so we'll delete by eventId and find related slots
-    await db.delete(gameTimeSlots).where(eq(gameTimeSlots.eventId, eventId));
+    // For individual game deletion, we need to handle timeSlotId reference
+    // First get the game to see if it has a timeSlotId
+    const gameToDelete = await db.select().from(games).where(
+      and(
+        eq(games.eventId, eventId),
+        eq(games.id, parseInt(gameId))
+      )
+    ).limit(1);
     
-    // Delete the game
+    if (gameToDelete.length === 0) {
+      return res.status(404).json({ error: 'Game not found' });
+    }
+    
+    // Delete the game first
     const deletedGame = await db.delete(games).where(
       and(
         eq(games.eventId, eventId),
@@ -25,9 +34,10 @@ router.delete('/events/:eventId/games/:gameId', requireAuth, async (req, res) =>
       )
     ).returning();
     
-    if (deletedGame.length === 0) {
-      return res.status(404).json({ error: 'Game not found' });
-    }
+    // If the game had a timeSlotId, we can optionally clean up unused time slots
+    // For now, we'll leave time slots since they might be reused
+    
+    // Game deletion handled above
     
     console.log(`[Schedule Management] Successfully deleted game ${gameId}`);
     
@@ -58,16 +68,15 @@ router.delete('/events/:eventId/games/bulk', requireAuth, async (req, res) => {
     
     console.log(`[Schedule Management] Bulk deleting ${gameIds.length} games from event ${eventId}`);
     
-    // Delete associated time slots first (no gameId field in gameTimeSlots)
-    await db.delete(gameTimeSlots).where(eq(gameTimeSlots.eventId, eventId));
-    
-    // Delete the games
+    // Delete the games first (to avoid foreign key constraint violations)
     const deletedGames = await db.delete(games).where(
       and(
         eq(games.eventId, eventId),
         inArray(games.id, gameIds.map(id => parseInt(id)))
       )
     ).returning();
+    
+    // Note: We're not deleting time slots for bulk delete since other games might use them
     
     console.log(`[Schedule Management] Successfully deleted ${deletedGames.length} games`);
     
@@ -87,7 +96,7 @@ router.delete('/events/:eventId/games/bulk', requireAuth, async (req, res) => {
   }
 });
 
-// Delete all games for an event
+// Delete all games for an event (primary endpoint)
 router.delete('/events/:eventId/games/all', requireAuth, async (req, res) => {
   try {
     const { eventId } = req.params;
@@ -106,11 +115,11 @@ router.delete('/events/:eventId/games/all', requireAuth, async (req, res) => {
       });
     }
     
-    // Delete associated time slots first
-    await db.delete(gameTimeSlots).where(eq(gameTimeSlots.eventId, eventId));
-    
-    // Delete all games
+    // Delete games first (to avoid foreign key constraint violations)
     await db.delete(games).where(eq(games.eventId, eventId));
+    
+    // Then delete associated time slots
+    await db.delete(gameTimeSlots).where(eq(gameTimeSlots.eventId, eventId));
     
     console.log(`[Schedule Management] Successfully deleted all ${gameCount} games`);
     
@@ -122,6 +131,48 @@ router.delete('/events/:eventId/games/all', requireAuth, async (req, res) => {
     
   } catch (error) {
     console.error('[Schedule Management] Error deleting all games:', error);
+    res.status(500).json({ 
+      error: 'Failed to delete all games',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
+// Delete all games for an event (alternative endpoint to match frontend)
+router.delete('/events/:eventId/games/delete-all', requireAuth, async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    
+    console.log(`[Schedule Management] Deleting ALL games for event ${eventId} (delete-all endpoint)`);
+    
+    // Get count first
+    const existingGames = await db.select().from(games).where(eq(games.eventId, eventId));
+    const gameCount = existingGames.length;
+    
+    if (gameCount === 0) {
+      return res.json({
+        success: true,
+        message: 'No games to delete',
+        deletedCount: 0
+      });
+    }
+    
+    // Delete games first (to avoid foreign key constraint violations)
+    await db.delete(games).where(eq(games.eventId, eventId));
+    
+    // Then delete associated time slots
+    await db.delete(gameTimeSlots).where(eq(gameTimeSlots.eventId, eventId));
+    
+    console.log(`[Schedule Management] Successfully deleted all ${gameCount} games via delete-all endpoint`);
+    
+    res.json({
+      success: true,
+      message: `Successfully deleted all ${gameCount} games from tournament`,
+      deletedCount: gameCount
+    });
+    
+  } catch (error) {
+    console.error('[Schedule Management] Error deleting all games (delete-all):', error);
     res.status(500).json({ 
       error: 'Failed to delete all games',
       details: error instanceof Error ? error.message : 'Unknown error'

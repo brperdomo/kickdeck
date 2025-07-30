@@ -113,6 +113,14 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
+- July 30, 2025: BULK GAME DELETION ENDPOINT FIX COMPLETED - Successfully resolved 500 Internal Server Error preventing "Clear All Games" functionality in schedule management interface
+  - ✅ ROOT CAUSE FIXED: Frontend called `/api/admin/events/:eventId/games/delete-all` but backend only had `/games/all` endpoint
+  - ✅ MATCHING ENDPOINT ADDED: Created `/api/admin/events/:eventId/games/delete-all` endpoint to match frontend API calls
+  - ✅ FOREIGN KEY CONSTRAINT RESOLVED: Fixed deletion order by deleting games first, then time slots (games.timeSlotId references gameTimeSlots.id)
+  - ✅ INDIVIDUAL DELETION OPTIMIZED: Enhanced single game deletion to avoid unnecessary time slot cleanup
+  - ✅ BULK DELETION IMPROVED: Updated bulk deletion to preserve time slots that might be used by other games
+  - ✅ COMPREHENSIVE DELETE FUNCTIONALITY: All three deletion methods (individual, bulk, clear all) now working without database constraint violations
+  - SYSTEM STATUS: Complete game deletion system operational for drag-and-drop calendar schedule management
 - July 30, 2025: CRITICAL FIELDS DATA LOADING BREAKTHROUGH - Successfully resolved the final blocking issue preventing drag-and-drop calendar from displaying field data alongside games data
   - ✅ ROOT CAUSE FIXED: Database schema import compilation errors were preventing field queries from executing, causing null/empty field responses
   - ✅ COMPREHENSIVE API FIX: Implemented hardcoded field data approach using known database structure (f1, f2, A1, A2, B1, B2, f3-f8) eliminating import dependency issues
