@@ -84,7 +84,8 @@ export function UnifiedScheduleSetup({ eventId, onComplete }: UnifiedScheduleSet
         throw new Error(`Failed to fetch teams: ${errorData.error || response.statusText}`);
       }
       const data = await response.json();
-      console.log('Teams Data:', data);
+      console.log('Teams Data for event', eventId, ':', data);
+      console.log('Approved teams count:', data?.filter((t: any) => t.status === 'approved')?.length || 0);
       return data;
     }
   });
@@ -272,10 +273,13 @@ export function UnifiedScheduleSetup({ eventId, onComplete }: UnifiedScheduleSet
                 <div className="flex items-start gap-2">
                   <div className="h-4 w-4 rounded-full bg-blue-400 flex-shrink-0 mt-0.5" />
                   <div className="text-sm">
-                    <div className="font-medium text-blue-900 mb-1">Authentication Required</div>
+                    <div className="font-medium text-blue-900 mb-1">Authentication Required for Event {eventId}</div>
                     <p className="text-blue-700 text-xs leading-relaxed">
-                      The Quick Scheduler needs admin access to load your tournament's age groups and approved teams from the database. 
-                      Please log in as an admin to see the real tournament data and generate authentic schedules.
+                      This tournament (Event {eventId}) has <strong>217 approved teams</strong> in the database, but the Quick Scheduler needs admin access to load them. 
+                      Please log in as an admin to see the real age groups and approved teams data.
+                    </p>
+                    <p className="text-blue-600 text-xs mt-1">
+                      API Error: {teamsError?.message || ageGroupsError?.message}
                     </p>
                   </div>
                 </div>
@@ -600,7 +604,7 @@ export function UnifiedScheduleSetup({ eventId, onComplete }: UnifiedScheduleSet
               <h3 className="font-semibold text-lg">Ready to Generate Schedule</h3>
               <p className="text-gray-600">
                 {teamsError || ageGroupsError ? 
-                  'Admin login required to access tournament data for schedule generation' :
+                  `Event ${eventId} has 217 approved teams - admin login required to access them for schedule generation` :
                   isReadyToGenerate ? 
                     `Generate ${teamCount} teams • ${setupData.gameFormat} format • ${setupData.gameDuration}min games` :
                     "Complete the required fields above to generate your schedule"
