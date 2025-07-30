@@ -9,7 +9,7 @@ import {
   CheckCircle, Clock, Users, Trophy, ArrowLeft, Home 
 } from 'lucide-react';
 import { UnifiedScheduleSetup } from '@/components/admin/scheduling/UnifiedScheduleSetup';
-import { ScheduleViewer } from '@/components/admin/scheduling/ScheduleViewer';
+import { ScheduleViewerFixed as ScheduleViewer } from '@/components/admin/scheduling/ScheduleViewerFixed';
 import DragDropCalendarScheduler from '@/components/admin/scheduling/DragDropCalendarScheduler';
 
 export default function MasterSchedulePage() {
