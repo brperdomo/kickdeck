@@ -247,6 +247,7 @@ router.post('/events/:eventId/unified-schedule', requireAuth, async (req, res) =
           startTime: `${startTimeHours.toString().padStart(2, '0')}:${startTimeMinutes.toString().padStart(2, '0')}`,
           endTime: `${endTimeHours.toString().padStart(2, '0')}:${endTimeMins.toString().padStart(2, '0')}`,
           field: selectedField?.name || `Field ${currentField + 1}`,
+          fieldId: selectedField?.id || firstAvailableField, // Assign actual field ID
           complex: selectedField?.complexName || 'Main Complex'
         });
         
@@ -284,10 +285,11 @@ router.post('/events/:eventId/unified-schedule', requireAuth, async (req, res) =
         breakTime: restPeriod
       }).returning();
 
-      // Create a time slot for this game using actual field ID
+      // Create a time slot for this game using the assigned field ID
+      const gameFieldId = game.fieldId || firstAvailableField;
       await db.insert(gameTimeSlots).values({
         eventId: eventId, // Keep as string to match schema
-        fieldId: firstAvailableField, // Use actual field ID from database
+        fieldId: gameFieldId, // Use the field ID assigned to this specific game
         startTime: game.startTime,
         endTime: game.endTime,
         dayIndex: 0, // Required field

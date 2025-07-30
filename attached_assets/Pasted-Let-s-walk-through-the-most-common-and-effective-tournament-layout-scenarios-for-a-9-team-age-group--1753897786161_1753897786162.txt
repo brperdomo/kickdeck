@@ -1,0 +1,65 @@
+Let’s walk through the most common and effective tournament layout scenarios for a 9-team age group. Each layout balances fairness, game count, and scheduling efficiency. I’ll break them down by pool structure, game count, and playoff format.
+⚙️ Scenario 1: 3 Pools of 3 Teams
+➤ Pool Play:
+3 pools (A, B, C), 3 teams each
+Each team plays 2 games (vs others in their pool)
+Total Pool Games: 3 per pool × 3 = 9 games
+➤ Playoffs:
+Option A: Top 6 Advance
+Quarterfinals: 3v6, 4v5 → 2 games
+Semifinals: 1 vs winner 4/5, 2 vs winner 3/6 → 2 games
+Final: 1 game
+Total Playoff Games: 5
+Option B: Top 4 Advance
+Semifinals: 1v4, 2v3 → 2 games
+Final: 1 game
+Total Playoff Games: 3
+Consolation: 3 teams not advancing → 1–2 games
+⚙️ Scenario 2: 1 Pool of 9 Teams (Round Robin)
+➤ Pool Play:
+Each team plays 8 games
+Total Games: (9 × 8) ÷ 2 = 36 games
+➤ Playoffs:
+Top 2 play Final → 1 game
+Or Top 4: Semis + Final → 3 games
+✅ Pros: Very fair, everyone plays everyone
+❌ Cons: Too many games for a short weekend
+⚙️ Scenario 3: 2 Pools (5 + 4 Teams)
+➤ Pool Play:
+Pool A (5 teams): 10 games (each team plays 4)
+Pool B (4 teams): 6 games (each team plays 3)
+Total Pool Games: 16
+➤ Playoffs:
+Option A: Top 2 from each pool
+Semifinals: A1 vs B2, B1 vs A2 → 2 games
+Final: 1 game
+Total Playoff Games: 3
+Option B: Top 3 from each pool
+Quarterfinals: A2 vs B3, B2 vs A3 → 2 games
+Semifinals: A1 vs QF winner, B1 vs QF winner → 2 games
+Final: 1 game
+Total Playoff Games: 5
+⚙️ Scenario 4: 3 Pools of 3 Teams + Crossover
+➤ Pool Play:
+Same as Scenario 1: 9 games
+Add 1 crossover game per team (vs team from another pool)
+Each team plays 3 games
+Total Games: 9 (pool) + 9 (crossover) = 18 games
+➤ Playoffs:
+Top 4 or 6 advance (same as above)
+Total Playoff Games: 3–5
+✅ Pros: Everyone gets 3 games before playoffs
+✅ Cons: Slightly more complex to schedule
+⚙️ Scenario 5: Flights Instead of Pools
+Flight A: Top 5 teams (based on rankings)
+Flight B: Remaining 4 teams
+Each flight plays round-robin:
+Flight A: 10 games
+Flight B: 6 games
+Total Games: 16
+Then:
+Flight A Final: Top 2 → 1 game
+Flight B Final: Top 2 → 1 game
+Total Playoff Games: 2
+✅ Pros: Good for tiered competition
+✅ Cons: No crossover between flights

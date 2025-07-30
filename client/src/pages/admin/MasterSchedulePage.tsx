@@ -10,10 +10,11 @@ import {
 } from 'lucide-react';
 import { UnifiedScheduleSetup } from '@/components/admin/scheduling/UnifiedScheduleSetup';
 import { ScheduleViewer } from '@/components/admin/scheduling/ScheduleViewer';
+import DragDropCalendarScheduler from '@/components/admin/scheduling/DragDropCalendarScheduler';
 
 export default function MasterSchedulePage() {
   const { eventId } = useParams<{ eventId: string }>();
-  const [currentView, setCurrentView] = useState<'quick' | 'view'>('quick');
+  const [currentView, setCurrentView] = useState<'quick' | 'view' | 'calendar'>('quick');
 
   if (!eventId) {
     return <div>Event ID not found</div>;
@@ -59,6 +60,14 @@ export default function MasterSchedulePage() {
             <Eye className="h-4 w-4" />
             View Complete Schedule
           </Button>
+          <Button
+            variant={currentView === 'calendar' ? 'default' : 'outline'}
+            onClick={() => setCurrentView('calendar')}
+            className="flex items-center gap-2"
+          >
+            <Calendar className="h-4 w-4" />
+            Calendar Drag & Drop
+          </Button>
         </div>
 
         {/* Content Area */}
@@ -73,7 +82,7 @@ export default function MasterSchedulePage() {
             </Alert>
             <UnifiedScheduleSetup eventId={eventId} />
           </div>
-        ) : (
+        ) : currentView === 'view' ? (
           <div className="space-y-6">
             <Alert className="border-green-200 bg-green-50">
               <Eye className="h-4 w-4 text-green-600" />
@@ -83,6 +92,17 @@ export default function MasterSchedulePage() {
               </AlertDescription>
             </Alert>
             <ScheduleViewer eventId={eventId} />
+          </div>
+        ) : (
+          <div className="space-y-6">
+            <Alert className="border-purple-200 bg-purple-50">
+              <Calendar className="h-4 w-4 text-purple-600" />
+              <AlertDescription className="text-purple-800">
+                <strong>Drag & Drop Calendar:</strong> Fine-tune your tournament schedule by dragging games 
+                between fields and time slots. Perfect for optimizing field usage and resolving conflicts.
+              </AlertDescription>
+            </Alert>
+            <DragDropCalendarScheduler eventId={eventId} />
           </div>
         )}
       </div>
