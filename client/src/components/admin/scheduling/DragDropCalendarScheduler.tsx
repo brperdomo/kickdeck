@@ -46,33 +46,35 @@ export default function DragDropCalendarScheduler({ eventId }: DragDropCalendarS
   const [fields, setFields] = useState<Field[]>([]);
   const queryClient = useQueryClient();
 
-  // Fetch games and fields data (using test endpoints temporarily)
+  // Fetch games and fields data from correct schedule calendar API
   const { data: gamesData, isLoading: gamesLoading, error } = useQuery({
-    queryKey: ['/api/test-games', eventId],
+    queryKey: ['/api/admin/events', eventId, 'schedule-calendar'],
     queryFn: async () => {
-      console.log('[Calendar] Fetching test games data for event:', eventId);
-      const response = await fetch(`/api/test-games/${eventId}`);
+      console.log('[Calendar] Fetching real schedule calendar data for event:', eventId);
+      const response = await fetch(`/api/admin/events/${eventId}/schedule-calendar`, {
+        credentials: 'include'
+      });
       console.log('[Calendar] Response status:', response.status);
       if (!response.ok) {
         const errorText = await response.text();
         console.log('[Calendar] Error response:', errorText);
-        throw new Error(`Failed to fetch games data: ${response.status}`);
+        throw new Error(`Failed to fetch schedule calendar data: ${response.status}`);
       }
       const data = await response.json();
-      console.log('[Calendar] Received games data:', data);
+      console.log('[Calendar] Received schedule calendar data:', data);
       
-      // Transform basic games data into calendar format
+      // Data is already processed by the API, just return games
       const processedGames = data.games?.map((game: any) => ({
         id: game.id,
-        homeTeamName: `Team ${game.homeTeamId}`,
-        awayTeamName: `Team ${game.awayTeamId}`,
-        ageGroup: 'U19',
-        startTime: '2025-10-01T08:00:00',
-        endTime: '2025-10-01T09:30:00',
-        fieldName: `Field ${game.fieldId || 8}`,
-        fieldId: game.fieldId || 8,
-        status: game.status || 'scheduled',
-        duration: 90
+        homeTeamName: game.homeTeamName,
+        awayTeamName: game.awayTeamName,
+        ageGroup: game.ageGroup,
+        startTime: game.startTime,
+        endTime: game.endTime,
+        fieldName: game.fieldName,
+        fieldId: game.fieldId,
+        status: game.status,
+        duration: game.duration
       })) || [];
       
       return { games: processedGames, success: true };
@@ -81,10 +83,12 @@ export default function DragDropCalendarScheduler({ eventId }: DragDropCalendarS
   });
 
   const { data: fieldsData, error: fieldsError } = useQuery({
-    queryKey: ['/api/test-fields'],
+    queryKey: ['/api/admin/events', eventId, 'fields'],
     queryFn: async () => {
-      console.log('[Calendar] Fetching test fields data');
-      const response = await fetch('/api/test-fields');
+      console.log('[Calendar] Fetching real fields data for event:', eventId);
+      const response = await fetch(`/api/admin/events/${eventId}/fields`, {
+        credentials: 'include'
+      });
       console.log('[Calendar] Fields response status:', response.status);
       if (!response.ok) {
         const errorText = await response.text();
@@ -94,13 +98,13 @@ export default function DragDropCalendarScheduler({ eventId }: DragDropCalendarS
       const data = await response.json();
       console.log('[Calendar] Received fields data:', data);
       
-      // Transform basic fields data into calendar format
+      // Fields data is already processed by the API
       const processedFields = data.fields?.map((field: any) => ({
         id: field.id,
-        name: field.name || `Field ${field.id}`,
-        fieldSize: field.fieldSize || '11v11',
-        complexName: field.complexName || 'Main Complex',
-        isOpen: field.isOpen !== false
+        name: field.name,
+        fieldSize: field.fieldSize,
+        complexName: field.complexName,
+        isOpen: true
       })) || [];
       
       return { fields: processedFields, success: true };
@@ -121,10 +125,10 @@ export default function DragDropCalendarScheduler({ eventId }: DragDropCalendarS
       return response.json();
     },
     onSuccess: () => {
-      // Invalidate both the test endpoints and the real schedule data
-      queryClient.invalidateQueries({ queryKey: ['/api/test-games', eventId] });
+      // Invalidate all relevant schedule queries
       queryClient.invalidateQueries({ queryKey: ['/api/admin/events', eventId, 'schedule-calendar'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/events', eventId, 'schedule-viewer'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/events', eventId, 'schedule'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/events', eventId, 'fields'] });
       toast({ title: 'Game rescheduled successfully' });
     },
     onError: (error) => {

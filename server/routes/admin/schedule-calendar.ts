@@ -48,13 +48,19 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
       // Get the corresponding time slot (assuming they're in the same order)
       const timeSlot = allTimeSlots[i % allTimeSlots.length]; // Use modulo to cycle through time slots
 
-      // Get team names
+      // Get team names - only from approved teams for this event
       const homeTeam = await db.query.teams.findFirst({
-        where: eq(teams.id, game.homeTeamId!)
+        where: and(
+          eq(teams.id, game.homeTeamId!),
+          eq(teams.eventId, eventId)
+        )
       });
       
       const awayTeam = await db.query.teams.findFirst({
-        where: eq(teams.id, game.awayTeamId!)
+        where: and(
+          eq(teams.id, game.awayTeamId!),
+          eq(teams.eventId, eventId)
+        )
       });
 
       // Get age group info
@@ -64,20 +70,25 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
 
       const field = allFields.find(f => f.id === timeSlot?.fieldId);
       
-      processedGames.push({
-        id: game.id,
-        homeTeamName: homeTeam?.name || `Team ${game.homeTeamId}`,
-        awayTeamName: awayTeam?.name || `Team ${game.awayTeamId}`,
-        ageGroup: ageGroup ? `${ageGroup.ageGroup} ${ageGroup.gender}`.trim() : 'Unknown',
-        startTime: timeSlot ? `2025-10-01T${timeSlot.startTime}:00` : `2025-10-01T08:00:00`,
-        endTime: timeSlot ? `2025-10-01T${timeSlot.endTime}:00` : `2025-10-01T09:30:00`,
-        fieldName: field?.name || `Field ${timeSlot?.fieldId || 8}`,
-        fieldId: timeSlot?.fieldId || 8,
-        status: game.status,
-        duration: game.duration || 90,
-        round: game.round,
-        matchNumber: game.matchNumber
-      });
+      // Only include games with both teams found and at least one approved
+      if (homeTeam && awayTeam && (homeTeam.status === 'approved' || awayTeam.status === 'approved')) {
+        processedGames.push({
+          id: game.id,
+          homeTeamName: homeTeam.name,
+          awayTeamName: awayTeam.name,
+          ageGroup: ageGroup ? `${ageGroup.ageGroup} ${ageGroup.gender}`.trim() : 'Unknown',
+          startTime: timeSlot ? `2025-10-01T${timeSlot.startTime}:00` : `2025-10-01T08:00:00`,
+          endTime: timeSlot ? `2025-10-01T${timeSlot.endTime}:00` : `2025-10-01T09:30:00`,
+          fieldName: field?.name || `Field ${timeSlot?.fieldId || 8}`,
+          fieldId: timeSlot?.fieldId || 8,
+          status: game.status,
+          duration: game.duration || 90,
+          round: game.round,
+          matchNumber: game.matchNumber
+        });
+      } else {
+        console.log(`[Schedule Calendar] Skipping game ${game.id} - teams not found or not approved: home=${homeTeam?.name}, away=${awayTeam?.name}`);
+      }
     }
 
     console.log(`[Schedule Calendar] Processed ${processedGames.length} games with team names`);
