@@ -1,0 +1,484 @@
+Submitting login with email: bperdomo@zoho.com
+index-B2Ot7nJO.js:673 Login mutation called with: bperdomo@zoho.com
+index-B2Ot7nJO.js:673 Sending login request with data: {email: 'bperdomo@zoho.com', passwordLength: 8}
+index-B2Ot7nJO.js:673 Login response status: 200
+index-B2Ot7nJO.js:673 Login successful, received user data: Yes
+index-B2Ot7nJO.js:673 Fetching current user after login
+index-B2Ot7nJO.js:673 Fetch finished loading: POST "https://app.matchpro.ai/api/login?t=1753839109439".
+mutationFn @ index-B2Ot7nJO.js:673
+fn @ index-B2Ot7nJO.js:40
+f @ index-B2Ot7nJO.js:40
+start @ index-B2Ot7nJO.js:40
+execute @ index-B2Ot7nJO.js:40
+await in execute
+mutate @ index-B2Ot7nJO.js:40
+o @ index-B2Ot7nJO.js:681
+(anonymous) @ index-B2Ot7nJO.js:673
+await in (anonymous)
+Wue @ index-B2Ot7nJO.js:37
+Kue @ index-B2Ot7nJO.js:37
+Yue @ index-B2Ot7nJO.js:37
+xM @ index-B2Ot7nJO.js:37
+aW @ index-B2Ot7nJO.js:37
+(anonymous) @ index-B2Ot7nJO.js:37
+CO @ index-B2Ot7nJO.js:40
+Aq @ index-B2Ot7nJO.js:37
+A2 @ index-B2Ot7nJO.js:37
+Z4 @ index-B2Ot7nJO.js:37
+ume @ index-B2Ot7nJO.js:37
+submit @ injected.js:5
+is @ injected.js:5
+uD @ injected.js:5
+await in uD
+Ox @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+n @ injected.js:5
+index-B2Ot7nJO.js:673 Fetch finished loading: GET "https://app.matchpro.ai/api/user".
+mutationFn @ index-B2Ot7nJO.js:673
+await in mutationFn
+fn @ index-B2Ot7nJO.js:40
+f @ index-B2Ot7nJO.js:40
+start @ index-B2Ot7nJO.js:40
+execute @ index-B2Ot7nJO.js:40
+await in execute
+mutate @ index-B2Ot7nJO.js:40
+o @ index-B2Ot7nJO.js:681
+(anonymous) @ index-B2Ot7nJO.js:673
+await in (anonymous)
+Wue @ index-B2Ot7nJO.js:37
+Kue @ index-B2Ot7nJO.js:37
+Yue @ index-B2Ot7nJO.js:37
+xM @ index-B2Ot7nJO.js:37
+aW @ index-B2Ot7nJO.js:37
+(anonymous) @ index-B2Ot7nJO.js:37
+CO @ index-B2Ot7nJO.js:40
+Aq @ index-B2Ot7nJO.js:37
+A2 @ index-B2Ot7nJO.js:37
+Z4 @ index-B2Ot7nJO.js:37
+ume @ index-B2Ot7nJO.js:37
+submit @ injected.js:5
+is @ injected.js:5
+uD @ injected.js:5
+await in uD
+Ox @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+n @ injected.js:5
+index-B2Ot7nJO.js:673 User data fetched after login: success
+index-B2Ot7nJO.js:681 Login mutation completed successfully
+index-B2Ot7nJO.js:681 Performing explicit user data fetch after login
+index-B2Ot7nJO.js:681 AUTH REDIRECT: User logged in, handling redirect
+index-B2Ot7nJO.js:681 Fetch finished loading: GET "https://app.matchpro.ai/api/user".
+o @ index-B2Ot7nJO.js:681
+await in o
+(anonymous) @ index-B2Ot7nJO.js:673
+await in (anonymous)
+Wue @ index-B2Ot7nJO.js:37
+Kue @ index-B2Ot7nJO.js:37
+Yue @ index-B2Ot7nJO.js:37
+xM @ index-B2Ot7nJO.js:37
+aW @ index-B2Ot7nJO.js:37
+(anonymous) @ index-B2Ot7nJO.js:37
+CO @ index-B2Ot7nJO.js:40
+Aq @ index-B2Ot7nJO.js:37
+A2 @ index-B2Ot7nJO.js:37
+Z4 @ index-B2Ot7nJO.js:37
+ume @ index-B2Ot7nJO.js:37
+submit @ injected.js:5
+is @ injected.js:5
+uD @ injected.js:5
+await in uD
+Ox @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+n @ injected.js:5
+index-B2Ot7nJO.js:681 User data retrieved after login: success
+index-B2Ot7nJO.js:673 Fetch finished loading: GET "https://app.matchpro.ai/api/user".
+queryFn @ index-B2Ot7nJO.js:673
+i @ index-B2Ot7nJO.js:40
+f @ index-B2Ot7nJO.js:40
+start @ index-B2Ot7nJO.js:40
+fetch @ index-B2Ot7nJO.js:40
+(anonymous) @ index-B2Ot7nJO.js:40
+(anonymous) @ index-B2Ot7nJO.js:40
+batch @ index-B2Ot7nJO.js:40
+refetchQueries @ index-B2Ot7nJO.js:40
+(anonymous) @ index-B2Ot7nJO.js:40
+batch @ index-B2Ot7nJO.js:40
+invalidateQueries @ index-B2Ot7nJO.js:40
+onSuccess @ index-B2Ot7nJO.js:673
+execute @ index-B2Ot7nJO.js:40
+await in execute
+mutate @ index-B2Ot7nJO.js:40
+o @ index-B2Ot7nJO.js:681
+(anonymous) @ index-B2Ot7nJO.js:673
+await in (anonymous)
+Wue @ index-B2Ot7nJO.js:37
+Kue @ index-B2Ot7nJO.js:37
+Yue @ index-B2Ot7nJO.js:37
+xM @ index-B2Ot7nJO.js:37
+aW @ index-B2Ot7nJO.js:37
+(anonymous) @ index-B2Ot7nJO.js:37
+CO @ index-B2Ot7nJO.js:40
+Aq @ index-B2Ot7nJO.js:37
+A2 @ index-B2Ot7nJO.js:37
+Z4 @ index-B2Ot7nJO.js:37
+ume @ index-B2Ot7nJO.js:37
+submit @ injected.js:5
+is @ injected.js:5
+uD @ injected.js:5
+await in uD
+Ox @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+n @ injected.js:5
+index-B2Ot7nJO.js:681 Found redirect path: /admin/tournament-system
+index-B2Ot7nJO.js:681 Redirecting to: /admin/tournament-system
+Navigated to https://app.matchpro.ai/admin/tournament-system
+js?libraries=places&v=beta&callback=Function.prototype:1377 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1377
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622Understand this warning
+js?libraries=places&v=beta&callback=Function.prototype:1409 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1409
+hda @ js?libraries=places&v=beta&callback=Function.prototype:1386
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1378
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+tournament-system:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+tournament-system:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+index-B2Ot7nJO.js:856 Google Maps API key length: 0 characters
+index-B2Ot7nJO.js:856 Mapbox API key length: 93 characters
+index-B2Ot7nJO.js:856 Google Maps API already loaded
+index-B2Ot7nJO.js:681 Current route location (Wouter): /admin/tournament-system
+index-B2Ot7nJO.js:681 Current URL: https://app.matchpro.ai/admin/tournament-system
+index-B2Ot7nJO.js:681 Current pathname: /admin/tournament-system
+index-B2Ot7nJO.js:681 Current search: 
+index-B2Ot7nJO.js:681 Fetching user with emulation token: not present
+chunk-FLCULYKI.js:31 orchestration: Initializing config store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing feature flag store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state {pill-player: {…}}
+chunk-FLCULYKI.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+index-B2Ot7nJO.js:681 Fetch finished loading: GET "https://app.matchpro.ai/api/user".
+mSe @ index-B2Ot7nJO.js:681
+i @ index-B2Ot7nJO.js:40
+f @ index-B2Ot7nJO.js:40
+start @ index-B2Ot7nJO.js:40
+fetch @ index-B2Ot7nJO.js:40
+ng @ index-B2Ot7nJO.js:40
+onSubscribe @ index-B2Ot7nJO.js:40
+subscribe @ index-B2Ot7nJO.js:40
+(anonymous) @ index-B2Ot7nJO.js:40
+bW @ index-B2Ot7nJO.js:38
+P1 @ index-B2Ot7nJO.js:40
+Jh @ index-B2Ot7nJO.js:40
+WM @ index-B2Ot7nJO.js:40
+ru @ index-B2Ot7nJO.js:38
+Ehe @ index-B2Ot7nJO.js:40
+Eu @ index-B2Ot7nJO.js:40
+ZW @ index-B2Ot7nJO.js:40
+N @ index-B2Ot7nJO.js:25
+T @ index-B2Ot7nJO.js:25
+index-B2Ot7nJO.js:681 User data fetched: {id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: '$2b$12$d6n1CBWgsWFm0fh77F1OX.YxDZy7/O3aLSuJOuq4QkvOtFmSit7BC', firstName: 'Bryan', …}
+shared-ff47c3d242500066edbcf20dbad802fa.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+(anonymous) @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+e @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+c @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+g @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+value @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+value @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+value @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+e @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+value @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+e @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+73339 @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+e @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+(anonymous) @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+e.O @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+(anonymous) @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+(anonymous) @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+shared-ff47c3d242500066edbcf20dbad802fa.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+(anonymous) @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+e @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+c @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+g @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+value @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+value @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+log @ shared-ff47c3d242500066edbcf20dbad802fa.js:1
+log @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+e @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+73339 @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+e @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+(anonymous) @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+e.O @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+(anonymous) @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+(anonymous) @ controller-with-preconnect-3eeeaaf65580a57fa4db91a8e104cfaa.js:1
+index-B2Ot7nJO.js:673 Fetch failed loading: GET "https://app.matchpro.ai/api/user".
+queryFn @ index-B2Ot7nJO.js:673
+i @ index-B2Ot7nJO.js:40
+f @ index-B2Ot7nJO.js:40
+start @ index-B2Ot7nJO.js:40
+fetch @ index-B2Ot7nJO.js:40
+ng @ index-B2Ot7nJO.js:40
+onSubscribe @ index-B2Ot7nJO.js:40
+subscribe @ index-B2Ot7nJO.js:40
+(anonymous) @ index-B2Ot7nJO.js:40
+bW @ index-B2Ot7nJO.js:38
+P1 @ index-B2Ot7nJO.js:40
+Jh @ index-B2Ot7nJO.js:40
+WM @ index-B2Ot7nJO.js:40
+ru @ index-B2Ot7nJO.js:38
+Ehe @ index-B2Ot7nJO.js:40
+Eu @ index-B2Ot7nJO.js:40
+ZW @ index-B2Ot7nJO.js:40
+N @ index-B2Ot7nJO.js:25
+T @ index-B2Ot7nJO.js:25
+index-B2Ot7nJO.js:1037 Fetch finished loading: GET "https://app.matchpro.ai/api/admin/tournaments/scheduling".
+queryFn @ index-B2Ot7nJO.js:1037
+i @ index-B2Ot7nJO.js:40
+f @ index-B2Ot7nJO.js:40
+start @ index-B2Ot7nJO.js:40
+fetch @ index-B2Ot7nJO.js:40
+ng @ index-B2Ot7nJO.js:40
+onSubscribe @ index-B2Ot7nJO.js:40
+subscribe @ index-B2Ot7nJO.js:40
+(anonymous) @ index-B2Ot7nJO.js:40
+bW @ index-B2Ot7nJO.js:38
+P1 @ index-B2Ot7nJO.js:40
+Jh @ index-B2Ot7nJO.js:40
+Ehe @ index-B2Ot7nJO.js:40
+Eu @ index-B2Ot7nJO.js:40
+WM @ index-B2Ot7nJO.js:40
+ru @ index-B2Ot7nJO.js:38
+(anonymous) @ index-B2Ot7nJO.js:40
+setTimeout
+Whe @ index-B2Ot7nJO.js:40
+o @ index-B2Ot7nJO.js:40
+batch @ index-B2Ot7nJO.js:40
+ac @ index-B2Ot7nJO.js:40
+setData @ index-B2Ot7nJO.js:40
+onSuccess @ index-B2Ot7nJO.js:40
+m @ index-B2Ot7nJO.js:40
+Promise.then
+f @ index-B2Ot7nJO.js:40
+start @ index-B2Ot7nJO.js:40
+fetch @ index-B2Ot7nJO.js:40
+ng @ index-B2Ot7nJO.js:40
+onSubscribe @ index-B2Ot7nJO.js:40
+subscribe @ index-B2Ot7nJO.js:40
+(anonymous) @ index-B2Ot7nJO.js:40
+bW @ index-B2Ot7nJO.js:38
+P1 @ index-B2Ot7nJO.js:40
+Jh @ index-B2Ot7nJO.js:40
+WM @ index-B2Ot7nJO.js:40
+ru @ index-B2Ot7nJO.js:38
+Ehe @ index-B2Ot7nJO.js:40
+Eu @ index-B2Ot7nJO.js:40
+ZW @ index-B2Ot7nJO.js:40
+N @ index-B2Ot7nJO.js:25
+T @ index-B2Ot7nJO.js:25
+index-B2Ot7nJO.js:1037 Fetch finished loading: GET "https://app.matchpro.ai/api/admin/events/1656618593/tournament-status".
+queryFn @ index-B2Ot7nJO.js:1037
+i @ index-B2Ot7nJO.js:40
+f @ index-B2Ot7nJO.js:40
+start @ index-B2Ot7nJO.js:40
+fetch @ index-B2Ot7nJO.js:40
+ng @ index-B2Ot7nJO.js:40
+onSubscribe @ index-B2Ot7nJO.js:40
+subscribe @ index-B2Ot7nJO.js:40
+(anonymous) @ index-B2Ot7nJO.js:40
+bW @ index-B2Ot7nJO.js:38
+P1 @ index-B2Ot7nJO.js:40
+Jh @ index-B2Ot7nJO.js:40
+Ehe @ index-B2Ot7nJO.js:40
+Eu @ index-B2Ot7nJO.js:40
+WM @ index-B2Ot7nJO.js:40
+ru @ index-B2Ot7nJO.js:38
+(anonymous) @ index-B2Ot7nJO.js:40
+util.js:31 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+Yxa @ util.js:31
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1379
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1379
+setTimeout
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1379
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622Understand this warning
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+Promise.then
+S @ out-4.5.44.js:1
+y @ out-4.5.44.js:1
+E @ out-4.5.44.js:1
+e.onload @ inner.html:1
+script
+(anonymous) @ inner.html:1
+(anonymous) @ inner.html:1
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+h @ out-4.5.44.js:1
+e @ inner.html:1
+index-B2Ot7nJO.js:1037 Fetch finished loading: GET "https://app.matchpro.ai/api/admin/events/1656618593/age-groups-status".
+queryFn @ index-B2Ot7nJO.js:1037
+i @ index-B2Ot7nJO.js:40
+f @ index-B2Ot7nJO.js:40
+start @ index-B2Ot7nJO.js:40
+fetch @ index-B2Ot7nJO.js:40
+ng @ index-B2Ot7nJO.js:40
+onSubscribe @ index-B2Ot7nJO.js:40
+subscribe @ index-B2Ot7nJO.js:40
+(anonymous) @ index-B2Ot7nJO.js:40
+bW @ index-B2Ot7nJO.js:38
+P1 @ index-B2Ot7nJO.js:40
+Jh @ index-B2Ot7nJO.js:40
+Ehe @ index-B2Ot7nJO.js:40
+Eu @ index-B2Ot7nJO.js:40
+WM @ index-B2Ot7nJO.js:40
+ru @ index-B2Ot7nJO.js:38
+(anonymous) @ index-B2Ot7nJO.js:40
+index-B2Ot7nJO.js:1037  POST https://app.matchpro.ai/api/admin/events/1656618593/age-groups/10043/schedule 500 (Internal Server Error)
+mutationFn @ index-B2Ot7nJO.js:1037
+fn @ index-B2Ot7nJO.js:40
+f @ index-B2Ot7nJO.js:40
+start @ index-B2Ot7nJO.js:40
+execute @ index-B2Ot7nJO.js:40
+await in execute
+mutate @ index-B2Ot7nJO.js:40
+(anonymous) @ index-B2Ot7nJO.js:40
+p @ index-B2Ot7nJO.js:1037
+onClick @ index-B2Ot7nJO.js:1037
+Wue @ index-B2Ot7nJO.js:37
+Kue @ index-B2Ot7nJO.js:37
+Yue @ index-B2Ot7nJO.js:37
+xM @ index-B2Ot7nJO.js:37
+aW @ index-B2Ot7nJO.js:37
+(anonymous) @ index-B2Ot7nJO.js:37
+CO @ index-B2Ot7nJO.js:40
+Aq @ index-B2Ot7nJO.js:37
+A2 @ index-B2Ot7nJO.js:37
+Z4 @ index-B2Ot7nJO.js:37
+ume @ index-B2Ot7nJO.js:37Understand this error
+index-B2Ot7nJO.js:1037 Fetch failed loading: POST "https://app.matchpro.ai/api/admin/events/1656618593/age-groups/10043/schedule".
+mutationFn @ index-B2Ot7nJO.js:1037
+fn @ index-B2Ot7nJO.js:40
+f @ index-B2Ot7nJO.js:40
+start @ index-B2Ot7nJO.js:40
+execute @ index-B2Ot7nJO.js:40
+await in execute
+mutate @ index-B2Ot7nJO.js:40
+(anonymous) @ index-B2Ot7nJO.js:40
+p @ index-B2Ot7nJO.js:1037
+onClick @ index-B2Ot7nJO.js:1037
+Wue @ index-B2Ot7nJO.js:37
+Kue @ index-B2Ot7nJO.js:37
+Yue @ index-B2Ot7nJO.js:37
+xM @ index-B2Ot7nJO.js:37
+aW @ index-B2Ot7nJO.js:37
+(anonymous) @ index-B2Ot7nJO.js:37
+CO @ index-B2Ot7nJO.js:40
+Aq @ index-B2Ot7nJO.js:37
+A2 @ index-B2Ot7nJO.js:37
+Z4 @ index-B2Ot7nJO.js:37
+ume @ index-B2Ot7nJO.js:37
+index-B2Ot7nJO.js:1037  POST https://app.matchpro.ai/api/admin/events/1656618593/age-groups/10045/schedule 500 (Internal Server Error)
+mutationFn @ index-B2Ot7nJO.js:1037
+fn @ index-B2Ot7nJO.js:40
+f @ index-B2Ot7nJO.js:40
+start @ index-B2Ot7nJO.js:40
+execute @ index-B2Ot7nJO.js:40
+await in execute
+mutate @ index-B2Ot7nJO.js:40
+(anonymous) @ index-B2Ot7nJO.js:40
+p @ index-B2Ot7nJO.js:1037
+onClick @ index-B2Ot7nJO.js:1037
+Wue @ index-B2Ot7nJO.js:37
+Kue @ index-B2Ot7nJO.js:37
+Yue @ index-B2Ot7nJO.js:37
+xM @ index-B2Ot7nJO.js:37
+aW @ index-B2Ot7nJO.js:37
+(anonymous) @ index-B2Ot7nJO.js:37
+CO @ index-B2Ot7nJO.js:40
+Aq @ index-B2Ot7nJO.js:37
+A2 @ index-B2Ot7nJO.js:37
+Z4 @ index-B2Ot7nJO.js:37
+ume @ index-B2Ot7nJO.js:37Understand this error
+index-B2Ot7nJO.js:1037 Fetch failed loading: POST "https://app.matchpro.ai/api/admin/events/1656618593/age-groups/10045/schedule".
+mutationFn @ index-B2Ot7nJO.js:1037
+fn @ index-B2Ot7nJO.js:40
+f @ index-B2Ot7nJO.js:40
+start @ index-B2Ot7nJO.js:40
+execute @ index-B2Ot7nJO.js:40
+await in execute
+mutate @ index-B2Ot7nJO.js:40
+(anonymous) @ index-B2Ot7nJO.js:40
+p @ index-B2Ot7nJO.js:1037
+onClick @ index-B2Ot7nJO.js:1037
+Wue @ index-B2Ot7nJO.js:37
+Kue @ index-B2Ot7nJO.js:37
+Yue @ index-B2Ot7nJO.js:37
+xM @ index-B2Ot7nJO.js:37
+aW @ index-B2Ot7nJO.js:37
+(anonymous) @ index-B2Ot7nJO.js:37
+CO @ index-B2Ot7nJO.js:40
+Aq @ index-B2Ot7nJO.js:37
+A2 @ index-B2Ot7nJO.js:37
+Z4 @ index-B2Ot7nJO.js:37
+ume @ index-B2Ot7nJO.js:37
+index-B2Ot7nJO.js:1037  POST https://app.matchpro.ai/api/admin/events/1656618593/age-groups/10044/schedule 500 (Internal Server Error)
+mutationFn @ index-B2Ot7nJO.js:1037
+fn @ index-B2Ot7nJO.js:40
+f @ index-B2Ot7nJO.js:40
+start @ index-B2Ot7nJO.js:40
+execute @ index-B2Ot7nJO.js:40
+await in execute
+mutate @ index-B2Ot7nJO.js:40
+(anonymous) @ index-B2Ot7nJO.js:40
+p @ index-B2Ot7nJO.js:1037
+onClick @ index-B2Ot7nJO.js:1037
+Wue @ index-B2Ot7nJO.js:37
+Kue @ index-B2Ot7nJO.js:37
+Yue @ index-B2Ot7nJO.js:37
+xM @ index-B2Ot7nJO.js:37
+aW @ index-B2Ot7nJO.js:37
+(anonymous) @ index-B2Ot7nJO.js:37
+CO @ index-B2Ot7nJO.js:40
+Aq @ index-B2Ot7nJO.js:37
+A2 @ index-B2Ot7nJO.js:37
+Z4 @ index-B2Ot7nJO.js:37
+ume @ index-B2Ot7nJO.js:37Understand this error
+index-B2Ot7nJO.js:1037 Fetch failed loading: POST "https://app.matchpro.ai/api/admin/events/1656618593/age-groups/10044/schedule".
+mutationFn @ index-B2Ot7nJO.js:1037
+fn @ index-B2Ot7nJO.js:40
+f @ index-B2Ot7nJO.js:40
+start @ index-B2Ot7nJO.js:40
+execute @ index-B2Ot7nJO.js:40
+await in execute
+mutate @ index-B2Ot7nJO.js:40
+(anonymous) @ index-B2Ot7nJO.js:40
+p @ index-B2Ot7nJO.js:1037
+onClick @ index-B2Ot7nJO.js:1037
+Wue @ index-B2Ot7nJO.js:37
+Kue @ index-B2Ot7nJO.js:37
+Yue @ index-B2Ot7nJO.js:37
+xM @ index-B2Ot7nJO.js:37
+aW @ index-B2Ot7nJO.js:37
+(anonymous) @ index-B2Ot7nJO.js:37
+CO @ index-B2Ot7nJO.js:40
+Aq @ index-B2Ot7nJO.js:37
+A2 @ index-B2Ot7nJO.js:37
+Z4 @ index-B2Ot7nJO.js:37
+ume @ index-B2Ot7nJO.js:37
