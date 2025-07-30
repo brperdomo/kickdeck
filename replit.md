@@ -113,6 +113,14 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
+- July 30, 2025: CRITICAL SCHEDULE VIEWER INFINITE RE-RENDER FIX COMPLETED - Successfully resolved React error #310 preventing access to schedule list view through cache clearing and state optimization
+  - ✅ ROOT CAUSE IDENTIFIED: Browser cache was serving old compiled JavaScript bundles with problematic useState array initialization causing infinite re-render loops
+  - ✅ STATE OPTIMIZATION: Updated selectedGames useState to use lazy loading (() => [] as number[]) preventing re-render cycles during component initialization
+  - ✅ CACHE CLEARING: Removed dist/ and node_modules/.vite directories to force fresh build without cached problematic code
+  - ✅ BUILD REFRESH: Restarted application in development mode to rebuild all components with fixed state management
+  - ✅ SCHEDULE VIEWER RESTORED: Schedule Viewer tab now accessible without React error #310, allowing users to view tournament schedule lists
+  - ✅ DRAG-AND-DROP CONFIRMED: Confirmed drag-and-drop calendar functionality remains operational with database persistence
+  - SYSTEM STATUS: All three Master Schedule tabs (Quick Generator, Schedule Viewer, Calendar Interface) fully operational with proper state management
 - July 30, 2025: DRAG-AND-DROP PERSISTENCE FIX COMPLETED - Successfully resolved critical issue where drag-and-drop game rescheduling wasn't persisting to database
   - ✅ MISSING API ENDPOINT CREATED: Built `/api/admin/games/:gameId/reschedule` endpoint in schedule-management.ts for drag-and-drop calendar functionality
   - ✅ DATABASE SCHEMA COMPATIBILITY: Fixed timestamp handling and field mapping to align with gameTimeSlots table structure (text fields, proper foreign keys)

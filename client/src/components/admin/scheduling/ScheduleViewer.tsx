@@ -74,7 +74,7 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
   const [selectedDate, setSelectedDate] = useState<string>('all');
   const [selectedField, setSelectedField] = useState<string>('all');
   const [selectedAgeGroup, setSelectedAgeGroup] = useState<string>('all');
-  const [selectedGames, setSelectedGames] = useState<number[]>([]);
+  const [selectedGames, setSelectedGames] = useState(() => [] as number[]);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteType, setDeleteType] = useState<'single' | 'bulk' | 'all'>('single');
   const [deleteGameId, setDeleteGameId] = useState<number | undefined>(undefined);
