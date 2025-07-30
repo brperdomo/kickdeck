@@ -126,7 +126,7 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
   // Delete mutations
   const deleteSingleGameMutation = useMutation({
     mutationFn: async (gameId: number) => {
-      const response = await fetch(`/api/admin/games/${gameId}`, {
+      const response = await fetch(`/api/admin/events/${eventId}/games/${gameId}`, {
         method: 'DELETE',
         credentials: 'include'
       });
@@ -145,7 +145,7 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
 
   const deleteBulkGamesMutation = useMutation({
     mutationFn: async (gameIds: number[]) => {
-      const response = await fetch('/api/admin/games/bulk-delete', {
+      const response = await fetch(`/api/admin/events/${eventId}/games/bulk`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
