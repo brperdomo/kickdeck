@@ -4,7 +4,8 @@ import {
   eventAgeGroups,
   teams,
   games,
-  gameTimeSlots
+  gameTimeSlots,
+  events
 } from '@db/schema';
 import { eq, and, count } from 'drizzle-orm';
 import { isAdmin } from '../../middleware/auth';
@@ -188,21 +189,40 @@ router.post('/events/:eventId/age-groups/:ageGroupId/schedule', isAdmin, async (
 
     // Simple round-robin schedule generation for this age group
     const generatedGames = [];
-    const gameDate = new Date();
-    gameDate.setDate(gameDate.getDate() + 7); // Next week
+    
+    // Get event details for proper tournament dates
+    const event = await db.select()
+      .from(events)
+      .where(eq(events.id, eventId))
+      .then(results => results[0]);
+    
+    if (!event) {
+      return res.status(404).json({ error: 'Event not found' });
+    }
+
+    // Use tournament start date instead of next week
+    const tournamentStartDate = new Date(event.startDate);
+    let gameCounter = 0;
 
     for (let i = 0; i < ageGroupTeams.length; i++) {
       for (let j = i + 1; j < ageGroupTeams.length; j++) {
-        const gameTime = new Date(gameDate);
-        gameTime.setHours(9 + (generatedGames.length * 2)); // 2 hour slots
+        // Calculate game time (distribute throughout tournament days)
+        const gameDate = new Date(tournamentStartDate);
+        const dayOffset = Math.floor(gameCounter / 8); // 8 games per day
+        const hourOffset = gameCounter % 8; // Games throughout the day
+        
+        gameDate.setDate(gameDate.getDate() + dayOffset);
+        gameDate.setHours(8 + hourOffset, 0, 0, 0); // Start at 8 AM
+        
+        const endTime = new Date(gameDate.getTime() + 90 * 60000); // 90 minutes later
 
-        // Create time slot using correct schema
+        // Create time slot with proper timestamp format
         const timeSlot = await db.insert(gameTimeSlots).values({
           eventId: eventId.toString(),
           fieldId: 1, // Default field for now
-          startTime: gameTime.toTimeString().split(' ')[0],
-          endTime: new Date(gameTime.getTime() + 90 * 60000).toTimeString().split(' ')[0],
-          dayIndex: 0,
+          startTime: gameDate.toISOString(),
+          endTime: endTime.toISOString(),
+          dayIndex: dayOffset,
           isAvailable: false
         }).returning();
 
@@ -216,11 +236,12 @@ router.post('/events/:eventId/age-groups/:ageGroupId/schedule', isAdmin, async (
           fieldId: 1,
           status: 'scheduled',
           round: 1,
-          matchNumber: generatedGames.length + 1,
+          matchNumber: gameCounter + 1,
           duration: 90
         }).returning();
 
         generatedGames.push(game[0]);
+        gameCounter++;
       }
     }
 
