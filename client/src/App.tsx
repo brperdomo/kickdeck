@@ -88,6 +88,9 @@ const ComprehensiveScheduleManagerPage = lazy(() => import("@/pages/admin/Compre
 // Quick Schedule Page - lazy loaded for admin use
 const QuickSchedulePage = lazy(() => import("@/pages/admin/QuickSchedulePage"));
 
+// Master Schedule Page - consolidated scheduling interface
+const MasterSchedulePage = lazy(() => import("@/pages/admin/MasterSchedulePage"));
+
 // Import landing page components
 import LandingPage from "@/pages/landing-page";
 import { isMainDomain } from "@/lib/domainHelper";
@@ -386,6 +389,15 @@ function Router() {
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
               </div>}>
                 <QuickSchedulePage />
+              </Suspense>
+            ) : <NotFound />}
+          </Route>
+          <Route path="/admin/events/:eventId/master-schedule">
+            {(params) => user.isAdmin ? (
+              <Suspense fallback={<div className="flex items-center justify-center min-h-screen">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              </div>}>
+                <MasterSchedulePage />
               </Suspense>
             ) : <NotFound />}
           </Route>

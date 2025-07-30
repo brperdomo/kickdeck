@@ -42,6 +42,8 @@ interface UnifiedScheduleSetupProps {
 }
 
 export function UnifiedScheduleSetup({ eventId, onComplete }: UnifiedScheduleSetupProps) {
+  const [scheduleGenerated, setScheduleGenerated] = useState(false);
+  const [generatedScheduleData, setGeneratedScheduleData] = useState<any>(null);
   const [setupData, setSetupData] = useState<UnifiedSetupData>({
     selectedAgeGroup: '',
     gameFormat: '11v11',
@@ -232,6 +234,8 @@ export function UnifiedScheduleSetup({ eventId, onComplete }: UnifiedScheduleSet
       return response.json();
     },
     onSuccess: (scheduleData) => {
+      setScheduleGenerated(true);
+      setGeneratedScheduleData(scheduleData);
       toast({
         title: "Schedule Generated! 🎉",
         description: `Created ${scheduleData.gamesCount} games for ${setupData.selectedAgeGroup}`
@@ -274,6 +278,51 @@ export function UnifiedScheduleSetup({ eventId, onComplete }: UnifiedScheduleSet
             <p className="text-gray-600">
               Fetching real team names, tournament dates, and venue information...
             </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Show success screen when schedule is generated
+  if (scheduleGenerated && generatedScheduleData) {
+    return (
+      <div className="space-y-6">
+        <Card className="border-green-200 bg-green-50">
+          <CardContent className="p-8 text-center">
+            <CheckCircle className="h-16 w-16 text-green-600 mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-green-800 mb-2">
+              Schedule Generated Successfully! 🎉
+            </h2>
+            <p className="text-green-700 mb-6">
+              Created {generatedScheduleData.gamesCount} games for {teamCount} teams in {setupData.selectedAgeGroup}
+            </p>
+            
+            <div className="flex gap-4 justify-center">
+              <Button 
+                size="lg"
+                onClick={() => window.open(`/admin/events/${eventId}/schedule`, '_blank')}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                <Calendar className="h-5 w-5 mr-2" />
+                View Complete Schedule
+              </Button>
+              
+              <Button 
+                size="lg"
+                variant="outline"
+                onClick={() => {
+                  setScheduleGenerated(false);
+                  setGeneratedScheduleData(null);
+                }}
+              >
+                Generate Another Age Group
+              </Button>
+            </div>
+            
+            <div className="mt-6 text-sm text-green-600">
+              Schedule is ready to view, edit, and publish to teams
+            </div>
           </CardContent>
         </Card>
       </div>
