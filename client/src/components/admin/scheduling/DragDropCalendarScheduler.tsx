@@ -106,9 +106,10 @@ export default function DragDropCalendarScheduler({ eventId }: DragDropCalendarS
     },
     onSuccess: () => {
       // Invalidate all relevant schedule queries
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/events', eventId, 'schedule-calendar'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/schedule-calendar', eventId, 'schedule-calendar'] });
       queryClient.invalidateQueries({ queryKey: ['/api/admin/events', eventId, 'schedule'] });
       queryClient.invalidateQueries({ queryKey: ['/api/admin/events', eventId, 'fields'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/events', eventId, 'schedule-viewer'] });
       toast({ title: 'Game rescheduled successfully' });
     },
     onError: (error) => {
@@ -213,7 +214,11 @@ export default function DragDropCalendarScheduler({ eventId }: DragDropCalendarS
     // Extract field ID and time slot from destination
     const [destFieldId, destTimeSlot] = destination.droppableId.split('-time-');
     const fieldId = parseInt(destFieldId.replace('field-', ''));
-    const startTime = `${selectedDate}T${destTimeSlot}:00`;
+    const startTime = `${selectedDate}T${destTimeSlot}:00.000Z`;
+
+    console.log(`[Drag Drop] Game ${gameId} dropped on field ${fieldId} at ${startTime}`);
+    console.log(`[Drag Drop] Source:`, source);
+    console.log(`[Drag Drop] Destination:`, destination);
 
     // Update game assignment
     updateGameMutation.mutate({ gameId, fieldId, startTime });

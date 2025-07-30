@@ -186,6 +186,7 @@ router.put('/games/:gameId/reschedule', async (req, res) => {
     const { fieldId, startTime } = req.body;
 
     console.log(`[RESCHEDULE] Game ${gameId} -> Field ${fieldId} at ${startTime}`);
+    console.log(`[RESCHEDULE] Request body:`, req.body);
 
     // Validate input
     if (!fieldId || !startTime) {
@@ -196,10 +197,12 @@ router.put('/games/:gameId/reschedule', async (req, res) => {
     const startDateTime = new Date(startTime);
     const endDateTime = new Date(startDateTime.getTime() + 90 * 60 * 1000);
 
-    // Update the game in the database
+    // Update the game in the database with both field and time information
     const updatedGame = await db.update(games)
       .set({
         fieldId: parseInt(fieldId),
+        startTime: startDateTime.toISOString(),
+        endTime: endDateTime.toISOString(),
         updatedAt: new Date().toISOString()
       })
       .where(eq(games.id, parseInt(gameId)))
@@ -230,12 +233,24 @@ router.put('/games/:gameId/reschedule', async (req, res) => {
       });
     }
 
-    console.log(`[RESCHEDULE] Successfully updated game ${gameId}`);
+    console.log(`[RESCHEDULE] Successfully updated game ${gameId}:`, {
+      gameId: updatedGame[0]?.id,
+      fieldId: updatedGame[0]?.fieldId,
+      startTime: updatedGame[0]?.startTime,
+      endTime: updatedGame[0]?.endTime
+    });
 
     res.json({ 
       success: true, 
       message: 'Game rescheduled successfully',
-      game: updatedGame[0]
+      game: updatedGame[0],
+      debug: {
+        originalRequest: { fieldId, startTime },
+        calculatedTimes: {
+          startTime: startDateTime.toISOString(),
+          endTime: endDateTime.toISOString()
+        }
+      }
     });
   } catch (error) {
     console.error('[RESCHEDULE ERROR]:', error);

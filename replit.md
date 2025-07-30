@@ -113,6 +113,15 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
+- July 30, 2025: CRITICAL DRAG-AND-DROP PERSISTENCE BUG FIXED - Successfully resolved issue where drag-and-drop game updates weren't persisting to database
+  - ✅ ROOT CAUSE IDENTIFIED: Reschedule API endpoint was only updating fieldId but not startTime/endTime fields in games table
+  - ✅ DATABASE UPDATE FIX: Enhanced reschedule endpoint to update fieldId, startTime, and endTime fields in games table
+  - ✅ PROPER TIME HANDLING: Fixed timestamp format handling with proper ISO datetime formatting and timezone support
+  - ✅ COMPREHENSIVE LOGGING: Added detailed console logging in both frontend and backend to track drag-and-drop operations
+  - ✅ QUERY INVALIDATION FIX: Corrected query key invalidation to match actual API endpoints for real-time UI updates
+  - ✅ GAMETIME SLOTS SYNC: Ensured gameTimeSlots table stays synchronized with game updates for calendar consistency
+  - ✅ ERROR HANDLING ENHANCED: Improved error handling and debugging information for failed reschedule attempts
+  - SYSTEM STATUS: Drag-and-drop calendar now properly persists all game rescheduling changes to database
 - July 30, 2025: GAME CARDS PDF DISPLAY ISSUES FIXED - Successfully resolved text overlapping and character rendering problems in PDF generation
   - ✅ EMOJI CHARACTER FIX: Removed problematic emoji characters (📅🕐⚽📍) causing strange symbols (⌀=0A, ⌀=YP) in PDF output
   - ✅ TEXT POSITIONING: Fixed overlapping text in team cards by adjusting font sizes, positioning, and card heights
