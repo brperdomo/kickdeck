@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback, useEffect } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { useTournamentDirector } from "@/hooks/use-tournament-director";
-import { Link2, Edit, FileQuestion, Copy, User, TagsIcon, Printer, AlertTriangle, MoreHorizontal, ChevronUp, ChevronDown, Search, FormInput, DollarSign, Ticket, Trash, Archive, RotateCcw, ChevronLeft, ChevronRight, Users } from "lucide-react";
+import { Link2, Edit, FileQuestion, Copy, User, TagsIcon, Printer, AlertTriangle, MoreHorizontal, ChevronUp, ChevronDown, Search, FormInput, DollarSign, Ticket, Trash, Archive, RotateCcw, ChevronLeft, ChevronRight, Users, Calendar, CalendarDays } from "lucide-react";
 import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -557,6 +557,16 @@ export function EventsTable() {
                           <Edit className="mr-2 h-4 w-4" />
                           Edit
                         </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/master-schedule`)}>
+                          <Calendar className="mr-2 h-4 w-4" />
+                          Master Schedule
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => navigate(`/admin/scheduling`)}>
+                          <CalendarDays className="mr-2 h-4 w-4" />
+                          All Tournaments View
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/fees`)}>
                           <DollarSign className="mr-2 h-4 w-4" />
                           Manage Fees
