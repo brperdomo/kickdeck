@@ -937,11 +937,11 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/events', isAdmin, tournamentStatusRouter); // Tournament status display
     app.use('/api/admin/events', isAdmin, scheduleViewerRouter); // Schedule viewing and management
     app.use('/api/admin', isAdmin, unifiedScheduleRouter); // Unified single-screen schedule generator
-    // Temporary test routes without authentication
+    // Enhanced test routes without authentication for calendar interface
     app.get('/api/test-fields', async (req, res) => {
       try {
-        const availableFields = await db.select().from(fields).limit(5);
-        res.json({ success: true, fields: availableFields });
+        const availableFields = await db.select().from(fields).where(eq(fields.isOpen, true));
+        res.json({ success: true, fields: availableFields, totalFields: availableFields.length });
       } catch (error) {
         res.status(500).json({ error: 'Test failed', details: error.message });
       }
@@ -950,8 +950,21 @@ export function registerRoutes(app: Express): Server {
     app.get('/api/test-games/:eventId', async (req, res) => {
       try {
         const { eventId } = req.params;
-        const testGames = await db.select().from(games).where(eq(games.eventId, eventId)).limit(5);
-        res.json({ success: true, games: testGames, count: testGames.length });
+        const testGames = await db.select().from(games).where(eq(games.eventId, eventId));
+        
+        // Also get field distribution statistics
+        const fieldDistribution = {};
+        testGames.forEach(game => {
+          const fieldId = game.fieldId || 'null';
+          fieldDistribution[fieldId] = (fieldDistribution[fieldId] || 0) + 1;
+        });
+        
+        res.json({ 
+          success: true, 
+          games: testGames, 
+          count: testGames.length,
+          fieldDistribution: fieldDistribution
+        });
       } catch (error) {
         res.status(500).json({ error: 'Test failed', details: error.message });
       }
