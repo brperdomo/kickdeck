@@ -1,0 +1,157 @@
+Google Maps API key length: 0 characters
+index-B2Ot7nJO.js:856 Mapbox API key length: 93 characters
+index-B2Ot7nJO.js:856 Google Maps API already loaded
+chunk-FLCULYKI.js:31 orchestration: Initializing config store with state Object
+chunk-FLCULYKI.js:31 orchestration: Initializing feature flag store with state Object
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state Object
+chunk-FLCULYKI.js:31 orchestration: Updating combined state Object
+index-B2Ot7nJO.js:681 Current route location (Wouter): /admin/tournament-system
+index-B2Ot7nJO.js:681 Current URL: https://app.matchpro.ai/admin/tournament-system
+index-B2Ot7nJO.js:681 Current pathname: /admin/tournament-system
+index-B2Ot7nJO.js:681 Current search: 
+index-B2Ot7nJO.js:681 Fetching user with emulation token: not present
+index-B2Ot7nJO.js:681 User data fetched: Object
+util.js:31 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+Yxa @ util.js:31
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1379
+setTimeout
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1379
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622Understand this warning
+/api/admin/events/1656618593/age-groups/10043/schedule:1  Failed to load resource: the server responded with a status of 500 ()Understand this error
+tournament-system:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+tournament-system:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+index-B2Ot7nJO.js:1037  POST https://app.matchpro.ai/api/admin/events/1656618593/age-groups/10043/schedule 500 (Internal Server Error)
+mutationFn @ index-B2Ot7nJO.js:1037
+fn @ index-B2Ot7nJO.js:40
+f @ index-B2Ot7nJO.js:40
+start @ index-B2Ot7nJO.js:40
+execute @ index-B2Ot7nJO.js:40
+await in execute
+mutate @ index-B2Ot7nJO.js:40
+(anonymous) @ index-B2Ot7nJO.js:40
+p @ index-B2Ot7nJO.js:1037
+onClick @ index-B2Ot7nJO.js:1037
+Wue @ index-B2Ot7nJO.js:37
+Kue @ index-B2Ot7nJO.js:37
+Yue @ index-B2Ot7nJO.js:37
+xM @ index-B2Ot7nJO.js:37
+aW @ index-B2Ot7nJO.js:37
+(anonymous) @ index-B2Ot7nJO.js:37
+CO @ index-B2Ot7nJO.js:40
+Aq @ index-B2Ot7nJO.js:37
+A2 @ index-B2Ot7nJO.js:37
+Z4 @ index-B2Ot7nJO.js:37
+ume @ index-B2Ot7nJO.js:37Understand this error
+index-B2Ot7nJO.js:1037 Fetch failed loading: POST "https://app.matchpro.ai/api/admin/events/1656618593/age-groups/10043/schedule".
+mutationFn @ index-B2Ot7nJO.js:1037
+fn @ index-B2Ot7nJO.js:40
+f @ index-B2Ot7nJO.js:40
+start @ index-B2Ot7nJO.js:40
+execute @ index-B2Ot7nJO.js:40
+await in execute
+mutate @ index-B2Ot7nJO.js:40
+(anonymous) @ index-B2Ot7nJO.js:40
+p @ index-B2Ot7nJO.js:1037
+onClick @ index-B2Ot7nJO.js:1037
+Wue @ index-B2Ot7nJO.js:37
+Kue @ index-B2Ot7nJO.js:37
+Yue @ index-B2Ot7nJO.js:37
+xM @ index-B2Ot7nJO.js:37
+aW @ index-B2Ot7nJO.js:37
+(anonymous) @ index-B2Ot7nJO.js:37
+CO @ index-B2Ot7nJO.js:40
+Aq @ index-B2Ot7nJO.js:37
+A2 @ index-B2Ot7nJO.js:37
+Z4 @ index-B2Ot7nJO.js:37
+ume @ index-B2Ot7nJO.js:37
+index-B2Ot7nJO.js:1037  POST https://app.matchpro.ai/api/admin/events/1656618593/age-groups/10044/schedule 500 (Internal Server Error)
+mutationFn @ index-B2Ot7nJO.js:1037
+fn @ index-B2Ot7nJO.js:40
+f @ index-B2Ot7nJO.js:40
+start @ index-B2Ot7nJO.js:40
+execute @ index-B2Ot7nJO.js:40
+await in execute
+mutate @ index-B2Ot7nJO.js:40
+(anonymous) @ index-B2Ot7nJO.js:40
+p @ index-B2Ot7nJO.js:1037
+onClick @ index-B2Ot7nJO.js:1037
+Wue @ index-B2Ot7nJO.js:37
+Kue @ index-B2Ot7nJO.js:37
+Yue @ index-B2Ot7nJO.js:37
+xM @ index-B2Ot7nJO.js:37
+aW @ index-B2Ot7nJO.js:37
+(anonymous) @ index-B2Ot7nJO.js:37
+CO @ index-B2Ot7nJO.js:40
+Aq @ index-B2Ot7nJO.js:37
+A2 @ index-B2Ot7nJO.js:37
+Z4 @ index-B2Ot7nJO.js:37
+ume @ index-B2Ot7nJO.js:37Understand this error
+index-B2Ot7nJO.js:1037 Fetch failed loading: POST "https://app.matchpro.ai/api/admin/events/1656618593/age-groups/10044/schedule".
+mutationFn @ index-B2Ot7nJO.js:1037
+fn @ index-B2Ot7nJO.js:40
+f @ index-B2Ot7nJO.js:40
+start @ index-B2Ot7nJO.js:40
+execute @ index-B2Ot7nJO.js:40
+await in execute
+mutate @ index-B2Ot7nJO.js:40
+(anonymous) @ index-B2Ot7nJO.js:40
+p @ index-B2Ot7nJO.js:1037
+onClick @ index-B2Ot7nJO.js:1037
+Wue @ index-B2Ot7nJO.js:37
+Kue @ index-B2Ot7nJO.js:37
+Yue @ index-B2Ot7nJO.js:37
+xM @ index-B2Ot7nJO.js:37
+aW @ index-B2Ot7nJO.js:37
+(anonymous) @ index-B2Ot7nJO.js:37
+CO @ index-B2Ot7nJO.js:40
+Aq @ index-B2Ot7nJO.js:37
+A2 @ index-B2Ot7nJO.js:37
+Z4 @ index-B2Ot7nJO.js:37
+ume @ index-B2Ot7nJO.js:37
+index-B2Ot7nJO.js:1037  POST https://app.matchpro.ai/api/admin/events/1656618593/age-groups/10046/schedule 500 (Internal Server Error)
+mutationFn @ index-B2Ot7nJO.js:1037
+fn @ index-B2Ot7nJO.js:40
+f @ index-B2Ot7nJO.js:40
+start @ index-B2Ot7nJO.js:40
+execute @ index-B2Ot7nJO.js:40
+await in execute
+mutate @ index-B2Ot7nJO.js:40
+(anonymous) @ index-B2Ot7nJO.js:40
+p @ index-B2Ot7nJO.js:1037
+onClick @ index-B2Ot7nJO.js:1037
+Wue @ index-B2Ot7nJO.js:37
+Kue @ index-B2Ot7nJO.js:37
+Yue @ index-B2Ot7nJO.js:37
+xM @ index-B2Ot7nJO.js:37
+aW @ index-B2Ot7nJO.js:37
+(anonymous) @ index-B2Ot7nJO.js:37
+CO @ index-B2Ot7nJO.js:40
+Aq @ index-B2Ot7nJO.js:37
+A2 @ index-B2Ot7nJO.js:37
+Z4 @ index-B2Ot7nJO.js:37
+ume @ index-B2Ot7nJO.js:37Understand this error
+index-B2Ot7nJO.js:1037 Fetch failed loading: POST "https://app.matchpro.ai/api/admin/events/1656618593/age-groups/10046/schedule".
+mutationFn @ index-B2Ot7nJO.js:1037
+fn @ index-B2Ot7nJO.js:40
+f @ index-B2Ot7nJO.js:40
+start @ index-B2Ot7nJO.js:40
+execute @ index-B2Ot7nJO.js:40
+await in execute
+mutate @ index-B2Ot7nJO.js:40
+(anonymous) @ index-B2Ot7nJO.js:40
+p @ index-B2Ot7nJO.js:1037
+onClick @ index-B2Ot7nJO.js:1037
+Wue @ index-B2Ot7nJO.js:37
+Kue @ index-B2Ot7nJO.js:37
+Yue @ index-B2Ot7nJO.js:37
+xM @ index-B2Ot7nJO.js:37
+aW @ index-B2Ot7nJO.js:37
+(anonymous) @ index-B2Ot7nJO.js:37
+CO @ index-B2Ot7nJO.js:40
+Aq @ index-B2Ot7nJO.js:37
+A2 @ index-B2Ot7nJO.js:37
+Z4 @ index-B2Ot7nJO.js:37
+ume @ index-B2Ot7nJO.js:37
