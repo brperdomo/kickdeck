@@ -6,7 +6,7 @@ import { eq } from 'drizzle-orm';
 const router = express.Router();
 
 // GET /api/admin/fields - Get all available fields
-router.get('/', async (req, res) => {
+router.get('/fields', async (req, res) => {
   try {
     console.log('[Fields API] Fetching all available fields');
 
