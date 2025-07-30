@@ -1,0 +1,342 @@
+Submitting login with email: bperdomo@zoho.com
+index-_oGmOvBG.js:664 Login mutation called with: bperdomo@zoho.com
+index-_oGmOvBG.js:664 Sending login request with data: {email: 'bperdomo@zoho.com', passwordLength: 8}
+index-_oGmOvBG.js:664 Login response status: 200
+index-_oGmOvBG.js:664 Login successful, received user data: Yes
+index-_oGmOvBG.js:664 Fetching current user after login
+index-_oGmOvBG.js:664 Fetch finished loading: POST "https://app.matchpro.ai/api/login?t=1753905571137".
+mutationFn @ index-_oGmOvBG.js:664
+fn @ index-_oGmOvBG.js:41
+f @ index-_oGmOvBG.js:41
+start @ index-_oGmOvBG.js:41
+execute @ index-_oGmOvBG.js:41
+await in execute
+mutate @ index-_oGmOvBG.js:41
+o @ index-_oGmOvBG.js:672
+(anonymous) @ index-_oGmOvBG.js:664
+await in (anonymous)
+_ue @ index-_oGmOvBG.js:38
+Due @ index-_oGmOvBG.js:38
+Iue @ index-_oGmOvBG.js:38
+pM @ index-_oGmOvBG.js:38
+Xq @ index-_oGmOvBG.js:38
+(anonymous) @ index-_oGmOvBG.js:38
+NO @ index-_oGmOvBG.js:41
+bq @ index-_oGmOvBG.js:38
+E2 @ index-_oGmOvBG.js:38
+X4 @ index-_oGmOvBG.js:38
+Xue @ index-_oGmOvBG.js:38
+submit @ injected.js:5
+is @ injected.js:5
+uD @ injected.js:5
+await in uD
+Ox @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+n @ injected.js:5
+index-_oGmOvBG.js:664 Fetch finished loading: GET "https://app.matchpro.ai/api/user".
+mutationFn @ index-_oGmOvBG.js:664
+await in mutationFn
+fn @ index-_oGmOvBG.js:41
+f @ index-_oGmOvBG.js:41
+start @ index-_oGmOvBG.js:41
+execute @ index-_oGmOvBG.js:41
+await in execute
+mutate @ index-_oGmOvBG.js:41
+o @ index-_oGmOvBG.js:672
+(anonymous) @ index-_oGmOvBG.js:664
+await in (anonymous)
+_ue @ index-_oGmOvBG.js:38
+Due @ index-_oGmOvBG.js:38
+Iue @ index-_oGmOvBG.js:38
+pM @ index-_oGmOvBG.js:38
+Xq @ index-_oGmOvBG.js:38
+(anonymous) @ index-_oGmOvBG.js:38
+NO @ index-_oGmOvBG.js:41
+bq @ index-_oGmOvBG.js:38
+E2 @ index-_oGmOvBG.js:38
+X4 @ index-_oGmOvBG.js:38
+Xue @ index-_oGmOvBG.js:38
+submit @ injected.js:5
+is @ injected.js:5
+uD @ injected.js:5
+await in uD
+Ox @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+n @ injected.js:5
+index-_oGmOvBG.js:664 User data fetched after login: success
+index-_oGmOvBG.js:672 Login mutation completed successfully
+index-_oGmOvBG.js:672 Performing explicit user data fetch after login
+index-_oGmOvBG.js:672 AUTH REDIRECT: User logged in, handling redirect
+index-_oGmOvBG.js:664 Fetch finished loading: GET "https://app.matchpro.ai/api/user".
+queryFn @ index-_oGmOvBG.js:664
+i @ index-_oGmOvBG.js:41
+f @ index-_oGmOvBG.js:41
+start @ index-_oGmOvBG.js:41
+fetch @ index-_oGmOvBG.js:41
+(anonymous) @ index-_oGmOvBG.js:41
+(anonymous) @ index-_oGmOvBG.js:41
+batch @ index-_oGmOvBG.js:41
+refetchQueries @ index-_oGmOvBG.js:41
+(anonymous) @ index-_oGmOvBG.js:41
+batch @ index-_oGmOvBG.js:41
+invalidateQueries @ index-_oGmOvBG.js:41
+onSuccess @ index-_oGmOvBG.js:664
+execute @ index-_oGmOvBG.js:41
+await in execute
+mutate @ index-_oGmOvBG.js:41
+o @ index-_oGmOvBG.js:672
+(anonymous) @ index-_oGmOvBG.js:664
+await in (anonymous)
+_ue @ index-_oGmOvBG.js:38
+Due @ index-_oGmOvBG.js:38
+Iue @ index-_oGmOvBG.js:38
+pM @ index-_oGmOvBG.js:38
+Xq @ index-_oGmOvBG.js:38
+(anonymous) @ index-_oGmOvBG.js:38
+NO @ index-_oGmOvBG.js:41
+bq @ index-_oGmOvBG.js:38
+E2 @ index-_oGmOvBG.js:38
+X4 @ index-_oGmOvBG.js:38
+Xue @ index-_oGmOvBG.js:38
+submit @ injected.js:5
+is @ injected.js:5
+uD @ injected.js:5
+await in uD
+Ox @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+n @ injected.js:5
+index-_oGmOvBG.js:672 Found redirect path: /admin/events/1656618593/master-schedule
+index-_oGmOvBG.js:672 Redirecting to: /admin/events/1656618593/master-schedule
+index-_oGmOvBG.js:672 Fetch finished loading: GET "https://app.matchpro.ai/api/user".
+o @ index-_oGmOvBG.js:672
+await in o
+(anonymous) @ index-_oGmOvBG.js:664
+await in (anonymous)
+_ue @ index-_oGmOvBG.js:38
+Due @ index-_oGmOvBG.js:38
+Iue @ index-_oGmOvBG.js:38
+pM @ index-_oGmOvBG.js:38
+Xq @ index-_oGmOvBG.js:38
+(anonymous) @ index-_oGmOvBG.js:38
+NO @ index-_oGmOvBG.js:41
+bq @ index-_oGmOvBG.js:38
+E2 @ index-_oGmOvBG.js:38
+X4 @ index-_oGmOvBG.js:38
+Xue @ index-_oGmOvBG.js:38
+submit @ injected.js:5
+is @ injected.js:5
+uD @ injected.js:5
+await in uD
+Ox @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+n @ injected.js:5
+index-_oGmOvBG.js:672 User data retrieved after login: success
+Navigated to https://app.matchpro.ai/admin/events/1656618593/master-schedule
+js?libraries=places&v=beta&callback=Function.prototype:1377 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1377
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622Understand this warning
+js?libraries=places&v=beta&callback=Function.prototype:1409 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+_.B.send @ js?libraries=places&v=beta&callback=Function.prototype:1409
+hda @ js?libraries=places&v=beta&callback=Function.prototype:1386
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1378
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+chunk-FLCULYKI.js:31 orchestration: Initializing config store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing feature flag store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state {pill-player: {…}}
+chunk-FLCULYKI.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+index-_oGmOvBG.js:847 Google Maps API key length: 0 characters
+index-_oGmOvBG.js:847 Mapbox API key length: 93 characters
+index-_oGmOvBG.js:847 Google Maps API already loaded
+index-_oGmOvBG.js:672 Current route location (Wouter): /admin/events/1656618593/master-schedule
+index-_oGmOvBG.js:672 Current URL: https://app.matchpro.ai/admin/events/1656618593/master-schedule
+index-_oGmOvBG.js:672 Current pathname: /admin/events/1656618593/master-schedule
+index-_oGmOvBG.js:672 Current search: 
+index-_oGmOvBG.js:672 Fetching user with emulation token: not present
+index-_oGmOvBG.js:672 User data fetched: {id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: '$2b$12$d6n1CBWgsWFm0fh77F1OX.YxDZy7/O3aLSuJOuq4QkvOtFmSit7BC', firstName: 'Bryan', …}
+8Fetch finished loading: GET "<URL>".
+index-_oGmOvBG.js:664 Fetch failed loading: GET "https://app.matchpro.ai/api/user".
+queryFn @ index-_oGmOvBG.js:664
+i @ index-_oGmOvBG.js:41
+f @ index-_oGmOvBG.js:41
+start @ index-_oGmOvBG.js:41
+fetch @ index-_oGmOvBG.js:41
+tg @ index-_oGmOvBG.js:41
+onSubscribe @ index-_oGmOvBG.js:41
+subscribe @ index-_oGmOvBG.js:41
+(anonymous) @ index-_oGmOvBG.js:41
+hW @ index-_oGmOvBG.js:39
+k1 @ index-_oGmOvBG.js:41
+Jh @ index-_oGmOvBG.js:41
+qM @ index-_oGmOvBG.js:41
+su @ index-_oGmOvBG.js:39
+hhe @ index-_oGmOvBG.js:41
+ku @ index-_oGmOvBG.js:41
+qW @ index-_oGmOvBG.js:41
+N @ index-_oGmOvBG.js:26
+T @ index-_oGmOvBG.js:26
+UnifiedScheduleSetup-DW1C48jR.js:1 QUICK SCHEDULER DEBUG: Fetching teams for event 1656618593
+UnifiedScheduleSetup-DW1C48jR.js:1 QUICK SCHEDULER DEBUG: API URL: /api/admin/teams?eventId=1656618593
+UnifiedScheduleSetup-DW1C48jR.js:1 QUICK SCHEDULER DEBUG: Response status: 200
+UnifiedScheduleSetup-DW1C48jR.js:1 QUICK SCHEDULER DEBUG: Response ok: true
+UnifiedScheduleSetup-DW1C48jR.js:1 QUICK SCHEDULER DEBUG: Teams Data for event 1656618593 : (220) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+UnifiedScheduleSetup-DW1C48jR.js:1 QUICK SCHEDULER DEBUG: Total teams received: 220
+UnifiedScheduleSetup-DW1C48jR.js:1 QUICK SCHEDULER DEBUG: Status breakdown: {approved: 217, rejected: 2, waitlisted: 1}
+UnifiedScheduleSetup-DW1C48jR.js:1 QUICK SCHEDULER DEBUG: Approved teams count: 217
+UnifiedScheduleSetup-DW1C48jR.js:1 Age Groups Data: (24) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+MasterSchedulePage-C37WJYs4.js:1 [Calendar] Fetching real schedule calendar data for event: 1656618593
+MasterSchedulePage-C37WJYs4.js:1 [Calendar] Fetching real fields data for event: 1656618593
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] gamesData: undefined
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] fieldsData: undefined
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] selectedDate: 2025-10-01
+MasterSchedulePage-C37WJYs4.js:1 [Calendar] Fields response status: 200
+MasterSchedulePage-C37WJYs4.js:1 [Calendar] Received fields data: (12) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] gamesData: undefined
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] fieldsData: {fields: Array(0), success: true}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] selectedDate: 2025-10-01
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Fields available but no games data
+util.js:31 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+Yxa @ util.js:31
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1379
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1379
+setTimeout
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1379
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622Understand this warning
+MasterSchedulePage-C37WJYs4.js:1 [Calendar] Response status: 200
+MasterSchedulePage-C37WJYs4.js:1 [Calendar] Received schedule calendar data: {success: true, games: Array(44), totalGames: 44, eventId: '1656618593'}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] gamesData: {games: Array(44), success: true}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] fieldsData: {fields: Array(0), success: true}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] selectedDate: 2025-10-01
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Setting fields: []
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5387 matches slot 08:00: {id: 5387, homeTeamName: 'U19 Girls Team 216', awayTeamName: 'U19 Girls Team 217', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5389 matches slot 08:00: {id: 5389, homeTeamName: 'U11 Boys Team 83', awayTeamName: 'U11 Boys Team 75', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5390 matches slot 08:00: {id: 5390, homeTeamName: 'U16 Boys Team 171', awayTeamName: 'U16 Boys Team 165', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5391 matches slot 08:00: {id: 5391, homeTeamName: 'U12 Girls Team 105', awayTeamName: 'U12 Girls Team 102', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5392 matches slot 08:00: {id: 5392, homeTeamName: 'U9 Boys Team 39', awayTeamName: 'U9 Boys Team 40', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5393 matches slot 08:00: {id: 5393, homeTeamName: 'U17 Boys Team 183', awayTeamName: 'U17 Boys Team 184', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5394 matches slot 08:00: {id: 5394, homeTeamName: 'U19 Girls Team 216', awayTeamName: 'U19 Girls Team 217', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5395 matches slot 08:00: {id: 5395, homeTeamName: 'U19 Girls Team 216', awayTeamName: 'U19 Girls Team 217', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5396 matches slot 08:00: {id: 5396, homeTeamName: 'U19 Girls Team 216', awayTeamName: 'U19 Girls Team 217', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5397 matches slot 08:00: {id: 5397, homeTeamName: 'U19 Girls Team 216', awayTeamName: 'U19 Girls Team 217', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5398 matches slot 08:00: {id: 5398, homeTeamName: 'U19 Girls Team 216', awayTeamName: 'U19 Girls Team 217', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5399 matches slot 08:00: {id: 5399, homeTeamName: 'U17 Girls Team 196', awayTeamName: 'U17 Girls Team 197', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5400 matches slot 08:00: {id: 5400, homeTeamName: 'U17 Girls Team 196', awayTeamName: 'U17 Girls Team 197', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5386 matches slot 08:00: {id: 5386, homeTeamName: 'U19 Boys Team 201', awayTeamName: 'U19 Boys Team 202', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5388 matches slot 08:00: {id: 5388, homeTeamName: 'U19 Girls Team 216', awayTeamName: 'U19 Girls Team 217', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5401 matches slot 08:00: {id: 5401, homeTeamName: 'U15 Girls Team 156', awayTeamName: 'U15 Girls Team 157', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5402 matches slot 08:00: {id: 5402, homeTeamName: 'U17 Boys Team 183', awayTeamName: 'U17 Boys Team 184', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5403 matches slot 08:00: {id: 5403, homeTeamName: 'U17 Boys Team 184', awayTeamName: 'U17 Boys Team 185', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5404 matches slot 08:00: {id: 5404, homeTeamName: 'U17 Boys Team 185', awayTeamName: 'U17 Boys Team 186', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5405 matches slot 08:00: {id: 5405, homeTeamName: 'U17 Boys Team 186', awayTeamName: 'U17 Boys Team 187', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5406 matches slot 08:00: {id: 5406, homeTeamName: 'U17 Boys Team 187', awayTeamName: 'U17 Boys Team 188', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5407 matches slot 08:00: {id: 5407, homeTeamName: 'U17 Boys Team 188', awayTeamName: 'U17 Boys Team 189', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5408 matches slot 08:00: {id: 5408, homeTeamName: 'U17 Boys Team 189', awayTeamName: 'U17 Boys Team 190', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5409 matches slot 08:00: {id: 5409, homeTeamName: 'U17 Boys Team 190', awayTeamName: 'U17 Boys Team 191', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5410 matches slot 08:00: {id: 5410, homeTeamName: 'U17 Boys Team 183', awayTeamName: 'U17 Boys Team 191', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5411 matches slot 08:00: {id: 5411, homeTeamName: 'U16 Boys Team 171', awayTeamName: 'U16 Boys Team 165', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5412 matches slot 08:00: {id: 5412, homeTeamName: 'U16 Boys Team 165', awayTeamName: 'U16 Boys Team 166', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5413 matches slot 08:00: {id: 5413, homeTeamName: 'U16 Boys Team 166', awayTeamName: 'U16 Boys Team 167', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5414 matches slot 08:00: {id: 5414, homeTeamName: 'U16 Boys Team 167', awayTeamName: 'U16 Boys Team 168', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5415 matches slot 08:00: {id: 5415, homeTeamName: 'U16 Boys Team 168', awayTeamName: 'U16 Boys Team 170', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5416 matches slot 08:00: {id: 5416, homeTeamName: 'U16 Boys Team 170', awayTeamName: 'U16 Boys Team 172', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5417 matches slot 08:00: {id: 5417, homeTeamName: 'U16 Boys Team 172', awayTeamName: 'U16 Boys Team 173', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5418 matches slot 08:00: {id: 5418, homeTeamName: 'U16 Boys Team 173', awayTeamName: 'U16 Boys Team 169', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5419 matches slot 08:00: {id: 5419, homeTeamName: 'U16 Boys Team 171', awayTeamName: 'U16 Boys Team 169', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5420 matches slot 08:00: {id: 5420, homeTeamName: 'U17 Girls Team 196', awayTeamName: 'U17 Girls Team 197', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5421 matches slot 08:00: {id: 5421, homeTeamName: 'U17 Girls Team 197', awayTeamName: 'U17 Girls Team 198', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5422 matches slot 08:00: {id: 5422, homeTeamName: 'U17 Girls Team 198', awayTeamName: 'U17 Girls Team 199', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5423 matches slot 08:00: {id: 5423, homeTeamName: 'U17 Girls Team 199', awayTeamName: 'U17 Girls Team 200', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5424 matches slot 08:00: {id: 5424, homeTeamName: 'U17 Girls Team 200', awayTeamName: 'U17 Girls Team 193', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5425 matches slot 08:00: {id: 5425, homeTeamName: 'U17 Girls Team 193', awayTeamName: 'U17 Girls Team 192', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5426 matches slot 08:00: {id: 5426, homeTeamName: 'U17 Girls Team 196', awayTeamName: 'U17 Girls Team 198', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5427 matches slot 08:00: {id: 5427, homeTeamName: 'U17 Girls Team 197', awayTeamName: 'U17 Girls Team 199', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5428 matches slot 08:00: {id: 5428, homeTeamName: 'U17 Girls Team 200', awayTeamName: 'U17 Girls Team 192', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5429 matches slot 08:00: {id: 5429, homeTeamName: 'U17 Girls Team 196', awayTeamName: 'U17 Girls Team 193', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Updated slots: (8) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] gamesData: {games: Array(44), success: true}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] fieldsData: {fields: Array(0), success: true}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] selectedDate: 2025-10-02
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Setting fields: []
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Updated slots: (8) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] gamesData: {games: Array(44), success: true}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] fieldsData: {fields: Array(0), success: true}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] selectedDate: 2025-10-03
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Setting fields: []
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Updated slots: (8) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] gamesData: {games: Array(44), success: true}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] fieldsData: {fields: Array(0), success: true}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] selectedDate: 2025-10-04
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Setting fields: []
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Updated slots: (8) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] gamesData: {games: Array(44), success: true}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] fieldsData: {fields: Array(0), success: true}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] selectedDate: 2025-10-01
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Setting fields: []
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5387 matches slot 08:00: {id: 5387, homeTeamName: 'U19 Girls Team 216', awayTeamName: 'U19 Girls Team 217', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5389 matches slot 08:00: {id: 5389, homeTeamName: 'U11 Boys Team 83', awayTeamName: 'U11 Boys Team 75', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5390 matches slot 08:00: {id: 5390, homeTeamName: 'U16 Boys Team 171', awayTeamName: 'U16 Boys Team 165', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5391 matches slot 08:00: {id: 5391, homeTeamName: 'U12 Girls Team 105', awayTeamName: 'U12 Girls Team 102', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5392 matches slot 08:00: {id: 5392, homeTeamName: 'U9 Boys Team 39', awayTeamName: 'U9 Boys Team 40', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5393 matches slot 08:00: {id: 5393, homeTeamName: 'U17 Boys Team 183', awayTeamName: 'U17 Boys Team 184', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5394 matches slot 08:00: {id: 5394, homeTeamName: 'U19 Girls Team 216', awayTeamName: 'U19 Girls Team 217', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5395 matches slot 08:00: {id: 5395, homeTeamName: 'U19 Girls Team 216', awayTeamName: 'U19 Girls Team 217', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5396 matches slot 08:00: {id: 5396, homeTeamName: 'U19 Girls Team 216', awayTeamName: 'U19 Girls Team 217', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5397 matches slot 08:00: {id: 5397, homeTeamName: 'U19 Girls Team 216', awayTeamName: 'U19 Girls Team 217', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5398 matches slot 08:00: {id: 5398, homeTeamName: 'U19 Girls Team 216', awayTeamName: 'U19 Girls Team 217', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5399 matches slot 08:00: {id: 5399, homeTeamName: 'U17 Girls Team 196', awayTeamName: 'U17 Girls Team 197', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5400 matches slot 08:00: {id: 5400, homeTeamName: 'U17 Girls Team 196', awayTeamName: 'U17 Girls Team 197', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5386 matches slot 08:00: {id: 5386, homeTeamName: 'U19 Boys Team 201', awayTeamName: 'U19 Boys Team 202', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5388 matches slot 08:00: {id: 5388, homeTeamName: 'U19 Girls Team 216', awayTeamName: 'U19 Girls Team 217', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5401 matches slot 08:00: {id: 5401, homeTeamName: 'U15 Girls Team 156', awayTeamName: 'U15 Girls Team 157', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5402 matches slot 08:00: {id: 5402, homeTeamName: 'U17 Boys Team 183', awayTeamName: 'U17 Boys Team 184', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5403 matches slot 08:00: {id: 5403, homeTeamName: 'U17 Boys Team 184', awayTeamName: 'U17 Boys Team 185', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5404 matches slot 08:00: {id: 5404, homeTeamName: 'U17 Boys Team 185', awayTeamName: 'U17 Boys Team 186', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5405 matches slot 08:00: {id: 5405, homeTeamName: 'U17 Boys Team 186', awayTeamName: 'U17 Boys Team 187', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5406 matches slot 08:00: {id: 5406, homeTeamName: 'U17 Boys Team 187', awayTeamName: 'U17 Boys Team 188', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5407 matches slot 08:00: {id: 5407, homeTeamName: 'U17 Boys Team 188', awayTeamName: 'U17 Boys Team 189', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5408 matches slot 08:00: {id: 5408, homeTeamName: 'U17 Boys Team 189', awayTeamName: 'U17 Boys Team 190', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5409 matches slot 08:00: {id: 5409, homeTeamName: 'U17 Boys Team 190', awayTeamName: 'U17 Boys Team 191', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5410 matches slot 08:00: {id: 5410, homeTeamName: 'U17 Boys Team 183', awayTeamName: 'U17 Boys Team 191', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5411 matches slot 08:00: {id: 5411, homeTeamName: 'U16 Boys Team 171', awayTeamName: 'U16 Boys Team 165', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5412 matches slot 08:00: {id: 5412, homeTeamName: 'U16 Boys Team 165', awayTeamName: 'U16 Boys Team 166', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5413 matches slot 08:00: {id: 5413, homeTeamName: 'U16 Boys Team 166', awayTeamName: 'U16 Boys Team 167', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5414 matches slot 08:00: {id: 5414, homeTeamName: 'U16 Boys Team 167', awayTeamName: 'U16 Boys Team 168', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5415 matches slot 08:00: {id: 5415, homeTeamName: 'U16 Boys Team 168', awayTeamName: 'U16 Boys Team 170', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5416 matches slot 08:00: {id: 5416, homeTeamName: 'U16 Boys Team 170', awayTeamName: 'U16 Boys Team 172', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5417 matches slot 08:00: {id: 5417, homeTeamName: 'U16 Boys Team 172', awayTeamName: 'U16 Boys Team 173', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5418 matches slot 08:00: {id: 5418, homeTeamName: 'U16 Boys Team 173', awayTeamName: 'U16 Boys Team 169', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5419 matches slot 08:00: {id: 5419, homeTeamName: 'U16 Boys Team 171', awayTeamName: 'U16 Boys Team 169', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5420 matches slot 08:00: {id: 5420, homeTeamName: 'U17 Girls Team 196', awayTeamName: 'U17 Girls Team 197', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5421 matches slot 08:00: {id: 5421, homeTeamName: 'U17 Girls Team 197', awayTeamName: 'U17 Girls Team 198', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5422 matches slot 08:00: {id: 5422, homeTeamName: 'U17 Girls Team 198', awayTeamName: 'U17 Girls Team 199', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5423 matches slot 08:00: {id: 5423, homeTeamName: 'U17 Girls Team 199', awayTeamName: 'U17 Girls Team 200', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5424 matches slot 08:00: {id: 5424, homeTeamName: 'U17 Girls Team 200', awayTeamName: 'U17 Girls Team 193', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5425 matches slot 08:00: {id: 5425, homeTeamName: 'U17 Girls Team 193', awayTeamName: 'U17 Girls Team 192', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5426 matches slot 08:00: {id: 5426, homeTeamName: 'U17 Girls Team 196', awayTeamName: 'U17 Girls Team 198', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5427 matches slot 08:00: {id: 5427, homeTeamName: 'U17 Girls Team 197', awayTeamName: 'U17 Girls Team 199', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5428 matches slot 08:00: {id: 5428, homeTeamName: 'U17 Girls Team 200', awayTeamName: 'U17 Girls Team 192', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Game 5429 matches slot 08:00: {id: 5429, homeTeamName: 'U17 Girls Team 196', awayTeamName: 'U17 Girls Team 193', ageGroup: 'U19', startTime: '2025-10-01T08:00:00', …}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Updated slots: (8) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] gamesData: {games: Array(44), success: true}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] fieldsData: {fields: Array(0), success: true}
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] selectedDate: 2025-10-02
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Setting fields: []
+MasterSchedulePage-C37WJYs4.js:1 [Calendar Effect] Updated slots: (8) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state {pill-player: {…}}
+chunk-FLCULYKI.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
