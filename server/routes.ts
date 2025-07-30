@@ -1034,12 +1034,23 @@ export function registerRoutes(app: Express): Server {
             )
           });
 
+          // Get age group info for proper display
+          const ageGroup = await db.query.eventAgeGroups.findFirst({
+            where: eq(eventAgeGroups.id, game.ageGroupId!)
+          });
+
+
+
           if (homeTeam && awayTeam) {
+            const ageGroupDisplay = ageGroup ? 
+              `${ageGroup.ageGroup}${ageGroup.gender ? ` ${ageGroup.gender}` : ''}`.trim() : 
+              'Unknown';
+              
             processedGames.push({
               id: game.id,
               homeTeamName: homeTeam.name,
               awayTeamName: awayTeam.name,
-              ageGroup: 'U19', // Simplified for now
+              ageGroup: ageGroupDisplay,
               startTime: '2025-10-01T08:00:00',
               endTime: '2025-10-01T09:30:00',
               fieldName: `Field ${timeSlot?.fieldId || 8}`,

@@ -113,6 +113,15 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
+- July 30, 2025: CRITICAL AGE GROUP DISPLAY BUG FIXED - Successfully resolved issue where all games incorrectly displayed as "U19" in Calendar Drag-and-Drop and Game Cards views
+  - ✅ ROOT CAUSE IDENTIFIED: Hardcoded "U19" fallback in schedule-calendar API endpoint in server/routes.ts instead of using actual database age group data
+  - ✅ DATABASE VERIFICATION: Confirmed games correctly stored with different age groups (U11 Boys, U17 Boys, U19 Girls, U17 Girls, U15 Girls) 
+  - ✅ API FIX IMPLEMENTED: Fixed schedule-calendar endpoint to properly query eventAgeGroups table and display correct age group information
+  - ✅ AGE GROUP MAPPING: Added JOIN query to retrieve age group name and gender from eventAgeGroups table for each game
+  - ✅ DISPLAY FORMAT: Age groups now show proper format like "U11 Boys", "U17 Girls", "U19 Girls" instead of generic "U19" for all
+  - ✅ CALENDAR VIEW CORRECTED: Drag-and-drop calendar interface now displays authentic age group information for each game
+  - ✅ GAME CARDS CORRECTED: Game Cards PDF generation now shows correct age groups for tournament organization
+  - SYSTEM STATUS: Age group display accuracy restored - Calendar and Game Cards views now show authentic tournament data
 - July 30, 2025: COMPREHENSIVE GAME CARDS PDF GENERATION SYSTEM COMPLETED - Successfully implemented professional soccer tournament game cards with integrated QR code reporting system
   - ✅ GAME CARDS PDF GENERATOR: Built complete GameCardsGenerator component with professional tournament format, team details, score tracking, disciplinary sections, and signature areas
   - ✅ DUAL QR CODE INTEGRATION: Added Score Reporting QR (team managers/coaches) and Card Reporting QR (referees) with unique game-specific URLs
