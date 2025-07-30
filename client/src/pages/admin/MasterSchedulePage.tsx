@@ -84,7 +84,7 @@ export default function MasterSchedulePage() {
             }`}
           >
             <Eye className="h-5 w-5" />
-            Schedule Manager
+            Schedule Viewer
           </Button>
           <Button
             variant={currentView === 'calendar' ? 'default' : 'outline'}

@@ -1,0 +1,64 @@
+[Calendar Effect] gamesData: {games: Array(34), success: true}
+MasterSchedulePage-C9OXYLMv.js:1 [Calendar Effect] fieldsData: {fields: Array(12), success: true}
+MasterSchedulePage-C9OXYLMv.js:1 [Calendar Effect] selectedDate: 2025-10-01
+MasterSchedulePage-C9OXYLMv.js:1 [Calendar Effect] Setting fields: (12) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+MasterSchedulePage-C9OXYLMv.js:1 [Calendar Effect] Updated slots: []
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+index-CSYrswIe.js:41 Error: Minified React error #310; visit https://reactjs.org/docs/error-decoder.html?invariant=310 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    at Co (index-CSYrswIe.js:39:17629)
+    at _2 (index-CSYrswIe.js:39:17883)
+    at Object.useState (index-CSYrswIe.js:39:24707)
+    at Tn.useState (index-CSYrswIe.js:10:6427)
+    at $e (index-CSYrswIe.js:41:96779)
+    at Ne (ScheduleViewer-CJOdA1WV.js:6:1999)
+    at pO (index-CSYrswIe.js:39:17031)
+    at oP (index-CSYrswIe.js:41:3143)
+    at XW (index-CSYrswIe.js:41:44880)
+    at KW (index-CSYrswIe.js:41:39822)
+iP @ index-CSYrswIe.js:41
+AW.r.callback @ index-CSYrswIe.js:41
+kM @ index-CSYrswIe.js:39
+UM @ index-CSYrswIe.js:41
+GW @ index-CSYrswIe.js:41
+lhe @ index-CSYrswIe.js:41
+hhe @ index-CSYrswIe.js:41
+ku @ index-CSYrswIe.js:41
+qM @ index-CSYrswIe.js:41
+su @ index-CSYrswIe.js:39
+(anonymous) @ index-CSYrswIe.js:41
+setTimeout
+_he @ index-CSYrswIe.js:41
+o @ index-CSYrswIe.js:41
+batch @ index-CSYrswIe.js:41
+ic @ index-CSYrswIe.js:41
+setData @ index-CSYrswIe.js:41
+onSuccess @ index-CSYrswIe.js:41
+m @ index-CSYrswIe.js:41
+Promise.then
+f @ index-CSYrswIe.js:41
+start @ index-CSYrswIe.js:41
+fetch @ index-CSYrswIe.js:41
+tg @ index-CSYrswIe.js:41
+onSubscribe @ index-CSYrswIe.js:41
+subscribe @ index-CSYrswIe.js:41
+(anonymous) @ index-CSYrswIe.js:41
+hW @ index-CSYrswIe.js:39
+k1 @ index-CSYrswIe.js:41
+Jh @ index-CSYrswIe.js:41
+hhe @ index-CSYrswIe.js:41
+ku @ index-CSYrswIe.js:41
+qM @ index-CSYrswIe.js:41
+su @ index-CSYrswIe.js:39
+(anonymous) @ index-CSYrswIe.js:41Understand this error
+index-CSYrswIe.js:39 Uncaught Error: Minified React error #310; visit https://reactjs.org/docs/error-decoder.html?invariant=310 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    at Co (index-CSYrswIe.js:39:17629)
+    at _2 (index-CSYrswIe.js:39:17883)
+    at Object.useState (index-CSYrswIe.js:39:24707)
+    at Tn.useState (index-CSYrswIe.js:10:6427)
+    at $e (index-CSYrswIe.js:41:96779)
+    at Ne (ScheduleViewer-CJOdA1WV.js:6:1999)
+    at pO (index-CSYrswIe.js:39:17031)
+    at oP (index-CSYrswIe.js:41:3143)
+    at XW (index-CSYrswIe.js:41:44880)
+    at KW (index-CSYrswIe.js:41:39822)

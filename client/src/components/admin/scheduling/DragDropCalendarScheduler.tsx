@@ -174,32 +174,51 @@ export default function DragDropCalendarScheduler({ eventId }: DragDropCalendarS
       console.log('[Calendar Effect] Setting fields:', fieldsData.fields);
       setFields(fieldsData.fields);
       
-      const updatedSlots = timeSlots.map(slot => {
+      // Create fresh time slots with games assigned
+      const slots: TimeSlot[] = [];
+      const startHour = 8;
+      const endHour = 20;
+      const intervalMinutes = 90;
+
+      for (let hour = startHour; hour < endHour; hour += intervalMinutes / 60) {
+        const wholeHour = Math.floor(hour);
+        const minutes = (hour % 1) * 60;
+        const startTime = `${wholeHour.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+        
+        const endHour = hour + intervalMinutes / 60;
+        const endWholeHour = Math.floor(endHour);
+        const endMinutes = (endHour % 1) * 60;
+        const endTimeStr = `${endWholeHour.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}`;
+
+        // Find games for this time slot
         const gamesInSlot = gamesData.games.filter((game: Game) => {
           const gameDate = game.startTime?.split('T')[0] || game.startTime?.split(' ')[0];
           const gameTime = game.startTime?.split('T')[1]?.split(':').slice(0, 2).join(':') || 
                           game.startTime?.split(' ')[1]?.split(':').slice(0, 2).join(':');
-          const matches = gameDate === selectedDate && gameTime === slot.startTime;
+          const matches = gameDate === selectedDate && gameTime === startTime;
           if (matches) {
-            console.log(`[Calendar Effect] Game ${game.id} matches slot ${slot.startTime}:`, game);
+            console.log(`[Calendar Effect] Game ${game.id} matches slot ${startTime}:`, game);
           }
           return matches;
         });
-        
-        return {
-          ...slot,
+
+        slots.push({
+          id: `${selectedDate}-${startTime}`,
+          startTime,
+          endTime: endTimeStr,
           games: gamesInSlot
-        };
-      });
+        });
+      }
       
-      console.log('[Calendar Effect] Updated slots:', updatedSlots);
-      setTimeSlots(updatedSlots);
+      console.log('[Calendar Effect] Updated slots:', slots);
+      setTimeSlots(slots);
     } else if (gamesData?.games) {
       console.log('[Calendar Effect] Games available but no fields data');
+      console.log('[Calendar Effect] Sample game data:', gamesData.games[0]);
     } else if (fieldsData?.fields) {
       console.log('[Calendar Effect] Fields available but no games data');
     }
-  }, [gamesData, fieldsData, selectedDate, timeSlots.length]);
+  }, [gamesData, fieldsData, selectedDate]);
 
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return;
