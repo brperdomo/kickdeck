@@ -123,6 +123,45 @@ export default function GameCardsGenerator({ eventId }: GameCardsGeneratorProps)
       const pageHeight = pdf.internal.pageSize.getHeight();
       let currentPage = 1;
 
+      // Load tournament/MatchPro logo
+      const loadLogoImage = async (): Promise<string | null> => {
+        try {
+          // First try to load tournament-specific logo if available
+          const tournamentLogoUrl = `/api/events/${eventId}/logo`;
+          const tournamentResponse = await fetch(tournamentLogoUrl);
+          
+          if (tournamentResponse.ok) {
+            const blob = await tournamentResponse.blob();
+            return new Promise((resolve) => {
+              const reader = new FileReader();
+              reader.onload = () => resolve(reader.result as string);
+              reader.readAsDataURL(blob);
+            });
+          }
+        } catch (error) {
+          console.log('Tournament logo not available, using MatchPro branding');
+        }
+        
+        // Fallback to MatchPro logo
+        try {
+          const matchProResponse = await fetch('/MatchPro.ai_Stacked_Color.png');
+          if (matchProResponse.ok) {
+            const blob = await matchProResponse.blob();
+            return new Promise((resolve) => {
+              const reader = new FileReader();
+              reader.onload = () => resolve(reader.result as string);
+              reader.readAsDataURL(blob);
+            });
+          }
+        } catch (error) {
+          console.log('MatchPro logo not available');
+        }
+        
+        return null;
+      };
+
+      const logoDataUrl = await loadLogoImage();
+
       for (let i = 0; i < selectedGames.length; i++) {
         const game = selectedGames[i];
         
@@ -131,59 +170,115 @@ export default function GameCardsGenerator({ eventId }: GameCardsGeneratorProps)
           currentPage++;
         }
 
-        // Header with tournament info
-        pdf.setFillColor(46, 134, 171); // MatchPro blue
-        pdf.rect(0, 0, pageWidth, 25, 'F');
+        // Modern header with gradient effect (simulated with rectangles)
+        pdf.setFillColor(46, 134, 171); // MatchPro primary blue
+        pdf.rect(0, 0, pageWidth, 30, 'F');
+        pdf.setFillColor(162, 59, 114); // MatchPro accent purple (lighter)
+        pdf.rect(0, 25, pageWidth, 5, 'F');
         
+        // Add logo if available
+        if (logoDataUrl) {
+          try {
+            // Determine appropriate logo size based on content
+            const logoSize = tournament.name && tournament.name.length > 20 ? 15 : 20;
+            pdf.addImage(logoDataUrl, 'PNG', pageWidth - logoSize - 5, 5, logoSize, logoSize);
+          } catch (error) {
+            console.log('Error adding logo to PDF:', error);
+          }
+        }
+        
+        // Tournament title with modern typography
         pdf.setTextColor(255, 255, 255);
-        pdf.setFontSize(18);
+        pdf.setFontSize(16);
         pdf.setFont('helvetica', 'bold');
-        pdf.text(tournament.name || 'Tournament', 10, 15);
+        pdf.text(tournament.name || 'Tournament', 10, 12);
         
-        pdf.setFontSize(12);
-        pdf.text(`Game #${game.id}`, pageWidth - 30, 10);
-        pdf.text(`${game.ageGroupName}`, pageWidth - 30, 20);
+        pdf.setFontSize(10);
+        pdf.setFont('helvetica', 'normal');
+        pdf.text(tournament.location || 'Galway Downs Soccer Complex', 10, 20);
+        
+        // Game identifier in top right
+        pdf.setFontSize(11);
+        pdf.setFont('helvetica', 'bold');
+        const gameText = `Game #${game.id}`;
+        const gameTextWidth = pdf.getTextWidth(gameText);
+        pdf.text(gameText, pageWidth - gameTextWidth - (logoDataUrl ? 30 : 10), 15);
+        
+        pdf.setFontSize(9);
+        pdf.setFont('helvetica', 'normal');
+        const ageGroupText = game.ageGroupName;
+        const ageGroupWidth = pdf.getTextWidth(ageGroupText);
+        pdf.text(ageGroupText, pageWidth - ageGroupWidth - (logoDataUrl ? 30 : 10), 23);
 
-        // Reset text color
+        // Reset text color and start main content
         pdf.setTextColor(0, 0, 0);
 
-        // Game details section
-        let yPos = 35;
+        // Game details section with modern card styling
+        let yPos = 40;
         
-        pdf.setFontSize(14);
-        pdf.setFont('helvetica', 'bold');
-        pdf.text('MATCH INFORMATION', 10, yPos);
-        
-        yPos += 10;
-        pdf.setFontSize(11);
-        pdf.setFont('helvetica', 'normal');
-        pdf.text(`Date: ${new Date(game.gameDate).toLocaleDateString()}`, 10, yPos);
-        pdf.text(`Time: ${game.startTime} - ${game.endTime}`, 100, yPos);
-        
-        yPos += 8;
-        pdf.text(`Field: ${game.fieldName}`, 10, yPos);
-        pdf.text(`Venue: ${game.complexName}`, 100, yPos);
-
-        // Team information section
-        yPos += 20;
-        pdf.setFontSize(14);
-        pdf.setFont('helvetica', 'bold');
-        pdf.text('TEAMS', 10, yPos);
-        
-        // Home team box
-        yPos += 10;
-        pdf.setDrawColor(0, 0, 0);
+        // Match information card
+        pdf.setFillColor(248, 249, 250); // Light gray background
+        pdf.setDrawColor(229, 231, 235); // Border color
         pdf.setLineWidth(0.5);
-        pdf.rect(10, yPos, 85, 25);
+        pdf.roundedRect(10, yPos, pageWidth - 20, 25, 2, 2, 'FD');
         
         pdf.setFontSize(12);
         pdf.setFont('helvetica', 'bold');
-        pdf.text('HOME TEAM', 12, yPos + 8);
+        pdf.setTextColor(55, 65, 81); // Dark gray
+        pdf.text('MATCH INFORMATION', 15, yPos + 8);
+        
+        pdf.setFontSize(10);
         pdf.setFont('helvetica', 'normal');
-        pdf.text(game.homeTeamName, 12, yPos + 16);
-        pdf.text('Coach: ____________________', 12, yPos + 22);
+        pdf.text(`📅 ${new Date(game.gameDate).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}`, 15, yPos + 16);
+        pdf.text(`🕐 ${game.startTime.slice(11, 16)} - ${game.endTime.slice(11, 16)}`, 80, yPos + 16);
+        pdf.text(`⚽ ${game.fieldName}`, 15, yPos + 21);
+        pdf.text(`📍 ${game.complexName}`, 80, yPos + 21);
 
-        // Away team box
+        // Team information section with modern cards
+        yPos += 35;
+        pdf.setTextColor(0, 0, 0);
+        pdf.setFontSize(12);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('MATCH TEAMS', 10, yPos);
+        
+        yPos += 10;
+        
+        // Home team card
+        pdf.setFillColor(239, 246, 255); // Light blue background
+        pdf.setDrawColor(59, 130, 246); // Blue border
+        pdf.setLineWidth(1);
+        pdf.roundedRect(10, yPos, 85, 30, 3, 3, 'FD');
+        
+        pdf.setFontSize(10);
+        pdf.setFont('helvetica', 'bold');
+        pdf.setTextColor(30, 64, 175); // Blue text
+        pdf.text('HOME TEAM', 14, yPos + 8);
+        pdf.setFontSize(11);
+        pdf.setFont('helvetica', 'bold');
+        pdf.setTextColor(0, 0, 0);
+        pdf.text(game.homeTeamName, 14, yPos + 16);
+        pdf.setFontSize(9);
+        pdf.setFont('helvetica', 'normal');
+        pdf.setTextColor(75, 85, 99);
+        pdf.text('Coach: _________________', 14, yPos + 23);
+
+        // Away team card
+        pdf.setFillColor(254, 242, 242); // Light red background
+        pdf.setDrawColor(239, 68, 68); // Red border
+        pdf.roundedRect(105, yPos, 85, 30, 3, 3, 'FD');
+        
+        pdf.setFontSize(10);
+        pdf.setFont('helvetica', 'bold');
+        pdf.setTextColor(185, 28, 28); // Red text
+        pdf.text('AWAY TEAM', 109, yPos + 8);
+        pdf.setFontSize(11);
+        pdf.setFont('helvetica', 'bold');
+        pdf.setTextColor(0, 0, 0);
+        pdf.text(game.awayTeamName, 109, yPos + 16);
+        pdf.setFontSize(9);
+        pdf.setFont('helvetica', 'normal');
+        pdf.setTextColor(75, 85, 99);
+        pdf.text('Coach: _________________', 109, yPos + 23);
         pdf.rect(105, yPos, 85, 25);
         pdf.setFont('helvetica', 'bold');
         pdf.text('AWAY TEAM', 107, yPos + 8);
@@ -191,49 +286,91 @@ export default function GameCardsGenerator({ eventId }: GameCardsGeneratorProps)
         pdf.text(game.awayTeamName, 107, yPos + 16);
         pdf.text('Coach: ____________________', 107, yPos + 22);
 
-        // Score section
-        yPos += 35;
-        pdf.setFontSize(14);
+        // Score section with modern styling
+        yPos += 40;
+        pdf.setTextColor(0, 0, 0);
+        pdf.setFontSize(12);
         pdf.setFont('helvetica', 'bold');
-        pdf.text('SCORE', 10, yPos);
+        pdf.text('MATCH SCORE', 10, yPos);
         
         yPos += 10;
-        // Score boxes
-        pdf.rect(10, yPos, 40, 20);
-        pdf.rect(60, yPos, 40, 20);
-        pdf.rect(110, yPos, 40, 20);
         
-        pdf.setFontSize(10);
-        pdf.text('HOME', 25, yPos + 6);
-        pdf.text('AWAY', 75, yPos + 6);
-        pdf.text('FINAL', 125, yPos + 6);
+        // Modern score cards
+        const scoreBoxes = [
+          { label: 'HOME', sublabel: 'Halftime', color: [59, 130, 246], bg: [239, 246, 255] },
+          { label: 'AWAY', sublabel: 'Halftime', color: [239, 68, 68], bg: [254, 242, 242] },
+          { label: 'FINAL', sublabel: 'Full Time', color: [34, 197, 94], bg: [240, 253, 244] }
+        ];
         
-        pdf.setFontSize(8);
-        pdf.text('Halftime Score', 10, yPos + 25);
-        pdf.text('Halftime Score', 60, yPos + 25);
-        pdf.text('Full Time', 110, yPos + 25);
+        scoreBoxes.forEach((box, index) => {
+          const xPos = 10 + (index * 60);
+          
+          // Score box with color-coded styling
+          pdf.setFillColor(box.bg[0], box.bg[1], box.bg[2]);
+          pdf.setDrawColor(box.color[0], box.color[1], box.color[2]);
+          pdf.setLineWidth(1.5);
+          pdf.roundedRect(xPos, yPos, 50, 25, 4, 4, 'FD');
+          
+          // Label
+          pdf.setFontSize(9);
+          pdf.setFont('helvetica', 'bold');
+          pdf.setTextColor(box.color[0], box.color[1], box.color[2]);
+          const labelWidth = pdf.getTextWidth(box.label);
+          pdf.text(box.label, xPos + (50 - labelWidth) / 2, yPos + 8);
+          
+          // Sublabel
+          pdf.setFontSize(7);
+          pdf.setFont('helvetica', 'normal');
+          pdf.setTextColor(107, 114, 128);
+          const sublabelWidth = pdf.getTextWidth(box.sublabel);
+          pdf.text(box.sublabel, xPos + (50 - sublabelWidth) / 2, yPos + 20);
+        });
 
-        // Disciplinary section
-        yPos += 40;
-        pdf.setFontSize(14);
+        // Disciplinary section with modern table styling
+        yPos += 35;
+        pdf.setTextColor(0, 0, 0);
+        pdf.setFontSize(12);
         pdf.setFont('helvetica', 'bold');
         pdf.text('DISCIPLINARY RECORD', 10, yPos);
         
         yPos += 10;
-        // Table headers
-        pdf.setFontSize(10);
-        pdf.setFont('helvetica', 'bold');
-        pdf.text('PLAYER NAME', 10, yPos);
-        pdf.text('TEAM', 60, yPos);
-        pdf.text('CARD', 90, yPos);
-        pdf.text('MIN', 110, yPos);
-        pdf.text('REASON', 130, yPos);
         
-        // Draw lines for disciplinary entries
+        // Modern table header
+        pdf.setFillColor(55, 65, 81); // Dark gray header
+        pdf.setDrawColor(55, 65, 81);
+        pdf.setLineWidth(0.5);
+        pdf.roundedRect(10, yPos, pageWidth - 20, 8, 1, 1, 'FD');
+        
+        pdf.setFontSize(8);
+        pdf.setFont('helvetica', 'bold');
+        pdf.setTextColor(255, 255, 255);
+        pdf.text('PLAYER NAME', 12, yPos + 5);
+        pdf.text('TEAM', 70, yPos + 5);
+        pdf.text('CARD', 100, yPos + 5);
+        pdf.text('MIN', 120, yPos + 5);
+        pdf.text('REASON', 135, yPos + 5);
+        
+        // Table rows with alternating colors
         for (let row = 0; row < 5; row++) {
           yPos += 8;
-          pdf.setDrawColor(200, 200, 200);
-          pdf.line(10, yPos + 3, pageWidth - 10, yPos + 3);
+          
+          // Alternating row colors
+          if (row % 2 === 0) {
+            pdf.setFillColor(249, 250, 251); // Very light gray
+          } else {
+            pdf.setFillColor(255, 255, 255); // White
+          }
+          
+          pdf.setDrawColor(229, 231, 235);
+          pdf.rect(10, yPos, pageWidth - 20, 8, 'FD');
+          
+          // Add subtle grid lines
+          pdf.setDrawColor(229, 231, 235);
+          pdf.setLineWidth(0.3);
+          pdf.line(68, yPos, 68, yPos + 8); // After player name
+          pdf.line(98, yPos, 98, yPos + 8);  // After team
+          pdf.line(118, yPos, 118, yPos + 8); // After card
+          pdf.line(133, yPos, 133, yPos + 8); // After min
         }
 
         // Generate QR codes
@@ -244,46 +381,107 @@ export default function GameCardsGenerator({ eventId }: GameCardsGeneratorProps)
         const scoreQR = await generateQRCode(scoreReportUrl);
         const cardQR = await generateQRCode(cardReportUrl);
 
-        // Add QR codes
+        // QR Codes section with modern card styling
         yPos += 20;
+        pdf.setTextColor(0, 0, 0);
         pdf.setFontSize(12);
         pdf.setFont('helvetica', 'bold');
-        pdf.text('QR CODES', 10, yPos);
+        pdf.text('DIGITAL REPORTING', 10, yPos);
         
         yPos += 10;
+        
+        // Score reporting QR card
         if (scoreQR) {
-          pdf.addImage(scoreQR, 'PNG', 10, yPos, 30, 30);
+          pdf.setFillColor(239, 246, 255); // Light blue
+          pdf.setDrawColor(59, 130, 246);
+          pdf.setLineWidth(1);
+          pdf.roundedRect(10, yPos, 80, 35, 3, 3, 'FD');
+          
+          pdf.addImage(scoreQR, 'PNG', 15, yPos + 3, 25, 25);
+          
           pdf.setFontSize(10);
+          pdf.setFont('helvetica', 'bold');
+          pdf.setTextColor(30, 64, 175);
+          pdf.text('Score Reporting', 45, yPos + 12);
+          pdf.setFontSize(8);
           pdf.setFont('helvetica', 'normal');
-          pdf.text('Score Reporting', 10, yPos + 35);
-          pdf.text('(Team Managers/Coaches)', 10, yPos + 40);
+          pdf.setTextColor(75, 85, 99);
+          pdf.text('Team Managers', 45, yPos + 18);
+          pdf.text('& Coaches', 45, yPos + 23);
         }
         
+        // Card reporting QR card
         if (cardQR) {
-          pdf.addImage(cardQR, 'PNG', 50, yPos, 30, 30);
-          pdf.text('Card Reporting', 50, yPos + 35);
-          pdf.text('(Referees)', 50, yPos + 40);
+          pdf.setFillColor(254, 242, 242); // Light red
+          pdf.setDrawColor(239, 68, 68);
+          pdf.setLineWidth(1);
+          pdf.roundedRect(100, yPos, 80, 35, 3, 3, 'FD');
+          
+          pdf.addImage(cardQR, 'PNG', 105, yPos + 3, 25, 25);
+          
+          pdf.setFontSize(10);
+          pdf.setFont('helvetica', 'bold');
+          pdf.setTextColor(185, 28, 28);
+          pdf.text('Card Reporting', 135, yPos + 12);
+          pdf.setFontSize(8);
+          pdf.setFont('helvetica', 'normal');
+          pdf.setTextColor(75, 85, 99);
+          pdf.text('Referees Only', 135, yPos + 18);
         }
 
-        // Signatures section
-        yPos += 50;
+        // Signatures section with modern styling
+        yPos += 45;
+        pdf.setTextColor(0, 0, 0);
         pdf.setFontSize(12);
         pdf.setFont('helvetica', 'bold');
-        pdf.text('SIGNATURES', 10, yPos);
+        pdf.text('OFFICIAL SIGNATURES', 10, yPos);
         
-        yPos += 15;
-        pdf.setFontSize(10);
-        pdf.setFont('helvetica', 'normal');
-        pdf.text('Referee: ________________________________', 10, yPos);
-        yPos += 15;
-        pdf.text('Home Coach: ____________________________', 10, yPos);
-        yPos += 15;
-        pdf.text('Away Coach: ____________________________', 10, yPos);
+        yPos += 10;
+        
+        // Signature cards
+        const signatures = [
+          { label: 'REFEREE', icon: '👨‍⚽' },
+          { label: 'HOME COACH', icon: '🏠' },
+          { label: 'AWAY COACH', icon: '✈️' }
+        ];
+        
+        signatures.forEach((sig, index) => {
+          yPos += 12;
+          
+          // Signature line with modern styling
+          pdf.setFillColor(248, 249, 250);
+          pdf.setDrawColor(229, 231, 235);
+          pdf.setLineWidth(0.5);
+          pdf.roundedRect(10, yPos, pageWidth - 20, 10, 2, 2, 'FD');
+          
+          pdf.setFontSize(9);
+          pdf.setFont('helvetica', 'bold');
+          pdf.setTextColor(75, 85, 99);
+          pdf.text(`${sig.label}:`, 15, yPos + 6);
+          
+          // Signature line
+          pdf.setDrawColor(156, 163, 175);
+          pdf.setLineWidth(0.5);
+          pdf.line(50, yPos + 6, pageWidth - 15, yPos + 6);
+        });
 
-        // Footer
+        // Modern footer with branding
+        yPos = pageHeight - 15;
+        pdf.setDrawColor(229, 231, 235);
+        pdf.setLineWidth(0.5);
+        pdf.line(10, yPos, pageWidth - 10, yPos);
+        
         pdf.setFontSize(8);
-        pdf.setTextColor(128, 128, 128);
-        pdf.text(`Generated: ${new Date().toLocaleString()}`, 10, pageHeight - 10);
+        pdf.setTextColor(107, 114, 128);
+        pdf.text(`Generated: ${new Date().toLocaleString()}`, 10, yPos + 8);
+        
+        if (logoDataUrl) {
+          pdf.setTextColor(46, 134, 171);
+          pdf.text('Powered by MatchPro AI', pageWidth - 45, yPos + 8);
+        } else {
+          pdf.setTextColor(107, 114, 128);
+          pdf.text('Professional Tournament Management', pageWidth - 65, yPos + 8);
+        }
         pdf.text(`Page ${currentPage} of ${selectedGames.length}`, pageWidth - 30, pageHeight - 10);
       }
 
