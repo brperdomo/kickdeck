@@ -62,6 +62,8 @@ import tournamentStatusRouter from "./routes/admin/tournament-status";
 import scheduleViewerRouter from "./routes/admin/schedule-viewer";
 import unifiedScheduleRouter from "./routes/admin/unified-schedule";
 import paymentCompletionRouter from "./routes/payment-completion";
+import tournamentsWithSchedulesRouter from "./routes/admin/tournaments-with-schedules";
+import gamesAllTournamentsRouter from "./routes/admin/games-all-tournaments";
 import { 
   getEnhancedEventFinancialReport, 
   getOrganizationFinancialSummary, 
@@ -933,6 +935,8 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/events', isAdmin, tournamentStatusRouter); // Tournament status display
     app.use('/api/admin/events', isAdmin, scheduleViewerRouter); // Schedule viewing and management
     app.use('/api/admin', isAdmin, unifiedScheduleRouter); // Unified single-screen schedule generator
+    app.use('/api/admin/tournaments', isAdmin, tournamentsWithSchedulesRouter); // All tournaments with schedule data
+    app.use('/api/admin/games', isAdmin, gamesAllTournamentsRouter); // Games across all tournaments
     app.use('/api/admin/events', isAdmin, flightsRouter); // Flight creation and management
     app.use('/api/admin/events', isAdmin, adminBracketsRouter); // Bracket generation and management
     app.use('/api/admin/events', isAdmin, adminGamesRouter); // Game scheduling and management
