@@ -254,6 +254,7 @@ export function UnifiedScheduleSetup({ eventId, onComplete }: UnifiedScheduleSet
       const response = await fetch(`/api/admin/events/${eventId}/unified-schedule`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(data)
       });
       if (!response.ok) throw new Error('Failed to generate schedule');
