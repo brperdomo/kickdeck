@@ -18,7 +18,8 @@ export default function GameMetadataPage() {
 
   const handleComplete = (data: any) => {
     console.log('Game metadata setup completed:', data);
-    // Optionally redirect back or show success message
+    // Navigate back to tournament system to show completion
+    setLocation('/admin/tournament-system');
   };
 
   return (

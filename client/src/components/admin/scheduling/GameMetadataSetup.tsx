@@ -11,7 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
-  Settings, Clock, Users, Field, AlertTriangle, CheckCircle,
+  Settings, Clock, Users, AlertTriangle, CheckCircle,
   Plus, Trash2, Copy, RefreshCw
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -176,16 +176,83 @@ export function GameMetadataSetup({ eventId, onComplete }: GameMetadataSetupProp
   };
 
   const loadDefaultTemplates = () => {
-    if (defaultTemplates) {
-      setGameFormats(defaultTemplates);
-      toast({
-        title: "Templates Loaded",
-        description: "Default game format templates have been loaded"
-      });
-    }
+    const standardTemplates: GameFormat[] = [
+      {
+        ageGroup: 'U6-U8',
+        format: '4v4',
+        gameLength: 60,
+        halves: 2,
+        halfLength: 25,
+        halfTimeBreak: 10,
+        bufferTime: 15,
+        fieldSize: '4v4',
+        allowsLights: true,
+        surfacePreference: 'Any'
+      },
+      {
+        ageGroup: 'U9-U10',
+        format: '7v7',
+        gameLength: 70,
+        halves: 2,
+        halfLength: 30,
+        halfTimeBreak: 10,
+        bufferTime: 15,
+        fieldSize: '7v7',
+        allowsLights: true,
+        surfacePreference: 'Any'
+      },
+      {
+        ageGroup: 'U11-U12',
+        format: '9v9',
+        gameLength: 80,
+        halves: 2,
+        halfLength: 35,
+        halfTimeBreak: 10,
+        bufferTime: 15,
+        fieldSize: '9v9',
+        allowsLights: true,
+        surfacePreference: 'Any'
+      },
+      {
+        ageGroup: 'U13+',
+        format: '11v11',
+        gameLength: 90,
+        halves: 2,
+        halfLength: 40,
+        halfTimeBreak: 10,
+        bufferTime: 15,
+        fieldSize: '11v11',
+        allowsLights: true,
+        surfacePreference: 'Any'
+      }
+    ];
+
+    setGameFormats(standardTemplates);
+    toast({
+      title: "Templates Loaded",
+      description: "Standard age group templates loaded: U6-U8 (4v4), U9-U10 (7v7), U11-U12 (9v9), U13+ (11v11)"
+    });
   };
 
-  const handleComplete = () => {
+  const handleComplete = async () => {
+    // First save the game formats if they exist
+    if (gameFormats.length > 0) {
+      try {
+        await saveGameFormatsMutation.mutateAsync(gameFormats);
+      } catch (error) {
+        console.error('Failed to save game formats:', error);
+        return; // Don't proceed if save fails
+      }
+    }
+
+    // Then save constraints
+    try {
+      await saveConstraintsMutation.mutateAsync(constraints);
+    } catch (error) {
+      console.error('Failed to save constraints:', error);
+      return; // Don't proceed if save fails
+    }
+
     const data = {
       gameFormats,
       constraints,
