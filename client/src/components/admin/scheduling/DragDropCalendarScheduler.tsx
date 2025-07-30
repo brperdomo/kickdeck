@@ -19,6 +19,8 @@ interface Game {
   fieldId: number;
   status: string;
   duration: number;
+  homeTeamCoach?: string;
+  awayTeamCoach?: string;
 }
 
 interface Field {
@@ -44,6 +46,7 @@ export default function DragDropCalendarScheduler({ eventId }: DragDropCalendarS
   const [selectedDate, setSelectedDate] = useState<string>('2025-10-01');
   const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
   const [fields, setFields] = useState<Field[]>([]);
+  const [coachColorMap, setCoachColorMap] = useState<Map<string, string>>(new Map());
   const queryClient = useQueryClient();
 
   // Fetch games and fields data from schedule calendar API (bypass auth for now)
@@ -72,7 +75,9 @@ export default function DragDropCalendarScheduler({ eventId }: DragDropCalendarS
         fieldName: game.fieldName,
         fieldId: game.fieldId,
         status: game.status,
-        duration: game.duration
+        duration: game.duration,
+        homeTeamCoach: game.homeTeamCoach,
+        awayTeamCoach: game.awayTeamCoach
       })) || [];
 
       const processedFields = data.fields?.map((field: any) => ({
@@ -91,6 +96,85 @@ export default function DragDropCalendarScheduler({ eventId }: DragDropCalendarS
   // Fields data comes from the same API call as games data
   const fieldsData = gamesData?.fields ? { fields: gamesData.fields, success: true } : null;
   const fieldsError = null;
+
+  // Color palette for coach coding
+  const coachColors = [
+    'bg-purple-100 border-purple-400 text-purple-800', // Purple
+    'bg-blue-100 border-blue-400 text-blue-800',       // Blue
+    'bg-green-100 border-green-400 text-green-800',    // Green
+    'bg-orange-100 border-orange-400 text-orange-800', // Orange
+    'bg-pink-100 border-pink-400 text-pink-800',       // Pink
+    'bg-indigo-100 border-indigo-400 text-indigo-800', // Indigo
+    'bg-yellow-100 border-yellow-400 text-yellow-800', // Yellow
+    'bg-red-100 border-red-400 text-red-800',          // Red
+    'bg-teal-100 border-teal-400 text-teal-800',       // Teal
+    'bg-cyan-100 border-cyan-400 text-cyan-800',       // Cyan
+  ];
+
+  // Function to get color for a coach
+  const getCoachColor = (coachName: string): string => {
+    if (!coachName) return 'bg-gray-100 border-gray-400 text-gray-800';
+    
+    if (!coachColorMap.has(coachName)) {
+      const colorIndex = coachColorMap.size % coachColors.length;
+      const newMap = new Map(coachColorMap);
+      newMap.set(coachName, coachColors[colorIndex]);
+      setCoachColorMap(newMap);
+      return coachColors[colorIndex];
+    }
+    
+    return coachColorMap.get(coachName) || 'bg-gray-100 border-gray-400 text-gray-800';
+  };
+
+  // Function to get primary coach for a game (for color coding)
+  const getPrimaryCoach = (game: Game): string => {
+    return game.homeTeamCoach || game.awayTeamCoach || `Team-${game.homeTeamName}`;
+  };
+
+  // Swap mutation for handling game position swaps
+  const swapGamesMutation = useMutation({
+    mutationFn: async ({ game1Id, game2Id, game1Field, game1Time, game2Field, game2Time }: {
+      game1Id: number;
+      game2Id: number;
+      game1Field: number;
+      game1Time: string;
+      game2Field: number;
+      game2Time: string;
+    }) => {
+      // Update both games simultaneously
+      const response1 = await fetch(`/api/admin/games/${game1Id}/reschedule`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ fieldId: game2Field, startTime: game2Time })
+      });
+      
+      const response2 = await fetch(`/api/admin/games/${game2Id}/reschedule`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ fieldId: game1Field, startTime: game1Time })
+      });
+
+      if (!response1.ok || !response2.ok) {
+        throw new Error('Failed to swap games');
+      }
+
+      return { game1: await response1.json(), game2: await response2.json() };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/schedule-calendar', eventId, 'schedule-calendar'] });
+      toast({ title: 'Games swapped successfully' });
+    },
+    onError: (error) => {
+      console.error('[Game Swap] Error:', error);
+      toast({ 
+        title: 'Failed to swap games', 
+        description: error.message || 'Please check the console for details', 
+        variant: 'destructive' 
+      });
+    }
+  });
 
   // Update game assignment mutation
   const updateGameMutation = useMutation({
@@ -209,19 +293,52 @@ export default function DragDropCalendarScheduler({ eventId }: DragDropCalendarS
     if (!result.destination) return;
 
     const { source, destination, draggableId } = result;
-    const gameId = parseInt(draggableId.split('-')[1]);
+    const draggedGameId = parseInt(draggableId.split('-')[1]);
     
     // Extract field ID and time slot from destination
     const [destFieldId, destTimeSlot] = destination.droppableId.split('-time-');
-    const fieldId = parseInt(destFieldId.replace('field-', ''));
-    const startTime = `${selectedDate}T${destTimeSlot}:00.000Z`;
+    const destFieldIdNum = parseInt(destFieldId.replace('field-', ''));
+    const destStartTime = `${selectedDate}T${destTimeSlot}:00.000Z`;
 
-    console.log(`[Drag Drop] Game ${gameId} dropped on field ${fieldId} at ${startTime}`);
+    console.log(`[Drag Drop] Game ${draggedGameId} dropped on field ${destFieldIdNum} at ${destStartTime}`);
     console.log(`[Drag Drop] Source:`, source);
     console.log(`[Drag Drop] Destination:`, destination);
 
-    // Update game assignment
-    updateGameMutation.mutate({ gameId, fieldId, startTime });
+    // Check if there's already a game in the destination slot
+    const destTimeSlotObj = timeSlots.find(slot => slot.id === `${selectedDate}-${destTimeSlot}`);
+    const destFieldGames = destTimeSlotObj?.games?.filter(game => game.fieldId === destFieldIdNum) || [];
+    
+    if (destFieldGames.length > 0) {
+      // There's a game in the destination slot - perform a swap
+      const targetGame = destFieldGames[0];
+      
+      // Get source game info
+      const [sourceFieldId, sourceTimeSlot] = source.droppableId.split('-time-');
+      const sourceFieldIdNum = parseInt(sourceFieldId.replace('field-', ''));
+      const sourceStartTime = `${selectedDate}T${sourceTimeSlot}:00.000Z`;
+      
+      console.log(`[Drag Drop] Swapping games: ${draggedGameId} <-> ${targetGame.id}`);
+      console.log(`[Drag Drop] Game ${draggedGameId}: ${sourceFieldIdNum}@${sourceTimeSlot} -> ${destFieldIdNum}@${destTimeSlot}`);
+      console.log(`[Drag Drop] Game ${targetGame.id}: ${destFieldIdNum}@${destTimeSlot} -> ${sourceFieldIdNum}@${sourceTimeSlot}`);
+      
+      // Perform swap
+      swapGamesMutation.mutate({
+        game1Id: draggedGameId,
+        game2Id: targetGame.id,
+        game1Field: sourceFieldIdNum,
+        game1Time: sourceStartTime,
+        game2Field: destFieldIdNum,
+        game2Time: destStartTime
+      });
+    } else {
+      // Empty slot - simple move
+      console.log(`[Drag Drop] Simple move: Game ${draggedGameId} -> ${destFieldIdNum}@${destTimeSlot}`);
+      updateGameMutation.mutate({ 
+        gameId: draggedGameId, 
+        fieldId: destFieldIdNum, 
+        startTime: destStartTime 
+      });
+    }
   };
 
   const getAvailableDates = () => {
@@ -342,30 +459,40 @@ export default function DragDropCalendarScheduler({ eventId }: DragDropCalendarS
                                 draggableId={`game-${game.id}`}
                                 index={index}
                               >
-                                {(provided, snapshot) => (
-                                  <div
-                                    ref={provided.innerRef}
-                                    {...provided.draggableProps}
-                                    {...provided.dragHandleProps}
-                                    className={`bg-card border rounded p-2 mb-2 shadow-sm cursor-move transition-shadow ${
-                                      snapshot.isDragging ? 'shadow-lg' : 'hover:shadow-md'
-                                    }`}
-                                  >
-                                    <div className="flex items-center gap-2 mb-1">
-                                      <Badge variant="outline" className="text-xs">
-                                        {game.ageGroup}
-                                      </Badge>
-                                      <Edit3 className="h-3 w-3 text-muted-foreground" />
+                                {(provided, snapshot) => {
+                                  const primaryCoach = getPrimaryCoach(game);
+                                  const coachColorClass = getCoachColor(primaryCoach);
+                                  
+                                  return (
+                                    <div
+                                      ref={provided.innerRef}
+                                      {...provided.draggableProps}
+                                      {...provided.dragHandleProps}
+                                      className={`border-2 rounded p-2 mb-2 shadow-sm cursor-move transition-all ${
+                                        snapshot.isDragging ? 'shadow-lg scale-105' : 'hover:shadow-md'
+                                      } ${coachColorClass}`}
+                                    >
+                                      <div className="flex items-center justify-between mb-1">
+                                        <Badge variant="outline" className="text-xs bg-white/50">
+                                          {game.ageGroup}
+                                        </Badge>
+                                        <Edit3 className="h-3 w-3 opacity-60" />
+                                      </div>
+                                      <div className="text-xs font-medium mb-1">
+                                        {game.homeTeamName} vs {game.awayTeamName}
+                                      </div>
+                                      {(game.homeTeamCoach || game.awayTeamCoach) && (
+                                        <div className="text-xs opacity-75 mb-1">
+                                          Coach: {game.homeTeamCoach || game.awayTeamCoach}
+                                        </div>
+                                      )}
+                                      <div className="flex items-center gap-1 text-xs opacity-60">
+                                        <Clock className="h-3 w-3" />
+                                        {game.duration}min
+                                      </div>
                                     </div>
-                                    <div className="text-xs font-medium">
-                                      {game.homeTeamName} vs {game.awayTeamName}
-                                    </div>
-                                    <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
-                                      <Clock className="h-3 w-3" />
-                                      {game.duration}min
-                                    </div>
-                                  </div>
-                                )}
+                                  );
+                                }}
                               </Draggable>
                             ))}
                           {provided.placeholder}
@@ -378,6 +505,23 @@ export default function DragDropCalendarScheduler({ eventId }: DragDropCalendarS
             </div>
           </DragDropContext>
 
+          {/* Coach Color Legend */}
+          {coachColorMap.size > 0 && (
+            <div className="mt-4 p-4 bg-muted/30 rounded-lg">
+              <h4 className="text-sm font-medium mb-2">Coach Color Coding</h4>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+                {Array.from(coachColorMap.entries()).map(([coach, colorClass]) => (
+                  <div key={coach} className={`px-2 py-1 rounded text-xs border-2 ${colorClass}`}>
+                    {coach.startsWith('Team-') ? coach.replace('Team-', '') : coach}
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                Games are color-coded by coach to help identify scheduling conflicts and back-to-back games.
+              </p>
+            </div>
+          )}
+
           <div className="mt-6 flex items-center justify-between">
             <div className="flex items-center gap-4 text-sm text-muted-foreground">
               <div className="flex items-center gap-1">
@@ -387,6 +531,10 @@ export default function DragDropCalendarScheduler({ eventId }: DragDropCalendarS
               <div className="flex items-center gap-1">
                 <MapPin className="h-4 w-4" />
                 {fields.length} fields available
+              </div>
+              <div className="flex items-center gap-1">
+                <Edit3 className="h-4 w-4" />
+                Drag to swap games
               </div>
             </div>
             

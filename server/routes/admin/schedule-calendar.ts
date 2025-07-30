@@ -70,7 +70,7 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
       // Get the corresponding time slot (assuming they're in the same order)
       const timeSlot = allTimeSlots[i % allTimeSlots.length]; // Use modulo to cycle through time slots
 
-      // Get team names - only from approved teams for this event
+      // Get team names and coach info - only from approved teams for this event
       const homeTeam = await db.query.teams.findFirst({
         where: and(
           eq(teams.id, game.homeTeamId!),
@@ -84,6 +84,30 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
           eq(teams.eventId, eventId)
         )
       });
+
+      // Extract coach information from teams
+      let homeTeamCoach = '';
+      let awayTeamCoach = '';
+      
+      if (homeTeam?.coach) {
+        try {
+          const coachData = typeof homeTeam.coach === 'string' ? JSON.parse(homeTeam.coach) : homeTeam.coach;
+          homeTeamCoach = coachData?.headCoachName || '';
+        } catch (e) {
+          // If coach data isn't JSON, try to use it directly
+          homeTeamCoach = homeTeam.coach || '';
+        }
+      }
+      
+      if (awayTeam?.coach) {
+        try {
+          const coachData = typeof awayTeam.coach === 'string' ? JSON.parse(awayTeam.coach) : awayTeam.coach;
+          awayTeamCoach = coachData?.headCoachName || '';
+        } catch (e) {
+          // If coach data isn't JSON, try to use it directly
+          awayTeamCoach = awayTeam.coach || '';
+        }
+      }
 
       const field = allFields.find(f => f.id === timeSlot?.fieldId);
       
@@ -105,7 +129,9 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
           status: game.status,
           duration: game.duration || 90,
           round: game.round,
-          matchNumber: game.matchNumber
+          matchNumber: game.matchNumber,
+          homeTeamCoach: homeTeamCoach,
+          awayTeamCoach: awayTeamCoach
         });
       } else {
         console.log(`[Schedule Calendar] Skipping game ${game.gameId} - teams not found or not approved: home=${homeTeam?.name}, away=${awayTeam?.name}`);

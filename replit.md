@@ -113,6 +113,17 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **Security**: Role-based access control and secure payment processing
 
 ## Changelog
+- July 30, 2025: COACHING CONFLICT COLOR-CODING AND GAME SWAPPING IMPLEMENTED - Enhanced drag-and-drop calendar with visual conflict detection and intelligent swapping functionality
+  - ✅ COACH COLOR-CODING SYSTEM: Games are now color-coded based on coaching assignments (purple, blue, green, orange, etc.) to easily identify potential scheduling conflicts
+  - ✅ SMART COLOR PALETTE: 10 distinct colors automatically assigned to coaches, with consistent color mapping across all games they coach
+  - ✅ VISUAL CONFLICT DETECTION: Same-coach games display in matching colors, making back-to-back games and overlapping schedules immediately visible
+  - ✅ DRAG-AND-DROP SWAPPING: Games can now flip-flop positions when dragged onto occupied time slots - both games intelligently swap positions
+  - ✅ COACH INFORMATION DISPLAY: Game cards show coach names when available, extracted from team registration data
+  - ✅ COLOR LEGEND: Dynamic legend displays all coaches and their assigned colors for easy reference
+  - ✅ ENHANCED GAME CARDS: Improved visual design with better color contrast, coach information, and drag-and-drop indicators
+  - ✅ SWAP FEEDBACK: Toast notifications and comprehensive logging for successful game swaps and moves
+  - ✅ BACKEND COACH DATA: Schedule calendar API enhanced to extract and provide coach information from team registration JSON
+  - SYSTEM STATUS: Drag-and-drop calendar now provides visual coaching conflict detection and intelligent game swapping functionality
 - July 30, 2025: CRITICAL DRAG-AND-DROP PERSISTENCE BUG FIXED - Successfully resolved issue where drag-and-drop game updates weren't persisting to database
   - ✅ ROOT CAUSE IDENTIFIED: Reschedule API endpoint was only updating fieldId but not startTime/endTime fields in games table
   - ✅ DATABASE UPDATE FIX: Enhanced reschedule endpoint to update fieldId, startTime, and endTime fields in games table
