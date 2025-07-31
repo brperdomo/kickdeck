@@ -15,11 +15,12 @@ import GameCardsGenerator from '@/components/admin/scheduling/GameCardsGenerator
 import AgeGroupManagementPanel from '@/components/admin/scheduling/AgeGroupManagementPanel';
 import { FlightReviewDashboard } from '@/components/admin/scheduling/FlightReviewDashboard';
 import { GameFormatEngine } from '@/components/admin/scheduling/GameFormatEngine';
+import BracketCreationEngine from '@/components/admin/scheduling/BracketCreationEngine';
 
 export default function MasterSchedulePage() {
   const { eventId } = useParams<{ eventId: string }>();
   const [, setLocation] = useLocation();
-  const [currentView, setCurrentView] = useState<'quick' | 'view' | 'calendar' | 'cards' | 'manage' | 'flights' | 'formats'>('flights');
+  const [currentView, setCurrentView] = useState<'quick' | 'view' | 'calendar' | 'cards' | 'manage' | 'flights' | 'formats' | 'brackets'>('flights');
 
   if (!eventId) {
     return <div>Event ID not found</div>;
@@ -150,6 +151,18 @@ export default function MasterSchedulePage() {
             <Settings className="h-5 w-5" />
             Game Formats
           </Button>
+          <Button
+            variant={currentView === 'brackets' ? 'default' : 'outline'}
+            onClick={() => setCurrentView('brackets')}
+            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${
+              currentView === 'brackets' 
+                ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg scale-105' 
+                : 'bg-white/90 text-gray-700 hover:bg-white hover:shadow-md border-2 border-gray-200'
+            }`}
+          >
+            <Trophy className="h-5 w-5" />
+            Create Brackets
+          </Button>
         </div>
 
         {/* Content Area */}
@@ -218,6 +231,17 @@ export default function MasterSchedulePage() {
               </AlertDescription>
             </Alert>
             <GameFormatEngine eventId={eventId} />
+          </div>
+        ) : currentView === 'brackets' ? (
+          <div className="space-y-6">
+            <Alert className="border-green-200 bg-green-50">
+              <Trophy className="h-4 w-4 text-green-600" />
+              <AlertDescription className="text-green-800">
+                <strong>Bracket Creation Engine:</strong> Assign teams to flights and create tournament brackets. 
+                Auto-assign teams for balanced competition or manage assignments manually.
+              </AlertDescription>
+            </Alert>
+            <BracketCreationEngine eventId={eventId} />
           </div>
         ) : (
           <div className="space-y-6">
