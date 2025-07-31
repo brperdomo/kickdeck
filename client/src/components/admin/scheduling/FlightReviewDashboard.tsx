@@ -135,13 +135,33 @@ export function FlightReviewDashboard({ eventId }: FlightReviewDashboardProps) {
       elite: 'bg-amber-500 text-white border-amber-400',
       premier: 'bg-blue-500 text-white border-blue-400', 
       classic: 'bg-emerald-500 text-white border-emerald-400',
-      intermediate: 'bg-slate-500 text-white border-slate-400'
+      intermediate: 'bg-slate-500 text-white border-slate-400',
+      top_flight: 'bg-amber-500 text-white border-amber-400',
+      middle_flight: 'bg-blue-500 text-white border-blue-400',
+      bottom_flight: 'bg-emerald-500 text-white border-emerald-400'
     };
+    
+    const labels = {
+      elite: 'Elite',
+      premier: 'Premier', 
+      classic: 'Classic',
+      intermediate: 'Intermediate',
+      top_flight: 'Top Flight',
+      middle_flight: 'Middle Flight',
+      bottom_flight: 'Bottom Flight'
+    };
+    
     return (
       <Badge className={colors[level as keyof typeof colors] || colors.intermediate}>
-        {level.charAt(0).toUpperCase() + level.slice(1)}
+        {labels[level as keyof typeof labels] || level.charAt(0).toUpperCase() + level.slice(1)}
       </Badge>
     );
+  };
+
+  // Helper function to format flight names properly
+  const formatFlightName = (name: string) => {
+    // Replace underscores with spaces and capitalize properly
+    return name.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   };
 
   if (isLoading) {
@@ -244,7 +264,7 @@ export function FlightReviewDashboard({ eventId }: FlightReviewDashboardProps) {
                     {group.availableFlights.map((flight) => (
                       <div key={flight.id} className="flex items-center gap-2 p-2 border border-slate-600 rounded bg-slate-700">
                         {getFlightLevelBadge(flight.level)}
-                        <span className="font-medium text-slate-200">{flight.name}</span>
+                        <span className="font-medium text-slate-200">{formatFlightName(flight.name)}</span>
                       </div>
                     ))}
                   </div>
@@ -268,7 +288,7 @@ export function FlightReviewDashboard({ eventId }: FlightReviewDashboardProps) {
                             <SelectContent>
                               {group.availableFlights.map((flight) => (
                                 <SelectItem key={flight.id} value={flight.id.toString()}>
-                                  {flight.name}
+                                  {formatFlightName(flight.name)}
                                 </SelectItem>
                               ))}
                             </SelectContent>
@@ -300,7 +320,7 @@ export function FlightReviewDashboard({ eventId }: FlightReviewDashboardProps) {
                     {group.availableFlights.map((flight) => (
                       <div key={flight.id} className="flex items-center gap-2 p-2 border border-slate-600 rounded bg-slate-700">
                         {getFlightLevelBadge(flight.level)}
-                        <span className="font-medium text-slate-200">{flight.name}</span>
+                        <span className="font-medium text-slate-200">{formatFlightName(flight.name)}</span>
                       </div>
                     ))}
                   </div>
@@ -327,7 +347,7 @@ export function FlightReviewDashboard({ eventId }: FlightReviewDashboardProps) {
                                 <SelectContent>
                                   {group.availableFlights.map((flight) => (
                                     <SelectItem key={flight.id} value={flight.id.toString()}>
-                                      {flight.name}
+                                      {formatFlightName(flight.name)}
                                     </SelectItem>
                                   ))}
                                 </SelectContent>
@@ -363,7 +383,7 @@ export function FlightReviewDashboard({ eventId }: FlightReviewDashboardProps) {
                             // Display Mode
                             <div className="flex items-center gap-2">
                               <Badge className="bg-emerald-600 text-white">
-                                {team.selectedBracketName}
+                                {team.selectedBracketName ? formatFlightName(team.selectedBracketName) : 'Assigned'}
                               </Badge>
                               <Button
                                 size="sm"
@@ -397,7 +417,7 @@ export function FlightReviewDashboard({ eventId }: FlightReviewDashboardProps) {
               <CardContent>
                 <div className="flex items-center justify-between">
                   <div className="text-sm text-slate-300">
-                    Flight Options: {group.availableFlights.map(f => f.name).join(', ')}
+                    Flight Options: {group.availableFlights.map(f => formatFlightName(f.name)).join(', ')}
                   </div>
                   <div className="flex gap-2">
                     <Badge variant={group.teamsWithoutSelection.length === 0 ? "default" : "destructive"} 
