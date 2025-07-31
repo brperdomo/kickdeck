@@ -7,7 +7,7 @@ import {
   teams 
 } from '@db/schema';
 import { eq, and } from 'drizzle-orm';
-import { isAdmin } from '../../middleware/index.js';
+import { isAdmin } from '../../middleware/auth.js';
 
 const router = Router();
 

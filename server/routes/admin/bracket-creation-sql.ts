@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { db } from '@db';
 import { sql } from 'drizzle-orm';
-import { isAdmin } from '../../middleware/index.js';
+import { isAdmin } from '../../middleware/auth.js';
 
 const router = Router();
 router.use(isAdmin);
