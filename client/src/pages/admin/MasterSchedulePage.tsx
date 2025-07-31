@@ -6,18 +6,19 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { 
   Calendar, Zap, Eye, Settings, ArrowRight, 
-  CheckCircle, Clock, Users, Trophy, ArrowLeft, Home, FileText 
+  CheckCircle, Clock, Users, Trophy, ArrowLeft, Home, FileText, Plane 
 } from 'lucide-react';
 import { UnifiedScheduleSetup } from '@/components/admin/scheduling/UnifiedScheduleSetup';
 import { ScheduleViewer } from '@/components/admin/scheduling/ScheduleViewerFixed';
 import DragDropCalendarScheduler from '@/components/admin/scheduling/DragDropCalendarScheduler';
 import GameCardsGenerator from '@/components/admin/scheduling/GameCardsGenerator';
 import AgeGroupManagementPanel from '@/components/admin/scheduling/AgeGroupManagementPanel';
+import { FlightReviewDashboard } from '@/components/admin/scheduling/FlightReviewDashboard';
 
 export default function MasterSchedulePage() {
   const { eventId } = useParams<{ eventId: string }>();
   const [, setLocation] = useLocation();
-  const [currentView, setCurrentView] = useState<'quick' | 'view' | 'calendar' | 'cards' | 'manage'>('quick');
+  const [currentView, setCurrentView] = useState<'quick' | 'view' | 'calendar' | 'cards' | 'manage' | 'flights'>('flights');
 
   if (!eventId) {
     return <div>Event ID not found</div>;
@@ -64,6 +65,18 @@ export default function MasterSchedulePage() {
       {/* MatchPro Navigation Tabs */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex gap-3 mb-8">
+          <Button
+            variant={currentView === 'flights' ? 'default' : 'outline'}
+            onClick={() => setCurrentView('flights')}
+            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${
+              currentView === 'flights' 
+                ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg scale-105' 
+                : 'bg-white/90 text-gray-700 hover:bg-white hover:shadow-md border-2 border-gray-200'
+            }`}
+          >
+            <Plane className="h-5 w-5" />
+            Flight Review
+          </Button>
           <Button
             variant={currentView === 'quick' ? 'default' : 'outline'}
             onClick={() => setCurrentView('quick')}
@@ -127,7 +140,18 @@ export default function MasterSchedulePage() {
         </div>
 
         {/* Content Area */}
-        {currentView === 'quick' ? (
+        {currentView === 'flights' ? (
+          <div className="space-y-6">
+            <Alert className="border-blue-200 bg-blue-50">
+              <Plane className="h-4 w-4 text-blue-600" />
+              <AlertDescription className="text-blue-800">
+                <strong>Flight Review:</strong> Organize teams into flights based on registration preferences. 
+                Review team selections, assign unassigned teams, and lock flights before scheduling.
+              </AlertDescription>
+            </Alert>
+            <FlightReviewDashboard eventId={eventId} />
+          </div>
+        ) : currentView === 'quick' ? (
           <div className="space-y-6">
             <Alert className="border-blue-200 bg-blue-50">
               <Zap className="h-4 w-4 text-blue-600" />

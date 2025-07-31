@@ -94,6 +94,7 @@ import trueAutomatedSchedulingRouter from "./routes/admin/true-automated-schedul
 import tournamentParametersRouter from "./routes/admin/tournament-parameters";
 import flightsRouter from "./routes/admin/flights";
 import bracketsRouter from "./routes/admin/brackets";
+import flightReviewRouter from "./routes/admin/flight-review";
 import gamesRouter from "./routes/admin/games";
 import fieldsRouter from "./routes/admin/fields";
 import schedulePublicationRouter from "./routes/admin/schedule-publication";
@@ -1109,6 +1110,7 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/tournaments', isAdmin, tournamentsWithSchedulesRouter); // All tournaments with schedule data
     app.use('/api/admin/games', isAdmin, gamesAllTournamentsRouter); // Games across all tournaments
     app.use('/api/admin/events', isAdmin, flightsRouter); // Flight creation and management
+    app.use('/api/admin', isAdmin, flightReviewRouter); // Flight review and team assignment
     app.use('/api/admin/events', isAdmin, adminBracketsRouter); // Bracket generation and management
     app.use('/api/admin/events', isAdmin, adminGamesRouter); // Game scheduling and management
     app.use('/api/admin/events', isAdmin, fieldsRouter); // Field assignment and management
