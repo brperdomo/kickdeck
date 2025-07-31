@@ -1,67 +1,67 @@
 {
-  "variant": "vibrant",
-  "primary": "hsl(220 85% 60%)",
-  "appearance": "light",
-  "radius": 0.75,
+  "variant": "professional",
+  "primary": "hsl(220 91% 60%)",
+  "appearance": "dark", 
+  "radius": 0.5,
   "colors": {
-    "background": "hsl(210 20% 98%)",
-    "foreground": "hsl(220 15% 15%)",
-    "card": "hsl(0 0% 100%)",
-    "card-foreground": "hsl(220 15% 15%)",
-    "popover": "hsl(0 0% 100%)",
-    "popover-foreground": "hsl(220 15% 15%)",
-    "primary": "hsl(220 85% 60%)",
-    "primary-foreground": "hsl(0 0% 100%)",
-    "secondary": "hsl(210 40% 96.1%)",
-    "secondary-foreground": "hsl(220 15% 25%)",
-    "muted": "hsl(210 40% 96.1%)",
-    "muted-foreground": "hsl(215.4 16.3% 46.9%)",
-    "accent": "hsl(270 70% 65%)",
-    "accent-foreground": "hsl(0 0% 100%)",
-    "destructive": "hsl(0 70% 58%)",
-    "destructive-foreground": "hsl(0 0% 100%)",
-    "border": "hsl(214.3 31.8% 91.4%)",
-    "input": "hsl(214.3 31.8% 91.4%)",
-    "ring": "hsl(220 85% 60%)",
-    "success": "hsl(142 76% 42%)",
+    "background": "hsl(220 13% 9%)",
+    "foreground": "hsl(220 9% 86%)",
+    "card": "hsl(220 13% 11%)",
+    "card-foreground": "hsl(220 9% 86%)",
+    "popover": "hsl(220 13% 11%)",
+    "popover-foreground": "hsl(220 9% 86%)",
+    "primary": "hsl(220 91% 60%)",
+    "primary-foreground": "hsl(220 13% 9%)",
+    "secondary": "hsl(220 13% 14%)",
+    "secondary-foreground": "hsl(220 9% 86%)",
+    "muted": "hsl(220 13% 14%)",
+    "muted-foreground": "hsl(220 9% 60%)",
+    "accent": "hsl(220 13% 14%)",
+    "accent-foreground": "hsl(220 9% 86%)",
+    "destructive": "hsl(0 62.8% 50%)",
+    "destructive-foreground": "hsl(220 9% 86%)",
+    "border": "hsl(220 13% 18%)",
+    "input": "hsl(220 13% 14%)",
+    "ring": "hsl(220 91% 60%)",
+    "success": "hsl(142 70% 45%)",
     "warning": "hsl(38 92% 55%)",
-    "info": "hsl(210 90% 65%)"
+    "info": "hsl(220 91% 60%)"
   },
   "custom": {
     "scheduling": {
       "flightCard": {
-        "boys": "linear-gradient(135deg, hsl(220 85% 60%) 0%, hsl(210 80% 65%) 100%)",
-        "girls": "linear-gradient(135deg, hsl(330 75% 60%) 0%, hsl(320 70% 65%) 100%)",
-        "mixed": "linear-gradient(135deg, hsl(270 70% 60%) 0%, hsl(260 65% 65%) 100%)"
+        "boys": "linear-gradient(135deg, hsl(220 91% 60%) 0%, hsl(210 85% 65%) 100%)",
+        "girls": "linear-gradient(135deg, hsl(280 70% 60%) 0%, hsl(270 65% 65%) 100%)",
+        "mixed": "linear-gradient(135deg, hsl(260 70% 60%) 0%, hsl(250 65% 65%) 100%)"
       },
       "stepCard": {
-        "completed": "linear-gradient(135deg, hsl(142 76% 42%) 0%, hsl(135 70% 48%) 100%)",
-        "active": "linear-gradient(135deg, hsl(220 85% 60%) 0%, hsl(210 80% 65%) 100%)",
-        "pending": "linear-gradient(135deg, hsl(210 40% 96%) 0%, hsl(220 20% 94%) 100%)"
+        "completed": "linear-gradient(135deg, hsl(142 70% 45%) 0%, hsl(135 65% 50%) 100%)",
+        "active": "linear-gradient(135deg, hsl(220 91% 60%) 0%, hsl(210 85% 65%) 100%)",
+        "pending": "linear-gradient(135deg, hsl(220 13% 14%) 0%, hsl(220 13% 18%) 100%)"
       },
       "brackets": {
         "gold": "linear-gradient(135deg, hsl(45 90% 60%) 0%, hsl(40 85% 65%) 100%)",
-        "silver": "linear-gradient(135deg, hsl(0 0% 75%) 0%, hsl(0 0% 85%) 100%)",
+        "silver": "linear-gradient(135deg, hsl(220 9% 60%) 0%, hsl(220 9% 70%) 100%)",
         "bronze": "linear-gradient(135deg, hsl(25 75% 60%) 0%, hsl(20 70% 65%) 100%)"
       }
     },
     "adminNav": {
-      "background": "linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(210 20% 98%) 100%)",
-      "text": "hsl(220 15% 25%)",
-      "active": "hsl(220 85% 60%)",
-      "hover": "hsl(210 40% 96.1%)"
+      "background": "hsl(220 13% 11%)",
+      "text": "hsl(220 9% 86%)",
+      "active": "hsl(220 91% 60%)",
+      "hover": "hsl(220 13% 14%)"
     },
     "gradients": {
-      "primary": "linear-gradient(135deg, hsl(220 85% 60%) 0%, hsl(270 70% 65%) 100%)",
-      "sidebar": "linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(210 20% 98%) 100%)",
-      "card": "linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(210 20% 99%) 100%)",
-      "hero": "linear-gradient(135deg, hsl(220 85% 60%) 0%, hsl(270 70% 65%) 50%, hsl(330 75% 60%) 100%)"
+      "primary": "linear-gradient(135deg, hsl(220 91% 60%) 0%, hsl(260 70% 60%) 100%)",
+      "sidebar": "linear-gradient(180deg, hsl(220 13% 11%) 0%, hsl(220 13% 9%) 100%)",
+      "card": "linear-gradient(135deg, hsl(220 13% 11%) 0%, hsl(220 13% 13%) 100%)",
+      "hero": "linear-gradient(135deg, hsl(220 13% 9%) 0%, hsl(220 13% 11%) 50%, hsl(220 13% 13%) 100%)"
     },
     "shadows": {
-      "card": "0 8px 32px rgba(59, 130, 246, 0.12)",
+      "card": "0 8px 32px rgba(0, 0, 0, 0.3)",
       "button": "0 4px 16px rgba(59, 130, 246, 0.25)",
-      "navbar": "0 4px 20px rgba(0, 0, 0, 0.08)",
-      "step": "0 12px 40px rgba(59, 130, 246, 0.15)"
+      "navbar": "0 4px 20px rgba(0, 0, 0, 0.5)",
+      "step": "0 12px 40px rgba(0, 0, 0, 0.4)"
     }
   }
 }
