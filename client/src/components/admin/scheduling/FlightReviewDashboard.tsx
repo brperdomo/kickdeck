@@ -132,10 +132,10 @@ export function FlightReviewDashboard({ eventId }: FlightReviewDashboardProps) {
 
   const getFlightLevelBadge = (level: string) => {
     const colors = {
-      elite: 'bg-yellow-500 text-white',
-      premier: 'bg-blue-500 text-white', 
-      classic: 'bg-green-500 text-white',
-      intermediate: 'bg-gray-500 text-white'
+      elite: 'bg-amber-500 text-white border-amber-400',
+      premier: 'bg-blue-500 text-white border-blue-400', 
+      classic: 'bg-emerald-500 text-white border-emerald-400',
+      intermediate: 'bg-slate-500 text-white border-slate-400'
     };
     return (
       <Badge className={colors[level as keyof typeof colors] || colors.intermediate}>
@@ -145,7 +145,7 @@ export function FlightReviewDashboard({ eventId }: FlightReviewDashboardProps) {
   };
 
   if (isLoading) {
-    return <div className="flex justify-center p-8">Loading flight data...</div>;
+    return <div className="flex justify-center p-8 text-slate-300">Loading flight data...</div>;
   }
 
   const totalTeamsWithoutSelection = flightData?.reduce((sum, group) => sum + group.teamsWithoutSelection.length, 0) || 0;
@@ -156,22 +156,22 @@ export function FlightReviewDashboard({ eventId }: FlightReviewDashboardProps) {
       {/* Header with Overview */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">Flight Review Dashboard</h2>
-          <p className="text-muted-foreground">
+          <h2 className="text-2xl font-bold text-white">Flight Review Dashboard</h2>
+          <p className="text-slate-300">
             Review team flight selections and organize flights before scheduling
           </p>
         </div>
         <div className="flex gap-4">
-          <Card>
+          <Card className="bg-slate-800 border-slate-700">
             <CardContent className="pt-4">
-              <div className="text-2xl font-bold text-green-600">{totalTeamsWithSelection}</div>
-              <div className="text-sm text-muted-foreground">Teams with Flight Selection</div>
+              <div className="text-2xl font-bold text-emerald-400">{totalTeamsWithSelection}</div>
+              <div className="text-sm text-slate-300">Teams with Flight Selection</div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="bg-slate-800 border-slate-700">
             <CardContent className="pt-4">
-              <div className="text-2xl font-bold text-orange-600">{totalTeamsWithoutSelection}</div>
-              <div className="text-sm text-muted-foreground">Teams Need Assignment</div>
+              <div className="text-2xl font-bold text-amber-400">{totalTeamsWithoutSelection}</div>
+              <div className="text-sm text-slate-300">Teams Need Assignment</div>
             </CardContent>
           </Card>
         </div>
@@ -182,6 +182,7 @@ export function FlightReviewDashboard({ eventId }: FlightReviewDashboardProps) {
         <Button 
           onClick={handleBulkAssign}
           disabled={Object.keys(selectedFlight).length === 0 || assignTeamsMutation.isPending}
+          className="bg-blue-600 hover:bg-blue-500 text-white"
         >
           {Object.keys(selectedFlight).length > 0 && editingTeamId ? 
             `Update Flight Assignment (${Object.keys(selectedFlight).length})` :
@@ -192,6 +193,7 @@ export function FlightReviewDashboard({ eventId }: FlightReviewDashboardProps) {
           variant="outline"
           onClick={() => lockFlightsMutation.mutate()}
           disabled={totalTeamsWithoutSelection > 0 || lockFlightsMutation.isPending}
+          className="border-slate-600 text-slate-200 hover:bg-slate-700 hover:border-slate-500"
         >
           Lock Flights & Proceed to Scheduling
         </Button>
@@ -210,16 +212,16 @@ export function FlightReviewDashboard({ eventId }: FlightReviewDashboardProps) {
 
       {/* Flight Review by Age Group */}
       <Tabs defaultValue="needs-assignment" className="w-full">
-        <TabsList>
-          <TabsTrigger value="needs-assignment">
+        <TabsList className="bg-slate-800 border-slate-700">
+          <TabsTrigger value="needs-assignment" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white text-slate-300">
             <AlertCircle className="h-4 w-4 mr-2" />
             Needs Assignment ({totalTeamsWithoutSelection})
           </TabsTrigger>
-          <TabsTrigger value="assigned">
+          <TabsTrigger value="assigned" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white text-slate-300">
             <Edit3 className="h-4 w-4 mr-2" />
             Flight Reassignment ({totalTeamsWithSelection})
           </TabsTrigger>
-          <TabsTrigger value="all-groups">
+          <TabsTrigger value="all-groups" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white text-slate-300">
             <Users className="h-4 w-4 mr-2" />
             All Age Groups
           </TabsTrigger>
@@ -227,10 +229,10 @@ export function FlightReviewDashboard({ eventId }: FlightReviewDashboardProps) {
 
         <TabsContent value="needs-assignment" className="space-y-4">
           {flightData?.filter(group => group.teamsWithoutSelection.length > 0).map((group) => (
-            <Card key={`${group.ageGroup}-${group.gender}`}>
+            <Card key={`${group.ageGroup}-${group.gender}`} className="bg-slate-800 border-slate-700">
               <CardHeader>
-                <CardTitle>{group.ageGroup} {group.gender}</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-white">{group.ageGroup} {group.gender}</CardTitle>
+                <CardDescription className="text-slate-300">
                   {group.teamsWithoutSelection.length} teams need flight assignment
                 </CardDescription>
               </CardHeader>
@@ -238,11 +240,11 @@ export function FlightReviewDashboard({ eventId }: FlightReviewDashboardProps) {
                 <div className="space-y-4">
                   {/* Available Flights */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                    <h4 className="col-span-full font-medium">Available Flights:</h4>
+                    <h4 className="col-span-full font-medium text-white">Available Flights:</h4>
                     {group.availableFlights.map((flight) => (
-                      <div key={flight.id} className="flex items-center gap-2 p-2 border rounded">
+                      <div key={flight.id} className="flex items-center gap-2 p-2 border border-slate-600 rounded bg-slate-700">
                         {getFlightLevelBadge(flight.level)}
-                        <span className="font-medium">{flight.name}</span>
+                        <span className="font-medium text-slate-200">{flight.name}</span>
                       </div>
                     ))}
                   </div>
@@ -250,10 +252,10 @@ export function FlightReviewDashboard({ eventId }: FlightReviewDashboardProps) {
                   {/* Teams Needing Assignment */}
                   <div className="grid gap-2">
                     {group.teamsWithoutSelection.map((team) => (
-                      <div key={team.id} className="flex items-center justify-between p-3 border rounded">
+                      <div key={team.id} className="flex items-center justify-between p-3 border border-slate-600 rounded bg-slate-700">
                         <div>
-                          <span className="font-medium">{team.name}</span>
-                          <Badge variant="outline" className="ml-2">{team.status}</Badge>
+                          <span className="font-medium text-slate-200">{team.name}</span>
+                          <Badge variant="outline" className="ml-2 border-slate-500 text-slate-300">{team.status}</Badge>
                         </div>
                         <div className="flex items-center gap-2">
                           <Select
@@ -283,10 +285,10 @@ export function FlightReviewDashboard({ eventId }: FlightReviewDashboardProps) {
 
         <TabsContent value="assigned" className="space-y-4">
           {flightData?.filter(group => group.teamsWithSelection.length > 0).map((group) => (
-            <Card key={`${group.ageGroup}-${group.gender}`}>
+            <Card key={`${group.ageGroup}-${group.gender}`} className="bg-slate-800 border-slate-700">
               <CardHeader>
-                <CardTitle>{group.ageGroup} {group.gender}</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-white">{group.ageGroup} {group.gender}</CardTitle>
+                <CardDescription className="text-slate-300">
                   {group.teamsWithSelection.length} teams with flight assignments • Click edit icon to reassign
                 </CardDescription>
               </CardHeader>
@@ -294,11 +296,11 @@ export function FlightReviewDashboard({ eventId }: FlightReviewDashboardProps) {
                 <div className="space-y-4">
                   {/* Available Flights for Reassignment */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                    <h4 className="col-span-full font-medium">Available Flights for Reassignment:</h4>
+                    <h4 className="col-span-full font-medium text-white">Available Flights for Reassignment:</h4>
                     {group.availableFlights.map((flight) => (
-                      <div key={flight.id} className="flex items-center gap-2 p-2 border rounded">
+                      <div key={flight.id} className="flex items-center gap-2 p-2 border border-slate-600 rounded bg-slate-700">
                         {getFlightLevelBadge(flight.level)}
-                        <span className="font-medium">{flight.name}</span>
+                        <span className="font-medium text-slate-200">{flight.name}</span>
                       </div>
                     ))}
                   </div>
@@ -306,10 +308,10 @@ export function FlightReviewDashboard({ eventId }: FlightReviewDashboardProps) {
                   {/* Teams with Current Assignments */}
                   <div className="grid gap-2">
                     {group.teamsWithSelection.map((team) => (
-                      <div key={team.id} className="flex items-center justify-between p-3 border rounded bg-green-50">
+                      <div key={team.id} className="flex items-center justify-between p-3 border border-slate-600 rounded bg-slate-700">
                         <div>
-                          <span className="font-medium">{team.name}</span>
-                          <Badge variant="outline" className="ml-2">{team.status}</Badge>
+                          <span className="font-medium text-slate-200">{team.name}</span>
+                          <Badge variant="outline" className="ml-2 border-slate-500 text-slate-300">{team.status}</Badge>
                         </div>
                         <div className="flex items-center gap-2">
                           {editingTeamId === team.id ? (
@@ -360,7 +362,7 @@ export function FlightReviewDashboard({ eventId }: FlightReviewDashboardProps) {
                           ) : (
                             // Display Mode
                             <div className="flex items-center gap-2">
-                              <Badge className="bg-green-600 text-white">
+                              <Badge className="bg-emerald-600 text-white">
                                 {team.selectedBracketName}
                               </Badge>
                               <Button
@@ -385,20 +387,21 @@ export function FlightReviewDashboard({ eventId }: FlightReviewDashboardProps) {
 
         <TabsContent value="all-groups" className="space-y-4">
           {flightData?.map((group) => (
-            <Card key={`${group.ageGroup}-${group.gender}`}>
+            <Card key={`${group.ageGroup}-${group.gender}`} className="bg-slate-800 border-slate-700">
               <CardHeader>
-                <CardTitle>{group.ageGroup} {group.gender}</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-white">{group.ageGroup} {group.gender}</CardTitle>
+                <CardDescription className="text-slate-300">
                   {group.totalTeams} total teams | {group.teamsWithSelection.length} assigned | {group.teamsWithoutSelection.length} unassigned
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-between">
-                  <div className="text-sm text-muted-foreground">
+                  <div className="text-sm text-slate-300">
                     Flight Options: {group.availableFlights.map(f => f.name).join(', ')}
                   </div>
                   <div className="flex gap-2">
-                    <Badge variant={group.teamsWithoutSelection.length === 0 ? "default" : "destructive"}>
+                    <Badge variant={group.teamsWithoutSelection.length === 0 ? "default" : "destructive"} 
+                           className={group.teamsWithoutSelection.length === 0 ? "bg-emerald-600 text-white" : "bg-red-600 text-white"}>
                       {group.teamsWithoutSelection.length === 0 ? "Complete" : "Needs Work"}
                     </Badge>
                   </div>
