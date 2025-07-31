@@ -1,11 +1,12 @@
 import { Router } from 'express';
 import { db } from '@db';
 import { isAdmin } from '../../middleware';
-import { eq, and } from 'drizzle-orm';
+import { eq, and, sql } from 'drizzle-orm';
 import { 
   eventBrackets, 
   gameFormats, 
-  events 
+  events,
+  teams
 } from '@db/schema';
 
 const router = Router();
@@ -56,12 +57,12 @@ router.get('/events/:eventId/flight-formats', isAdmin, async (req, res) => {
       }
     });
 
-    const flightData = flightsWithFormats.map(bracket => ({
+    const flightData = await Promise.all(flightsWithFormats.map(async bracket => ({
       flightId: bracket.id,
       flightName: bracket.name,
       ageGroup: bracket.level, // Using level as age group
       gender: 'Mixed', // Default gender, could be extracted from description
-      teamCount: 0, // Will need to be calculated separately
+      teamCount: await getTeamCountForFlight(eventId, bracket.id),
       currentFormat: bracket.gameFormat ? {
         id: bracket.gameFormat.id,
         gameLength: bracket.gameFormat.gameLength,
@@ -72,7 +73,7 @@ router.get('/events/:eventId/flight-formats', isAdmin, async (req, res) => {
         templateName: bracket.gameFormat.templateName || undefined
         // bracketStructure will be added later when we extend the schema
       } : undefined
-    }));
+    })));
 
     res.json(flightData);
   } catch (error) {
@@ -220,5 +221,24 @@ router.post('/events/:eventId/flight-formats/lock', isAdmin, async (req, res) =>
     res.status(500).json({ error: 'Failed to lock formats' });
   }
 });
+
+// Helper function to get team count for a specific flight
+async function getTeamCountForFlight(eventId: string, flightId: number): Promise<number> {
+  try {
+    const result = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(teams)
+      .where(and(
+        eq(teams.eventId, parseInt(eventId)),
+        eq(teams.bracketId, flightId),
+        eq(teams.status, 'approved')
+      ));
+    
+    return result[0]?.count || 0;
+  } catch (error) {
+    console.error('Error counting teams for flight:', error);
+    return 0;
+  }
+}
 
 export default router;

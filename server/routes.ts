@@ -38,6 +38,7 @@ import memberMergeRouter from "./routes/admin/member-merge";
 import feeAdjustmentsRouter from "./routes/admin/fee-adjustments";
 import gameMetadataRouter from "./routes/admin/game-metadata";
 import gameFormatsRouter from "./routes/admin/game-formats";
+import bracketCreationSqlRouter from "./routes/admin/bracket-creation-fixed";
 import adminBracketsRouter from "./routes/admin/brackets";
 import fieldCapacityRouter from "./routes/admin/field-capacity";
 import intelligentSchedulingRouter from "./routes/admin/intelligent-scheduling";
@@ -97,7 +98,7 @@ import flightsRouter from "./routes/admin/flights";
 import bracketsRouter from "./routes/admin/brackets";
 import flightReviewRouter from "./routes/admin/flight-review";
 import flightFormatsRouter from "./routes/admin/flight-formats";
-import bracketCreationRouter from "./routes/admin/bracket-creation-sql";
+
 import gamesRouter from "./routes/admin/games";
 import fieldsRouter from "./routes/admin/fields";
 import schedulePublicationRouter from "./routes/admin/schedule-publication";
@@ -933,6 +934,7 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin', isAdmin, intelligentSchedulingRouter); // Intelligent scheduling system router
     app.use('/api/admin/events', isAdmin, gameMetadataRouter); // Game metadata and scheduling rules router
     app.use('/api/admin', isAdmin, gameFormatsRouter); // Game format configuration router
+    app.use('/api/admin/events', isAdmin, bracketCreationSqlRouter); // Bracket creation and team assignment router
     app.use('/api/admin/games', isAdmin, gamesRouter); // Game management router
     app.use('/api/admin/schedule', isAdmin, scheduleManagementRouter); // Schedule management with drag-and-drop
     app.use('/api/admin/scheduling', isAdmin, schedulingSimulationRouter); // Advanced scheduling simulation and analysis
