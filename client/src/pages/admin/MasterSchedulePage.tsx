@@ -27,9 +27,9 @@ export default function MasterSchedulePage() {
   }
 
   return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(135deg, hsl(220 85% 60%) 0%, hsl(270 70% 65%) 50%, hsl(330 75% 60%) 100%)' }}>
+    <div className="min-h-screen bg-background">
       {/* MatchPro Header */}
-      <div className="bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-lg">
+      <div className="bg-card/95 backdrop-blur-sm border-b border-border shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -37,16 +37,16 @@ export default function MasterSchedulePage() {
                 variant="outline"
                 size="sm"
                 onClick={() => setLocation('/admin')}
-                className="flex items-center gap-2 hover:bg-blue-50 border-blue-200"
+                className="flex items-center gap-2 hover:bg-muted border-border"
               >
                 <ArrowLeft className="h-4 w-4" />
                 Admin Dashboard
               </Button>
               <div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                <h1 className="text-3xl font-bold text-foreground">
                   Master Schedule Control Center
                 </h1>
-                <p className="text-gray-600 mt-1 font-medium">
+                <p className="text-muted-foreground mt-1 font-medium">
                   Professional tournament scheduling with intelligent field distribution
                 </p>
               </div>
@@ -54,7 +54,7 @@ export default function MasterSchedulePage() {
             <div className="flex items-center gap-3">
               <Badge 
                 variant="secondary" 
-                className="text-sm bg-gradient-to-r from-blue-100 to-purple-100 text-blue-800 border-blue-200"
+                className="text-sm"
               >
                 <Trophy className="h-3 w-3 mr-1" />
                 Event {eventId}
@@ -71,10 +71,10 @@ export default function MasterSchedulePage() {
           <Button
             variant={currentView === 'flights' ? 'default' : 'outline'}
             onClick={() => setCurrentView('flights')}
-            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${
+            className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all duration-200 ${
               currentView === 'flights' 
-                ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg scale-105' 
-                : 'bg-white/90 text-gray-700 hover:bg-white hover:shadow-md border-2 border-gray-200'
+                ? 'bg-primary text-primary-foreground shadow-lg' 
+                : 'bg-card text-card-foreground hover:bg-muted border border-border'
             }`}
           >
             <Plane className="h-5 w-5" />
@@ -85,10 +85,10 @@ export default function MasterSchedulePage() {
           <Button
             variant={currentView === 'formats' ? 'default' : 'outline'}
             onClick={() => setCurrentView('formats')}
-            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${
+            className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all duration-200 ${
               currentView === 'formats' 
-                ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg scale-105' 
-                : 'bg-white/90 text-gray-700 hover:bg-white hover:shadow-md border-2 border-gray-200'
+                ? 'bg-primary text-primary-foreground shadow-lg' 
+                : 'bg-card text-card-foreground hover:bg-muted border border-border'
             }`}
           >
             <Settings className="h-5 w-5" />
@@ -99,10 +99,10 @@ export default function MasterSchedulePage() {
           <Button
             variant={currentView === 'brackets' ? 'default' : 'outline'}
             onClick={() => setCurrentView('brackets')}
-            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${
+            className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all duration-200 ${
               currentView === 'brackets' 
-                ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg scale-105' 
-                : 'bg-white/90 text-gray-700 hover:bg-white hover:shadow-md border-2 border-gray-200'
+                ? 'bg-primary text-primary-foreground shadow-lg' 
+                : 'bg-card text-card-foreground hover:bg-muted border border-border'
             }`}
           >
             <Trophy className="h-5 w-5" />
@@ -113,10 +113,10 @@ export default function MasterSchedulePage() {
           <Button
             variant={currentView === 'quick' ? 'default' : 'outline'}
             onClick={() => setCurrentView('quick')}
-            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${
+            className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all duration-200 ${
               currentView === 'quick' 
-                ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg scale-105' 
-                : 'bg-white/90 text-gray-700 hover:bg-white hover:shadow-md border-2 border-gray-200'
+                ? 'bg-primary text-primary-foreground shadow-lg' 
+                : 'bg-card text-card-foreground hover:bg-muted border border-border'
             }`}
           >
             <Zap className="h-5 w-5" />
@@ -127,10 +127,10 @@ export default function MasterSchedulePage() {
           <Button
             variant={currentView === 'view' ? 'default' : 'outline'}
             onClick={() => setCurrentView('view')}
-            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${
+            className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all duration-200 ${
               currentView === 'view' 
-                ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg scale-105' 
-                : 'bg-white/90 text-gray-700 hover:bg-white hover:shadow-md border-2 border-gray-200'
+                ? 'bg-primary text-primary-foreground shadow-lg' 
+                : 'bg-card text-card-foreground hover:bg-muted border border-border'
             }`}
           >
             <Eye className="h-5 w-5" />
@@ -140,10 +140,10 @@ export default function MasterSchedulePage() {
           <Button
             variant={currentView === 'calendar' ? 'default' : 'outline'}
             onClick={() => setCurrentView('calendar')}
-            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${
+            className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all duration-200 ${
               currentView === 'calendar' 
-                ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg scale-105' 
-                : 'bg-white/90 text-gray-700 hover:bg-white hover:shadow-md border-2 border-gray-200'
+                ? 'bg-primary text-primary-foreground shadow-lg' 
+                : 'bg-card text-card-foreground hover:bg-muted border border-border'
             }`}
           >
             <Calendar className="h-5 w-5" />
@@ -153,10 +153,10 @@ export default function MasterSchedulePage() {
           <Button
             variant={currentView === 'cards' ? 'default' : 'outline'}
             onClick={() => setCurrentView('cards')}
-            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${
+            className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all duration-200 ${
               currentView === 'cards' 
-                ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg scale-105' 
-                : 'bg-white/90 text-gray-700 hover:bg-white hover:shadow-md border-2 border-gray-200'
+                ? 'bg-primary text-primary-foreground shadow-lg' 
+                : 'bg-card text-card-foreground hover:bg-muted border border-border'
             }`}
           >
             <FileText className="h-5 w-5" />
@@ -167,9 +167,9 @@ export default function MasterSchedulePage() {
         {/* Content Area */}
         {currentView === 'flights' ? (
           <div className="space-y-6">
-            <Alert className="border-blue-200 bg-blue-50">
-              <Plane className="h-4 w-4 text-blue-600" />
-              <AlertDescription className="text-blue-800">
+            <Alert className="border-border bg-muted">
+              <Plane className="h-4 w-4 text-primary" />
+              <AlertDescription className="text-foreground">
                 <strong>Phase 1 - Flight Management:</strong> Organize teams into flights based on registration preferences. 
                 Review team selections, assign unassigned teams, and prepare for game format configuration.
               </AlertDescription>
@@ -178,9 +178,9 @@ export default function MasterSchedulePage() {
           </div>
         ) : currentView === 'quick' ? (
           <div className="space-y-6">
-            <Alert className="border-blue-200 bg-blue-50">
-              <Zap className="h-4 w-4 text-blue-600" />
-              <AlertDescription className="text-blue-800">
+            <Alert className="border-border bg-muted">
+              <Zap className="h-4 w-4 text-primary" />
+              <AlertDescription className="text-foreground">
                 <strong>Phase 4 - Automated Scheduling:</strong> Generate complete tournament schedules automatically. 
                 The system will create games for all flights with intelligent field distribution and conflict avoidance.
               </AlertDescription>
@@ -189,9 +189,9 @@ export default function MasterSchedulePage() {
           </div>
         ) : currentView === 'view' ? (
           <div className="space-y-6">
-            <Alert className="border-green-200 bg-green-50">
-              <Eye className="h-4 w-4 text-green-600" />
-              <AlertDescription className="text-green-800">
+            <Alert className="border-border bg-muted">
+              <Eye className="h-4 w-4 text-primary" />
+              <AlertDescription className="text-foreground">
                 <strong>Schedule Viewer:</strong> View all generated games, filter by date/team/field, 
                 and export schedules. All schedules generated via Quick Generator appear here.
               </AlertDescription>
@@ -200,9 +200,9 @@ export default function MasterSchedulePage() {
           </div>
         ) : currentView === 'calendar' ? (
           <div className="space-y-6">
-            <Alert className="border-purple-200 bg-purple-50">
-              <Calendar className="h-4 w-4 text-purple-600" />
-              <AlertDescription className="text-purple-800">
+            <Alert className="border-border bg-muted">
+              <Calendar className="h-4 w-4 text-primary" />
+              <AlertDescription className="text-foreground">
                 <strong>Drag & Drop Calendar:</strong> Fine-tune your tournament schedule by dragging games 
                 between fields and time slots. Perfect for optimizing field usage and resolving conflicts.
               </AlertDescription>
@@ -211,9 +211,9 @@ export default function MasterSchedulePage() {
           </div>
         ) : currentView === 'cards' ? (
           <div className="space-y-6">
-            <Alert className="border-orange-200 bg-orange-50">
-              <FileText className="h-4 w-4 text-orange-600" />
-              <AlertDescription className="text-orange-800">
+            <Alert className="border-border bg-muted">
+              <FileText className="h-4 w-4 text-primary" />
+              <AlertDescription className="text-foreground">
                 <strong>Game Cards Generator:</strong> Create professional PDF game cards with team information, 
                 score tracking, disciplinary sections, and QR codes for digital score and card reporting.
               </AlertDescription>
@@ -222,9 +222,9 @@ export default function MasterSchedulePage() {
           </div>
         ) : currentView === 'formats' ? (
           <div className="space-y-6">
-            <Alert className="border-purple-200 bg-purple-50">
-              <Settings className="h-4 w-4 text-purple-600" />
-              <AlertDescription className="text-purple-800">
+            <Alert className="border-border bg-muted">
+              <Settings className="h-4 w-4 text-primary" />
+              <AlertDescription className="text-foreground">
                 <strong>Phase 2 - Game Format Configuration:</strong> Configure game lengths, field sizes, and rest periods for each flight. 
                 Use templates for quick setup or create custom formats for specific competitive levels.
               </AlertDescription>
@@ -233,9 +233,9 @@ export default function MasterSchedulePage() {
           </div>
         ) : currentView === 'brackets' ? (
           <div className="space-y-6">
-            <Alert className="border-green-200 bg-green-50">
-              <Trophy className="h-4 w-4 text-green-600" />
-              <AlertDescription className="text-green-800">
+            <Alert className="border-border bg-muted">
+              <Trophy className="h-4 w-4 text-primary" />
+              <AlertDescription className="text-foreground">
                 <strong>Phase 3 - Bracket Creation:</strong> Assign teams to flights and create tournament brackets. 
                 Auto-assign teams for balanced competition or manage assignments manually.
               </AlertDescription>
@@ -258,26 +258,26 @@ export default function MasterSchedulePage() {
 
       {/* Quick Reference Footer */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Card className="border-gray-200 bg-gray-50">
+        <Card className="border-border bg-card">
           <CardContent className="p-6">
-            <h3 className="font-semibold text-gray-800 mb-3">Quick Reference</h3>
+            <h3 className="font-semibold text-foreground mb-3">Quick Reference</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
               <div className="flex items-start gap-3">
-                <Zap className="h-4 w-4 text-blue-600 mt-0.5" />
+                <Zap className="h-4 w-4 text-primary mt-0.5" />
                 <div>
                   <strong>Generate Schedules:</strong> Use Quick Generator to create schedules 
                   for individual age groups. Each generated schedule is automatically saved.
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <Eye className="h-4 w-4 text-green-600 mt-0.5" />
+                <Eye className="h-4 w-4 text-primary mt-0.5" />
                 <div>
                   <strong>View & Manage:</strong> Use Schedule Viewer to see all generated games, 
                   filter by criteria, and export to CSV for distribution.
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <Settings className="h-4 w-4 text-green-600 mt-0.5" />
+                <Settings className="h-4 w-4 text-primary mt-0.5" />
                 <div>
                   <strong>Age Group Management:</strong> Edit team seeding and regenerate schedules 
                   for late registrations or waitlisted teams using the Manage Age Groups tab.
