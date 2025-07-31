@@ -39,6 +39,7 @@ import feeAdjustmentsRouter from "./routes/admin/fee-adjustments";
 import gameMetadataRouter from "./routes/admin/game-metadata";
 import gameFormatsRouter from "./routes/admin/game-formats";
 import bracketCreationSqlRouter from "./routes/admin/bracket-creation-fixed";
+import conflictDetectionRouter from "./routes/admin/conflict-detection";
 import adminBracketsRouter from "./routes/admin/brackets";
 import fieldCapacityRouter from "./routes/admin/field-capacity";
 import intelligentSchedulingRouter from "./routes/admin/intelligent-scheduling";
@@ -1118,7 +1119,8 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/events', isAdmin, flightsRouter); // Flight creation and management
     app.use('/api/admin', isAdmin, flightReviewRouter); // Flight review and team assignment
     app.use('/api/admin', isAdmin, flightFormatsRouter); // Game format engine and configuration
-    app.use('/api/admin/events', isAdmin, bracketCreationRouter); // Bracket creation engine
+    app.use('/api/admin/events', isAdmin, bracketCreationSqlRouter); // Bracket creation engine
+    app.use('/api/admin/events', isAdmin, conflictDetectionRouter); // Comprehensive conflict detection system
     app.use('/api/admin/events', isAdmin, adminBracketsRouter); // Bracket generation and management
     app.use('/api/admin/events', isAdmin, adminGamesRouter); // Game scheduling and management
     app.use('/api/admin/events', isAdmin, fieldsRouter); // Field assignment and management
