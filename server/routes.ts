@@ -37,6 +37,7 @@ import playersRouter from "./routes/admin/players-router";
 import memberMergeRouter from "./routes/admin/member-merge";
 import feeAdjustmentsRouter from "./routes/admin/fee-adjustments";
 import gameMetadataRouter from "./routes/admin/game-metadata";
+import gameFormatsRouter from "./routes/admin/game-formats";
 import adminBracketsRouter from "./routes/admin/brackets";
 import fieldCapacityRouter from "./routes/admin/field-capacity";
 import intelligentSchedulingRouter from "./routes/admin/intelligent-scheduling";
@@ -931,6 +932,7 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin', isAdmin, fieldCapacityRouter); // Field capacity analysis router
     app.use('/api/admin', isAdmin, intelligentSchedulingRouter); // Intelligent scheduling system router
     app.use('/api/admin/events', isAdmin, gameMetadataRouter); // Game metadata and scheduling rules router
+    app.use('/api/admin', isAdmin, gameFormatsRouter); // Game format configuration router
     app.use('/api/admin/games', isAdmin, gamesRouter); // Game management router
     app.use('/api/admin/schedule', isAdmin, scheduleManagementRouter); // Schedule management with drag-and-drop
     app.use('/api/admin/scheduling', isAdmin, schedulingSimulationRouter); // Advanced scheduling simulation and analysis
