@@ -31,9 +31,7 @@ router.get('/events/:eventId/flight-review', async (req, res) => {
             name: teams.name,
             status: teams.status,
             bracketId: teams.bracketId,
-            selectedBracketName: eventBrackets.name,
-            ageGroup: ageGroup.ageGroup,
-            gender: ageGroup.gender
+            selectedBracketName: eventBrackets.name
           })
           .from(teams)
           .innerJoin(eventBrackets, eq(teams.bracketId, eventBrackets.id))
@@ -51,10 +49,7 @@ router.get('/events/:eventId/flight-review', async (req, res) => {
             id: teams.id,
             name: teams.name,
             status: teams.status,
-            bracketId: teams.bracketId,
-            selectedBracketName: null,
-            ageGroup: ageGroup.ageGroup,
-            gender: ageGroup.gender
+            bracketId: teams.bracketId
           })
           .from(teams)
           .where(
@@ -68,8 +63,18 @@ router.get('/events/:eventId/flight-review', async (req, res) => {
         return {
           ageGroup: ageGroup.ageGroup,
           gender: ageGroup.gender,
-          teamsWithSelection,
-          teamsWithoutSelection,
+          teamsWithSelection: teamsWithSelection.map(team => ({
+            ...team,
+            ageGroup: ageGroup.ageGroup,
+            gender: ageGroup.gender,
+            selectedBracketName: team.selectedBracketName
+          })),
+          teamsWithoutSelection: teamsWithoutSelection.map(team => ({
+            ...team,
+            ageGroup: ageGroup.ageGroup,
+            gender: ageGroup.gender,
+            selectedBracketName: null
+          })),
           availableFlights: availableFlights.map(flight => ({
             id: flight.id,
             name: flight.name,
@@ -105,8 +110,7 @@ router.post('/events/:eventId/teams/bulk-flight-assign', async (req, res) => {
         await db
           .update(teams)
           .set({ 
-            bracketId: bracketId,
-            updatedAt: new Date().toISOString()
+            bracketId: bracketId
           })
           .where(eq(teams.id, teamId));
       })
