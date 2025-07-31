@@ -244,9 +244,9 @@ export default function MasterSchedulePage() {
           </div>
         ) : (
           <div className="space-y-6">
-            <Alert className="border-green-200 bg-green-50">
-              <Settings className="h-4 w-4 text-green-600" />
-              <AlertDescription className="text-green-800">
+            <Alert className="border-slate-600 bg-slate-800">
+              <Settings className="h-4 w-4 text-blue-400" />
+              <AlertDescription className="text-slate-200">
                 <strong>Age Group Management:</strong> Edit team seeding, manage existing age groups, 
                 and regenerate schedules for late registrations or waitlisted teams.
               </AlertDescription>
