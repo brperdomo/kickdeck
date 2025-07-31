@@ -66,7 +66,8 @@ export default function MasterSchedulePage() {
 
       {/* MatchPro Navigation Tabs */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="flex gap-3 mb-8">
+        <div className="flex gap-3 mb-8 flex-wrap">
+          {/* Phase 1: Flight Management */}
           <Button
             variant={currentView === 'flights' ? 'default' : 'outline'}
             onClick={() => setCurrentView('flights')}
@@ -77,8 +78,38 @@ export default function MasterSchedulePage() {
             }`}
           >
             <Plane className="h-5 w-5" />
-            Flight Review
+            1. Flight Review
           </Button>
+          
+          {/* Phase 2: Game Format Configuration */}
+          <Button
+            variant={currentView === 'formats' ? 'default' : 'outline'}
+            onClick={() => setCurrentView('formats')}
+            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${
+              currentView === 'formats' 
+                ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg scale-105' 
+                : 'bg-white/90 text-gray-700 hover:bg-white hover:shadow-md border-2 border-gray-200'
+            }`}
+          >
+            <Settings className="h-5 w-5" />
+            2. Game Formats
+          </Button>
+          
+          {/* Phase 3: Bracket Creation */}
+          <Button
+            variant={currentView === 'brackets' ? 'default' : 'outline'}
+            onClick={() => setCurrentView('brackets')}
+            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${
+              currentView === 'brackets' 
+                ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg scale-105' 
+                : 'bg-white/90 text-gray-700 hover:bg-white hover:shadow-md border-2 border-gray-200'
+            }`}
+          >
+            <Trophy className="h-5 w-5" />
+            3. Create Brackets
+          </Button>
+          
+          {/* Phase 4: Automated Scheduling */}
           <Button
             variant={currentView === 'quick' ? 'default' : 'outline'}
             onClick={() => setCurrentView('quick')}
@@ -89,8 +120,10 @@ export default function MasterSchedulePage() {
             }`}
           >
             <Zap className="h-5 w-5" />
-            Quick Generator
+            4. Auto Schedule
           </Button>
+          
+          {/* Phase 4+: Schedule Management */}
           <Button
             variant={currentView === 'view' ? 'default' : 'outline'}
             onClick={() => setCurrentView('view')}
@@ -103,6 +136,7 @@ export default function MasterSchedulePage() {
             <Eye className="h-5 w-5" />
             Schedule Viewer
           </Button>
+          
           <Button
             variant={currentView === 'calendar' ? 'default' : 'outline'}
             onClick={() => setCurrentView('calendar')}
@@ -115,6 +149,7 @@ export default function MasterSchedulePage() {
             <Calendar className="h-5 w-5" />
             Calendar Interface
           </Button>
+          
           <Button
             variant={currentView === 'cards' ? 'default' : 'outline'}
             onClick={() => setCurrentView('cards')}
@@ -127,42 +162,6 @@ export default function MasterSchedulePage() {
             <FileText className="h-5 w-5" />
             Game Cards
           </Button>
-          <Button
-            variant={currentView === 'manage' ? 'default' : 'outline'}
-            onClick={() => setCurrentView('manage')}
-            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${
-              currentView === 'manage' 
-                ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg scale-105' 
-                : 'bg-white/90 text-gray-700 hover:bg-white hover:shadow-md border-2 border-gray-200'
-            }`}
-          >
-            <Settings className="h-5 w-5" />
-            Manage Age Groups
-          </Button>
-          <Button
-            variant={currentView === 'formats' ? 'default' : 'outline'}
-            onClick={() => setCurrentView('formats')}
-            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${
-              currentView === 'formats' 
-                ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg scale-105' 
-                : 'bg-white/90 text-gray-700 hover:bg-white hover:shadow-md border-2 border-gray-200'
-            }`}
-          >
-            <Settings className="h-5 w-5" />
-            Game Formats
-          </Button>
-          <Button
-            variant={currentView === 'brackets' ? 'default' : 'outline'}
-            onClick={() => setCurrentView('brackets')}
-            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${
-              currentView === 'brackets' 
-                ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg scale-105' 
-                : 'bg-white/90 text-gray-700 hover:bg-white hover:shadow-md border-2 border-gray-200'
-            }`}
-          >
-            <Trophy className="h-5 w-5" />
-            Create Brackets
-          </Button>
         </div>
 
         {/* Content Area */}
@@ -171,8 +170,8 @@ export default function MasterSchedulePage() {
             <Alert className="border-blue-200 bg-blue-50">
               <Plane className="h-4 w-4 text-blue-600" />
               <AlertDescription className="text-blue-800">
-                <strong>Flight Review:</strong> Organize teams into flights based on registration preferences. 
-                Review team selections, assign unassigned teams, and lock flights before scheduling.
+                <strong>Phase 1 - Flight Management:</strong> Organize teams into flights based on registration preferences. 
+                Review team selections, assign unassigned teams, and prepare for game format configuration.
               </AlertDescription>
             </Alert>
             <FlightReviewDashboard eventId={eventId} />
@@ -182,8 +181,8 @@ export default function MasterSchedulePage() {
             <Alert className="border-blue-200 bg-blue-50">
               <Zap className="h-4 w-4 text-blue-600" />
               <AlertDescription className="text-blue-800">
-                <strong>Quick Start:</strong> Generate schedules for individual age groups. 
-                Select an age group, verify teams, and click generate - we'll handle the rest!
+                <strong>Phase 4 - Automated Scheduling:</strong> Generate complete tournament schedules automatically. 
+                The system will create games for all flights with intelligent field distribution and conflict avoidance.
               </AlertDescription>
             </Alert>
             <UnifiedScheduleSetup eventId={eventId} />
@@ -226,7 +225,7 @@ export default function MasterSchedulePage() {
             <Alert className="border-purple-200 bg-purple-50">
               <Settings className="h-4 w-4 text-purple-600" />
               <AlertDescription className="text-purple-800">
-                <strong>Game Format Engine:</strong> Configure game lengths, field sizes, and rest periods for each flight. 
+                <strong>Phase 2 - Game Format Configuration:</strong> Configure game lengths, field sizes, and rest periods for each flight. 
                 Use templates for quick setup or create custom formats for specific competitive levels.
               </AlertDescription>
             </Alert>
@@ -237,7 +236,7 @@ export default function MasterSchedulePage() {
             <Alert className="border-green-200 bg-green-50">
               <Trophy className="h-4 w-4 text-green-600" />
               <AlertDescription className="text-green-800">
-                <strong>Bracket Creation Engine:</strong> Assign teams to flights and create tournament brackets. 
+                <strong>Phase 3 - Bracket Creation:</strong> Assign teams to flights and create tournament brackets. 
                 Auto-assign teams for balanced competition or manage assignments manually.
               </AlertDescription>
             </Alert>
