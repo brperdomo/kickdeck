@@ -12,7 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Settings, Users, Trophy, RefreshCw, Edit3, Plus, 
   AlertTriangle, CheckCircle, Clock, Save, Trash2,
-  DragHandleDots2, ArrowUpDown
+  GripVertical, ArrowUpDown
 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
@@ -330,7 +330,7 @@ export default function AgeGroupManagementPanel({ eventId }: AgeGroupManagementP
                                                         {...provided.dragHandleProps}
                                                         className="cursor-grab active:cursor-grabbing"
                                                       >
-                                                        <DragHandleDots2 className="h-4 w-4 text-gray-400" />
+                                                        <GripVertical className="h-4 w-4 text-gray-400" />
                                                       </div>
                                                       <Badge variant="outline" className="w-8 h-6 flex items-center justify-center">
                                                         {team.seedRanking}
