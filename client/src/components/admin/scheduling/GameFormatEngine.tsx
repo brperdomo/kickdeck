@@ -188,8 +188,8 @@ export function GameFormatEngine({ eventId }: GameFormatEngineProps) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">Game Format Engine</h2>
-          <p className="text-muted-foreground">
+          <h2 className="text-2xl font-bold text-white">Game Format Engine</h2>
+          <p className="text-slate-300">
             Configure game formats for each flight before creating brackets
           </p>
         </div>
@@ -207,37 +207,37 @@ export function GameFormatEngine({ eventId }: GameFormatEngineProps) {
 
       {/* Progress Summary */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
+        <Card className="border-slate-600 bg-slate-800">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <Settings className="h-8 w-8 text-blue-600" />
+              <Settings className="h-8 w-8 text-blue-400" />
               <div>
-                <p className="text-2xl font-bold">{configuredFlights.length}</p>
-                <p className="text-sm text-muted-foreground">Configured Flights</p>
+                <p className="text-2xl font-bold text-white">{configuredFlights.length}</p>
+                <p className="text-sm text-slate-300">Configured Flights</p>
               </div>
             </div>
           </CardContent>
         </Card>
         
-        <Card>
+        <Card className="border-slate-600 bg-slate-800">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <Clock className="h-8 w-8 text-orange-600" />
+              <Clock className="h-8 w-8 text-orange-400" />
               <div>
-                <p className="text-2xl font-bold">{unconfiguredFlights.length}</p>
-                <p className="text-sm text-muted-foreground">Needs Configuration</p>
+                <p className="text-2xl font-bold text-white">{unconfiguredFlights.length}</p>
+                <p className="text-sm text-slate-300">Needs Configuration</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-slate-600 bg-slate-800">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <Users className="h-8 w-8 text-green-600" />
+              <Users className="h-8 w-8 text-green-400" />
               <div>
-                <p className="text-2xl font-bold">{flightData?.reduce((sum, f) => sum + f.teamCount, 0) || 0}</p>
-                <p className="text-sm text-muted-foreground">Total Teams</p>
+                <p className="text-2xl font-bold text-white">{flightData?.reduce((sum, f) => sum + f.teamCount, 0) || 0}</p>
+                <p className="text-sm text-slate-300">Total Teams</p>
               </div>
             </div>
           </CardContent>
@@ -246,16 +246,16 @@ export function GameFormatEngine({ eventId }: GameFormatEngineProps) {
 
       {/* Format Configuration */}
       <Tabs defaultValue="needs-config" className="w-full">
-        <TabsList>
-          <TabsTrigger value="needs-config">
+        <TabsList className="bg-slate-800 border-slate-600">
+          <TabsTrigger value="needs-config" className="text-slate-200 data-[state=active]:bg-slate-700 data-[state=active]:text-white">
             <Settings className="h-4 w-4 mr-2" />
             Needs Configuration ({unconfiguredFlights.length})
           </TabsTrigger>
-          <TabsTrigger value="configured">
+          <TabsTrigger value="configured" className="text-slate-200 data-[state=active]:bg-slate-700 data-[state=active]:text-white">
             <CheckCircle className="h-4 w-4 mr-2" />
             Configured ({configuredFlights.length})
           </TabsTrigger>
-          <TabsTrigger value="templates">
+          <TabsTrigger value="templates" className="text-slate-200 data-[state=active]:bg-slate-700 data-[state=active]:text-white">
             <Copy className="h-4 w-4 mr-2" />
             Format Templates
           </TabsTrigger>
@@ -263,21 +263,21 @@ export function GameFormatEngine({ eventId }: GameFormatEngineProps) {
 
         <TabsContent value="needs-config" className="space-y-4">
           {unconfiguredFlights.length === 0 ? (
-            <Card>
+            <Card className="border-slate-600 bg-slate-800">
               <CardContent className="p-8 text-center">
-                <CheckCircle className="h-12 w-12 text-green-600 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">All Flights Configured</h3>
-                <p className="text-muted-foreground">
+                <CheckCircle className="h-12 w-12 text-green-400 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold mb-2 text-white">All Flights Configured</h3>
+                <p className="text-slate-300">
                   All flights have game format configurations. Ready to proceed to bracket creation.
                 </p>
               </CardContent>
             </Card>
           ) : (
             unconfiguredFlights.map((flight) => (
-              <Card key={flight.flightId}>
+              <Card key={flight.flightId} className="border-slate-600 bg-slate-800">
                 <CardHeader>
-                  <CardTitle>{flight.ageGroup} {flight.gender} - {flight.flightName}</CardTitle>
-                  <CardDescription>
+                  <CardTitle className="text-white">{flight.ageGroup} {flight.gender} - {flight.flightName}</CardTitle>
+                  <CardDescription className="text-slate-300">
                     {flight.teamCount} teams • Configure game format settings
                   </CardDescription>
                 </CardHeader>
@@ -285,7 +285,7 @@ export function GameFormatEngine({ eventId }: GameFormatEngineProps) {
                   <div className="space-y-6">
                     {/* Template Selection */}
                     <div className="space-y-3">
-                      <Label>Quick Start Templates</Label>
+                      <Label className="text-slate-200">Quick Start Templates</Label>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                         {templates?.map((template) => (
                           <Button
@@ -307,13 +307,13 @@ export function GameFormatEngine({ eventId }: GameFormatEngineProps) {
 
                     {/* Custom Configuration */}
                     {(customFormats[flight.flightId] || editingFlight === flight.flightId) && (
-                      <div className="border rounded-lg p-4 space-y-4">
-                        <h4 className="font-semibold">Custom Configuration</h4>
+                      <div className="border border-slate-600 rounded-lg p-4 space-y-4 bg-slate-700/50">
+                        <h4 className="font-semibold text-white">Custom Configuration</h4>
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                           {/* Game Length */}
                           <div className="space-y-2">
-                            <Label>Game Length (minute halves)</Label>
+                            <Label className="text-slate-200">Game Length (minute halves)</Label>
                             <Select
                               value={customFormats[flight.flightId]?.gameLength?.toString() || ""}
                               onValueChange={(value) => handleCustomFormatChange(flight.flightId, 'gameLength', parseInt(value))}
@@ -331,7 +331,7 @@ export function GameFormatEngine({ eventId }: GameFormatEngineProps) {
 
                           {/* Field Size */}
                           <div className="space-y-2">
-                            <Label>Field Size</Label>
+                            <Label className="text-slate-200">Field Size</Label>
                             <Select
                               value={customFormats[flight.flightId]?.fieldSize || ""}
                               onValueChange={(value) => handleCustomFormatChange(flight.flightId, 'fieldSize', value)}
@@ -349,7 +349,7 @@ export function GameFormatEngine({ eventId }: GameFormatEngineProps) {
 
                           {/* Buffer Time */}
                           <div className="space-y-2">
-                            <Label>Buffer Time (minutes)</Label>
+                            <Label className="text-slate-200">Buffer Time (minutes)</Label>
                             <Input
                               type="number"
                               min="5"
@@ -362,7 +362,7 @@ export function GameFormatEngine({ eventId }: GameFormatEngineProps) {
 
                           {/* Rest Period */}
                           <div className="space-y-2">
-                            <Label>Rest Period (minutes)</Label>
+                            <Label className="text-slate-200">Rest Period (minutes)</Label>
                             <Input
                               type="number"
                               min="30"

@@ -145,8 +145,8 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">Bracket Creation Engine</h2>
-          <p className="text-muted-foreground">
+          <h2 className="text-2xl font-bold tracking-tight text-white">Bracket Creation Engine</h2>
+          <p className="text-slate-300">
             Assign teams to flights and create tournament brackets
           </p>
         </div>
@@ -172,49 +172,49 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
 
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
+        <Card className="border-slate-600 bg-slate-800">
           <CardContent className="p-6">
             <div className="flex items-center space-x-2">
-              <Trophy className="h-5 w-5 text-amber-500" />
+              <Trophy className="h-5 w-5 text-amber-400" />
               <div>
-                <p className="text-2xl font-bold">{stats.totalFlights}</p>
-                <p className="text-sm text-muted-foreground">Total Flights</p>
+                <p className="text-2xl font-bold text-white">{stats.totalFlights}</p>
+                <p className="text-sm text-slate-300">Total Flights</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-slate-600 bg-slate-800">
           <CardContent className="p-6">
             <div className="flex items-center space-x-2">
-              <Target className="h-5 w-5 text-green-500" />
+              <Target className="h-5 w-5 text-green-400" />
               <div>
-                <p className="text-2xl font-bold">{stats.assignedFlights}</p>
-                <p className="text-sm text-muted-foreground">Assigned Flights</p>
+                <p className="text-2xl font-bold text-white">{stats.assignedFlights}</p>
+                <p className="text-sm text-slate-300">Assigned Flights</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-slate-600 bg-slate-800">
           <CardContent className="p-6">
             <div className="flex items-center space-x-2">
-              <Users className="h-5 w-5 text-blue-500" />
+              <Users className="h-5 w-5 text-blue-400" />
               <div>
-                <p className="text-2xl font-bold">{stats.totalTeams}</p>
-                <p className="text-sm text-muted-foreground">Total Teams</p>
+                <p className="text-2xl font-bold text-white">{stats.totalTeams}</p>
+                <p className="text-sm text-slate-300">Total Teams</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-slate-600 bg-slate-800">
           <CardContent className="p-6">
             <div className="flex items-center space-x-2">
-              <AlertTriangle className="h-5 w-5 text-orange-500" />
+              <AlertTriangle className="h-5 w-5 text-orange-400" />
               <div>
-                <p className="text-2xl font-bold">{stats.unassignedTeams}</p>
-                <p className="text-sm text-muted-foreground">Unassigned Teams</p>
+                <p className="text-2xl font-bold text-white">{stats.unassignedTeams}</p>
+                <p className="text-sm text-slate-300">Unassigned Teams</p>
               </div>
             </div>
           </CardContent>
@@ -222,25 +222,25 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
       </div>
 
       {/* Progress */}
-      <Card>
+      <Card className="border-slate-600 bg-slate-800">
         <CardContent className="p-6">
           <div className="space-y-2">
-            <div className="flex justify-between text-sm">
+            <div className="flex justify-between text-sm text-slate-200">
               <span>Bracket Creation Progress</span>
               <span>{completionPercentage}% Complete</span>
             </div>
             <Progress value={completionPercentage} className="w-full" />
             {stats.readyForScheduling ? (
-              <Alert className="mt-4">
-                <CheckCircle className="h-4 w-4" />
-                <AlertDescription>
+              <Alert className="mt-4 border-green-600 bg-green-800/20">
+                <CheckCircle className="h-4 w-4 text-green-400" />
+                <AlertDescription className="text-green-200">
                   All teams assigned! Ready to lock brackets and proceed to scheduling.
                 </AlertDescription>
               </Alert>
             ) : (
-              <Alert className="mt-4">
-                <AlertTriangle className="h-4 w-4" />
-                <AlertDescription>
+              <Alert className="mt-4 border-orange-600 bg-orange-800/20">
+                <AlertTriangle className="h-4 w-4 text-orange-400" />
+                <AlertDescription className="text-orange-200">
                   {stats.unassignedTeams} teams still need flight assignments.
                 </AlertDescription>
               </Alert>
