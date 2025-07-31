@@ -5,7 +5,7 @@ import {
   eventAgeGroups, 
   teams, 
   eventBrackets,
-  gameFormats,
+  eventGameFormats,
   formatTemplates
 } from '../../../db/schema.js';
 import { eq, and, isNotNull } from 'drizzle-orm';
@@ -25,18 +25,17 @@ router.get('/events/:eventId/flight-formats', async (req, res) => {
         ageGroup: eventAgeGroups.ageGroup,
         gender: eventAgeGroups.gender,
         currentFormat: {
-          id: gameFormats.id,
-          gameLength: gameFormats.gameLength,
-          fieldSize: gameFormats.fieldSize,
-          bufferTime: gameFormats.bufferTime,
-          restPeriod: gameFormats.restPeriod,
-          maxGamesPerDay: gameFormats.maxGamesPerDay,
-          templateName: gameFormats.templateName
+          id: eventGameFormats.id,
+          gameLength: eventGameFormats.gameLength,
+          fieldSize: eventGameFormats.fieldSize,
+          bufferTime: eventGameFormats.bufferTime,
+          ageGroup: eventGameFormats.ageGroup,
+          format: eventGameFormats.format
         }
       })
       .from(eventBrackets)
       .innerJoin(eventAgeGroups, eq(eventBrackets.ageGroupId, eventAgeGroups.id))
-      .leftJoin(gameFormats, eq(gameFormats.bracketId, eventBrackets.id))
+      .leftJoin(eventGameFormats, eq(eventGameFormats.eventId, parseInt(eventId)))
       .where(
         and(
           eq(eventAgeGroups.eventId, eventId),
