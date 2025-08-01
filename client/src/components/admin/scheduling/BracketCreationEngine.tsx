@@ -213,7 +213,7 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
             <div className="flex items-center space-x-2">
               <AlertTriangle className="h-5 w-5 text-orange-400" />
               <div>
-                <p className="text-2xl font-bold text-white">{stats.unassignedTeams}</p>
+                <p className="text-2xl font-bold text-white">{stats.unassignedTeams || 0}</p>
                 <p className="text-sm text-slate-300">Unassigned Teams</p>
               </div>
             </div>
@@ -251,16 +251,25 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
 
       {/* Main Interface */}
       <Tabs value={selectedTab} onValueChange={setSelectedTab}>
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="overview">
+        <TabsList className="grid w-full grid-cols-3 bg-slate-800 border-slate-600">
+          <TabsTrigger 
+            value="overview"
+            className="text-slate-200 data-[state=active]:bg-slate-700 data-[state=active]:text-white"
+          >
             <Eye className="h-4 w-4 mr-2" />
             Overview
           </TabsTrigger>
-          <TabsTrigger value="assign">
+          <TabsTrigger 
+            value="assign"
+            className="text-slate-200 data-[state=active]:bg-slate-700 data-[state=active]:text-white"
+          >
             <Users className="h-4 w-4 mr-2" />
             Team Assignment
           </TabsTrigger>
-          <TabsTrigger value="preview">
+          <TabsTrigger 
+            value="preview"
+            className="text-slate-200 data-[state=active]:bg-slate-700 data-[state=active]:text-white"
+          >
             <Play className="h-4 w-4 mr-2" />
             Bracket Preview
           </TabsTrigger>
@@ -268,50 +277,70 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
 
         <TabsContent value="overview" className="space-y-4">
           <div className="grid gap-4">
-            {flights.map((flight) => (
-              <Card key={flight.flightId} className="p-4">
+            {flights.slice(0, 12).map((flight) => (
+              <Card key={flight.id} className="border-slate-600 bg-slate-800 p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4">
                     <div>
-                      <h3 className="font-semibold">
-                        {flight.ageGroup} {flight.gender} - {flight.name}
+                      <h3 className="font-semibold text-white">
+                        {flight.level} - {flight.name}
                       </h3>
-                      <p className="text-sm text-muted-foreground">
-                        Level: {flight.level}
+                      <p className="text-sm text-slate-300">
+                        {flight.assignedTeams} teams assigned
                       </p>
                     </div>
-                    <Badge variant={flight.teamCount > 0 ? "default" : "secondary"}>
-                      {flight.teamCount} teams
-                    </Badge>
+                    <div className="flex gap-2">
+                      <Badge 
+                        variant={flight.assignedTeams > 0 ? "default" : "secondary"}
+                        className={flight.assignedTeams > 0 ? "bg-blue-600 text-white" : "bg-slate-600 text-slate-200"}
+                      >
+                        {flight.assignedTeams} teams
+                      </Badge>
+                      {flight.bracketType && (
+                        <Badge variant="outline" className="border-green-500 text-green-300">
+                          {flight.bracketType}
+                        </Badge>
+                      )}
+                    </div>
                   </div>
                   <div className="text-right">
-                    {flight.maxTeams && (
-                      <p className="text-sm text-muted-foreground">
-                        Max: {flight.maxTeams} teams
+                    {flight.estimatedGames && (
+                      <p className="text-sm text-slate-300">
+                        ~{flight.estimatedGames} games
                       </p>
                     )}
                   </div>
                 </div>
               </Card>
             ))}
+            {flights.length > 12 && (
+              <Card className="border-slate-600 bg-slate-800 p-4">
+                <div className="text-center text-slate-300">
+                  <p>... and {flights.length - 12} more flights</p>
+                  <p className="text-sm text-slate-400 mt-1">
+                    Note: This event has {flights.length} total brackets, which may indicate duplicate data
+                  </p>
+                </div>
+              </Card>
+            )}
           </div>
         </TabsContent>
 
         <TabsContent value="assign">
-          <Card>
+          <Card className="border-slate-600 bg-slate-800">
             <CardHeader>
-              <CardTitle>Team Assignment</CardTitle>
-              <CardDescription>
+              <CardTitle className="text-white">Team Assignment</CardTitle>
+              <CardDescription className="text-slate-300">
                 Assign teams to specific flights or use auto-assignment
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="text-center py-8">
-                <Settings className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <p className="text-muted-foreground">
+                <Settings className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+                <p className="text-slate-300">
                   Team assignment interface will be implemented here
                 </p>
-                <p className="text-sm text-muted-foreground mt-2">
+                <p className="text-sm text-slate-400 mt-2">
                   Features: Drag & drop, bulk assignment, flight constraints
                 </p>
               </div>
@@ -320,17 +349,17 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
         </TabsContent>
 
         <TabsContent value="preview">
-          <Card>
+          <Card className="border-slate-600 bg-slate-800">
             <CardHeader>
-              <CardTitle>Bracket Preview</CardTitle>
-              <CardDescription>
+              <CardTitle className="text-white">Bracket Preview</CardTitle>
+              <CardDescription className="text-slate-300">
                 Preview tournament brackets before finalizing
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="text-center py-8">
-                <Trophy className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <p className="text-muted-foreground">
+                <Trophy className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+                <p className="text-slate-300">
                   Bracket preview will be displayed here
                 </p>
                 <p className="text-sm text-muted-foreground mt-2">

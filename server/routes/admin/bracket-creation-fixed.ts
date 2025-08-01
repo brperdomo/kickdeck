@@ -55,10 +55,33 @@ router.get('/:eventId/bracket-creation', isAdmin, async (req, res) => {
 
     console.log(`[Bracket Creation] Found ${flights.length} flights`);
 
+    // Get total approved teams for this event first
+    const totalTeamsResult = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(teams)
+      .where(and(
+        eq(teams.eventId, eventId),
+        eq(teams.status, 'approved')
+      ));
+    
+    const totalTeamsCount = totalTeamsResult[0]?.count || 0;
+    console.log(`[Bracket Creation] Total approved teams for event: ${totalTeamsCount}`);
+
+    // Get unassigned teams (those without bracket assignment)
+    const unassignedTeamsResult = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(teams)
+      .where(and(
+        eq(teams.eventId, eventId),
+        eq(teams.status, 'approved'),
+        sql`bracket_id IS NULL`
+      ));
+    
+    const unassignedTeamsCount = unassignedTeamsResult[0]?.count || 0;
+    console.log(`[Bracket Creation] Unassigned teams: ${unassignedTeamsCount}`);
+
     // Build flight data with team counts
     const flightData: Flight[] = [];
-    let totalTeams = 0;
-    let unassignedTeams = 0;
     let assignedFlights = 0;
 
     for (const flight of flights) {
@@ -112,16 +135,14 @@ router.get('/:eventId/bracket-creation', isAdmin, async (req, res) => {
         isConfigured
       });
 
-      totalTeams += totalForAgeGroup;
-      unassignedTeams += unassignedForFlight;
     }
 
     const stats: BracketStats = {
       totalFlights: flights.length,
       assignedFlights,
-      unassignedTeams,
-      totalTeams,
-      readyForScheduling: unassignedTeams === 0 && assignedFlights === flights.length
+      unassignedTeams: unassignedTeamsCount,
+      totalTeams: totalTeamsCount,
+      readyForScheduling: unassignedTeamsCount === 0 && assignedFlights === flights.length
     };
 
     const response: BracketCreationData = {
