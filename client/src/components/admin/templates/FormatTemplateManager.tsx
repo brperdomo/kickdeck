@@ -281,7 +281,10 @@ export function FormatTemplateManager() {
             min="5"
             max="30"
             value={formData.bufferTime}
-            onChange={(e) => setFormData(prev => ({ ...prev, bufferTime: parseInt(e.target.value) }))}
+            onChange={(e) => {
+              const value = e.target.value === '' ? 0 : parseInt(e.target.value) || 0;
+              setFormData(prev => ({ ...prev, bufferTime: value }));
+            }}
             required
           />
         </div>
@@ -294,7 +297,10 @@ export function FormatTemplateManager() {
             min="30"
             max="300"
             value={formData.restPeriod}
-            onChange={(e) => setFormData(prev => ({ ...prev, restPeriod: parseInt(e.target.value) }))}
+            onChange={(e) => {
+              const value = e.target.value === '' ? 0 : parseInt(e.target.value) || 0;
+              setFormData(prev => ({ ...prev, restPeriod: value }));
+            }}
             required
           />
         </div>
@@ -307,7 +313,10 @@ export function FormatTemplateManager() {
             min="1"
             max="8"
             value={formData.maxGamesPerDay}
-            onChange={(e) => setFormData(prev => ({ ...prev, maxGamesPerDay: parseInt(e.target.value) }))}
+            onChange={(e) => {
+              const value = e.target.value === '' ? 0 : parseInt(e.target.value) || 0;
+              setFormData(prev => ({ ...prev, maxGamesPerDay: value }));
+            }}
             required
           />
         </div>
