@@ -344,7 +344,7 @@ export function GameFormatEngine({ eventId }: GameFormatEngineProps) {
             <div className="flex items-center gap-3">
               <Users className="h-8 w-8 text-green-400" />
               <div>
-                <p className="text-2xl font-bold text-white">{flightData?.reduce((sum, f) => sum + f.teamCount, 0) || 0}</p>
+                <p className="text-2xl font-bold text-white">{flightData?.reduce((sum, f) => sum + (Number(f.teamCount) || 0), 0) || 0}</p>
                 <p className="text-sm text-slate-300">Total Teams</p>
               </div>
             </div>
@@ -665,28 +665,28 @@ export function GameFormatEngine({ eventId }: GameFormatEngineProps) {
         <TabsContent value="templates" className="space-y-4">
           <div className="grid gap-4">
             {templates?.map((template) => (
-              <Card key={template.id}>
+              <Card key={template.id} className="border-slate-600 bg-slate-800">
                 <CardHeader>
-                  <CardTitle>{template.name}</CardTitle>
-                  <CardDescription>{template.description}</CardDescription>
+                  <CardTitle className="text-white">{template.name}</CardTitle>
+                  <CardDescription className="text-slate-300">{template.description}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                     <div>
-                      <span className="font-medium">Field Size:</span>
-                      <p>{template.fieldSize}</p>
+                      <span className="font-medium text-slate-200">Field Size:</span>
+                      <p className="text-slate-300">{template.fieldSize}</p>
                     </div>
                     <div>
-                      <span className="font-medium">Game Length:</span>
-                      <p>{template.gameLength} minute halves</p>
+                      <span className="font-medium text-slate-200">Game Length:</span>
+                      <p className="text-slate-300">{template.gameLength} minute halves</p>
                     </div>
                     <div>
-                      <span className="font-medium">Rest Period:</span>
-                      <p>{template.restPeriod} minutes</p>
+                      <span className="font-medium text-slate-200">Rest Period:</span>
+                      <p className="text-slate-300">{template.restPeriod} minutes</p>
                     </div>
                     <div>
-                      <span className="font-medium">Max Games/Day:</span>
-                      <p>{template.maxGamesPerDay}</p>
+                      <span className="font-medium text-slate-200">Max Games/Day:</span>
+                      <p className="text-slate-300">{template.maxGamesPerDay}</p>
                     </div>
                   </div>
                 </CardContent>
