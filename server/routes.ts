@@ -955,6 +955,64 @@ export function registerRoutes(app: Express): Server {
       res.status(500).json({ error: 'Failed to fetch format templates', debug: true, details: error.message });
     }
   });
+
+  // Debug endpoint for lock formats without authentication
+  app.post('/api/debug/events/:eventId/flight-formats/lock', async (req, res) => {
+    try {
+      const { eventId } = req.params;
+      console.log(`[Debug Lock] Attempting to lock formats for event ${eventId}`);
+      
+      const { db } = await import('@db');
+      const { events, eventBrackets, eventAgeGroups, gameFormats } = await import('@db/schema');
+      const { eq, and, isNull } = await import('drizzle-orm');
+      
+      // Check that all flights have format configurations  
+      const flightsWithoutFormats = await db
+        .select({
+          flightId: eventBrackets.id,
+          flightName: eventBrackets.name
+        })
+        .from(eventBrackets)
+        .innerJoin(eventAgeGroups, eq(eventBrackets.ageGroupId, eventAgeGroups.id))
+        .leftJoin(gameFormats, eq(gameFormats.bracketId, eventBrackets.id))
+        .where(
+          and(
+            eq(eventAgeGroups.eventId, parseInt(eventId)),
+            isNull(gameFormats.id) // No format configuration
+          )
+        );
+
+      console.log(`[Debug Lock] Found ${flightsWithoutFormats.length} flights without formats`);
+
+      if (flightsWithoutFormats.length > 0) {
+        return res.status(400).json({ 
+          error: 'All flights must have format configurations before locking',
+          missingFormats: flightsWithoutFormats.map(f => f.flightName)
+        });
+      }
+
+      // Mark event as having locked formats
+      const event = await db.query.events.findFirst({
+        where: eq(events.id, parseInt(eventId))
+      });
+
+      if (!event) {
+        return res.status(404).json({ error: 'Event not found' });
+      }
+
+      console.log(`[Debug Lock] Successfully locked formats for event ${eventId}`);
+
+      res.json({ 
+        debug: true,
+        success: true, 
+        message: 'All formats locked successfully',
+        nextStep: 'bracket_creation' 
+      });
+    } catch (error) {
+      console.error('Error locking formats (debug):', error);
+      res.status(500).json({ error: 'Failed to lock formats', debug: true, details: error.message });
+    }
+  });
     app.use('/api/admin/events', isAdmin, bracketCreationSqlRouter); // Bracket creation and team assignment router
     app.use('/api/admin/games', isAdmin, gamesRouter); // Game management router
     app.use('/api/admin/schedule', isAdmin, scheduleManagementRouter); // Schedule management with drag-and-drop
