@@ -6,9 +6,11 @@ import {
   teams, 
   eventBrackets,
   eventGameFormats,
-  formatTemplates
+  formatTemplates,
+  gameFormats
 } from '../../../db/schema.js';
-import { eq, and, isNotNull } from 'drizzle-orm';
+import { eq, and, isNotNull, isNull } from 'drizzle-orm';
+import { isAdmin } from '../../middleware/index.js';
 
 const router = Router();
 
@@ -62,7 +64,7 @@ router.get('/events/:eventId/flight-formats', async (req, res) => {
           ageGroup: flight.ageGroup,
           gender: flight.gender,
           teamCount: teamCount.length,
-          currentFormat: flight.currentFormat.id ? flight.currentFormat : undefined
+          currentFormat: flight.currentFormat?.id ? flight.currentFormat : undefined
         };
       })
     );
@@ -220,9 +222,11 @@ router.post('/events/:eventId/flights/:flightId/format', async (req, res) => {
 });
 
 // Lock all formats and proceed to bracket creation
-router.post('/events/:eventId/flight-formats/lock', async (req, res) => {
+router.post('/events/:eventId/flight-formats/lock', isAdmin, async (req, res) => {
   try {
     const { eventId } = req.params;
+
+    console.log(`[Lock Formats] Attempting to lock formats for event ${eventId}`);
 
     // Check that all flights have format configurations
     const flightsWithoutFormats = await db
@@ -236,9 +240,11 @@ router.post('/events/:eventId/flight-formats/lock', async (req, res) => {
       .where(
         and(
           eq(eventAgeGroups.eventId, eventId),
-          eq(gameFormats.id, null) // No format configuration
+          isNull(gameFormats.id) // No format configuration
         )
       );
+
+    console.log(`[Lock Formats] Found ${flightsWithoutFormats.length} flights without formats`);
 
     if (flightsWithoutFormats.length > 0) {
       return res.status(400).json({ 
@@ -247,16 +253,35 @@ router.post('/events/:eventId/flight-formats/lock', async (req, res) => {
       });
     }
 
-    // Mark event as having locked formats (we can add a field to events table if needed)
+    // Mark event as having locked formats in details field
+    const event = await db.query.events.findFirst({
+      where: eq(events.id, parseInt(eventId))
+    });
+
+    if (!event) {
+      return res.status(404).json({ error: 'Event not found' });
+    }
+
+    // Update event details to include locked status
+    const updatedDetails = event.details?.includes('[FORMATS_LOCKED]') 
+      ? event.details 
+      : `${event.details || ''} [FORMATS_LOCKED]`;
+
     await db
       .update(events)
       .set({ 
-        status: 'formats_locked',
+        details: updatedDetails,
         updatedAt: new Date().toISOString()
       })
       .where(eq(events.id, parseInt(eventId)));
 
-    res.json({ success: true, message: 'All formats locked successfully' });
+    console.log(`[Lock Formats] Successfully locked formats for event ${eventId}`);
+
+    res.json({ 
+      success: true, 
+      message: 'All formats locked successfully',
+      nextStep: 'bracket_creation' 
+    });
   } catch (error) {
     console.error('Error locking formats:', error);
     res.status(500).json({ error: 'Failed to lock formats' });
