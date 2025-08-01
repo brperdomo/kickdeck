@@ -4,7 +4,7 @@ import { isAdmin } from '../../middleware';
 import { eq, and, sql } from 'drizzle-orm';
 import { 
   eventBrackets, 
-  gameFormats, 
+  eventGameFormats,
   events,
   teams
 } from '@db/schema';
@@ -49,35 +49,57 @@ router.get('/events/:eventId/flight-formats', isAdmin, async (req, res) => {
   try {
     const { eventId } = req.params;
 
-    // Get all flights for this event with team counts and current formats
-    const flightsWithFormats = await db.query.eventBrackets.findMany({
-      where: eq(eventBrackets.eventId, eventId),
-      with: {
-        gameFormat: true
-      }
+    console.log(`[Flight Formats] Fetching data for event ${eventId}`);
+
+    // Get all flights for this event
+    const flights = await db.query.eventBrackets.findMany({
+      where: eq(eventBrackets.eventId, eventId)
     });
 
-    const flightData = await Promise.all(flightsWithFormats.map(async bracket => ({
-      flightId: bracket.id,
-      flightName: bracket.name,
-      ageGroup: bracket.level, // Using level as age group
-      gender: 'Mixed', // Default gender, could be extracted from description
-      teamCount: await getTeamCountForFlight(eventId, bracket.id),
-      currentFormat: bracket.gameFormat ? {
-        id: bracket.gameFormat.id,
-        gameLength: bracket.gameFormat.gameLength,
-        fieldSize: bracket.gameFormat.fieldSize,
-        bufferTime: bracket.gameFormat.bufferTime,
-        restPeriod: bracket.gameFormat.restPeriod,
-        maxGamesPerDay: bracket.gameFormat.maxGamesPerDay,
-        templateName: bracket.gameFormat.templateName || undefined
-        // bracketStructure will be added later when we extend the schema
-      } : undefined
-    })));
+    console.log(`[Flight Formats] Found ${flights.length} flights/brackets`);
+
+    // Get all game formats for this event
+    const gameFormats = await db.query.eventGameFormats.findMany({
+      where: eq(eventGameFormats.eventId, parseInt(eventId))
+    });
+
+    console.log(`[Flight Formats] Found ${gameFormats.length} game formats`);
+
+    const flightData = await Promise.all(flights.map(async bracket => {
+      // Find matching game format by age group (bracket.level)
+      const matchingFormat = gameFormats.find(format => 
+        format.ageGroup === bracket.level || 
+        format.ageGroup.includes(bracket.level) ||
+        bracket.level.includes(format.ageGroup)
+      );
+
+      const teamCount = await getTeamCountForFlight(eventId, bracket.id);
+
+      console.log(`[Flight Formats] Bracket ${bracket.id} (${bracket.level}): teams=${teamCount}, hasFormat=${!!matchingFormat}`);
+
+      return {
+        flightId: bracket.id,
+        flightName: bracket.name,
+        ageGroup: bracket.level,
+        gender: 'Mixed', // Default gender, could be extracted from description
+        teamCount,
+        currentFormat: matchingFormat ? {
+          id: matchingFormat.id,
+          gameLength: matchingFormat.gameLength,
+          fieldSize: matchingFormat.fieldSize,
+          bufferTime: matchingFormat.bufferTime,
+          restPeriod: 90, // Default rest period (not in eventGameFormats schema)
+          maxGamesPerDay: 3, // Default max games per day (not in eventGameFormats schema)
+          templateName: `${matchingFormat.format} ${matchingFormat.gameLength}min`
+        } : undefined
+      };
+    }));
+
+    console.log(`[Flight Formats] Configured flights: ${flightData.filter(f => f.currentFormat).length}/${flightData.length}`);
 
     res.json(flightData);
   } catch (error) {
-    console.error('Error fetching flight formats:', error);
+    console.error('[Flight Formats] Error fetching flight formats:', error);
     res.status(500).json({ error: 'Failed to fetch flight formats' });
   }
 });
@@ -229,7 +251,7 @@ async function getTeamCountForFlight(eventId: string, flightId: number): Promise
       .select({ count: sql<number>`count(*)` })
       .from(teams)
       .where(and(
-        eq(teams.eventId, parseInt(eventId)),
+        eq(teams.eventId, eventId),
         eq(teams.bracketId, flightId),
         eq(teams.status, 'approved')
       ));
