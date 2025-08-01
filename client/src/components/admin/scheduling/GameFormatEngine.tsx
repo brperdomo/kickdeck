@@ -8,7 +8,8 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { Settings, Clock, Users, MapPin, Save, Copy, Trash2, CheckCircle } from 'lucide-react';
+import { Settings, Clock, Users, MapPin, Save, Copy, Trash2, CheckCircle, FileTemplate } from 'lucide-react';
+import { FormatTemplateManager } from '@/components/admin/templates/FormatTemplateManager';
 
 interface FlightFormatData {
   flightId: number;
@@ -693,6 +694,10 @@ export function GameFormatEngine({ eventId }: GameFormatEngineProps) {
               </Card>
             ))}
           </div>
+        </TabsContent>
+
+        <TabsContent value="templates" className="space-y-4">
+          <FormatTemplateManager />
         </TabsContent>
       </Tabs>
     </div>

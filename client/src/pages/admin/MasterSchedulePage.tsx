@@ -15,6 +15,7 @@ import GameCardsGenerator from '@/components/admin/scheduling/GameCardsGenerator
 import AgeGroupManagementPanel from '@/components/admin/scheduling/AgeGroupManagementPanel';
 import { FlightReviewDashboard } from '@/components/admin/scheduling/FlightReviewDashboard';
 import { GameFormatEngine } from '@/components/admin/scheduling/GameFormatEngine';
+import { FormatTemplateManager } from '@/components/admin/templates/FormatTemplateManager';
 import BracketCreationEngine from '@/components/admin/scheduling/BracketCreationEngine';
 
 export default function MasterSchedulePage() {

@@ -1,12 +1,14 @@
 import { Router } from 'express';
 import { db } from '@db';
 import { isAdmin } from '../../middleware';
-import { eq, and, sql } from 'drizzle-orm';
+import { eq, and, sql, ne } from 'drizzle-orm';
 import { 
   eventBrackets, 
   eventGameFormats,
   events,
-  teams
+  teams,
+  formatTemplates,
+  gameFormats
 } from '@db/schema';
 
 const router = Router();
@@ -105,47 +107,155 @@ router.get('/events/:eventId/flight-formats', isAdmin, async (req, res) => {
 });
 
 // GET /api/admin/format-templates
-// Fetch available format templates
+// Fetch available format templates from database
 router.get('/format-templates', isAdmin, async (req, res) => {
   try {
-    // Return predefined templates for common scenarios
-    const templates = [
-      {
-        id: 1,
-        name: "Youth Standard",
-        description: "35-minute halves, 9v9, balanced rest periods",
-        gameLength: 35,
-        fieldSize: "9v9",
-        bufferTime: 10,
-        restPeriod: 90,
-        maxGamesPerDay: 3
-      },
-      {
-        id: 2,
-        name: "Competitive",
-        description: "40-minute halves, 11v11, extended rest",
-        gameLength: 40,
-        fieldSize: "11v11",
-        bufferTime: 15,
-        restPeriod: 120,
-        maxGamesPerDay: 2
-      },
-      {
-        id: 3,
-        name: "Fast Pace",
-        description: "30-minute halves, 7v7, quick turnaround",
-        gameLength: 30,
-        fieldSize: "7v7",
-        bufferTime: 5,
-        restPeriod: 60,
-        maxGamesPerDay: 4
-      }
-    ];
+    const templates = await db
+      .select()
+      .from(formatTemplates)
+      .where(eq(formatTemplates.isActive, true))
+      .orderBy(formatTemplates.name);
 
     res.json(templates);
   } catch (error) {
     console.error('Error fetching format templates:', error);
     res.status(500).json({ error: 'Failed to fetch format templates' });
+  }
+});
+
+// POST /api/admin/format-templates
+// Create new format template
+router.post('/format-templates', isAdmin, async (req, res) => {
+  try {
+    const { name, description, gameLength, fieldSize, bufferTime, restPeriod, maxGamesPerDay } = req.body;
+
+    // Validate required fields
+    if (!name || !description || !gameLength || !fieldSize || !bufferTime || !restPeriod || !maxGamesPerDay) {
+      return res.status(400).json({ error: 'All template fields are required' });
+    }
+
+    // Check for duplicate names
+    const existingTemplate = await db
+      .select()
+      .from(formatTemplates)
+      .where(eq(formatTemplates.name, name))
+      .limit(1);
+
+    if (existingTemplate.length > 0) {
+      return res.status(400).json({ error: 'Template name already exists' });
+    }
+
+    const [newTemplate] = await db
+      .insert(formatTemplates)
+      .values({
+        name,
+        description,
+        gameLength: parseInt(gameLength),
+        fieldSize,
+        bufferTime: parseInt(bufferTime),
+        restPeriod: parseInt(restPeriod),
+        maxGamesPerDay: parseInt(maxGamesPerDay),
+        isActive: true,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      })
+      .returning();
+
+    res.json({ success: true, template: newTemplate });
+  } catch (error) {
+    console.error('Error creating format template:', error);
+    res.status(500).json({ error: 'Failed to create format template' });
+  }
+});
+
+// PUT /api/admin/format-templates/:id
+// Update existing format template
+router.put('/format-templates/:id', isAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, description, gameLength, fieldSize, bufferTime, restPeriod, maxGamesPerDay } = req.body;
+
+    // Validate required fields
+    if (!name || !description || !gameLength || !fieldSize || !bufferTime || !restPeriod || !maxGamesPerDay) {
+      return res.status(400).json({ error: 'All template fields are required' });
+    }
+
+    // Check if template exists
+    const existingTemplate = await db
+      .select()
+      .from(formatTemplates)
+      .where(eq(formatTemplates.id, parseInt(id)))
+      .limit(1);
+
+    if (existingTemplate.length === 0) {
+      return res.status(404).json({ error: 'Template not found' });
+    }
+
+    // Check for duplicate names (excluding current template)
+    const duplicateName = await db
+      .select()
+      .from(formatTemplates)
+      .where(and(
+        eq(formatTemplates.name, name),
+        ne(formatTemplates.id, parseInt(id))
+      ))
+      .limit(1);
+
+    if (duplicateName.length > 0) {
+      return res.status(400).json({ error: 'Template name already exists' });
+    }
+
+    const [updatedTemplate] = await db
+      .update(formatTemplates)
+      .set({
+        name,
+        description,
+        gameLength: parseInt(gameLength),
+        fieldSize,
+        bufferTime: parseInt(bufferTime),
+        restPeriod: parseInt(restPeriod),
+        maxGamesPerDay: parseInt(maxGamesPerDay),
+        updatedAt: new Date().toISOString()
+      })
+      .where(eq(formatTemplates.id, parseInt(id)))
+      .returning();
+
+    res.json({ success: true, template: updatedTemplate });
+  } catch (error) {
+    console.error('Error updating format template:', error);
+    res.status(500).json({ error: 'Failed to update format template' });
+  }
+});
+
+// DELETE /api/admin/format-templates/:id
+// Soft delete format template (mark as inactive)
+router.delete('/format-templates/:id', isAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Check if template exists
+    const existingTemplate = await db
+      .select()
+      .from(formatTemplates)
+      .where(eq(formatTemplates.id, parseInt(id)))
+      .limit(1);
+
+    if (existingTemplate.length === 0) {
+      return res.status(404).json({ error: 'Template not found' });
+    }
+
+    await db
+      .update(formatTemplates)
+      .set({
+        isActive: false,
+        updatedAt: new Date().toISOString()
+      })
+      .where(eq(formatTemplates.id, parseInt(id)));
+
+    res.json({ success: true, message: 'Template deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting format template:', error);
+    res.status(500).json({ error: 'Failed to delete format template' });
   }
 });
 
