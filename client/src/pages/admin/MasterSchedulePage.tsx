@@ -20,7 +20,7 @@ import BracketCreationEngine from '@/components/admin/scheduling/BracketCreation
 export default function MasterSchedulePage() {
   const { eventId } = useParams<{ eventId: string }>();
   const [, setLocation] = useLocation();
-  const [currentView, setCurrentView] = useState<'quick' | 'view' | 'calendar' | 'cards' | 'manage' | 'flights' | 'formats' | 'brackets'>('flights');
+  const [currentView, setCurrentView] = useState<'quick' | 'view' | 'calendar' | 'cards' | 'manage' | 'flights' | 'formats' | 'brackets'>('formats');
 
   if (!eventId) {
     return <div>Event ID not found</div>;
@@ -67,21 +67,7 @@ export default function MasterSchedulePage() {
       {/* MatchPro Navigation Tabs */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex gap-2 mb-8 overflow-x-auto scrollbar-hide">
-          {/* Phase 1: Flight Management */}
-          <Button
-            variant={currentView === 'flights' ? 'default' : 'outline'}
-            onClick={() => setCurrentView('flights')}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 whitespace-nowrap ${
-              currentView === 'flights' 
-                ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25 hover:bg-blue-500' 
-                : 'bg-slate-700 text-slate-200 hover:bg-slate-600 border border-slate-600 hover:border-slate-500'
-            }`}
-          >
-            <Plane className="h-4 w-4" />
-            1. Flight Review
-          </Button>
-          
-          {/* Phase 2: Game Format Configuration */}
+          {/* Phase 1: Game Format Configuration */}
           <Button
             variant={currentView === 'formats' ? 'default' : 'outline'}
             onClick={() => setCurrentView('formats')}
@@ -92,7 +78,21 @@ export default function MasterSchedulePage() {
             }`}
           >
             <Settings className="h-4 w-4" />
-            2. Game Formats
+            1. Game Formats
+          </Button>
+          
+          {/* Phase 2: Flight Assignment */}
+          <Button
+            variant={currentView === 'flights' ? 'default' : 'outline'}
+            onClick={() => setCurrentView('flights')}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 whitespace-nowrap ${
+              currentView === 'flights' 
+                ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25 hover:bg-blue-500' 
+                : 'bg-slate-700 text-slate-200 hover:bg-slate-600 border border-slate-600 hover:border-slate-500'
+            }`}
+          >
+            <Plane className="h-4 w-4" />
+            2. Flight Assignment
           </Button>
           
           {/* Phase 3: Bracket Creation */}
