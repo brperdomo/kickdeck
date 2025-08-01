@@ -35,6 +35,7 @@ interface Flight {
 interface AgeGroup {
   id: number;
   ageGroup: string;
+  birthYear?: number;
   gender: string;
   fieldSize: string;
   projectedTeams: number;
@@ -356,7 +357,9 @@ export function FlightCreationStep({ eventId, onComplete }: FlightCreationStepPr
               return (
                 <div key={`${ageGroup.id}-${ageGroup.gender}`} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                   <div className="flex items-center space-x-3">
-                    <Badge variant="outline">{ageGroup.ageGroup} {ageGroup.gender}</Badge>
+                    <Badge variant="outline">
+                      {ageGroup.ageGroup} {ageGroup.gender} - [{ageGroup.birthYear}]
+                    </Badge>
                     <span className="text-sm text-gray-600">{ageGroup.fieldSize}</span>
                   </div>
                   

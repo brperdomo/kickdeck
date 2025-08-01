@@ -28,7 +28,9 @@ interface FlightOption {
 
 interface FlightReviewData {
   ageGroup: string;
+  birthYear?: number;
   gender: string;
+  displayName?: string;
   teamsWithSelection: Team[];
   teamsWithoutSelection: Team[];
   availableFlights: FlightOption[];
@@ -251,7 +253,9 @@ export function FlightReviewDashboard({ eventId }: FlightReviewDashboardProps) {
           {flightData?.filter(group => group.teamsWithoutSelection.length > 0).map((group) => (
             <Card key={`${group.ageGroup}-${group.gender}`} className="bg-slate-800 border-slate-700">
               <CardHeader>
-                <CardTitle className="text-white">{group.ageGroup} {group.gender}</CardTitle>
+                <CardTitle className="text-white">
+                  {group.displayName || `${group.ageGroup} ${group.gender}${group.birthYear ? ` - [${group.birthYear}]` : ''}`}
+                </CardTitle>
                 <CardDescription className="text-slate-300">
                   {group.teamsWithoutSelection.length} teams need flight assignment
                 </CardDescription>
@@ -307,7 +311,9 @@ export function FlightReviewDashboard({ eventId }: FlightReviewDashboardProps) {
           {flightData?.filter(group => group.teamsWithSelection.length > 0).map((group) => (
             <Card key={`${group.ageGroup}-${group.gender}`} className="bg-slate-800 border-slate-700">
               <CardHeader>
-                <CardTitle className="text-white">{group.ageGroup} {group.gender}</CardTitle>
+                <CardTitle className="text-white">
+                  {group.displayName || `${group.ageGroup} ${group.gender}${group.birthYear ? ` - [${group.birthYear}]` : ''}`}
+                </CardTitle>
                 <CardDescription className="text-slate-300">
                   {group.teamsWithSelection.length} teams with flight assignments • Click edit icon to reassign
                 </CardDescription>
@@ -409,7 +415,9 @@ export function FlightReviewDashboard({ eventId }: FlightReviewDashboardProps) {
           {flightData?.map((group) => (
             <Card key={`${group.ageGroup}-${group.gender}`} className="bg-slate-800 border-slate-700">
               <CardHeader>
-                <CardTitle className="text-white">{group.ageGroup} {group.gender}</CardTitle>
+                <CardTitle className="text-white">
+                  {group.displayName || `${group.ageGroup} ${group.gender}${group.birthYear ? ` - [${group.birthYear}]` : ''}`}
+                </CardTitle>
                 <CardDescription className="text-slate-300">
                   {group.totalTeams} total teams | {group.teamsWithSelection.length} assigned | {group.teamsWithoutSelection.length} unassigned
                 </CardDescription>

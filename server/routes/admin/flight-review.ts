@@ -16,8 +16,11 @@ router.get('/events/:eventId/flight-review', async (req, res) => {
       .from(eventAgeGroups)
       .where(eq(eventAgeGroups.eventId, eventId));
 
+    // Sort age groups from oldest to youngest (lowest birth year to highest)
+    const sortedAgeGroups = ageGroups.sort((a, b) => a.birthYear - b.birthYear);
+
     const flightReviewData = await Promise.all(
-      ageGroups.map(async (ageGroup) => {
+      sortedAgeGroups.map(async (ageGroup) => {
         // Get available flights for this age group
         const availableFlights = await db
           .select()
@@ -62,7 +65,10 @@ router.get('/events/:eventId/flight-review', async (req, res) => {
 
         return {
           ageGroup: ageGroup.ageGroup,
+          birthYear: ageGroup.birthYear,
           gender: ageGroup.gender,
+          displayName: `${ageGroup.ageGroup} ${ageGroup.gender} - [${ageGroup.birthYear}]`,
+          sortKey: ageGroup.birthYear, // For sorting oldest to youngest
           teamsWithSelection: teamsWithSelection.map(team => ({
             ...team,
             ageGroup: ageGroup.ageGroup,

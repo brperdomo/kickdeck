@@ -75,7 +75,8 @@ export function FlightManager({ eventId, teamsData, workflowData, onComplete, on
       name: ag.ageGroup,
       gender: ag.gender, // Use actual gender field from database
       ageOnly: ag.ageGroup,
-      fullDisplayName: `${ag.ageGroup} ${ag.gender}` // e.g., "U17 Boys", "U17 Girls"
+      birthYear: ag.birthYear,
+      fullDisplayName: `${ag.ageGroup} ${ag.gender}${ag.birthYear ? ` - [${ag.birthYear}]` : ''}` // e.g., "U17 Boys - [2008]"
     }));
   }, [ageGroupsData]);
   
