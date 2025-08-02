@@ -339,26 +339,138 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
           </div>
         </TabsContent>
 
-        <TabsContent value="assign">
+        <TabsContent value="assign" className="space-y-4">
+          {/* Auto-Assignment Controls */}
           <Card className="border-slate-600 bg-slate-800">
             <CardHeader>
-              <CardTitle className="text-white">Team Assignment</CardTitle>
+              <CardTitle className="text-white">Auto-Assignment</CardTitle>
               <CardDescription className="text-slate-300">
-                Assign teams to specific flights or use auto-assignment
+                Automatically distribute teams across flights using intelligent algorithms
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-center py-8">
-                <Settings className="h-12 w-12 text-slate-400 mx-auto mb-4" />
-                <p className="text-slate-300">
-                  Team assignment interface will be implemented here
-                </p>
-                <p className="text-sm text-slate-400 mt-2">
-                  Features: Drag & drop, bulk assignment, flight constraints
-                </p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <Button
+                  onClick={() => autoAssignMutation.mutate({ method: 'balanced' })}
+                  disabled={autoAssignMutation.isPending}
+                  className="bg-blue-600 hover:bg-blue-700 h-auto py-4"
+                >
+                  <div className="text-left">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Shuffle className="h-4 w-4" />
+                      <span className="font-semibold">Balanced</span>
+                    </div>
+                    <div className="text-xs text-blue-200">
+                      Equal team distribution across flights
+                    </div>
+                  </div>
+                </Button>
+                
+                <Button
+                  onClick={() => autoAssignMutation.mutate({ method: 'skill' })}
+                  disabled={autoAssignMutation.isPending}
+                  variant="outline"
+                  className="border-slate-600 bg-slate-700 hover:bg-slate-600 h-auto py-4"
+                >
+                  <div className="text-left">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Target className="h-4 w-4" />
+                      <span className="font-semibold">Skill-Based</span>
+                    </div>
+                    <div className="text-xs text-slate-300">
+                      Group teams by competitive level
+                    </div>
+                  </div>
+                </Button>
+                
+                <Button
+                  onClick={() => autoAssignMutation.mutate({ method: 'geographic' })}
+                  disabled={autoAssignMutation.isPending}
+                  variant="outline"
+                  className="border-slate-600 bg-slate-700 hover:bg-slate-600 h-auto py-4"
+                >
+                  <div className="text-left">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Users className="h-4 w-4" />
+                      <span className="font-semibold">Geographic</span>
+                    </div>
+                    <div className="text-xs text-slate-300">
+                      Minimize travel conflicts
+                    </div>
+                  </div>
+                </Button>
               </div>
             </CardContent>
           </Card>
+
+          {/* Flight Assignment Overview */}
+          <div className="grid gap-4">
+            {bracketData?.flights?.map((flight: Flight) => (
+              <Card key={flight.flightId} className="border-slate-600 bg-slate-800">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="text-white text-lg">
+                        {flight.ageGroup} {flight.gender} - {flight.name}
+                      </CardTitle>
+                      <CardDescription className="text-slate-300">
+                        {flight.registeredTeams?.length || 0} / {flight.maxTeams || 'unlimited'} teams assigned
+                      </CardDescription>
+                    </div>
+                    <Badge 
+                      variant={flight.registeredTeams?.length > 0 ? "default" : "secondary"}
+                      className={flight.registeredTeams?.length > 0 ? "bg-green-600 text-white" : "bg-slate-600 text-slate-200"}
+                    >
+                      {flight.teamCount} teams
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {flight.registeredTeams?.length > 0 ? (
+                    <div className="space-y-2">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                        {flight.registeredTeams.map((team: Team) => (
+                          <div 
+                            key={team.id}
+                            className="flex items-center justify-between p-2 bg-slate-700 rounded border border-slate-600"
+                          >
+                            <div className="flex-1">
+                              <div className="font-medium text-white text-sm">{team.name}</div>
+                              {team.clubName && (
+                                <div className="text-xs text-slate-400">{team.clubName}</div>
+                              )}
+                            </div>
+                            <Badge 
+                              variant="outline" 
+                              className={`text-xs ${team.status === 'approved' ? 'border-green-500 text-green-300' : 'border-slate-500 text-slate-300'}`}
+                            >
+                              {team.status}
+                            </Badge>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center py-6 text-slate-400">
+                      <Users className="h-8 w-8 mx-auto mb-2 text-slate-500" />
+                      <p className="text-sm">No teams assigned to this flight yet</p>
+                      <p className="text-xs text-slate-500 mt-1">Use auto-assignment or manual assignment</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )) || (
+              <Card className="border-slate-600 bg-slate-800">
+                <CardContent className="p-8 text-center">
+                  <AlertTriangle className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+                  <p className="text-slate-300 mb-2">No flights available for team assignment</p>
+                  <p className="text-sm text-slate-400">
+                    Please ensure game formats are configured and locked before proceeding with team assignments.
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+          </div>
         </TabsContent>
 
         <TabsContent value="preview">

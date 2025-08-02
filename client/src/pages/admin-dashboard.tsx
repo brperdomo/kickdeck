@@ -4322,6 +4322,18 @@ function TeamsView() {
                       </Badge>
                     </span>
                   </TabsTrigger>
+                  <TabsTrigger 
+                    value="refunded" 
+                    className="data-[state=active]:bg-purple-500 data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:shadow-md transition-all duration-200 px-4 py-2 rounded-md"
+                  >
+                    <span className="flex items-center gap-2">
+                      <RefreshCcw className="h-4 w-4" />
+                      Refunded
+                      <Badge variant="secondary" className="ml-1 text-xs">
+                        {teamCounts.refunded || 0}
+                      </Badge>
+                    </span>
+                  </TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="registered">
@@ -4754,6 +4766,79 @@ function TeamsView() {
                                     >
                                       <ArrowLeft className="h-4 w-4 mr-1" />
                                       Reset
+                                    </Button>
+                                  </div>
+                                </TableCell>
+                              </TableRow>
+                            ))
+                        )}
+                      </TableBody>
+                    </Table>
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="refunded">
+                  <div className="shadow-md rounded-xl overflow-hidden border border-gray-200">
+                    <Table className="team-list">
+                      <TableHeader>
+                        <TableRow className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-gray-800 dark:to-gray-700">
+                          <TableHead className="font-semibold py-4 text-purple-900 dark:text-purple-100">Team Name</TableHead>
+                          <TableHead className="font-semibold py-4 text-purple-900 dark:text-purple-100">Event</TableHead>
+                          <TableHead className="font-semibold py-4 text-purple-900 dark:text-purple-100">Age Group</TableHead>
+                          <TableHead className="font-semibold py-4 text-purple-900 dark:text-purple-100">Submitter</TableHead>
+                          <TableHead className="font-semibold py-4 text-purple-900 dark:text-purple-100">Registered Date</TableHead>
+                          <TableHead className="font-semibold py-4 text-purple-900 dark:text-purple-100">Refund Date</TableHead>
+                          <TableHead className="font-semibold py-4 text-purple-900 dark:text-purple-100">Amount</TableHead>
+                          <TableHead className="font-semibold py-4 text-purple-900 dark:text-purple-100 text-right">Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {teamsQuery.isLoading ? (
+                          <TableRow>
+                            <TableCell colSpan={8} className="text-center py-4">
+                              <div className="flex justify-center">
+                                <Loader2 className="h-6 w-6 animate-spin" />
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ) : filteredTeams.filter((team: any) => team && team.status === 'refunded').length === 0 ? (
+                          <TableRow>
+                            <TableCell colSpan={8} className="text-center py-4">
+                              No refunded teams found
+                            </TableCell>
+                          </TableRow>
+                        ) : (
+                          filteredTeams
+                            .filter((team: any) => team && team.status === 'refunded')
+                            .map((team: any, index) => (
+                              <TableRow key={team.id} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+                                <TableCell className="font-medium">
+                                  <div className="flex flex-col">
+                                    <span className="text-sm font-medium">{team.name}</span>
+                                    {team.clubName && (
+                                      <span className="text-xs text-muted-foreground">({team.clubName})</span>
+                                    )}
+                                  </div>
+                                </TableCell>
+                                <TableCell>{team.event?.name || "N/A"}</TableCell>
+                                <TableCell>{team.ageGroup?.ageGroup || "N/A"}</TableCell>
+                                <TableCell>{team.submitterEmail || team.managerEmail}</TableCell>
+                                <TableCell>{formatDate(team.createdAt)}</TableCell>
+                                <TableCell>
+                                  <Badge variant="outline" className="text-purple-700 border-purple-400">
+                                    {team.refundDate ? formatDate(team.refundDate) : 'N/A'}
+                                  </Badge>
+                                </TableCell>
+                                <TableCell>{formatCurrency(team.totalAmount || team.registrationFee || 0)}</TableCell>
+                                <TableCell className="text-right">
+                                  <div className="flex justify-end gap-2">
+                                    <Button 
+                                      variant="outline" 
+                                      size="sm"
+                                      onClick={() => handleViewTeamDetails(team)}
+                                    >
+                                      <Eye className="h-4 w-4 mr-1" />
+                                      Details
                                     </Button>
                                   </div>
                                 </TableCell>
