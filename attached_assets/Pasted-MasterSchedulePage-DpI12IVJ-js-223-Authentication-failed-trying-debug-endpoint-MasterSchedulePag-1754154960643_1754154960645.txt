@@ -1,0 +1,89 @@
+MasterSchedulePage-DpI12IVJ.js:223 Authentication failed, trying debug endpoint...
+MasterSchedulePage-DpI12IVJ.js:223 Fetch failed loading: POST "https://app.matchpro.ai/api/admin/events/1656618593/flight-formats/lock".
+mutationFn @ MasterSchedulePage-DpI12IVJ.js:223
+fn @ index-DpGfXW-F.js:41
+f @ index-DpGfXW-F.js:41
+start @ index-DpGfXW-F.js:41
+execute @ index-DpGfXW-F.js:41
+await in execute
+mutate @ index-DpGfXW-F.js:41
+(anonymous) @ index-DpGfXW-F.js:41
+onClick @ MasterSchedulePage-DpI12IVJ.js:223
+_ue @ index-DpGfXW-F.js:38
+Due @ index-DpGfXW-F.js:38
+Iue @ index-DpGfXW-F.js:38
+pM @ index-DpGfXW-F.js:38
+Xq @ index-DpGfXW-F.js:38
+(anonymous) @ index-DpGfXW-F.js:38
+NO @ index-DpGfXW-F.js:41
+bq @ index-DpGfXW-F.js:38
+E2 @ index-DpGfXW-F.js:38
+X4 @ index-DpGfXW-F.js:38
+Xue @ index-DpGfXW-F.js:38
+MasterSchedulePage-DpI12IVJ.js:223  POST https://app.matchpro.ai/api/debug/events/1656618593/flight-formats/lock 400 (Bad Request)
+mutationFn @ MasterSchedulePage-DpI12IVJ.js:223
+await in mutationFn
+fn @ index-DpGfXW-F.js:41
+f @ index-DpGfXW-F.js:41
+start @ index-DpGfXW-F.js:41
+execute @ index-DpGfXW-F.js:41
+await in execute
+mutate @ index-DpGfXW-F.js:41
+(anonymous) @ index-DpGfXW-F.js:41
+onClick @ MasterSchedulePage-DpI12IVJ.js:223
+_ue @ index-DpGfXW-F.js:38
+Due @ index-DpGfXW-F.js:38
+Iue @ index-DpGfXW-F.js:38
+pM @ index-DpGfXW-F.js:38
+Xq @ index-DpGfXW-F.js:38
+(anonymous) @ index-DpGfXW-F.js:38
+NO @ index-DpGfXW-F.js:41
+bq @ index-DpGfXW-F.js:38
+E2 @ index-DpGfXW-F.js:38
+X4 @ index-DpGfXW-F.js:38
+Xue @ index-DpGfXW-F.js:38Understand this error
+MasterSchedulePage-DpI12IVJ.js:223 Error locking formats: Error: Failed to lock formats
+    at Object.mutationFn (MasterSchedulePage-DpI12IVJ.js:223:46076)
+mutationFn @ MasterSchedulePage-DpI12IVJ.js:223
+await in mutationFn
+fn @ index-DpGfXW-F.js:41
+f @ index-DpGfXW-F.js:41
+start @ index-DpGfXW-F.js:41
+execute @ index-DpGfXW-F.js:41
+await in execute
+mutate @ index-DpGfXW-F.js:41
+(anonymous) @ index-DpGfXW-F.js:41
+onClick @ MasterSchedulePage-DpI12IVJ.js:223
+_ue @ index-DpGfXW-F.js:38
+Due @ index-DpGfXW-F.js:38
+Iue @ index-DpGfXW-F.js:38
+pM @ index-DpGfXW-F.js:38
+Xq @ index-DpGfXW-F.js:38
+(anonymous) @ index-DpGfXW-F.js:38
+NO @ index-DpGfXW-F.js:41
+bq @ index-DpGfXW-F.js:38
+E2 @ index-DpGfXW-F.js:38
+X4 @ index-DpGfXW-F.js:38
+Xue @ index-DpGfXW-F.js:38Understand this error
+MasterSchedulePage-DpI12IVJ.js:223 Fetch failed loading: POST "https://app.matchpro.ai/api/debug/events/1656618593/flight-formats/lock".
+mutationFn @ MasterSchedulePage-DpI12IVJ.js:223
+await in mutationFn
+fn @ index-DpGfXW-F.js:41
+f @ index-DpGfXW-F.js:41
+start @ index-DpGfXW-F.js:41
+execute @ index-DpGfXW-F.js:41
+await in execute
+mutate @ index-DpGfXW-F.js:41
+(anonymous) @ index-DpGfXW-F.js:41
+onClick @ MasterSchedulePage-DpI12IVJ.js:223
+_ue @ index-DpGfXW-F.js:38
+Due @ index-DpGfXW-F.js:38
+Iue @ index-DpGfXW-F.js:38
+pM @ index-DpGfXW-F.js:38
+Xq @ index-DpGfXW-F.js:38
+(anonymous) @ index-DpGfXW-F.js:38
+NO @ index-DpGfXW-F.js:41
+bq @ index-DpGfXW-F.js:38
+E2 @ index-DpGfXW-F.js:38
+X4 @ index-DpGfXW-F.js:38
+Xue @ index-DpGfXW-F.js:38

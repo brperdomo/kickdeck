@@ -59,7 +59,9 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
   const { data: bracketData, isLoading } = useQuery({
     queryKey: ['bracket-creation', eventId],
     queryFn: async () => {
-      const response = await fetch(`/api/admin/events/${eventId}/bracket-creation`);
+      const response = await fetch(`/api/admin/events/${eventId}/bracket-creation`, {
+        credentials: 'include'
+      });
       if (!response.ok) throw new Error('Failed to fetch bracket data');
       return response.json();
     }
@@ -71,9 +73,14 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
       const response = await fetch(`/api/admin/events/${eventId}/bracket-creation/auto-assign`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(config)
       });
-      if (!response.ok) throw new Error('Failed to auto-assign teams');
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Auto assign error:', errorText);
+        throw new Error('Unexpected token \'<\', "<!DOCTYPE "... is not valid JSON');
+      }
       return response.json();
     },
     onSuccess: () => {
@@ -96,9 +103,15 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
   const lockBracketsMutation = useMutation({
     mutationFn: async () => {
       const response = await fetch(`/api/admin/events/${eventId}/bracket-creation/lock`, {
-        method: 'POST'
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include'
       });
-      if (!response.ok) throw new Error('Failed to lock brackets');
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Lock brackets error:', errorText);
+        throw new Error('Failed to lock brackets');
+      }
       return response.json();
     },
     onSuccess: () => {
