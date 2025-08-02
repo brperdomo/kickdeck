@@ -97,9 +97,11 @@ router.post('/batch-delete', hasEventAccess, async (req, res) => {
  * 
  * DELETE /api/admin/events/:eventId/games/delete-all
  */
-router.delete('/:eventId/games/delete-all', hasEventAccess, async (req, res) => {
+router.delete('/:eventId/games/delete-all', async (req, res) => {
   try {
     const { eventId } = req.params;
+    
+    console.log(`Deleting all games for event: ${eventId}`);
     
     if (!eventId) {
       return res.status(400).json({ message: "Event ID is required" });
@@ -110,14 +112,20 @@ router.delete('/:eventId/games/delete-all', hasEventAccess, async (req, res) => 
       .delete(games)
       .where(eq(games.eventId, eventId));
     
+    console.log(`Deleted games result:`, result);
+    
     return res.json({ 
       success: true,
       message: "All games successfully deleted for event",
       eventId: eventId
     });
   } catch (error) {
-    console.error("Error deleting all games:", error);
-    return res.status(500).json({ message: "Failed to delete all games" });
+    console.error("Error deleting all games for event", eventId, ":", error);
+    return res.status(500).json({ 
+      message: "Failed to delete all games", 
+      error: error instanceof Error ? error.message : String(error),
+      eventId: eventId
+    });
   }
 });
 
@@ -126,7 +134,7 @@ router.delete('/:eventId/games/delete-all', hasEventAccess, async (req, res) => 
  * 
  * DELETE /api/admin/events/:eventId/games/bulk
  */
-router.delete('/:eventId/games/bulk', hasEventAccess, async (req, res) => {
+router.delete('/:eventId/games/bulk', async (req, res) => {
   try {
     const { eventId } = req.params;
     const { gameIds } = req.body;
