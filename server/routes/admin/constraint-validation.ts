@@ -205,7 +205,7 @@ router.get('/events/:eventId/validate-coach-conflicts', requireAuth, isAdmin, as
     
     console.log(`👨‍🏫 API: Validating coach conflicts for event ${eventId}`);
     
-    const conflicts = await CoachConflictService.detectConflicts(eventId);
+    const conflicts = await CoachConflictService.detectConflicts(eventId, []);
     
     const criticalConflicts = conflicts.filter(c => c.severity === 'critical');
     const warnings = conflicts.filter(c => c.severity === 'warning');
@@ -251,7 +251,7 @@ router.post('/events/:eventId/validate-all-constraints', requireAuth, isAdmin, a
       fieldSizeValidation,
       travelValidations
     ] = await Promise.all([
-      CoachConflictService.detectConflicts(eventId),
+      CoachConflictService.detectConflicts(eventId, []),
       FieldSizeValidator.validateScheduleFieldSizes(games, availableFields),
       Promise.all(teams.map((team: any) => ({
         teamId: team.id,
