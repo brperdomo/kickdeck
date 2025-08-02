@@ -50,7 +50,7 @@ export function UnifiedTournamentControlCenter({ eventId }: TournamentControlCen
   const { data: tournamentStatus, refetch: refetchStatus } = useQuery({
     queryKey: ['tournament-status', eventId],
     queryFn: async (): Promise<TournamentStatus> => {
-      const response = await fetch(`/api/admin/tournament-control/${eventId}/status`);
+      const response = await fetch(`/api/admin/tournaments/${eventId}/status`);
       if (!response.ok) throw new Error('Failed to fetch tournament status');
       return response.json();
     },
@@ -61,7 +61,7 @@ export function UnifiedTournamentControlCenter({ eventId }: TournamentControlCen
   const { data: components } = useQuery({
     queryKey: ['scheduling-components', eventId],
     queryFn: async (): Promise<SchedulingComponents> => {
-      const response = await fetch(`/api/admin/tournament-control/${eventId}/components-status`);
+      const response = await fetch(`/api/admin/tournaments/${eventId}/components-status`);
       if (!response.ok) throw new Error('Failed to fetch components status');
       return response.json();
     },
@@ -71,7 +71,7 @@ export function UnifiedTournamentControlCenter({ eventId }: TournamentControlCen
   // Auto-scheduling mutation
   const autoScheduleMutation = useMutation({
     mutationFn: async () => {
-      const response = await fetch(`/api/admin/tournament-control/${eventId}/auto-schedule`, {
+      const response = await fetch(`/api/admin/tournaments/${eventId}/auto-schedule`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ includeReferees: true, includeFacilities: true })
@@ -100,7 +100,7 @@ export function UnifiedTournamentControlCenter({ eventId }: TournamentControlCen
   // Manual step execution
   const executeStepMutation = useMutation({
     mutationFn: async (step: string) => {
-      const response = await fetch(`/api/admin/tournament-control/${eventId}/execute-step`, {
+      const response = await fetch(`/api/admin/tournaments/${eventId}/execute-step`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ step })
