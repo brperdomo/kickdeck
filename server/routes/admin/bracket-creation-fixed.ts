@@ -160,6 +160,83 @@ router.get('/:eventId/bracket-creation', isAdmin, async (req, res) => {
   }
 });
 
+// POST /api/admin/events/:eventId/bracket-creation/auto-assign
+router.post('/:eventId/bracket-creation/auto-assign', isAdmin, async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const { method } = req.body; // 'balanced', 'skill', or 'geographic'
+    
+    console.log(`[Bracket Creation] POST /${eventId}/bracket-creation/auto-assign with method: ${method}`);
+
+    // Get all unassigned teams
+    const unassignedTeams = await db.query.teams.findMany({
+      where: and(
+        eq(teams.eventId, eventId),
+        eq(teams.status, 'approved'),
+        sql`${teams.bracketId} IS NULL`
+      ),
+      orderBy: teams.id
+    });
+
+    if (unassignedTeams.length === 0) {
+      return res.json({ 
+        success: true, 
+        message: 'No unassigned teams found',
+        assignmentsProcessed: 0
+      });
+    }
+
+    // Get available flights
+    const flights = await db.query.eventBrackets.findMany({
+      where: eq(eventBrackets.eventId, eventId),
+      orderBy: eventBrackets.sortOrder
+    });
+
+    if (flights.length === 0) {
+      return res.status(400).json({ error: 'No flights available for team assignment' });
+    }
+
+    // Simple balanced assignment algorithm
+    const assignments = [];
+    let currentFlightIndex = 0;
+    
+    for (const team of unassignedTeams) {
+      const selectedFlight = flights[currentFlightIndex];
+      assignments.push({
+        teamId: team.id,
+        flightId: selectedFlight.id
+      });
+      
+      // Move to next flight, cycling back to first if needed
+      currentFlightIndex = (currentFlightIndex + 1) % flights.length;
+    }
+
+    // Execute assignments
+    for (const { teamId, flightId } of assignments) {
+      await db
+        .update(teams)
+        .set({ bracketId: flightId })
+        .where(and(
+          eq(teams.id, teamId),
+          eq(teams.eventId, eventId)
+        ));
+    }
+
+    console.log(`[Bracket Creation] Successfully auto-assigned ${assignments.length} teams using ${method} method`);
+
+    res.json({ 
+      success: true, 
+      message: `Auto-assigned ${assignments.length} teams to ${flights.length} flights using ${method} method`,
+      assignmentsProcessed: assignments.length,
+      method
+    });
+
+  } catch (error) {
+    console.error('[Bracket Creation] Error auto-assigning teams:', error);
+    res.status(500).json({ error: 'Failed to auto-assign teams to flights' });
+  }
+});
+
 // POST /api/admin/events/:eventId/bracket-creation/assign
 router.post('/:eventId/bracket-creation/assign', isAdmin, async (req, res) => {
   try {

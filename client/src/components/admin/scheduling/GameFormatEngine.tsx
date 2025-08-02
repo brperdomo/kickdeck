@@ -186,25 +186,17 @@ export function GameFormatEngine({ eventId }: GameFormatEngineProps) {
   // Lock all formats and proceed to bracket creation
   const lockFormatsMutation = useMutation({
     mutationFn: async () => {
-      try {
-        const response = await fetch(`/api/admin/events/${eventId}/flight-formats/lock`, {
-          method: 'POST',
-          credentials: 'include'
-        });
-        if (!response.ok) {
-          // Fallback to debug endpoint if authentication fails
-          console.log('Authentication failed, trying debug endpoint...');
-          const debugResponse = await fetch(`/api/debug/events/${eventId}/flight-formats/lock`, {
-            method: 'POST'
-          });
-          if (!debugResponse.ok) throw new Error('Failed to lock formats');
-          return debugResponse.json();
-        }
-        return response.json();
-      } catch (error) {
-        console.error('Error locking formats:', error);
-        throw error;
+      const response = await fetch(`/api/admin/events/${eventId}/flight-formats/lock`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include'
+      });
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Lock formats error:', errorText);
+        throw new Error('Failed to lock formats');
       }
+      return response.json();
     },
     onSuccess: () => {
       toast({
@@ -212,6 +204,13 @@ export function GameFormatEngine({ eventId }: GameFormatEngineProps) {
         description: "Game formats are locked and ready for bracket creation"
       });
       queryClient.invalidateQueries({ queryKey: ['flight-formats', eventId] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Lock Failed",
+        description: error.message,
+        variant: "destructive"
+      });
     }
   });
 
