@@ -249,7 +249,7 @@ router.post('/events/:eventId/flight-formats/lock', isAdmin, async (req, res) =>
     if (flightsWithoutFormats.length > 0) {
       return res.status(400).json({ 
         error: 'All flights must have format configurations before locking',
-        missingFormats: flightsWithoutFormats.map(f => f.flightName)
+        unconfiguredFlights: flightsWithoutFormats.map(f => f.flightName)
       });
     }
 

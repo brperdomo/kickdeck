@@ -192,9 +192,11 @@ export function GameFormatEngine({ eventId }: GameFormatEngineProps) {
         credentials: 'include'
       });
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Lock formats error:', errorText);
-        throw new Error('Failed to lock formats');
+        const errorData = await response.json().catch(() => ({}));
+        console.error('Lock formats error:', errorData);
+        const error = new Error(errorData.error || 'Failed to lock formats');
+        error.response = { json: () => Promise.resolve(errorData) };
+        throw error;
       }
       return response.json();
     },
@@ -205,12 +207,31 @@ export function GameFormatEngine({ eventId }: GameFormatEngineProps) {
       });
       queryClient.invalidateQueries({ queryKey: ['flight-formats', eventId] });
     },
-    onError: (error) => {
-      toast({
-        title: "Lock Failed",
-        description: error.message,
-        variant: "destructive"
-      });
+    onError: async (error) => {
+      try {
+        const errorResponse = await error.response?.json();
+        const errorMsg = errorResponse?.error || error.message;
+        
+        if (errorResponse?.unconfiguredFlights) {
+          toast({
+            title: "Configuration Required",
+            description: `Please configure formats for: ${errorResponse.unconfiguredFlights.join(', ')}`,
+            variant: "destructive"
+          });
+        } else {
+          toast({
+            title: "Lock Failed",
+            description: errorMsg,
+            variant: "destructive"
+          });
+        }
+      } catch {
+        toast({
+          title: "Lock Failed",
+          description: "Failed to lock formats. Please ensure all flights are configured.",
+          variant: "destructive"
+        });
+      }
     }
   });
 
