@@ -124,6 +124,67 @@ export default function DragDropCalendarScheduler({ eventId }: DragDropCalendarS
     return game.homeTeamCoach || game.awayTeamCoach || `Team-${game.homeTeamName}`;
   };
 
+  // Conflict detection functions
+  const detectConflicts = (game: Game, timeSlot: TimeSlot): string[] => {
+    const conflicts: string[] = [];
+    
+    // Check for coach conflicts (same coach, same time, different games)
+    const sameTimeGames = timeSlots
+      .find(slot => slot.startTime === timeSlot.startTime)?.games || [];
+    
+    const gameCoach = getPrimaryCoach(game);
+    const conflictingCoachGames = sameTimeGames.filter(g => 
+      g.id !== game.id && getPrimaryCoach(g) === gameCoach
+    );
+    
+    if (conflictingCoachGames.length > 0) {
+      conflicts.push(`COACH CONFLICT: ${gameCoach} has ${conflictingCoachGames.length + 1} games at ${timeSlot.startTime}`);
+    }
+
+    // Check for team rest period conflicts (same team playing within 90 minutes)
+    const teamNames = [game.homeTeamName, game.awayTeamName];
+    const currentSlotIndex = timeSlots.findIndex(slot => slot.startTime === timeSlot.startTime);
+    
+    // Check previous and next time slots (90-minute intervals)
+    [currentSlotIndex - 1, currentSlotIndex + 1].forEach(checkIndex => {
+      if (checkIndex >= 0 && checkIndex < timeSlots.length) {
+        const checkSlot = timeSlots[checkIndex];
+        const conflictingTeamGames = checkSlot.games.filter(g => 
+          g.id !== game.id && (
+            teamNames.includes(g.homeTeamName) || 
+            teamNames.includes(g.awayTeamName)
+          )
+        );
+        
+        if (conflictingTeamGames.length > 0) {
+          const conflictTime = checkIndex < currentSlotIndex ? 'previous' : 'next';
+          conflicts.push(`TEAM REST: Teams have back-to-back games (${conflictTime} slot)`);
+        }
+      }
+    });
+
+    return conflicts;
+  };
+
+  // Get conflict severity for styling
+  const getConflictSeverity = (conflicts: string[]): 'none' | 'warning' | 'error' => {
+    if (conflicts.some(c => c.includes('COACH CONFLICT'))) return 'error';
+    if (conflicts.some(c => c.includes('TEAM REST'))) return 'warning';
+    return 'none';
+  };
+
+  // Get conflict styling classes
+  const getConflictStyling = (severity: 'none' | 'warning' | 'error'): string => {
+    switch (severity) {
+      case 'error':
+        return 'border-red-500 bg-red-50 text-red-900 ring-2 ring-red-200';
+      case 'warning':
+        return 'border-yellow-500 bg-yellow-50 text-yellow-900 ring-2 ring-yellow-200';
+      default:
+        return '';
+    }
+  };
+
   // Swap mutation for handling game position swaps
   const swapGamesMutation = useMutation({
     mutationFn: async ({ game1Id, game2Id, game1Field, game1Time, game2Field, game2Time }: {
@@ -393,16 +454,88 @@ export default function DragDropCalendarScheduler({ eventId }: DragDropCalendarS
     );
   }
 
+  // Calculate overall conflict summary
+  const getConflictSummary = () => {
+    let totalCritical = 0;
+    let totalWarnings = 0;
+    const conflictDetails: { [key: string]: string[] } = {};
+
+    timeSlots.forEach(slot => {
+      slot.games.forEach(game => {
+        const conflicts = detectConflicts(game, slot);
+        const severity = getConflictSeverity(conflicts);
+        
+        if (severity === 'error') totalCritical++;
+        if (severity === 'warning') totalWarnings++;
+        
+        if (conflicts.length > 0) {
+          const key = `${game.homeTeamName} vs ${game.awayTeamName} (${slot.startTime})`;
+          conflictDetails[key] = conflicts;
+        }
+      });
+    });
+
+    return { totalCritical, totalWarnings, conflictDetails };
+  };
+
+  const conflictSummary = getConflictSummary();
+
   return (
     <div className="w-full space-y-6">
+      {/* Conflict Alert Panel */}
+      {(conflictSummary.totalCritical > 0 || conflictSummary.totalWarnings > 0) && (
+        <div className="bg-gradient-to-r from-red-50 to-yellow-50 border border-orange-200 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+                <span className="font-semibold text-red-900">
+                  {conflictSummary.totalCritical} Critical Conflicts
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                <span className="font-semibold text-yellow-900">
+                  {conflictSummary.totalWarnings} Warnings
+                </span>
+              </div>
+            </div>
+            <Badge variant="destructive" className="animate-bounce">
+              NEEDS ATTENTION
+            </Badge>
+          </div>
+          <div className="text-sm text-gray-700">
+            <p className="mb-2 font-medium">Active Scheduling Conflicts:</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-32 overflow-y-auto">
+              {Object.entries(conflictSummary.conflictDetails).map(([game, conflicts]) => (
+                <div key={game} className="bg-white/60 rounded p-2 border-l-4 border-orange-400">
+                  <div className="font-medium text-xs mb-1">{game}</div>
+                  {conflicts.map((conflict, idx) => (
+                    <div key={idx} className="text-xs text-gray-600 flex items-center gap-1">
+                      {conflict.includes('COACH CONFLICT') ? '🔴' : '🟡'} {conflict}
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Calendar className="h-5 w-5" />
             Drag & Drop Schedule Calendar
+            {conflictSummary.totalCritical === 0 && conflictSummary.totalWarnings === 0 && (
+              <Badge variant="default" className="bg-green-600">
+                ✓ No Conflicts
+              </Badge>
+            )}
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            Drag games between fields and time slots to fine-tune your tournament schedule
+            Drag games between fields and time slots to fine-tune your tournament schedule.
+            Games with conflicts are highlighted in red (critical) or yellow (warnings).
           </p>
         </CardHeader>
         <CardContent>
@@ -465,6 +598,9 @@ export default function DragDropCalendarScheduler({ eventId }: DragDropCalendarS
                                 {(provided, snapshot) => {
                                   const primaryCoach = getPrimaryCoach(game);
                                   const coachColorClass = getCoachColor(primaryCoach);
+                                  const conflicts = detectConflicts(game, slot);
+                                  const conflictSeverity = getConflictSeverity(conflicts);
+                                  const conflictStyling = getConflictStyling(conflictSeverity);
                                   
                                   return (
                                     <div
@@ -473,13 +609,22 @@ export default function DragDropCalendarScheduler({ eventId }: DragDropCalendarS
                                       {...provided.dragHandleProps}
                                       className={`border-2 rounded p-2 mb-2 shadow-sm cursor-move transition-all ${
                                         snapshot.isDragging ? 'shadow-lg scale-105' : 'hover:shadow-md'
-                                      } ${coachColorClass}`}
+                                      } ${conflictSeverity === 'none' ? coachColorClass : conflictStyling}`}
+                                      title={conflicts.length > 0 ? conflicts.join('\n') : `Coach: ${primaryCoach}`}
                                     >
                                       <div className="flex items-center justify-between mb-1">
                                         <Badge variant="outline" className="text-xs bg-white/50">
                                           {game.ageGroup}
                                         </Badge>
-                                        <Edit3 className="h-3 w-3 opacity-60" />
+                                        <div className="flex items-center gap-1">
+                                          {conflictSeverity === 'error' && (
+                                            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" title="Critical Conflict" />
+                                          )}
+                                          {conflictSeverity === 'warning' && (
+                                            <div className="w-2 h-2 bg-yellow-500 rounded-full" title="Warning: Potential Issue" />
+                                          )}
+                                          <Edit3 className="h-3 w-3 opacity-60" />
+                                        </div>
                                       </div>
                                       <div className="text-xs font-medium mb-1">
                                         {game.homeTeamName} vs {game.awayTeamName}
@@ -489,9 +634,16 @@ export default function DragDropCalendarScheduler({ eventId }: DragDropCalendarS
                                           Coach: {game.homeTeamCoach || game.awayTeamCoach}
                                         </div>
                                       )}
-                                      <div className="flex items-center gap-1 text-xs opacity-60">
-                                        <Clock className="h-3 w-3" />
-                                        {game.duration}min
+                                      <div className="flex items-center justify-between text-xs opacity-60">
+                                        <div className="flex items-center gap-1">
+                                          <Clock className="h-3 w-3" />
+                                          {game.duration}min
+                                        </div>
+                                        {conflicts.length > 0 && (
+                                          <div className="text-xs font-bold">
+                                            ⚠️ {conflicts.length}
+                                          </div>
+                                        )}
                                       </div>
                                     </div>
                                   );
@@ -508,22 +660,47 @@ export default function DragDropCalendarScheduler({ eventId }: DragDropCalendarS
             </div>
           </DragDropContext>
 
-          {/* Coach Color Legend */}
-          {coachColorMap.size > 0 && (
-            <div className="mt-4 p-4 bg-muted/30 rounded-lg">
-              <h4 className="text-sm font-medium mb-2">Coach Color Coding</h4>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
-                {Array.from(coachColorMap.entries()).map(([coach, colorClass]) => (
-                  <div key={coach} className={`px-2 py-1 rounded text-xs border-2 ${colorClass}`}>
-                    {coach.startsWith('Team-') ? coach.replace('Team-', '') : coach}
-                  </div>
-                ))}
+          {/* Conflict Detection Legend */}
+          <div className="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {/* Coach Color Legend */}
+            {coachColorMap.size > 0 && (
+              <div className="p-4 bg-muted/30 rounded-lg">
+                <h4 className="text-sm font-medium mb-2">Coach Color Coding</h4>
+                <div className="grid grid-cols-2 gap-2">
+                  {Array.from(coachColorMap.entries()).slice(0, 6).map(([coach, colorClass]) => (
+                    <div key={coach} className={`px-2 py-1 rounded text-xs border-2 ${colorClass}`}>
+                      {coach.startsWith('Team-') ? coach.replace('Team-', '') : coach}
+                    </div>
+                  ))}
+                </div>
+                <p className="text-xs text-muted-foreground mt-2">
+                  Games are color-coded by coach when no conflicts are detected.
+                </p>
+              </div>
+            )}
+
+            {/* Conflict Detection Legend */}
+            <div className="p-4 bg-muted/30 rounded-lg">
+              <h4 className="text-sm font-medium mb-2">Conflict Detection</h4>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 bg-red-500 rounded-full animate-pulse"></div>
+                  <span className="text-xs">Critical: Coach conflicts (same coach, multiple games)</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 bg-yellow-500 rounded-full"></div>
+                  <span className="text-xs">Warning: Team rest period issues (back-to-back games)</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-dashed border-gray-400 rounded"></div>
+                  <span className="text-xs">Normal: No conflicts detected</span>
+                </div>
               </div>
               <p className="text-xs text-muted-foreground mt-2">
-                Games are color-coded by coach to help identify scheduling conflicts and back-to-back games.
+                Hover over games to see detailed conflict information. Red indicates critical issues that must be resolved.
               </p>
             </div>
-          )}
+          </div>
 
           <div className="mt-6 flex items-center justify-between">
             <div className="flex items-center gap-4 text-sm text-muted-foreground">
