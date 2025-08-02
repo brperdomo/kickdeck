@@ -5436,7 +5436,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           let actualAmountCharged = reg.team.registrationFee || reg.team.totalAmount || 0;
           let transactionData = null;
           
-          if (reg.team.status === 'approved' && reg.team.paymentIntentId) {
+          if ((reg.team.status === 'approved' || reg.team.status === 'refunded') && reg.team.paymentIntentId) {
             console.log(`Looking up payment for team ${reg.team.id} with payment intent: ${reg.team.paymentIntentId}`);
             try {
               const [paymentTransaction] = await db

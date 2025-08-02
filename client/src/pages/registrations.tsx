@@ -308,6 +308,9 @@ export default function RegistrationsPage() {
   const problemPayments = registrations.filter((reg: Registration) => 
     reg.status === 'rejected' || (reg.errorCode && reg.errorCode.length > 0)
   );
+  const refundedPayments = registrations.filter((reg: Registration) => 
+    reg.status === 'refunded'
+  );
 
   if (isLoading) {
     return (
@@ -351,7 +354,7 @@ export default function RegistrationsPage() {
         <h1 className="text-3xl font-bold">My Registrations</h1>
         
         <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid grid-cols-4 mb-6">
+          <TabsList className="grid grid-cols-5 mb-6">
             <TabsTrigger value="all">
               All Registrations
               <Badge variant="outline" className="ml-2">{registrations.length}</Badge>
@@ -363,6 +366,10 @@ export default function RegistrationsPage() {
             <TabsTrigger value="completed">
               Completed
               <Badge variant="outline" className="ml-2">{completedPayments.length}</Badge>
+            </TabsTrigger>
+            <TabsTrigger value="refunded">
+              Refunded
+              <Badge variant="outline" className="ml-2">{refundedPayments.length}</Badge>
             </TabsTrigger>
             <TabsTrigger value="issues">
               Issues
@@ -437,6 +444,30 @@ export default function RegistrationsPage() {
                   </div>
                 ) : (
                   <RegistrationsList registrations={completedPayments} />
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="refunded">
+            <Card className="member-card shadow-md">
+              <CardHeader>
+                <CardTitle>Refunded Registrations</CardTitle>
+                <CardDescription>
+                  Registrations that have been refunded
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {refundedPayments.length === 0 ? (
+                  <div className="text-center py-10">
+                    <CheckCircle className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                    <h3 className="text-lg font-medium mb-2">No Refunded Registrations</h3>
+                    <p className="text-muted-foreground">
+                      You don't have any refunded registrations.
+                    </p>
+                  </div>
+                ) : (
+                  <RegistrationsList registrations={refundedPayments} />
                 )}
               </CardContent>
             </Card>
