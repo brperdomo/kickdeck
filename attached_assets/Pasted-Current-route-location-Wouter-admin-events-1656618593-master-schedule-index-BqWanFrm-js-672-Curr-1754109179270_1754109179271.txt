@@ -1,0 +1,308 @@
+Current route location (Wouter): /admin/events/1656618593/master-schedule
+index-BqWanFrm.js:672 Current URL: https://app.matchpro.ai/admin/events/1656618593/master-schedule
+index-BqWanFrm.js:672 Current pathname: /admin/events/1656618593/master-schedule
+index-BqWanFrm.js:672 Current search: 
+index-BqWanFrm.js:672 Fetching user with emulation token: not present
+index-BqWanFrm.js:672 Fetch finished loading: GET "https://app.matchpro.ai/api/user".
+eSe @ index-BqWanFrm.js:672
+i @ index-BqWanFrm.js:41
+f @ index-BqWanFrm.js:41
+start @ index-BqWanFrm.js:41
+fetch @ index-BqWanFrm.js:41
+tg @ index-BqWanFrm.js:41
+onSubscribe @ index-BqWanFrm.js:41
+subscribe @ index-BqWanFrm.js:41
+(anonymous) @ index-BqWanFrm.js:41
+hW @ index-BqWanFrm.js:39
+k1 @ index-BqWanFrm.js:41
+Jh @ index-BqWanFrm.js:41
+qM @ index-BqWanFrm.js:41
+su @ index-BqWanFrm.js:39
+hhe @ index-BqWanFrm.js:41
+ku @ index-BqWanFrm.js:41
+qW @ index-BqWanFrm.js:41
+N @ index-BqWanFrm.js:26
+T @ index-BqWanFrm.js:26
+index-BqWanFrm.js:672 User data fetched: {id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: '$2b$12$d6n1CBWgsWFm0fh77F1OX.YxDZy7/O3aLSuJOuq4QkvOtFmSit7BC', firstName: 'Bryan', …}
+index-BqWanFrm.js:664 Fetch failed loading: GET "https://app.matchpro.ai/api/user".
+queryFn @ index-BqWanFrm.js:664
+i @ index-BqWanFrm.js:41
+f @ index-BqWanFrm.js:41
+start @ index-BqWanFrm.js:41
+fetch @ index-BqWanFrm.js:41
+tg @ index-BqWanFrm.js:41
+onSubscribe @ index-BqWanFrm.js:41
+subscribe @ index-BqWanFrm.js:41
+(anonymous) @ index-BqWanFrm.js:41
+hW @ index-BqWanFrm.js:39
+k1 @ index-BqWanFrm.js:41
+Jh @ index-BqWanFrm.js:41
+qM @ index-BqWanFrm.js:41
+su @ index-BqWanFrm.js:39
+hhe @ index-BqWanFrm.js:41
+ku @ index-BqWanFrm.js:41
+qW @ index-BqWanFrm.js:41
+N @ index-BqWanFrm.js:26
+T @ index-BqWanFrm.js:26
+MasterSchedulePage-CLORlZ5y.js:218 Fetch finished loading: GET "https://app.matchpro.ai/api/admin/format-templates".
+queryFn @ MasterSchedulePage-CLORlZ5y.js:218
+i @ index-BqWanFrm.js:41
+f @ index-BqWanFrm.js:41
+start @ index-BqWanFrm.js:41
+fetch @ index-BqWanFrm.js:41
+tg @ index-BqWanFrm.js:41
+onSubscribe @ index-BqWanFrm.js:41
+subscribe @ index-BqWanFrm.js:41
+(anonymous) @ index-BqWanFrm.js:41
+hW @ index-BqWanFrm.js:39
+k1 @ index-BqWanFrm.js:41
+Jh @ index-BqWanFrm.js:41
+(anonymous) @ index-BqWanFrm.js:41
+N @ index-BqWanFrm.js:26
+T @ index-BqWanFrm.js:26
+MasterSchedulePage-CLORlZ5y.js:218 Fetch finished loading: GET "https://app.matchpro.ai/api/admin/events/1656618593/flight-formats".
+queryFn @ MasterSchedulePage-CLORlZ5y.js:218
+i @ index-BqWanFrm.js:41
+f @ index-BqWanFrm.js:41
+start @ index-BqWanFrm.js:41
+fetch @ index-BqWanFrm.js:41
+tg @ index-BqWanFrm.js:41
+onSubscribe @ index-BqWanFrm.js:41
+subscribe @ index-BqWanFrm.js:41
+(anonymous) @ index-BqWanFrm.js:41
+hW @ index-BqWanFrm.js:39
+k1 @ index-BqWanFrm.js:41
+Jh @ index-BqWanFrm.js:41
+(anonymous) @ index-BqWanFrm.js:41
+N @ index-BqWanFrm.js:26
+T @ index-BqWanFrm.js:26
+MasterSchedulePage-CLORlZ5y.js:218  POST https://app.matchpro.ai/api/admin/events/1656618593/flight-formats/lock 400 (Bad Request)
+mutationFn @ MasterSchedulePage-CLORlZ5y.js:218
+fn @ index-BqWanFrm.js:41
+f @ index-BqWanFrm.js:41
+start @ index-BqWanFrm.js:41
+execute @ index-BqWanFrm.js:41
+await in execute
+mutate @ index-BqWanFrm.js:41
+(anonymous) @ index-BqWanFrm.js:41
+onClick @ MasterSchedulePage-CLORlZ5y.js:218
+_ue @ index-BqWanFrm.js:38
+Due @ index-BqWanFrm.js:38
+Iue @ index-BqWanFrm.js:38
+pM @ index-BqWanFrm.js:38
+Xq @ index-BqWanFrm.js:38
+(anonymous) @ index-BqWanFrm.js:38
+NO @ index-BqWanFrm.js:41
+bq @ index-BqWanFrm.js:38
+E2 @ index-BqWanFrm.js:38
+X4 @ index-BqWanFrm.js:38
+Xue @ index-BqWanFrm.js:38Understand this error
+MasterSchedulePage-CLORlZ5y.js:218 Authentication failed, trying debug endpoint...
+MasterSchedulePage-CLORlZ5y.js:218 Fetch failed loading: POST "https://app.matchpro.ai/api/admin/events/1656618593/flight-formats/lock".
+mutationFn @ MasterSchedulePage-CLORlZ5y.js:218
+fn @ index-BqWanFrm.js:41
+f @ index-BqWanFrm.js:41
+start @ index-BqWanFrm.js:41
+execute @ index-BqWanFrm.js:41
+await in execute
+mutate @ index-BqWanFrm.js:41
+(anonymous) @ index-BqWanFrm.js:41
+onClick @ MasterSchedulePage-CLORlZ5y.js:218
+_ue @ index-BqWanFrm.js:38
+Due @ index-BqWanFrm.js:38
+Iue @ index-BqWanFrm.js:38
+pM @ index-BqWanFrm.js:38
+Xq @ index-BqWanFrm.js:38
+(anonymous) @ index-BqWanFrm.js:38
+NO @ index-BqWanFrm.js:41
+bq @ index-BqWanFrm.js:38
+E2 @ index-BqWanFrm.js:38
+X4 @ index-BqWanFrm.js:38
+Xue @ index-BqWanFrm.js:38
+MasterSchedulePage-CLORlZ5y.js:218  POST https://app.matchpro.ai/api/debug/events/1656618593/flight-formats/lock 400 (Bad Request)
+mutationFn @ MasterSchedulePage-CLORlZ5y.js:218
+await in mutationFn
+fn @ index-BqWanFrm.js:41
+f @ index-BqWanFrm.js:41
+start @ index-BqWanFrm.js:41
+execute @ index-BqWanFrm.js:41
+await in execute
+mutate @ index-BqWanFrm.js:41
+(anonymous) @ index-BqWanFrm.js:41
+onClick @ MasterSchedulePage-CLORlZ5y.js:218
+_ue @ index-BqWanFrm.js:38
+Due @ index-BqWanFrm.js:38
+Iue @ index-BqWanFrm.js:38
+pM @ index-BqWanFrm.js:38
+Xq @ index-BqWanFrm.js:38
+(anonymous) @ index-BqWanFrm.js:38
+NO @ index-BqWanFrm.js:41
+bq @ index-BqWanFrm.js:38
+E2 @ index-BqWanFrm.js:38
+X4 @ index-BqWanFrm.js:38
+Xue @ index-BqWanFrm.js:38Understand this error
+MasterSchedulePage-CLORlZ5y.js:218 Error locking formats: Error: Failed to lock formats
+    at Object.mutationFn (MasterSchedulePage-CLORlZ5y.js:218:46076)
+mutationFn @ MasterSchedulePage-CLORlZ5y.js:218
+await in mutationFn
+fn @ index-BqWanFrm.js:41
+f @ index-BqWanFrm.js:41
+start @ index-BqWanFrm.js:41
+execute @ index-BqWanFrm.js:41
+await in execute
+mutate @ index-BqWanFrm.js:41
+(anonymous) @ index-BqWanFrm.js:41
+onClick @ MasterSchedulePage-CLORlZ5y.js:218
+_ue @ index-BqWanFrm.js:38
+Due @ index-BqWanFrm.js:38
+Iue @ index-BqWanFrm.js:38
+pM @ index-BqWanFrm.js:38
+Xq @ index-BqWanFrm.js:38
+(anonymous) @ index-BqWanFrm.js:38
+NO @ index-BqWanFrm.js:41
+bq @ index-BqWanFrm.js:38
+E2 @ index-BqWanFrm.js:38
+X4 @ index-BqWanFrm.js:38
+Xue @ index-BqWanFrm.js:38Understand this error
+MasterSchedulePage-CLORlZ5y.js:218 Fetch failed loading: POST "https://app.matchpro.ai/api/debug/events/1656618593/flight-formats/lock".
+mutationFn @ MasterSchedulePage-CLORlZ5y.js:218
+await in mutationFn
+fn @ index-BqWanFrm.js:41
+f @ index-BqWanFrm.js:41
+start @ index-BqWanFrm.js:41
+execute @ index-BqWanFrm.js:41
+await in execute
+mutate @ index-BqWanFrm.js:41
+(anonymous) @ index-BqWanFrm.js:41
+onClick @ MasterSchedulePage-CLORlZ5y.js:218
+_ue @ index-BqWanFrm.js:38
+Due @ index-BqWanFrm.js:38
+Iue @ index-BqWanFrm.js:38
+pM @ index-BqWanFrm.js:38
+Xq @ index-BqWanFrm.js:38
+(anonymous) @ index-BqWanFrm.js:38
+NO @ index-BqWanFrm.js:41
+bq @ index-BqWanFrm.js:38
+E2 @ index-BqWanFrm.js:38
+X4 @ index-BqWanFrm.js:38
+Xue @ index-BqWanFrm.js:38
+util.js:31 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+Yxa @ util.js:31
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1379
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1379
+setTimeout
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1379
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622Understand this warning
+MasterSchedulePage-CLORlZ5y.js:218  POST https://app.matchpro.ai/api/admin/events/1656618593/flight-formats/lock 400 (Bad Request)
+mutationFn @ MasterSchedulePage-CLORlZ5y.js:218
+fn @ index-BqWanFrm.js:41
+f @ index-BqWanFrm.js:41
+start @ index-BqWanFrm.js:41
+execute @ index-BqWanFrm.js:41
+await in execute
+mutate @ index-BqWanFrm.js:41
+(anonymous) @ index-BqWanFrm.js:41
+onClick @ MasterSchedulePage-CLORlZ5y.js:218
+_ue @ index-BqWanFrm.js:38
+Due @ index-BqWanFrm.js:38
+Iue @ index-BqWanFrm.js:38
+pM @ index-BqWanFrm.js:38
+Xq @ index-BqWanFrm.js:38
+(anonymous) @ index-BqWanFrm.js:38
+NO @ index-BqWanFrm.js:41
+bq @ index-BqWanFrm.js:38
+E2 @ index-BqWanFrm.js:38
+X4 @ index-BqWanFrm.js:38
+Xue @ index-BqWanFrm.js:38Understand this error
+MasterSchedulePage-CLORlZ5y.js:218 Authentication failed, trying debug endpoint...
+MasterSchedulePage-CLORlZ5y.js:218 Fetch failed loading: POST "https://app.matchpro.ai/api/admin/events/1656618593/flight-formats/lock".
+mutationFn @ MasterSchedulePage-CLORlZ5y.js:218
+fn @ index-BqWanFrm.js:41
+f @ index-BqWanFrm.js:41
+start @ index-BqWanFrm.js:41
+execute @ index-BqWanFrm.js:41
+await in execute
+mutate @ index-BqWanFrm.js:41
+(anonymous) @ index-BqWanFrm.js:41
+onClick @ MasterSchedulePage-CLORlZ5y.js:218
+_ue @ index-BqWanFrm.js:38
+Due @ index-BqWanFrm.js:38
+Iue @ index-BqWanFrm.js:38
+pM @ index-BqWanFrm.js:38
+Xq @ index-BqWanFrm.js:38
+(anonymous) @ index-BqWanFrm.js:38
+NO @ index-BqWanFrm.js:41
+bq @ index-BqWanFrm.js:38
+E2 @ index-BqWanFrm.js:38
+X4 @ index-BqWanFrm.js:38
+Xue @ index-BqWanFrm.js:38
+MasterSchedulePage-CLORlZ5y.js:218  POST https://app.matchpro.ai/api/debug/events/1656618593/flight-formats/lock 400 (Bad Request)
+mutationFn @ MasterSchedulePage-CLORlZ5y.js:218
+await in mutationFn
+fn @ index-BqWanFrm.js:41
+f @ index-BqWanFrm.js:41
+start @ index-BqWanFrm.js:41
+execute @ index-BqWanFrm.js:41
+await in execute
+mutate @ index-BqWanFrm.js:41
+(anonymous) @ index-BqWanFrm.js:41
+onClick @ MasterSchedulePage-CLORlZ5y.js:218
+_ue @ index-BqWanFrm.js:38
+Due @ index-BqWanFrm.js:38
+Iue @ index-BqWanFrm.js:38
+pM @ index-BqWanFrm.js:38
+Xq @ index-BqWanFrm.js:38
+(anonymous) @ index-BqWanFrm.js:38
+NO @ index-BqWanFrm.js:41
+bq @ index-BqWanFrm.js:38
+E2 @ index-BqWanFrm.js:38
+X4 @ index-BqWanFrm.js:38
+Xue @ index-BqWanFrm.js:38Understand this error
+MasterSchedulePage-CLORlZ5y.js:218 Error locking formats: Error: Failed to lock formats
+    at Object.mutationFn (MasterSchedulePage-CLORlZ5y.js:218:46076)
+mutationFn @ MasterSchedulePage-CLORlZ5y.js:218
+await in mutationFn
+fn @ index-BqWanFrm.js:41
+f @ index-BqWanFrm.js:41
+start @ index-BqWanFrm.js:41
+execute @ index-BqWanFrm.js:41
+await in execute
+mutate @ index-BqWanFrm.js:41
+(anonymous) @ index-BqWanFrm.js:41
+onClick @ MasterSchedulePage-CLORlZ5y.js:218
+_ue @ index-BqWanFrm.js:38
+Due @ index-BqWanFrm.js:38
+Iue @ index-BqWanFrm.js:38
+pM @ index-BqWanFrm.js:38
+Xq @ index-BqWanFrm.js:38
+(anonymous) @ index-BqWanFrm.js:38
+NO @ index-BqWanFrm.js:41
+bq @ index-BqWanFrm.js:38
+E2 @ index-BqWanFrm.js:38
+X4 @ index-BqWanFrm.js:38
+Xue @ index-BqWanFrm.js:38Understand this error
+MasterSchedulePage-CLORlZ5y.js:218 Fetch failed loading: POST "https://app.matchpro.ai/api/debug/events/1656618593/flight-formats/lock".
+mutationFn @ MasterSchedulePage-CLORlZ5y.js:218
+await in mutationFn
+fn @ index-BqWanFrm.js:41
+f @ index-BqWanFrm.js:41
+start @ index-BqWanFrm.js:41
+execute @ index-BqWanFrm.js:41
+await in execute
+mutate @ index-BqWanFrm.js:41
+(anonymous) @ index-BqWanFrm.js:41
+onClick @ MasterSchedulePage-CLORlZ5y.js:218
+_ue @ index-BqWanFrm.js:38
+Due @ index-BqWanFrm.js:38
+Iue @ index-BqWanFrm.js:38
+pM @ index-BqWanFrm.js:38
+Xq @ index-BqWanFrm.js:38
+(anonymous) @ index-BqWanFrm.js:38
+NO @ index-BqWanFrm.js:41
+bq @ index-BqWanFrm.js:38
+E2 @ index-BqWanFrm.js:38
+X4 @ index-BqWanFrm.js:38
+Xue @ index-BqWanFrm.js:38
