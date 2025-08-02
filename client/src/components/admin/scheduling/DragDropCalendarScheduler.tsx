@@ -248,17 +248,13 @@ export default function DragDropCalendarScheduler({ eventId }: DragDropCalendarS
       
       setCoachColorMap(newCoachColorMap);
     }
-  }, [gamesData, coachColors]);
+  }, [gamesData?.games, coachColorMap.size]); // Remove coachColors dependency
 
-  // Organize games into time slots
+  // Organize games into time slots - REMOVE INFINITE LOOP
   useEffect(() => {
-    console.log('[Calendar Effect] gamesData:', gamesData);
-    console.log('[Calendar Effect] fieldsData:', fieldsData);
-    console.log('[Calendar Effect] selectedDate:', selectedDate);
-    
-    if (gamesData?.games && fieldsData?.fields) {
-      console.log('[Calendar Effect] Setting fields:', fieldsData.fields);
-      setFields(fieldsData.fields);
+    // Only log once per effect run to prevent console spam
+    if (gamesData?.games && gamesData?.fields) {
+      setFields(gamesData.fields);
       
       // Create fresh time slots with games assigned
       const slots: TimeSlot[] = [];
@@ -281,11 +277,7 @@ export default function DragDropCalendarScheduler({ eventId }: DragDropCalendarS
           const gameDate = game.startTime?.split('T')[0] || game.startTime?.split(' ')[0];
           const gameTime = game.startTime?.split('T')[1]?.split(':').slice(0, 2).join(':') || 
                           game.startTime?.split(' ')[1]?.split(':').slice(0, 2).join(':');
-          const matches = gameDate === selectedDate && gameTime === startTime;
-          if (matches) {
-            console.log(`[Calendar Effect] Game ${game.id} matches slot ${startTime}:`, game);
-          }
-          return matches;
+          return gameDate === selectedDate && gameTime === startTime;
         });
 
         slots.push({
@@ -296,15 +288,9 @@ export default function DragDropCalendarScheduler({ eventId }: DragDropCalendarS
         });
       }
       
-      console.log('[Calendar Effect] Updated slots:', slots);
       setTimeSlots(slots);
-    } else if (gamesData?.games) {
-      console.log('[Calendar Effect] Games available but no fields data');
-      console.log('[Calendar Effect] Sample game data:', gamesData.games[0]);
-    } else if (fieldsData?.fields) {
-      console.log('[Calendar Effect] Fields available but no games data');
     }
-  }, [gamesData, fieldsData, selectedDate]);
+  }, [gamesData?.games, gamesData?.fields, selectedDate]); // Fix dependencies to prevent infinite loop
 
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return;

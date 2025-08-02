@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { isAdmin } from '../../middleware';
 import { db } from '@db';
-import { eventAgeGroups, teams } from '@db/schema';
+import { eventAgeGroups, teams, events } from '@db/schema';
 import { eq, and, count } from 'drizzle-orm';
 
 const router = Router();
@@ -10,6 +10,16 @@ const router = Router();
 router.get('/events/:eventId/flight-configurations', isAdmin, async (req, res) => {
   try {
     const { eventId } = req.params;
+
+    // Get event details first to get actual event dates
+    const [eventDetails] = await db
+      .select({
+        startDate: events.startDate,
+        endDate: events.endDate,
+      })
+      .from(events)
+      .where(eq(events.id, parseInt(eventId)))
+      .limit(1);
 
     // Get age groups with team counts and game format configurations
     const flightConfigs = await db
@@ -35,6 +45,10 @@ router.get('/events/:eventId/flight-configurations', isAdmin, async (req, res) =
       ))
       .groupBy(teams.ageGroupId);
 
+    // Use event dates or fall back to defaults
+    const startDate = eventDetails?.startDate || new Date().toISOString().split('T')[0];
+    const endDate = eventDetails?.endDate || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
     // Combine the data
     const result = flightConfigs.map(config => {
       const teamCountData = teamCounts.find(tc => tc.ageGroupId === config.ageGroupId);
@@ -42,8 +56,8 @@ router.get('/events/:eventId/flight-configurations', isAdmin, async (req, res) =
       return {
         id: config.id.toString(),
         divisionName: config.divisionName || `Division ${config.id}`,
-        startDate: new Date().toISOString().split('T')[0], // Default to today
-        endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // Default to week from now
+        startDate: startDate, // Use actual event start date
+        endDate: endDate, // Use actual event end date
         matchCount: 2, // Default - could be calculated based on format
         matchTime: 35, // Default values
         breakTime: 5,

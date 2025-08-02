@@ -1,0 +1,45 @@
+{games: Array(13), fields: Array(12), success: true}
+MasterSchedulePage-Lyr9N-7T.js:22 [Calendar Effect] fieldsData: {fields: Array(12), success: true}
+MasterSchedulePage-Lyr9N-7T.js:22 [Calendar Effect] selectedDate: 2025-10-03
+MasterSchedulePage-Lyr9N-7T.js:22 [Calendar Effect] Setting fields: (12) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+MasterSchedulePage-Lyr9N-7T.js:22 [Calendar Effect] Updated slots: (8) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+MasterSchedulePage-Lyr9N-7T.js:22 [Calendar Effect] gamesData: {games: Array(13), fields: Array(12), success: true}
+MasterSchedulePage-Lyr9N-7T.js:22 [Calendar Effect] fieldsData: {fields: Array(12), success: true}
+MasterSchedulePage-Lyr9N-7T.js:22 [Calendar Effect] selectedDate: 2025-10-03
+MasterSchedulePage-Lyr9N-7T.js:22 [Calendar Effect] Setting fields: (12) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+MasterSchedulePage-Lyr9N-7T.js:22 [Calendar Effect] Updated slots: (8) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+MasterSchedulePage-Lyr9N-7T.js:22 [Calendar Effect] gamesData: {games: Array(13), fields: Array(12), success: true}
+MasterSchedulePage-Lyr9N-7T.js:22 [Calendar Effect] fieldsData: {fields: Array(12), success: true}
+MasterSchedulePage-Lyr9N-7T.js:22 [Calendar Effect] selectedDate: 2025-10-03
+MasterSchedulePage-Lyr9N-7T.js:22 [Calendar Effect] Setting fields: (12) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+MasterSchedulePage-Lyr9N-7T.js:22 [Calendar Effect] Updated slots: (8) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+MasterSchedulePage-Lyr9N-7T.js:22 [Calendar Effect] gamesData: {games: Array(13), fields: Array(12), success: true}
+MasterSchedulePage-Lyr9N-7T.js:22 [Calendar Effect] fieldsData: {fields: Array(12), success: true}
+MasterSchedulePage-Lyr9N-7T.js:22 [Calendar Effect] selectedDate: 2025-10-03
+MasterSchedulePage-Lyr9N-7T.js:22 [Calendar Effect] Setting fields: (12) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+MasterSchedulePage-Lyr9N-7T.js:22 [Calendar Effect] Updated slots: (8) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+MasterSchedulePage-Lyr9N-7T.js:22 [Calendar Effect] gamesData: {games: Array(13), fields: Array(12), success: true}
+MasterSchedulePage-Lyr9N-7T.js:22 [Calendar Effect] fieldsData: {fields: Array(12), success: true}
+MasterSchedulePage-Lyr9N-7T.js:22 [Calendar Effect] selectedDate: 2025-10-03
+MasterSchedulePage-Lyr9N-7T.js:22 [Calendar Effect] Setting fields: (12) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+MasterSchedulePage-Lyr9N-7T.js:22 [Calendar Effect] Updated slots: (8) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+MasterSchedulePage-Lyr9N-7T.js:22 [Calendar Effect] gamesData: {games: Array(13), fields: Array(12), success: true}
+MasterSchedulePage-Lyr9N-7T.js:22 [Calendar Effect] fieldsData: {fields: Array(12), success: true}
+MasterSchedulePage-Lyr9N-7T.js:22 [Calendar Effect] selectedDate: 2025-10-03
+MasterSchedulePage-Lyr9N-7T.js:22 [Calendar Effect] Setting fields: (12) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+MasterSchedulePage-Lyr9N-7T.js:22 [Calendar Effect] Updated slots: (8) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+MasterSchedulePage-Lyr9N-7T.js:22 [Calendar Effect] gamesData: {games: Array(13), fields: Array(12), success: true}
+MasterSchedulePage-Lyr9N-7T.js:22 [Calendar Effect] fieldsData: {fields: Array(12), success: true}
+MasterSchedulePage-Lyr9N-7T.js:22 [Calendar Effect] selectedDate: 2025-10-03
+MasterSchedulePage-Lyr9N-7T.js:22 [Calendar Effect] Setting fields: (12) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+MasterSchedulePage-Lyr9N-7T.js:22 [Calendar Effect] Updated slots: (8) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+MasterSchedulePage-Lyr9N-7T.js:22 [Calendar Effect] gamesData: {games: Array(13), fields: Array(12), success: true}
+MasterSchedulePage-Lyr9N-7T.js:22 [Calendar Effect] fieldsData: {fields: Array(12), success: true}
+MasterSchedulePage-Lyr9N-7T.js:22 [Calendar Effect] selectedDate: 2025-10-03
+MasterSchedulePage-Lyr9N-7T.js:22 [Calendar Effect] Setting fields: (12) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+MasterSchedulePage-Lyr9N-7T.js:22 [Calendar Effect] Updated slots: (8) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+MasterSchedulePage-Lyr9N-7T.js:22 [Calendar Effect] gamesData: {games: Array(13), fields: Array(12), success: true}
+MasterSchedulePage-Lyr9N-7T.js:22 [Calendar Effect] fieldsData: {fields: Array(12), success: true}
+MasterSchedulePage-Lyr9N-7T.js:22 [Calendar Effect] selectedDate: 2025-10-03
+MasterSchedulePage-Lyr9N-7T.js:22 [Calendar Effect] Setting fields: (12) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+MasterSchedulePage-Lyr9N-7T.js:22 [
