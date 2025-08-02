@@ -130,16 +130,23 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
         method: 'DELETE',
         credentials: 'include'
       });
-      if (!response.ok) throw new Error('Failed to delete game');
+      if (!response.ok) {
+        const errorData = await response.text();
+        console.error('Delete game failed:', response.status, errorData);
+        throw new Error(`Failed to delete game: ${response.status}`);
+      }
       return response.json();
     },
+    retry: false, // Disable retries to prevent exponential requests
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/events', eventId, 'schedule'] });
       toast({ title: 'Game deleted successfully', variant: 'default' });
       setShowDeleteConfirm(false);
     },
-    onError: () => {
+    onError: (error) => {
+      console.error('Delete game mutation error:', error);
       toast({ title: 'Failed to delete game', variant: 'destructive' });
+      setShowDeleteConfirm(false); // Close dialog even on error
     }
   });
 
@@ -151,17 +158,24 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
         credentials: 'include',
         body: JSON.stringify({ gameIds })
       });
-      if (!response.ok) throw new Error('Failed to delete games');
+      if (!response.ok) {
+        const errorData = await response.text();
+        console.error('Bulk delete games failed:', response.status, errorData);
+        throw new Error(`Failed to delete games: ${response.status}`);
+      }
       return response.json();
     },
+    retry: false, // Disable retries to prevent exponential requests
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/events', eventId, 'schedule'] });
-      toast({ title: `Successfully deleted ${data.deletedCount} games`, variant: 'default' });
+      toast({ title: `Successfully deleted games`, variant: 'default' });
       setSelectedGames([]);
       setShowDeleteConfirm(false);
     },
-    onError: () => {
+    onError: (error) => {
+      console.error('Bulk delete games mutation error:', error);
       toast({ title: 'Failed to delete selected games', variant: 'destructive' });
+      setShowDeleteConfirm(false); // Close dialog even on error
     }
   });
 
@@ -171,16 +185,23 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
         method: 'DELETE',
         credentials: 'include'
       });
-      if (!response.ok) throw new Error('Failed to delete all games');
+      if (!response.ok) {
+        const errorData = await response.text();
+        console.error('Delete all games failed:', response.status, errorData);
+        throw new Error(`Failed to delete all games: ${response.status}`);
+      }
       return response.json();
     },
+    retry: false, // Disable retries to prevent exponential requests
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/events', eventId, 'schedule'] });
-      toast({ title: `Successfully deleted all ${data.deletedCount} games`, variant: 'default' });
+      toast({ title: 'Successfully deleted all games', variant: 'default' });
       setShowDeleteConfirm(false);
     },
-    onError: () => {
+    onError: (error) => {
+      console.error('Delete all games mutation error:', error);
       toast({ title: 'Failed to delete all games', variant: 'destructive' });
+      setShowDeleteConfirm(false); // Close dialog even on error
     }
   });
 

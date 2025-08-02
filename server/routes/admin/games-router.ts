@@ -120,6 +120,7 @@ router.delete('/:eventId/games/delete-all', async (req, res) => {
       eventId: eventId
     });
   } catch (error) {
+    const { eventId } = req.params;
     console.error("Error deleting all games for event", eventId, ":", error);
     return res.status(500).json({ 
       message: "Failed to delete all games", 
