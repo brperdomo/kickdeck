@@ -483,6 +483,7 @@ export class TournamentScheduler {
     }
     
     const { FieldAvailabilityService } = await import('./field-availability-service');
+    const { EnhancedConflictDetection } = await import('./enhanced-conflict-detection');
     const scheduledGames: Game[] = [];
     const teamSchedule = new Map<number, Game[]>(); // teamId -> games
     
@@ -532,15 +533,25 @@ export class TournamentScheduler {
             });
             
             if (!hasTeamConflict) {
-              // Reserve the time slot
-              try {
-                const timeSlotId = await FieldAvailabilityService.reserveTimeSlot(
-                  eventId,
-                  slot.fieldId,
-                  slot.startTime,
-                  slot.endTime,
-                  currentDay + dayAttempts
-                );
+              // Enhanced conflict detection before reservation
+              const conflicts = await EnhancedConflictDetection.detectTimeOverlaps(
+                eventId,
+                slot.startTime,
+                slot.endTime,
+                currentDay + dayAttempts,
+                slot.fieldId
+              );
+              
+              if (conflicts.filter(c => c.severity === 'critical').length === 0) {
+                // Reserve the time slot
+                try {
+                  const timeSlotId = await FieldAvailabilityService.reserveTimeSlot(
+                    eventId,
+                    slot.fieldId,
+                    slot.startTime,
+                    slot.endTime,
+                    currentDay + dayAttempts
+                  );
                 
                 // Create scheduled game
                 const scheduledGame: Game = {
@@ -572,7 +583,14 @@ export class TournamentScheduler {
                 console.log(`⚠️ Failed to reserve time slot: ${error.message}`);
                 continue;
               }
+            } else {
+              console.log(`⚠️ Critical conflicts detected for game ${game.gameNumber}, trying next slot`);
+              continue;
+            } else {
+              console.log(`⚠️ Critical conflicts detected for game ${game.gameNumber}, trying next slot`);
+              continue;
             }
+          }
           }
         } catch (error: any) {
           console.log(`⚠️ Error finding available slots: ${error.message}`);

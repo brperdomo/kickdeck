@@ -69,6 +69,7 @@ import scheduleManagementRouter from "./routes/admin/schedule-management";
 import scheduleCalendarRouter from "./routes/admin/schedule-calendar";
 import fieldsRouter from "./routes/admin/fields";
 import fieldManagementRouter from "./routes/admin/field-management";
+import enhancedConflictDetectionRouter from "./routes/admin/enhanced-conflict-detection";
 import paymentCompletionRouter from "./routes/payment-completion";
 import tournamentsWithSchedulesRouter from "./routes/admin/tournaments-with-schedules";
 import gamesAllTournamentsRouter from "./routes/admin/games-all-tournaments";
@@ -1206,6 +1207,7 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/events', isAdmin, adminGamesRouter); // Game scheduling and management
     app.use('/api/admin/events', isAdmin, fieldsRouter); // Field assignment and management
     app.use('/api/admin/field-management', isAdmin, fieldManagementRouter); // Real field availability service
+    app.use('/api/admin/enhanced-conflict-detection', isAdmin, enhancedConflictDetectionRouter); // Advanced conflict analysis
     app.use('/api/admin/events', isAdmin, schedulePublicationRouter); // Schedule publication and distribution
     app.use('/api/admin/clubs', isAdmin, adminClubsRouter); // Admin club management router
     app.use('/api/admin/event-clubs', isAdmin, eventClubsRouter); // Event clubs management router
