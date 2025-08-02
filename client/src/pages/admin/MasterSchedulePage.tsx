@@ -38,7 +38,7 @@ export default function MasterSchedulePage() {
                 variant="outline"
                 size="sm"
                 onClick={() => setLocation('/admin')}
-                className="flex items-center gap-2 hover:bg-slate-700 border-slate-600 text-slate-200 transition-all duration-200 hover:scale-105"
+                className="flex items-center gap-2 bg-white hover:bg-gray-100 border-gray-300 text-gray-900 font-medium transition-all duration-200 hover:scale-105 shadow-sm"
               >
                 <ArrowLeft className="h-4 w-4" />
                 Admin Dashboard
