@@ -1,0 +1,24 @@
+MasterSchedulePage-Beis4Dqq.js:223 Fetch failed loading: GET "https://app.matchpro.ai/api/admin/events/1656618593/flight-configurations".
+shared-ddc5d97fbead6…5e7216c69ed0b1.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+shared-ddc5d97fbead6…5e7216c69ed0b1.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+shared-ddc5d97fbead6…5e7216c69ed0b1.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+shared-ddc5d97fbead6…5e7216c69ed0b1.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+util.js:31 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+shared-ddc5d97fbead6…5e7216c69ed0b1.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+UnifiedTournamentCon…enter-BMds8pYw.js:1 Fetch finished loading: POST "https://app.matchpro.ai/api/admin/tournaments/1656618593/auto-schedule".
+master-schedule:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received
+ScheduleViewerFixed-D0pIn1NT.js:6 
+ DELETE https://app.matchpro.ai/api/admin/events/1656618593/games/delete-all 500 (Internal Server Error)
+ScheduleViewerFixed-D0pIn1NT.js:6 Fetch failed loading: DELETE "https://app.matchpro.ai/api/admin/events/1656618593/games/delete-all".
+ScheduleViewerFixed-D0pIn1NT.js:6 
+ DELETE https://app.matchpro.ai/api/admin/events/1656618593/games/bulk 500 (Internal Server Error)
+ScheduleViewerFixed-D0pIn1NT.js:6 Fetch failed loading: DELETE "https://app.matchpro.ai/api/admin/events/1656618593/games/bulk".
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state 
+{pill-player: {…}}
+chunk-FLCULYKI.js:31 orchestration: Updating combined state 
+{anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+shared-ddc5d97fbead6…5e7216c69ed0b1.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+﻿
+

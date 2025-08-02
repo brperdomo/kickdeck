@@ -92,4 +92,76 @@ router.post('/batch-delete', hasEventAccess, async (req, res) => {
   }
 });
 
+/**
+ * Delete all games for an event
+ * 
+ * DELETE /api/admin/events/:eventId/games/delete-all
+ */
+router.delete('/:eventId/games/delete-all', hasEventAccess, async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    
+    if (!eventId) {
+      return res.status(400).json({ message: "Event ID is required" });
+    }
+    
+    // Delete all games for this event (eventId is stored as string)
+    const result = await db
+      .delete(games)
+      .where(eq(games.eventId, eventId));
+    
+    return res.json({ 
+      success: true,
+      message: "All games successfully deleted for event",
+      eventId: eventId
+    });
+  } catch (error) {
+    console.error("Error deleting all games:", error);
+    return res.status(500).json({ message: "Failed to delete all games" });
+  }
+});
+
+/**
+ * Bulk delete games (alternative endpoint)
+ * 
+ * DELETE /api/admin/events/:eventId/games/bulk
+ */
+router.delete('/:eventId/games/bulk', hasEventAccess, async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const { gameIds } = req.body;
+    
+    if (!eventId) {
+      return res.status(400).json({ message: "Event ID is required" });
+    }
+    
+    if (!gameIds || !Array.isArray(gameIds) || gameIds.length === 0) {
+      return res.status(400).json({ message: "Game IDs array is required" });
+    }
+    
+    // Parse all game IDs to numbers
+    const parsedGameIds = gameIds.map(id => parseInt(id));
+    
+    // Validate all IDs are valid numbers
+    if (parsedGameIds.some(id => isNaN(id))) {
+      return res.status(400).json({ message: "Invalid game ID format in the array" });
+    }
+    
+    // Delete all specified games for this event
+    const result = await db
+      .delete(games)
+      .where(inArray(games.id, parsedGameIds));
+    
+    return res.json({ 
+      success: true,
+      message: `Successfully deleted ${parsedGameIds.length} games`,
+      deletedGameIds: parsedGameIds,
+      eventId: eventId
+    });
+  } catch (error) {
+    console.error("Error bulk deleting games:", error);
+    return res.status(500).json({ message: "Failed to bulk delete games" });
+  }
+});
+
 export default router;
