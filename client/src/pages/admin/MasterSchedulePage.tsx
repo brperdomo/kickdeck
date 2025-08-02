@@ -16,12 +16,13 @@ import AgeGroupManagementPanel from '@/components/admin/scheduling/AgeGroupManag
 import { FlightReviewDashboard } from '@/components/admin/scheduling/FlightReviewDashboard';
 import { GameFormatEngine } from '@/components/admin/scheduling/GameFormatEngine';
 import { FormatTemplateManager } from '@/components/admin/templates/FormatTemplateManager';
+import { FlightConfigurationTable } from '@/components/admin/scheduling/FlightConfigurationTable';
 import BracketCreationEngine from '@/components/admin/scheduling/BracketCreationEngine';
 
 export default function MasterSchedulePage() {
   const { eventId } = useParams<{ eventId: string }>();
   const [, setLocation] = useLocation();
-  const [currentView, setCurrentView] = useState<'quick' | 'view' | 'calendar' | 'cards' | 'manage' | 'flights' | 'formats' | 'brackets'>('formats');
+  const [currentView, setCurrentView] = useState<'quick' | 'view' | 'calendar' | 'cards' | 'manage' | 'flights' | 'formats' | 'brackets' | 'overview'>('overview');
 
   if (!eventId) {
     return <div>Event ID not found</div>;
@@ -68,6 +69,20 @@ export default function MasterSchedulePage() {
       {/* MatchPro Navigation Tabs */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex gap-2 mb-8 overflow-x-auto scrollbar-hide">
+          {/* Overview Tab */}
+          <Button
+            variant={currentView === 'overview' ? 'default' : 'outline'}
+            onClick={() => setCurrentView('overview')}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 whitespace-nowrap ${
+              currentView === 'overview' 
+                ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25 hover:bg-blue-500' 
+                : 'bg-slate-700 text-slate-200 hover:bg-slate-600 border border-slate-600 hover:border-slate-500'
+            }`}
+          >
+            <Trophy className="h-4 w-4" />
+            Overview
+          </Button>
+          
           {/* Phase 1: Game Format Configuration */}
           <Button
             variant={currentView === 'formats' ? 'default' : 'outline'}
@@ -166,7 +181,19 @@ export default function MasterSchedulePage() {
         </div>
 
         {/* Content Area */}
-        {currentView === 'flights' ? (
+        {currentView === 'overview' ? (
+          <div className="space-y-6">
+            <Alert className="border-slate-600 bg-slate-800">
+              <Trophy className="h-4 w-4 text-blue-400" />
+              <AlertDescription className="text-slate-200">
+                <strong>Flight Configuration Overview:</strong> View and configure all tournament divisions/flights with 
+                game timing, formats, and scheduling parameters. This table provides a comprehensive overview 
+                similar to professional tournament management systems.
+              </AlertDescription>
+            </Alert>
+            <FlightConfigurationTable eventId={eventId} />
+          </div>
+        ) : currentView === 'flights' ? (
           <div className="space-y-6">
             <Alert className="border-slate-600 bg-slate-800">
               <Plane className="h-4 w-4 text-blue-400" />
