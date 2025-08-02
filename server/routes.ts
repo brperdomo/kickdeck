@@ -107,6 +107,7 @@ import bracketsRouter from "./routes/admin/brackets";
 import flightReviewRouter from "./routes/admin/flight-review";
 import flightFormatsRouter from "./routes/admin/flight-formats";
 import flightConfigurationsRouter from "./routes/admin/flight-configurations";
+import tournamentControlRouter from "./routes/admin/tournament-control";
 
 import gamesRouter from "./routes/admin/games";
 import fieldsRouter from "./routes/admin/fields";
@@ -1027,6 +1028,7 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/scheduling', isAdmin, schedulingSimulationRouter); // Advanced scheduling simulation and analysis
     app.use('/api/admin', isAdmin, workflowProgressRouter); // Workflow progress tracking for session persistence
     app.use('/api/admin/tournaments', isAdmin, tournamentSelectionRouter); // Tournament selection with session isolation
+    app.use('/api/admin', isAdmin, tournamentControlRouter); // Unified tournament control center
     app.use('/api/admin/events', isAdmin, trueAutomatedSchedulingRouter); // True automated scheduling
     app.use('/api/admin/events', isAdmin, tournamentParametersRouter); // Tournament parameters
     app.use('/api/admin', isAdmin, flexibleAgeGroupsRoutes); // Flexible age group management
