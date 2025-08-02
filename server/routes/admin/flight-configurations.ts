@@ -18,12 +18,9 @@ router.get('/events/:eventId/flight-configurations', isAdmin, async (req, res) =
         divisionName: eventAgeGroups.divisionCode,
         ageGroupId: eventAgeGroups.id,
         eventId: eventAgeGroups.eventId,
-        // Default values for now
-        startDate: eventAgeGroups.startDate,
-        endDate: eventAgeGroups.endDate,
       })
       .from(eventAgeGroups)
-      .where(eq(eventAgeGroups.eventId, parseInt(eventId)));
+      .where(eq(eventAgeGroups.eventId, eventId));
 
     // Get team counts for each age group
     const teamCounts = await db
@@ -33,7 +30,7 @@ router.get('/events/:eventId/flight-configurations', isAdmin, async (req, res) =
       })
       .from(teams)
       .where(and(
-        eq(teams.eventId, parseInt(eventId)),
+        eq(teams.eventId, eventId),
         eq(teams.status, 'approved')
       ))
       .groupBy(teams.ageGroupId);
@@ -45,8 +42,8 @@ router.get('/events/:eventId/flight-configurations', isAdmin, async (req, res) =
       return {
         id: config.id.toString(),
         divisionName: config.divisionName || `Division ${config.id}`,
-        startDate: config.startDate || new Date().toISOString().split('T')[0],
-        endDate: config.endDate || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        startDate: new Date().toISOString().split('T')[0], // Default to today
+        endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // Default to week from now
         matchCount: 2, // Default - could be calculated based on format
         matchTime: 35, // Default values
         breakTime: 5,
