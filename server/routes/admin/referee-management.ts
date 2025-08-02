@@ -4,8 +4,8 @@
  */
 
 import { Router } from 'express';
-import { db } from '../../db/index.js';
-import { referees, gameAssignments, insertRefereeSchema, insertGameAssignmentSchema } from '../../db/schema.js';
+import { db } from '@db';
+import { referees, gameAssignments, insertRefereeSchema, insertGameAssignmentSchema } from '@db/schema';
 import { eq, and, desc, count, sum } from 'drizzle-orm';
 import RefereeAssignmentEngine from '../../services/referee-assignment-engine.js';
 

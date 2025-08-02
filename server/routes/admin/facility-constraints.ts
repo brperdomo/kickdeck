@@ -4,8 +4,8 @@
  */
 
 import { Router } from 'express';
-import { db } from '../../db/index.js';
-import { fields, complexes } from '../../db/schema.js';
+import { db } from '@db';
+import { fields, complexes } from '@db/schema';
 import { eq } from 'drizzle-orm';
 import FacilityConstraintService from '../../services/facility-constraint-service.js';
 

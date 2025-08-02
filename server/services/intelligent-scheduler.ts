@@ -10,6 +10,9 @@ import { FieldAvailabilityService } from './field-availability-service';
 import { EnhancedConflictDetection } from './enhanced-conflict-detection';
 import { FlexibleTimeSlotService } from './flexible-time-slot-service';
 import { FieldBlackoutService } from './field-blackout-service';
+import FacilityConstraintService from './facility-constraint-service.js';
+import SwissSystemScheduler from './swiss-system-scheduler.js';
+import RefereeAssignmentEngine from './referee-assignment-engine.js';
 
 export interface TournamentConfig {
   eventId: string;
