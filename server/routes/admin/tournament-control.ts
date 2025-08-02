@@ -7,6 +7,7 @@ import { Router } from 'express';
 import { db } from '@db';
 import { isAdmin } from '../../middleware';
 import { events, teams, games, eventAgeGroups, eventBrackets, fields, gameFormats, eventGameFormats, eventScheduleConstraints, gameTimeSlots } from '@db/schema';
+import { TimeSlotManager } from '../utils/timeSlotManager';
 import { eq, and, count, isNull } from 'drizzle-orm';
 
 const router = Router();
@@ -186,13 +187,75 @@ async function getComponentsStatus(eventId: string) {
   };
 }
 
+async function validateTournamentStructure(eventId: string) {
+  const errors = [];
+  
+  // Check if event exists and has valid dates
+  const event = await db.query.events.findFirst({
+    where: eq(events.id, parseInt(eventId))
+  });
+  
+  if (!event) {
+    errors.push('Event not found');
+    return { isValid: false, errors };
+  }
+  
+  if (new Date(event.startDate) >= new Date(event.endDate)) {
+    errors.push('Event start date must be before end date');
+  }
+  
+  // Check if age groups exist
+  const ageGroups = await db.query.eventAgeGroups.findMany({
+    where: eq(eventAgeGroups.eventId, eventId)
+  });
+  
+  if (ageGroups.length === 0) {
+    errors.push('No age groups configured for this event');
+  }
+  
+  // Check if there are approved teams
+  const approvedTeams = await db.query.teams.findMany({
+    where: and(
+      eq(teams.eventId, eventId),
+      eq(teams.status, 'approved')
+    )
+  });
+  
+  if (approvedTeams.length === 0) {
+    errors.push('No approved teams found for this event');
+  }
+  
+  // Check if fields are available
+  const availableFields = await db.query.fields.findMany({
+    where: eq(fields.isOpen, true)
+  });
+  
+  if (availableFields.length === 0) {
+    errors.push('No available fields found');
+  }
+  
+  return {
+    isValid: errors.length === 0,
+    errors,
+    summary: {
+      ageGroups: ageGroups.length,
+      approvedTeams: approvedTeams.length,
+      availableFields: availableFields.length
+    }
+  };
+}
+
 // Tournament-Aware Auto-scheduling that respects flight configurations, game formats, and bracket structures
 async function executeAutoScheduling(eventId: string, options: { includeReferees: boolean; includeFacilities: boolean }) {
   console.log(`[Tournament Auto Schedule] Starting tournament-aware auto-scheduling for event ${eventId}`);
   
   try {
     // Step 0: Validate tournament structure is ready
-    await validateTournamentStructure(eventId);
+    const structureValidation = await validateTournamentStructure(eventId);
+    if (!structureValidation.isValid) {
+      throw new Error(`Tournament structure incomplete: ${structureValidation.errors.join(', ')}`);
+    }
+    console.log('[Tournament Auto Schedule] Tournament structure validated:', structureValidation.summary);
     
     // Step 1: Get existing flight configurations and game formats
     const flightConfigs = await getFlightConfigurations(eventId);
@@ -286,29 +349,47 @@ async function optimizeSchedule(eventId: string) {
 async function validateScheduleConflicts(eventId: string) {
   const gamesData = await db.select().from(games).where(eq(games.eventId, eventId));
   
-  const conflicts = [];
+  const conflicts: any[] = [];
   
-  // Check for coach conflicts
-  const coachAssignments: { [timeSlot: string]: string[] } = {};
+  // Check for games without field assignments
+  gamesData.forEach(game => {
+    if (!game.fieldId) {
+      conflicts.push({
+        type: 'field_assignment',
+        message: `Game ${game.id} has no field assigned`,
+        gameId: game.id
+      });
+    }
+    
+    if (!game.timeSlotId) {
+      conflicts.push({
+        type: 'time_assignment',
+        message: `Game ${game.id} has no time slot assigned`,
+        gameId: game.id
+      });
+    }
+  });
+  
+  // Check for overlapping time slots on same field
+  const timeSlotAssignments: { [key: string]: number[] } = {};
   
   gamesData.forEach(game => {
-    if (game.startTime) {
-      const timeSlot = game.startTime.toISOString();
-      if (!coachAssignments[timeSlot]) {
-        coachAssignments[timeSlot] = [];
+    if (game.timeSlotId && game.fieldId) {
+      const key = `${game.timeSlotId}-${game.fieldId}`;
+      if (!timeSlotAssignments[key]) {
+        timeSlotAssignments[key] = [];
       }
-      
-      const coaches = [game.homeTeamCoach, game.awayTeamCoach].filter(Boolean);
-      coaches.forEach(coach => {
-        if (coach && coachAssignments[timeSlot].includes(coach)) {
-          conflicts.push({
-            type: 'coach_conflict',
-            message: `Coach ${coach} assigned to multiple games at ${timeSlot}`,
-            gameId: game.id
-          });
-        } else if (coach) {
-          coachAssignments[timeSlot].push(coach);
-        }
+      timeSlotAssignments[key].push(game.id);
+    }
+  });
+  
+  // Find conflicts where multiple games assigned to same time slot and field
+  Object.entries(timeSlotAssignments).forEach(([key, gameIds]) => {
+    if (gameIds.length > 1) {
+      conflicts.push({
+        type: 'time_conflict',
+        message: `Multiple games (${gameIds.join(', ')}) scheduled at same time slot on same field`,
+        gameIds: gameIds
       });
     }
   });
@@ -357,7 +438,7 @@ async function getFlightConfigurations(eventId: string) {
     .select()
     .from(gameFormats)
     .leftJoin(eventBrackets, eq(gameFormats.bracketId, eventBrackets.id))
-    .where(eq(eventBrackets.eventId, parseInt(eventId)));
+    .where(eq(eventBrackets.eventId, eventId));
 
   // Combine the data with smart defaults
   return flightConfigs.map(config => {
@@ -378,10 +459,10 @@ async function getFlightConfigurations(eventId: string) {
       endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
       matchCount: 3, // Will be calculated based on tournament format
       matchTime: formatConfig?.gameLength || 35,
-      breakTime: formatConfig?.restPeriod || formatConfig?.halfTimeBreak || 5,
+      breakTime: (formatConfig?.restPeriod || formatConfig?.halfTimeBreak || 5),
       paddingTime: formatConfig?.bufferTime || 10,
-      totalTime: (formatConfig?.gameLength || 35) + (formatConfig?.halfTimeBreak || 5) + (formatConfig?.bufferTime || 10),
-      formatName: formatConfig?.format || 'Round Robin',
+      totalTime: (formatConfig?.gameLength || 35) + (formatConfig?.halfTimeBreak || formatConfig?.restPeriod || 5) + (formatConfig?.bufferTime || 10),
+      formatName: formatConfig?.format || formatConfig?.templateName || 'Round Robin',
       teamCount: teamCountData?.teamCount || 0,
       ageGroupId: config.ageGroupId,
       fieldSize: config.fieldSize || formatConfig?.fieldSize || '11v11'

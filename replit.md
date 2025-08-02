@@ -33,15 +33,17 @@ Preferred communication style: Simple, everyday language.
         - **Intelligent Scheduler Framework**: Multi-objective optimization with field utilization, team fairness, and travel minimization
         - **Comprehensive Game Generation**: Round-robin, pool play, single elimination, double elimination, Swiss system, and hybrid formats
         - **Tournament Director Workflow**: Game Format Configuration → Flight Selection → Bracket Creation → Tournament-Aware Auto Scheduling
-        - **Tournament-Aware Auto Scheduling (ENHANCED)**: Respects flight configurations, game formats, and bracket structures instead of bypassing them
+        - **Tournament-Aware Auto Scheduling (ENHANCED - CRITICAL FIXES APPLIED)**: Respects flight configurations, game formats, and bracket structures instead of bypassing them
+        - **FIXED**: Database schema references and field mappings (games table structure aligned)
+        - **FIXED**: Time slot management integration with gameTimeSlots table
+        - **FIXED**: Tournament structure validation before scheduling execution
+        - **ENHANCED**: Comprehensive pre-scheduling validation (event dates, teams, fields)
         - Format-driven flight creation ensuring operational alignment with game requirements
         - Automated parameter configuration from existing tournament data
-        - Comprehensive tournament structure validation before scheduling
         - Flight-specific game generation using configured formats and timing
-        - Intelligent field assignment with size compatibility checking
+        - Intelligent field assignment with conflict detection
         - Drag-and-drop calendar for fine-tuning with visual conflict detection
         - Comprehensive game card PDF generation with QR code reporting
-        - Pre-scheduling validation and predictive feasibility analysis
     - **Field Intelligence System (Phases 1A-1C COMPLETE)**:
         - **Phase 1A ENHANCED**: Real field data integration (12 fields across 3 complexes), flexible time slots (5-15 min increments), intelligent buffer management, and field blackout system
         - **Phase 1B COMPLETE**: Enhanced conflict detection with multi-severity analysis and scheduling intelligence
