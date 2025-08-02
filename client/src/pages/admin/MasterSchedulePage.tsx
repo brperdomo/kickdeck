@@ -9,6 +9,7 @@ import {
   CheckCircle, Clock, Users, Trophy, ArrowLeft, Home, FileText, Plane 
 } from 'lucide-react';
 import { UnifiedScheduleSetup } from '@/components/admin/scheduling/UnifiedScheduleSetup';
+import { UnifiedTournamentControlCenter } from '@/components/admin/scheduling/UnifiedTournamentControlCenter';
 import { ScheduleViewer } from '@/components/admin/scheduling/ScheduleViewerFixed';
 import DragDropCalendarScheduler from '@/components/admin/scheduling/DragDropCalendarScheduler';
 import GameCardsGenerator from '@/components/admin/scheduling/GameCardsGenerator';
@@ -187,18 +188,27 @@ export default function MasterSchedulePage() {
             <Alert className="border-slate-600 bg-slate-800">
               <Trophy className="h-4 w-4 text-blue-400" />
               <AlertDescription className="text-slate-200">
-                <strong>Flight Configuration Overview:</strong> View and configure all tournament divisions/flights with 
-                game timing, formats, and scheduling parameters. This table provides a comprehensive overview 
-                similar to professional tournament management systems.
+                <strong>Master Schedule Control Center:</strong> Unified tournament management interface. 
+                Execute automated scheduling or run manual step-by-step workflow. All phases integrate 
+                seamlessly with your existing game formats, flights, and bracket configuration.
               </AlertDescription>
             </Alert>
-            <FlightConfigurationTable eventId={eventId} />
+            
+            {/* Unified Tournament Control Center Integration */}
+            <UnifiedTournamentControlCenter eventId={eventId} />
+            
+            {/* Flight Configuration Table */}
+            <div className="mt-8">
+              <h3 className="text-xl font-semibold text-white mb-4">Flight Configuration Status</h3>
+              <FlightConfigurationTable eventId={eventId} />
+            </div>
             
             {/* Add Data Flow Demo Button */}
             <div className="mt-6 text-center">
               <Button
                 onClick={() => setCurrentView('workflow')}
-                className="bg-blue-600 hover:bg-blue-500 text-white"
+                variant="outline"
+                className="border-slate-600 text-slate-200 hover:bg-slate-700"
               >
                 <ArrowRight className="h-4 w-4 mr-2" />
                 See How This Data Flows Through Workflow
