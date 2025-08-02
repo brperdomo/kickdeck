@@ -79,10 +79,10 @@ export function UnifiedTournamentControlCenter({ eventId }: TournamentControlCen
       if (!response.ok) throw new Error('Auto-scheduling failed');
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       toast({
-        title: "Auto-Scheduling Complete",
-        description: "Tournament schedule generated with all constraints applied.",
+        title: "Tournament Auto-Scheduling Complete",
+        description: `${data.message || 'Tournament schedule generated respecting flight configurations, game formats, and bracket structures.'}`,
       });
       refetchStatus();
       setIsProcessing(false);

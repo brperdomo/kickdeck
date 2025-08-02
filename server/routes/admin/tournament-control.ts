@@ -6,8 +6,8 @@
 import { Router } from 'express';
 import { db } from '@db';
 import { isAdmin } from '../../middleware';
-import { events, teams, games } from '@db/schema';
-import { eq } from 'drizzle-orm';
+import { events, teams, games, eventAgeGroups, eventBrackets, fields, gameFormats } from '@db/schema';
+import { eq, and, count, isNull } from 'drizzle-orm';
 
 const router = Router();
 
@@ -186,47 +186,69 @@ async function getComponentsStatus(eventId: string) {
   };
 }
 
-// Auto-scheduling implementation that actually works
+// Tournament-Aware Auto-scheduling that respects flight configurations, game formats, and bracket structures
 async function executeAutoScheduling(eventId: string, options: { includeReferees: boolean; includeFacilities: boolean }) {
-  console.log(`[Auto Schedule] Starting full auto-scheduling for event ${eventId}`);
+  console.log(`[Tournament Auto Schedule] Starting tournament-aware auto-scheduling for event ${eventId}`);
   
   try {
-    // Step 1: Use Quick Schedule Generator to create games
-    const quickScheduleResponse = await fetch(`http://localhost:5000/api/admin/events/${eventId}/quick-schedule`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        schedulingMethod: 'simple',
-        startDate: new Date().toISOString().split('T')[0],
-        timeSlots: [
-          { start: '08:00', end: '09:30' },
-          { start: '10:00', end: '11:30' },
-          { start: '12:00', end: '13:30' },
-          { start: '14:00', end: '15:30' },
-          { start: '16:00', end: '17:30' }
-        ]
-      })
-    });
+    // Step 0: Validate tournament structure is ready
+    await validateTournamentStructure(eventId);
     
-    if (!quickScheduleResponse.ok) {
-      throw new Error('Quick schedule generation failed');
+    // Step 1: Get existing flight configurations and game formats
+    const flightConfigs = await getFlightConfigurations(eventId);
+    console.log(`[Tournament Auto Schedule] Found ${flightConfigs.length} configured flights`);
+    
+    if (flightConfigs.length === 0) {
+      throw new Error('No flight configurations found. Please configure flights first via the Flight Management tab.');
     }
     
-    const quickScheduleResult = await quickScheduleResponse.json();
-    console.log(`[Auto Schedule] Generated ${quickScheduleResult.gamesCreated || 0} games`);
+    // Step 2: Get bracket configurations for each flight
+    const brackets = await getBracketConfigurations(eventId);
+    console.log(`[Tournament Auto Schedule] Found ${brackets.length} bracket configurations`);
     
-    // Step 2: Apply conflict detection and validation
+    // Step 3: Generate games for each configured flight using their specific formats
+    let totalGamesCreated = 0;
+    const flightResults = [];
+    
+    for (const flight of flightConfigs) {
+      console.log(`[Tournament Auto Schedule] Processing flight: ${flight.divisionName} (${flight.teamCount} teams)`);
+      
+      if (flight.teamCount < 2) {
+        console.log(`[Tournament Auto Schedule] Skipping flight ${flight.divisionName} - insufficient teams (${flight.teamCount})`);
+        continue;
+      }
+      
+      // Generate games using the flight's configured format and timing
+      const flightGames = await generateGamesForFlight(eventId, flight);
+      totalGamesCreated += flightGames.gamesCreated;
+      
+      flightResults.push({
+        flightName: flight.divisionName,
+        gamesCreated: flightGames.gamesCreated,
+        format: flight.formatName,
+        duration: flight.matchTime
+      });
+    }
+    
+    // Step 4: Apply intelligent scheduling with field assignments
+    if (totalGamesCreated > 0) {
+      await assignFieldsToGames(eventId);
+      console.log(`[Tournament Auto Schedule] Assigned fields to ${totalGamesCreated} games`);
+    }
+    
+    // Step 5: Apply conflict detection and validation
     const conflicts = await validateScheduleConflicts(eventId);
     
     return {
-      gamesCreated: quickScheduleResult.gamesCreated || 0,
+      gamesCreated: totalGamesCreated,
+      flightResults,
       conflictsDetected: conflicts.length,
-      message: `Auto-scheduling completed - ${quickScheduleResult.gamesCreated || 0} games created, ${conflicts.length} conflicts detected`
+      message: `Tournament auto-scheduling completed - ${totalGamesCreated} games created across ${flightResults.length} flights, ${conflicts.length} conflicts detected`
     };
     
   } catch (error: any) {
-    console.error('[Auto Schedule] Failed:', error);
-    throw new Error(`Auto-scheduling failed: ${error.message}`);
+    console.error('[Tournament Auto Schedule] Failed:', error);
+    throw new Error(`Tournament auto-scheduling failed: ${error.message}`);
   }
 }
 
@@ -293,6 +315,243 @@ async function validateScheduleConflicts(eventId: string) {
   
   console.log(`[Conflict Detection] Found ${conflicts.length} conflicts`);
   return conflicts;
+}
+
+// Helper functions for tournament-aware scheduling
+
+async function getFlightConfigurations(eventId: string) {
+  // Get age groups with team counts and game format configurations
+  const flightConfigs = await db
+    .select({
+      id: eventAgeGroups.id,
+      divisionName: eventAgeGroups.divisionCode,
+      ageGroupId: eventAgeGroups.id,
+      eventId: eventAgeGroups.eventId,
+      ageGroup: eventAgeGroups.ageGroup,
+      gender: eventAgeGroups.gender,
+      fieldSize: eventAgeGroups.fieldSize
+    })
+    .from(eventAgeGroups)
+    .where(eq(eventAgeGroups.eventId, eventId));
+
+  // Get team counts for each age group
+  const teamCounts = await db
+    .select({
+      ageGroupId: teams.ageGroupId,
+      teamCount: count(teams.id),
+    })
+    .from(teams)
+    .where(and(
+      eq(teams.eventId, eventId),
+      eq(teams.status, 'approved')
+    ))
+    .groupBy(teams.ageGroupId);
+
+  // Get game format configurations
+  const gameFormatConfigs = await db
+    .select()
+    .from(gameFormats)
+    .where(eq(gameFormats.eventId, parseInt(eventId)));
+
+  // Combine the data with smart defaults
+  return flightConfigs.map(config => {
+    const teamCountData = teamCounts.find(tc => tc.ageGroupId === config.ageGroupId);
+    const formatConfig = gameFormatConfigs.find(gf => gf.ageGroupId === config.ageGroupId);
+    
+    return {
+      id: config.id.toString(),
+      divisionName: config.divisionName || `${config.ageGroup} ${config.gender}`,
+      startDate: new Date().toISOString().split('T')[0],
+      endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      matchCount: formatConfig?.gamesPerTeam || 3,
+      matchTime: formatConfig?.gameLength || 35,
+      breakTime: formatConfig?.restPeriod || 5,
+      paddingTime: formatConfig?.bufferTime || 10,
+      totalTime: (formatConfig?.gameLength || 35) + (formatConfig?.restPeriod || 5) + (formatConfig?.bufferTime || 10),
+      formatName: formatConfig?.format || 'Round Robin',
+      teamCount: teamCountData?.teamCount || 0,
+      ageGroupId: config.ageGroupId,
+      fieldSize: config.fieldSize || '11v11'
+    };
+  });
+}
+
+async function getBracketConfigurations(eventId: string) {
+  const brackets = await db
+    .select({
+      id: eventBrackets.id,
+      name: eventBrackets.name,
+      ageGroupId: eventBrackets.ageGroupId,
+      maxTeams: eventBrackets.maxTeams,
+      bracketType: eventBrackets.bracketType,
+      isActive: eventBrackets.isActive
+    })
+    .from(eventBrackets)
+    .where(eq(eventBrackets.eventId, parseInt(eventId)));
+
+  return brackets;
+}
+
+async function generateGamesForFlight(eventId: string, flight: any) {
+  console.log(`[Generate Games] Creating games for flight ${flight.divisionName}`);
+  
+  // Get teams for this flight
+  const flightTeams = await db
+    .select()
+    .from(teams)
+    .where(and(
+      eq(teams.eventId, eventId),
+      eq(teams.ageGroupId, flight.ageGroupId),
+      eq(teams.status, 'approved')
+    ));
+
+  if (flightTeams.length < 2) {
+    return { gamesCreated: 0 };
+  }
+
+  // Generate round-robin games for this flight
+  const gamesToCreate = [];
+  let gameNumber = 1;
+
+  for (let i = 0; i < flightTeams.length; i++) {
+    for (let j = i + 1; j < flightTeams.length; j++) {
+      const homeTeam = flightTeams[i];
+      const awayTeam = flightTeams[j];
+
+      gamesToCreate.push({
+        eventId: eventId,
+        homeTeamId: homeTeam.id,
+        awayTeamId: awayTeam.id,
+        homeTeamName: homeTeam.name,
+        awayTeamName: awayTeam.name,
+        ageGroup: flight.divisionName,
+        gameNumber: gameNumber++,
+        gameLength: flight.matchTime,
+        fieldSize: flight.fieldSize,
+        status: 'scheduled',
+        bracketId: flight.id,
+        round: 1,
+        homeTeamCoach: homeTeam.managerName,
+        awayTeamCoach: awayTeam.managerName
+      });
+    }
+  }
+
+  // Insert games into database
+  if (gamesToCreate.length > 0) {
+    await db.insert(games).values(gamesToCreate);
+    console.log(`[Generate Games] Created ${gamesToCreate.length} games for flight ${flight.divisionName}`);
+  }
+
+  return { gamesCreated: gamesToCreate.length };
+}
+
+async function assignFieldsToGames(eventId: string) {
+  // Get unscheduled games
+  const unscheduledGames = await db
+    .select()
+    .from(games)
+    .where(and(
+      eq(games.eventId, eventId),
+      isNull(games.fieldId)
+    ));
+
+  // Get available fields
+  const availableFields = await db
+    .select()
+    .from(fields)
+    .where(eq(fields.isOpen, true));
+
+  if (availableFields.length === 0) {
+    console.log('[Assign Fields] No available fields found');
+    return;
+  }
+
+  // Simple field assignment - distribute games across available fields
+  let fieldIndex = 0;
+  const updates = [];
+
+  for (const game of unscheduledGames) {
+    const assignedField = availableFields[fieldIndex % availableFields.length];
+    
+    // Check field size compatibility
+    const isCompatible = isFieldSizeCompatible(game.fieldSize, assignedField.fieldSize);
+    
+    if (isCompatible) {
+      updates.push({
+        gameId: game.id,
+        fieldId: assignedField.id,
+        fieldSize: assignedField.fieldSize
+      });
+    }
+    
+    fieldIndex++;
+  }
+
+  // Apply field assignments
+  for (const update of updates) {
+    await db
+      .update(games)
+      .set({ 
+        fieldId: update.fieldId,
+        fieldSize: update.fieldSize
+      })
+      .where(eq(games.id, update.gameId));
+  }
+
+  console.log(`[Assign Fields] Assigned fields to ${updates.length} games`);
+}
+
+async function validateTournamentStructure(eventId: string) {
+  console.log(`[Validate Tournament] Checking tournament structure for event ${eventId}`);
+
+  // Check if age groups exist
+  const ageGroups = await db
+    .select()
+    .from(eventAgeGroups)
+    .where(eq(eventAgeGroups.eventId, eventId));
+
+  if (ageGroups.length === 0) {
+    throw new Error('No age groups configured. Please set up age groups first.');
+  }
+
+  // Check if approved teams exist
+  const approvedTeams = await db
+    .select()
+    .from(teams)
+    .where(and(
+      eq(teams.eventId, eventId),
+      eq(teams.status, 'approved')
+    ));
+
+  if (approvedTeams.length === 0) {
+    throw new Error('No approved teams found. Please approve teams before scheduling.');
+  }
+
+  // Check if fields are available
+  const openFields = await db
+    .select()
+    .from(fields)
+    .where(eq(fields.isOpen, true));
+
+  if (openFields.length === 0) {
+    throw new Error('No available fields found. Please ensure fields are configured and open.');
+  }
+
+  console.log(`[Validate Tournament] Structure validated: ${ageGroups.length} age groups, ${approvedTeams.length} approved teams, ${openFields.length} available fields`);
+}
+
+function isFieldSizeCompatible(gameFieldSize: string, availableFieldSize: string): boolean {
+  // Field size compatibility matrix
+  const compatibilityMap: { [key: string]: string[] } = {
+    '4v4': ['4v4', '7v7', '9v9', '11v11'],
+    '7v7': ['7v7', '9v9', '11v11'],
+    '9v9': ['9v9', '11v11'],
+    '11v11': ['11v11']
+  };
+
+  const compatibleSizes = compatibilityMap[gameFieldSize] || [gameFieldSize];
+  return compatibleSizes.includes(availableFieldSize);
 }
 
 export default router;

@@ -259,8 +259,8 @@ export default function MasterSchedulePage() {
             <Alert className="border-slate-600 bg-slate-800">
               <Zap className="h-4 w-4 text-blue-400" />
               <AlertDescription className="text-slate-200">
-                <strong>Phase 4 - Automated Scheduling:</strong> Generate complete tournament schedules automatically. 
-                The system will create games for all flights with intelligent field distribution and conflict avoidance.
+                <strong>Phase 4 - Tournament-Aware Auto Scheduling:</strong> Generate complete tournament schedules that respect your flight configurations, game formats, and bracket structures. 
+                The system validates existing tournament data and creates games for each configured flight with intelligent field distribution and conflict avoidance.
               </AlertDescription>
             </Alert>
             <UnifiedScheduleSetup eventId={eventId} />

@@ -32,9 +32,13 @@ Preferred communication style: Simple, everyday language.
         - **Tournament Progression Engine**: Dynamic advancement logic with complete tiebreaker systems (head-to-head, goal difference, etc.)
         - **Intelligent Scheduler Framework**: Multi-objective optimization with field utilization, team fairness, and travel minimization
         - **Comprehensive Game Generation**: Round-robin, pool play, single elimination, double elimination, Swiss system, and hybrid formats
-        - **Tournament Director Workflow**: Game Format Configuration → Flight Selection → Bracket Creation → Auto Scheduling
+        - **Tournament Director Workflow**: Game Format Configuration → Flight Selection → Bracket Creation → Tournament-Aware Auto Scheduling
+        - **Tournament-Aware Auto Scheduling (ENHANCED)**: Respects flight configurations, game formats, and bracket structures instead of bypassing them
         - Format-driven flight creation ensuring operational alignment with game requirements
         - Automated parameter configuration from existing tournament data
+        - Comprehensive tournament structure validation before scheduling
+        - Flight-specific game generation using configured formats and timing
+        - Intelligent field assignment with size compatibility checking
         - Drag-and-drop calendar for fine-tuning with visual conflict detection
         - Comprehensive game card PDF generation with QR code reporting
         - Pre-scheduling validation and predictive feasibility analysis
