@@ -20,6 +20,7 @@ import { FormatTemplateManager } from '@/components/admin/templates/FormatTempla
 import { FlightConfigurationTable } from '@/components/admin/scheduling/FlightConfigurationTable';
 import { WorkflowDataFlow } from '@/components/admin/scheduling/WorkflowDataFlow';
 import BracketCreationEngine from '@/components/admin/scheduling/BracketCreationEngine';
+import { MasterScheduleConflictDetection } from '@/components/admin/scheduling/MasterScheduleConflictDetection';
 
 export default function MasterSchedulePage() {
   const { eventId } = useParams<{ eventId: string }>();
@@ -201,6 +202,11 @@ export default function MasterSchedulePage() {
             <div className="mt-8">
               <h3 className="text-xl font-semibold text-white mb-4">Flight Configuration Status</h3>
               <FlightConfigurationTable eventId={eventId} />
+            </div>
+            
+            {/* Master Schedule Conflict Detection Panel */}
+            <div className="mt-8">
+              <MasterScheduleConflictDetection eventId={eventId} />
             </div>
             
             {/* Add Data Flow Demo Button */}
