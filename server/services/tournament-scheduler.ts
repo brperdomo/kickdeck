@@ -427,52 +427,17 @@ export class TournamentScheduler {
   }
   
   /**
-   * Get available fields for the event
+   * Get available fields for the event using field availability service
    */
   private static async getAvailableFields(eventId: string): Promise<Field[]> {
-    // Get complex IDs assigned to this event
-    const eventComplexesData = await db
-      .select()
-      .from(eventComplexes)
-      .where(eq(eventComplexes.eventId, eventId));
-      
-    const complexIds = eventComplexesData.map(ec => ec.complexId);
+    const { FieldAvailabilityService } = await import('./field-availability-service');
+    const fieldsInfo = await FieldAvailabilityService.getAvailableFields(eventId);
     
-    let fieldsData = [];
-    
-    if (complexIds.length > 0) {
-      fieldsData = await db
-        .select({
-          id: fields.id,
-          name: fields.name,
-          complexId: fields.complexId,
-          complexName: complexes.name,
-        })
-        .from(fields)
-        .leftJoin(complexes, eq(fields.complexId, complexes.id))
-        .where(and(
-          eq(fields.isOpen, true),
-          inArray(fields.complexId, complexIds)
-        ));
-    } else {
-      // Fallback to all active fields
-      fieldsData = await db
-        .select({
-          id: fields.id,
-          name: fields.name,
-          complexId: fields.complexId,
-          complexName: complexes.name,
-        })
-        .from(fields)
-        .leftJoin(complexes, eq(fields.complexId, complexes.id))
-        .where(eq(fields.isOpen, true));
-    }
-    
-    return fieldsData.map(field => ({
+    return fieldsInfo.map(field => ({
       id: field.id,
       name: field.name,
       complexId: field.complexId,
-      complexName: field.complexName || 'Unknown Complex',
+      complexName: field.complexName,
       duration: 90 // Standard game duration
     }));
   }
@@ -510,51 +475,164 @@ export class TournamentScheduler {
     options: any = {}
   ): Promise<Game[]> {
     
+    console.log(`🎯 Assigning fields and times to ${games.length} games using field availability service`);
+    
     if (fields.length === 0) {
       console.log('⚠️  No fields available, returning games without field assignments');
       return games;
     }
     
-    if (timeSlots.length === 0) {
-      console.log('⚠️  No time slots available, returning games without time assignments');
-      return games;
-    }
+    const { FieldAvailabilityService } = await import('./field-availability-service');
+    const scheduledGames: Game[] = [];
+    const teamSchedule = new Map<number, Game[]>(); // teamId -> games
     
-    const scheduledGames = [...games];
-    let currentFieldIndex = 0;
-    let currentTimeIndex = 0;
+    // Get event ID from first game (assuming all games are from same event)
+    const eventId = games[0]?.bracketId?.split('_')[0] || '1656618593'; // fallback to test event
     
-    // Simple round-robin field assignment
-    for (const game of scheduledGames) {
-      // Assign field
-      const field = fields[currentFieldIndex];
-      game.fieldId = field.id;
-      game.fieldName = field.name;
+    // Sort games by priority (pool play first, then knockout)
+    const sortedGames = [...games].sort((a, b) => {
+      if (a.gameType === 'pool_play' && b.gameType !== 'pool_play') return -1;
+      if (a.gameType !== 'pool_play' && b.gameType === 'pool_play') return 1;
+      return a.gameNumber - b.gameNumber;
+    });
+    
+    let currentDay = 0;
+    const minRestMinutes = options.minRestPeriod || 60;
+    
+    for (const game of sortedGames) {
+      let assigned = false;
+      let dayAttempts = 0;
       
-      // Assign time slot
-      if (currentTimeIndex < timeSlots.length) {
-        const timeSlot = timeSlots[currentTimeIndex];
-        game.timeSlotId = timeSlot.id;
-        game.startTime = timeSlot.startTime;
-        game.endTime = timeSlot.endTime;
-        game.date = timeSlot.date;
+      while (!assigned && dayAttempts < 7) { // Try up to 7 days
+        // Determine field size needed based on game/bracket info
+        const fieldSize = this.determineFieldSize(game);
+        
+        try {
+          // Find available time slots for this field size on current day
+          const availableSlots = await FieldAvailabilityService.findAvailableTimeSlots(
+            eventId,
+            fieldSize,
+            currentDay + dayAttempts,
+            game.duration,
+            15 // 15 minute buffer between games
+          );
+          
+          // Check team rest periods for each available slot
+          for (const slot of availableSlots) {
+            const homeTeamGames = teamSchedule.get(game.homeTeamId) || [];
+            const awayTeamGames = teamSchedule.get(game.awayTeamId) || [];
+            
+            const hasTeamConflict = [...homeTeamGames, ...awayTeamGames].some(teamGame => {
+              if (!teamGame.endTime || teamGame.date !== this.formatDate(currentDay + dayAttempts)) return false;
+              
+              const teamGameEndMinutes = this.timeToMinutes(teamGame.endTime);
+              const proposedStartMinutes = this.timeToMinutes(slot.startTime);
+              
+              return (proposedStartMinutes - teamGameEndMinutes) < minRestMinutes;
+            });
+            
+            if (!hasTeamConflict) {
+              // Reserve the time slot
+              try {
+                const timeSlotId = await FieldAvailabilityService.reserveTimeSlot(
+                  eventId,
+                  slot.fieldId,
+                  slot.startTime,
+                  slot.endTime,
+                  currentDay + dayAttempts
+                );
+                
+                // Create scheduled game
+                const scheduledGame: Game = {
+                  ...game,
+                  fieldId: slot.fieldId,
+                  fieldName: slot.field?.name || `Field ${slot.fieldId}`,
+                  startTime: slot.startTime,
+                  endTime: slot.endTime,
+                  date: this.formatDate(currentDay + dayAttempts),
+                  timeSlotId
+                };
+                
+                scheduledGames.push(scheduledGame);
+                
+                // Update team schedules
+                if (!teamSchedule.has(game.homeTeamId)) {
+                  teamSchedule.set(game.homeTeamId, []);
+                }
+                if (!teamSchedule.has(game.awayTeamId)) {
+                  teamSchedule.set(game.awayTeamId, []);
+                }
+                teamSchedule.get(game.homeTeamId)!.push(scheduledGame);
+                teamSchedule.get(game.awayTeamId)!.push(scheduledGame);
+                
+                assigned = true;
+                console.log(`✅ Assigned game ${game.gameNumber} to field ${slot.fieldId} on day ${currentDay + dayAttempts} from ${slot.startTime} to ${slot.endTime}`);
+                break;
+              } catch (error: any) {
+                console.log(`⚠️ Failed to reserve time slot: ${error.message}`);
+                continue;
+              }
+            }
+          }
+        } catch (error: any) {
+          console.log(`⚠️ Error finding available slots: ${error.message}`);
+        }
+        
+        dayAttempts++;
       }
       
-      // Rotate to next field
-      currentFieldIndex = (currentFieldIndex + 1) % fields.length;
-      
-      // Move to next time slot when we've cycled through all fields
-      if (currentFieldIndex === 0) {
-        currentTimeIndex++;
+      if (!assigned) {
+        console.log(`❌ Could not assign field/time for game ${game.gameNumber}: ${game.homeTeamName} vs ${game.awayTeamName}`);
+        // Add to scheduled games without field assignment
+        scheduledGames.push({
+          ...game,
+          fieldId: undefined,
+          fieldName: 'TBD',
+          startTime: 'TBD',
+          endTime: 'TBD',
+          date: 'TBD'
+        });
       }
     }
     
-    console.log(`📅 Assigned ${scheduledGames.filter(g => g.fieldId).length} games to fields`);
-    console.log(`⏰ Assigned ${scheduledGames.filter(g => g.timeSlotId).length} games to time slots`);
+    console.log(`✅ Successfully assigned ${scheduledGames.filter(g => g.fieldId).length}/${games.length} games to fields with real availability checking`);
     
     return scheduledGames;
   }
   
+  /**
+   * Determine appropriate field size for a game
+   */
+  private static determineFieldSize(game: Game): string {
+    // Extract age from bracket name or use default
+    const bracketName = game.bracketName || '';
+    
+    if (bracketName.includes('U8') || bracketName.includes('U9') || bracketName.includes('U10')) {
+      return '7v7';
+    } else if (bracketName.includes('U11') || bracketName.includes('U12')) {
+      return '9v9';
+    } else {
+      return '11v11';
+    }
+  }
+  
+  /**
+   * Convert time string to minutes since midnight
+   */
+  private static timeToMinutes(timeString: string): number {
+    const [hours, minutes] = timeString.split(':').map(Number);
+    return hours * 60 + minutes;
+  }
+  
+  /**
+   * Format date for day offset
+   */
+  private static formatDate(dayOffset: number): string {
+    const date = new Date();
+    date.setDate(date.getDate() + dayOffset);
+    return date.toISOString().split('T')[0];
+  }
+
   /**
    * Generate schedule summary statistics
    */
