@@ -7,7 +7,7 @@ import { Router } from 'express';
 import { db } from '@db';
 import { isAdmin } from '../../middleware';
 import { events, teams, games, eventAgeGroups, eventBrackets, fields, gameFormats, eventGameFormats, eventScheduleConstraints, gameTimeSlots } from '@db/schema';
-import { TimeSlotManager } from '../utils/timeSlotManager';
+import { TimeSlotManager } from '../../utils/timeSlotManager';
 import { eq, and, count, isNull } from 'drizzle-orm';
 
 const router = Router();
@@ -459,10 +459,10 @@ async function getFlightConfigurations(eventId: string) {
       endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
       matchCount: 3, // Will be calculated based on tournament format
       matchTime: formatConfig?.gameLength || 35,
-      breakTime: (formatConfig?.restPeriod || formatConfig?.halfTimeBreak || 5),
+      breakTime: (formatConfig?.bufferTime || 5),
       paddingTime: formatConfig?.bufferTime || 10,
-      totalTime: (formatConfig?.gameLength || 35) + (formatConfig?.halfTimeBreak || formatConfig?.restPeriod || 5) + (formatConfig?.bufferTime || 10),
-      formatName: formatConfig?.format || formatConfig?.templateName || 'Round Robin',
+      totalTime: (formatConfig?.gameLength || 35) + (formatConfig?.bufferTime || 5) + (formatConfig?.bufferTime || 10),
+      formatName: (eventFormatConfig?.format || bracketFormatConfig?.templateName || 'Round Robin'),
       teamCount: teamCountData?.teamCount || 0,
       ageGroupId: config.ageGroupId,
       fieldSize: config.fieldSize || formatConfig?.fieldSize || '11v11'
@@ -586,44 +586,7 @@ async function assignFieldsToGames(eventId: string) {
   console.log(`[Assign Fields] Assigned fields to ${updates.length} games`);
 }
 
-async function validateTournamentStructure(eventId: string) {
-  console.log(`[Validate Tournament] Checking tournament structure for event ${eventId}`);
 
-  // Check if age groups exist
-  const ageGroups = await db
-    .select()
-    .from(eventAgeGroups)
-    .where(eq(eventAgeGroups.eventId, eventId));
-
-  if (ageGroups.length === 0) {
-    throw new Error('No age groups configured. Please set up age groups first.');
-  }
-
-  // Check if approved teams exist
-  const approvedTeams = await db
-    .select()
-    .from(teams)
-    .where(and(
-      eq(teams.eventId, eventId),
-      eq(teams.status, 'approved')
-    ));
-
-  if (approvedTeams.length === 0) {
-    throw new Error('No approved teams found. Please approve teams before scheduling.');
-  }
-
-  // Check if fields are available
-  const openFields = await db
-    .select()
-    .from(fields)
-    .where(eq(fields.isOpen, true));
-
-  if (openFields.length === 0) {
-    throw new Error('No available fields found. Please ensure fields are configured and open.');
-  }
-
-  console.log(`[Validate Tournament] Structure validated: ${ageGroups.length} age groups, ${approvedTeams.length} approved teams, ${openFields.length} available fields`);
-}
 
 function isFieldSizeCompatible(gameFieldSize: string, availableFieldSize: string): boolean {
   // Field size compatibility matrix
