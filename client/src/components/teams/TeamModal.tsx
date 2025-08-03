@@ -28,6 +28,7 @@ const teamSchema = z.object({
   managerEmail: z.string().email("Invalid email address").optional().or(z.literal("")),
   ageGroupId: z.string().optional(),
   bracketId: z.number().nullable().optional(),
+  gender: z.enum(["Boys", "Girls"]).optional(),
 });
 
 type TeamFormValues = z.infer<typeof teamSchema>;
@@ -61,6 +62,7 @@ interface TeamModalProps {
 export function TeamModal({ isOpen, onClose, team }: TeamModalProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [selectedGender, setSelectedGender] = useState<string>(""); 
   
   // Fetch age groups for this event if we have an eventId
   const ageGroupsQuery = useQuery({
@@ -137,13 +139,19 @@ export function TeamModal({ isOpen, onClose, team }: TeamModalProps) {
       clubName: team?.clubName || "",
       ageGroupId: team?.ageGroupId ? String(team.ageGroupId) : "",
       bracketId: team?.bracketId || null,
+      gender: "",
     },
   });
 
   // Reset form when team changes
   useEffect(() => {
-    if (team) {
+    if (team && ageGroupsQuery.data) {
       const coachData = team.coachData || parseCoachData();
+      
+      // Find the current team's gender from age groups
+      const currentAgeGroup = ageGroupsQuery.data.find((ag: any) => ag.id === team.ageGroupId);
+      const currentGender = currentAgeGroup?.gender || "";
+      
       form.reset({
         name: team.name || "",
         managerName: team.managerName || "",
@@ -158,14 +166,18 @@ export function TeamModal({ isOpen, onClose, team }: TeamModalProps) {
         clubName: team.clubName || "",
         ageGroupId: team.ageGroupId ? String(team.ageGroupId) : "",
         bracketId: team.bracketId || null,
+        gender: currentGender,
       });
       
-      // Initialize the age group ID for bracket fetching
+      // Initialize the age group ID and gender for bracket fetching
       if (team.ageGroupId) {
         setSelectedAgeGroupId(String(team.ageGroupId));
       }
+      if (currentGender) {
+        setSelectedGender(currentGender);
+      }
     }
-  }, [team, form]);
+  }, [team, form, ageGroupsQuery.data]);
   
   // Watch for age group changes and update the selected age group for bracket fetching
   useEffect(() => {
@@ -463,6 +475,37 @@ export function TeamModal({ isOpen, onClose, team }: TeamModalProps) {
                 
                 <FormField
                   control={form.control}
+                  name="gender"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Gender</FormLabel>
+                      <Select
+                        value={field.value}
+                        onValueChange={(value) => {
+                          field.onChange(value);
+                          setSelectedGender(value);
+                          // Clear age group selection when gender changes
+                          form.setValue("ageGroupId", "");
+                          form.setValue("bracketId", null);
+                        }}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select gender" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="Boys">Boys</SelectItem>
+                          <SelectItem value="Girls">Girls</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
                   name="ageGroupId"
                   render={({ field }) => (
                     <FormItem>
@@ -473,11 +516,11 @@ export function TeamModal({ isOpen, onClose, team }: TeamModalProps) {
                           field.onChange(value);
                           setSelectedAgeGroupId(value); // Update the age group for brackets query
                         }}
-                        disabled={ageGroupsQuery.isLoading || !team?.eventId}
+                        disabled={ageGroupsQuery.isLoading || !team?.eventId || !selectedGender}
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select age group" />
+                            <SelectValue placeholder={selectedGender ? "Select age group" : "Select gender first"} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -494,9 +537,12 @@ export function TeamModal({ isOpen, onClose, team }: TeamModalProps) {
                               No age groups available
                             </SelectItem>
                           ) : (
-                            ageGroupsQuery.data?.filter((ageGroup: any) => ageGroup.isEligible !== false).map((ageGroup: any) => (
+                            ageGroupsQuery.data?.filter((ageGroup: any) => 
+                              ageGroup.isEligible !== false && 
+                              (!selectedGender || ageGroup.gender === selectedGender)
+                            ).map((ageGroup: any) => (
                               <SelectItem key={ageGroup.id} value={String(ageGroup.id)}>
-                                {ageGroup.ageGroup}
+                                {ageGroup.ageGroup} ({ageGroup.gender})
                               </SelectItem>
                             ))
                           )}
@@ -531,7 +577,7 @@ export function TeamModal({ isOpen, onClose, team }: TeamModalProps) {
                         <FormControl>
                           <BracketSelector
                             brackets={bracketsQuery.data || []}
-                            value={field.value}
+                            value={field.value ?? null}
                             onChange={field.onChange}
                           />
                         </FormControl>
