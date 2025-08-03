@@ -946,7 +946,7 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin', isAdmin, fieldCapacityRouter); // Field capacity analysis router
     app.use('/api/admin', isAdmin, intelligentSchedulingRouter); // Intelligent scheduling system router
     app.use('/api/admin/events', isAdmin, gameMetadataRouter); // Game metadata and scheduling rules router
-    app.use('/api/admin', isAdmin, gameFormatsRouter); // Game format configuration router
+    // app.use('/api/admin', isAdmin, gameFormatsRouter); // Game format configuration router - disabled due to duplicate with flight-formats
 
   // Debug endpoint for testing templates without authentication
   app.get('/api/debug/format-templates', async (req, res) => {

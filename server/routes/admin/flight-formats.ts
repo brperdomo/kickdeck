@@ -166,10 +166,14 @@ router.get('/format-templates', async (req, res) => {
 });
 
 // Save format configuration for a flight
-router.post('/events/:eventId/flights/:flightId/format', async (req, res) => {
+router.post('/events/:eventId/flights/:flightId/format', isAdmin, async (req, res) => {
   try {
     const { eventId, flightId } = req.params;
     const { gameLength, fieldSize, bufferTime, restPeriod, maxGamesPerDay, templateName } = req.body;
+    
+    console.log(`[Flight Formats] Saving format for event ${eventId}, flight ${flightId}:`, {
+      gameLength, fieldSize, bufferTime, restPeriod, maxGamesPerDay, templateName
+    });
 
     // Validate required fields
     if (!gameLength || !fieldSize || !bufferTime || !restPeriod || !maxGamesPerDay) {
@@ -214,6 +218,7 @@ router.post('/events/:eventId/flights/:flightId/format', async (req, res) => {
         });
     }
 
+    console.log(`[Flight Formats] Format configuration saved successfully for flight ${flightId}`);
     res.json({ success: true, message: 'Format configuration saved successfully' });
   } catch (error) {
     console.error('Error saving format configuration:', error);
