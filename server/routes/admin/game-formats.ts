@@ -119,7 +119,8 @@ router.get('/events/:eventId/flight-formats', isAdmin, async (req, res) => {
         if (bracketTeams.rows.length > 0) {
           const teamInfo = bracketTeams.rows[0];
           ageGroup = ageGroup || teamInfo.age_group_name;
-          gender = gender || (teamInfo.gender === 'male' ? 'Boys' : teamInfo.gender === 'female' ? 'Girls' : 'Mixed');
+          // The database already stores 'Boys'/'Girls' correctly
+          gender = gender || teamInfo.gender || 'Mixed';
         }
       }
       
