@@ -15,7 +15,7 @@ import { isAdmin } from '../../middleware';
 const router = Router();
 
 // Get flights ready for format configuration (flights must be locked first)
-router.get('/events/:eventId/flight-formats', async (req, res) => {
+router.get('/events/:eventId/flight-formats', isAdmin, async (req, res) => {
   try {
     const { eventId } = req.params;
 
@@ -27,17 +27,18 @@ router.get('/events/:eventId/flight-formats', async (req, res) => {
         ageGroup: eventAgeGroups.ageGroup,
         gender: eventAgeGroups.gender,
         currentFormat: {
-          id: eventGameFormats.id,
-          gameLength: eventGameFormats.gameLength,
-          fieldSize: eventGameFormats.fieldSize,
-          bufferTime: eventGameFormats.bufferTime,
-          ageGroup: eventGameFormats.ageGroup,
-          format: eventGameFormats.format
+          id: gameFormats.id,
+          gameLength: gameFormats.gameLength,
+          fieldSize: gameFormats.fieldSize,
+          bufferTime: gameFormats.bufferTime,
+          restPeriod: gameFormats.restPeriod,
+          maxGamesPerDay: gameFormats.maxGamesPerDay,
+          templateName: gameFormats.templateName
         }
       })
       .from(eventBrackets)
       .innerJoin(eventAgeGroups, eq(eventBrackets.ageGroupId, eventAgeGroups.id))
-      .leftJoin(eventGameFormats, eq(eventGameFormats.eventId, parseInt(eventId)))
+      .leftJoin(gameFormats, eq(gameFormats.bracketId, eventBrackets.id))
       .where(
         and(
           eq(eventAgeGroups.eventId, eventId),
@@ -69,6 +70,12 @@ router.get('/events/:eventId/flight-formats', async (req, res) => {
       })
     );
 
+    console.log(`[Flight Formats] Returning flight data for event ${eventId}:`, flightData.map(f => ({
+      flightId: f.flightId,
+      flightName: f.flightName,
+      hasFormat: !!f.currentFormat
+    })));
+    
     res.json(flightData);
   } catch (error) {
     console.error('Error fetching flight formats:', error);
@@ -174,6 +181,23 @@ router.post('/events/:eventId/flights/:flightId/format', isAdmin, async (req, re
     console.log(`[Flight Formats] Saving format for event ${eventId}, flight ${flightId}:`, {
       gameLength, fieldSize, bufferTime, restPeriod, maxGamesPerDay, templateName
     });
+
+    // Validate that the flight exists and belongs to the event
+    const flight = await db
+      .select()
+      .from(eventBrackets)
+      .innerJoin(eventAgeGroups, eq(eventBrackets.ageGroupId, eventAgeGroups.id))
+      .where(
+        and(
+          eq(eventBrackets.id, parseInt(flightId)),
+          eq(eventAgeGroups.eventId, eventId)
+        )
+      )
+      .limit(1);
+
+    if (flight.length === 0) {
+      return res.status(400).json({ error: 'Flight does not belong to this event' });
+    }
 
     // Validate required fields
     if (!gameLength || !fieldSize || !bufferTime || !restPeriod || !maxGamesPerDay) {
