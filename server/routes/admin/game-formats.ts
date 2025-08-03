@@ -88,23 +88,35 @@ router.get('/events/:eventId/flight-formats', isAdmin, async (req, res) => {
 
       const teamCount = await getTeamCountForFlight(eventId, bracket.id);
 
-      // Extract age group and gender from bracket name
+      // Extract components from bracket name
+      // Example: "U17 Boys Nike Elite" -> extract age group, gender, and flight name
       const ageGroupMatch = bracket.name.match(/(U\d+)/i);
       const genderMatch = bracket.name.match(/(Boys|Girls|Mixed)/i);
-      const ageGroup = ageGroupMatch ? ageGroupMatch[1] : bracket.name;
+      const ageGroup = ageGroupMatch ? ageGroupMatch[1] : 'Unknown';
       const gender = genderMatch ? genderMatch[1] : 'Mixed';
-
-      // Get flight level display name
-      const flightDisplayName = flightLevelMap.get(bracket.level) || bracket.level;
       
-      // Create full display name: "U17 Boys - Top Flight"
-      const displayName = `${ageGroup} ${gender} - ${flightDisplayName}`;
+      // Extract flight name by removing age group and gender from bracket name
+      let flightName = bracket.name;
+      if (ageGroupMatch) {
+        flightName = flightName.replace(ageGroupMatch[0], '').trim();
+      }
+      if (genderMatch) {
+        flightName = flightName.replace(genderMatch[0], '').trim();
+      }
+      
+      // Get flight level display name (Top Flight, Middle Flight, etc.)
+      const flightLevelDisplay = flightLevelMap.get(bracket.level) || bracket.level;
+      
+      // Create comprehensive display name: "U17 Boys Nike Elite - Top Flight"
+      const displayName = flightName 
+        ? `${ageGroup} ${gender} ${flightName} - ${flightLevelDisplay}`
+        : `${ageGroup} ${gender} - ${flightLevelDisplay}`;
 
       console.log(`[Flight Formats] Bracket ${bracket.id} (${bracket.level}): teams=${teamCount}, hasFormat=${!!matchingFormat}`);
 
       return {
         flightId: bracket.id,
-        flightName: bracket.name,
+        flightName: flightName || bracket.name, // The flight name (Nike Elite, etc.)
         ageGroup: ageGroup,
         gender: gender,
         level: bracket.level,
