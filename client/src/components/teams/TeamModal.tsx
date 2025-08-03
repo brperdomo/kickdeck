@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -84,6 +84,16 @@ export function TeamModal({ isOpen, onClose, team }: TeamModalProps) {
   const [selectedAgeGroupId, setSelectedAgeGroupId] = useState<string | null>(
     team?.ageGroupId ? String(team.ageGroupId) : null
   );
+
+  // Force refetch brackets when modal opens or age group changes
+  React.useEffect(() => {
+    if (isOpen && team?.eventId && selectedAgeGroupId) {
+      console.log('Modal opened or age group changed, invalidating brackets cache');
+      queryClient.invalidateQueries({ 
+        queryKey: ['/api/brackets', team.eventId, selectedAgeGroupId] 
+      });
+    }
+  }, [isOpen, team?.eventId, selectedAgeGroupId, queryClient]);
   
   // Fetch brackets for the selected age group
   const bracketsQuery = useQuery({
@@ -110,6 +120,8 @@ export function TeamModal({ isOpen, onClose, team }: TeamModalProps) {
       return brackets;
     },
     enabled: !!team?.eventId && !!selectedAgeGroupId,
+    staleTime: 0, // Always refetch brackets to ensure fresh data
+    gcTime: 0, // Don't cache brackets for too long
   });
   
   // Parse coach data if it's a string
