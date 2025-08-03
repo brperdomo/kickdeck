@@ -130,25 +130,26 @@ async function getTournamentStatus(eventId: string) {
   const teamsData = await db.select().from(teams).where(eq(teams.eventId, eventId));
   const gamesData = await db.select().from(games).where(eq(games.eventId, eventId));
   
-  // Determine current phase and progress
+  // Determine current phase and progress with flexible validation
   let phase: 'setup' | 'configuration' | 'scheduling' | 'optimization' | 'finalized' = 'setup';
   let progress = 0;
-  let nextAction = 'Configure game formats to begin tournament setup';
-  let canProceed = teamsData.length > 0;
+  let nextAction = 'Configure game formats and flights as needed';
+  let canProceed = true; // Allow flexible progression - users can configure partially
   
   const issues = [];
   
   if (teamsData.length === 0) {
     issues.push({
-      type: 'warning' as const,
-      message: 'No teams registered yet. Tournament setup requires teams.',
+      type: 'info' as const,
+      message: 'Teams will be needed eventually, but you can configure formats first.',
       action: 'register-teams'
     });
-    canProceed = false;
+    progress = 10;
+    nextAction = 'Configure game formats and register teams when ready';
   } else if (gamesData.length === 0) {
     phase = 'configuration';
-    progress = 25;
-    nextAction = 'Create tournament brackets and games';
+    progress = 40;
+    nextAction = 'Continue configuring formats or create brackets when ready';
   } else {
     phase = 'scheduling';
     progress = 75;
@@ -176,11 +177,15 @@ async function getComponentsStatus(eventId: string) {
   const teamsData = await db.select().from(teams).where(eq(teams.eventId, eventId));
   const gamesData = await db.select().from(games).where(eq(games.eventId, eventId));
   
-  // Check status of each component
+  // Check if event has game formats configured through eventGameFormats table
+  const eventGameFormatsData = await db.select().from(eventGameFormats).where(eq(eventGameFormats.eventId, parseInt(eventId)));
+  const hasFormatsConfigured = eventGameFormatsData.length > 0;
+  
+  // Check status of each component with flexible validation
   return {
-    gameFormats: gamesData.length > 0, // Games exist means formats are configured
-    flightAssignment: teamsData.length > 0, // Teams exist means flights are assigned
-    bracketCreation: gamesData.length > 0, // Games exist means brackets are created
+    gameFormats: hasFormatsConfigured || gamesData.length > 0, // Formats configured OR games exist
+    flightAssignment: teamsData.length > 0, // Teams exist means flights can be assigned
+    bracketCreation: (hasFormatsConfigured && teamsData.length > 0) || gamesData.length > 0, // Can create when both formats and teams exist OR games already exist
     facilityConstraints: true, // Always available
     refereeAssignment: true, // Always available
     scheduleOptimization: gamesData.length > 0 // Available when games exist

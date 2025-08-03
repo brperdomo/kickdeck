@@ -185,11 +185,11 @@ export function UnifiedTournamentControlCenter({ eventId }: TournamentControlCen
             <div className="flex items-center gap-3">
               <Button
                 onClick={handleAutoSchedule}
-                disabled={!tournamentStatus?.canProceed || isProcessing}
+                disabled={isProcessing}
                 className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500"
               >
                 <Zap className="h-4 w-4" />
-                {autoMode ? 'Running Auto-Schedule...' : 'Auto-Schedule Everything'}
+                {autoMode ? 'Running Auto-Schedule...' : 'Auto-Schedule (Flexible Configuration)'}
               </Button>
 
               <Button
