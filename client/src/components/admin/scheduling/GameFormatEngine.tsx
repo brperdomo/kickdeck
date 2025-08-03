@@ -179,7 +179,9 @@ export function GameFormatEngine({ eventId }: GameFormatEngineProps) {
         title: "Format Saved",
         description: "Game format configuration has been saved successfully"
       });
+      // Force refetch of flight data to update UI
       queryClient.invalidateQueries({ queryKey: ['flight-formats', eventId] });
+      queryClient.refetchQueries({ queryKey: ['flight-formats', eventId] });
       setEditingFlight(null);
       // Clear the custom format since it's now saved
       setCustomFormats(prev => {

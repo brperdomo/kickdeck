@@ -19,7 +19,7 @@ router.get('/events/:eventId/flight-formats', async (req, res) => {
   try {
     const { eventId } = req.params;
 
-    // Get all flights (brackets) with their teams
+    // Get all flights (brackets) with their teams and format configurations
     const flightsWithTeams = await db
       .select({
         flightId: eventBrackets.id,
@@ -27,17 +27,18 @@ router.get('/events/:eventId/flight-formats', async (req, res) => {
         ageGroup: eventAgeGroups.ageGroup,
         gender: eventAgeGroups.gender,
         currentFormat: {
-          id: eventGameFormats.id,
-          gameLength: eventGameFormats.gameLength,
-          fieldSize: eventGameFormats.fieldSize,
-          bufferTime: eventGameFormats.bufferTime,
-          ageGroup: eventGameFormats.ageGroup,
-          format: eventGameFormats.format
+          id: gameFormats.id,
+          gameLength: gameFormats.gameLength,
+          fieldSize: gameFormats.fieldSize,
+          bufferTime: gameFormats.bufferTime,
+          restPeriod: gameFormats.restPeriod,
+          maxGamesPerDay: gameFormats.maxGamesPerDay,
+          templateName: gameFormats.templateName
         }
       })
       .from(eventBrackets)
       .innerJoin(eventAgeGroups, eq(eventBrackets.ageGroupId, eventAgeGroups.id))
-      .leftJoin(eventGameFormats, eq(eventGameFormats.eventId, parseInt(eventId)))
+      .leftJoin(gameFormats, eq(gameFormats.bracketId, eventBrackets.id))
       .where(
         and(
           eq(eventAgeGroups.eventId, eventId),
