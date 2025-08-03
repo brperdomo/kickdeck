@@ -166,6 +166,88 @@ router.delete('/:eventId/brackets/:bracketId', isAdmin, async (req, res) => {
   }
 });
 
+// Bulk create brackets for multiple age groups
+router.post('/:eventId/bulk-brackets', isAdmin, async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const { ageGroupIds, brackets, replaceExisting } = req.body;
+
+    console.log('Bulk brackets request received:', { eventId, ageGroupIds, brackets, replaceExisting });
+
+    if (!ageGroupIds || !Array.isArray(ageGroupIds) || ageGroupIds.length === 0) {
+      return res.status(400).json({ error: 'Age group IDs are required' });
+    }
+
+    if (!brackets || !Array.isArray(brackets) || brackets.length === 0) {
+      return res.status(400).json({ error: 'Bracket templates are required' });
+    }
+
+    const createdBrackets = [];
+    const errors = [];
+
+    // If replaceExisting is true, delete existing brackets for these age groups
+    if (replaceExisting) {
+      for (const ageGroupId of ageGroupIds) {
+        try {
+          await db
+            .delete(eventBrackets)
+            .where(
+              and(
+                eq(eventBrackets.eventId, eventId),
+                eq(eventBrackets.ageGroupId, ageGroupId)
+              )
+            );
+        } catch (error) {
+          console.error(`Error deleting existing brackets for age group ${ageGroupId}:`, error);
+        }
+      }
+    }
+
+    // Create brackets for each selected age group
+    for (const ageGroupId of ageGroupIds) {
+      for (const bracket of brackets) {
+        try {
+          const newBracket = await db
+            .insert(eventBrackets)
+            .values({
+              eventId: eventId,
+              ageGroupId: parseInt(ageGroupId),
+              name: bracket.name,
+              description: bracket.description || null,
+              level: 'middle_flight', // Default level
+              eligibility: null
+            })
+            .returning();
+
+          createdBrackets.push({
+            ...newBracket[0],
+            ageGroupId: ageGroupId
+          });
+        } catch (error) {
+          console.error(`Error creating bracket for age group ${ageGroupId}:`, error);
+          errors.push({
+            ageGroupId,
+            bracketName: bracket.name,
+            message: `Failed to create bracket: ${error instanceof Error ? error.message : 'Unknown error'}`
+          });
+        }
+      }
+    }
+
+    console.log('Bulk brackets created successfully:', createdBrackets.length);
+
+    res.json({
+      success: true,
+      createdBrackets,
+      errors,
+      message: `Created ${createdBrackets.length} brackets across ${ageGroupIds.length} age groups`
+    });
+  } catch (error) {
+    console.error('Error in bulk brackets creation:', error);
+    res.status(500).json({ error: 'Failed to create brackets in bulk' });
+  }
+});
+
 // Generate brackets with specific configurations
 router.post('/:eventId/brackets/generate', isAdmin, async (req, res) => {
   try {
