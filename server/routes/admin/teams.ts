@@ -6,7 +6,7 @@ import { log } from '../../vite';
 import { sendTemplatedEmail } from '../../services/emailService';
 import { createRefund, createTestPaymentIntent, intelligentPaymentRecovery } from '../../services/stripeService';
 import { chargeApprovedTeam } from '../stripe-connect-payments';
-import { parseStripeError, formatErrorForAdmin, type DetailedPaymentError } from '../utils/stripeErrorHandler';
+// import { parseStripeError, formatErrorForAdmin, type DetailedPaymentError } from '../utils/stripeErrorHandler';
 import Stripe from 'stripe';
 
 type TeamStatus = 'registered' | 'approved' | 'rejected' | 'paid' | 'withdrawn' | 'refunded' | 'waitlisted';
@@ -429,18 +429,17 @@ export async function getTeams(req: Request, res: Response) {
     .leftJoin(users, eq(teams.managerEmail, users.email))
     .leftJoin(eventBrackets, eq(teams.bracketId, eventBrackets.id));
     
-    // Add filters if provided
+    // Add filters and sorting
+    let whereConditions = [];
     if (eventId) {
-      query = query.where(eq(teams.eventId, eventId as string));
+      whereConditions.push(eq(teams.eventId, eventId as string));
     }
-    
     if (status) {
-      query = query.where(eq(teams.status, status as string));
+      whereConditions.push(eq(teams.status, status as string));
     }
-    
     if (search) {
       const searchTerm = `%${search}%`;
-      query = query.where(
+      whereConditions.push(
         or(
           like(teams.name, searchTerm as string),
           like(teams.managerEmail, searchTerm as string),
@@ -449,17 +448,18 @@ export async function getTeams(req: Request, res: Response) {
       );
     }
     
+    if (whereConditions.length > 0) {
+      query = query.where(whereConditions.length === 1 ? whereConditions[0] : and(...whereConditions));
+    }
+    
     // Add sorting
-    if (sortBy && sortOrder) {
-      if (sortBy === 'createdAt') {
-        query = query.orderBy(sortOrder === 'asc' ? asc(teams.createdAt) : desc(teams.createdAt));
-      } else if (sortBy === 'name') {
-        query = query.orderBy(sortOrder === 'asc' ? asc(teams.name) : desc(teams.name));
-      } else if (sortBy === 'approvedAt') {
-        query = query.orderBy(sortOrder === 'asc' ? asc(teams.approvedAt) : desc(teams.approvedAt));
-      }
+    if (sortBy === 'createdAt') {
+      query = query.orderBy(sortOrder === 'asc' ? asc(teams.createdAt) : desc(teams.createdAt));
+    } else if (sortBy === 'name') {
+      query = query.orderBy(sortOrder === 'asc' ? asc(teams.name) : desc(teams.name));
+    } else if (sortBy === 'approvedAt') {
+      query = query.orderBy(sortOrder === 'asc' ? asc(teams.approvedAt) : desc(teams.approvedAt));
     } else if (status === 'approved') {
-      // Default sort for approved teams: most recent approval first
       query = query.orderBy(desc(teams.approvedAt));
     }
     
