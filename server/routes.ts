@@ -73,6 +73,7 @@ import enhancedConflictDetectionRouter from "./routes/admin/enhanced-conflict-de
 import enhancedFieldManagementRouter from "./routes/admin/enhanced-field-management";
 import constraintValidationRouter from "./routes/admin/constraint-validation";
 import swissTournamentRouter from "./routes/admin/swiss-tournaments";
+import flightTemplatesRouter from "./routes/admin/flight-templates";
 import facilityConstraintRouter from "./routes/admin/facility-constraints";
 import refereeManagementRouter from "./routes/admin/referee-management";
 import paymentCompletionRouter from "./routes/payment-completion";
@@ -1213,6 +1214,7 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/events', isAdmin, bracketCreationSqlRouter); // Bracket creation engine
     app.use('/api/admin/events', isAdmin, conflictDetectionRouter); // Comprehensive conflict detection system
     app.use('/api/admin/events', isAdmin, adminBracketsRouter); // Bracket generation and management
+    app.use('/api/admin/events', isAdmin, flightTemplatesRouter); // Tournament-wide flight template management
     app.use('/api/admin/events', isAdmin, adminGamesRouter); // Game scheduling and management
     app.use('/api/admin/events', isAdmin, fieldsRouter); // Field assignment and management
     app.use('/api/admin/field-management', isAdmin, fieldManagementRouter); // Real field availability service
