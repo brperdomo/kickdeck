@@ -27,6 +27,7 @@ Preferred communication style: Simple, everyday language.
     - **Payment Processing**: Full Stripe integration supporting Connect accounts, two-step payments (Setup Intents), refunds, and intelligent payment recovery for "burned" methods. Handles complex fee structures and fund routing.
     - **Email Communication**: Dynamic template system via SendGrid for automated notifications.
     - **Administrative Features**: Role-based access, team approval/rejection, payment tracking, audit trails, and comprehensive user/team management (contact editing, member merge, email updates).
+    - **Tournament-Wide Flight Management**: Unified flight category system where changes apply to all age groups simultaneously. Flight templates (Top Flight, Middle Flight, Bottom Flight) are configured once at tournament level and automatically propagate to all brackets across age groups.
     - **Scheduling Engine**: Advanced multi-tier system with constraint-aware optimization. Features include:
         - **Four Scheduling Approaches**: TournamentScheduler (deterministic), SimpleScheduler (constraint-aware), OpenAI-Service (AI-powered), SwissSystemScheduler (performance-based pairings)
         - **Tournament Progression Engine**: Dynamic advancement logic with complete tiebreaker systems (head-to-head, goal difference, etc.)
