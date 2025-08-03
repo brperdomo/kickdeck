@@ -6,6 +6,97 @@ import { isAdmin } from '../../middleware/auth';
 
 const router = Router();
 
+// Get brackets for a specific age group
+router.get('/:eventId/age-groups/:ageGroupId/brackets', isAdmin, async (req, res) => {
+  try {
+    const { eventId, ageGroupId } = req.params;
+    
+    const brackets = await db
+      .select({
+        id: eventBrackets.id,
+        name: eventBrackets.name,
+        description: eventBrackets.description,
+        level: eventBrackets.level,
+        eligibility: eventBrackets.eligibility,
+        sortOrder: eventBrackets.sortOrder
+      })
+      .from(eventBrackets)
+      .where(
+        and(
+          eq(eventBrackets.eventId, eventId),
+          eq(eventBrackets.ageGroupId, parseInt(ageGroupId))
+        )
+      )
+      .orderBy(eventBrackets.sortOrder);
+
+    res.json(brackets);
+  } catch (error) {
+    console.error('Error fetching age group brackets:', error);
+    res.status(500).json({ error: 'Failed to fetch age group brackets' });
+  }
+});
+
+// Create a new bracket for an age group
+router.post('/:eventId/brackets', isAdmin, async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const { name, description, level, eligibility, ageGroupId } = req.body;
+    
+    const newBracket = await db
+      .insert(eventBrackets)
+      .values({
+        eventId,
+        ageGroupId,
+        name,
+        description,
+        level,
+        eligibility,
+        sortOrder: 0
+      })
+      .returning();
+
+    res.json(newBracket[0]);
+  } catch (error) {
+    console.error('Error creating bracket:', error);
+    res.status(500).json({ error: 'Failed to create bracket' });
+  }
+});
+
+// Update a bracket
+router.put('/:eventId/brackets/:bracketId', isAdmin, async (req, res) => {
+  try {
+    const { bracketId } = req.params;
+    const { name, description, level, eligibility } = req.body;
+    
+    const updatedBracket = await db
+      .update(eventBrackets)
+      .set({ name, description, level, eligibility })
+      .where(eq(eventBrackets.id, parseInt(bracketId)))
+      .returning();
+
+    res.json(updatedBracket[0]);
+  } catch (error) {
+    console.error('Error updating bracket:', error);
+    res.status(500).json({ error: 'Failed to update bracket' });
+  }
+});
+
+// Delete a bracket
+router.delete('/:eventId/brackets/:bracketId', isAdmin, async (req, res) => {
+  try {
+    const { bracketId } = req.params;
+    
+    await db
+      .delete(eventBrackets)
+      .where(eq(eventBrackets.id, parseInt(bracketId)));
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error deleting bracket:', error);
+    res.status(500).json({ error: 'Failed to delete bracket' });
+  }
+});
+
 // Get brackets for an event
 router.get('/:eventId/brackets', isAdmin, async (req, res) => {
   try {
