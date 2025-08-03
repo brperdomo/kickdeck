@@ -200,11 +200,21 @@ export function GameFormatEngine({ eventId }: GameFormatEngineProps) {
       }
       return response.json();
     },
-    onSuccess: () => {
-      toast({
-        title: "Formats Locked",
-        description: "Game formats are locked and ready for bracket creation"
-      });
+    onSuccess: (data) => {
+      const { summary } = data;
+      
+      if (summary?.unconfiguredFlights?.length > 0) {
+        toast({
+          title: "Formats Locked (Partial)",
+          description: `${summary.canSchedule} flight(s) ready for scheduling. ${summary.needsConfiguration} unconfigured flight(s) can be set up later.`
+        });
+      } else {
+        toast({
+          title: "All Formats Locked",
+          description: `All ${summary?.canSchedule || 'configured'} flight(s) are ready for bracket creation`
+        });
+      }
+      
       queryClient.invalidateQueries({ queryKey: ['flight-formats', eventId] });
     },
     onError: async (error) => {
@@ -212,10 +222,10 @@ export function GameFormatEngine({ eventId }: GameFormatEngineProps) {
         const errorResponse = await error.response?.json();
         const errorMsg = errorResponse?.error || error.message;
         
-        if (errorResponse?.unconfiguredFlights) {
+        if (errorResponse?.unconfigured) {
           toast({
             title: "Configuration Required",
-            description: `Please configure formats for: ${errorResponse.unconfiguredFlights.join(', ')}`,
+            description: `Please configure at least one flight to proceed`,
             variant: "destructive"
           });
         } else {
@@ -332,17 +342,20 @@ export function GameFormatEngine({ eventId }: GameFormatEngineProps) {
         <div>
           <h2 className="text-2xl font-bold text-white">Game Format Engine</h2>
           <p className="text-slate-300">
-            Configure game formats for each flight before creating brackets
+            Configure game formats for flights. You can proceed with at least one configured flight.
           </p>
         </div>
         <div className="flex gap-2">
           <Button
             onClick={() => lockFormatsMutation.mutate()}
-            disabled={unconfiguredFlights.length > 0 || lockFormatsMutation.isPending}
+            disabled={configuredFlights.length === 0 || lockFormatsMutation.isPending}
             className="bg-green-600 hover:bg-green-700"
           >
             <CheckCircle className="h-4 w-4 mr-2" />
-            Lock Formats & Create Brackets
+            {unconfiguredFlights.length > 0 
+              ? `Lock ${configuredFlights.length} Flight(s) & Continue`
+              : 'Lock All Formats & Create Brackets'
+            }
           </Button>
         </div>
       </div>
@@ -385,6 +398,29 @@ export function GameFormatEngine({ eventId }: GameFormatEngineProps) {
           </CardContent>
         </Card>
       </div>
+
+      {/* Partial Configuration Info */}
+      {unconfiguredFlights.length > 0 && configuredFlights.length > 0 && (
+        <Card className="border-yellow-600 bg-yellow-900/20">
+          <CardContent className="p-4">
+            <div className="flex items-start gap-3">
+              <div className="p-1 bg-yellow-600 rounded-full">
+                <Settings className="h-4 w-4 text-white" />
+              </div>
+              <div>
+                <h4 className="font-semibold text-yellow-200 mb-1">Partial Configuration Notice</h4>
+                <p className="text-yellow-100 text-sm mb-2">
+                  You have {configuredFlights.length} flight(s) configured and {unconfiguredFlights.length} unconfigured. 
+                </p>
+                <p className="text-yellow-100 text-sm">
+                  <strong>You can proceed:</strong> Schedules will be created for configured flights only. 
+                  Unconfigured flights can be set up later and added to the tournament schedule.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Format Configuration */}
       <Tabs defaultValue="needs-config" className="w-full">

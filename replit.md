@@ -34,6 +34,7 @@ Preferred communication style: Simple, everyday language.
         - **Comprehensive Game Generation**: Round-robin, pool play, single elimination, double elimination, Swiss system, and hybrid formats
         - **Tournament Director Workflow**: Game Format Configuration → Flight Selection → Bracket Creation → Tournament-Aware Auto Scheduling
         - **Tournament-Aware Auto Scheduling (ENHANCED - CRITICAL FIXES APPLIED)**: Respects flight configurations, game formats, and bracket structures instead of bypassing them
+    - **Flexible Flight Configuration**: Updated system to allow partial flight format configuration - admins can proceed with at least one configured flight rather than requiring ALL flights to be configured before proceeding
         - **FIXED**: Database schema references and field mappings (games table structure aligned)
         - **FIXED**: Time slot management integration with gameTimeSlots table
         - **FIXED**: Tournament structure validation before scheduling execution
