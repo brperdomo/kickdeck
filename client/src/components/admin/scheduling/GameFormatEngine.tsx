@@ -136,12 +136,17 @@ export function GameFormatEngine({ eventId }: GameFormatEngineProps) {
   const { data: flightData, isLoading } = useQuery({
     queryKey: ['flight-formats', eventId],
     queryFn: async (): Promise<FlightFormatData[]> => {
+      console.log(`[Frontend] Fetching flight formats for event ${eventId}`);
       const response = await fetch(`/api/admin/events/${eventId}/flight-formats`, {
         credentials: 'include'
       });
       if (!response.ok) throw new Error('Failed to fetch flight format data');
-      return response.json();
-    }
+      const data = await response.json();
+      console.log(`[Frontend] Received ${data.length} flights, configured: ${data.filter((f: any) => f.currentFormat).length}`);
+      return data;
+    },
+    staleTime: 0, // Always refetch
+    refetchOnWindowFocus: true
   });
 
   // Fetch format templates
@@ -173,15 +178,16 @@ export function GameFormatEngine({ eventId }: GameFormatEngineProps) {
       }
       return response.json();
     },
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       console.log('Format saved successfully:', data);
       toast({
         title: "Format Saved",
         description: "Game format configuration has been saved successfully"
       });
       // Force refetch of flight data to update UI
+      console.log(`[Frontend] Invalidating and refetching flight-formats for event ${eventId}`);
       queryClient.invalidateQueries({ queryKey: ['flight-formats', eventId] });
-      queryClient.refetchQueries({ queryKey: ['flight-formats', eventId] });
+      await queryClient.refetchQueries({ queryKey: ['flight-formats', eventId] });
       setEditingFlight(null);
       // Clear the custom format since it's now saved
       setCustomFormats(prev => {

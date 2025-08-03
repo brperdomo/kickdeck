@@ -1,0 +1,51 @@
+MasterSchedulePage-Dyw_0zUZ.js:224 Saving format for flight: 570 with data: {gameLength: 35, fieldSize: '9v9', bufferTime: 10, restPeriod: 90, maxGamesPerDay: 3, …}bracketStructure: {type: 'round_robin_final', teamCount: '6', gameDistribution: {…}, playoffStructure: {…}, description: '6 team tournament with playoffs (format to be optimized)'}bufferTime: 10fieldSize: "9v9"gameLength: 35maxGamesPerDay: 3restPeriod: 90templateName: "6-Team round robin final"[[Prototype]]: Object
+MasterSchedulePage-Dyw_0zUZ.js:224 Fetch finished loading: POST "https://app.matchpro.ai/api/admin/events/1844329078/flights/570/format".
+mutationFn @ MasterSchedulePage-Dyw_0zUZ.js:224
+fn @ index-NdeAOHKE.js:41
+f @ index-NdeAOHKE.js:41
+start @ index-NdeAOHKE.js:41
+execute @ index-NdeAOHKE.js:41
+await in execute
+mutate @ index-NdeAOHKE.js:41
+(anonymous) @ index-NdeAOHKE.js:41
+x @ MasterSchedulePage-Dyw_0zUZ.js:224
+onClick @ MasterSchedulePage-Dyw_0zUZ.js:224
+_ue @ index-NdeAOHKE.js:38
+Due @ index-NdeAOHKE.js:38
+Iue @ index-NdeAOHKE.js:38
+pM @ index-NdeAOHKE.js:38
+Xq @ index-NdeAOHKE.js:38
+(anonymous) @ index-NdeAOHKE.js:38
+NO @ index-NdeAOHKE.js:41
+bq @ index-NdeAOHKE.js:38
+E2 @ index-NdeAOHKE.js:38
+X4 @ index-NdeAOHKE.js:38
+Xue @ index-NdeAOHKE.js:38
+MasterSchedulePage-Dyw_0zUZ.js:224 Format saved successfully: {success: true, id: 7}id: 7success: true[[Prototype]]: Objectconstructor: ƒ Object()hasOwnProperty: ƒ hasOwnProperty()isPrototypeOf: ƒ isPrototypeOf()propertyIsEnumerable: ƒ propertyIsEnumerable()toLocaleString: ƒ toLocaleString()toString: ƒ toString()valueOf: ƒ valueOf()__defineGetter__: ƒ __defineGetter__()__defineSetter__: ƒ __defineSetter__()__lookupGetter__: ƒ __lookupGetter__()__lookupSetter__: ƒ __lookupSetter__()__proto__: (...)get __proto__: ƒ __proto__()set __proto__: ƒ __proto__()
+chunk-CVIZYB43.js:3 [Violation] 'setTimeout' handler took 52ms
+chunk-CVIZYB43.js:3 [Violation] 'setTimeout' handler took 53ms
+MasterSchedulePage-Dyw_0zUZ.js:224 Saving format for flight: 571 with data: {gameLength: 35, fieldSize: '9v9', bufferTime: 10, restPeriod: 90, maxGamesPerDay: 2, …}bracketStructure: {type: 'round_robin_final', teamCount: '4', gameDistribution: {…}, playoffStructure: {…}, description: '4 team tournament with playoffs (format to be optimized)'}bufferTime: 10fieldSize: "9v9"gameLength: 35maxGamesPerDay: 2restPeriod: 90templateName: undefined[[Prototype]]: Objectconstructor: ƒ Object()hasOwnProperty: ƒ hasOwnProperty()isPrototypeOf: ƒ isPrototypeOf()propertyIsEnumerable: ƒ propertyIsEnumerable()toLocaleString: ƒ toLocaleString()toString: ƒ toString()valueOf: ƒ valueOf()__defineGetter__: ƒ __defineGetter__()__defineSetter__: ƒ __defineSetter__()__lookupGetter__: ƒ __lookupGetter__()__lookupSetter__: ƒ __lookupSetter__()__proto__: (...)get __proto__: ƒ __proto__()set __proto__: ƒ __proto__()
+MasterSchedulePage-Dyw_0zUZ.js:224 Format saved successfully: {success: true, id: 8}id: 8success: true[[Prototype]]: Object
+MasterSchedulePage-Dyw_0zUZ.js:224 Fetch finished loading: POST "https://app.matchpro.ai/api/admin/events/1844329078/flights/571/format".
+mutationFn @ MasterSchedulePage-Dyw_0zUZ.js:224
+fn @ index-NdeAOHKE.js:41
+f @ index-NdeAOHKE.js:41
+start @ index-NdeAOHKE.js:41
+execute @ index-NdeAOHKE.js:41
+await in execute
+mutate @ index-NdeAOHKE.js:41
+(anonymous) @ index-NdeAOHKE.js:41
+x @ MasterSchedulePage-Dyw_0zUZ.js:224
+onClick @ MasterSchedulePage-Dyw_0zUZ.js:224
+_ue @ index-NdeAOHKE.js:38
+Due @ index-NdeAOHKE.js:38
+Iue @ index-NdeAOHKE.js:38
+pM @ index-NdeAOHKE.js:38
+Xq @ index-NdeAOHKE.js:38
+(anonymous) @ index-NdeAOHKE.js:38
+NO @ index-NdeAOHKE.js:41
+bq @ index-NdeAOHKE.js:38
+E2 @ index-NdeAOHKE.js:38
+X4 @ index-NdeAOHKE.js:38
+Xue @ index-NdeAOHKE.js:38
+chunk-CVIZYB43.js:3 [Violation] 'setTimeout' handler took 57ms
