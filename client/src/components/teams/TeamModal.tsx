@@ -89,16 +89,25 @@ export function TeamModal({ isOpen, onClose, team }: TeamModalProps) {
   const bracketsQuery = useQuery({
     queryKey: ['/api/brackets', team?.eventId, selectedAgeGroupId],
     queryFn: async () => {
-      if (!team?.eventId || !selectedAgeGroupId) return [];
+      if (!team?.eventId || !selectedAgeGroupId) {
+        console.log('Missing eventId or selectedAgeGroupId:', { eventId: team?.eventId, selectedAgeGroupId });
+        return [];
+      }
       
       console.log(`Fetching brackets for event ${team.eventId} and age group ${selectedAgeGroupId}`);
-      const response = await fetch(`/api/brackets?eventId=${team.eventId}&ageGroupId=${selectedAgeGroupId}`);
+      const url = `/api/brackets?eventId=${team.eventId}&ageGroupId=${selectedAgeGroupId}`;
+      console.log('Brackets API URL:', url);
+      
+      const response = await fetch(url);
       
       if (!response.ok) {
+        console.error('Brackets API error:', response.status, response.statusText);
         throw new Error('Failed to fetch brackets');
       }
       
-      return response.json();
+      const brackets = await response.json();
+      console.log('Fetched brackets:', brackets);
+      return brackets;
     },
     enabled: !!team?.eventId && !!selectedAgeGroupId,
   });
