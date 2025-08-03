@@ -18,6 +18,7 @@ const router = Router();
 router.get('/events/:eventId/flight-formats', async (req, res) => {
   try {
     const { eventId } = req.params;
+    console.log(`[Flight Formats] Fetching formats for event ${eventId}`);
 
     // Get all flights (brackets) with their teams and format configurations
     const flightsWithTeams = await db
@@ -39,12 +40,7 @@ router.get('/events/:eventId/flight-formats', async (req, res) => {
       .from(eventBrackets)
       .innerJoin(eventAgeGroups, eq(eventBrackets.ageGroupId, eventAgeGroups.id))
       .leftJoin(gameFormats, eq(gameFormats.bracketId, eventBrackets.id))
-      .where(
-        and(
-          eq(eventAgeGroups.eventId, eventId),
-          isNotNull(eventBrackets.id) // Only include brackets that exist (flights are locked)
-        )
-      );
+      .where(eq(eventBrackets.eventId, eventId));
 
     // Get team counts for each flight
     const flightData = await Promise.all(
@@ -70,6 +66,7 @@ router.get('/events/:eventId/flight-formats', async (req, res) => {
       })
     );
 
+    console.log(`[Flight Formats] Returning ${flightData.length} flights, ${flightData.filter(f => f.currentFormat).length} configured`);
     res.json(flightData);
   } catch (error) {
     console.error('Error fetching flight formats:', error);
