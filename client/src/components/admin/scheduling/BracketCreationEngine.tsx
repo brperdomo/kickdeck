@@ -15,9 +15,37 @@ import {
   AlertTriangle,
   Settings,
   Play,
-  Eye
+  Eye,
+  Move,
+  ArrowUp,
+  ArrowDown,
+  Plus,
+  Minus,
+  Star,
+  GripVertical
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+
+// Helper function to format flight names with proper context
+const formatFlightName = (level: string, ageGroup?: string, gender?: string): string => {
+  const flightMap: Record<string, string> = {
+    'top_flight': 'Top Flight',
+    'middle_flight': 'Middle Flight', 
+    'bottom_flight': 'Bottom Flight',
+    'other': 'Other'
+  };
+  
+  const flightName = flightMap[level] || level;
+  
+  if (ageGroup && gender) {
+    return `${ageGroup} ${gender} ${flightName}`;
+  }
+  
+  return flightName;
+};
 
 interface Flight {
   flightId: number;
@@ -36,6 +64,8 @@ interface Team {
   clubName: string;
   status: string;
   flightId?: number;
+  seed?: number;
+  ageGroupId?: number;
 }
 
 interface BracketStats {
@@ -130,6 +160,105 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
     }
   });
 
+  // Manual team assignment handlers
+  const handleManualAssignment = async (teamId: string, flightId: number) => {
+    try {
+      const response = await fetch(`/api/admin/events/${eventId}/teams/${teamId}/assign-flight`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ flightId })
+      });
+      
+      if (!response.ok) throw new Error('Failed to assign team');
+      
+      queryClient.invalidateQueries({ queryKey: ['bracket-creation', eventId] });
+      toast({
+        title: "Team Assigned",
+        description: "Team has been assigned to the flight successfully."
+      });
+    } catch (error) {
+      toast({
+        title: "Assignment Failed",
+        description: "Failed to assign team to flight.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleRemoveFromFlight = async (teamId: number) => {
+    try {
+      const response = await fetch(`/api/admin/events/${eventId}/teams/${teamId}/remove-flight`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include'
+      });
+      
+      if (!response.ok) throw new Error('Failed to remove team');
+      
+      queryClient.invalidateQueries({ queryKey: ['bracket-creation', eventId] });
+      toast({
+        title: "Team Removed",
+        description: "Team has been removed from the flight."
+      });
+    } catch (error) {
+      toast({
+        title: "Removal Failed",
+        description: "Failed to remove team from flight.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleSeedChange = async (teamId: number, direction: 'up' | 'down') => {
+    try {
+      const response = await fetch(`/api/admin/events/${eventId}/teams/${teamId}/seed`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ direction })
+      });
+      
+      if (!response.ok) throw new Error('Failed to update seed');
+      
+      queryClient.invalidateQueries({ queryKey: ['bracket-creation', eventId] });
+      toast({
+        title: "Seed Updated",
+        description: `Team seed moved ${direction}.`
+      });
+    } catch (error) {
+      toast({
+        title: "Seed Update Failed",
+        description: "Failed to update team seed.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleAutoSeed = async (flightId: number) => {
+    try {
+      const response = await fetch(`/api/admin/events/${eventId}/flights/${flightId}/auto-seed`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include'
+      });
+      
+      if (!response.ok) throw new Error('Failed to auto-seed');
+      
+      queryClient.invalidateQueries({ queryKey: ['bracket-creation', eventId] });
+      toast({
+        title: "Auto-Seeding Complete",
+        description: "Teams have been automatically seeded based on ranking."
+      });
+    } catch (error) {
+      toast({
+        title: "Auto-Seeding Failed",
+        description: "Failed to automatically seed teams.",
+        variant: "destructive"
+      });
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -152,6 +281,13 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
   const flights: Flight[] = bracketData?.flights || [];
   const completionPercentage = stats.totalFlights > 0 ? 
     Math.round((stats.assignedFlights / stats.totalFlights) * 100) : 0;
+
+  // Get unassigned teams by filtering out teams that already have flight assignments
+  const allTeams = bracketData?.teams || [];
+  const assignedTeamIds = new Set(
+    flights.flatMap(flight => flight.registeredTeams?.map(team => team.id) || [])
+  );
+  const unassignedTeams = allTeams.filter(team => !assignedTeamIds.has(team.id));
 
   return (
     <div className="space-y-6">
@@ -411,7 +547,7 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
                   <div className="flex items-center justify-between">
                     <div>
                       <CardTitle className="text-white text-lg">
-                        {flight.ageGroup} {flight.gender} - {flight.name}
+                        {formatFlightName(flight.level, flight.ageGroup, flight.gender)}
                       </CardTitle>
                       <CardDescription className="text-slate-300">
                         {flight.registeredTeams?.length || 0} / {flight.maxTeams || 'unlimited'} teams assigned
@@ -426,37 +562,114 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
                   </div>
                 </CardHeader>
                 <CardContent>
-                  {flight.registeredTeams?.length > 0 ? (
-                    <div className="space-y-2">
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-                        {flight.registeredTeams.map((team: Team) => (
-                          <div 
-                            key={team.id}
-                            className="flex items-center justify-between p-2 bg-slate-700 rounded border border-slate-600"
+                  <div className="space-y-4">
+                    {/* Manual Assignment Controls */}
+                    <div className="flex items-center gap-2 pb-2 border-b border-slate-600">
+                      <Label className="text-slate-300 text-sm">Manual Assignment:</Label>
+                      <Select onValueChange={(teamId) => handleManualAssignment(teamId, flight.flightId)}>
+                        <SelectTrigger className="w-[200px] bg-slate-700 border-slate-600">
+                          <SelectValue placeholder="Add team..." />
+                        </SelectTrigger>
+                        <SelectContent className="bg-slate-700 border-slate-600">
+                          {unassignedTeams
+                            ?.filter(team => team.ageGroupId === flight.ageGroupId)
+                            ?.map((team: Team) => (
+                            <SelectItem key={team.id} value={team.id.toString()}>
+                              {team.name} {team.clubName && `(${team.clubName})`}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Assigned Teams with Seeding */}
+                    {flight.registeredTeams?.length > 0 ? (
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between mb-2">
+                          <Label className="text-slate-300 text-sm">Team Seeding & Management</Label>
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            className="bg-slate-700 border-slate-600 text-slate-300 hover:bg-slate-600"
+                            onClick={() => handleAutoSeed(flight.flightId)}
                           >
-                            <div className="flex-1">
-                              <div className="font-medium text-white text-sm">{team.name}</div>
-                              {team.clubName && (
-                                <div className="text-xs text-slate-400">{team.clubName}</div>
-                              )}
-                            </div>
-                            <Badge 
-                              variant="outline" 
-                              className={`text-xs ${team.status === 'approved' ? 'border-green-500 text-green-300' : 'border-slate-500 text-slate-300'}`}
+                            <Star className="h-3 w-3 mr-1" />
+                            Auto Seed
+                          </Button>
+                        </div>
+                        
+                        <div className="space-y-1">
+                          {flight.registeredTeams
+                            .sort((a, b) => (a.seed || 999) - (b.seed || 999))
+                            .map((team: Team, index: number) => (
+                            <div 
+                              key={team.id}
+                              className="flex items-center gap-2 p-3 bg-slate-700 rounded border border-slate-600 hover:border-slate-500 transition-colors"
                             >
-                              {team.status}
-                            </Badge>
-                          </div>
-                        ))}
+                              {/* Seed Number */}
+                              <div className="flex items-center gap-1">
+                                <Badge variant="outline" className="border-blue-500 text-blue-300 w-8 h-6 text-xs justify-center">
+                                  {team.seed || index + 1}
+                                </Badge>
+                                <div className="flex flex-col gap-1">
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    className="h-4 w-4 p-0 text-slate-400 hover:text-white"
+                                    onClick={() => handleSeedChange(team.id, 'up')}
+                                    disabled={index === 0}
+                                  >
+                                    <ArrowUp className="h-3 w-3" />
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    className="h-4 w-4 p-0 text-slate-400 hover:text-white"
+                                    onClick={() => handleSeedChange(team.id, 'down')}
+                                    disabled={index === flight.registeredTeams.length - 1}
+                                  >
+                                    <ArrowDown className="h-3 w-3" />
+                                  </Button>
+                                </div>
+                              </div>
+
+                              {/* Team Info */}
+                              <div className="flex-1">
+                                <div className="font-medium text-white text-sm">{team.name}</div>
+                                {team.clubName && (
+                                  <div className="text-xs text-slate-400">{team.clubName}</div>
+                                )}
+                              </div>
+
+                              {/* Status & Actions */}
+                              <div className="flex items-center gap-2">
+                                <Badge 
+                                  variant="outline" 
+                                  className={`text-xs ${team.status === 'approved' ? 'border-green-500 text-green-300' : 'border-slate-500 text-slate-300'}`}
+                                >
+                                  {team.status}
+                                </Badge>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  className="h-6 w-6 p-0 text-slate-400 hover:text-red-300"
+                                  onClick={() => handleRemoveFromFlight(team.id)}
+                                >
+                                  <Minus className="h-3 w-3" />
+                                </Button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  ) : (
-                    <div className="text-center py-6 text-slate-400">
-                      <Users className="h-8 w-8 mx-auto mb-2 text-slate-500" />
-                      <p className="text-sm">No teams assigned to this flight yet</p>
-                      <p className="text-xs text-slate-500 mt-1">Use auto-assignment or manual assignment</p>
-                    </div>
-                  )}
+                    ) : (
+                      <div className="text-center py-6 text-slate-400">
+                        <Users className="h-8 w-8 mx-auto mb-2 text-slate-500" />
+                        <p className="text-sm">No teams assigned to this flight yet</p>
+                        <p className="text-xs text-slate-500 mt-1">Use the dropdown above to manually assign teams</p>
+                      </div>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             )) || (

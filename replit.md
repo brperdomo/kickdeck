@@ -24,10 +24,12 @@ Preferred communication style: Simple, everyday language.
 - **Core Features**:
     - **Event Management**: Configuration of tournaments, age groups, brackets, eligibility, and scoring systems.
     - **Team Registration**: Multi-step workflow, roster management, and two-step payment processing.
+    - **Enhanced Team Management**: Complete team gender editing functionality with smart age group filtering and server-side updates
     - **Payment Processing**: Full Stripe integration supporting Connect accounts, two-step payments (Setup Intents), refunds, and intelligent payment recovery for "burned" methods. Handles complex fee structures and fund routing.
     - **Email Communication**: Dynamic template system via SendGrid for automated notifications.
     - **Administrative Features**: Role-based access, team approval/rejection, payment tracking, audit trails, and comprehensive user/team management (contact editing, member merge, email updates).
     - **Tournament-Wide Flight Management**: Unified flight category system where changes apply to all age groups simultaneously. Flight templates (Top Flight, Middle Flight, Bottom Flight) are configured once at tournament level and automatically propagate to all flights across age groups. Flights represent competitive groupings (e.g., "U10 Boys Nike Elite"), while brackets are tournament structures created during scheduling.
+    - **Enhanced Bracket Creation Engine**: Comprehensive team assignment interface with manual assignment capabilities, seeding functionality, and proper flight name formatting showing age group context ("U10 Boys Middle Flight"). Includes manual team assignment dropdowns, seed adjustment controls, auto-seeding, and team removal functionality.
     - **Scheduling Engine**: Advanced multi-tier system with constraint-aware optimization. Features include:
         - **Four Scheduling Approaches**: TournamentScheduler (deterministic), SimpleScheduler (constraint-aware), OpenAI-Service (AI-powered), SwissSystemScheduler (performance-based pairings)
         - **Tournament Progression Engine**: Dynamic advancement logic with complete tiebreaker systems (head-to-head, goal difference, etc.)
