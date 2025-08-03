@@ -18,6 +18,8 @@ interface FlightFormatData {
   gender: string;
   teamCount: number;
   currentFormat?: GameFormat;
+  level: string; // Flight level like "top-flight", "middle-flight"
+  displayName: string; // Full display like "U17 Boys - Top Flight"
 }
 
 interface GameFormat {
@@ -418,7 +420,7 @@ export function GameFormatEngine({ eventId }: GameFormatEngineProps) {
             unconfiguredFlights.map((flight) => (
               <Card key={flight.flightId} className="border-slate-600 bg-slate-800">
                 <CardHeader>
-                  <CardTitle className="text-white">{flight.ageGroup} {flight.gender} - {flight.flightName}</CardTitle>
+                  <CardTitle className="text-white">{flight.displayName || `${flight.ageGroup} ${flight.gender} - ${flight.flightName}`}</CardTitle>
                   <CardDescription className="text-slate-300">
                     {flight.teamCount} teams • Configure game format settings
                   </CardDescription>

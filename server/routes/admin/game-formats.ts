@@ -67,6 +67,17 @@ router.get('/events/:eventId/flight-formats', isAdmin, async (req, res) => {
 
     console.log(`[Flight Formats] Found ${gameFormats.length} game formats`);
 
+    // Get flight templates for proper display names
+    const flightTemplates = await db.execute(sql`
+      SELECT level, display_name FROM event_flight_templates 
+      WHERE event_id = ${eventId} AND is_active = true
+    `);
+
+    const flightLevelMap = new Map();
+    flightTemplates.rows.forEach(template => {
+      flightLevelMap.set(template.level, template.display_name);
+    });
+
     const flightData = await Promise.all(flights.map(async bracket => {
       // Find matching game format by age group (bracket.level)
       const matchingFormat = gameFormats.find(format => 
@@ -77,13 +88,27 @@ router.get('/events/:eventId/flight-formats', isAdmin, async (req, res) => {
 
       const teamCount = await getTeamCountForFlight(eventId, bracket.id);
 
+      // Extract age group and gender from bracket name
+      const ageGroupMatch = bracket.name.match(/(U\d+)/i);
+      const genderMatch = bracket.name.match(/(Boys|Girls|Mixed)/i);
+      const ageGroup = ageGroupMatch ? ageGroupMatch[1] : bracket.name;
+      const gender = genderMatch ? genderMatch[1] : 'Mixed';
+
+      // Get flight level display name
+      const flightDisplayName = flightLevelMap.get(bracket.level) || bracket.level;
+      
+      // Create full display name: "U17 Boys - Top Flight"
+      const displayName = `${ageGroup} ${gender} - ${flightDisplayName}`;
+
       console.log(`[Flight Formats] Bracket ${bracket.id} (${bracket.level}): teams=${teamCount}, hasFormat=${!!matchingFormat}`);
 
       return {
         flightId: bracket.id,
         flightName: bracket.name,
-        ageGroup: bracket.level,
-        gender: 'Mixed', // Default gender, could be extracted from description
+        ageGroup: ageGroup,
+        gender: gender,
+        level: bracket.level,
+        displayName: displayName,
         teamCount,
         currentFormat: matchingFormat ? {
           id: matchingFormat.id,
