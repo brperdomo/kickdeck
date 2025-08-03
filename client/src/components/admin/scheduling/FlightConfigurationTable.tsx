@@ -178,7 +178,7 @@ export function FlightConfigurationTable({ eventId }: { eventId: string }) {
                     ) : (
                       <button
                         onClick={() => handleEdit(flight.id, 'startDate', flight.startDate)}
-                        className="flex items-center gap-1 hover:text-blue-400 transition-colors"
+                        className="flex items-center gap-1 hover:text-blue-400 transition-colors text-slate-300"
                       >
                         {formatDate(flight.startDate)}
                         <Calendar className="h-3 w-3" />
@@ -206,7 +206,7 @@ export function FlightConfigurationTable({ eventId }: { eventId: string }) {
                     ) : (
                       <button
                         onClick={() => handleEdit(flight.id, 'endDate', flight.endDate)}
-                        className="flex items-center gap-1 hover:text-blue-400 transition-colors"
+                        className="flex items-center gap-1 hover:text-blue-400 transition-colors text-slate-300"
                       >
                         {formatDate(flight.endDate)}
                         <Calendar className="h-3 w-3" />
@@ -234,7 +234,7 @@ export function FlightConfigurationTable({ eventId }: { eventId: string }) {
                     ) : (
                       <button
                         onClick={() => handleEdit(flight.id, 'matchCount', flight.matchCount)}
-                        className="px-2 py-1 bg-slate-700 rounded text-center hover:bg-slate-600 transition-colors"
+                        className="px-2 py-1 bg-slate-700 rounded text-center hover:bg-slate-600 transition-colors text-white"
                       >
                         {flight.matchCount}
                       </button>
@@ -261,7 +261,7 @@ export function FlightConfigurationTable({ eventId }: { eventId: string }) {
                     ) : (
                       <button
                         onClick={() => handleEdit(flight.id, 'matchTime', flight.matchTime)}
-                        className="flex items-center gap-1 px-2 py-1 bg-slate-700 rounded hover:bg-slate-600 transition-colors"
+                        className="flex items-center gap-1 px-2 py-1 bg-slate-700 rounded hover:bg-slate-600 transition-colors text-white"
                       >
                         {flight.matchTime} min
                         <Clock className="h-3 w-3" />
@@ -289,7 +289,7 @@ export function FlightConfigurationTable({ eventId }: { eventId: string }) {
                     ) : (
                       <button
                         onClick={() => handleEdit(flight.id, 'breakTime', flight.breakTime)}
-                        className="px-2 py-1 bg-slate-700 rounded text-center hover:bg-slate-600 transition-colors"
+                        className="px-2 py-1 bg-slate-700 rounded text-center hover:bg-slate-600 transition-colors text-white"
                       >
                         {flight.breakTime} min
                       </button>
@@ -316,7 +316,7 @@ export function FlightConfigurationTable({ eventId }: { eventId: string }) {
                     ) : (
                       <button
                         onClick={() => handleEdit(flight.id, 'paddingTime', flight.paddingTime)}
-                        className="px-2 py-1 bg-slate-700 rounded text-center hover:bg-slate-600 transition-colors"
+                        className="px-2 py-1 bg-slate-700 rounded text-center hover:bg-slate-600 transition-colors text-white"
                       >
                         {flight.paddingTime} min
                       </button>
