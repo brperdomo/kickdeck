@@ -6,38 +6,6 @@ import { isAdmin } from '../../middleware/auth';
 
 const router = Router();
 
-// Get brackets for a specific age group within an event
-router.get('/:eventId/age-groups/:ageGroupId/brackets', isAdmin, async (req, res) => {
-  try {
-    const { eventId, ageGroupId } = req.params;
-    
-    const brackets = await db
-      .select({
-        id: eventBrackets.id,
-        event_id: eventBrackets.eventId,
-        age_group_id: eventBrackets.ageGroupId,
-        name: eventBrackets.name,
-        description: eventBrackets.description,
-        level: eventBrackets.level,
-        eligibility: eventBrackets.eligibility,
-        created_at: eventBrackets.createdAt,
-        updated_at: eventBrackets.updatedAt
-      })
-      .from(eventBrackets)
-      .where(
-        and(
-          eq(eventBrackets.eventId, eventId),
-          eq(eventBrackets.ageGroupId, parseInt(ageGroupId))
-        )
-      );
-
-    res.json(brackets);
-  } catch (error) {
-    console.error('Error fetching brackets for age group:', error);
-    res.status(500).json({ error: 'Failed to fetch brackets' });
-  }
-});
-
 // Get brackets for an event
 router.get('/:eventId/brackets', isAdmin, async (req, res) => {
   try {
@@ -48,7 +16,9 @@ router.get('/:eventId/brackets', isAdmin, async (req, res) => {
         id: eventBrackets.id,
         name: eventBrackets.name,
         ageGroupId: eventBrackets.ageGroupId,
+        maxTeams: eventBrackets.maxTeams,
         bracketType: sql<string>`COALESCE(${eventBrackets.name}, 'standard')`,
+        isActive: eventBrackets.isActive,
         ageGroup: eventAgeGroups.ageGroup,
         gender: eventAgeGroups.gender,
         fieldSize: eventAgeGroups.fieldSize
@@ -67,7 +37,8 @@ router.get('/:eventId/brackets', isAdmin, async (req, res) => {
             and(
               eq(teams.eventId, eventId),
               eq(teams.status, 'approved'),
-              eq(teams.ageGroupId, bracket.ageGroupId)
+              sql`${teams.ageGroup} = ${bracket.ageGroup}`,
+              sql`${teams.gender} = ${bracket.gender}`
             )
           );
 
@@ -88,163 +59,6 @@ router.get('/:eventId/brackets', isAdmin, async (req, res) => {
   } catch (error) {
     console.error('Error fetching brackets:', error);
     res.status(500).json({ error: 'Failed to fetch brackets' });
-  }
-});
-
-// Create a new bracket
-router.post('/:eventId/brackets', isAdmin, async (req, res) => {
-  try {
-    const { eventId } = req.params;
-    const { name, description, level, eligibility, ageGroupId } = req.body;
-
-    const newBracket = await db
-      .insert(eventBrackets)
-      .values({
-        eventId: eventId,
-        ageGroupId: parseInt(ageGroupId),
-        name,
-        description,
-        level,
-        eligibility
-      })
-      .returning();
-
-    res.json(newBracket[0]);
-  } catch (error) {
-    console.error('Error creating bracket:', error);
-    res.status(500).json({ error: 'Failed to create bracket' });
-  }
-});
-
-// Update a bracket
-router.put('/:eventId/brackets/:bracketId', isAdmin, async (req, res) => {
-  try {
-    const { bracketId } = req.params;
-    const { name, description, level, eligibility } = req.body;
-
-    const updatedBracket = await db
-      .update(eventBrackets)
-      .set({
-        name,
-        description,
-        level,
-        eligibility,
-        updatedAt: new Date().toISOString().slice(0, 19) + 'Z'
-      })
-      .where(eq(eventBrackets.id, parseInt(bracketId)))
-      .returning();
-
-    if (updatedBracket.length === 0) {
-      return res.status(404).json({ error: 'Bracket not found' });
-    }
-
-    res.json(updatedBracket[0]);
-  } catch (error) {
-    console.error('Error updating bracket:', error);
-    res.status(500).json({ error: 'Failed to update bracket' });
-  }
-});
-
-// Delete a bracket
-router.delete('/:eventId/brackets/:bracketId', isAdmin, async (req, res) => {
-  try {
-    const { bracketId } = req.params;
-
-    const deletedBracket = await db
-      .delete(eventBrackets)
-      .where(eq(eventBrackets.id, parseInt(bracketId)))
-      .returning();
-
-    if (deletedBracket.length === 0) {
-      return res.status(404).json({ error: 'Bracket not found' });
-    }
-
-    res.json({ success: true, message: 'Bracket deleted successfully' });
-  } catch (error) {
-    console.error('Error deleting bracket:', error);
-    res.status(500).json({ error: 'Failed to delete bracket' });
-  }
-});
-
-// Bulk create brackets for multiple age groups
-router.post('/:eventId/bulk-brackets', isAdmin, async (req, res) => {
-  try {
-    const { eventId } = req.params;
-    const { ageGroupIds, brackets, replaceExisting } = req.body;
-
-    console.log('Bulk brackets request received:', { eventId, ageGroupIds, brackets, replaceExisting });
-
-    if (!ageGroupIds || !Array.isArray(ageGroupIds) || ageGroupIds.length === 0) {
-      return res.status(400).json({ error: 'Age group IDs are required' });
-    }
-
-    if (!brackets || !Array.isArray(brackets) || brackets.length === 0) {
-      return res.status(400).json({ error: 'Bracket templates are required' });
-    }
-
-    const createdBrackets = [];
-    const errors = [];
-
-    // If replaceExisting is true, delete existing brackets for these age groups
-    if (replaceExisting) {
-      for (const ageGroupId of ageGroupIds) {
-        try {
-          await db
-            .delete(eventBrackets)
-            .where(
-              and(
-                eq(eventBrackets.eventId, eventId),
-                eq(eventBrackets.ageGroupId, ageGroupId)
-              )
-            );
-        } catch (error) {
-          console.error(`Error deleting existing brackets for age group ${ageGroupId}:`, error);
-        }
-      }
-    }
-
-    // Create brackets for each selected age group
-    for (const ageGroupId of ageGroupIds) {
-      for (const bracket of brackets) {
-        try {
-          const newBracket = await db
-            .insert(eventBrackets)
-            .values({
-              eventId: eventId,
-              ageGroupId: parseInt(ageGroupId),
-              name: bracket.name,
-              description: bracket.description || null,
-              level: 'middle_flight', // Default level
-              eligibility: null
-            })
-            .returning();
-
-          createdBrackets.push({
-            ...newBracket[0],
-            ageGroupId: ageGroupId
-          });
-        } catch (error) {
-          console.error(`Error creating bracket for age group ${ageGroupId}:`, error);
-          errors.push({
-            ageGroupId,
-            bracketName: bracket.name,
-            message: `Failed to create bracket: ${error instanceof Error ? error.message : 'Unknown error'}`
-          });
-        }
-      }
-    }
-
-    console.log('Bulk brackets created successfully:', createdBrackets.length);
-
-    res.json({
-      success: true,
-      createdBrackets,
-      errors,
-      message: `Created ${createdBrackets.length} brackets across ${ageGroupIds.length} age groups`
-    });
-  } catch (error) {
-    console.error('Error in bulk brackets creation:', error);
-    res.status(500).json({ error: 'Failed to create brackets in bulk' });
   }
 });
 

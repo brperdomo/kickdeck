@@ -15,7 +15,7 @@ import { isAdmin } from '../../middleware';
 const router = Router();
 
 // Get flights ready for format configuration (flights must be locked first)
-router.get('/events/:eventId/flight-formats', isAdmin, async (req, res) => {
+router.get('/events/:eventId/flight-formats', async (req, res) => {
   try {
     const { eventId } = req.params;
 
@@ -27,18 +27,17 @@ router.get('/events/:eventId/flight-formats', isAdmin, async (req, res) => {
         ageGroup: eventAgeGroups.ageGroup,
         gender: eventAgeGroups.gender,
         currentFormat: {
-          id: gameFormats.id,
-          gameLength: gameFormats.gameLength,
-          fieldSize: gameFormats.fieldSize,
-          bufferTime: gameFormats.bufferTime,
-          restPeriod: gameFormats.restPeriod,
-          maxGamesPerDay: gameFormats.maxGamesPerDay,
-          templateName: gameFormats.templateName
+          id: eventGameFormats.id,
+          gameLength: eventGameFormats.gameLength,
+          fieldSize: eventGameFormats.fieldSize,
+          bufferTime: eventGameFormats.bufferTime,
+          ageGroup: eventGameFormats.ageGroup,
+          format: eventGameFormats.format
         }
       })
       .from(eventBrackets)
       .innerJoin(eventAgeGroups, eq(eventBrackets.ageGroupId, eventAgeGroups.id))
-      .leftJoin(gameFormats, eq(gameFormats.bracketId, eventBrackets.id))
+      .leftJoin(eventGameFormats, eq(eventGameFormats.eventId, parseInt(eventId)))
       .where(
         and(
           eq(eventAgeGroups.eventId, eventId),
@@ -70,12 +69,6 @@ router.get('/events/:eventId/flight-formats', isAdmin, async (req, res) => {
       })
     );
 
-    console.log(`[Flight Formats] Returning flight data for event ${eventId}:`, flightData.map(f => ({
-      flightId: f.flightId,
-      flightName: f.flightName,
-      hasFormat: !!f.currentFormat
-    })));
-    
     res.json(flightData);
   } catch (error) {
     console.error('Error fetching flight formats:', error);
@@ -173,31 +166,10 @@ router.get('/format-templates', async (req, res) => {
 });
 
 // Save format configuration for a flight
-router.post('/events/:eventId/flights/:flightId/format', isAdmin, async (req, res) => {
+router.post('/events/:eventId/flights/:flightId/format', async (req, res) => {
   try {
     const { eventId, flightId } = req.params;
     const { gameLength, fieldSize, bufferTime, restPeriod, maxGamesPerDay, templateName } = req.body;
-    
-    console.log(`[Flight Formats] Saving format for event ${eventId}, flight ${flightId}:`, {
-      gameLength, fieldSize, bufferTime, restPeriod, maxGamesPerDay, templateName
-    });
-
-    // Validate that the flight exists and belongs to the event
-    const flight = await db
-      .select()
-      .from(eventBrackets)
-      .innerJoin(eventAgeGroups, eq(eventBrackets.ageGroupId, eventAgeGroups.id))
-      .where(
-        and(
-          eq(eventBrackets.id, parseInt(flightId)),
-          eq(eventAgeGroups.eventId, eventId)
-        )
-      )
-      .limit(1);
-
-    if (flight.length === 0) {
-      return res.status(400).json({ error: 'Flight does not belong to this event' });
-    }
 
     // Validate required fields
     if (!gameLength || !fieldSize || !bufferTime || !restPeriod || !maxGamesPerDay) {
@@ -242,7 +214,6 @@ router.post('/events/:eventId/flights/:flightId/format', isAdmin, async (req, re
         });
     }
 
-    console.log(`[Flight Formats] Format configuration saved successfully for flight ${flightId}`);
     res.json({ success: true, message: 'Format configuration saved successfully' });
   } catch (error) {
     console.error('Error saving format configuration:', error);
@@ -275,25 +246,10 @@ router.post('/events/:eventId/flight-formats/lock', isAdmin, async (req, res) =>
 
     console.log(`[Lock Formats] Found ${flightsWithoutFormats.length} flights without formats`);
 
-    // Get flights WITH format configurations  
-    const flightsWithFormats = await db
-      .select({
-        flightId: eventBrackets.id,
-        flightName: eventBrackets.name
-      })
-      .from(eventBrackets)
-      .innerJoin(eventAgeGroups, eq(eventBrackets.ageGroupId, eventAgeGroups.id))
-      .innerJoin(gameFormats, eq(gameFormats.bracketId, eventBrackets.id))
-      .where(eq(eventAgeGroups.eventId, eventId));
-
-    console.log(`[Lock Formats] Found ${flightsWithFormats.length} flights with formats configured`);
-
-    // Require at least one flight to have format configuration
-    if (flightsWithFormats.length === 0) {
+    if (flightsWithoutFormats.length > 0) {
       return res.status(400).json({ 
-        error: 'At least one flight must have format configuration before proceeding',
-        configured: [],
-        unconfigured: flightsWithoutFormats.map(f => f.flightName)
+        error: 'All flights must have format configurations before locking',
+        unconfiguredFlights: flightsWithoutFormats.map(f => f.flightName)
       });
     }
 
@@ -321,21 +277,10 @@ router.post('/events/:eventId/flight-formats/lock', isAdmin, async (req, res) =>
 
     console.log(`[Lock Formats] Successfully locked formats for event ${eventId}`);
 
-    // Provide detailed feedback about what can be scheduled
-    const message = flightsWithoutFormats.length > 0 
-      ? `Formats locked for ${flightsWithFormats.length} flight(s). ${flightsWithoutFormats.length} flight(s) without formats can be configured later.`
-      : `All formats locked successfully for ${flightsWithFormats.length} flight(s).`;
-
     res.json({ 
       success: true, 
-      message,
-      nextStep: 'bracket_creation',
-      summary: {
-        configuredFlights: flightsWithFormats.map(f => f.flightName),
-        unconfiguredFlights: flightsWithoutFormats.map(f => f.flightName),
-        canSchedule: flightsWithFormats.length,
-        needsConfiguration: flightsWithoutFormats.length
-      }
+      message: 'All formats locked successfully',
+      nextStep: 'bracket_creation' 
     });
   } catch (error) {
     console.error('Error locking formats:', error);

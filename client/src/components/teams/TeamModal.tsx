@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -84,44 +84,23 @@ export function TeamModal({ isOpen, onClose, team }: TeamModalProps) {
   const [selectedAgeGroupId, setSelectedAgeGroupId] = useState<string | null>(
     team?.ageGroupId ? String(team.ageGroupId) : null
   );
-
-  // Force refetch brackets when modal opens or age group changes
-  React.useEffect(() => {
-    if (isOpen && team?.eventId && selectedAgeGroupId) {
-      console.log('Modal opened or age group changed, invalidating brackets cache');
-      queryClient.invalidateQueries({ 
-        queryKey: ['/api/brackets', team.eventId, selectedAgeGroupId] 
-      });
-    }
-  }, [isOpen, team?.eventId, selectedAgeGroupId, queryClient]);
   
   // Fetch brackets for the selected age group
   const bracketsQuery = useQuery({
     queryKey: ['/api/brackets', team?.eventId, selectedAgeGroupId],
     queryFn: async () => {
-      if (!team?.eventId || !selectedAgeGroupId) {
-        console.log('Missing eventId or selectedAgeGroupId:', { eventId: team?.eventId, selectedAgeGroupId });
-        return [];
-      }
+      if (!team?.eventId || !selectedAgeGroupId) return [];
       
       console.log(`Fetching brackets for event ${team.eventId} and age group ${selectedAgeGroupId}`);
-      const url = `/api/brackets?eventId=${team.eventId}&ageGroupId=${selectedAgeGroupId}`;
-      console.log('Brackets API URL:', url);
-      
-      const response = await fetch(url);
+      const response = await fetch(`/api/brackets?eventId=${team.eventId}&ageGroupId=${selectedAgeGroupId}`);
       
       if (!response.ok) {
-        console.error('Brackets API error:', response.status, response.statusText);
         throw new Error('Failed to fetch brackets');
       }
       
-      const brackets = await response.json();
-      console.log('Fetched brackets:', brackets);
-      return brackets;
+      return response.json();
     },
     enabled: !!team?.eventId && !!selectedAgeGroupId,
-    staleTime: 0, // Always refetch brackets to ensure fresh data
-    gcTime: 0, // Don't cache brackets for too long
   });
   
   // Parse coach data if it's a string

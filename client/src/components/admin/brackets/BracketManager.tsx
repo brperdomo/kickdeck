@@ -99,30 +99,16 @@ export function BracketManager({ ageGroupId, eventId }: BracketManagerProps) {
     data: brackets = [], // Initialize with empty array to prevent map errors
     isLoading,
     isError,
-    error,
   } = useQuery({
     queryKey: ["brackets", ageGroupId, eventId],
     queryFn: async () => {
-      try {
-        // Use admin endpoint when eventId is provided, otherwise fallback to public endpoint
-        const endpoint = eventId 
-          ? `/api/admin/events/${eventId}/age-groups/${ageGroupId}/brackets`
-          : `/api/age-groups/${ageGroupId}/brackets`;
-        
-        const { data } = await axios.get(endpoint);
-        
-        // Ensure we always return an array
-        if (!Array.isArray(data)) {
-          console.warn('Brackets API returned non-array data:', data);
-          return [];
-        }
-        
-        return data;
-      } catch (error) {
-        console.error('Error fetching brackets:', error);
-        // Return empty array instead of throwing to prevent component crash
-        return [];
-      }
+      // Use admin endpoint when eventId is provided, otherwise fallback to public endpoint
+      const endpoint = eventId 
+        ? `/api/admin/events/${eventId}/age-groups/${ageGroupId}/brackets`
+        : `/api/age-groups/${ageGroupId}/brackets`;
+      
+      const { data } = await axios.get(endpoint);
+      return data;
     },
     enabled: !!ageGroupId,
   });
@@ -334,23 +320,7 @@ export function BracketManager({ ageGroupId, eventId }: BracketManagerProps) {
         </Dialog>
       </div>
 
-      {isLoading ? (
-        <div className="flex items-center justify-center py-8">
-          <Loader2 className="h-6 w-6 animate-spin text-primary" />
-          <span className="ml-2">Loading brackets...</span>
-        </div>
-      ) : isError ? (
-        <Card>
-          <CardContent className="py-8">
-            <div className="flex flex-col items-center justify-center text-center space-y-3 py-4">
-              <p className="text-destructive">Error loading brackets</p>
-              <p className="text-muted-foreground text-sm">
-                {error instanceof Error ? error.message : 'Failed to load brackets. Please try again.'}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      ) : brackets && Array.isArray(brackets) && brackets.length > 0 ? (
+      {brackets && brackets.length > 0 ? (
         <Table>
           <TableHeader>
             <TableRow>

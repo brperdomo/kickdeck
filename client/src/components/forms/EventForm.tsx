@@ -26,7 +26,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { BracketsContent } from "@/components/admin/brackets/BracketsContent";
-import { GameCardManager } from "@/components/admin/tournaments/GameCardManager";
 import { Editor } from "@tinymce/tinymce-react";
 import { AgeGroupEligibilityManager } from "@/components/admin/age-groups/AgeGroupEligibilityManager";
 import { StripeConnectBankingView } from "@/components/admin/StripeConnectBankingView";
@@ -1597,7 +1596,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
       <Card className="bg-white shadow-sm border border-gray-200">
         <CardContent className="p-6">
           <Tabs value={activeTab} onValueChange={(value) => handleTabChange(value as EventTab)}>
-            <TabsList className="w-full grid grid-cols-9 gap-2 mb-6 bg-[#F2F2F7] p-1 rounded-lg">
+            <TabsList className="w-full grid grid-cols-8 gap-2 mb-6 bg-[#F2F2F7] p-1 rounded-lg">
               {TAB_ORDER.map((tab) => (
                 <TabsTrigger
                   key={tab}
@@ -1608,8 +1607,6 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                 >
                   {tab === 'administrators' 
                     ? 'Admins' 
-                    : tab === 'game-cards'
-                    ? 'Game Cards'
                     : tab.replace('-', ' ').charAt(0).toUpperCase() + tab.slice(1).replace('-', ' ')}
                 </TabsTrigger>
               ))}
@@ -1681,18 +1678,6 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
 
               <TabsContent value="administrators">
                 {renderAdministratorsContent()}
-              </TabsContent>
-
-              <TabsContent value="game-cards">
-                {defaultValues?.id ? (
-                  <GameCardManager eventId={defaultValues.id} />
-                ) : (
-                  <div className="text-center py-8">
-                    <p className="text-muted-foreground">
-                      Save the event first to generate game cards
-                    </p>
-                  </div>
-                )}
               </TabsContent>
             </div>
           </Tabs>

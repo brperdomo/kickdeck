@@ -64,7 +64,7 @@ export function BracketsContent() {
     return (
       <div className="flex items-center justify-center h-40">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <span className="ml-2">Loading flights...</span>
+        <span className="ml-2">Loading age groups...</span>
       </div>
     );
   }
@@ -73,7 +73,7 @@ export function BracketsContent() {
   if (isError) {
     return (
       <Alert variant="destructive">
-        <AlertTitle>Error loading flights</AlertTitle>
+        <AlertTitle>Error loading age groups</AlertTitle>
         <AlertDescription>
           {error instanceof Error ? error.message : "Unknown error occurred"}
         </AlertDescription>
@@ -115,9 +115,9 @@ export function BracketsContent() {
   return (
     <div className="space-y-6">
       <div className="space-y-2">
-        <h2 className="text-xl font-semibold">Flight Management</h2>
+        <h2 className="text-xl font-semibold">Bracket Management</h2>
         <p className="text-muted-foreground">
-          Create flights for each age group to allow teams to select their competitive level during registration.
+          Create brackets for each age group to allow teams to select their competitive level during registration.
         </p>
       </div>
 
@@ -130,7 +130,7 @@ export function BracketsContent() {
         <TabsContent value="individual">
           <Card>
             <CardHeader>
-              <CardTitle>Individual Age Group Flights</CardTitle>
+              <CardTitle>Individual Age Group Brackets</CardTitle>
             </CardHeader>
             <CardContent>
               {/* Improved age group selector with better layout and readability */}
