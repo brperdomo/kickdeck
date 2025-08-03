@@ -89,14 +89,48 @@ router.get('/events/:eventId/flight-formats', isAdmin, async (req, res) => {
       const teamCount = await getTeamCountForFlight(eventId, bracket.id);
 
       // Extract components from bracket name
-      // Example: "U17 Boys Nike Elite" -> extract age group, gender, and flight name
+      // The bracket name might just be "Nike Elite" without age group info
+      // We need to get age group from the bracket's relationship or description
+      
+      // Try to extract age group from name first
       const ageGroupMatch = bracket.name.match(/(U\d+)/i);
       const genderMatch = bracket.name.match(/(Boys|Girls|Mixed)/i);
-      const ageGroup = ageGroupMatch ? ageGroupMatch[1] : 'Unknown';
-      const gender = genderMatch ? genderMatch[1] : 'Mixed';
       
-      // Extract flight name by removing age group and gender from bracket name
+      // If no age group in name, we need to look up the actual age group
+      // For now, let's get the age group from the bracket's associated teams
+      let ageGroup = ageGroupMatch ? ageGroupMatch[1] : null;
+      let gender = genderMatch ? genderMatch[1] : null;
+      
+      // If we don't have age group/gender from the bracket name, 
+      // try to get it from the teams in this bracket
+      if (!ageGroup || !gender) {
+        const bracketTeams = await db.execute(sql`
+          SELECT DISTINCT 
+            eag.age_group as age_group_name,
+            eag.gender
+          FROM teams t
+          JOIN event_age_groups eag ON t.age_group_id = eag.id
+          WHERE t.event_id = ${eventId} 
+          AND t.bracket_id = ${bracket.id}
+          AND t.status = 'approved'
+          LIMIT 1
+        `);
+        
+        if (bracketTeams.rows.length > 0) {
+          const teamInfo = bracketTeams.rows[0];
+          ageGroup = ageGroup || teamInfo.age_group_name;
+          gender = gender || (teamInfo.gender === 'male' ? 'Boys' : teamInfo.gender === 'female' ? 'Girls' : 'Mixed');
+        }
+      }
+      
+      // Fallback values
+      ageGroup = ageGroup || 'Unknown Age';
+      gender = gender || 'Mixed';
+      
+      // The flight name is typically the bracket name itself (Nike Elite, etc.)
       let flightName = bracket.name;
+      
+      // Only remove age group and gender if they were actually in the name
       if (ageGroupMatch) {
         flightName = flightName.replace(ageGroupMatch[0], '').trim();
       }
