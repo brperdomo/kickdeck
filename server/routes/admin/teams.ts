@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { db } from '@db';
-import { teams, events, users, players, eventAgeGroups, paymentTransactions } from '@db/schema';
+import { teams, events, users, players, eventAgeGroups, paymentTransactions, eventBrackets } from '@db/schema';
 import { eq, and, or, like, asc, desc, sql } from 'drizzle-orm';
 import { log } from '../../vite';
 import { sendTemplatedEmail } from '../../services/emailService';
@@ -416,12 +416,18 @@ export async function getTeams(req: Request, res: Response) {
         email: users.email,
         firstName: users.firstName,
         lastName: users.lastName
+      },
+      bracket: {
+        id: eventBrackets.id,
+        name: eventBrackets.name,
+        division: eventBrackets.division
       }
     })
     .from(teams)
     .leftJoin(events, eq(teams.eventId, events.id))
     .leftJoin(eventAgeGroups, eq(teams.ageGroupId, eventAgeGroups.id))
-    .leftJoin(users, eq(teams.managerEmail, users.email));
+    .leftJoin(users, eq(teams.managerEmail, users.email))
+    .leftJoin(eventBrackets, eq(teams.bracketId, eventBrackets.id));
     
     // Add filters if provided
     if (eventId) {
@@ -461,7 +467,7 @@ export async function getTeams(req: Request, res: Response) {
     
     // For each team, fetch player count
     const teamsWithPlayerCounts = await Promise.all(
-      result.map(async ({ team, event, ageGroup, user }) => {
+      result.map(async ({ team, event, ageGroup, user, bracket }) => {
         // Count players for this team
         const playerCountResult = await db
           .select({ count: sql<number>`count(*)`.mapWith(Number) })
@@ -480,7 +486,8 @@ export async function getTeams(req: Request, res: Response) {
           },
           event,
           ageGroup,
-          user
+          user,
+          bracket
         };
       })
     );
@@ -505,6 +512,11 @@ export async function getTeamById(req: Request, res: Response) {
         id: events.id,
         name: events.name
       },
+      bracket: {
+        id: eventBrackets.id,
+        name: eventBrackets.name,
+        division: eventBrackets.division
+      },
       user: {
         email: users.email,
         firstName: users.firstName,
@@ -514,6 +526,7 @@ export async function getTeamById(req: Request, res: Response) {
     .from(teams)
     .leftJoin(events, eq(teams.eventId, events.id))
     .leftJoin(users, eq(teams.managerEmail, users.email))
+    .leftJoin(eventBrackets, eq(teams.bracketId, eventBrackets.id))
     .where(eq(teams.id, parseInt(teamId)));
     
     if (result.length === 0) {
