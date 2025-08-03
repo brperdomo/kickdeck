@@ -159,22 +159,34 @@ export function GameFormatEngine({ eventId }: GameFormatEngineProps) {
   // Save format configuration
   const saveFormatMutation = useMutation({
     mutationFn: async ({ flightId, format }: { flightId: number; format: GameFormat }) => {
+      console.log('Saving format for flight:', flightId, 'with data:', format);
       const response = await fetch(`/api/admin/events/${eventId}/flights/${flightId}/format`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify(format)
       });
-      if (!response.ok) throw new Error('Failed to save format configuration');
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Failed to save format configuration' }));
+        console.error('Save format error:', errorData);
+        throw new Error(errorData.error || 'Failed to save format configuration');
+      }
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log('Format saved successfully:', data);
       toast({
         title: "Format Saved",
         description: "Game format configuration has been saved successfully"
       });
       queryClient.invalidateQueries({ queryKey: ['flight-formats', eventId] });
       setEditingFlight(null);
+      // Clear the custom format since it's now saved
+      setCustomFormats(prev => {
+        const updated = { ...prev };
+        delete updated[data.flightId || Object.keys(prev)[0]];
+        return updated;
+      });
     },
     onError: (error) => {
       toast({
