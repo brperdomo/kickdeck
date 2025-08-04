@@ -176,8 +176,22 @@ router.delete('/:eventId/games/bulk', isAdmin, async (req, res) => {
       WHERE event_id = ${eventId}
     `);
     
-    const totalGames = Number(countResult.rows[0]?.total) || 0;
-    console.log(`[Bulk Delete] Found ${totalGames} games to delete for event ${eventId}`);
+    console.log(`[Bulk Delete] Raw count result:`, JSON.stringify(countResult.rows[0], null, 2));
+    
+    // Handle different possible formats of the count result
+    let totalGames = 0;
+    if (countResult.rows && countResult.rows.length > 0) {
+      const row = countResult.rows[0];
+      if (typeof row === 'object' && row.total !== undefined) {
+        totalGames = parseInt(String(row.total), 10) || 0;
+      } else if (typeof row === 'number') {
+        totalGames = row;
+      } else if (Array.isArray(row) && row.length > 0) {
+        totalGames = parseInt(String(row[0]), 10) || 0;
+      }
+    }
+    
+    console.log(`[Bulk Delete] Parsed totalGames: ${totalGames} for event ${eventId}`);
 
     if (totalGames === 0) {
       return res.json({ 

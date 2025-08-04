@@ -1,0 +1,84 @@
+Configured flights: 10 of 72
+chunk-CVIZYB43.js:3 [Violation] 'setTimeout' handler took 54ms
+[Violation] 'click' handler took 4753ms
+util.js:31 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+Yxa @ util.js:31
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1379
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1379
+setTimeout
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1379
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622Understand this warning
+UnifiedTournamentControlCenter-B1kVau1-.js:1  DELETE https://app.matchpro.ai/api/admin/events/1844329078/games/bulk 500 (Internal Server Error)
+mutationFn @ UnifiedTournamentControlCenter-B1kVau1-.js:1
+fn @ index-CPLFJsmc.js:41
+f @ index-CPLFJsmc.js:41
+start @ index-CPLFJsmc.js:41
+execute @ index-CPLFJsmc.js:41
+await in execute
+mutate @ index-CPLFJsmc.js:41
+(anonymous) @ index-CPLFJsmc.js:41
+B @ UnifiedTournamentControlCenter-B1kVau1-.js:1
+_ue @ index-CPLFJsmc.js:38
+Due @ index-CPLFJsmc.js:38
+Iue @ index-CPLFJsmc.js:38
+pM @ index-CPLFJsmc.js:38
+Xq @ index-CPLFJsmc.js:38
+(anonymous) @ index-CPLFJsmc.js:38
+NO @ index-CPLFJsmc.js:41
+bq @ index-CPLFJsmc.js:38
+E2 @ index-CPLFJsmc.js:38
+X4 @ index-CPLFJsmc.js:38
+Xue @ index-CPLFJsmc.js:38Understand this error
+UnifiedTournamentControlCenter-B1kVau1-.js:1 Fetch failed loading: DELETE "https://app.matchpro.ai/api/admin/events/1844329078/games/bulk".
+mutationFn @ UnifiedTournamentControlCenter-B1kVau1-.js:1
+fn @ index-CPLFJsmc.js:41
+f @ index-CPLFJsmc.js:41
+start @ index-CPLFJsmc.js:41
+execute @ index-CPLFJsmc.js:41
+await in execute
+mutate @ index-CPLFJsmc.js:41
+(anonymous) @ index-CPLFJsmc.js:41
+B @ UnifiedTournamentControlCenter-B1kVau1-.js:1
+_ue @ index-CPLFJsmc.js:38
+Due @ index-CPLFJsmc.js:38
+Iue @ index-CPLFJsmc.js:38
+pM @ index-CPLFJsmc.js:38
+Xq @ index-CPLFJsmc.js:38
+(anonymous) @ index-CPLFJsmc.js:38
+NO @ index-CPLFJsmc.js:41
+bq @ index-CPLFJsmc.js:38
+E2 @ index-CPLFJsmc.js:38
+X4 @ index-CPLFJsmc.js:38
+Xue @ index-CPLFJsmc.js:38
+UnifiedTournamentControlCenter-B1kVau1-.js:1 Flight configs loaded: 72 flights
+UnifiedTournamentControlCenter-B1kVau1-.js:1 Configured flights: 10 of 72
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+Promise.then
+S @ out-4.5.44.js:1
+y @ out-4.5.44.js:1
+E @ out-4.5.44.js:1
+e.onload @ inner.html:1
+script
+(anonymous) @ inner.html:1
+(anonymous) @ inner.html:1
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+h @ out-4.5.44.js:1
+e @ inner.html:1
+chunk-CVIZYB43.js:3 [Violation] 'setTimeout' handler took 54ms
+UnifiedTournamentControlCenter-B1kVau1-.js:1 Flight configs loaded: 72 flights
+UnifiedTournamentControlCenter-B1kVau1-.js:1 Configured flights: 10 of 72
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state {pill-player: {…}}
+chunk-FLCULYKI.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+UnifiedTournamentControlCenter-B1kVau1-.js:1 Flight configs loaded: 72 flights
+UnifiedTournamentControlCenter-B1kVau1-.js:1 Configured flights: 10 of 72
