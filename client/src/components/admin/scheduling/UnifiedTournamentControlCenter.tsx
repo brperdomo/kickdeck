@@ -69,28 +69,35 @@ export function UnifiedTournamentControlCenter({ eventId }: TournamentControlCen
   });
 
   // Fetch scheduling readiness (configured flights with game formats)
-  const { data: schedulingReadiness } = useQuery({
+  const { data: schedulingReadiness, error: schedulingError } = useQuery({
     queryKey: ['scheduling-readiness', eventId],
     queryFn: async () => {
       const response = await fetch(`/api/admin/events/${eventId}/flight-configurations`);
-      if (!response.ok) throw new Error('Failed to fetch flight configurations');
-      const data = await response.json();
+      if (!response.ok) {
+        console.error('Flight configurations fetch failed:', response.status, response.statusText);
+        throw new Error('Failed to fetch flight configurations');
+      }
+      const flightConfigs = await response.json();
       
-      // Count configured flights (flights with saved game formats)
-      const configuredFlights = data.flights?.filter((flight: any) => 
-        flight.gameFormat && 
-        flight.gameFormat.templateName && 
-        flight.gameFormat.templateName !== 'Not Configured' &&
-        !flight.gameFormat.templateName.includes('Default')
-      ) || [];
+      console.log('Flight configs loaded:', flightConfigs?.length || 0, 'flights');
+      
+      // Count configured flights (flights with saved game formats and isConfigured = true)
+      const configuredFlights = flightConfigs.filter((flight: any) => 
+        flight.isConfigured === true &&
+        flight.formatName && 
+        flight.formatName !== 'Not Configured'
+      );
+      
+      console.log('Configured flights:', configuredFlights.length, 'of', flightConfigs.length);
       
       return {
-        totalFlights: data.flights?.length || 0,
+        totalFlights: flightConfigs.length || 0,
         configuredFlights: configuredFlights.length,
         readyForScheduling: configuredFlights.length > 0
       };
     },
-    refetchInterval: 5000
+    refetchInterval: 5000,
+    retry: 3
   });
 
   // Auto-scheduling mutation
