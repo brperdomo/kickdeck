@@ -43,6 +43,7 @@ Preferred communication style: Simple, everyday language.
         - **ENHANCED**: Comprehensive pre-scheduling validation (event dates, teams, fields)
         - **CRITICAL FIX**: Quick Scheduler field size constraint validation - now respects field compatibility (7v7/9v9/11v11)
         - **CRITICAL FIX**: Game format persistence in Configured tab - saved formats now properly display
+        - **CRITICAL FIX**: Simultaneous scheduling prevention - teams cannot play multiple games at same time on different fields
         - **ENHANCED QUICK SCHEDULER (COMPREHENSIVE UPGRADE)**: Complete constraint validation and intelligent optimization system
         - **Team Rest Period Enforcement**: Configurable minimum rest time between games with millisecond precision
         - **Games Per Day Limits**: Strict enforcement of maximum games per team per day constraints

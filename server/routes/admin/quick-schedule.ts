@@ -376,20 +376,27 @@ function generateGamesForTeamsWithConstraints(teams: string[], ageGroup: string,
       const slotTime = new Date(slot.startTime);
       const slotDate = slotTime.toISOString().split('T')[0];
       
-      // Check if this slot is already used
-      if (games.find(g => g.scheduledTime === slot.startTime && g.fieldId === slot.fieldId)) {
-        continue;
-      }
+      // Removed duplicate field check - handled below with better logging
       
-      // CRITICAL: Check if either team is already playing at this exact time
-      const conflictingGame = games.find(g => 
+      // CRITICAL: Check if either team is already playing at this exact time (ANY FIELD)
+      const teamConflict = games.find(g => 
         g.scheduledTime === slot.startTime && 
         (g.homeTeam === matchup.homeTeam || g.awayTeam === matchup.homeTeam ||
          g.homeTeam === matchup.awayTeam || g.awayTeam === matchup.awayTeam)
       );
       
-      if (conflictingGame) {
-        console.log(`SCHEDULING CONFLICT BLOCKED: ${matchup.homeTeam} vs ${matchup.awayTeam} at ${slot.startTime} - team already playing`);
+      if (teamConflict) {
+        console.log(`🚫 TEAM CONFLICT BLOCKED: ${matchup.homeTeam} vs ${matchup.awayTeam} at ${slot.startTime} - ${teamConflict.homeTeam} vs ${teamConflict.awayTeam} already scheduled`);
+        continue;
+      }
+      
+      // CRITICAL: Check if field is already occupied at this time
+      const fieldConflict = games.find(g => 
+        g.scheduledTime === slot.startTime && g.fieldId === slot.fieldId
+      );
+      
+      if (fieldConflict) {
+        console.log(`🚫 FIELD CONFLICT BLOCKED: Field ${slot.fieldName} already occupied at ${slot.startTime} by ${fieldConflict.homeTeam} vs ${fieldConflict.awayTeam}`);
         continue;
       }
       
@@ -425,6 +432,8 @@ function generateGamesForTeamsWithConstraints(teams: string[], ageGroup: string,
         round: matchup.round,
         pool: matchup.pool || null
       });
+      
+      console.log(`✅ GAME SCHEDULED: ${matchup.homeTeam} vs ${matchup.awayTeam} at ${assignedSlot.startTime} on ${assignedSlot.fieldName}`);
     } else {
       console.warn(`Could not schedule game: ${matchup.homeTeam} vs ${matchup.awayTeam} - no valid time slots found`);
     }
