@@ -32,8 +32,13 @@ import { Label } from '@/components/ui/label';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { BracketSubdivisionModal } from './BracketSubdivisionModal';
 
-// Helper function to format flight names with proper context
-const formatFlightName = (level: string, ageGroup?: string, gender?: string): string => {
+// Helper function to format flight names with proper context (avoiding redundancy)
+const formatFlightName = (bracketName: string, level?: string, ageGroup?: string, gender?: string): string => {
+  // If the bracket name already contains the flight level info, don't duplicate it
+  if (bracketName.includes('Flight') || bracketName.includes('Elite') || bracketName.includes('Premier') || bracketName.includes('Classic')) {
+    return bracketName;
+  }
+  
   const flightMap: Record<string, string> = {
     'top_flight': 'Top Flight',
     'middle_flight': 'Middle Flight', 
@@ -41,24 +46,31 @@ const formatFlightName = (level: string, ageGroup?: string, gender?: string): st
     'other': 'Other'
   };
   
-  const flightName = flightMap[level] || level;
+  const flightName = level ? flightMap[level] || level : '';
   
-  if (ageGroup && gender) {
+  if (ageGroup && gender && flightName) {
     return `${ageGroup} ${gender} ${flightName}`;
   }
   
-  return flightName;
+  return bracketName || flightName;
 };
 
 interface Flight {
+  id: number;
   flightId: number;
   name: string;
   level: string;
   ageGroup: string;
   gender: string;
   teamCount: number;
+  assignedTeams: number;
+  unassignedTeams: number;
   registeredTeams: Team[];
   maxTeams?: number;
+  bracketType?: string;
+  estimatedGames?: number;
+  isConfigured: boolean;
+  ageGroupId?: number;
 }
 
 interface Team {
@@ -68,6 +80,20 @@ interface Team {
   status: string;
   flightId?: number;
   seed?: number;
+  ageGroupId?: number;
+  isPlaceholder?: boolean;
+  placeholderLabel?: string;
+}
+
+interface PlaceholderTeam {
+  id: string;
+  name: string;
+  clubName: string;
+  status: string;
+  isPlaceholder: true;
+  placeholderLabel: string;
+  seed?: number;
+  flightId?: number;
   ageGroupId?: number;
 }
 
@@ -87,6 +113,7 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
   const [selectedTab, setSelectedTab] = useState('overview');
   const [subdivisionModalOpen, setSubdivisionModalOpen] = useState(false);
   const [selectedFlightForSubdivision, setSelectedFlightForSubdivision] = useState<any>(null);
+  const [placeholderCounter, setPlaceholderCounter] = useState(1);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -292,6 +319,67 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
     setSubdivisionModalOpen(true);
   };
 
+  // Handle adding placeholder teams
+  const handleAddPlaceholder = async (flightId: number) => {
+    try {
+      const placeholderName = `TBD Team ${placeholderCounter}`;
+      const response = await fetch(`/api/admin/events/${eventId}/flights/${flightId}/add-placeholder`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ placeholderName })
+      });
+      
+      if (!response.ok) throw new Error('Failed to add placeholder');
+      
+      setPlaceholderCounter(prev => prev + 1);
+      
+      // Immediately invalidate and refetch to show changes
+      await queryClient.invalidateQueries({ queryKey: ['bracket-creation', eventId] });
+      await queryClient.refetchQueries({ queryKey: ['bracket-creation', eventId] });
+      
+      toast({
+        title: "Placeholder Added",
+        description: `Added "${placeholderName}" as a placeholder team.`
+      });
+    } catch (error) {
+      toast({
+        title: "Failed to Add Placeholder",
+        description: "Could not add placeholder team.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  // Handle replacing placeholder with real team
+  const handleReplacePlaceholder = async (placeholderId: string, newTeamId: string) => {
+    try {
+      const response = await fetch(`/api/admin/events/${eventId}/replace-placeholder`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ placeholderId, newTeamId })
+      });
+      
+      if (!response.ok) throw new Error('Failed to replace placeholder');
+      
+      // Immediately invalidate and refetch to show changes
+      await queryClient.invalidateQueries({ queryKey: ['bracket-creation', eventId] });
+      await queryClient.refetchQueries({ queryKey: ['bracket-creation', eventId] });
+      
+      toast({
+        title: "Placeholder Replaced",
+        description: "Successfully replaced placeholder with real team."
+      });
+    } catch (error) {
+      toast({
+        title: "Failed to Replace Placeholder",
+        description: "Could not replace placeholder team.",
+        variant: "destructive"
+      });
+    }
+  };
+
   // Drag and drop handler
   const handleDragEnd = async (result: any) => {
     const { destination, source, draggableId } = result;
@@ -360,7 +448,7 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
   const assignedTeamIds = new Set(
     flights.flatMap(flight => flight.registeredTeams?.map(team => team.id) || [])
   );
-  const unassignedTeams = allTeams.filter(team => !assignedTeamIds.has(team.id));
+  const unassignedTeams = allTeams.filter((team: any) => !assignedTeamIds.has(team.id));
 
   return (
     <div className="space-y-6">
@@ -499,13 +587,13 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
 
         <TabsContent value="overview" className="space-y-4">
           <div className="grid gap-4">
-            {flights.slice(0, 12).map((flight) => (
+            {flights.map((flight) => (
               <Card key={flight.id} className="border-slate-600 bg-slate-800 p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4">
                     <div>
                       <h3 className="font-semibold text-white">
-                        {flight.level} - {flight.name}
+                        {formatFlightName(flight.name, flight.level, flight.ageGroup, flight.gender)}
                       </h3>
                       <p className="text-sm text-slate-300">
                         {flight.assignedTeams} teams assigned
@@ -548,12 +636,12 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
                 </div>
               </Card>
             ))}
-            {flights.length > 12 && (
+            {flights.length === 0 && (
               <Card className="border-slate-600 bg-slate-800 p-4">
                 <div className="text-center text-slate-300">
-                  <p>... and {flights.length - 12} more flights</p>
+                  <p>No flights configured yet.</p>
                   <p className="text-sm text-slate-400 mt-1">
-                    Note: This event has {flights.length} total brackets, which may indicate duplicate data
+                    Configure game formats first to create flights.
                   </p>
                 </div>
               </Card>
@@ -649,7 +737,7 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
                           : 'border-slate-600 bg-slate-700/30'
                       }`}
                     >
-                      {unassignedTeams.map((team, index) => (
+                      {unassignedTeams.map((team: any, index: number) => (
                         <Draggable key={team.id} draggableId={team.id.toString()} index={index}>
                           {(provided, snapshot) => (
                             <div
@@ -696,7 +784,7 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
                   <div className="flex items-center justify-between">
                     <div>
                       <CardTitle className="text-white text-lg">
-                        {formatFlightName(flight.level, flight.ageGroup, flight.gender)}
+                        {formatFlightName(flight.name, flight.level, flight.ageGroup, flight.gender)}
                       </CardTitle>
                       <CardDescription className="text-slate-300">
                         {flight.registeredTeams?.length || 0} / {flight.maxTeams || 'unlimited'} teams assigned
@@ -721,14 +809,23 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
                         </SelectTrigger>
                         <SelectContent className="bg-slate-700 border-slate-600">
                           {unassignedTeams
-                            ?.filter(team => team.ageGroupId === flight.ageGroupId)
-                            ?.map((team: Team) => (
+                            ?.filter((team: any) => team.ageGroupId === flight.ageGroupId)
+                            ?.map((team: any) => (
                             <SelectItem key={team.id} value={team.id.toString()}>
                               {team.name} {team.clubName && `(${team.clubName})`}
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleAddPlaceholder(flight.flightId)}
+                        className="bg-slate-700 border-slate-600 text-slate-300 hover:bg-slate-600"
+                      >
+                        <Plus className="h-3 w-3 mr-1" />
+                        Add Placeholder
+                      </Button>
                     </div>
 
                     {/* Flight Drop Zone with Assigned Teams */}
@@ -762,7 +859,7 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
                               <div className="space-y-2">
                                 {flight.registeredTeams
                                   .sort((a, b) => (a.seed || 999) - (b.seed || 999))
-                                  .map((team: Team, index: number) => (
+                                  .map((team: any, index: number) => (
                                   <Draggable key={team.id} draggableId={team.id.toString()} index={index}>
                                     {(provided, snapshot) => (
                                       <div
@@ -811,20 +908,48 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
 
                                         {/* Team Info */}
                                         <div className="flex-1">
-                                          <div className="font-medium text-white text-sm">{team.name}</div>
-                                          {team.clubName && (
+                                          <div className={`font-medium text-sm ${team.isPlaceholder ? 'text-orange-300 italic' : 'text-white'}`}>
+                                            {team.name}
+                                            {team.isPlaceholder && (
+                                              <Badge variant="outline" className="ml-2 border-orange-500 text-orange-300 text-xs">
+                                                Placeholder
+                                              </Badge>
+                                            )}
+                                          </div>
+                                          {!team.isPlaceholder && team.clubName && (
                                             <div className="text-xs text-slate-400">{team.clubName}</div>
+                                          )}
+                                          {team.isPlaceholder && (
+                                            <div className="text-xs text-orange-400">Can be replaced with real team</div>
                                           )}
                                         </div>
 
                                         {/* Status & Actions */}
                                         <div className="flex items-center gap-2">
-                                          <Badge 
-                                            variant="outline" 
-                                            className={`text-xs ${team.status === 'approved' ? 'border-green-500 text-green-300' : 'border-slate-500 text-slate-300'}`}
-                                          >
-                                            {team.status}
-                                          </Badge>
+                                          {!team.isPlaceholder && (
+                                            <Badge 
+                                              variant="outline" 
+                                              className={`text-xs ${team.status === 'approved' ? 'border-green-500 text-green-300' : 'border-slate-500 text-slate-300'}`}
+                                            >
+                                              {team.status}
+                                            </Badge>
+                                          )}
+                                          {team.isPlaceholder && (
+                                            <Select onValueChange={(newTeamId) => handleReplacePlaceholder(team.id.toString(), newTeamId)}>
+                                              <SelectTrigger className="w-[120px] h-6 text-xs bg-slate-700 border-slate-600">
+                                                <SelectValue placeholder="Replace..." />
+                                              </SelectTrigger>
+                                              <SelectContent className="bg-slate-700 border-slate-600">
+                                                {unassignedTeams
+                                                  ?.filter((t: any) => t.ageGroupId === flight.ageGroupId)
+                                                  ?.map((t: any) => (
+                                                  <SelectItem key={t.id} value={t.id.toString()}>
+                                                    {t.name}
+                                                  </SelectItem>
+                                                ))}
+                                              </SelectContent>
+                                            </Select>
+                                          )}
                                           <Button
                                             size="sm"
                                             variant="ghost"

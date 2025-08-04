@@ -98,12 +98,12 @@ router.get('/:eventId/bracket-creation', isAdmin, async (req, res) => {
     let assignedFlights = 0;
 
     for (const flight of flights) {
-      // Get teams assigned to this specific flight/bracket with seeding
+      // Get teams assigned to this specific flight/bracket with seeding (including placeholders)
       const assignedTeams = await db.query.teams.findMany({
         where: and(
           eq(teams.eventId, eventId),
           eq(teams.bracketId, flight.id),
-          eq(teams.status, 'approved')
+          sql`(status = 'approved' OR status = 'placeholder')`
         ),
         orderBy: [sql`COALESCE(seed_ranking, 999)`, teams.name]
       });
@@ -134,7 +134,7 @@ router.get('/:eventId/bracket-creation', isAdmin, async (req, res) => {
       const isConfigured = assignedCount >= 3;
       if (isConfigured) assignedFlights++;
 
-      // Format teams for the response with proper seeding
+      // Format teams for the response with proper seeding and placeholder identification
       const teamsInFlight: Team[] = assignedTeams.map((team, index) => ({
         id: team.id,
         name: team.name,
@@ -142,7 +142,9 @@ router.get('/:eventId/bracket-creation', isAdmin, async (req, res) => {
         status: team.status,
         flightId: team.bracketId,
         seed: team.seedRanking || (index + 1), // Use actual seed or assign based on current order
-        ageGroupId: team.ageGroupId
+        ageGroupId: team.ageGroupId,
+        isPlaceholder: team.status === 'placeholder',
+        placeholderLabel: team.status === 'placeholder' ? team.name : undefined
       }));
 
       flightData.push({
@@ -559,6 +561,113 @@ router.post('/:eventId/flights/:flightId/auto-seed', isAdmin, async (req, res) =
   } catch (error) {
     console.error('[Auto-Seeding] Error auto-seeding teams:', error);
     res.status(500).json({ error: 'Failed to auto-seed teams' });
+  }
+});
+
+// Add placeholder team to flight
+router.post('/:eventId/flights/:flightId/add-placeholder', isAdmin, async (req, res) => {
+  try {
+    const { eventId, flightId } = req.params;
+    const { placeholderName } = req.body;
+
+    console.log(`[Placeholder] Adding placeholder "${placeholderName}" to flight ${flightId} in event ${eventId}`);
+
+    // Get the bracket/flight info to determine age group
+    const bracket = await db.query.eventBrackets.findFirst({
+      where: and(
+        eq(eventBrackets.id, parseInt(flightId)),
+        eq(eventBrackets.eventId, eventId)
+      )
+    });
+
+    if (!bracket) {
+      return res.status(404).json({ error: 'Bracket not found' });
+    }
+
+    // Create placeholder team record
+    const [placeholderTeam] = await db.insert(teams).values({
+      eventId: eventId,
+      ageGroupId: bracket.ageGroupId,
+      bracketId: parseInt(flightId),
+      name: placeholderName,
+      clubName: 'TBD',
+      status: 'placeholder',
+      managerName: 'TBD',
+      managerEmail: 'tbd@placeholder.com',
+      seedRanking: 999, // Put placeholders at the end by default
+      createdAt: new Date().toISOString()
+    }).returning();
+
+    console.log(`[Placeholder] Successfully created placeholder team:`, placeholderTeam);
+
+    res.json({
+      success: true,
+      message: `Added placeholder "${placeholderName}" successfully`,
+      placeholderTeam
+    });
+
+  } catch (error) {
+    console.error('[Placeholder] Error adding placeholder team:', error);
+    res.status(500).json({ error: 'Failed to add placeholder team' });
+  }
+});
+
+// Replace placeholder team with real team
+router.post('/:eventId/replace-placeholder', isAdmin, async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const { placeholderId, newTeamId } = req.body;
+
+    console.log(`[Placeholder] Replacing placeholder ${placeholderId} with team ${newTeamId} in event ${eventId}`);
+
+    // Get the placeholder team info
+    const placeholderTeam = await db.query.teams.findFirst({
+      where: and(
+        eq(teams.id, parseInt(placeholderId)),
+        eq(teams.eventId, eventId),
+        eq(teams.status, 'placeholder')
+      )
+    });
+
+    if (!placeholderTeam) {
+      return res.status(404).json({ error: 'Placeholder team not found' });
+    }
+
+    // Get the real team
+    const realTeam = await db.query.teams.findFirst({
+      where: and(
+        eq(teams.id, parseInt(newTeamId)),
+        eq(teams.eventId, eventId)
+      )
+    });
+
+    if (!realTeam) {
+      return res.status(404).json({ error: 'Real team not found' });
+    }
+
+    // Update the real team to take the placeholder's position
+    await db.update(teams)
+      .set({
+        bracketId: placeholderTeam.bracketId,
+        seedRanking: placeholderTeam.seedRanking
+      })
+      .where(eq(teams.id, parseInt(newTeamId)));
+
+    // Delete the placeholder team
+    await db.delete(teams)
+      .where(eq(teams.id, parseInt(placeholderId)));
+
+    console.log(`[Placeholder] Successfully replaced placeholder with real team`);
+
+    res.json({
+      success: true,
+      message: `Successfully replaced placeholder with ${realTeam.name}`,
+      replacedTeam: realTeam
+    });
+
+  } catch (error) {
+    console.error('[Placeholder] Error replacing placeholder team:', error);
+    res.status(500).json({ error: 'Failed to replace placeholder team' });
   }
 });
 
