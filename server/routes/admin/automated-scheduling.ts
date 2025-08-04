@@ -568,35 +568,47 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
       throw new Error(`Event ${eventId} not found`);
     }
 
-    // Get teams for the selected flights (simplified approach)
-    const eventTeams = await db.query.teams.findMany({
-      where: eq(teams.eventId, eventId)
-    });
-
     // Get available fields
     const eventFields = await db.query.fields.findMany();
 
     // Generate a basic schedule for the selected flights
-    // This is a simplified implementation that will be enhanced
     const generatedGames = [];
     let gameCounter = 1;
 
-    // Create sample games based on selected flights
+    // Create games based on selected bracket IDs (flights)
     for (const flightId of flightIds) {
-      const flightTeams = eventTeams.filter(team => 
-        team.name && team.name.includes('Flight') // Basic flight filtering
-      );
+      // Get teams for this specific bracket/flight
+      const flightTeams = await db.query.teams.findMany({
+        where: and(
+          eq(teams.eventId, eventId),
+          eq(teams.bracketId, parseInt(flightId))
+        )
+      });
+
+      console.log(`[Selective Scheduling] Found ${flightTeams.length} teams for bracket/flight ${flightId}`);
+
+      if (flightTeams.length < 2) {
+        console.log(`[Selective Scheduling] Skipping bracket ${flightId} - not enough teams (${flightTeams.length})`);
+        continue;
+      }
 
       // Generate round-robin games for this flight
-      for (let i = 0; i < Math.min(flightTeams.length, 4); i++) {
-        for (let j = i + 1; j < Math.min(flightTeams.length, 4); j++) {
+      for (let i = 0; i < flightTeams.length; i++) {
+        for (let j = i + 1; j < flightTeams.length; j++) {
+          const homeTeam = flightTeams[i];
+          const awayTeam = flightTeams[j];
+          
           generatedGames.push({
             id: gameCounter++,
-            homeTeam: flightTeams[i].name,
-            awayTeam: flightTeams[j].name,
-            flightId: flightId,
-            field: eventFields[0]?.name || 'Field 1',
-            scheduledTime: new Date().toISOString()
+            homeTeam: homeTeam.name,
+            awayTeam: awayTeam.name,
+            homeTeamId: homeTeam.id,
+            awayTeamId: awayTeam.id,
+            bracketId: parseInt(flightId),
+            field: eventFields[Math.floor(Math.random() * eventFields.length)]?.name || 'Field 1',
+            scheduledTime: new Date(Date.now() + (gameCounter * 60 * 60 * 1000)).toISOString(), // Spread games over time
+            round: 1,
+            status: 'scheduled'
           });
         }
       }
