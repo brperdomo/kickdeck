@@ -33,11 +33,14 @@ if (nodeEnv === "production") {
   log(`Loaded development environment variables from .env`);
 }
 
-// Force exact mirror of working development configuration
-// This ensures production uses identical SendGrid settings as development
-process.env.SENDGRID_API_KEY =
-  "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";
-process.env.DEFAULT_FROM_EMAIL = "support@matchpro.ai";
+// Use environment variables for production deployment
+// Only set defaults if not already configured
+if (!process.env.SENDGRID_API_KEY && nodeEnv === "development") {
+  process.env.SENDGRID_API_KEY = "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";
+}
+if (!process.env.DEFAULT_FROM_EMAIL) {
+  process.env.DEFAULT_FROM_EMAIL = "support@matchpro.ai";
+}
 
 // Log critical environment variables for debugging (without exposing secrets)
 log(`Environment: ${nodeEnv}`);
