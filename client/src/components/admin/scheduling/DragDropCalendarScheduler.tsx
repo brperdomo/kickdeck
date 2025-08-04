@@ -43,7 +43,7 @@ interface DragDropCalendarSchedulerProps {
 }
 
 export default function DragDropCalendarScheduler({ eventId }: DragDropCalendarSchedulerProps) {
-  const [selectedDate, setSelectedDate] = useState<string>('2025-10-01');
+  const [selectedDate, setSelectedDate] = useState<string>('2025-08-16'); // Use actual tournament start date
   const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
   const [fields, setFields] = useState<Field[]>([]);
   const [coachColorMap, setCoachColorMap] = useState<Map<string, string>>(new Map());

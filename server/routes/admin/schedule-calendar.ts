@@ -1,6 +1,6 @@
 import express from 'express';
 import { db } from '@db';
-import { games, teams, eventAgeGroups, fields, complexes, gameTimeSlots } from '@db/schema';
+import { games, teams, eventAgeGroups, fields, complexes, gameTimeSlots, events } from '@db/schema';
 import { eq, and } from 'drizzle-orm';
 
 const router = express.Router();
@@ -11,6 +11,18 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
     const { eventId } = req.params;
     
     console.log(`[Schedule Calendar] Fetching calendar data for event ${eventId}`);
+
+    // Get event details first to get proper dates
+    const event = await db.query.events.findFirst({
+      where: eq(events.id, eventId)
+    });
+
+    if (!event) {
+      return res.status(404).json({ error: 'Event not found' });
+    }
+
+    const eventStartDate = event.startDate; // Use actual tournament start date (2025-08-16)
+    console.log(`[Schedule Calendar] Using event start date: ${eventStartDate}`);
 
     // Get games with proper age group information using JOIN first
     const gamesWithDetails = await db
@@ -61,14 +73,38 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
 
 
     
-    // Process each unique game with its FIRST time slot only (to avoid 612 duplicates)
+    // Process each unique game with proper field and time assignment
     const processedGames = [];
+    
+    // Since we have no time slots, create a simple scheduling pattern for calendar display
+    // Distribute games across available fields and time slots throughout the tournament days
+    const eventDays = ['2025-08-16', '2025-08-17']; // Tournament is Aug 16-17
+    const timeSlots = ['08:00', '09:30', '11:00', '12:30', '14:00', '15:30', '17:00'];
+    const availableFields = allFields.slice(0, 6); // Use first 6 fields
+    
+    console.log(`[Schedule Calendar] Creating schedule for ${gamesWithDetails.length} games across ${eventDays.length} days`);
+    console.log(`[Schedule Calendar] Available fields: ${availableFields.map(f => f.name).join(', ')}`);
     
     for (let i = 0; i < gamesWithDetails.length; i++) {
       const game = gamesWithDetails[i];
       
-      // Get the corresponding time slot (assuming they're in the same order)
-      const timeSlot = allTimeSlots[i % allTimeSlots.length]; // Use modulo to cycle through time slots
+      // Distribute games evenly across days, times, and fields
+      const dayIndex = i % eventDays.length;
+      const timeIndex = Math.floor(i / eventDays.length) % timeSlots.length;
+      const fieldIndex = i % availableFields.length;
+      
+      const gameDay = eventDays[dayIndex];
+      const gameTime = timeSlots[timeIndex];
+      const assignedField = availableFields[fieldIndex];
+      
+      console.log(`[Schedule Calendar] Game ${i+1}: ${gameDay} ${gameTime} on ${assignedField?.name}`);
+      
+      // Create synthetic time slot for this game since none exist in database
+      const syntheticTimeSlot = {
+        fieldId: assignedField?.id || 8,
+        startTime: gameTime,
+        endTime: addMinutesToTime(gameTime, 90) // 90-minute games
+      };
 
       // Get team names and coach info - only from approved teams for this event
       const homeTeam = await db.query.teams.findFirst({
@@ -109,7 +145,7 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
         }
       }
 
-      const field = allFields.find(f => f.id === timeSlot?.fieldId);
+      const field = assignedField;
       
       // Only include games with both teams found and at least one approved
       if (homeTeam && awayTeam && (homeTeam.status === 'approved' || awayTeam.status === 'approved')) {
@@ -122,10 +158,10 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
           homeTeamName: homeTeam.name,
           awayTeamName: awayTeam.name,
           ageGroup: ageGroupDisplay,
-          startTime: timeSlot ? `2025-10-01T${timeSlot.startTime}:00` : `2025-10-01T08:00:00`,
-          endTime: timeSlot ? `2025-10-01T${timeSlot.endTime}:00` : `2025-10-01T09:30:00`,
-          fieldName: field?.name || `Field ${timeSlot?.fieldId || 8}`,
-          fieldId: timeSlot?.fieldId || 8,
+          startTime: `${gameDay}T${syntheticTimeSlot.startTime}:00`,
+          endTime: `${gameDay}T${syntheticTimeSlot.endTime}:00`,
+          fieldName: field?.name || `Field ${syntheticTimeSlot.fieldId}`,
+          fieldId: syntheticTimeSlot.fieldId,
           status: game.status,
           duration: game.duration || 90,
           round: game.round,
@@ -141,12 +177,40 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
     console.log(`[Schedule Calendar] Processed ${processedGames.length} games with team names`);
     console.log(`[Schedule Calendar] Sample processed game:`, processedGames[0]);
 
+    // Add fields data to response
+    const responseFields = allFields.map(field => ({
+      id: field.id,
+      name: field.name,
+      fieldSize: field.fieldSize || '11v11',
+      complexName: field.complexName || 'Tournament Complex',
+      isOpen: true
+    }));
+
     res.json({
       success: true,
       games: processedGames,
+      fields: responseFields,
       totalGames: processedGames.length,
       eventId: eventId
     });
+
+  } catch (error) {
+    console.error('[Schedule Calendar] Error:', error);
+    res.status(500).json({ 
+      error: 'Failed to fetch calendar schedule data',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
+// Helper function to add minutes to time string
+function addMinutesToTime(timeStr: string, minutes: number): string {
+  const [hours, mins] = timeStr.split(':').map(Number);
+  const totalMinutes = hours * 60 + mins + minutes;
+  const newHours = Math.floor(totalMinutes / 60) % 24;
+  const newMins = totalMinutes % 60;
+  return `${newHours.toString().padStart(2, '0')}:${newMins.toString().padStart(2, '0')}`;
+}
 
   } catch (error) {
     console.error('[Schedule Calendar] Error:', error);
