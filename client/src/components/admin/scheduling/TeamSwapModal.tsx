@@ -22,10 +22,10 @@ interface Flight {
   flightId: number;
   name: string;
   ageGroup: string;
+  gender: string;
+  level: string;
   registeredTeams: Team[];
   id?: number;
-  gender?: string;
-  level?: string;
   teamCount?: number;
   assignedTeams?: number;
   unassignedTeams?: number;
@@ -64,11 +64,14 @@ export default function TeamSwapModal({
   const [showConfirmation, setShowConfirmation] = useState(false);
   const { toast } = useToast();
 
-  // Get all teams from all flights
+  // Get all teams from all flights with complete flight context
   const allTeams = flights.flatMap(flight => 
     flight.registeredTeams.map(team => ({
       ...team,
-      flightName: flight.name
+      flightName: flight.name,
+      flightAgeGroup: flight.ageGroup,
+      flightGender: flight.gender,
+      flightLevel: flight.level
     }))
   );
 
@@ -172,14 +175,19 @@ export default function TeamSwapModal({
     );
   };
 
-  const renderTeamBadge = (team: Team) => (
-    <div className="flex items-center space-x-2">
-      <Badge variant={team.isPlaceholder ? "secondary" : "default"}>
-        {team.name}
-      </Badge>
-      <span className="text-sm text-gray-500">
-        ({team.clubName || 'No Club'}) - Seed #{team.seed || 'N/A'}
-      </span>
+  const renderTeamBadge = (team: Team & { flightAgeGroup?: string; flightGender?: string; flightLevel?: string }) => (
+    <div className="flex flex-col space-y-1">
+      <div className="flex items-center space-x-2">
+        <Badge variant={team.isPlaceholder ? "secondary" : "default"}>
+          {team.name}
+        </Badge>
+        <span className="text-sm text-gray-500">
+          ({team.clubName || 'No Club'}) - Seed #{team.seed || 'N/A'}
+        </span>
+      </div>
+      <div className="text-xs text-gray-400">
+        {team.flightAgeGroup} {team.flightGender} • {team.flightLevel}
+      </div>
     </div>
   );
 
@@ -218,9 +226,12 @@ export default function TeamSwapModal({
                       disabled={team.id === selectedTeam2?.id}
                     >
                       <div className="flex flex-col">
-                        <span>{team.name}</span>
+                        <span className="font-medium">{team.name}</span>
                         <span className="text-xs text-gray-400">
-                          {(team as any).flightName} - Seed #{team.seed || 'N/A'}
+                          {(team as any).flightAgeGroup} {(team as any).flightGender} • {(team as any).flightLevel}
+                        </span>
+                        <span className="text-xs text-gray-500">
+                          ({team.clubName || 'No Club'}) - Seed #{team.seed || 'N/A'}
                         </span>
                       </div>
                     </SelectItem>
@@ -229,7 +240,7 @@ export default function TeamSwapModal({
               </Select>
               {selectedTeam1 && (
                 <div className="mt-2 p-2 bg-slate-700 rounded">
-                  {renderTeamBadge(selectedTeam1)}
+                  {renderTeamBadge(selectedTeam1 as any)}
                   <div className="text-xs text-gray-400 mt-1">
                     Flight: {getFlightForTeam(selectedTeam1.id)?.name}
                   </div>
@@ -259,9 +270,12 @@ export default function TeamSwapModal({
                       disabled={team.id === selectedTeam1?.id}
                     >
                       <div className="flex flex-col">
-                        <span>{team.name}</span>
+                        <span className="font-medium">{team.name}</span>
                         <span className="text-xs text-gray-400">
-                          {(team as any).flightName} - Seed #{team.seed || 'N/A'}
+                          {(team as any).flightAgeGroup} {(team as any).flightGender} • {(team as any).flightLevel}
+                        </span>
+                        <span className="text-xs text-gray-500">
+                          ({team.clubName || 'No Club'}) - Seed #{team.seed || 'N/A'}
                         </span>
                       </div>
                     </SelectItem>
@@ -270,7 +284,7 @@ export default function TeamSwapModal({
               </Select>
               {selectedTeam2 && (
                 <div className="mt-2 p-2 bg-slate-700 rounded">
-                  {renderTeamBadge(selectedTeam2)}
+                  {renderTeamBadge(selectedTeam2 as any)}
                   <div className="text-xs text-gray-400 mt-1">
                     Flight: {getFlightForTeam(selectedTeam2.id)?.name}
                   </div>
