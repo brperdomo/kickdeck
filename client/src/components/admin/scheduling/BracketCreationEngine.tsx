@@ -34,27 +34,20 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { BracketSubdivisionModal } from './BracketSubdivisionModal';
 import TeamSwapModal from './TeamSwapModal';
 
-// Helper function to format flight names with proper context (avoiding redundancy)
+// Helper function to format flight names with complete context
 const formatFlightName = (bracketName: string, level?: string, ageGroup?: string, gender?: string): string => {
-  // If the bracket name already contains the flight level info, don't duplicate it
-  if (bracketName.includes('Flight') || bracketName.includes('Elite') || bracketName.includes('Premier') || bracketName.includes('Classic')) {
-    return bracketName;
+  // Always show the complete information: Age Group + Gender + Flight Level
+  if (ageGroup && gender) {
+    // If bracketName is a custom name like "Nike Elite", include it
+    if (bracketName && !bracketName.includes(ageGroup) && !bracketName.includes(gender)) {
+      return `${ageGroup} ${gender} • ${bracketName}`;
+    }
+    // If bracketName already contains the info or is generic, format properly
+    return `${ageGroup} ${gender} ${bracketName ? `• ${bracketName}` : ''}`;
   }
   
-  const flightMap: Record<string, string> = {
-    'top_flight': 'Top Flight',
-    'middle_flight': 'Middle Flight', 
-    'bottom_flight': 'Bottom Flight',
-    'other': 'Other'
-  };
-  
-  const flightName = level ? flightMap[level] || level : '';
-  
-  if (ageGroup && gender && flightName) {
-    return `${ageGroup} ${gender} ${flightName}`;
-  }
-  
-  return bracketName || flightName;
+  // Fallback to original name if age group/gender missing
+  return bracketName || level || 'Flight';
 };
 
 interface Flight {

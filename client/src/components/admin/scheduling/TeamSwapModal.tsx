@@ -14,7 +14,7 @@ interface Team {
   status: string;
   flightId?: number;
   seed?: number;
-  ageGroupId: number;
+  ageGroupId?: number;
   isPlaceholder?: boolean;
 }
 
