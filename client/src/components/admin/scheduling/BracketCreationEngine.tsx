@@ -37,16 +37,16 @@ import TeamSwapModal from './TeamSwapModal';
 // Helper function to format flight names with complete context
 const formatFlightName = (bracketName: string, level?: string, ageGroup?: string, gender?: string): string => {
   // Always show the complete information: Age Group + Gender + Flight Level
-  if (ageGroup && gender) {
+  if (ageGroup && gender && ageGroup !== 'Unknown Age Group') {
     // If bracketName is a custom name like "Nike Elite", include it
     if (bracketName && !bracketName.includes(ageGroup) && !bracketName.includes(gender)) {
       return `${ageGroup} ${gender} • ${bracketName}`;
     }
     // If bracketName already contains the info or is generic, format properly
-    return `${ageGroup} ${gender} ${bracketName ? `• ${bracketName}` : ''}`;
+    return `${ageGroup} ${gender}${bracketName ? ` • ${bracketName}` : ''}`;
   }
   
-  // Fallback to original name if age group/gender missing
+  // Fallback to original name if age group/gender missing or unknown
   return bracketName || level || 'Flight';
 };
 
