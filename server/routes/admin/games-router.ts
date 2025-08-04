@@ -50,7 +50,10 @@ router.delete('/:gameId', hasEventAccess, async (req, res) => {
     });
   } catch (error) {
     console.error("Error deleting game:", error);
-    return res.status(500).json({ message: "Failed to delete game" });
+    return res.status(500).json({ 
+      error: "Failed to delete game",
+      details: error instanceof Error ? error.message : String(error)
+    });
   }
 });
 
@@ -110,7 +113,7 @@ router.delete('/:eventId/games/delete-all', async (req, res) => {
     // Delete all games for this event (eventId is stored as string)
     const result = await db
       .delete(games)
-      .where(eq(games.eventId, eventId));
+      .where(eq(games.eventId, String(eventId)));
     
     console.log(`Deleted games result:`, result);
     
