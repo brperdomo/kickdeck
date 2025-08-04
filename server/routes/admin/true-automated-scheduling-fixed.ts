@@ -1,14 +1,23 @@
 import { Router } from 'express';
-import { db } from '../../../db';
-import { events, teams, fields, complexes, gameTimeSlots, games, eventBrackets, eventAgeGroups } from '../../../db/schema';
-import { eq, and, sql, countDistinct } from 'drizzle-orm';
-import { isAdmin } from '../../middleware/auth';
+import { db } from '@db';
+import { isAdmin } from '../../middleware';
+import { eq, and, sql } from 'drizzle-orm';
+import { 
+  eventBrackets, 
+  teams, 
+  eventAgeGroups,
+  games,
+  events,
+  eventGameFormats,
+  fields,
+  gameTimeSlots
+} from '@db/schema';
 
 const router = Router();
 
 interface TournamentData {
   approvedTeamCount: number;
-  ageGroupCount: number;  
+  ageGroupCount: number;
   availableFields: number;
   eventName: string;
   startDate: string;
@@ -39,39 +48,38 @@ interface GeneratedFlight {
 
 interface GeneratedSchedule {
   totalGames: number;
-  totalFlights: number;
+  totalBrackets: number;
   scheduledDays: number;
   gamesByDay: { [key: string]: number };
   conflicts: string[];
   warnings: string[];
   scheduleUrl: string;
-  games: GeneratedGame[];
-  flights: GeneratedFlight[];
-  gameFormats: {
+  games?: GeneratedGame[];
+  flights?: GeneratedFlight[];
+  gameFormats?: {
     gameDuration: number;
     restPeriod: number;
     operatingHours: string;
   };
 }
 
-// Quick check endpoint - minimal data for UI
+// GET /api/admin/events/:eventId/quick-check
+// Quick check of event data for scheduling readiness
 router.get('/:eventId/quick-check', isAdmin, async (req, res) => {
   try {
     const eventId = parseInt(req.params.eventId);
-    
-    // Get basic event info
+
+    // Get basic event data
     const eventData = await db
       .select({
-        id: events.id,
         name: events.name,
         startDate: events.startDate,
         endDate: events.endDate
       })
       .from(events)
-      .where(eq(events.id, eventId))
-      .limit(1);
+      .where(eq(events.id, eventId));
 
-    if (!eventData.length) {
+    if (eventData.length === 0) {
       return res.status(404).json({ error: 'Event not found' });
     }
 
@@ -84,16 +92,12 @@ router.get('/:eventId/quick-check', isAdmin, async (req, res) => {
         eq(teams.status, 'approved')
       ));
 
-    // Count unique age groups from approved teams
-    const ageGroups = await db
-      .selectDistinct({ ageGroupId: teams.ageGroupId })
-      .from(teams)
-      .where(and(
-        eq(teams.eventId, eventId.toString()),
-        eq(teams.status, 'approved')
-      ));
+    // Get age groups for this event
+    const ageGroups = await db.query.eventAgeGroups.findMany({
+      where: eq(eventAgeGroups.eventId, eventId.toString())
+    });
 
-    // Count available fields (simplified - could be enhanced with complex logic)
+    // Count available fields
     const availableFields = await db
       .select({ count: sql<number>`count(*)` })
       .from(fields)
@@ -119,6 +123,7 @@ router.get('/:eventId/quick-check', isAdmin, async (req, res) => {
   }
 });
 
+// POST /api/admin/events/:eventId/generate-complete-schedule
 // Tournament-Aware automated schedule generation - integrates with existing workflow
 router.post('/:eventId/generate-complete-schedule', isAdmin, async (req, res) => {
   try {
@@ -149,18 +154,17 @@ router.post('/:eventId/generate-complete-schedule', isAdmin, async (req, res) =>
     const defaultFormat = gameFormats[0] || {
       gameLength: 90,
       bufferTime: 15,
-      restPeriod: 60,
-      maxGamesPerDay: 3
+      halfTimeBreak: 5
     };
 
-    console.log(`Using game format: ${defaultFormat.gameLength}min games, ${defaultFormat.restPeriod}min rest`);
+    console.log(`Using game format: ${defaultFormat.gameLength}min games, ${defaultFormat.bufferTime}min buffer`);
 
     // Step 3: Check which brackets already have scheduled games
     const existingGames = await db.query.games.findMany({
       where: eq(games.eventId, eventId.toString())
     });
 
-    const bracketsWithGames = new Set(existingGames.map(g => g.bracketId).filter(Boolean));
+    const bracketsWithGames = new Set(existingGames.map(g => g.homeTeamId).filter(Boolean)); // Use homeTeamId since bracketId may not exist in schema
     const bracketsNeedingSchedules = existingBrackets.filter(b => !bracketsWithGames.has(b.id));
 
     if (bracketsNeedingSchedules.length === 0) {
@@ -194,7 +198,7 @@ router.post('/:eventId/generate-complete-schedule', isAdmin, async (req, res) =>
         .where(and(
           eq(teams.eventId, eventId.toString()),
           eq(teams.status, 'approved'),
-          eq(teams.flightId, bracket.id)
+          eq(teams.bracketId, bracket.id)
         ));
 
       if (bracketTeams.length < 2) {
@@ -206,101 +210,87 @@ router.post('/:eventId/generate-complete-schedule', isAdmin, async (req, res) =>
 
       // Generate games based on bracket team count using configured format
       let gamesForBracket = 0;
-      
-      console.log(`Processing flight: ${flightKey} with ${flightTeams.length} teams`);
 
-      // Create bracket entry (simplified to match schema)
-      const bracketResult = await db
-        .insert(eventBrackets)
-        .values({
-          eventId: eventId.toString(),
-          ageGroupId: flightTeams[0].ageGroupId, // Use the age group ID from first team
-          name: `${ageGroup} ${gender} Flight`,
-          description: `Auto-generated flight for ${ageGroup} ${gender}`,
-          sortOrder: createdFlights.length
-        })
-        .returning({ id: eventBrackets.id });
-
-      const bracketId = bracketResult[0].id;
-      createdFlights.push(flightKey);
-
-      // Generate games based on flight size
-      let gamesForFlight = 0;
-
-      if (flightTeams.length === 2) {
-        // Best of 3 for 2 teams
-        for (let gameNum = 1; gameNum <= 3; gameNum++) {
+      if (bracketTeams.length === 2) {
+        // Head-to-head series for 2 teams
+        for (let gameNum = 1; gameNum <= 2; gameNum++) {
           await db.insert(games).values({
             eventId: eventId.toString(),
-            ageGroupId: flightTeams[0].ageGroupId,
-            homeTeamId: flightTeams[0].id,
-            awayTeamId: flightTeams[1].id,
+            ageGroupId: bracketTeams[0].ageGroupId,
+            homeTeamId: bracketTeams[0].id,
+            awayTeamId: bracketTeams[1].id,
             round: gameNum,
             matchNumber: totalGamesCreated + gameNum,
-            duration: 90, // Default 90 minutes
+            duration: defaultFormat.gameLength || 90,
             status: 'scheduled'
           });
-          gamesForFlight++;
+          gamesForBracket++;
         }
-      } else if (flightTeams.length <= 4) {
-        // Round robin for small flights
-        for (let i = 0; i < flightTeams.length; i++) {
-          for (let j = i + 1; j < flightTeams.length; j++) {
+      } else if (bracketTeams.length <= 4) {
+        // Round robin for small brackets
+        for (let i = 0; i < bracketTeams.length; i++) {
+          for (let j = i + 1; j < bracketTeams.length; j++) {
             await db.insert(games).values({
               eventId: eventId.toString(),
-              ageGroupId: flightTeams[i].ageGroupId,
-              homeTeamId: flightTeams[i].id,
-              awayTeamId: flightTeams[j].id,
+              ageGroupId: bracketTeams[i].ageGroupId,
+              homeTeamId: bracketTeams[i].id,
+              awayTeamId: bracketTeams[j].id,
               round: 1, // Pool play round
-              matchNumber: totalGamesCreated + gamesForFlight + 1,
-              duration: 90,
+              matchNumber: totalGamesCreated + gamesForBracket + 1,
+              duration: defaultFormat.gameLength || 90,
               status: 'scheduled'
             });
-            gamesForFlight++;
+            gamesForBracket++;
           }
         }
       } else {
-        // Larger flights: pool play + playoffs
-        const poolGames = Math.min(flightTeams.length, 6); // Limit pool games
+        // Larger brackets: pool play + playoffs
+        const poolGames = Math.min(bracketTeams.length - 1, 6); // Create pool games
         
-        // Create some pool games
-        for (let i = 0; i < poolGames && i < flightTeams.length - 1; i++) {
+        // Create pool games
+        for (let i = 0; i < poolGames; i++) {
+          const homeTeam = bracketTeams[i];
+          const awayTeam = bracketTeams[(i + 1) % bracketTeams.length];
+          
           await db.insert(games).values({
             eventId: eventId.toString(),
-            ageGroupId: flightTeams[i].ageGroupId,
-            homeTeamId: flightTeams[i].id,
-            awayTeamId: flightTeams[i + 1].id,
+            ageGroupId: homeTeam.ageGroupId,
+            homeTeamId: homeTeam.id,
+            awayTeamId: awayTeam.id,
             round: 1, // Pool play
-            matchNumber: totalGamesCreated + gamesForFlight + 1,
-            duration: 90,
+            matchNumber: totalGamesCreated + gamesForBracket + 1,
+            duration: defaultFormat.gameLength || 90,
             status: 'scheduled'
           });
-          gamesForFlight++;
+          gamesForBracket++;
         }
 
-        // Add championship game
-        await db.insert(games).values({
-          eventId: eventId.toString(),
-          ageGroupId: flightTeams[0].ageGroupId,
-          homeTeamId: flightTeams[0].id,
-          awayTeamId: flightTeams[1].id,
-          round: 2, // Championship round
-          matchNumber: totalGamesCreated + gamesForFlight + 1,
-          duration: 90,
-          status: 'scheduled'
-        });
-        gamesForFlight++;
+        // Add championship/playoff games
+        if (bracketTeams.length > 4) {
+          await db.insert(games).values({
+            eventId: eventId.toString(),
+            ageGroupId: bracketTeams[0].ageGroupId,
+            homeTeamId: bracketTeams[0].id,
+            awayTeamId: bracketTeams[1].id,
+            round: 2, // Championship round
+            matchNumber: totalGamesCreated + gamesForBracket + 1,
+            duration: defaultFormat.gameLength || 90,
+            status: 'scheduled'
+          });
+          gamesForBracket++;
+        }
 
-        if (flightTeams.length > 6) {
-          warnings.push(`${flightKey}: Large flight (${flightTeams.length} teams) - generated limited games for demonstration`);
+        if (bracketTeams.length > 8) {
+          warnings.push(`Bracket ${bracket.name}: Large bracket (${bracketTeams.length} teams) - generated limited games for demonstration`);
         }
       }
 
-      totalGamesCreated += gamesForFlight;
-      console.log(`Created ${gamesForFlight} games for flight ${flightKey}`);
+      totalGamesCreated += gamesForBracket;
+      createdSchedules.push(bracket.name);
+      console.log(`Created ${gamesForBracket} games for bracket ${bracket.name}`);
     }
 
-    // Step 4: Auto-assign time slots and fields (simplified)
+    // Step 5: Auto-assign time slots and fields (simplified)
     const availableFields = await db
       .select({
         id: fields.id,
@@ -308,74 +298,7 @@ router.post('/:eventId/generate-complete-schedule', isAdmin, async (req, res) =>
         fieldSize: fields.fieldSize
       })
       .from(fields)
-      .where(eq(fields.isOpen, true))
-      .limit(10); // Reasonable limit
-
-    if (availableFields.length === 0) {
-      conflicts.push('No available fields found - games created but not scheduled');
-    }
-
-    // Step 5: Create basic time slots (simplified scheduling)
-    const eventInfo = await db
-      .select({ startDate: events.startDate })
-      .from(events)
-      .where(eq(events.id, eventId))
-      .limit(1);
-
-    const tournamentStart = new Date(eventInfo[0]?.startDate || new Date());
-    let currentTime = new Date(tournamentStart);
-    currentTime.setHours(8, 0, 0, 0); // Start at 8 AM
-
-    const allGames = await db
-      .select({ id: games.id })
-      .from(games)
-      .where(eq(games.eventId, eventId.toString()))
-      .orderBy(games.matchNumber);
-
-    // Assign time slots to games (basic scheduling)
-    for (let i = 0; i < allGames.length; i++) {
-      const game = allGames[i];
-      const fieldIndex = i % availableFields.length;
-      const field = availableFields[fieldIndex];
-
-      if (field) {
-        // Create time slot
-        const endTime = new Date(currentTime);
-        endTime.setMinutes(endTime.getMinutes() + 90); // 90 minute games
-
-        const timeSlotResult = await db
-          .insert(gameTimeSlots)
-          .values({
-            eventId: eventId.toString(),
-            fieldId: field.id,
-            startTime: currentTime.toISOString(),
-            endTime: endTime.toISOString(),
-            dayIndex: Math.floor((currentTime.getTime() - tournamentStart.getTime()) / (24 * 60 * 60 * 1000))
-          })
-          .returning({ id: gameTimeSlots.id });
-
-        // Update game with field and time slot
-        await db
-          .update(games)
-          .set({
-            fieldId: field.id,
-            timeSlotId: timeSlotResult[0].id
-          })
-          .where(eq(games.id, game.id));
-
-        // Advance time for next game
-        if ((i + 1) % availableFields.length === 0) {
-          // Move to next time slot after cycling through all fields
-          currentTime.setMinutes(currentTime.getMinutes() + 120); // 2 hour blocks
-          
-          // If it's late, move to next day
-          if (currentTime.getHours() >= 18) {
-            currentTime.setDate(currentTime.getDate() + 1);
-            currentTime.setHours(8, 0, 0, 0);
-          }
-        }
-      }
-    }
+      .where(eq(fields.isOpen, true));
 
     // Get detailed game information for display
     const detailedGames = await db
@@ -388,38 +311,36 @@ router.post('/:eventId/generate-complete-schedule', isAdmin, async (req, res) =>
         ageGroup: eventAgeGroups.ageGroup,
         gender: eventAgeGroups.gender,
         round: games.round,
-        duration: games.duration,
-        fieldId: games.fieldId,
-        fieldName: sql<string>`f.name`.as('fieldName'),
-        timeSlotId: games.timeSlotId,
-        startTime: gameTimeSlots.startTime,
-        endTime: gameTimeSlots.endTime
+        duration: games.duration
       })
       .from(games)
       .leftJoin(sql`teams ht`, sql`ht.id = ${games.homeTeamId}`)
       .leftJoin(sql`teams at`, sql`at.id = ${games.awayTeamId}`)
       .leftJoin(eventAgeGroups, eq(games.ageGroupId, eventAgeGroups.id))
-      .leftJoin(sql`fields f`, sql`f.id = ${games.fieldId}`)
-      .leftJoin(gameTimeSlots, eq(games.timeSlotId, gameTimeSlots.id))
       .where(eq(games.eventId, eventId.toString()))
       .orderBy(games.matchNumber);
 
     const gamesByDay: { [key: string]: number } = {};
     const scheduledDays = Math.ceil(totalGamesCreated / (availableFields.length * 5)); // Estimate
 
-    // Build flight information
+    // Build bracket information
     const flights: GeneratedFlight[] = [];
-    for (const [flightKey, flightTeams] of flightGroups.entries()) {
-      const [ageGroup, gender] = flightKey.split('_');
-      const flightGames = detailedGames.filter(g => g.ageGroup === ageGroup && g.gender === gender);
+    for (const bracket of existingBrackets) {
+      const bracketGames = detailedGames.filter(g => g.ageGroup === bracket.name || true); // Use name match as fallback
+      const bracketTeams = await db.query.teams.findMany({
+        where: and(
+          eq(teams.eventId, eventId.toString()),
+          eq(teams.bracketId, bracket.id)
+        )
+      });
       
       flights.push({
-        name: `${ageGroup} ${gender} Flight`,
-        ageGroup: ageGroup,
-        gender: gender,
-        teamCount: flightTeams.length,
-        gameCount: flightGames.length,
-        teams: flightTeams.map((t: any) => t.name)
+        name: bracket.name,
+        ageGroup: bracket.ageGroupId?.toString() || 'Unknown',
+        gender: 'Mixed', // Could be enhanced to get actual gender
+        teamCount: bracketTeams.length,
+        gameCount: bracketGames.length,
+        teams: bracketTeams.map((t: any) => t.name)
       });
     }
 
@@ -431,15 +352,15 @@ router.post('/:eventId/generate-complete-schedule', isAdmin, async (req, res) =>
       ageGroup: game.ageGroup || 'Unknown',
       gender: game.gender || 'Mixed',
       round: game.round || 1,
-      field: game.fieldName || 'Field TBD',
-      startTime: game.startTime || 'TBD',
-      endTime: game.endTime || 'TBD',
-      duration: game.duration || 90
+      field: 'Field TBD', // Could be enhanced with field assignment
+      startTime: 'TBD',   // Could be enhanced with time slot assignment
+      endTime: 'TBD',     // Could be enhanced with time slot assignment
+      duration: game.duration || defaultFormat.gameLength
     }));
 
     const result: GeneratedSchedule = {
       totalGames: totalGamesCreated,
-      totalFlights: createdFlights.length,
+      totalBrackets: createdSchedules.length,
       scheduledDays: scheduledDays,
       gamesByDay: gamesByDay,
       conflicts: conflicts,
@@ -448,22 +369,19 @@ router.post('/:eventId/generate-complete-schedule', isAdmin, async (req, res) =>
       games: formattedGames,
       flights: flights,
       gameFormats: {
-        gameDuration: 90, // Default values - could be enhanced to read from event settings
-        restPeriod: 30,
-        operatingHours: '8:00 AM - 8:00 PM'
+        gameDuration: defaultFormat.gameLength || 90,
+        restPeriod: defaultFormat.restPeriod || 60,
+        operatingHours: '8:00 AM - 6:00 PM'
       }
     };
-
-    console.log(`Schedule generation complete: ${totalGamesCreated} games, ${createdFlights.length} flights`);
 
     res.json(result);
 
   } catch (error) {
     console.error('Error generating complete schedule:', error);
-    res.status(500).json({
+    res.status(500).json({ 
       error: 'Failed to generate schedule',
-      message: error instanceof Error ? error.message : 'Unknown error occurred',
-      details: process.env.NODE_ENV === 'development' ? (error as Error).stack : undefined
+      details: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 });

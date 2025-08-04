@@ -73,7 +73,7 @@ import enhancedConflictDetectionRouter from "./routes/admin/enhanced-conflict-de
 import enhancedFieldManagementRouter from "./routes/admin/enhanced-field-management";
 import constraintValidationRouter from "./routes/admin/constraint-validation";
 import swissTournamentRouter from "./routes/admin/swiss-tournaments";
-import trueAutomatedSchedulingRouter from "./routes/admin/true-automated-scheduling";
+import trueAutomatedSchedulingRouter from "./routes/admin/true-automated-scheduling-fixed";
 import flightTemplatesRouter from "./routes/admin/flight-templates";
 import facilityConstraintRouter from "./routes/admin/facility-constraints";
 import refereeManagementRouter from "./routes/admin/referee-management";
