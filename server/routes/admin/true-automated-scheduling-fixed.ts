@@ -370,7 +370,7 @@ router.post('/:eventId/generate-complete-schedule', isAdmin, async (req, res) =>
       flights: flights,
       gameFormats: {
         gameDuration: defaultFormat.gameLength || 90,
-        restPeriod: defaultFormat.restPeriod || 60,
+        restPeriod: (defaultFormat.bufferTime || 15) * 2, // Use bufferTime * 2 as rest period
         operatingHours: '8:00 AM - 6:00 PM'
       }
     };
