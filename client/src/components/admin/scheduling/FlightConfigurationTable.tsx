@@ -22,6 +22,9 @@ interface FlightConfig {
   formatName: string;
   teamCount: number;
   ageGroupId: number;
+  isConfigured: boolean;
+  ageGroup: string;
+  gender: string;
 }
 
 interface EditingState {
@@ -49,7 +52,8 @@ export function FlightConfigurationTable({ eventId }: { eventId: string }) {
     queryFn: async () => {
       const response = await fetch(`/api/admin/events/${eventId}/flight-configurations`);
       if (!response.ok) throw new Error('Failed to fetch flight configurations');
-      return response.json() as FlightConfig[];
+      const data = await response.json();
+      return data as FlightConfig[];
     },
   });
 
@@ -155,6 +159,15 @@ export function FlightConfigurationTable({ eventId }: { eventId: string }) {
                       <Badge variant="outline" className="bg-blue-600/20 text-blue-400 border-blue-600">
                         {flight.divisionName}
                       </Badge>
+                      {flight.isConfigured ? (
+                        <Badge variant="outline" className="bg-green-600/20 text-green-400 border-green-600">
+                          ✓ Ready
+                        </Badge>
+                      ) : (
+                        <Badge variant="outline" className="bg-yellow-600/20 text-yellow-400 border-yellow-600">
+                          ⚠ Needs Setup
+                        </Badge>
+                      )}
                     </div>
                   </TableCell>
 

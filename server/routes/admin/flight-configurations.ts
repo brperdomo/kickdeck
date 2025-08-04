@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { isAdmin } from '../../middleware';
 import { db } from '@db';
-import { eventAgeGroups, teams, events } from '@db/schema';
+import { eventAgeGroups, teams, events, eventGameFormats } from '@db/schema';
 import { eq, and, count } from 'drizzle-orm';
 
 const router = Router();
@@ -28,6 +28,8 @@ router.get('/events/:eventId/flight-configurations', isAdmin, async (req, res) =
         divisionName: eventAgeGroups.divisionCode,
         ageGroupId: eventAgeGroups.id,
         eventId: eventAgeGroups.eventId,
+        ageGroup: eventAgeGroups.ageGroup,
+        gender: eventAgeGroups.gender,
       })
       .from(eventAgeGroups)
       .where(eq(eventAgeGroups.eventId, eventId));
@@ -45,29 +47,69 @@ router.get('/events/:eventId/flight-configurations', isAdmin, async (req, res) =
       ))
       .groupBy(teams.ageGroupId);
 
+    // Get actual saved game formats for this event
+    const savedGameFormats = await db
+      .select({
+        ageGroup: eventGameFormats.ageGroup,
+        format: eventGameFormats.format,
+        gameLength: eventGameFormats.gameLength,
+        halves: eventGameFormats.halves,
+        halfLength: eventGameFormats.halfLength,
+        halfTimeBreak: eventGameFormats.halfTimeBreak,
+        bufferTime: eventGameFormats.bufferTime,
+        fieldSize: eventGameFormats.fieldSize,
+        allowsLights: eventGameFormats.allowsLights,
+        surfacePreference: eventGameFormats.surfacePreference,
+        isActive: eventGameFormats.isActive,
+      })
+      .from(eventGameFormats)
+      .where(and(
+        eq(eventGameFormats.eventId, parseInt(eventId)),
+        eq(eventGameFormats.isActive, true)
+      ));
+
     // Use event dates or fall back to defaults
     const startDate = eventDetails?.startDate || new Date().toISOString().split('T')[0];
     const endDate = eventDetails?.endDate || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
-    // Combine the data
-    const result = flightConfigs.map(config => {
-      const teamCountData = teamCounts.find(tc => tc.ageGroupId === config.ageGroupId);
-      
-      return {
-        id: config.id.toString(),
-        divisionName: config.divisionName || `Division ${config.id}`,
-        startDate: startDate, // Use actual event start date
-        endDate: endDate, // Use actual event end date
-        matchCount: 2, // Default - could be calculated based on format
-        matchTime: 35, // Default values
-        breakTime: 5,
-        paddingTime: 10,
-        totalTime: 50, // 35 + 5 + 10
-        formatName: 'Group of 4',
-        teamCount: teamCountData?.teamCount || 0,
-        ageGroupId: config.ageGroupId,
-      };
-    });
+    // Combine the data - only include age groups with saved game formats
+    const result = flightConfigs
+      .map(config => {
+        const teamCountData = teamCounts.find(tc => tc.ageGroupId === config.ageGroupId);
+        const gameFormatData = savedGameFormats.find(gf => gf.ageGroup === config.ageGroup);
+        
+        // Only include if there's a saved game format
+        if (!gameFormatData) {
+          return null;
+        }
+
+        // Check if the game format has all required values for scheduling
+        const isCompletelyConfigured = gameFormatData.format && 
+                                     gameFormatData.gameLength && 
+                                     gameFormatData.halves && 
+                                     gameFormatData.halfLength && 
+                                     gameFormatData.bufferTime !== null &&
+                                     gameFormatData.fieldSize;
+
+        return {
+          id: config.id.toString(),
+          divisionName: `${config.ageGroup} ${config.gender}`,
+          startDate: startDate,
+          endDate: endDate,
+          matchCount: gameFormatData.halves || 2,
+          matchTime: gameFormatData.halfLength ? (gameFormatData.halfLength * (gameFormatData.halves || 2)) : 35,
+          breakTime: gameFormatData.halfTimeBreak || 5,
+          paddingTime: gameFormatData.bufferTime || 10,
+          totalTime: gameFormatData.gameLength || 50,
+          formatName: gameFormatData.format || 'Not Configured',
+          teamCount: teamCountData?.teamCount || 0,
+          ageGroupId: config.ageGroupId,
+          isConfigured: isCompletelyConfigured,
+          ageGroup: config.ageGroup,
+          gender: config.gender,
+        };
+      })
+      .filter(config => config !== null); // Remove null entries
 
     res.json(result);
   } catch (error) {
