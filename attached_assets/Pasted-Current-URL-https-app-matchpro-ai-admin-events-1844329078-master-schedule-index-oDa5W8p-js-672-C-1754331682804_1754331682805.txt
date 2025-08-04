@@ -1,0 +1,46 @@
+Current URL: https://app.matchpro.ai/admin/events/1844329078/master-schedule
+index--oDa5W8p.js:672 Current pathname: /admin/events/1844329078/master-schedule
+index--oDa5W8p.js:672 Current search: 
+index--oDa5W8p.js:672 Fetching user with emulation token: not present
+17Fetch finished loading: GET "<URL>".
+index--oDa5W8p.js:672 User data fetched: {id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: '$2b$12$d6n1CBWgsWFm0fh77F1OX.YxDZy7/O3aLSuJOuq4QkvOtFmSit7BC', firstName: 'Bryan', …}
+index--oDa5W8p.js:664 Fetch failed loading: GET "https://app.matchpro.ai/api/user".
+queryFn @ index--oDa5W8p.js:664
+i @ index--oDa5W8p.js:41
+f @ index--oDa5W8p.js:41
+start @ index--oDa5W8p.js:41
+fetch @ index--oDa5W8p.js:41
+ng @ index--oDa5W8p.js:41
+onSubscribe @ index--oDa5W8p.js:41
+subscribe @ index--oDa5W8p.js:41
+(anonymous) @ index--oDa5W8p.js:41
+hW @ index--oDa5W8p.js:39
+k1 @ index--oDa5W8p.js:41
+Jh @ index--oDa5W8p.js:41
+qM @ index--oDa5W8p.js:41
+su @ index--oDa5W8p.js:39
+hhe @ index--oDa5W8p.js:41
+ku @ index--oDa5W8p.js:41
+qW @ index--oDa5W8p.js:41
+N @ index--oDa5W8p.js:26
+T @ index--oDa5W8p.js:26
+UnifiedTournamentControlCenter-DroVOI_J.js:1 Flight configs loaded: 0 flights
+UnifiedTournamentControlCenter-DroVOI_J.js:1 Configured flights: 0 of 0
+util.js:31 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+Yxa @ util.js:31
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1379
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1379
+setTimeout
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1379
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622Understand this warning
+UnifiedTournamentControlCenter-DroVOI_J.js:1 Flight configs loaded: 0 flights
+UnifiedTournamentControlCenter-DroVOI_J.js:1 Configured flights: 0 of 0
+UnifiedTournamentControlCenter-DroVOI_J.js:1 Flight configs loaded: 0 flights
+UnifiedTournamentControlCenter-DroVOI_J.js:1 Configured flights: 0 of 0
+UnifiedTournamentControlCenter-DroVOI_J.js:1 Flight configs loaded: 0 flights
+UnifiedTournamentControlCenter-DroVOI_J.js:1 Configured flights: 0 of 0
+UnifiedTournamentControlCenter-DroVOI_J.js:1 Flight configs loaded: 0 flights
+UnifiedTournamentControlCenter-DroVOI_J.js:1 Configured flights: 0 of 0

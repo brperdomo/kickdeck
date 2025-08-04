@@ -72,19 +72,24 @@ router.get('/events/:eventId/flight-configurations', isAdmin, async (req, res) =
     const startDate = eventDetails?.startDate || new Date().toISOString().split('T')[0];
     const endDate = eventDetails?.endDate || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
-    // Combine the data - only include age groups with saved game formats
+    console.log(`Found ${flightConfigs.length} age groups`);
+    console.log(`Found ${savedGameFormats.length} saved game formats`);
+    console.log('Age groups:', flightConfigs.map(c => c.ageGroup));
+    console.log('Game format age groups:', savedGameFormats.map(g => g.ageGroup));
+
+    // Combine the data - include all age groups and show their configuration status
     const result = flightConfigs
       .map(config => {
         const teamCountData = teamCounts.find(tc => tc.ageGroupId === config.ageGroupId);
         const gameFormatData = savedGameFormats.find(gf => gf.ageGroup === config.ageGroup);
         
-        // Only include if there's a saved game format
-        if (!gameFormatData) {
-          return null;
-        }
+        console.log(`Processing age group ${config.ageGroup}: found game format = ${!!gameFormatData}`);
+        
+        // Include all age groups, but mark configuration status properly
 
         // Check if the game format has all required values for scheduling
-        const isCompletelyConfigured = gameFormatData.format && 
+        const isCompletelyConfigured = gameFormatData && 
+                                     gameFormatData.format && 
                                      gameFormatData.gameLength && 
                                      gameFormatData.halves && 
                                      gameFormatData.halfLength && 
@@ -96,20 +101,19 @@ router.get('/events/:eventId/flight-configurations', isAdmin, async (req, res) =
           divisionName: `${config.ageGroup} ${config.gender}`,
           startDate: startDate,
           endDate: endDate,
-          matchCount: gameFormatData.halves || 2,
-          matchTime: gameFormatData.halfLength ? (gameFormatData.halfLength * (gameFormatData.halves || 2)) : 35,
-          breakTime: gameFormatData.halfTimeBreak || 5,
-          paddingTime: gameFormatData.bufferTime || 10,
-          totalTime: gameFormatData.gameLength || 50,
-          formatName: gameFormatData.format || 'Not Configured',
+          matchCount: gameFormatData?.halves || 2,
+          matchTime: gameFormatData?.halfLength ? (gameFormatData.halfLength * (gameFormatData.halves || 2)) : 35,
+          breakTime: gameFormatData?.halfTimeBreak || 5,
+          paddingTime: gameFormatData?.bufferTime || 10,
+          totalTime: gameFormatData?.gameLength || 50,
+          formatName: gameFormatData?.format || 'Not Configured',
           teamCount: teamCountData?.teamCount || 0,
           ageGroupId: config.ageGroupId,
           isConfigured: isCompletelyConfigured,
           ageGroup: config.ageGroup,
           gender: config.gender,
         };
-      })
-      .filter(config => config !== null); // Remove null entries
+      }); // Include all configurations, even unconfigured ones
 
     res.json(result);
   } catch (error) {
