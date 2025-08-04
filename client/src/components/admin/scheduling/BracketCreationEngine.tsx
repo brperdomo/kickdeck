@@ -23,7 +23,8 @@ import {
   Minus,
   Star,
   GripVertical,
-  Split
+  Split,
+  ArrowLeftRight
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -31,6 +32,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { BracketSubdivisionModal } from './BracketSubdivisionModal';
+import TeamSwapModal from './TeamSwapModal';
 
 // Helper function to format flight names with proper context (avoiding redundancy)
 const formatFlightName = (bracketName: string, level?: string, ageGroup?: string, gender?: string): string => {
@@ -114,6 +116,7 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
   const [subdivisionModalOpen, setSubdivisionModalOpen] = useState(false);
   const [selectedFlightForSubdivision, setSelectedFlightForSubdivision] = useState<any>(null);
   const [placeholderCounter, setPlaceholderCounter] = useState(1);
+  const [teamSwapModalOpen, setTeamSwapModalOpen] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -711,6 +714,18 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
                     </div>
                   </Button>
                 </div>
+                
+                {/* Team Management Tools */}
+                <div className="flex justify-end mt-4 pt-4 border-t border-slate-600">
+                  <Button
+                    onClick={() => setTeamSwapModalOpen(true)}
+                    variant="outline"
+                    className="border-slate-600 bg-slate-700 hover:bg-slate-600"
+                  >
+                    <ArrowLeftRight className="h-4 w-4 mr-2" />
+                    Swap Teams
+                  </Button>
+                </div>
               </CardContent>
             </Card>
 
@@ -1032,6 +1047,18 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
           flight={selectedFlightForSubdivision}
         />
       )}
+
+      {/* Team Swap Modal */}
+      <TeamSwapModal
+        isOpen={teamSwapModalOpen}
+        onClose={() => setTeamSwapModalOpen(false)}
+        flights={flights}
+        eventId={eventId}
+        onSwapComplete={async () => {
+          await queryClient.invalidateQueries({ queryKey: ['bracket-creation', eventId] });
+          await queryClient.refetchQueries({ queryKey: ['bracket-creation', eventId] });
+        }}
+      />
     </div>
   );
 }

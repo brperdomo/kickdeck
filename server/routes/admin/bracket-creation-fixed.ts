@@ -1,13 +1,14 @@
 import { Router } from 'express';
 import { db } from '@db';
 import { isAdmin } from '../../middleware';
-import { eq, and, sql } from 'drizzle-orm';
+import { eq, and, sql, or } from 'drizzle-orm';
 import { 
   eventBrackets, 
   teams, 
   eventAgeGroups,
   events,
-  games
+  games,
+  teamStandings
 } from '@db/schema';
 
 const router = Router();
@@ -668,6 +669,194 @@ router.post('/:eventId/replace-placeholder', isAdmin, async (req, res) => {
   } catch (error) {
     console.error('[Placeholder] Error replacing placeholder team:', error);
     res.status(500).json({ error: 'Failed to replace placeholder team' });
+  }
+});
+
+// Validate team swap before execution
+router.post('/:eventId/validate-team-swap', isAdmin, async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const { team1Id, team2Id } = req.body;
+
+    console.log(`[Team Swap] Validating swap between teams ${team1Id} and ${team2Id} in event ${eventId}`);
+
+    // Get both teams with their current bracket assignments
+    const [team1, team2] = await Promise.all([
+      db.query.teams.findFirst({
+        where: and(
+          eq(teams.id, parseInt(team1Id)),
+          eq(teams.eventId, eventId)
+        )
+      }),
+      db.query.teams.findFirst({
+        where: and(
+          eq(teams.id, parseInt(team2Id)),
+          eq(teams.eventId, eventId)
+        )
+      })
+    ]);
+
+    if (!team1 || !team2) {
+      return res.status(404).json({ error: 'One or both teams not found' });
+    }
+
+    const validation = {
+      canSwap: true,
+      warnings: [] as string[],
+      impacts: [] as string[],
+      blockers: [] as string[]
+    };
+
+    // Check if teams are in same age group
+    if (team1.ageGroupId !== team2.ageGroupId) {
+      validation.blockers.push('Teams must be in the same age group to swap flights');
+      validation.canSwap = false;
+    }
+
+    // Check if teams are placeholders
+    if (team1.status === 'placeholder' || team2.status === 'placeholder') {
+      validation.impacts.push('Swapping involves placeholder teams');
+    }
+
+    // Check for existing games
+    const [team1Games, team2Games] = await Promise.all([
+      db.query.games.findMany({
+        where: or(
+          eq(games.homeTeamId, parseInt(team1Id)),
+          eq(games.awayTeamId, parseInt(team1Id))
+        )
+      }),
+      db.query.games.findMany({
+        where: or(
+          eq(games.homeTeamId, parseInt(team2Id)),
+          eq(games.awayTeamId, parseInt(team2Id))
+        )
+      })
+    ]);
+
+    if (team1Games.length > 0 || team2Games.length > 0) {
+      validation.warnings.push('Teams have existing games scheduled - games will need to be rescheduled');
+      validation.impacts.push('Existing games will be moved with the teams to their new brackets');
+    }
+
+    // Check for standings/scores
+    const [team1Standings, team2Standings] = await Promise.all([
+      db.query.teamStandings.findMany({
+        where: eq(teamStandings.teamId, parseInt(team1Id))
+      }),
+      db.query.teamStandings.findMany({
+        where: eq(teamStandings.teamId, parseInt(team2Id))
+      })
+    ]);
+
+    if (team1Standings.length > 0 || team2Standings.length > 0) {
+      validation.warnings.push('Teams have existing standings - standings will be reset for affected brackets');
+      validation.impacts.push('Bracket standings will be recalculated after swap');
+    }
+
+    // Impact summary
+    validation.impacts.push(`${team1.name} will move to ${team2.bracketId ? 'existing bracket' : 'unassigned pool'}`);
+    validation.impacts.push(`${team2.name} will move to ${team1.bracketId ? 'existing bracket' : 'unassigned pool'}`);
+
+    console.log(`[Team Swap] Validation result:`, validation);
+
+    res.json(validation);
+
+  } catch (error) {
+    console.error('[Team Swap] Validation error:', error);
+    res.status(500).json({ error: 'Failed to validate team swap' });
+  }
+});
+
+// Execute team swap
+router.post('/:eventId/swap-teams', isAdmin, async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const { team1Id, team2Id, preserveSeeds = true } = req.body;
+
+    console.log(`[Team Swap] Executing swap between teams ${team1Id} and ${team2Id} in event ${eventId}`);
+
+    // Get both teams with their current bracket assignments
+    const [team1, team2] = await Promise.all([
+      db.query.teams.findFirst({
+        where: and(
+          eq(teams.id, parseInt(team1Id)),
+          eq(teams.eventId, eventId)
+        )
+      }),
+      db.query.teams.findFirst({
+        where: and(
+          eq(teams.id, parseInt(team2Id)),
+          eq(teams.eventId, eventId)
+        )
+      })
+    ]);
+
+    if (!team1 || !team2) {
+      return res.status(404).json({ error: 'One or both teams not found' });
+    }
+
+    // Execute the swap in a transaction
+    await db.transaction(async (tx) => {
+      // Swap bracket assignments
+      const team1NewBracket = team2.bracketId;
+      const team2NewBracket = team1.bracketId;
+
+      // Swap seed rankings if preserving seeds
+      const team1NewSeed = preserveSeeds ? team2.seedRanking : team1.seedRanking;
+      const team2NewSeed = preserveSeeds ? team1.seedRanking : team2.seedRanking;
+
+      // Update team 1
+      await tx.update(teams)
+        .set({
+          bracketId: team1NewBracket,
+          seedRanking: team1NewSeed
+        })
+        .where(eq(teams.id, parseInt(team1Id)));
+
+      // Update team 2
+      await tx.update(teams)
+        .set({
+          bracketId: team2NewBracket,
+          seedRanking: team2NewSeed
+        })
+        .where(eq(teams.id, parseInt(team2Id)));
+
+      // Games will automatically follow teams since they reference teamId, not bracketId
+      // No need to update games table as bracket assignment is through team relationship
+
+      // Clear standings for affected brackets to force recalculation  
+      if (team1.bracketId) {
+        await tx.delete(teamStandings)
+          .where(and(
+            eq(teamStandings.eventId, eventId),
+            eq(teamStandings.bracketId, team1.bracketId)
+          ));
+      }
+
+      if (team2.bracketId && team2.bracketId !== team1.bracketId) {
+        await tx.delete(teamStandings)
+          .where(and(
+            eq(teamStandings.eventId, eventId),
+            eq(teamStandings.bracketId, team2.bracketId)
+          ));
+      }
+    });
+
+    console.log(`[Team Swap] Successfully swapped ${team1.name} and ${team2.name}`);
+
+    res.json({
+      success: true,
+      message: `Successfully swapped ${team1.name} and ${team2.name}`,
+      swappedTeams: {
+        team1: { id: team1.id, name: team1.name, newBracket: team2.bracketId },
+        team2: { id: team2.id, name: team2.name, newBracket: team1.bracketId }
+      }
+    });
+
+  } catch (error) {
+    console.error('[Team Swap] Execution error:', error);
+    res.status(500).json({ error: 'Failed to execute team swap' });
   }
 });
 
