@@ -61,12 +61,13 @@ router.get('/:eventId/bracket-creation', isAdmin, async (req, res) => {
     
     console.log(`[Bracket Creation] GET /${eventId}/bracket-creation`);
 
-    // Get all flights (event brackets) for this event with age group information
+    // Get all flights (event brackets) for this event with age group and game format information
     const flights = await db.query.eventBrackets.findMany({
       where: eq(eventBrackets.eventId, eventId),
       orderBy: eventBrackets.sortOrder,
       with: {
-        ageGroup: true // Join with eventAgeGroups to get age group and gender
+        ageGroup: true, // Join with eventAgeGroups to get age group and gender
+        gameFormat: true // Join with gameFormats to get actual tournament configuration
       }
     });
 
@@ -118,21 +119,31 @@ router.get('/:eventId/bracket-creation', isAdmin, async (req, res) => {
       const totalForAgeGroup = assignedCount;
       const unassignedForFlight = 0; // Simplified for now
 
-      // Determine bracket type based on team count
-      let bracketType = 'Single Elimination';
-      let estimatedGames = assignedCount;
+      // Get bracket type from actual game format configuration or default based on team count
+      let bracketType = 'Not Configured';
+      let estimatedGames = 0;
       
-      if (assignedCount === 4) {
-        bracketType = 'Round Robin + Final';
-        estimatedGames = 7;
-      } else if (assignedCount === 6) {
-        bracketType = 'Cross-Flight Play';
-        estimatedGames = 10;
-      } else if (assignedCount === 8) {
-        bracketType = 'Dual-Flight Championship';
-        estimatedGames = 14;
-      } else if (assignedCount > 2) {
-        estimatedGames = Math.max(assignedCount - 1, 3);
+      if (flight.gameFormat?.templateName) {
+        // Use the actual configured tournament format
+        bracketType = flight.gameFormat.templateName;
+        
+        // Calculate estimated games based on format and team count
+        if (bracketType.toLowerCase().includes('round robin')) {
+          estimatedGames = assignedCount > 1 ? Math.floor((assignedCount * (assignedCount - 1)) / 2) : 0;
+        } else if (bracketType.toLowerCase().includes('elimination')) {
+          estimatedGames = assignedCount > 1 ? assignedCount - 1 : 0;
+        } else {
+          estimatedGames = Math.max(assignedCount - 1, 0);
+        }
+      } else if (assignedCount >= 3) {
+        // Fallback logic for unconfigured flights based on team count
+        if (assignedCount <= 4) {
+          bracketType = 'Round Robin (Default)';
+          estimatedGames = Math.floor((assignedCount * (assignedCount - 1)) / 2);
+        } else {
+          bracketType = 'Single Elimination (Default)';
+          estimatedGames = assignedCount - 1;
+        }
       }
 
       const isConfigured = assignedCount >= 3;

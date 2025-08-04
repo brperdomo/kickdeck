@@ -773,7 +773,10 @@ export const eventBracketsRelations = relations(eventBrackets, ({ one, many }) =
     references: [events.id]
   }),
   teams: many(teams),
-  gameFormat: one(gameFormats),
+  gameFormat: one(gameFormats, {
+    fields: [eventBrackets.id],
+    references: [gameFormats.bracketId]
+  }),
 }));
 export type InsertTeam = typeof teams.$inferInsert;
 export type SelectTeam = typeof teams.$inferSelect;
