@@ -146,7 +146,11 @@ router.get('/:eventId/bracket-creation', isAdmin, async (req, res) => {
         }
       }
 
-      const isConfigured = assignedCount >= 3;
+      // Check if this flight has a proper game format configuration
+      // A flight is only configured if it has a saved game format from the Game Format Configuration
+      const isConfigured = Boolean(flight.gameFormat?.templateName && 
+                                  flight.gameFormat?.templateName !== 'Not Configured' &&
+                                  !flight.gameFormat?.templateName.includes('Default'));
       if (isConfigured) assignedFlights++;
 
       // Format teams for the response with proper seeding and placeholder identification

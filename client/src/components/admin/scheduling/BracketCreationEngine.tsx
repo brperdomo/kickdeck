@@ -117,13 +117,16 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
   const { data: bracketData, isLoading } = useQuery({
     queryKey: ['bracket-creation', eventId],
     queryFn: async () => {
+      console.log('[BracketCreationEngine] Fetching bracket data for event:', eventId);
       const response = await fetch(`/api/admin/events/${eventId}/bracket-creation`, {
         credentials: 'include'
       });
       if (!response.ok) throw new Error('Failed to fetch bracket data');
-      return response.json();
+      const data = await response.json();
+      console.log('[BracketCreationEngine] Received flights:', data.flights?.length || 0);
+      return data;
     },
-    staleTime: 30000, // Consider data fresh for 30 seconds
+    staleTime: 0, // Always fetch fresh data to avoid showing incorrect cached "Ready" badges
     refetchOnWindowFocus: true
   });
 
