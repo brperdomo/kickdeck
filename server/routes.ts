@@ -1280,6 +1280,11 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/event-clubs', isAdmin, eventClubsRouter); // Event clubs management router
     app.use('/api/admin/email-config', isAdmin, emailConfigRouter); // Email configuration router
     app.use('/api/admin', isAdmin, tournamentDirectorRoutes); // Tournament Director management router
+    
+    // Game management and safety functions
+    import('./routes/admin/game-management.js').then(module => {
+      app.use('/api/admin', isAdmin, module.default); // Game management and deletion functions
+    });
 
     // Get events accessible to current Tournament Director
     app.get('/api/admin/my-events', async (req: Request, res: Response) => {

@@ -3,6 +3,7 @@ import { requirePermission } from '../../middleware/auth.js';
 import { db } from '../../../db/index.js';
 import { teams, events, eventGameFormats, complexes, fields, games, eventBrackets } from '../../../db/schema.js';
 import { eq, and, inArray } from 'drizzle-orm';
+import { validateSchedulingSafety, validateFieldCapacity, validateNoDuplicateGames } from '../../middleware/scheduling-safety.js';
 
 const router = Router();
 
@@ -155,6 +156,45 @@ router.post('/events/:eventId/scheduling/preview', requirePermission('manage_eve
   }
 });
 
+// SAFETY CHECK: Validate scheduling prerequisites 
+router.post('/events/:eventId/scheduling/validate', requirePermission('manage_events'), async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const { 
+      totalGamesNeeded,
+      targetFlightIds,
+      targetBracketIds,
+      gameDurationMinutes = 90,
+      bufferMinutes = 15
+    } = req.body;
+
+    console.log(`[Scheduling Validation] Running safety checks for event ${eventId}`);
+
+    const validationResult = await validateSchedulingSafety(
+      eventId,
+      totalGamesNeeded,
+      targetFlightIds,
+      targetBracketIds,
+      gameDurationMinutes,
+      bufferMinutes
+    );
+
+    res.json({
+      success: true,
+      validation: validationResult,
+      canProceed: validationResult.canProceed,
+      message: validationResult.summary.recommendation
+    });
+
+  } catch (error) {
+    console.error('[Scheduling Validation] Error:', error);
+    res.status(500).json({ 
+      error: 'Failed to validate scheduling safety',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
 // Generate complete automated schedule
 router.post('/events/:eventId/scheduling/auto-generate', requirePermission('manage_events'), async (req, res) => {
   try {
@@ -166,10 +206,41 @@ router.post('/events/:eventId/scheduling/auto-generate', requirePermission('mana
       autoSeedTeams,
       optimizeFieldUsage,
       detectConflicts,
-      respectGameFormatRules
+      respectGameFormatRules,
+      targetFlightIds,
+      targetBracketIds,
+      forceGeneration = false // Override safety checks (admin only)
     } = req.body;
 
     console.log(`[Automated Scheduling] Starting automated schedule generation for event ${eventId}`);
+
+    // MANDATORY SAFETY CHECK: Validate before generating any games
+    if (!forceGeneration) {
+      console.log(`[Automated Scheduling] Running mandatory safety checks`);
+      
+      // Quick estimate of games needed for validation
+      const estimatedGames = 50; // Will be calculated more precisely below
+      
+      const safetyCheck = await validateSchedulingSafety(
+        eventId,
+        estimatedGames,
+        targetFlightIds,
+        targetBracketIds
+      );
+
+      if (!safetyCheck.canProceed) {
+        console.log(`[Automated Scheduling] BLOCKED: Safety check failed`);
+        return res.status(400).json({
+          error: 'Cannot proceed with scheduling - critical safety issues detected',
+          safetyCheck,
+          solution: 'Resolve the listed errors before attempting to generate games'
+        });
+      }
+
+      console.log(`[Automated Scheduling] Safety checks passed - proceeding with generation`);
+    } else {
+      console.log(`[Automated Scheduling] WARNING: Force generation enabled - bypassing safety checks`);
+    }
 
     // Step 1: Analyze approved teams
     const approvedTeams = await db.query.teams.findMany({
