@@ -59,7 +59,7 @@ router.post('/events/:eventId/quick-schedule', isAdmin, async (req, res) => {
     };
 
     await db.insert(eventAgeGroups)
-      .values(ageGroupConfig)
+      .values([ageGroupConfig])
       .onConflictDoUpdate({
         target: [eventAgeGroups.eventId, eventAgeGroups.ageGroup],
         set: ageGroupConfig
@@ -117,10 +117,17 @@ router.post('/events/:eventId/quick-schedule', isAdmin, async (req, res) => {
       orderBy: fields.id
     });
     
-    // Filter fields compatible with the game format
-    const compatibleFields = fieldsData.filter(field => 
-      field.fieldSize === gameFormat || field.fieldSize === '11v11' // 11v11 fields can accommodate smaller games
-    );
+    // Filter fields with strict size compatibility - only allow exact matches or proper scaling
+    const compatibleFields = fieldsData.filter(field => {
+      if (field.fieldSize === gameFormat) return true;
+      
+      // Only allow larger fields if they can properly accommodate smaller games
+      if (gameFormat === '7v7' && field.fieldSize === '11v11') return false; // 7v7 should NOT go on 11v11
+      if (gameFormat === '7v7' && field.fieldSize === '9v9') return false;   // 7v7 should NOT go on 9v9
+      if (gameFormat === '9v9' && field.fieldSize === '11v11') return true;  // 9v9 CAN go on 11v11
+      
+      return false;
+    });
     
     if (compatibleFields.length === 0) {
       return res.status(400).json({ 
@@ -175,7 +182,7 @@ router.post('/events/:eventId/quick-schedule', isAdmin, async (req, res) => {
       fieldId: game.fieldId,
       status: 'scheduled' as const,
       gameNumber: index + 1,
-      matchNumber: `${selectedAgeGroup}-${index + 1}`,
+      matchNumber: index + 1,
       duration: 90, // Default 90 minutes
       round: game.round || 1
     }));
@@ -302,7 +309,7 @@ function generateTimeSlots(
 }
 
 function generateGamesForTeamsWithConstraints(teams: string[], ageGroup: string, timeSlots: any[], constraints: any) {
-  const games = [];
+  const games: any[] = [];
   const teamLastGameTime: { [team: string]: Date } = {};
   const teamGamesPerDay: { [team: string]: { [date: string]: number } } = {};
   
@@ -371,6 +378,18 @@ function generateGamesForTeamsWithConstraints(teams: string[], ageGroup: string,
       
       // Check if this slot is already used
       if (games.find(g => g.scheduledTime === slot.startTime && g.fieldId === slot.fieldId)) {
+        continue;
+      }
+      
+      // CRITICAL: Check if either team is already playing at this exact time
+      const conflictingGame = games.find(g => 
+        g.scheduledTime === slot.startTime && 
+        (g.homeTeam === matchup.homeTeam || g.awayTeam === matchup.homeTeam ||
+         g.homeTeam === matchup.awayTeam || g.awayTeam === matchup.awayTeam)
+      );
+      
+      if (conflictingGame) {
+        console.log(`SCHEDULING CONFLICT BLOCKED: ${matchup.homeTeam} vs ${matchup.awayTeam} at ${slot.startTime} - team already playing`);
         continue;
       }
       
@@ -452,17 +471,19 @@ function isSlotValidForTeams(homeTeam: string, awayTeam: string, slot: any, team
     }
   }
   
-  // Check coach conflict (simplified - assume teams with similar names might share coaches)
+  // Enhanced coach conflict detection - prevent teams from same organization playing simultaneously
   if (constraints.preventCoachConflicts) {
-    const homeTeamPrefix = homeTeam.split(' ')[0]; // Get first word (club name)
-    const awayTeamPrefix = awayTeam.split(' ')[0];
+    const homeClub = extractClubName(homeTeam);
+    const awayClub = extractClubName(awayTeam);
     
-    // If teams are from same club, they might share coaches
-    if (homeTeamPrefix === awayTeamPrefix && homeTeamPrefix.length > 3) {
-      // Allow same-club games but ensure they don't happen too close together
-      const clubConflictBuffer = 30 * 60 * 1000; // 30 minutes between same-club games
-      if (Math.abs(slotTime.getTime() - homeTeamLastGame.getTime()) < clubConflictBuffer ||
-          Math.abs(slotTime.getTime() - awayTeamLastGame.getTime()) < clubConflictBuffer) {
+    // If teams are from same club/organization, they CANNOT play at the exact same time
+    if (homeClub === awayClub && homeClub.length > 2) {
+      const timeDifferenceMinutes = Math.abs(slotTime.getTime() - teamLastGameTime[homeTeam].getTime()) / (1000 * 60);
+      const awayTimeDifferenceMinutes = Math.abs(slotTime.getTime() - teamLastGameTime[awayTeam].getTime()) / (1000 * 60);
+      
+      // Require at least 60 minutes between games for same-club teams
+      if (timeDifferenceMinutes < 60 || awayTimeDifferenceMinutes < 60) {
+        console.log(`COACH CONFLICT BLOCKED: ${homeTeam} vs ${awayTeam} - same club (${homeClub}) within 60 minutes`);
         return false;
       }
     }
@@ -516,6 +537,23 @@ function calculateSlotScore(homeTeam: string, awayTeam: string, slot: any, teamL
   score -= fieldUsage * 2; // Small penalty for heavily used fields
   
   return score;
+}
+
+function extractClubName(teamName: string): string {
+  // Extract club/organization name from team name
+  // Examples: "ALBION SC Riverside B19 Academy" -> "ALBION SC"
+  //           "Empire Surf B2019 A-1" -> "Empire Surf"
+  const parts = teamName.split(' ');
+  
+  // Look for common club indicators
+  for (let i = 1; i < parts.length; i++) {
+    if (parts[i].match(/^(SC|FC|United|Academy|Club|CF|AFC|FC)$/i)) {
+      return parts.slice(0, i + 1).join(' ');
+    }
+  }
+  
+  // If no club indicator found, use first 2 words as club name
+  return parts.slice(0, 2).join(' ');
 }
 
 export default router;
