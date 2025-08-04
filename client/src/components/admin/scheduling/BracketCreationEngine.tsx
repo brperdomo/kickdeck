@@ -86,7 +86,7 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Fetch bracket data with real-time updates
+  // Fetch bracket data with on-demand updates
   const { data: bracketData, isLoading } = useQuery({
     queryKey: ['bracket-creation', eventId],
     queryFn: async () => {
@@ -96,7 +96,7 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
       if (!response.ok) throw new Error('Failed to fetch bracket data');
       return response.json();
     },
-    refetchInterval: 5000, // Refetch every 5 seconds for real-time updates
+    staleTime: 30000, // Consider data fresh for 30 seconds
     refetchOnWindowFocus: true
   });
 
@@ -116,8 +116,11 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
       }
       return response.json();
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['bracket-creation', eventId] });
+    onSuccess: async () => {
+      // Immediately invalidate and refetch to show changes
+      await queryClient.invalidateQueries({ queryKey: ['bracket-creation', eventId] });
+      await queryClient.refetchQueries({ queryKey: ['bracket-creation', eventId] });
+      
       toast({
         title: "Teams Auto-Assigned",
         description: "Teams have been automatically distributed across flights."
@@ -175,7 +178,10 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
       
       if (!response.ok) throw new Error('Failed to assign team');
       
-      queryClient.invalidateQueries({ queryKey: ['bracket-creation', eventId] });
+      // Immediately invalidate and refetch to show changes
+      await queryClient.invalidateQueries({ queryKey: ['bracket-creation', eventId] });
+      await queryClient.refetchQueries({ queryKey: ['bracket-creation', eventId] });
+      
       toast({
         title: "Team Assigned",
         description: "Team has been assigned to the flight successfully."
@@ -199,7 +205,10 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
       
       if (!response.ok) throw new Error('Failed to remove team');
       
-      queryClient.invalidateQueries({ queryKey: ['bracket-creation', eventId] });
+      // Immediately invalidate and refetch to show changes
+      await queryClient.invalidateQueries({ queryKey: ['bracket-creation', eventId] });
+      await queryClient.refetchQueries({ queryKey: ['bracket-creation', eventId] });
+      
       toast({
         title: "Team Removed",
         description: "Team has been removed from the flight."
@@ -224,7 +233,10 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
       
       if (!response.ok) throw new Error('Failed to update seed');
       
-      queryClient.invalidateQueries({ queryKey: ['bracket-creation', eventId] });
+      // Immediately invalidate and refetch to show changes
+      await queryClient.invalidateQueries({ queryKey: ['bracket-creation', eventId] });
+      await queryClient.refetchQueries({ queryKey: ['bracket-creation', eventId] });
+      
       toast({
         title: "Seed Updated",
         description: `Team seed moved ${direction}.`
@@ -248,7 +260,10 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
       
       if (!response.ok) throw new Error('Failed to auto-seed');
       
-      queryClient.invalidateQueries({ queryKey: ['bracket-creation', eventId] });
+      // Immediately invalidate and refetch to show changes
+      await queryClient.invalidateQueries({ queryKey: ['bracket-creation', eventId] });
+      await queryClient.refetchQueries({ queryKey: ['bracket-creation', eventId] });
+      
       toast({
         title: "Auto-Seeding Complete",
         description: "Teams have been automatically seeded based on ranking."
