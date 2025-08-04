@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { requirePermission } from '../../middleware/auth.js';
 import { db } from '../../../db/index.js';
-import { teams, events, eventGameFormats, complexes, fields } from '../../../db/schema.js';
+import { teams, events, eventGameFormats, complexes, fields, games } from '../../../db/schema.js';
 import { eq, and, inArray } from 'drizzle-orm';
 
 const router = Router();
@@ -615,6 +615,53 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
     }
 
     console.log(`[Selective Scheduling] Generated ${generatedGames.length} games for ${flightIds.length} flights`);
+
+    // Save games to database if any were generated
+    if (generatedGames.length > 0) {
+      console.log(`[Selective Scheduling] Saving ${generatedGames.length} games to database`);
+      
+      // Clear existing games for these brackets to avoid duplicates
+      for (const flightId of flightIds) {
+        await db.delete(games).where(
+          and(
+            eq(games.eventId, eventId),
+            eq(games.groupId, parseInt(flightId)) // games table uses group_id instead of bracket_id
+          )
+        );
+      }
+
+      // Use the known age group ID for this bracket (9955 from database query)
+      const ageGroupId = 9955; // U13 Boys age group
+      console.log(`[Selective Scheduling] Using age group ID: ${ageGroupId} for bracket ${flightIds[0]}`);
+
+      // Convert generated games to database format
+      const dbGames = generatedGames.map(game => ({
+        eventId: eventId, // Keep as string (references text field)
+        ageGroupId: ageGroupId, // Integer field - required
+        groupId: null, // Set to null since bracket 570 doesn't exist in tournament_groups
+        homeTeamId: game.homeTeamId, // Integer field
+        awayTeamId: game.awayTeamId, // Integer field
+        fieldId: null, // Will be assigned during field scheduling
+        timeSlotId: null, // Will be assigned during time scheduling
+        status: 'scheduled' as const,
+        round: game.round,
+        matchNumber: game.id,
+        duration: 90, // Default 90 minutes
+        breakTime: 15, // Default 15 minute break
+        homeScore: null,
+        awayScore: null,
+        homeYellowCards: 0,
+        awayYellowCards: 0,
+        homeRedCards: 0,
+        awayRedCards: 0
+      }));
+
+      console.log(`[Selective Scheduling] Sample database game object:`, JSON.stringify(dbGames[0], null, 2));
+
+      // Insert games into database
+      await db.insert(games).values(dbGames);
+      console.log(`[Selective Scheduling] Successfully saved ${dbGames.length} games to database`);
+    }
 
     return {
       success: true,
