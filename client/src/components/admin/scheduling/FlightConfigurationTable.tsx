@@ -380,6 +380,7 @@ export function FlightConfigurationTable({ eventId }: { eventId: string }) {
                       size="sm"
                       variant="ghost"
                       className="h-8 w-8 p-0 hover:bg-slate-600"
+                      onClick={() => handleEdit(flight.id, 'formatName', flight.formatName)}
                     >
                       <Pencil className="h-4 w-4 text-slate-400" />
                     </Button>
