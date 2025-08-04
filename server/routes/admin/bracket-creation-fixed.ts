@@ -61,10 +61,13 @@ router.get('/:eventId/bracket-creation', isAdmin, async (req, res) => {
     
     console.log(`[Bracket Creation] GET /${eventId}/bracket-creation`);
 
-    // Get all flights (event brackets) for this event
+    // Get all flights (event brackets) for this event with age group information
     const flights = await db.query.eventBrackets.findMany({
       where: eq(eventBrackets.eventId, eventId),
-      orderBy: eventBrackets.sortOrder
+      orderBy: eventBrackets.sortOrder,
+      with: {
+        ageGroup: true // Join with eventAgeGroups to get age group and gender
+      }
     });
 
     console.log(`[Bracket Creation] Found ${flights.length} flights`);
@@ -151,8 +154,8 @@ router.get('/:eventId/bracket-creation', isAdmin, async (req, res) => {
       flightData.push({
         flightId: flight.id,
         name: flight.name,
-        ageGroup: flight.level,
-        gender: 'Mixed',
+        ageGroup: flight.ageGroup?.ageGroup || 'Unknown Age Group',
+        gender: flight.ageGroup?.gender || 'Mixed',
         level: flight.level,
         teamCount: totalForAgeGroup,
         assignedTeams: assignedCount,
