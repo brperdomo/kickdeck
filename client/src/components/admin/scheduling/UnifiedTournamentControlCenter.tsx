@@ -201,13 +201,28 @@ export function UnifiedTournamentControlCenter({ eventId }: TournamentControlCen
       const response = await fetch(`/api/admin/events/${eventId}/generate-selective-schedule`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ 
           flightIds, 
           includeReferees: true, 
           includeFacilities: true 
         })
       });
-      if (!response.ok) throw new Error('Selective scheduling failed');
+      
+      // Better error handling for different response types
+      if (!response.ok) {
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('text/html')) {
+          throw new Error('Authentication required. Please log in.');
+        }
+        try {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Selective scheduling failed');
+        } catch (parseError) {
+          throw new Error(`Selective scheduling failed (${response.status})`);
+        }
+      }
+      
       return response.json();
     },
     onSuccess: (data) => {

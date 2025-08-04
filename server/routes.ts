@@ -75,6 +75,7 @@ import enhancedFieldManagementRouter from "./routes/admin/enhanced-field-managem
 import constraintValidationRouter from "./routes/admin/constraint-validation";
 import swissTournamentRouter from "./routes/admin/swiss-tournaments";
 import trueAutomatedSchedulingRouter from "./routes/admin/true-automated-scheduling-fixed";
+import automatedSchedulingRouter from "./routes/admin/automated-scheduling";
 import flightTemplatesRouter from "./routes/admin/flight-templates";
 import facilityConstraintRouter from "./routes/admin/facility-constraints";
 import refereeManagementRouter from "./routes/admin/referee-management";
@@ -1035,6 +1036,7 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin', isAdmin, tournamentControlRouter); // Unified tournament control center
     app.use('/api/schedule', scheduleConflictsRouter); // Schedule conflict detection for Master Schedule (lightweight auth)
     app.use('/api/admin/events', isAdmin, trueAutomatedSchedulingRouter); // True automated scheduling
+    app.use('/api/admin', isAdmin, automatedSchedulingRouter); // Selective and automated scheduling
     app.use('/api/admin/events', isAdmin, tournamentParametersRouter); // Tournament parameters
     app.use('/api/admin', isAdmin, flexibleAgeGroupsRoutes); // Flexible age group management
     app.use('/api/admin/events', isAdmin, tournamentStatusRouter); // Tournament status display
