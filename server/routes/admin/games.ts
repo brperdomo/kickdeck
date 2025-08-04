@@ -176,8 +176,8 @@ router.delete('/:eventId/games/bulk', isAdmin, async (req, res) => {
       WHERE event_id = ${eventId}
     `);
     
-    const totalGames = parseInt(countResult.rows[0]?.total as string) || 0;
-    console.log(`[Bulk Delete] Found ${totalGames} games to delete`);
+    const totalGames = Number(countResult.rows[0]?.total) || 0;
+    console.log(`[Bulk Delete] Found ${totalGames} games to delete for event ${eventId}`);
 
     if (totalGames === 0) {
       return res.json({ 
