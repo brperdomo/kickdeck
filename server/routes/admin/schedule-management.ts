@@ -5,6 +5,78 @@ import { eq, and, inArray } from 'drizzle-orm';
 
 const router = Router();
 
+// Bulk delete games - no middleware here since isAdmin is applied at router level
+// NOTE: This route must come BEFORE the individual game route to avoid route conflicts
+router.delete('/events/:eventId/games/bulk', async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const { gameIds } = req.body;
+    
+    console.log(`[Schedule Management] Deleting game bulk from event ${eventId}`);
+    
+    // If no gameIds provided, delete ALL games for the event
+    if (!gameIds || !Array.isArray(gameIds) || gameIds.length === 0) {
+      console.log(`[Schedule Management] No gameIds provided, deleting ALL games for event ${eventId}`);
+      
+      // Get count first
+      const existingGames = await db.select().from(games).where(eq(games.eventId, eventId));
+      const gameCount = existingGames.length;
+      
+      if (gameCount === 0) {
+        return res.json({
+          success: true,
+          message: 'No games to delete',
+          deletedCount: 0
+        });
+      }
+      
+      // Delete games first (to avoid foreign key constraint violations)
+      await db.delete(games).where(eq(games.eventId, eventId));
+      
+      // Then delete associated time slots (eventId is text field)
+      const timeSlotDeletionResult = await db.delete(gameTimeSlots).where(eq(gameTimeSlots.eventId, eventId));
+      console.log(`[Schedule Management] Deleted time slots for event ${eventId}`);
+      
+      console.log(`[Schedule Management] Successfully deleted all ${gameCount} games`);
+      
+      return res.json({
+        success: true,
+        message: `Successfully deleted all ${gameCount} games from tournament`,
+        deletedCount: gameCount
+      });
+    }
+    
+    // If specific gameIds provided, delete only those games
+    console.log(`[Schedule Management] Bulk deleting ${gameIds.length} specific games from event ${eventId}`);
+    
+    // Delete the games first (to avoid foreign key constraint violations)
+    const deletedGames = await db.delete(games).where(
+      and(
+        eq(games.eventId, eventId),
+        inArray(games.id, gameIds.map(id => parseInt(id)))
+      )
+    ).returning();
+    
+    // Note: We're not deleting time slots for bulk delete since other games might use them
+    
+    console.log(`[Schedule Management] Successfully deleted ${deletedGames.length} games`);
+    
+    res.json({
+      success: true,
+      message: `Successfully deleted ${deletedGames.length} games`,
+      deletedCount: deletedGames.length,
+      deletedGames: deletedGames.map(g => ({ id: g.id, homeTeamId: g.homeTeamId, awayTeamId: g.awayTeamId }))
+    });
+    
+  } catch (error) {
+    console.error('[Schedule Management] Error deleting game:', error);
+    res.status(500).json({ 
+      error: 'Failed to delete game',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
 // Delete individual game - no middleware here since isAdmin is applied at router level
 router.delete('/events/:eventId/games/:gameId', async (req, res) => {
   try {
@@ -55,45 +127,7 @@ router.delete('/events/:eventId/games/:gameId', async (req, res) => {
   }
 });
 
-// Bulk delete games - no middleware here since isAdmin is applied at router level
-router.delete('/events/:eventId/games/bulk', async (req, res) => {
-  try {
-    const { eventId } = req.params;
-    const { gameIds } = req.body;
-    
-    if (!Array.isArray(gameIds) || gameIds.length === 0) {
-      return res.status(400).json({ error: 'gameIds array is required' });
-    }
-    
-    console.log(`[Schedule Management] Bulk deleting ${gameIds.length} games from event ${eventId}`);
-    
-    // Delete the games first (to avoid foreign key constraint violations)
-    const deletedGames = await db.delete(games).where(
-      and(
-        eq(games.eventId, eventId),
-        inArray(games.id, gameIds.map(id => parseInt(id)))
-      )
-    ).returning();
-    
-    // Note: We're not deleting time slots for bulk delete since other games might use them
-    
-    console.log(`[Schedule Management] Successfully deleted ${deletedGames.length} games`);
-    
-    res.json({
-      success: true,
-      message: `Successfully deleted ${deletedGames.length} games`,
-      deletedCount: deletedGames.length,
-      deletedGames: deletedGames.map(g => ({ id: g.id, homeTeamId: g.homeTeamId, awayTeamId: g.awayTeamId }))
-    });
-    
-  } catch (error) {
-    console.error('[Schedule Management] Error bulk deleting games:', error);
-    res.status(500).json({ 
-      error: 'Failed to bulk delete games',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    });
-  }
-});
+
 
 // Delete all games for an event (primary endpoint) - no middleware here since isAdmin is applied at router level
 router.delete('/events/:eventId/games/all', async (req, res) => {
