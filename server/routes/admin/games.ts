@@ -169,53 +169,31 @@ router.delete('/:eventId/games/bulk', isAdmin, async (req, res) => {
     const eventId = req.params.eventId;
     console.log(`[Bulk Delete] Starting deletion of all games for event ${eventId}`);
 
-    // First, get count of games to be deleted using direct SQL
-    const countResult = await db.execute(sql`
-      SELECT COUNT(*) as total 
-      FROM games 
-      WHERE event_id = ${eventId}
-    `);
-    
-    console.log(`[Bulk Delete] Raw count result:`, JSON.stringify(countResult.rows[0], null, 2));
-    
-    // Handle different possible formats of the count result
-    let totalGames = 0;
-    if (countResult.rows && countResult.rows.length > 0) {
-      const row = countResult.rows[0];
-      if (typeof row === 'object' && row.total !== undefined) {
-        totalGames = parseInt(String(row.total), 10) || 0;
-      } else if (typeof row === 'number') {
-        totalGames = row;
-      } else if (Array.isArray(row) && row.length > 0) {
-        totalGames = parseInt(String(row[0]), 10) || 0;
-      }
-    }
-    
-    console.log(`[Bulk Delete] Parsed totalGames: ${totalGames} for event ${eventId}`);
-
-    if (totalGames === 0) {
-      return res.json({ 
-        success: true, 
-        message: 'No games found to delete',
-        deletedCount: 0 
-      });
-    }
-
-    // Delete all games for this event using direct SQL
-    await db.execute(sql`
+    // Delete all games for this event using direct SQL - skip the count check
+    const deleteResult = await db.execute(sql`
       DELETE FROM games WHERE event_id = ${eventId}
     `);
 
-    console.log(`[Bulk Delete] Successfully deleted ${totalGames} games for event ${eventId}`);
+    console.log(`[Bulk Delete] Delete operation completed for event ${eventId}`);
+    console.log(`[Bulk Delete] Delete result:`, JSON.stringify(deleteResult, null, 2));
+
+    // Get the number of affected rows from the delete result
+    const deletedCount = deleteResult.rowCount || deleteResult.affectedRows || 0;
+
+    console.log(`[Bulk Delete] Successfully deleted ${deletedCount} games for event ${eventId}`);
 
     res.json({ 
       success: true, 
-      message: `Successfully deleted ${totalGames} games from the tournament`,
-      deletedCount: totalGames 
+      message: `Successfully deleted ${deletedCount} games from the tournament`,
+      deletedCount: deletedCount 
     });
   } catch (error) {
     console.error('Error deleting games:', error);
-    res.status(500).json({ error: 'Failed to delete games' });
+    console.error('Error details:', JSON.stringify(error, null, 2));
+    res.status(500).json({ 
+      error: 'Failed to delete games',
+      details: error.message || 'Unknown error occurred'
+    });
   }
 });
 
