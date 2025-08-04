@@ -472,7 +472,47 @@ async function generateCompleteSchedule(params: any) {
   return { games };
 }
 
-// Generate selective automated schedule for specific flights
+// Generate selective automated schedule for specific flights (legacy endpoint)
+router.post('/schedule-selected-flights', requirePermission('manage_events'), async (req, res) => {
+  try {
+    const { eventId, selectedFlights } = req.body;
+    
+    console.log(`[Selective Scheduling] Starting selective schedule generation for event ${eventId}`);
+    console.log(`[Selective Scheduling] Selected flights: ${selectedFlights?.join(', ') || 'none'}`);
+
+    if (!eventId) {
+      return res.status(400).json({ error: 'Event ID is required for selective scheduling' });
+    }
+
+    if (!selectedFlights || !Array.isArray(selectedFlights) || selectedFlights.length === 0) {
+      return res.status(400).json({ error: 'Flight IDs are required for selective scheduling' });
+    }
+
+    // Use the existing selective scheduling implementation
+    const result = await generateSelectiveSchedule(eventId, selectedFlights, {
+      includeReferees: true,
+      includeFacilities: true
+    });
+
+    res.json({
+      success: result.success,
+      message: result.message || `Schedule generated successfully for ${selectedFlights.length} selected flights`,
+      selectedFlights: result.selectedFlights || selectedFlights.length,
+      totalGames: result.totalGames || 0,
+      flightNames: selectedFlights,
+      games: result.games || []
+    });
+
+  } catch (error) {
+    console.error('Selective scheduling error:', error);
+    res.status(500).json({ 
+      error: 'Failed to generate selective schedule',
+      details: error instanceof Error ? error.message : String(error)
+    });
+  }
+});
+
+// Generate selective automated schedule for specific flights (new endpoint)
 router.post('/events/:eventId/generate-selective-schedule', requirePermission('manage_events'), async (req, res) => {
   try {
     const { eventId } = req.params;
