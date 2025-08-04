@@ -62,7 +62,7 @@ export function TrueAutomatedScheduler({ eventId, onComplete }: TrueAutomatedSch
   const [generatedSchedule, setGeneratedSchedule] = useState<GeneratedSchedule | null>(null);
   const { toast } = useToast();
 
-  // Quick data check - just get team count
+  // Enhanced data check - get comprehensive readiness status
   const { data: eventData } = useQuery({
     queryKey: ['event-quick-check', eventId],
     queryFn: async () => {
@@ -70,6 +70,18 @@ export function TrueAutomatedScheduler({ eventId, onComplete }: TrueAutomatedSch
         credentials: 'include'
       });
       if (!response.ok) throw new Error('Failed to fetch event data');
+      return response.json();
+    }
+  });
+
+  // Get detailed flight readiness
+  const { data: flightReadiness } = useQuery({
+    queryKey: ['bracket-creation', eventId],
+    queryFn: async () => {
+      const response = await fetch(`/api/admin/events/${eventId}/bracket-creation`, {
+        credentials: 'include'
+      });
+      if (!response.ok) throw new Error('Failed to fetch flight data');
       return response.json();
     }
   });
@@ -118,6 +130,21 @@ export function TrueAutomatedScheduler({ eventId, onComplete }: TrueAutomatedSch
       toast({
         title: "Cannot Generate Schedule",
         description: "Need at least 2 approved teams to generate a tournament schedule.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Check flight readiness
+    const configuredFlights = flightReadiness?.flights?.filter((f: any) => f.isConfigured) || [];
+    const readyFlights = flightReadiness?.flights?.filter((f: any) => 
+      f.isConfigured && f.assignedTeams >= 3 && f.bracketType !== 'Not Configured'
+    ) || [];
+    
+    if (readyFlights.length === 0) {
+      toast({
+        title: "Flights Not Ready for Scheduling",
+        description: `Need at least 1 flight with 3+ teams and configured game format. Currently ${configuredFlights.length} flights configured.`,
         variant: "destructive"
       });
       return;
@@ -237,6 +264,58 @@ export function TrueAutomatedScheduler({ eventId, onComplete }: TrueAutomatedSch
           )}
         </CardContent>
       </Card>
+
+      {/* Flight Readiness Display */}
+      {flightReadiness?.flights && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Settings className="h-5 w-5" />
+              Flight Configuration Status
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {flightReadiness.flights.map((flight: any, index: number) => {
+                const isReady = flight.isConfigured && flight.assignedTeams >= 3 && flight.bracketType !== 'Not Configured';
+                const statusColor = isReady ? 'text-green-600' : 'text-orange-600';
+                const statusIcon = isReady ? <CheckCircle className="h-4 w-4 text-green-600" /> : <Clock className="h-4 w-4 text-orange-600" />;
+                
+                return (
+                  <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div className="flex items-center gap-3">
+                      {statusIcon}
+                      <div>
+                        <div className="font-medium">{flight.name}</div>
+                        <div className="text-sm text-muted-foreground">
+                          {flight.ageGroup} {flight.gender} • {flight.assignedTeams} teams
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Badge variant={isReady ? "default" : "secondary"} className={statusColor}>
+                        {flight.bracketType || 'Not Configured'}
+                      </Badge>
+                      <Badge variant="outline">
+                        {isReady ? 'Ready' : 'Needs Setup'}
+                      </Badge>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            
+            {flightReadiness.flights.length > 0 && (
+              <Alert className="mt-4">
+                <AlertDescription>
+                  {flightReadiness.flights.filter((f: any) => f.isConfigured && f.assignedTeams >= 3 && f.bracketType !== 'Not Configured').length} of {flightReadiness.flights.length} flights are ready for scheduling.
+                  Flights need 3+ teams and configured game formats to be schedulable.
+                </AlertDescription>
+              </Alert>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Generation Interface */}
       <Card>
