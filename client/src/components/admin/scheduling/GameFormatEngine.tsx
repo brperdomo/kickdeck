@@ -77,21 +77,6 @@ export function GameFormatEngine({ eventId }: GameFormatEngineProps) {
   const [editingFlight, setEditingFlight] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<string>("needs-config");
 
-  // Update active tab when flight data changes
-  useEffect(() => {
-    if (flightData) {
-      const configured = flightData.filter(f => f.currentFormat);
-      const unconfigured = flightData.filter(f => !f.currentFormat);
-      
-      // If we have configured flights and no unconfigured, show configured tab
-      if (configured.length > 0 && unconfigured.length === 0) {
-        setActiveTab("configured");
-      } else if (configured.length > 0 && activeTab === "needs-config" && unconfigured.length === 0) {
-        setActiveTab("configured");
-      }
-    }
-  }, [flightData, activeTab]);
-
   // Generate bracket structure based on team count
   const generateBracketStructure = (teamCount: number): BracketStructure => {
     if (teamCount === 4) {
@@ -176,6 +161,21 @@ export function GameFormatEngine({ eventId }: GameFormatEngineProps) {
       return response.json();
     }
   });
+
+  // Update active tab when flight data changes
+  useEffect(() => {
+    if (flightData) {
+      const configured = flightData.filter(f => f.currentFormat);
+      const unconfigured = flightData.filter(f => !f.currentFormat);
+      
+      // If we have configured flights and no unconfigured, show configured tab
+      if (configured.length > 0 && unconfigured.length === 0) {
+        setActiveTab("configured");
+      } else if (configured.length > 0 && activeTab === "needs-config" && unconfigured.length === 0) {
+        setActiveTab("configured");
+      }
+    }
+  }, [flightData, activeTab]);
 
   // Save format configuration
   const saveFormatMutation = useMutation({
