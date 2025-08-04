@@ -163,4 +163,46 @@ router.post('/:eventId/schedule/optimize', isAdmin, async (req, res) => {
   }
 });
 
+// Delete all games for an event
+router.delete('/:eventId/games/bulk', isAdmin, async (req, res) => {
+  try {
+    const eventId = req.params.eventId;
+    console.log(`[Bulk Delete] Starting deletion of all games for event ${eventId}`);
+
+    // First, get count of games to be deleted using direct SQL
+    const countResult = await db.execute(sql`
+      SELECT COUNT(*) as total 
+      FROM games 
+      WHERE event_id = ${eventId}
+    `);
+    
+    const totalGames = parseInt(countResult.rows[0]?.total as string) || 0;
+    console.log(`[Bulk Delete] Found ${totalGames} games to delete`);
+
+    if (totalGames === 0) {
+      return res.json({ 
+        success: true, 
+        message: 'No games found to delete',
+        deletedCount: 0 
+      });
+    }
+
+    // Delete all games for this event using direct SQL
+    await db.execute(sql`
+      DELETE FROM games WHERE event_id = ${eventId}
+    `);
+
+    console.log(`[Bulk Delete] Successfully deleted ${totalGames} games for event ${eventId}`);
+
+    res.json({ 
+      success: true, 
+      message: `Successfully deleted ${totalGames} games from the tournament`,
+      deletedCount: totalGames 
+    });
+  } catch (error) {
+    console.error('Error deleting games:', error);
+    res.status(500).json({ error: 'Failed to delete games' });
+  }
+});
+
 export default router;

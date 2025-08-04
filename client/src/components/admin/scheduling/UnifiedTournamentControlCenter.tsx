@@ -14,7 +14,7 @@ import { toast } from '@/hooks/use-toast';
 import {
   Trophy, Settings, Users, Calendar, Zap, Eye, 
   CheckCircle, Clock, AlertTriangle, ArrowRight, 
-  Play, Pause, RotateCcw, Download, Share2
+  Play, Pause, RotateCcw, Download, Share2, Trash2
 } from 'lucide-react';
 
 interface TournamentControlCenterProps {
@@ -136,6 +136,32 @@ export function UnifiedTournamentControlCenter({ eventId }: TournamentControlCen
     }
   });
 
+  // Bulk delete games mutation
+  const bulkDeleteMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch(`/api/admin/events/${eventId}/games/bulk`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      if (!response.ok) throw new Error('Failed to delete games');
+      return response.json();
+    },
+    onSuccess: (data) => {
+      toast({
+        title: "Games Deleted Successfully",
+        description: `${data.message || `Deleted ${data.deletedCount} games from the tournament`}`,
+      });
+      refetchStatus();
+    },
+    onError: (error) => {
+      toast({
+        title: "Delete Failed",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  });
+
   // Manual step execution
   const executeStepMutation = useMutation({
     mutationFn: async (step: string) => {
@@ -164,6 +190,12 @@ export function UnifiedTournamentControlCenter({ eventId }: TournamentControlCen
 
   const handleManualStep = (step: string) => {
     executeStepMutation.mutate(step);
+  };
+
+  const handleBulkDelete = () => {
+    if (window.confirm('Are you sure you want to delete ALL games from this tournament? This action cannot be undone.')) {
+      bulkDeleteMutation.mutate();
+    }
   };
 
   const getPhaseColor = (phase: string) => {
@@ -256,6 +288,16 @@ export function UnifiedTournamentControlCenter({ eventId }: TournamentControlCen
               >
                 <RotateCcw className="h-4 w-4" />
                 Refresh
+              </Button>
+
+              <Button
+                variant="outline"
+                onClick={handleBulkDelete}
+                disabled={bulkDeleteMutation.isPending}
+                className="flex items-center gap-2 border-red-600 text-red-400 hover:bg-red-900/20 hover:text-red-300"
+              >
+                <Trash2 className="h-4 w-4" />
+                {bulkDeleteMutation.isPending ? 'Deleting...' : 'Delete All Games'}
               </Button>
             </div>
 
