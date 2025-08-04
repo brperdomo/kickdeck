@@ -75,7 +75,13 @@ export function UnifiedTournamentControlCenter({ eventId }: TournamentControlCen
       const response = await fetch(`/api/admin/events/${eventId}/flight-configurations`);
       if (!response.ok) {
         console.error('Flight configurations fetch failed:', response.status, response.statusText);
-        throw new Error('Failed to fetch flight configurations');
+        // Return fallback data when not authenticated or API fails
+        return {
+          totalFlights: 0,
+          configuredFlights: 0,
+          readyForScheduling: false,
+          error: true
+        };
       }
       const flightConfigs = await response.json();
       
@@ -93,11 +99,12 @@ export function UnifiedTournamentControlCenter({ eventId }: TournamentControlCen
       return {
         totalFlights: flightConfigs.length || 0,
         configuredFlights: configuredFlights.length,
-        readyForScheduling: configuredFlights.length > 0
+        readyForScheduling: configuredFlights.length > 0,
+        error: false
       };
     },
     refetchInterval: 5000,
-    retry: 3
+    retry: 1
   });
 
   // Auto-scheduling mutation
@@ -220,12 +227,13 @@ export function UnifiedTournamentControlCenter({ eventId }: TournamentControlCen
                 disabled={isProcessing || !schedulingReadiness?.readyForScheduling}
                 className={`flex items-center gap-2 ${
                   schedulingReadiness?.readyForScheduling 
-                    ? 'bg-blue-600 hover:bg-blue-500' 
-                    : 'bg-gray-600 cursor-not-allowed'
+                    ? 'bg-blue-600 hover:bg-blue-500 text-white' 
+                    : 'bg-gray-600 cursor-not-allowed text-gray-300'
                 }`}
               >
                 <Zap className="h-4 w-4" />
                 {isProcessing ? 'Running Auto-Schedule...' : 
+                 schedulingReadiness?.error ? 'Auto-Schedule (Login Required)' :
                  schedulingReadiness?.readyForScheduling 
                    ? `Auto-Schedule (${schedulingReadiness.configuredFlights} Flights Ready)` 
                    : 'Auto-Schedule (No Configured Flights)'}
@@ -256,15 +264,23 @@ export function UnifiedTournamentControlCenter({ eventId }: TournamentControlCen
               <Alert className={`border-slate-600 ${
                 schedulingReadiness.readyForScheduling 
                   ? 'bg-green-900/20 border-green-600' 
-                  : 'bg-yellow-900/20 border-yellow-600'
+                  : schedulingReadiness.error 
+                    ? 'bg-blue-900/20 border-blue-600'
+                    : 'bg-yellow-900/20 border-yellow-600'
               }`}>
                 {schedulingReadiness.readyForScheduling ? (
                   <CheckCircle className="h-4 w-4 text-green-400" />
+                ) : schedulingReadiness.error ? (
+                  <AlertTriangle className="h-4 w-4 text-blue-400" />
                 ) : (
                   <Clock className="h-4 w-4 text-yellow-400" />
                 )}
                 <AlertDescription className="text-slate-200">
-                  {schedulingReadiness.readyForScheduling ? (
+                  {schedulingReadiness.error ? (
+                    <span>
+                      <strong>Login Required:</strong> Please log in as an admin to view flight configuration status and enable automated scheduling.
+                    </span>
+                  ) : schedulingReadiness.readyForScheduling ? (
                     <span>
                       <strong>Ready for Scheduling:</strong> {schedulingReadiness.configuredFlights} of {schedulingReadiness.totalFlights} flights have game formats configured and are ready for automated scheduling.
                     </span>
