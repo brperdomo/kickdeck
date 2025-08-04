@@ -582,8 +582,28 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
+          {/* Flight Readiness Summary */}
+          <Alert className="border-blue-500 bg-blue-900/20">
+            <AlertDescription className="text-blue-300">
+              <strong>Flight Priority:</strong> Flights with configured game formats appear first, followed by those needing setup.
+              Ready flights show ✓ Ready badge and can proceed to team assignment and scheduling.
+            </AlertDescription>
+          </Alert>
+          
           <div className="grid gap-4">
-            {flights.map((flight) => (
+            {flights
+              .sort((a, b) => {
+                // Sort configured flights (with game formats) to the top
+                const aConfigured = a.isConfigured && a.bracketType && a.bracketType !== 'Not Configured';
+                const bConfigured = b.isConfigured && b.bracketType && b.bracketType !== 'Not Configured';
+                
+                if (aConfigured && !bConfigured) return -1;
+                if (!aConfigured && bConfigured) return 1;
+                
+                // Secondary sort by team count (higher first)
+                return b.assignedTeams - a.assignedTeams;
+              })
+              .map((flight) => (
               <Card key={flight.id} className="border-slate-600 bg-slate-800 p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4">
@@ -602,9 +622,18 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
                       >
                         {flight.assignedTeams} teams
                       </Badge>
-                      {flight.bracketType && (
+                      {flight.bracketType && flight.bracketType !== 'Not Configured' ? (
                         <Badge variant="outline" className="border-green-500 text-green-300">
                           {flight.bracketType}
+                        </Badge>
+                      ) : (
+                        <Badge variant="outline" className="border-orange-500 text-orange-300">
+                          Needs Game Format
+                        </Badge>
+                      )}
+                      {flight.isConfigured && flight.bracketType && flight.bracketType !== 'Not Configured' && (
+                        <Badge variant="outline" className="border-emerald-500 text-emerald-300 bg-emerald-900/20">
+                          ✓ Ready
                         </Badge>
                       )}
                     </div>
@@ -646,6 +675,14 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
         </TabsContent>
 
         <TabsContent value="assign" className="space-y-4">
+          {/* Flight Assignment Priority Info */}
+          <Alert className="border-emerald-500 bg-emerald-900/20">
+            <AlertDescription className="text-emerald-300">
+              <strong>Smart Prioritization:</strong> Flights with configured game formats are shown first.
+              Focus on flights marked "✓ Game Format Ready" - these are ready for team assignments and scheduling.
+            </AlertDescription>
+          </Alert>
+          
           <DragDropContext onDragEnd={handleDragEnd}>
             {/* Auto-Assignment Controls */}
             <Card className="border-slate-600 bg-slate-800">
@@ -786,7 +823,19 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
 
           {/* Flight Assignment Overview */}
           <div className="grid gap-4">
-            {bracketData?.flights?.map((flight: Flight) => (
+            {bracketData?.flights
+              ?.sort((a: Flight, b: Flight) => {
+                // Sort configured flights (with game formats) to the top
+                const aConfigured = a.isConfigured && a.bracketType && a.bracketType !== 'Not Configured';
+                const bConfigured = b.isConfigured && b.bracketType && b.bracketType !== 'Not Configured';
+                
+                if (aConfigured && !bConfigured) return -1;
+                if (!aConfigured && bConfigured) return 1;
+                
+                // Secondary sort by assigned team count (higher first)  
+                return b.assignedTeams - a.assignedTeams;
+              })
+              ?.map((flight: Flight) => (
               <Card key={flight.flightId} className="border-slate-600 bg-slate-800">
                 <CardHeader>
                   <div className="flex items-center justify-between">
@@ -798,12 +847,23 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
                         {flight.registeredTeams?.length || 0} / {flight.maxTeams || 'unlimited'} teams assigned
                       </CardDescription>
                     </div>
-                    <Badge 
-                      variant={flight.registeredTeams?.length > 0 ? "default" : "secondary"}
-                      className={flight.registeredTeams?.length > 0 ? "bg-green-600 text-white" : "bg-slate-600 text-slate-200"}
-                    >
-                      {flight.teamCount} teams
-                    </Badge>
+                    <div className="flex gap-2">
+                      <Badge 
+                        variant={flight.registeredTeams?.length > 0 ? "default" : "secondary"}
+                        className={flight.registeredTeams?.length > 0 ? "bg-green-600 text-white" : "bg-slate-600 text-slate-200"}
+                      >
+                        {flight.teamCount} teams
+                      </Badge>
+                      {flight.isConfigured && flight.bracketType && flight.bracketType !== 'Not Configured' ? (
+                        <Badge variant="outline" className="border-emerald-500 text-emerald-300 bg-emerald-900/20">
+                          ✓ Game Format Ready
+                        </Badge>
+                      ) : (
+                        <Badge variant="outline" className="border-orange-500 text-orange-300 bg-orange-900/20">
+                          ⚠ Needs Game Format
+                        </Badge>
+                      )}
+                    </div>
                   </div>
                 </CardHeader>
                 <CardContent>
