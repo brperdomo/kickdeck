@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { isAdmin } from '../../middleware';
 import { db } from '@db';
-import { eventAgeGroups, teams, events, eventGameFormats } from '@db/schema';
+import { eventAgeGroups, teams, events, eventGameFormats, eventBrackets, gameFormats } from '@db/schema';
 import { eq, and, count } from 'drizzle-orm';
 
 const router = Router();
@@ -21,103 +21,82 @@ router.get('/events/:eventId/flight-configurations', isAdmin, async (req, res) =
       .where(eq(events.id, parseInt(eventId)))
       .limit(1);
 
-    // Use the SAME data source as the working MasterSchedulePage 
-    // From your logs: "72 flights, configured: 8" - this means the API works
-    // Let's use the exact same query as the MasterSchedulePage component
-    
-    // Query teams with their age group data (this creates the "flights")
-    const teamsWithAgeGroups = await db
+    // Use the EXACT SAME data source as MasterSchedulePage
+    // Query event_brackets (flights) with their game formats from the game_formats table
+    const flightsWithFormats = await db
       .select({
-        teamId: teams.id,
-        teamName: teams.name,
-        ageGroupId: teams.ageGroupId,
-        ageGroup: teams.ageGroup,
-        gender: teams.gender,
-        status: teams.status,
-        flightCategory: teams.flightCategory,
-        clubId: teams.clubId
+        flightId: eventBrackets.id,
+        flightName: eventBrackets.name,
+        ageGroupId: eventBrackets.ageGroupId,
+        ageGroup: eventAgeGroups.ageGroup,
+        gender: eventAgeGroups.gender,
+        level: eventBrackets.level,
+        // Game format data
+        gameFormatId: gameFormats.id,
+        gameLength: gameFormats.gameLength,
+        fieldSize: gameFormats.fieldSize,
+        bufferTime: gameFormats.bufferTime,
+        restPeriod: gameFormats.restPeriod,
+        maxGamesPerDay: gameFormats.maxGamesPerDay,
+        templateName: gameFormats.templateName
+      })
+      .from(eventBrackets)
+      .innerJoin(eventAgeGroups, eq(eventBrackets.ageGroupId, eventAgeGroups.id))
+      .leftJoin(gameFormats, eq(gameFormats.bracketId, eventBrackets.id))
+      .where(eq(eventBrackets.eventId, eventId));
+
+    console.log(`Found ${flightsWithFormats.length} brackets/flights for event ${eventId}`);
+
+    // Get team counts for each bracket
+    const teamCounts = await db
+      .select({
+        bracketId: teams.bracketId,
+        teamCount: count(teams.id),
       })
       .from(teams)
-      .where(eq(teams.eventId, eventId));
-
-    // Group teams by age group + gender + flight category to create flights
-    const flightGroups = new Map<string, any[]>();
-    teamsWithAgeGroups.forEach(team => {
-      const flightKey = `${team.ageGroup}-${team.gender}-${team.flightCategory || 'default'}`;
-      if (!flightGroups.has(flightKey)) {
-        flightGroups.set(flightKey, []);
-      }
-      flightGroups.get(flightKey)!.push(team);
-    });
-
-    console.log(`Found ${flightGroups.size} unique flights for event ${eventId}`);
-    console.log('Flight keys:', Array.from(flightGroups.keys()));
-
-    // Get actual saved game formats for this event  
-    const savedGameFormats = await db
-      .select({
-        ageGroup: eventGameFormats.ageGroup,
-        format: eventGameFormats.format,
-        gameLength: eventGameFormats.gameLength,
-        halves: eventGameFormats.halves,
-        halfLength: eventGameFormats.halfLength,
-        halfTimeBreak: eventGameFormats.halfTimeBreak,
-        bufferTime: eventGameFormats.bufferTime,
-        fieldSize: eventGameFormats.fieldSize,
-        allowsLights: eventGameFormats.allowsLights,
-        surfacePreference: eventGameFormats.surfacePreference,
-        isActive: eventGameFormats.isActive,
-      })
-      .from(eventGameFormats)
       .where(and(
-        eq(eventGameFormats.eventId, parseInt(eventId)),
-        eq(eventGameFormats.isActive, true)
-      ));
+        eq(teams.eventId, eventId),
+        eq(teams.status, 'approved')
+      ))
+      .groupBy(teams.bracketId);
 
     // Use event dates or fall back to defaults
     const startDate = eventDetails?.startDate || new Date().toISOString().split('T')[0];
     const endDate = eventDetails?.endDate || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
-    console.log(`Found ${savedGameFormats.length} saved game formats`);
-    console.log('Game format age groups:', savedGameFormats.map(g => g.ageGroup));
+    const configuredFlights = flightsWithFormats.filter(f => f.gameFormatId !== null);
+    console.log(`Found ${configuredFlights.length} flights with game formats out of ${flightsWithFormats.length} total`);
 
-    // Transform flight groups into the expected response format
-    const result = Array.from(flightGroups.entries()).map(([flightKey, flightTeams]) => {
-      const sampleTeam = flightTeams[0];
-      const ageGroup = sampleTeam.ageGroup;
-      const gender = sampleTeam.gender;
-      const approvedTeams = flightTeams.filter(t => t.status === 'approved');
-      
-      // Find matching game format
-      const gameFormatData = savedGameFormats.find(gf => gf.ageGroup === ageGroup);
-      
-      console.log(`Processing flight ${flightKey}: ${flightTeams.length} teams, game format = ${!!gameFormatData}`);
+    // Transform into the expected response format
+    const result = flightsWithFormats.map(flight => {
+      const teamCountData = teamCounts.find(tc => tc.bracketId === flight.flightId);
       
       // Check if the game format has all required values for scheduling
-      const isCompletelyConfigured = gameFormatData && 
-                                   gameFormatData.format && 
-                                   gameFormatData.gameLength && 
-                                   gameFormatData.halves && 
-                                   gameFormatData.halfLength && 
-                                   gameFormatData.bufferTime !== null &&
-                                   gameFormatData.fieldSize;
+      const isCompletelyConfigured = flight.gameFormatId !== null && 
+                                   flight.gameLength !== null && 
+                                   flight.fieldSize !== null && 
+                                   flight.bufferTime !== null;
+
+      console.log(`Processing flight ${flight.flightName}: ${teamCountData?.teamCount || 0} teams, configured = ${isCompletelyConfigured}`);
 
       return {
-        id: flightKey,
-        divisionName: `${ageGroup} ${gender}`,
+        id: flight.flightId.toString(),
+        divisionName: `${flight.ageGroup} ${flight.gender} - ${flight.flightName}`,
         startDate: startDate,
         endDate: endDate,
-        matchCount: gameFormatData?.halves || 2,
-        matchTime: gameFormatData?.halfLength ? (gameFormatData.halfLength * (gameFormatData.halves || 2)) : 35,
-        breakTime: gameFormatData?.halfTimeBreak || 5,
-        paddingTime: gameFormatData?.bufferTime || 10,
-        totalTime: gameFormatData?.gameLength || 50,
-        formatName: gameFormatData?.format || 'Not Configured',
-        teamCount: approvedTeams.length,
-        ageGroupId: sampleTeam.ageGroupId,
+        matchCount: 2, // Default halves
+        matchTime: flight.gameLength || 35,
+        breakTime: 5, // Default
+        paddingTime: flight.bufferTime || 10,
+        totalTime: flight.gameLength || 35,
+        formatName: flight.templateName || (isCompletelyConfigured ? 'Configured' : 'Not Configured'),
+        teamCount: teamCountData?.teamCount || 0,
+        ageGroupId: flight.ageGroupId,
         isConfigured: isCompletelyConfigured,
-        ageGroup: ageGroup,
-        gender: gender,
+        ageGroup: flight.ageGroup,
+        gender: flight.gender,
+        flightName: flight.flightName,
+        level: flight.level
       };
     });
 
