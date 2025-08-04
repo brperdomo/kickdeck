@@ -103,7 +103,6 @@ import gameReportsRouter from "./routes/admin/game-reports";
 import schedulingSimulationRouter from "./routes/admin/scheduling-simulation";
 import workflowProgressRouter from "./routes/admin/workflow-progress";
 import tournamentSelectionRouter from "./routes/admin/tournament-selection";
-import trueAutomatedSchedulingRouter from "./routes/admin/true-automated-scheduling";
 import tournamentParametersRouter from "./routes/admin/tournament-parameters";
 import flightsRouter from "./routes/admin/flights";
 import bracketsRouter from "./routes/admin/brackets";

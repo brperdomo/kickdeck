@@ -68,6 +68,31 @@ export function UnifiedTournamentControlCenter({ eventId }: TournamentControlCen
     refetchInterval: 10000
   });
 
+  // Fetch scheduling readiness (configured flights with game formats)
+  const { data: schedulingReadiness } = useQuery({
+    queryKey: ['scheduling-readiness', eventId],
+    queryFn: async () => {
+      const response = await fetch(`/api/admin/events/${eventId}/flight-configurations`);
+      if (!response.ok) throw new Error('Failed to fetch flight configurations');
+      const data = await response.json();
+      
+      // Count configured flights (flights with saved game formats)
+      const configuredFlights = data.flights?.filter((flight: any) => 
+        flight.gameFormat && 
+        flight.gameFormat.templateName && 
+        flight.gameFormat.templateName !== 'Not Configured' &&
+        !flight.gameFormat.templateName.includes('Default')
+      ) || [];
+      
+      return {
+        totalFlights: data.flights?.length || 0,
+        configuredFlights: configuredFlights.length,
+        readyForScheduling: configuredFlights.length > 0
+      };
+    },
+    refetchInterval: 5000
+  });
+
   // Auto-scheduling mutation
   const autoScheduleMutation = useMutation({
     mutationFn: async () => {
@@ -185,11 +210,18 @@ export function UnifiedTournamentControlCenter({ eventId }: TournamentControlCen
             <div className="flex items-center gap-3">
               <Button
                 onClick={handleAutoSchedule}
-                disabled={isProcessing}
-                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500"
+                disabled={isProcessing || !schedulingReadiness?.readyForScheduling}
+                className={`flex items-center gap-2 ${
+                  schedulingReadiness?.readyForScheduling 
+                    ? 'bg-blue-600 hover:bg-blue-500' 
+                    : 'bg-gray-600 cursor-not-allowed'
+                }`}
               >
                 <Zap className="h-4 w-4" />
-                {autoMode ? 'Running Auto-Schedule...' : 'Auto-Schedule (Flexible Configuration)'}
+                {isProcessing ? 'Running Auto-Schedule...' : 
+                 schedulingReadiness?.readyForScheduling 
+                   ? `Auto-Schedule (${schedulingReadiness.configuredFlights} Flights Ready)` 
+                   : 'Auto-Schedule (No Configured Flights)'}
               </Button>
 
               <Button
@@ -211,6 +243,32 @@ export function UnifiedTournamentControlCenter({ eventId }: TournamentControlCen
                 Refresh
               </Button>
             </div>
+
+            {/* Scheduling Readiness Status */}
+            {schedulingReadiness && (
+              <Alert className={`border-slate-600 ${
+                schedulingReadiness.readyForScheduling 
+                  ? 'bg-green-900/20 border-green-600' 
+                  : 'bg-yellow-900/20 border-yellow-600'
+              }`}>
+                {schedulingReadiness.readyForScheduling ? (
+                  <CheckCircle className="h-4 w-4 text-green-400" />
+                ) : (
+                  <Clock className="h-4 w-4 text-yellow-400" />
+                )}
+                <AlertDescription className="text-slate-200">
+                  {schedulingReadiness.readyForScheduling ? (
+                    <span>
+                      <strong>Ready for Scheduling:</strong> {schedulingReadiness.configuredFlights} of {schedulingReadiness.totalFlights} flights have game formats configured and are ready for automated scheduling.
+                    </span>
+                  ) : (
+                    <span>
+                      <strong>Setup Required:</strong> Configure game formats for flights in the Flight Assignment tab before using automated scheduling. {schedulingReadiness.totalFlights} flights available, {schedulingReadiness.configuredFlights} configured.
+                    </span>
+                  )}
+                </AlertDescription>
+              </Alert>
+            )}
 
             {/* Next Action */}
             {tournamentStatus?.nextAction && (
