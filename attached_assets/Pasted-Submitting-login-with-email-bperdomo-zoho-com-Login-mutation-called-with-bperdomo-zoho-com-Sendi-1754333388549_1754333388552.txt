@@ -1,0 +1,977 @@
+Submitting login with email: bperdomo@zoho.com
+ Login mutation called with: bperdomo@zoho.com
+ Sending login request with data: {email: 'bperdomo@zoho.com', passwordLength: 8}
+ Login response status: 200
+ Login successful, received user data: Yes
+ Fetching current user after login
+ Fetch finished loading: POST "https://app.matchpro.ai/api/login?t=1754331622869".
+mutationFn @ index--oDa5W8p.js:664
+fn @ index--oDa5W8p.js:41
+f @ index--oDa5W8p.js:41
+start @ index--oDa5W8p.js:41
+execute @ index--oDa5W8p.js:41
+await in execute
+mutate @ index--oDa5W8p.js:41
+o @ index--oDa5W8p.js:672
+(anonymous) @ index--oDa5W8p.js:664
+await in (anonymous)
+_ue @ index--oDa5W8p.js:38
+Due @ index--oDa5W8p.js:38
+Iue @ index--oDa5W8p.js:38
+pM @ index--oDa5W8p.js:38
+Xq @ index--oDa5W8p.js:38
+(anonymous) @ index--oDa5W8p.js:38
+NO @ index--oDa5W8p.js:41
+bq @ index--oDa5W8p.js:38
+E2 @ index--oDa5W8p.js:38
+X4 @ index--oDa5W8p.js:38
+Xue @ index--oDa5W8p.js:38
+submit @ injected.js:5
+is @ injected.js:5
+uD @ injected.js:5
+await in uD
+Ox @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+n @ injected.js:5
+ Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+Yxa @ util.js:31
+(anonymous) @ js:1379
+Promise.then
+(anonymous) @ js:1379
+setTimeout
+jda @ js:1379
+google.maps.Load @ js:14
+(anonymous) @ js:1622
+(anonymous) @ js:1622Understand this warning
+ User data fetched after login: success
+ Fetch finished loading: GET "https://app.matchpro.ai/api/user".
+mutationFn @ index--oDa5W8p.js:664
+await in mutationFn
+fn @ index--oDa5W8p.js:41
+f @ index--oDa5W8p.js:41
+start @ index--oDa5W8p.js:41
+execute @ index--oDa5W8p.js:41
+await in execute
+mutate @ index--oDa5W8p.js:41
+o @ index--oDa5W8p.js:672
+(anonymous) @ index--oDa5W8p.js:664
+await in (anonymous)
+_ue @ index--oDa5W8p.js:38
+Due @ index--oDa5W8p.js:38
+Iue @ index--oDa5W8p.js:38
+pM @ index--oDa5W8p.js:38
+Xq @ index--oDa5W8p.js:38
+(anonymous) @ index--oDa5W8p.js:38
+NO @ index--oDa5W8p.js:41
+bq @ index--oDa5W8p.js:38
+E2 @ index--oDa5W8p.js:38
+X4 @ index--oDa5W8p.js:38
+Xue @ index--oDa5W8p.js:38
+submit @ injected.js:5
+is @ injected.js:5
+uD @ injected.js:5
+await in uD
+Ox @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+n @ injected.js:5
+ Login mutation completed successfully
+ Performing explicit user data fetch after login
+ AUTH REDIRECT: User logged in, handling redirect
+ User data retrieved after login: success
+ Fetch finished loading: GET "https://app.matchpro.ai/api/user".
+o @ index--oDa5W8p.js:672
+await in o
+(anonymous) @ index--oDa5W8p.js:664
+await in (anonymous)
+_ue @ index--oDa5W8p.js:38
+Due @ index--oDa5W8p.js:38
+Iue @ index--oDa5W8p.js:38
+pM @ index--oDa5W8p.js:38
+Xq @ index--oDa5W8p.js:38
+(anonymous) @ index--oDa5W8p.js:38
+NO @ index--oDa5W8p.js:41
+bq @ index--oDa5W8p.js:38
+E2 @ index--oDa5W8p.js:38
+X4 @ index--oDa5W8p.js:38
+Xue @ index--oDa5W8p.js:38
+submit @ injected.js:5
+is @ injected.js:5
+uD @ injected.js:5
+await in uD
+Ox @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+n @ injected.js:5
+ Fetch finished loading: GET "https://app.matchpro.ai/api/user".
+queryFn @ index--oDa5W8p.js:664
+i @ index--oDa5W8p.js:41
+f @ index--oDa5W8p.js:41
+start @ index--oDa5W8p.js:41
+fetch @ index--oDa5W8p.js:41
+(anonymous) @ index--oDa5W8p.js:41
+(anonymous) @ index--oDa5W8p.js:41
+batch @ index--oDa5W8p.js:41
+refetchQueries @ index--oDa5W8p.js:41
+(anonymous) @ index--oDa5W8p.js:41
+batch @ index--oDa5W8p.js:41
+invalidateQueries @ index--oDa5W8p.js:41
+onSuccess @ index--oDa5W8p.js:664
+execute @ index--oDa5W8p.js:41
+await in execute
+mutate @ index--oDa5W8p.js:41
+o @ index--oDa5W8p.js:672
+(anonymous) @ index--oDa5W8p.js:664
+await in (anonymous)
+_ue @ index--oDa5W8p.js:38
+Due @ index--oDa5W8p.js:38
+Iue @ index--oDa5W8p.js:38
+pM @ index--oDa5W8p.js:38
+Xq @ index--oDa5W8p.js:38
+(anonymous) @ index--oDa5W8p.js:38
+NO @ index--oDa5W8p.js:41
+bq @ index--oDa5W8p.js:38
+E2 @ index--oDa5W8p.js:38
+X4 @ index--oDa5W8p.js:38
+Xue @ index--oDa5W8p.js:38
+submit @ injected.js:5
+is @ injected.js:5
+uD @ injected.js:5
+await in uD
+Ox @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+n @ injected.js:5
+ Found redirect path: /admin/events/1844329078/master-schedule
+ Redirecting to: /admin/events/1844329078/master-schedule
+Navigated to https://app.matchpro.ai/admin/events/1844329078/master-schedule
+js?libraries=places&v=beta&callback=Function.prototype:1377 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1377
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622Understand this warning
+js?libraries=places&v=beta&callback=Function.prototype:1409 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+_.B.send @ js?libraries=places&v=beta&callback=Function.prototype:1409
+hda @ js?libraries=places&v=beta&callback=Function.prototype:1386
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1378
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+chunk-YWMW7BHW.js:32 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap
+pet @ chunk-YWMW7BHW.js:32
+sF @ chunk-YWMW7BHW.js:32
+(anonymous) @ chunk-YWMW7BHW.js:32Understand this warning
+chunk-YWMW7BHW.js:32 OTS parsing error: invalid sfntVersion: 791289955
+pet @ chunk-YWMW7BHW.js:32
+sF @ chunk-YWMW7BHW.js:32
+(anonymous) @ chunk-YWMW7BHW.js:32Understand this warning
+index--oDa5W8p.js:847 Google Maps API key length: 0 characters
+index--oDa5W8p.js:847 Mapbox API key length: 93 characters
+index--oDa5W8p.js:847 Google Maps API already loaded
+chunk-FLCULYKI.js:31 orchestration: Initializing config store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing feature flag store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state {pill-player: {…}}
+chunk-FLCULYKI.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+index--oDa5W8p.js:672 Current route location (Wouter): /admin/events/1844329078/master-schedule
+index--oDa5W8p.js:672 Current URL: https://app.matchpro.ai/admin/events/1844329078/master-schedule
+index--oDa5W8p.js:672 Current pathname: /admin/events/1844329078/master-schedule
+index--oDa5W8p.js:672 Current search: 
+index--oDa5W8p.js:672 Fetching user with emulation token: not present
+22Fetch finished loading: GET "<URL>".
+index--oDa5W8p.js:672 User data fetched: {id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: '$2b$12$d6n1CBWgsWFm0fh77F1OX.YxDZy7/O3aLSuJOuq4QkvOtFmSit7BC', firstName: 'Bryan', …}
+index--oDa5W8p.js:664 Fetch failed loading: GET "https://app.matchpro.ai/api/user".
+queryFn @ index--oDa5W8p.js:664
+i @ index--oDa5W8p.js:41
+f @ index--oDa5W8p.js:41
+start @ index--oDa5W8p.js:41
+fetch @ index--oDa5W8p.js:41
+ng @ index--oDa5W8p.js:41
+onSubscribe @ index--oDa5W8p.js:41
+subscribe @ index--oDa5W8p.js:41
+(anonymous) @ index--oDa5W8p.js:41
+hW @ index--oDa5W8p.js:39
+k1 @ index--oDa5W8p.js:41
+Jh @ index--oDa5W8p.js:41
+qM @ index--oDa5W8p.js:41
+su @ index--oDa5W8p.js:39
+hhe @ index--oDa5W8p.js:41
+ku @ index--oDa5W8p.js:41
+qW @ index--oDa5W8p.js:41
+N @ index--oDa5W8p.js:26
+T @ index--oDa5W8p.js:26
+UnifiedTournamentControlCenter-DroVOI_J.js:1 Flight configs loaded: 0 flights
+UnifiedTournamentControlCenter-DroVOI_J.js:1 Configured flights: 0 of 0
+util.js:31 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+Yxa @ util.js:31
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1379
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1379
+setTimeout
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1379
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622Understand this warning
+UnifiedTournamentControlCenter-DroVOI_J.js:1 Flight configs loaded: 0 flights
+UnifiedTournamentControlCenter-DroVOI_J.js:1 Configured flights: 0 of 0
+UnifiedTournamentControlCenter-DroVOI_J.js:1 Flight configs loaded: 0 flights
+UnifiedTournamentControlCenter-DroVOI_J.js:1 Configured flights: 0 of 0
+UnifiedTournamentControlCenter-DroVOI_J.js:1 Flight configs loaded: 0 flights
+UnifiedTournamentControlCenter-DroVOI_J.js:1 Configured flights: 0 of 0
+UnifiedTournamentControlCenter-DroVOI_J.js:1 Flight configs loaded: 0 flights
+UnifiedTournamentControlCenter-DroVOI_J.js:1 Configured flights: 0 of 0
+MasterSchedulePage-DThgLzIJ.js:244 [Frontend] Fetching flight formats for event 1844329078
+MasterSchedulePage-DThgLzIJ.js:244 [Frontend] Received 72 flights, configured: 7
+chunk-CVIZYB43.js:3 [Violation] 'setTimeout' handler took 59ms
+chunk-CVIZYB43.js:3 [Violation] 'setTimeout' handler took 55ms
+MasterSchedulePage-DThgLzIJ.js:244 Saving format for flight: 576 with data: {gameLength: 35, fieldSize: '9v9', bufferTime: 10, restPeriod: 90, maxGamesPerDay: 3, …}
+MasterSchedulePage-DThgLzIJ.js:244 Fetch finished loading: POST "https://app.matchpro.ai/api/admin/events/1844329078/flights/576/format".
+mutationFn @ MasterSchedulePage-DThgLzIJ.js:244
+fn @ index--oDa5W8p.js:41
+f @ index--oDa5W8p.js:41
+start @ index--oDa5W8p.js:41
+execute @ index--oDa5W8p.js:41
+await in execute
+mutate @ index--oDa5W8p.js:41
+(anonymous) @ index--oDa5W8p.js:41
+K @ MasterSchedulePage-DThgLzIJ.js:244
+onClick @ MasterSchedulePage-DThgLzIJ.js:244
+_ue @ index--oDa5W8p.js:38
+Due @ index--oDa5W8p.js:38
+Iue @ index--oDa5W8p.js:38
+pM @ index--oDa5W8p.js:38
+Xq @ index--oDa5W8p.js:38
+(anonymous) @ index--oDa5W8p.js:38
+NO @ index--oDa5W8p.js:41
+bq @ index--oDa5W8p.js:38
+E2 @ index--oDa5W8p.js:38
+X4 @ index--oDa5W8p.js:38
+Xue @ index--oDa5W8p.js:38
+MasterSchedulePage-DThgLzIJ.js:244 Format saved successfully: {success: true, id: 14}
+MasterSchedulePage-DThgLzIJ.js:244 [Frontend] Invalidating and refetching flight-formats for event 1844329078
+MasterSchedulePage-DThgLzIJ.js:244 [Frontend] Fetching flight formats for event 1844329078
+MasterSchedulePage-DThgLzIJ.js:244 [Frontend] Fetching flight formats for event 1844329078
+2MasterSchedulePage-DThgLzIJ.js:244 [Frontend] Received 72 flights, configured: 8
+chunk-CVIZYB43.js:3 [Violation] 'setTimeout' handler took 60ms
+Navigated to https://app.matchpro.ai/admin/events/1844329078/master-schedule
+js?libraries=places&v=beta&callback=Function.prototype:1377 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1377
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622Understand this warning
+chunk-FLCULYKI.js:31 orchestration: Initializing config store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing feature flag store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state {pill-player: {…}}
+chunk-FLCULYKI.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+js?libraries=places&v=beta&callback=Function.prototype:1409 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+_.B.send @ js?libraries=places&v=beta&callback=Function.prototype:1409
+hda @ js?libraries=places&v=beta&callback=Function.prototype:1386
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1378
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+index--oDa5W8p.js:847 Google Maps API key length: 0 characters
+index--oDa5W8p.js:847 Mapbox API key length: 93 characters
+index--oDa5W8p.js:847 Google Maps API already loaded
+index--oDa5W8p.js:672 Current route location (Wouter): /admin/events/1844329078/master-schedule
+index--oDa5W8p.js:672 Current URL: https://app.matchpro.ai/admin/events/1844329078/master-schedule
+index--oDa5W8p.js:672 Current pathname: /admin/events/1844329078/master-schedule
+index--oDa5W8p.js:672 Current search: 
+index--oDa5W8p.js:672 Fetching user with emulation token: not present
+index--oDa5W8p.js:672 User data fetched: {id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: '$2b$12$d6n1CBWgsWFm0fh77F1OX.YxDZy7/O3aLSuJOuq4QkvOtFmSit7BC', firstName: 'Bryan', …}
+16Fetch finished loading: GET "<URL>".
+7Fetch failed loading: GET "<URL>".
+UnifiedTournamentControlCenter-DroVOI_J.js:1 Flight configs loaded: 0 flights
+UnifiedTournamentControlCenter-DroVOI_J.js:1 Configured flights: 0 of 0
+util.js:31 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+Yxa @ util.js:31
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1379
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1379
+setTimeout
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1379
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622Understand this warning
+UnifiedTournamentControlCenter-DroVOI_J.js:1 Flight configs loaded: 0 flights
+UnifiedTournamentControlCenter-DroVOI_J.js:1 Configured flights: 0 of 0
+ Flight configs loaded: 0 flights
+ Configured flights: 0 of 0
+ orchestration: Initializing user store with state {pill-player: {…}}
+ Flight configs loaded: 0 flights
+ Configured flights: 0 of 0
+ orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+master-schedule:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this error
+stripe.js:1 [Violation] 'setTimeout' handler took 517ms
+webauthn-listeners.js:5 [Violation] 'setInterval' handler took 68ms
+ Fetching user with emulation token: not present
+  GET https://app.matchpro.ai/api/admin/tournaments/1844329078/components-status 401 (Unauthorized)
+queryFn @ UnifiedTournamentCon…enter-DroVOI_J.js:1
+i @ index--oDa5W8p.js:41
+f @ index--oDa5W8p.js:41
+start @ index--oDa5W8p.js:41
+fetch @ index--oDa5W8p.js:41
+ng @ index--oDa5W8p.js:41
+fetch @ index--oDa5W8p.js:41
+refetch @ index--oDa5W8p.js:41
+onOnline @ index--oDa5W8p.js:41
+(anonymous) @ index--oDa5W8p.js:41
+(anonymous) @ index--oDa5W8p.js:41
+batch @ index--oDa5W8p.js:41
+onOnline @ index--oDa5W8p.js:41
+(anonymous) @ index--oDa5W8p.js:41
+await in (anonymous)
+(anonymous) @ index--oDa5W8p.js:41
+setOnline @ index--oDa5W8p.js:41
+r @ index--oDa5W8p.js:41Understand this error
+  GET https://app.matchpro.ai/api/admin/events/1844329078/flight-configurations 401 (Unauthorized)
+queryFn @ UnifiedTournamentCon…enter-DroVOI_J.js:1
+i @ index--oDa5W8p.js:41
+f @ index--oDa5W8p.js:41
+start @ index--oDa5W8p.js:41
+fetch @ index--oDa5W8p.js:41
+ng @ index--oDa5W8p.js:41
+fetch @ index--oDa5W8p.js:41
+refetch @ index--oDa5W8p.js:41
+onOnline @ index--oDa5W8p.js:41
+(anonymous) @ index--oDa5W8p.js:41
+(anonymous) @ index--oDa5W8p.js:41
+batch @ index--oDa5W8p.js:41
+onOnline @ index--oDa5W8p.js:41
+(anonymous) @ index--oDa5W8p.js:41
+await in (anonymous)
+(anonymous) @ index--oDa5W8p.js:41
+setOnline @ index--oDa5W8p.js:41
+r @ index--oDa5W8p.js:41Understand this error
+ Flight configurations fetch failed: 401 
+queryFn @ UnifiedTournamentCon…enter-DroVOI_J.js:1
+await in queryFn
+i @ index--oDa5W8p.js:41
+f @ index--oDa5W8p.js:41
+start @ index--oDa5W8p.js:41
+fetch @ index--oDa5W8p.js:41
+ng @ index--oDa5W8p.js:41
+fetch @ index--oDa5W8p.js:41
+refetch @ index--oDa5W8p.js:41
+onOnline @ index--oDa5W8p.js:41
+(anonymous) @ index--oDa5W8p.js:41
+(anonymous) @ index--oDa5W8p.js:41
+batch @ index--oDa5W8p.js:41
+onOnline @ index--oDa5W8p.js:41
+(anonymous) @ index--oDa5W8p.js:41
+await in (anonymous)
+(anonymous) @ index--oDa5W8p.js:41
+setOnline @ index--oDa5W8p.js:41
+r @ index--oDa5W8p.js:41Understand this error
+  GET https://app.matchpro.ai/api/admin/tournaments/1844329078/status 401 (Unauthorized)
+queryFn @ UnifiedTournamentCon…enter-DroVOI_J.js:1
+i @ index--oDa5W8p.js:41
+f @ index--oDa5W8p.js:41
+start @ index--oDa5W8p.js:41
+fetch @ index--oDa5W8p.js:41
+ng @ index--oDa5W8p.js:41
+fetch @ index--oDa5W8p.js:41
+refetch @ index--oDa5W8p.js:41
+onOnline @ index--oDa5W8p.js:41
+(anonymous) @ index--oDa5W8p.js:41
+(anonymous) @ index--oDa5W8p.js:41
+batch @ index--oDa5W8p.js:41
+onOnline @ index--oDa5W8p.js:41
+(anonymous) @ index--oDa5W8p.js:41
+await in (anonymous)
+(anonymous) @ index--oDa5W8p.js:41
+setOnline @ index--oDa5W8p.js:41
+r @ index--oDa5W8p.js:41Understand this error
+  GET https://app.matchpro.ai/api/user 401 (Unauthorized)
+queryFn @ index--oDa5W8p.js:664
+i @ index--oDa5W8p.js:41
+f @ index--oDa5W8p.js:41
+start @ index--oDa5W8p.js:41
+fetch @ index--oDa5W8p.js:41
+ng @ index--oDa5W8p.js:41
+fetch @ index--oDa5W8p.js:41
+refetch @ index--oDa5W8p.js:41
+onOnline @ index--oDa5W8p.js:41
+(anonymous) @ index--oDa5W8p.js:41
+(anonymous) @ index--oDa5W8p.js:41
+batch @ index--oDa5W8p.js:41
+onOnline @ index--oDa5W8p.js:41
+(anonymous) @ index--oDa5W8p.js:41
+await in (anonymous)
+(anonymous) @ index--oDa5W8p.js:41
+setOnline @ index--oDa5W8p.js:41
+r @ index--oDa5W8p.js:41Understand this error
+  GET https://app.matchpro.ai/api/admin/events/1844329078/flight-configurations 401 (Unauthorized)
+queryFn @ MasterSchedulePage-DThgLzIJ.js:244
+i @ index--oDa5W8p.js:41
+f @ index--oDa5W8p.js:41
+start @ index--oDa5W8p.js:41
+fetch @ index--oDa5W8p.js:41
+ng @ index--oDa5W8p.js:41
+fetch @ index--oDa5W8p.js:41
+refetch @ index--oDa5W8p.js:41
+onOnline @ index--oDa5W8p.js:41
+(anonymous) @ index--oDa5W8p.js:41
+(anonymous) @ index--oDa5W8p.js:41
+batch @ index--oDa5W8p.js:41
+onOnline @ index--oDa5W8p.js:41
+(anonymous) @ index--oDa5W8p.js:41
+await in (anonymous)
+(anonymous) @ index--oDa5W8p.js:41
+setOnline @ index--oDa5W8p.js:41
+r @ index--oDa5W8p.js:41Understand this error
+  GET https://app.matchpro.ai/api/user 401 (Unauthorized)
+eSe @ index--oDa5W8p.js:672
+i @ index--oDa5W8p.js:41
+f @ index--oDa5W8p.js:41
+start @ index--oDa5W8p.js:41
+fetch @ index--oDa5W8p.js:41
+ng @ index--oDa5W8p.js:41
+fetch @ index--oDa5W8p.js:41
+refetch @ index--oDa5W8p.js:41
+onOnline @ index--oDa5W8p.js:41
+(anonymous) @ index--oDa5W8p.js:41
+(anonymous) @ index--oDa5W8p.js:41
+batch @ index--oDa5W8p.js:41
+onOnline @ index--oDa5W8p.js:41
+(anonymous) @ index--oDa5W8p.js:41
+await in (anonymous)
+(anonymous) @ index--oDa5W8p.js:41
+setOnline @ index--oDa5W8p.js:41
+r @ index--oDa5W8p.js:41Understand this error
+ AnimatedBackground initialized with type: particles
+ Setting redirect based on current protected URL: /admin/events/1844329078/master-schedule
+index--oDa5W8p.js:41 [Violation] 'setTimeout' handler took 142ms
+ orchestration: Initializing user store with state {pill-player: {…}}
+ orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+Navigated to https://app.matchpro.ai/admin/events/1844329078/master-schedule
+ orchestration: Initializing config store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+ orchestration: Initializing user store with state {pill-player: {…}}
+ orchestration: Initializing feature flag store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+ orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+ Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+jda @ js:1377
+google.maps.Load @ js:14
+(anonymous) @ js:1622
+(anonymous) @ js:1622Understand this warning
+ XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+_.B.send @ js:1409
+hda @ js:1386
+jda @ js:1378
+google.maps.Load @ js:14
+(anonymous) @ js:1622
+(anonymous) @ js:1622
+ Google Maps API key length: 0 characters
+ Mapbox API key length: 93 characters
+ Google Maps API already loaded
+ Current route location (Wouter): /admin/events/1844329078/master-schedule
+ Current URL: https://app.matchpro.ai/admin/events/1844329078/master-schedule
+ Current pathname: /admin/events/1844329078/master-schedule
+ Current search: 
+ Fetching user with emulation token: not present
+  GET https://app.matchpro.ai/api/user 401 (Unauthorized)
+eSe @ index--oDa5W8p.js:672
+i @ index--oDa5W8p.js:41
+f @ index--oDa5W8p.js:41
+start @ index--oDa5W8p.js:41
+fetch @ index--oDa5W8p.js:41
+ng @ index--oDa5W8p.js:41
+onSubscribe @ index--oDa5W8p.js:41
+subscribe @ index--oDa5W8p.js:41
+(anonymous) @ index--oDa5W8p.js:41
+hW @ index--oDa5W8p.js:39
+k1 @ index--oDa5W8p.js:41
+Jh @ index--oDa5W8p.js:41
+qM @ index--oDa5W8p.js:41
+su @ index--oDa5W8p.js:39
+hhe @ index--oDa5W8p.js:41
+ku @ index--oDa5W8p.js:41
+qW @ index--oDa5W8p.js:41
+N @ index--oDa5W8p.js:26
+T @ index--oDa5W8p.js:26Understand this error
+ AnimatedBackground initialized with type: particles
+ Setting redirect based on current protected URL: /admin/events/1844329078/master-schedule
+ Fetch failed loading: GET "https://app.matchpro.ai/api/user".
+eSe @ index--oDa5W8p.js:672
+i @ index--oDa5W8p.js:41
+f @ index--oDa5W8p.js:41
+start @ index--oDa5W8p.js:41
+fetch @ index--oDa5W8p.js:41
+ng @ index--oDa5W8p.js:41
+onSubscribe @ index--oDa5W8p.js:41
+subscribe @ index--oDa5W8p.js:41
+(anonymous) @ index--oDa5W8p.js:41
+hW @ index--oDa5W8p.js:39
+k1 @ index--oDa5W8p.js:41
+Jh @ index--oDa5W8p.js:41
+qM @ index--oDa5W8p.js:41
+su @ index--oDa5W8p.js:39
+hhe @ index--oDa5W8p.js:41
+ku @ index--oDa5W8p.js:41
+qW @ index--oDa5W8p.js:41
+N @ index--oDa5W8p.js:26
+T @ index--oDa5W8p.js:26
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+  GET https://app.matchpro.ai/api/user 401 (Unauthorized)
+queryFn @ index--oDa5W8p.js:664
+i @ index--oDa5W8p.js:41
+f @ index--oDa5W8p.js:41
+start @ index--oDa5W8p.js:41
+fetch @ index--oDa5W8p.js:41
+ng @ index--oDa5W8p.js:41
+onSubscribe @ index--oDa5W8p.js:41
+subscribe @ index--oDa5W8p.js:41
+(anonymous) @ index--oDa5W8p.js:41
+hW @ index--oDa5W8p.js:39
+k1 @ index--oDa5W8p.js:41
+Jh @ index--oDa5W8p.js:41
+qM @ index--oDa5W8p.js:41
+su @ index--oDa5W8p.js:39
+hhe @ index--oDa5W8p.js:41
+ku @ index--oDa5W8p.js:41
+qW @ index--oDa5W8p.js:41
+N @ index--oDa5W8p.js:26
+T @ index--oDa5W8p.js:26Understand this error
+ Fetch failed loading: GET "https://app.matchpro.ai/api/user".
+queryFn @ index--oDa5W8p.js:664
+i @ index--oDa5W8p.js:41
+f @ index--oDa5W8p.js:41
+start @ index--oDa5W8p.js:41
+fetch @ index--oDa5W8p.js:41
+ng @ index--oDa5W8p.js:41
+onSubscribe @ index--oDa5W8p.js:41
+subscribe @ index--oDa5W8p.js:41
+(anonymous) @ index--oDa5W8p.js:41
+hW @ index--oDa5W8p.js:39
+k1 @ index--oDa5W8p.js:41
+Jh @ index--oDa5W8p.js:41
+qM @ index--oDa5W8p.js:41
+su @ index--oDa5W8p.js:39
+hhe @ index--oDa5W8p.js:41
+ku @ index--oDa5W8p.js:41
+qW @ index--oDa5W8p.js:41
+N @ index--oDa5W8p.js:26
+T @ index--oDa5W8p.js:26
+ Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+Yxa @ util.js:31
+(anonymous) @ js:1379
+Promise.then
+(anonymous) @ js:1379
+setTimeout
+jda @ js:1379
+google.maps.Load @ js:14
+(anonymous) @ js:1622
+(anonymous) @ js:1622Understand this warning
+c.1password.com/richicons/images/login/120/app.matchpro.ai.png:1  GET https://c.1password.com/richicons/images/login/120/app.matchpro.ai.png 404 (Not Found)
+Image
+J @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+c @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+Ln @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+c @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+c @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+c @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+c @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+Ln @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+c @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+Ln @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+c @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+c @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+Ln @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+c @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+c @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+c @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+c @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+Ln @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+c @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+Ln @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+c @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+p @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+pe @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+Y @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+Promise.then
+Pt @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+$e @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+(anonymous) @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+(anonymous) @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+o @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+i @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+(anonymous) @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:3
+Promise.then
+gr @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:3
+ve @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:3
+Lt @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+Rn @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:3
+Eo @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+yt @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+we @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:3
+Lt @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+Ln @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:3
+Ro @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+yt @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+br @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:3
+p @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:3
+pe @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+Y @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+Promise.then
+Pt @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+$e @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+(anonymous) @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+(anonymous) @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:3
+Promise.then
+Be @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:3
+Lt @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+jn @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:3
+Lo @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+yt @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+me @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:3
+Lt @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+zn @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:3
+jo @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+yt @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+le @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:3
+Lt @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+In @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:3
+qo @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+Lt @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+Un @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+Xr @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+(anonymous) @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101Understand this error
+ Submitting login with email: bperdomo@zoho.com
+ Login mutation called with: bperdomo@zoho.com
+ Sending login request with data: {email: 'bperdomo@zoho.com', passwordLength: 8}
+ Login response status: 200
+ Login successful, received user data: Yes
+ Fetching current user after login
+ Fetch finished loading: POST "https://app.matchpro.ai/api/login?t=1754333225083".
+mutationFn @ index--oDa5W8p.js:664
+fn @ index--oDa5W8p.js:41
+f @ index--oDa5W8p.js:41
+start @ index--oDa5W8p.js:41
+execute @ index--oDa5W8p.js:41
+await in execute
+mutate @ index--oDa5W8p.js:41
+o @ index--oDa5W8p.js:672
+(anonymous) @ index--oDa5W8p.js:664
+await in (anonymous)
+_ue @ index--oDa5W8p.js:38
+Due @ index--oDa5W8p.js:38
+Iue @ index--oDa5W8p.js:38
+pM @ index--oDa5W8p.js:38
+Xq @ index--oDa5W8p.js:38
+(anonymous) @ index--oDa5W8p.js:38
+NO @ index--oDa5W8p.js:41
+bq @ index--oDa5W8p.js:38
+E2 @ index--oDa5W8p.js:38
+X4 @ index--oDa5W8p.js:38
+Xue @ index--oDa5W8p.js:38
+submit @ injected.js:5
+is @ injected.js:5
+uD @ injected.js:5
+await in uD
+Ox @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+n @ injected.js:5
+ User data fetched after login: success
+ Fetch finished loading: GET "https://app.matchpro.ai/api/user".
+mutationFn @ index--oDa5W8p.js:664
+await in mutationFn
+fn @ index--oDa5W8p.js:41
+f @ index--oDa5W8p.js:41
+start @ index--oDa5W8p.js:41
+execute @ index--oDa5W8p.js:41
+await in execute
+mutate @ index--oDa5W8p.js:41
+o @ index--oDa5W8p.js:672
+(anonymous) @ index--oDa5W8p.js:664
+await in (anonymous)
+_ue @ index--oDa5W8p.js:38
+Due @ index--oDa5W8p.js:38
+Iue @ index--oDa5W8p.js:38
+pM @ index--oDa5W8p.js:38
+Xq @ index--oDa5W8p.js:38
+(anonymous) @ index--oDa5W8p.js:38
+NO @ index--oDa5W8p.js:41
+bq @ index--oDa5W8p.js:38
+E2 @ index--oDa5W8p.js:38
+X4 @ index--oDa5W8p.js:38
+Xue @ index--oDa5W8p.js:38
+submit @ injected.js:5
+is @ injected.js:5
+uD @ injected.js:5
+await in uD
+Ox @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+n @ injected.js:5
+ Login mutation completed successfully
+ Performing explicit user data fetch after login
+ AUTH REDIRECT: User logged in, handling redirect
+ Fetch finished loading: GET "https://app.matchpro.ai/api/user".
+queryFn @ index--oDa5W8p.js:664
+i @ index--oDa5W8p.js:41
+f @ index--oDa5W8p.js:41
+start @ index--oDa5W8p.js:41
+fetch @ index--oDa5W8p.js:41
+(anonymous) @ index--oDa5W8p.js:41
+(anonymous) @ index--oDa5W8p.js:41
+batch @ index--oDa5W8p.js:41
+refetchQueries @ index--oDa5W8p.js:41
+(anonymous) @ index--oDa5W8p.js:41
+batch @ index--oDa5W8p.js:41
+invalidateQueries @ index--oDa5W8p.js:41
+onSuccess @ index--oDa5W8p.js:664
+execute @ index--oDa5W8p.js:41
+await in execute
+mutate @ index--oDa5W8p.js:41
+o @ index--oDa5W8p.js:672
+(anonymous) @ index--oDa5W8p.js:664
+await in (anonymous)
+_ue @ index--oDa5W8p.js:38
+Due @ index--oDa5W8p.js:38
+Iue @ index--oDa5W8p.js:38
+pM @ index--oDa5W8p.js:38
+Xq @ index--oDa5W8p.js:38
+(anonymous) @ index--oDa5W8p.js:38
+NO @ index--oDa5W8p.js:41
+bq @ index--oDa5W8p.js:38
+E2 @ index--oDa5W8p.js:38
+X4 @ index--oDa5W8p.js:38
+Xue @ index--oDa5W8p.js:38
+submit @ injected.js:5
+is @ injected.js:5
+uD @ injected.js:5
+await in uD
+Ox @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+n @ injected.js:5
+ User data retrieved after login: success
+ Found redirect path: /admin/events/1844329078/master-schedule
+ Redirecting to: /admin/events/1844329078/master-schedule
+ Fetch finished loading: GET "https://app.matchpro.ai/api/user".
+o @ index--oDa5W8p.js:672
+await in o
+(anonymous) @ index--oDa5W8p.js:664
+await in (anonymous)
+_ue @ index--oDa5W8p.js:38
+Due @ index--oDa5W8p.js:38
+Iue @ index--oDa5W8p.js:38
+pM @ index--oDa5W8p.js:38
+Xq @ index--oDa5W8p.js:38
+(anonymous) @ index--oDa5W8p.js:38
+NO @ index--oDa5W8p.js:41
+bq @ index--oDa5W8p.js:38
+E2 @ index--oDa5W8p.js:38
+X4 @ index--oDa5W8p.js:38
+Xue @ index--oDa5W8p.js:38
+submit @ injected.js:5
+is @ injected.js:5
+uD @ injected.js:5
+await in uD
+Ox @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+n @ injected.js:5
+Navigated to https://app.matchpro.ai/admin/events/1844329078/master-schedule
+js?libraries=places&v=beta&callback=Function.prototype:1377 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1377
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622Understand this warning
+js?libraries=places&v=beta&callback=Function.prototype:1409 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+_.B.send @ js?libraries=places&v=beta&callback=Function.prototype:1409
+hda @ js?libraries=places&v=beta&callback=Function.prototype:1386
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1378
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+chunk-FLCULYKI.js:31 orchestration: Initializing config store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing feature flag store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state {pill-player: {…}}
+chunk-FLCULYKI.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+index--oDa5W8p.js:847 Google Maps API key length: 0 characters
+index--oDa5W8p.js:847 Mapbox API key length: 93 characters
+index--oDa5W8p.js:847 Google Maps API already loaded
+index--oDa5W8p.js:672 Current route location (Wouter): /admin/events/1844329078/master-schedule
+index--oDa5W8p.js:672 Current URL: https://app.matchpro.ai/admin/events/1844329078/master-schedule
+index--oDa5W8p.js:672 Current pathname: /admin/events/1844329078/master-schedule
+index--oDa5W8p.js:672 Current search: 
+index--oDa5W8p.js:672 Fetching user with emulation token: not present
+index--oDa5W8p.js:672 User data fetched: {id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: '$2b$12$d6n1CBWgsWFm0fh77F1OX.YxDZy7/O3aLSuJOuq4QkvOtFmSit7BC', firstName: 'Bryan', …}
+17Fetch finished loading: GET "<URL>".
+index--oDa5W8p.js:664 Fetch failed loading: GET "https://app.matchpro.ai/api/user".
+queryFn @ index--oDa5W8p.js:664
+i @ index--oDa5W8p.js:41
+f @ index--oDa5W8p.js:41
+start @ index--oDa5W8p.js:41
+fetch @ index--oDa5W8p.js:41
+ng @ index--oDa5W8p.js:41
+onSubscribe @ index--oDa5W8p.js:41
+subscribe @ index--oDa5W8p.js:41
+(anonymous) @ index--oDa5W8p.js:41
+hW @ index--oDa5W8p.js:39
+k1 @ index--oDa5W8p.js:41
+Jh @ index--oDa5W8p.js:41
+qM @ index--oDa5W8p.js:41
+su @ index--oDa5W8p.js:39
+hhe @ index--oDa5W8p.js:41
+ku @ index--oDa5W8p.js:41
+qW @ index--oDa5W8p.js:41
+N @ index--oDa5W8p.js:26
+T @ index--oDa5W8p.js:26
+UnifiedTournamentControlCenter-DroVOI_J.js:1 Flight configs loaded: 24 flights
+UnifiedTournamentControlCenter-DroVOI_J.js:1 Configured flights: 0 of 24
+util.js:31 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+Yxa @ util.js:31
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1379
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1379
+setTimeout
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1379
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622Understand this warning
+UnifiedTournamentControlCenter-DroVOI_J.js:1 Flight configs loaded: 24 flights
+UnifiedTournamentControlCenter-DroVOI_J.js:1 Configured flights: 0 of 24
+MasterSchedulePage-DThgLzIJ.js:244 [Frontend] Fetching flight formats for event 1844329078
+MasterSchedulePage-DThgLzIJ.js:244 [Frontend] Received 72 flights, configured: 8
+MasterSchedulePage-DThgLzIJ.js:244 Saving format for flight: 594 with data: {gameLength: 35, fieldSize: '9v9', bufferTime: 10, restPeriod: 90, maxGamesPerDay: 3, …}
+MasterSchedulePage-DThgLzIJ.js:244 Format saved successfully: {success: true, id: 15}
+MasterSchedulePage-DThgLzIJ.js:244 [Frontend] Invalidating and refetching flight-formats for event 1844329078
+MasterSchedulePage-DThgLzIJ.js:244 Fetch finished loading: POST "https://app.matchpro.ai/api/admin/events/1844329078/flights/594/format".
+mutationFn @ MasterSchedulePage-DThgLzIJ.js:244
+fn @ index--oDa5W8p.js:41
+f @ index--oDa5W8p.js:41
+start @ index--oDa5W8p.js:41
+execute @ index--oDa5W8p.js:41
+await in execute
+mutate @ index--oDa5W8p.js:41
+(anonymous) @ index--oDa5W8p.js:41
+K @ MasterSchedulePage-DThgLzIJ.js:244
+onClick @ MasterSchedulePage-DThgLzIJ.js:244
+_ue @ index--oDa5W8p.js:38
+Due @ index--oDa5W8p.js:38
+Iue @ index--oDa5W8p.js:38
+pM @ index--oDa5W8p.js:38
+Xq @ index--oDa5W8p.js:38
+(anonymous) @ index--oDa5W8p.js:38
+NO @ index--oDa5W8p.js:41
+bq @ index--oDa5W8p.js:38
+E2 @ index--oDa5W8p.js:38
+X4 @ index--oDa5W8p.js:38
+Xue @ index--oDa5W8p.js:38
+MasterSchedulePage-DThgLzIJ.js:244 [Frontend] Fetching flight formats for event 1844329078
+MasterSchedulePage-DThgLzIJ.js:244 [Frontend] Fetching flight formats for event 1844329078
+2MasterSchedulePage-DThgLzIJ.js:244 [Frontend] Received 72 flights, configured: 9
+chunk-CVIZYB43.js:3 [Violation] 'setTimeout' handler took 54ms
+MasterSchedulePage-DThgLzIJ.js:244 Saving format for flight: 618 with data: {gameLength: 35, fieldSize: '9v9', bufferTime: 10, restPeriod: 90, maxGamesPerDay: 3, …}
+MasterSchedulePage-DThgLzIJ.js:244 Fetch finished loading: POST "https://app.matchpro.ai/api/admin/events/1844329078/flights/618/format".
+mutationFn @ MasterSchedulePage-DThgLzIJ.js:244
+fn @ index--oDa5W8p.js:41
+f @ index--oDa5W8p.js:41
+start @ index--oDa5W8p.js:41
+execute @ index--oDa5W8p.js:41
+await in execute
+mutate @ index--oDa5W8p.js:41
+(anonymous) @ index--oDa5W8p.js:41
+K @ MasterSchedulePage-DThgLzIJ.js:244
+onClick @ MasterSchedulePage-DThgLzIJ.js:244
+_ue @ index--oDa5W8p.js:38
+Due @ index--oDa5W8p.js:38
+Iue @ index--oDa5W8p.js:38
+pM @ index--oDa5W8p.js:38
+Xq @ index--oDa5W8p.js:38
+(anonymous) @ index--oDa5W8p.js:38
+NO @ index--oDa5W8p.js:41
+bq @ index--oDa5W8p.js:38
+E2 @ index--oDa5W8p.js:38
+X4 @ index--oDa5W8p.js:38
+Xue @ index--oDa5W8p.js:38
+MasterSchedulePage-DThgLzIJ.js:244 Format saved successfully: {success: true, id: 16}
+MasterSchedulePage-DThgLzIJ.js:244 [Frontend] Invalidating and refetching flight-formats for event 1844329078
+MasterSchedulePage-DThgLzIJ.js:244 [Frontend] Fetching flight formats for event 1844329078
+MasterSchedulePage-DThgLzIJ.js:244 [Frontend] Fetching flight formats for event 1844329078
+2MasterSchedulePage-DThgLzIJ.js:244 [Frontend] Received 72 flights, configured: 10
+Navigated to https://app.matchpro.ai/admin/events/1844329078/master-schedule
+js?libraries=places&v=beta&callback=Function.prototype:1377 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1377
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622Understand this warning
+chunk-FLCULYKI.js:31 orchestration: Initializing config store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing feature flag store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state {pill-player: {…}}
+chunk-FLCULYKI.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+js?libraries=places&v=beta&callback=Function.prototype:1409 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+_.B.send @ js?libraries=places&v=beta&callback=Function.prototype:1409
+hda @ js?libraries=places&v=beta&callback=Function.prototype:1386
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1378
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+index--oDa5W8p.js:847 Google Maps API key length: 0 characters
+index--oDa5W8p.js:847 Mapbox API key length: 93 characters
+index--oDa5W8p.js:847 Google Maps API already loaded
+index--oDa5W8p.js:672 Current route location (Wouter): /admin/events/1844329078/master-schedule
+index--oDa5W8p.js:672 Current URL: https://app.matchpro.ai/admin/events/1844329078/master-schedule
+index--oDa5W8p.js:672 Current pathname: /admin/events/1844329078/master-schedule
+index--oDa5W8p.js:672 Current search: 
+index--oDa5W8p.js:672 Fetching user with emulation token: not present
+12Fetch finished loading: GET "<URL>".
+index--oDa5W8p.js:672 User data fetched: {id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: '$2b$12$d6n1CBWgsWFm0fh77F1OX.YxDZy7/O3aLSuJOuq4QkvOtFmSit7BC', firstName: 'Bryan', …}
+index--oDa5W8p.js:664 Fetch failed loading: GET "https://app.matchpro.ai/api/user".
+queryFn @ index--oDa5W8p.js:664
+i @ index--oDa5W8p.js:41
+f @ index--oDa5W8p.js:41
+start @ index--oDa5W8p.js:41
+fetch @ index--oDa5W8p.js:41
+ng @ index--oDa5W8p.js:41
+onSubscribe @ index--oDa5W8p.js:41
+subscribe @ index--oDa5W8p.js:41
+(anonymous) @ index--oDa5W8p.js:41
+hW @ index--oDa5W8p.js:39
+k1 @ index--oDa5W8p.js:41
+Jh @ index--oDa5W8p.js:41
+qM @ index--oDa5W8p.js:41
+su @ index--oDa5W8p.js:39
+hhe @ index--oDa5W8p.js:41
+ku @ index--oDa5W8p.js:41
+qW @ index--oDa5W8p.js:41
+N @ index--oDa5W8p.js:26
+T @ index--oDa5W8p.js:26
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+UnifiedTournamentControlCenter-DroVOI_J.js:1 Flight configs loaded: 24 flights
+UnifiedTournamentControlCenter-DroVOI_J.js:1 Configured flights: 0 of 24
+util.js:31 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+Yxa @ util.js:31
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1379
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1379
+setTimeout
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1379
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622Understand this warning
+UnifiedTournamentControlCenter-DroVOI_J.js:1 Flight configs loaded: 24 flights
+UnifiedTournamentControlCenter-DroVOI_J.js:1 Configured flights: 0 of 24
+MasterSchedulePage-DThgLzIJ.js:244 [Frontend] Fetching flight formats for event 1844329078
+MasterSchedulePage-DThgLzIJ.js:244 [Frontend] Received 72 flights, configured: 10
+MasterSchedulePage-DThgLzIJ.js:244 [Frontend] Fetching flight formats for event 1844329078
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state {pill-player: {…}}
+chunk-FLCULYKI.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+MasterSchedulePage-DThgLzIJ.js:244 [Frontend] Received 72 flights, configured: 10

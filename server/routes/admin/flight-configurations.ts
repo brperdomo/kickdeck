@@ -21,33 +21,39 @@ router.get('/events/:eventId/flight-configurations', isAdmin, async (req, res) =
       .where(eq(events.id, parseInt(eventId)))
       .limit(1);
 
-    // Get age groups with team counts and game format configurations
-    const flightConfigs = await db
+    // Use the SAME data source as the working MasterSchedulePage 
+    // From your logs: "72 flights, configured: 8" - this means the API works
+    // Let's use the exact same query as the MasterSchedulePage component
+    
+    // Query teams with their age group data (this creates the "flights")
+    const teamsWithAgeGroups = await db
       .select({
-        id: eventAgeGroups.id,
-        divisionName: eventAgeGroups.divisionCode,
-        ageGroupId: eventAgeGroups.id,
-        eventId: eventAgeGroups.eventId,
-        ageGroup: eventAgeGroups.ageGroup,
-        gender: eventAgeGroups.gender,
-      })
-      .from(eventAgeGroups)
-      .where(eq(eventAgeGroups.eventId, eventId));
-
-    // Get team counts for each age group
-    const teamCounts = await db
-      .select({
+        teamId: teams.id,
+        teamName: teams.name,
         ageGroupId: teams.ageGroupId,
-        teamCount: count(teams.id),
+        ageGroup: teams.ageGroup,
+        gender: teams.gender,
+        status: teams.status,
+        flightCategory: teams.flightCategory,
+        clubId: teams.clubId
       })
       .from(teams)
-      .where(and(
-        eq(teams.eventId, eventId),
-        eq(teams.status, 'approved')
-      ))
-      .groupBy(teams.ageGroupId);
+      .where(eq(teams.eventId, eventId));
 
-    // Get actual saved game formats for this event
+    // Group teams by age group + gender + flight category to create flights
+    const flightGroups = new Map<string, any[]>();
+    teamsWithAgeGroups.forEach(team => {
+      const flightKey = `${team.ageGroup}-${team.gender}-${team.flightCategory || 'default'}`;
+      if (!flightGroups.has(flightKey)) {
+        flightGroups.set(flightKey, []);
+      }
+      flightGroups.get(flightKey)!.push(team);
+    });
+
+    console.log(`Found ${flightGroups.size} unique flights for event ${eventId}`);
+    console.log('Flight keys:', Array.from(flightGroups.keys()));
+
+    // Get actual saved game formats for this event  
     const savedGameFormats = await db
       .select({
         ageGroup: eventGameFormats.ageGroup,
@@ -72,48 +78,48 @@ router.get('/events/:eventId/flight-configurations', isAdmin, async (req, res) =
     const startDate = eventDetails?.startDate || new Date().toISOString().split('T')[0];
     const endDate = eventDetails?.endDate || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
-    console.log(`Found ${flightConfigs.length} age groups`);
     console.log(`Found ${savedGameFormats.length} saved game formats`);
-    console.log('Age groups:', flightConfigs.map(c => c.ageGroup));
     console.log('Game format age groups:', savedGameFormats.map(g => g.ageGroup));
 
-    // Combine the data - include all age groups and show their configuration status
-    const result = flightConfigs
-      .map(config => {
-        const teamCountData = teamCounts.find(tc => tc.ageGroupId === config.ageGroupId);
-        const gameFormatData = savedGameFormats.find(gf => gf.ageGroup === config.ageGroup);
-        
-        console.log(`Processing age group ${config.ageGroup}: found game format = ${!!gameFormatData}`);
-        
-        // Include all age groups, but mark configuration status properly
+    // Transform flight groups into the expected response format
+    const result = Array.from(flightGroups.entries()).map(([flightKey, flightTeams]) => {
+      const sampleTeam = flightTeams[0];
+      const ageGroup = sampleTeam.ageGroup;
+      const gender = sampleTeam.gender;
+      const approvedTeams = flightTeams.filter(t => t.status === 'approved');
+      
+      // Find matching game format
+      const gameFormatData = savedGameFormats.find(gf => gf.ageGroup === ageGroup);
+      
+      console.log(`Processing flight ${flightKey}: ${flightTeams.length} teams, game format = ${!!gameFormatData}`);
+      
+      // Check if the game format has all required values for scheduling
+      const isCompletelyConfigured = gameFormatData && 
+                                   gameFormatData.format && 
+                                   gameFormatData.gameLength && 
+                                   gameFormatData.halves && 
+                                   gameFormatData.halfLength && 
+                                   gameFormatData.bufferTime !== null &&
+                                   gameFormatData.fieldSize;
 
-        // Check if the game format has all required values for scheduling
-        const isCompletelyConfigured = gameFormatData && 
-                                     gameFormatData.format && 
-                                     gameFormatData.gameLength && 
-                                     gameFormatData.halves && 
-                                     gameFormatData.halfLength && 
-                                     gameFormatData.bufferTime !== null &&
-                                     gameFormatData.fieldSize;
-
-        return {
-          id: config.id.toString(),
-          divisionName: `${config.ageGroup} ${config.gender}`,
-          startDate: startDate,
-          endDate: endDate,
-          matchCount: gameFormatData?.halves || 2,
-          matchTime: gameFormatData?.halfLength ? (gameFormatData.halfLength * (gameFormatData.halves || 2)) : 35,
-          breakTime: gameFormatData?.halfTimeBreak || 5,
-          paddingTime: gameFormatData?.bufferTime || 10,
-          totalTime: gameFormatData?.gameLength || 50,
-          formatName: gameFormatData?.format || 'Not Configured',
-          teamCount: teamCountData?.teamCount || 0,
-          ageGroupId: config.ageGroupId,
-          isConfigured: isCompletelyConfigured,
-          ageGroup: config.ageGroup,
-          gender: config.gender,
-        };
-      }); // Include all configurations, even unconfigured ones
+      return {
+        id: flightKey,
+        divisionName: `${ageGroup} ${gender}`,
+        startDate: startDate,
+        endDate: endDate,
+        matchCount: gameFormatData?.halves || 2,
+        matchTime: gameFormatData?.halfLength ? (gameFormatData.halfLength * (gameFormatData.halves || 2)) : 35,
+        breakTime: gameFormatData?.halfTimeBreak || 5,
+        paddingTime: gameFormatData?.bufferTime || 10,
+        totalTime: gameFormatData?.gameLength || 50,
+        formatName: gameFormatData?.format || 'Not Configured',
+        teamCount: approvedTeams.length,
+        ageGroupId: sampleTeam.ageGroupId,
+        isConfigured: isCompletelyConfigured,
+        ageGroup: ageGroup,
+        gender: gender,
+      };
+    });
 
     res.json(result);
   } catch (error) {
