@@ -134,14 +134,14 @@ router.get('/:eventId/bracket-creation', isAdmin, async (req, res) => {
       const isConfigured = assignedCount >= 3;
       if (isConfigured) assignedFlights++;
 
-      // Format teams for the response
-      const teamsInFlight: Team[] = assignedTeams.map(team => ({
+      // Format teams for the response with proper seeding
+      const teamsInFlight: Team[] = assignedTeams.map((team, index) => ({
         id: team.id,
         name: team.name,
         clubName: team.clubName || '',
         status: team.status,
         flightId: team.bracketId,
-        seed: team.seedRanking,
+        seed: team.seedRanking || (index + 1), // Use actual seed or assign based on current order
         ageGroupId: team.ageGroupId
       }));
 
@@ -187,7 +187,7 @@ router.get('/:eventId/bracket-creation', isAdmin, async (req, res) => {
       status: team.status,
       flightId: team.bracketId,
       ageGroupId: team.ageGroupId,
-      seed: team.seedRanking
+      seed: team.seedRanking || null
     }));
 
     const response: BracketCreationData = {
@@ -489,19 +489,21 @@ router.post('/:eventId/teams/:teamId/seed', isAdmin, async (req, res) => {
       return res.status(400).json({ error: 'Cannot move team seed in that direction' });
     }
 
-    // Swap the seeds
+    // Simple position-based swapping: swap positions in the ordered list
     const teamToSwapWith = flightTeams[newIndex];
-    const currentTeamSeed = team.seedRanking || (currentIndex + 1);
-    const swapTeamSeed = teamToSwapWith.seedRanking || (newIndex + 1);
+    
+    // Assign new seed rankings based on position (1-indexed)
+    const newCurrentTeamSeed = newIndex + 1;
+    const newSwapTeamSeed = currentIndex + 1;
 
     await db
       .update(teams)
-      .set({ seedRanking: swapTeamSeed })
+      .set({ seedRanking: newCurrentTeamSeed })
       .where(eq(teams.id, parseInt(teamId)));
 
     await db
       .update(teams)
-      .set({ seedRanking: currentTeamSeed })
+      .set({ seedRanking: newSwapTeamSeed })
       .where(eq(teams.id, teamToSwapWith.id));
 
     console.log(`[Seeding] Successfully moved team ${teamId} seed ${direction}`);

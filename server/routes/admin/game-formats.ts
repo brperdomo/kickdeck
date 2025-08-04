@@ -60,12 +60,12 @@ router.get('/events/:eventId/flight-formats', isAdmin, async (req, res) => {
 
     console.log(`[Flight Formats] Found ${flights.length} flights`);
 
-    // Get all game formats for this event
-    const gameFormats = await db.query.eventGameFormats.findMany({
-      where: eq(eventGameFormats.eventId, parseInt(eventId))
+    // Get all game formats for flights in this event
+    const gameFormatsQuery = await db.query.gameFormats.findMany({
+      where: sql`bracket_id IN (SELECT id FROM event_brackets WHERE event_id = ${eventId})`
     });
 
-    console.log(`[Flight Formats] Found ${gameFormats.length} game formats`);
+    console.log(`[Flight Formats] Found ${gameFormatsQuery.length} game formats`);
 
     // Get flight templates for proper display names
     const flightTemplates = await db.execute(sql`
@@ -79,11 +79,9 @@ router.get('/events/:eventId/flight-formats', isAdmin, async (req, res) => {
     });
 
     const flightData = await Promise.all(flights.map(async flight => {
-      // Find matching game format by age group (flight.level)
-      const matchingFormat = gameFormats.find(format => 
-        format.ageGroup === flight.level || 
-        format.ageGroup.includes(flight.level) ||
-        flight.level.includes(format.ageGroup)
+      // Find matching game format by bracket ID
+      const matchingFormat = gameFormatsQuery.find(format => 
+        format.bracketId === flight.id
       );
 
       const teamCount = await getTeamCountForFlight(eventId, flight.id);
@@ -162,9 +160,9 @@ router.get('/events/:eventId/flight-formats', isAdmin, async (req, res) => {
           gameLength: matchingFormat.gameLength,
           fieldSize: matchingFormat.fieldSize,
           bufferTime: matchingFormat.bufferTime,
-          restPeriod: 90, // Default rest period (not in eventGameFormats schema)
-          maxGamesPerDay: 3, // Default max games per day (not in eventGameFormats schema)
-          templateName: `${matchingFormat.format} ${matchingFormat.gameLength}min`
+          restPeriod: matchingFormat.restPeriod || 90, // Use saved rest period or default
+          maxGamesPerDay: matchingFormat.maxGamesPerDay || 3, // Use saved max games or default
+          templateName: matchingFormat.templateName || `${matchingFormat.fieldSize} ${matchingFormat.gameLength}min`
         } : undefined
       };
     }));
