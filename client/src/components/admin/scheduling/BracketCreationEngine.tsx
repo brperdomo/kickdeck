@@ -22,13 +22,15 @@ import {
   Plus,
   Minus,
   Star,
-  GripVertical
+  GripVertical,
+  Split
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { BracketSubdivisionModal } from './BracketSubdivisionModal';
 
 // Helper function to format flight names with proper context
 const formatFlightName = (level: string, ageGroup?: string, gender?: string): string => {
@@ -83,6 +85,8 @@ interface BracketCreationEngineProps {
 
 export default function BracketCreationEngine({ eventId }: BracketCreationEngineProps) {
   const [selectedTab, setSelectedTab] = useState('overview');
+  const [subdivisionModalOpen, setSubdivisionModalOpen] = useState(false);
+  const [selectedFlightForSubdivision, setSelectedFlightForSubdivision] = useState<any>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -275,6 +279,17 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
         variant: "destructive"
       });
     }
+  };
+
+  const handleSubdivideFlight = (flight: any) => {
+    setSelectedFlightForSubdivision({
+      flightId: flight.flightId,
+      name: flight.name,
+      teamCount: flight.assignedTeams,
+      ageGroup: flight.ageGroup,
+      gender: flight.gender
+    });
+    setSubdivisionModalOpen(true);
   };
 
   // Drag and drop handler
@@ -510,12 +525,25 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
                       )}
                     </div>
                   </div>
-                  <div className="text-right">
-                    {flight.estimatedGames && (
-                      <p className="text-sm text-slate-300">
-                        ~{flight.estimatedGames} games
-                      </p>
+                  <div className="flex items-center gap-2">
+                    {flight.assignedTeams >= 4 && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleSubdivideFlight(flight)}
+                        className="border-slate-600 bg-slate-700 hover:bg-slate-600 text-slate-200"
+                      >
+                        <Split className="h-3 w-3 mr-1" />
+                        Split
+                      </Button>
                     )}
+                    <div className="text-right">
+                      {flight.estimatedGames && (
+                        <p className="text-sm text-slate-300">
+                          ~{flight.estimatedGames} games
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </div>
               </Card>
@@ -866,6 +894,19 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Bracket Subdivision Modal */}
+      {selectedFlightForSubdivision && (
+        <BracketSubdivisionModal
+          isOpen={subdivisionModalOpen}
+          onClose={() => {
+            setSubdivisionModalOpen(false);
+            setSelectedFlightForSubdivision(null);
+          }}
+          eventId={eventId}
+          flight={selectedFlightForSubdivision}
+        />
+      )}
     </div>
   );
 }
