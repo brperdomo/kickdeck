@@ -41,6 +41,8 @@ Preferred communication style: Simple, everyday language.
         - **FIXED**: Time slot management integration with gameTimeSlots table
         - **FIXED**: Tournament structure validation before scheduling execution
         - **ENHANCED**: Comprehensive pre-scheduling validation (event dates, teams, fields)
+        - **CRITICAL FIX**: Quick Scheduler field size constraint validation - now respects field compatibility (7v7/9v9/11v11)
+        - **CRITICAL FIX**: Game format persistence in Configured tab - saved formats now properly display
         - Format-driven flight creation ensuring operational alignment with game requirements
         - Automated parameter configuration from existing tournament data
         - Flight-specific game generation using configured formats and timing

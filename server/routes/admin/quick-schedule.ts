@@ -6,7 +6,8 @@ import {
   eventGameFormats, 
   eventScheduleConstraints,
   games,
-  gameTimeSlots
+  gameTimeSlots,
+  fields
 } from '../../../db/schema';
 import { eq, and } from 'drizzle-orm';
 import { isAdmin } from '../../middleware/auth';
@@ -109,14 +110,34 @@ router.post('/events/:eventId/quick-schedule', isAdmin, async (req, res) => {
         set: constraintsConfig
       });
 
-    // Generate time slots for the tournament dates
+    // Get actual field data with size compatibility
+    const fieldsData = await db.query.fields.findMany({
+      where: eq(fields.isOpen, true),
+      orderBy: fields.id
+    });
+    
+    // Filter fields compatible with the game format
+    const compatibleFields = fieldsData.filter(field => 
+      field.fieldSize === gameFormat || field.fieldSize === '11v11' // 11v11 fields can accommodate smaller games
+    );
+    
+    if (compatibleFields.length === 0) {
+      return res.status(400).json({ 
+        error: `No fields compatible with ${gameFormat} format found. Available fields: ${fieldsData.map(f => `${f.name} (${f.fieldSize})`).join(', ')}` 
+      });
+    }
+    
+    console.log(`Using ${compatibleFields.length} compatible fields for ${gameFormat} games:`, 
+      compatibleFields.map(f => `${f.name} (${f.fieldSize})`));
+
+    // Generate time slots for the tournament dates with compatible fields only
     const timeSlots = generateTimeSlots(
       startDate, 
       endDate, 
       operatingHours.start, 
       operatingHours.end, 
       gameDuration + 15, // Include buffer time
-      availableFields
+      compatibleFields
     );
 
     // Save time slots
@@ -126,7 +147,7 @@ router.post('/events/:eventId/quick-schedule', isAdmin, async (req, res) => {
       endTime: slot.endTime,
       fieldId: slot.fieldId,
       isAvailable: true,
-      fieldName: `Field ${slot.fieldId}`
+      fieldName: slot.fieldName || `Field ${slot.fieldId}`
     }));
 
     await db.delete(gameTimeSlots).where(eq(gameTimeSlots.eventId, parseInt(eventId)));
@@ -159,7 +180,8 @@ router.post('/events/:eventId/quick-schedule', isAdmin, async (req, res) => {
       teamsCount: teams.length,
       gamesCount: generatedGames.length,
       timeSlotsCount: timeSlots.length,
-      fieldsUsed: availableFields,
+      fieldsUsed: compatibleFields.length,
+      compatibleFields: compatibleFields.map(f => ({ id: f.id, name: f.name, size: f.fieldSize })),
       schedule: generatedGames.slice(0, 10), // Return first 10 games as preview
       message: `Successfully generated ${generatedGames.length} games for ${selectedAgeGroup}`
     });
@@ -190,7 +212,7 @@ function generateTimeSlots(
   startTime: string, 
   endTime: string, 
   gameDurationWithBuffer: number,
-  fieldsCount: number
+  compatibleFields: any[]
 ) {
   const slots = [];
   const start = new Date(startDate);
@@ -200,7 +222,7 @@ function generateTimeSlots(
     const dayStart = new Date(`${date.toISOString().split('T')[0]}T${startTime}:00`);
     const dayEnd = new Date(`${date.toISOString().split('T')[0]}T${endTime}:00`);
     
-    for (let fieldId = 1; fieldId <= fieldsCount; fieldId++) {
+    for (const field of compatibleFields) {
       let currentTime = new Date(dayStart);
       
       while (currentTime < dayEnd) {
@@ -210,7 +232,9 @@ function generateTimeSlots(
           slots.push({
             startTime: currentTime.toISOString(),
             endTime: slotEnd.toISOString(),
-            fieldId: fieldId
+            fieldId: field.id,
+            fieldName: field.name,
+            fieldSize: field.fieldSize
           });
         }
         

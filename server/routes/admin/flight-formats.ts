@@ -61,7 +61,9 @@ router.get('/events/:eventId/flight-formats', async (req, res) => {
           ageGroup: flight.ageGroup,
           gender: flight.gender,
           teamCount: teamCount.length,
-          currentFormat: flight.currentFormat?.id ? flight.currentFormat : undefined
+          currentFormat: flight.currentFormat?.id ? flight.currentFormat : undefined,
+          level: flight.flightName.toLowerCase(), // Add level for compatibility
+          displayName: `${flight.ageGroup} ${flight.gender} - ${flight.flightName}` // Add full display name
         };
       })
     );
@@ -212,7 +214,21 @@ router.post('/events/:eventId/flights/:flightId/format', async (req, res) => {
         });
     }
 
-    res.json({ success: true, message: 'Format configuration saved successfully' });
+    // Fetch the saved format and return it
+    const savedFormat = await db
+      .select()
+      .from(gameFormats)
+      .where(eq(gameFormats.bracketId, parseInt(flightId)))
+      .limit(1);
+
+    console.log(`[Flight Format Save] Format saved for flight ${flightId}, returning data:`, savedFormat[0]);
+    
+    res.json({ 
+      success: true, 
+      message: 'Format configuration saved successfully',
+      flightId: parseInt(flightId),
+      format: savedFormat[0]
+    });
   } catch (error) {
     console.error('Error saving format configuration:', error);
     res.status(500).json({ error: 'Failed to save format configuration' });
