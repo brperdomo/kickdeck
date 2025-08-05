@@ -144,6 +144,34 @@ export class SimpleScheduler {
         console.log(`📅 Processing ${dateGames.length} games for ${date}`);
         
         for (const game of dateGames) {
+          // CRITICAL CROSS-EVENT FIELD VALIDATION: Check if field is available across all events
+          const fieldConflicts = await SimpleScheduler.validateCrossEventFieldAvailability(
+            game.fieldId, 
+            game.startTime, 
+            game.endTime,
+            eventId
+          );
+          
+          if (fieldConflicts.length > 0) {
+            console.log(`⚠️ FIELD CONFLICT DETECTED for Field ${game.fieldId}: ${fieldConflicts.join(', ')}`);
+            // Try to find an alternative field with same field size
+            const alternativeField = await SimpleScheduler.findAlternativeField(
+              game.fieldSize || '11v11',
+              game.startTime,
+              game.endTime,
+              eventId
+            );
+            
+            if (alternativeField) {
+              console.log(`🔄 FIELD REASSIGNMENT: Using Field ${alternativeField.id} instead of ${game.fieldId}`);
+              game.fieldId = alternativeField.id;
+              allGames[game.originalIndex].fieldId = alternativeField.id;
+            } else {
+              console.log(`❌ CRITICAL: No alternative fields available for game ${game.originalIndex + 1}`);
+              throw new Error(`Field conflict: Field ${game.fieldId} is unavailable from ${game.startTime} to ${game.endTime} due to conflicts with other events. No alternative fields available.`);
+            }
+          }
+          
           // Create time slot for this specific game
           const [timeSlot] = await db
             .insert(gameTimeSlots)
@@ -160,7 +188,7 @@ export class SimpleScheduler {
           // Update the game object with the time slot ID for later database insertion
           allGames[game.originalIndex].timeSlotId = timeSlot.id;
           
-          console.log(`⚽ Game ${game.originalIndex + 1}: ${date} linked to time slot ${timeSlot.id}`);
+          console.log(`⚽ Game ${game.originalIndex + 1}: ${date} linked to time slot ${timeSlot.id} on Field ${game.fieldId}`);
         }
       }
       
@@ -169,6 +197,112 @@ export class SimpleScheduler {
     } catch (error) {
       console.error('❌ Error creating time slots:', error);
       // Don't throw error - let scheduling continue without time slots if needed
+    }
+  }
+
+  /**
+   * CRITICAL CROSS-EVENT FIELD VALIDATION
+   * Validates that a field is available across all events, not just the current event
+   */
+  static async validateCrossEventFieldAvailability(
+    fieldId: number, 
+    startTime: string, 
+    endTime: string, 
+    currentEventId: string
+  ): Promise<string[]> {
+    const conflicts: string[] = [];
+    
+    try {
+      // Query ALL existing games across ALL events that use this field
+      const existingGames = await db
+        .select({
+          gameId: games.id,
+          eventId: games.eventId,
+          homeTeamId: games.homeTeamId,
+          awayTeamId: games.awayTeamId,
+          fieldId: games.fieldId,
+          timeSlotId: games.timeSlotId
+        })
+        .from(games)
+        .where(eq(games.fieldId, fieldId));
+      
+      // Get time slots for these games to check for overlaps
+      const gameTimeSlotIds = existingGames
+        .filter(g => g.timeSlotId !== null)
+        .map(g => g.timeSlotId);
+      
+      if (gameTimeSlotIds.length > 0) {
+        const existingTimeSlots = await db
+          .select()
+          .from(gameTimeSlots)
+          .where(inArray(gameTimeSlots.id, gameTimeSlotIds));
+        
+        // Check for time overlaps
+        const newStart = new Date(startTime);
+        const newEnd = new Date(endTime);
+        
+        for (const timeSlot of existingTimeSlots) {
+          const existingStart = new Date(timeSlot.startTime);
+          const existingEnd = new Date(timeSlot.endTime);
+          
+          // Check for time overlap
+          if (newStart < existingEnd && newEnd > existingStart) {
+            // Only report conflicts with OTHER events (not the current event)
+            if (timeSlot.eventId !== currentEventId) {
+              conflicts.push(
+                `Event ${timeSlot.eventId} has game from ${existingStart.toLocaleTimeString()} to ${existingEnd.toLocaleTimeString()}`
+              );
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error validating cross-event field availability:', error);
+      // Don't block scheduling on validation errors, but log them
+    }
+    
+    return conflicts;
+  }
+
+  /**
+   * Find alternative field with same field size that's available at the given time
+   */
+  static async findAlternativeField(
+    requiredFieldSize: string,
+    startTime: string,
+    endTime: string,
+    currentEventId: string
+  ): Promise<{id: number, name: string} | null> {
+    try {
+      // Get all fields with the required field size
+      const availableFields = await db
+        .select({
+          id: fields.id,
+          name: fields.name,
+          fieldSize: fields.fieldSize
+        })
+        .from(fields)
+        .where(eq(fields.fieldSize, requiredFieldSize));
+      
+      // Check each field for availability
+      for (const field of availableFields) {
+        const conflicts = await SimpleScheduler.validateCrossEventFieldAvailability(
+          field.id,
+          startTime,
+          endTime,
+          currentEventId
+        );
+        
+        if (conflicts.length === 0) {
+          console.log(`✅ Found available alternative: Field ${field.id} (${field.name})`);
+          return field;
+        }
+      }
+      
+      return null; // No alternative fields available
+    } catch (error) {
+      console.error('Error finding alternative field:', error);
+      return null;
     }
   }
 
