@@ -1,0 +1,226 @@
+Flight configs loaded: 72 flights
+UnifiedTournamentControlCenter-DYfab0LL.js:1 Configured flights: 10 of 72
+chunk-CVIZYB43.js:3 [Violation] 'setTimeout' handler took 64ms
+UnifiedScheduleSetup-VLak4BBi.js:1 QUICK SCHEDULER DEBUG: Fetching teams for event 1844329078
+UnifiedScheduleSetup-VLak4BBi.js:1 QUICK SCHEDULER DEBUG: API URL: /api/admin/teams?eventId=1844329078
+UnifiedScheduleSetup-VLak4BBi.js:1 QUICK SCHEDULER DEBUG: Response status: 200
+UnifiedScheduleSetup-VLak4BBi.js:1 QUICK SCHEDULER DEBUG: Response ok: true
+UnifiedScheduleSetup-VLak4BBi.js:1 QUICK SCHEDULER DEBUG: Teams Data for event 1844329078 : (306) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+UnifiedScheduleSetup-VLak4BBi.js:1 QUICK SCHEDULER DEBUG: Total teams received: 306
+UnifiedScheduleSetup-VLak4BBi.js:1 QUICK SCHEDULER DEBUG: Status breakdown: {registered: 17, waitlisted: 11, placeholder: 2, approved: 257, rejected: 18, …}
+UnifiedScheduleSetup-VLak4BBi.js:1 QUICK SCHEDULER DEBUG: Approved teams count: 257
+UnifiedScheduleSetup-VLak4BBi.js:1 Age Groups Data: (24) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+UnifiedScheduleSetup-VLak4BBi.js:2 AUTO-FORMAT: U14 → 11v11, 90min, Full Size field
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+UnifiedScheduleSetup-VLak4BBi.js:2 Fetch finished loading: POST "https://app.matchpro.ai/api/admin/events/1844329078/unified-schedule".
+mutationFn @ UnifiedScheduleSetup-VLak4BBi.js:2
+fn @ index-BqXeKt2T.js:41
+f @ index-BqXeKt2T.js:41
+start @ index-BqXeKt2T.js:41
+execute @ index-BqXeKt2T.js:41
+await in execute
+mutate @ index-BqXeKt2T.js:41
+(anonymous) @ index-BqXeKt2T.js:41
+te @ UnifiedScheduleSetup-VLak4BBi.js:3
+_ue @ index-BqXeKt2T.js:38
+Due @ index-BqXeKt2T.js:38
+Iue @ index-BqXeKt2T.js:38
+pM @ index-BqXeKt2T.js:38
+Xq @ index-BqXeKt2T.js:38
+(anonymous) @ index-BqXeKt2T.js:38
+NO @ index-BqXeKt2T.js:41
+bq @ index-BqXeKt2T.js:38
+E2 @ index-BqXeKt2T.js:38
+X4 @ index-BqXeKt2T.js:38
+Xue @ index-BqXeKt2T.js:38
+ScheduleViewerFixed-D8fZY5pM.js:6 Schedule API Response: {games: Array(9), fields: Array(12), ageGroups: Array(24), dates: Array(2), totalGames: 9, …}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 1 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf North G2012 Academy', awayTeamStructure: 'Sporting California Girls 2012 ECNL RL SoCal', fieldStructure: 'f3', rawFieldName: 'f3', …}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 1 API data: {
+  "id": 6614,
+  "homeTeam": "Empire Surf North G2012 Academy",
+  "awayTeam": "Sporting California Girls 2012 ECNL RL SoCal",
+  "homeTeamClub": "Empire Surf",
+  "awayTeamClub": "Sporting California USA",
+  "ageGroup": "U14",
+  "field": "f3 (Galway Downs Soccer Complex)",
+  "fieldName": "f3",
+  "complexName": "Galway Downs Soccer Complex",
+  "complexAddress": "38801 Los Corralitos Road, Temecula, California 92592, United States",
+  "fieldSize": "11v11",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 1 transformed: {id: 6614, homeTeam: 'Empire Surf North G2012 Academy', awayTeam: 'Sporting California Girls 2012 ECNL RL SoCal', ageGroup: 'U14', field: 'f3', …}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 2 transformation debug: {raw: {…}, homeTeamStructure: 'Desert Empire Surf G12 Academy 2', awayTeamStructure: 'Sporting California Girls 2012 ECNL RL SoCal', fieldStructure: 'f2', rawFieldName: 'f2', …}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 2 API data: {
+  "id": 6613,
+  "homeTeam": "Desert Empire Surf G12 Academy 2",
+  "awayTeam": "Sporting California Girls 2012 ECNL RL SoCal",
+  "homeTeamClub": "Empire Surf",
+  "awayTeamClub": "Sporting California USA",
+  "ageGroup": "U14",
+  "field": "f2 (Galway Downs Soccer Complex)",
+  "fieldName": "f2",
+  "complexName": "Galway Downs Soccer Complex",
+  "complexAddress": "38801 Los Corralitos Road, Temecula, California 92592, United States",
+  "fieldSize": "11v11",
+  "date": "2025-08-16",
+  "time": "09:30",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 2 transformed: {id: 6613, homeTeam: 'Desert Empire Surf G12 Academy 2', awayTeam: 'Sporting California Girls 2012 ECNL RL SoCal', ageGroup: 'U14', field: 'f2', …}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 3 transformation debug: {raw: {…}, homeTeamStructure: 'G2012 RebelsSD Mullet', awayTeamStructure: 'Desert Empire Surf G12 Academy 2', fieldStructure: 'f1', rawFieldName: 'f1', …}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 3 API data: {
+  "id": 6612,
+  "homeTeam": "G2012 RebelsSD Mullet",
+  "awayTeam": "Desert Empire Surf G12 Academy 2",
+  "homeTeamClub": "Rebels San Diego",
+  "awayTeamClub": "Empire Surf",
+  "ageGroup": "U14",
+  "field": "f1 (Galway Downs Soccer Complex)",
+  "fieldName": "f1",
+  "complexName": "Galway Downs Soccer Complex",
+  "complexAddress": "38801 Los Corralitos Road, Temecula, California 92592, United States",
+  "fieldSize": "11v11",
+  "date": "2025-08-16",
+  "time": "10:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 3 transformed: {id: 6612, homeTeam: 'G2012 RebelsSD Mullet', awayTeam: 'Desert Empire Surf G12 Academy 2', ageGroup: 'U14', field: 'f1', …}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 4 transformation debug: {raw: {…}, homeTeamStructure: 'Cal Elite G2012', awayTeamStructure: 'G2012 RebelsSD Mullet', fieldStructure: 'f6', rawFieldName: 'f6', …}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 4 API data: {
+  "id": 6611,
+  "homeTeam": "Cal Elite G2012",
+  "awayTeam": "G2012 RebelsSD Mullet",
+  "homeTeamClub": "California Elite Soccer Club",
+  "awayTeamClub": "Rebels San Diego",
+  "ageGroup": "U14",
+  "field": "f6 (Galway Downs Soccer Complex)",
+  "fieldName": "f6",
+  "complexName": "Galway Downs Soccer Complex",
+  "complexAddress": "38801 Los Corralitos Road, Temecula, California 92592, United States",
+  "fieldSize": "11v11",
+  "date": "2025-08-16",
+  "time": "11:30",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 4 transformed: {id: 6611, homeTeam: 'Cal Elite G2012', awayTeam: 'G2012 RebelsSD Mullet', ageGroup: 'U14', field: 'f6', …}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 5 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf G2012 Academy 2', awayTeamStructure: 'Cal Elite G2012', fieldStructure: 'f5', rawFieldName: 'f5', …}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 5 API data: {
+  "id": 6610,
+  "homeTeam": "Empire Surf G2012 Academy 2",
+  "awayTeam": "Cal Elite G2012",
+  "homeTeamClub": "Empire Surf",
+  "awayTeamClub": "California Elite Soccer Club",
+  "ageGroup": "U14",
+  "field": "f5 (Galway Downs Soccer Complex)",
+  "fieldName": "f5",
+  "complexName": "Galway Downs Soccer Complex",
+  "complexAddress": "38801 Los Corralitos Road, Temecula, California 92592, United States",
+  "fieldSize": "11v11",
+  "date": "2025-08-16",
+  "time": "12:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 5 transformed: {id: 6610, homeTeam: 'Empire Surf G2012 Academy 2', awayTeam: 'Cal Elite G2012', ageGroup: 'U14', field: 'f5', …}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 6 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf North G2012 NL', awayTeamStructure: 'Empire Surf G2012 Academy 2', fieldStructure: 'f4', rawFieldName: 'f4', …}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 6 API data: {
+  "id": 6609,
+  "homeTeam": "Empire Surf North G2012 NL",
+  "awayTeam": "Empire Surf G2012 Academy 2",
+  "homeTeamClub": "Empire Surf",
+  "awayTeamClub": "Empire Surf",
+  "ageGroup": "U14",
+  "field": "f4 (Galway Downs Soccer Complex)",
+  "fieldName": "f4",
+  "complexName": "Galway Downs Soccer Complex",
+  "complexAddress": "38801 Los Corralitos Road, Temecula, California 92592, United States",
+  "fieldSize": "11v11",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 6 transformed: {id: 6609, homeTeam: 'Empire Surf North G2012 NL', awayTeam: 'Empire Surf G2012 Academy 2', ageGroup: 'U14', field: 'f4', …}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 7 transformation debug: {raw: {…}, homeTeamStructure: 'ALBION SC Riverside G12 DPL', awayTeamStructure: 'Empire Surf North G2012 NL', fieldStructure: 'f3', rawFieldName: 'f3', …}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 7 API data: {
+  "id": 6608,
+  "homeTeam": "ALBION SC Riverside G12 DPL",
+  "awayTeam": "Empire Surf North G2012 NL",
+  "homeTeamClub": "ALBION SC Riverside",
+  "awayTeamClub": "Empire Surf",
+  "ageGroup": "U14",
+  "field": "f3 (Galway Downs Soccer Complex)",
+  "fieldName": "f3",
+  "complexName": "Galway Downs Soccer Complex",
+  "complexAddress": "38801 Los Corralitos Road, Temecula, California 92592, United States",
+  "fieldSize": "11v11",
+  "date": "2025-08-17",
+  "time": "09:30",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 7 transformed: {id: 6608, homeTeam: 'ALBION SC Riverside G12 DPL', awayTeam: 'Empire Surf North G2012 NL', ageGroup: 'U14', field: 'f3', …}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 8 transformation debug: {raw: {…}, homeTeamStructure: 'Future FC G12', awayTeamStructure: 'ALBION SC Riverside G12 DPL', fieldStructure: 'f2', rawFieldName: 'f2', …}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 8 API data: {
+  "id": 6607,
+  "homeTeam": "Future FC G12",
+  "awayTeam": "ALBION SC Riverside G12 DPL",
+  "homeTeamClub": "Future FC",
+  "awayTeamClub": "ALBION SC Riverside",
+  "ageGroup": "U14",
+  "field": "f2 (Galway Downs Soccer Complex)",
+  "fieldName": "f2",
+  "complexName": "Galway Downs Soccer Complex",
+  "complexAddress": "38801 Los Corralitos Road, Temecula, California 92592, United States",
+  "fieldSize": "11v11",
+  "date": "2025-08-17",
+  "time": "10:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 8 transformed: {id: 6607, homeTeam: 'Future FC G12', awayTeam: 'ALBION SC Riverside G12 DPL', ageGroup: 'U14', field: 'f2', …}ageGroup: "U14"awayTeam: "ALBION SC Riverside G12 DPL"date: "TBD"duration: 90endTime: undefinedfield: "f2"fieldName: "f2"homeTeam: "Future FC G12"id: 6607startTime: undefinedstatus: "scheduled"time: "TBD"[[Prototype]]: Object
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 9 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf North G2012 Academy', awayTeamStructure: 'Future FC G12', fieldStructure: 'f1', rawFieldName: 'f1', …}awayTeamStructure: "Future FC G12"fieldStructure: "f1"homeTeamStructure: "Empire Surf North G2012 Academy"raw: {id: 6606, homeTeam: 'Empire Surf North G2012 Academy', awayTeam: 'Future FC G12', homeTeamClub: 'Empire Surf', awayTeamClub: 'Future FC', …}rawField: "f1 (Galway Downs Soccer Complex)"rawFieldName: "f1"[[Prototype]]: Object
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 9 API data: {
+  "id": 6606,
+  "homeTeam": "Empire Surf North G2012 Academy",
+  "awayTeam": "Future FC G12",
+  "homeTeamClub": "Empire Surf",
+  "awayTeamClub": "Future FC",
+  "ageGroup": "U14",
+  "field": "f1 (Galway Downs Soccer Complex)",
+  "fieldName": "f1",
+  "complexName": "Galway Downs Soccer Complex",
+  "complexAddress": "38801 Los Corralitos Road, Temecula, California 92592, United States",
+  "fieldSize": "11v11",
+  "date": "2025-08-17",
+  "time": "11:30",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 9 transformed: {id: 6606, homeTeam: 'Empire Surf North G2012 Academy', awayTeam: 'Future FC G12', ageGroup: 'U14', field: 'f1', …}
