@@ -12,7 +12,7 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
     
     console.log(`[Schedule Calendar] Fetching calendar data for event ${eventId}`);
 
-    // Get event details first to get proper dates
+    // Get event details first to get proper dates  
     const event = await db.query.events.findFirst({
       where: eq(events.id, eventId)
     });
@@ -212,15 +212,6 @@ function addMinutesToTime(timeStr: string, minutes: number): string {
   return `${newHours.toString().padStart(2, '0')}:${newMins.toString().padStart(2, '0')}`;
 }
 
-  } catch (error) {
-    console.error('[Schedule Calendar] Error:', error);
-    res.status(500).json({ 
-      error: 'Failed to fetch calendar schedule data',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    });
-  }
-});
-
 // PUT /api/admin/games/:gameId/reschedule - Update game field and time
 router.put('/games/:gameId/reschedule', async (req, res) => {
   try {
@@ -246,10 +237,7 @@ router.put('/games/:gameId/reschedule', async (req, res) => {
           startTime: startTime,
           endTime: endTime,
           isAvailable: false,
-          dayIndex: 0, // Default day
-          slotType: 'game',
-          bufferBefore: 15,
-          bufferAfter: 15
+          dayIndex: 0
         })
         .returning();
       timeSlot = newTimeSlot;

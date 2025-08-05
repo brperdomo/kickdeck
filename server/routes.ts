@@ -1042,6 +1042,7 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/events', isAdmin, tournamentStatusRouter); // Tournament status display
     app.use('/api/admin/events', isAdmin, scheduleViewerRouter); // Schedule viewing and management
     app.use('/api/admin', isAdmin, unifiedScheduleRouter); // Unified single-screen schedule generator
+    app.use('/api/admin', isAdmin, scheduleCalendarRouter); // Schedule calendar with drag-and-drop reschedule
     
     // Register schedule management router
     app.use('/api/admin', isAdmin, scheduleManagementRouter); // Schedule management (delete games)
