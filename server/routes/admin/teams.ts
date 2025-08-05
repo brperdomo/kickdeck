@@ -205,11 +205,12 @@ async function processTeamApprovalPaymentFallback(team: any, teamId: string): Pr
       log(`Link payment method is properly attached to customer ${currentPaymentMethod.customer}`, 'admin');
       
       // Ensure team database has the correct customer ID
-      if (team.stripeCustomerId !== currentPaymentMethod.customer) {
+      const customerIdString = typeof currentPaymentMethod.customer === 'string' ? currentPaymentMethod.customer : currentPaymentMethod.customer?.id;
+      if (team.stripeCustomerId !== customerIdString) {
         await db.update(teams)
-          .set({ stripeCustomerId: currentPaymentMethod.customer })
+          .set({ stripeCustomerId: customerIdString })
           .where(eq(teams.id, parseInt(teamId, 10)));
-        log(`Updated team ${teamId} customer ID to ${currentPaymentMethod.customer}`, 'admin');
+        log(`Updated team ${teamId} customer ID to ${customerIdString}`, 'admin');
       }
     }
     
@@ -235,8 +236,8 @@ async function processTeamApprovalPaymentFallback(team: any, teamId: string): Pr
       const basicPaymentIntent = await stripe.paymentIntents.create({
         amount: team.totalAmount,
         currency: 'usd',
-        payment_method: setupIntent.payment_method,
-        customer: setupIntent.customer || undefined,
+        payment_method: typeof setupIntent.payment_method === 'string' ? setupIntent.payment_method : setupIntent.payment_method?.id,
+        customer: typeof setupIntent.customer === 'string' ? setupIntent.customer : setupIntent.customer?.id || undefined,
         confirm: true,
         off_session: true,
         metadata: {
@@ -251,7 +252,7 @@ async function processTeamApprovalPaymentFallback(team: any, teamId: string): Pr
           .set({
             paymentIntentId: basicPaymentIntent.id,
             paymentStatus: 'paid',
-            paymentMethodId: setupIntent.payment_method
+            paymentMethodId: typeof setupIntent.payment_method === 'string' ? setupIntent.payment_method : setupIntent.payment_method?.id
           })
           .where(eq(teams.id, parseInt(teamId, 10)));
         
@@ -300,7 +301,7 @@ async function processTeamApprovalPaymentFallback(team: any, teamId: string): Pr
     
     const paymentResult = await processDestinationCharge(
       teamId,
-      team.eventId,
+      parseInt(team.eventId.toString(), 10),
       setupIntent.payment_method as string,
       feeCalculation.totalChargedAmount, // Use total amount including platform fees
       eventInfo.stripeConnectAccountId,
@@ -313,7 +314,7 @@ async function processTeamApprovalPaymentFallback(team: any, teamId: string): Pr
         .set({
           paymentIntentId: paymentResult.paymentIntent.id,
           paymentStatus: 'paid',
-          paymentMethodId: setupIntent.payment_method
+          paymentMethodId: typeof setupIntent.payment_method === 'string' ? setupIntent.payment_method : setupIntent.payment_method?.id
         })
         .where(eq(teams.id, parseInt(teamId, 10)));
       
@@ -756,7 +757,7 @@ async function updateTeamStatus(req: Request, res: Response) {
                         const directPaymentIntent = await stripe.paymentIntents.create({
                           amount: feeCalculation.totalChargedAmount,
                           currency: 'usd',
-                          payment_method: originalPaymentMethod,
+                          payment_method: typeof originalPaymentMethod === 'string' ? originalPaymentMethod : originalPaymentMethod?.id,
                           confirm: true,
                           off_session: true,
                           application_fee_amount: feeCalculation.platformFeeAmount,
@@ -780,7 +781,7 @@ async function updateTeamStatus(req: Request, res: Response) {
                             .set({
                               paymentIntentId: directPaymentIntent.id,
                               paymentStatus: 'paid',
-                              paymentMethodId: originalPaymentMethod,
+                              paymentMethodId: typeof originalPaymentMethod === 'string' ? originalPaymentMethod : originalPaymentMethod?.id,
                               stripeCustomerId: correctCustomerId
                             })
                             .where(eq(teams.id, parseInt(teamId, 10)));
