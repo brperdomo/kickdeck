@@ -1,0 +1,180 @@
+Sending status update with data: {teamId: 874, status: 'approved', notes: null, skipPayment: undefined, skipEmail: undefined}
+index-BqXeKt2T.js:861  PUT https://app.matchpro.ai/api/admin/teams/874/status 400 (Bad Request)
+mutationFn @ index-BqXeKt2T.js:861
+fn @ index-BqXeKt2T.js:41
+f @ index-BqXeKt2T.js:41
+start @ index-BqXeKt2T.js:41
+execute @ index-BqXeKt2T.js:41
+await in execute
+mutate @ index-BqXeKt2T.js:41
+(anonymous) @ index-BqXeKt2T.js:41
+Fo @ index-BqXeKt2T.js:861
+onClick @ index-BqXeKt2T.js:861
+_ue @ index-BqXeKt2T.js:38
+Due @ index-BqXeKt2T.js:38
+Iue @ index-BqXeKt2T.js:38
+pM @ index-BqXeKt2T.js:38
+Xq @ index-BqXeKt2T.js:38
+(anonymous) @ index-BqXeKt2T.js:38
+NO @ index-BqXeKt2T.js:41
+bq @ index-BqXeKt2T.js:38
+E2 @ index-BqXeKt2T.js:38
+X4 @ index-BqXeKt2T.js:38
+Xue @ index-BqXeKt2T.js:38Understand this error
+index-BqXeKt2T.js:861 Raw response text: {"status":"error","error":"Payment processing failed","message":"Payment processing failed. Please check team payment details.","paymentStatus":"payment_error","teamStatus":"registered"}
+index-BqXeKt2T.js:861 Error response: {status: 'error', error: 'Payment processing failed', message: 'Payment processing failed. Please check team payment details.', paymentStatus: 'payment_error', teamStatus: 'registered'}
+mutationFn @ index-BqXeKt2T.js:861
+await in mutationFn
+fn @ index-BqXeKt2T.js:41
+f @ index-BqXeKt2T.js:41
+start @ index-BqXeKt2T.js:41
+execute @ index-BqXeKt2T.js:41
+await in execute
+mutate @ index-BqXeKt2T.js:41
+(anonymous) @ index-BqXeKt2T.js:41
+Fo @ index-BqXeKt2T.js:861
+onClick @ index-BqXeKt2T.js:861
+_ue @ index-BqXeKt2T.js:38
+Due @ index-BqXeKt2T.js:38
+Iue @ index-BqXeKt2T.js:38
+pM @ index-BqXeKt2T.js:38
+Xq @ index-BqXeKt2T.js:38
+(anonymous) @ index-BqXeKt2T.js:38
+NO @ index-BqXeKt2T.js:41
+bq @ index-BqXeKt2T.js:38
+E2 @ index-BqXeKt2T.js:38
+X4 @ index-BqXeKt2T.js:38
+Xue @ index-BqXeKt2T.js:38Understand this error
+index-BqXeKt2T.js:861 Error in updateTeamStatus mutation: Error: Payment processing failed
+    at Object.mutationFn (index-BqXeKt2T.js:861:83603)
+mutationFn @ index-BqXeKt2T.js:861
+await in mutationFn
+fn @ index-BqXeKt2T.js:41
+f @ index-BqXeKt2T.js:41
+start @ index-BqXeKt2T.js:41
+execute @ index-BqXeKt2T.js:41
+await in execute
+mutate @ index-BqXeKt2T.js:41
+(anonymous) @ index-BqXeKt2T.js:41
+Fo @ index-BqXeKt2T.js:861
+onClick @ index-BqXeKt2T.js:861
+_ue @ index-BqXeKt2T.js:38
+Due @ index-BqXeKt2T.js:38
+Iue @ index-BqXeKt2T.js:38
+pM @ index-BqXeKt2T.js:38
+Xq @ index-BqXeKt2T.js:38
+(anonymous) @ index-BqXeKt2T.js:38
+NO @ index-BqXeKt2T.js:41
+bq @ index-BqXeKt2T.js:38
+E2 @ index-BqXeKt2T.js:38
+X4 @ index-BqXeKt2T.js:38
+Xue @ index-BqXeKt2T.js:38Understand this error
+index-BqXeKt2T.js:861 Fetch failed loading: PUT "https://app.matchpro.ai/api/admin/teams/874/status".
+mutationFn @ index-BqXeKt2T.js:861
+fn @ index-BqXeKt2T.js:41
+f @ index-BqXeKt2T.js:41
+start @ index-BqXeKt2T.js:41
+execute @ index-BqXeKt2T.js:41
+await in execute
+mutate @ index-BqXeKt2T.js:41
+(anonymous) @ index-BqXeKt2T.js:41
+Fo @ index-BqXeKt2T.js:861
+onClick @ index-BqXeKt2T.js:861
+_ue @ index-BqXeKt2T.js:38
+Due @ index-BqXeKt2T.js:38
+Iue @ index-BqXeKt2T.js:38
+pM @ index-BqXeKt2T.js:38
+Xq @ index-BqXeKt2T.js:38
+(anonymous) @ index-BqXeKt2T.js:38
+NO @ index-BqXeKt2T.js:41
+bq @ index-BqXeKt2T.js:38
+E2 @ index-BqXeKt2T.js:38
+X4 @ index-BqXeKt2T.js:38
+Xue @ index-BqXeKt2T.js:38
+index-BqXeKt2T.js:753 Fetching permissions, emulation token: not present
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state {pill-player: {…}}
+index-BqXeKt2T.js:753 Fetched permissions: {roles: Array(1), permissions: Array(42)}
+index-BqXeKt2T.js:753 Normalized dot permission "users.view" to "view_users"
+index-BqXeKt2T.js:753 Normalized dot permission "users.create" to "create_users"
+index-BqXeKt2T.js:753 Normalized dot permission "users.edit" to "edit_users"
+index-BqXeKt2T.js:753 Normalized dot permission "users.delete" to "delete_users"
+index-BqXeKt2T.js:753 Normalized dot permission "events.view" to "view_events"
+index-BqXeKt2T.js:753 Normalized dot permission "events.create" to "create_events"
+index-BqXeKt2T.js:753 Normalized dot permission "events.edit" to "edit_events"
+index-BqXeKt2T.js:753 Normalized dot permission "events.delete" to "delete_events"
+index-BqXeKt2T.js:753 Normalized dot permission "teams.view" to "view_teams"
+index-BqXeKt2T.js:753 Normalized dot permission "teams.create" to "create_teams"
+index-BqXeKt2T.js:753 Normalized dot permission "teams.edit" to "edit_teams"
+index-BqXeKt2T.js:753 Normalized dot permission "teams.delete" to "delete_teams"
+index-BqXeKt2T.js:753 Normalized dot permission "games.view" to "view_games"
+index-BqXeKt2T.js:753 Normalized dot permission "games.create" to "create_games"
+index-BqXeKt2T.js:753 Normalized dot permission "games.edit" to "edit_games"
+index-BqXeKt2T.js:753 Normalized dot permission "games.delete" to "delete_games"
+index-BqXeKt2T.js:753 Normalized dot permission "scores.view" to "view_scores"
+index-BqXeKt2T.js:753 Normalized dot permission "scores.create" to "create_scores"
+index-BqXeKt2T.js:753 Normalized dot permission "scores.edit" to "edit_scores"
+index-BqXeKt2T.js:753 Normalized dot permission "scores.delete" to "delete_scores"
+index-BqXeKt2T.js:753 Normalized dot permission "finances.view" to "view_finances"
+index-BqXeKt2T.js:753 Normalized dot permission "finances.create" to "create_finances"
+index-BqXeKt2T.js:753 Normalized dot permission "finances.edit" to "edit_finances"
+index-BqXeKt2T.js:753 Normalized dot permission "finances.delete" to "delete_finances"
+index-BqXeKt2T.js:753 Normalized dot permission "finances.approve" to "approve_finances"
+index-BqXeKt2T.js:753 Normalized dot permission "settings.view" to "view_settings"
+index-BqXeKt2T.js:753 Normalized dot permission "settings.edit" to "edit_settings"
+index-BqXeKt2T.js:753 Normalized dot permission "reports.view" to "view_reports"
+index-BqXeKt2T.js:753 Normalized dot permission "reports.export" to "export_reports"
+index-BqXeKt2T.js:753 Normalized dot permission "administrators.view" to "view_administrators"
+index-BqXeKt2T.js:753 Normalized dot permission "administrators.create" to "create_administrators"
+index-BqXeKt2T.js:753 Normalized dot permission "administrators.edit" to "edit_administrators"
+index-BqXeKt2T.js:753 Normalized dot permission "administrators.delete" to "delete_administrators"
+index-BqXeKt2T.js:753 Normalized dot permission "coupons.view" to "view_coupons"
+index-BqXeKt2T.js:753 Normalized dot permission "coupons.create" to "create_coupons"
+index-BqXeKt2T.js:753 Normalized dot permission "coupons.edit" to "edit_coupons"
+index-BqXeKt2T.js:753 Normalized dot permission "coupons.delete" to "delete_coupons"
+index-BqXeKt2T.js:753 Normalized dot permission "members.view" to "view_members"
+index-BqXeKt2T.js:753 Normalized dot permission "scheduling.view" to "view_scheduling"
+index-BqXeKt2T.js:753 Normalized dot permission "scheduling.create" to "create_scheduling"
+index-BqXeKt2T.js:753 Normalized dot permission "scheduling.edit" to "edit_scheduling"
+index-BqXeKt2T.js:753 Normalized dot permission "scheduling.delete" to "delete_scheduling"
+index-BqXeKt2T.js:753 Final normalized permissions: (42) ['view_users', 'create_users', 'edit_users', 'delete_users', 'view_events', 'create_events', 'edit_events', 'delete_events', 'view_teams', 'create_teams', 'edit_teams', 'delete_teams', 'view_games', 'create_games', 'edit_games', 'delete_games', 'view_scores', 'create_scores', 'edit_scores', 'delete_scores', 'view_finances', 'create_finances', 'edit_finances', 'delete_finances', 'approve_finances', 'view_settings', 'edit_settings', 'view_reports', 'export_reports', 'view_administrators', 'create_administrators', 'edit_administrators', 'delete_administrators', 'view_coupons', 'create_coupons', 'edit_coupons', 'delete_coupons', 'view_members', 'view_scheduling', 'create_scheduling', 'edit_scheduling', 'delete_scheduling']
+index-BqXeKt2T.js:753 Fetch finished loading: GET "https://app.matchpro.ai/api/admin/permissions/me".
+queryFn @ index-BqXeKt2T.js:753
+i @ index-BqXeKt2T.js:41
+f @ index-BqXeKt2T.js:41
+start @ index-BqXeKt2T.js:41
+fetch @ index-BqXeKt2T.js:41
+ng @ index-BqXeKt2T.js:41
+fetch @ index-BqXeKt2T.js:41
+refetch @ index-BqXeKt2T.js:41
+onFocus @ index-BqXeKt2T.js:41
+(anonymous) @ index-BqXeKt2T.js:41
+(anonymous) @ index-BqXeKt2T.js:41
+batch @ index-BqXeKt2T.js:41
+onFocus @ index-BqXeKt2T.js:41
+(anonymous) @ index-BqXeKt2T.js:41
+await in (anonymous)
+(anonymous) @ index-BqXeKt2T.js:41
+onFocus @ index-BqXeKt2T.js:41
+(anonymous) @ index-BqXeKt2T.js:41
+r @ index-BqXeKt2T.js:41
+chunk-FLCULYKI.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+shared-a1ef324407d0b39907344a47bac7d5b4.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-a1ef324407d0b39907344a47bac7d5b4.js:1
+e @ shared-a1ef324407d0b39907344a47bac7d5b4.js:1
+c @ shared-a1ef324407d0b39907344a47bac7d5b4.js:1
+value @ shared-a1ef324407d0b39907344a47bac7d5b4.js:1
+value @ shared-a1ef324407d0b39907344a47bac7d5b4.js:1
+value @ shared-a1ef324407d0b39907344a47bac7d5b4.js:1
+value @ shared-a1ef324407d0b39907344a47bac7d5b4.js:1
+value @ shared-a1ef324407d0b39907344a47bac7d5b4.js:1
+(anonymous) @ shared-a1ef324407d0b39907344a47bac7d5b4.js:1
+setTimeout
+value @ shared-a1ef324407d0b39907344a47bac7d5b4.js:1
+value @ shared-a1ef324407d0b39907344a47bac7d5b4.js:1
+value @ shared-a1ef324407d0b39907344a47bac7d5b4.js:1
+(anonymous) @ shared-a1ef324407d0b39907344a47bac7d5b4.js:1
+value @ shared-a1ef324407d0b39907344a47bac7d5b4.js:1
+log @ shared-a1ef324407d0b39907344a47bac7d5b4.js:1
+log @ controller-with-preconnect-273ac792129e8021213176a1a9e77f6c.js:1
+pe @ controller-with-preconnect-273ac792129e8021213176a1a9e77f6c.js:1
+(anonymous) @ controller-with-preconnect-273ac792129e8021213176a1a9e77f6c.js:1
