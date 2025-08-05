@@ -141,7 +141,7 @@ export function FlightConfigurationTable({ eventId }: { eventId: string }) {
                 <TableHead className="text-slate-300 font-medium">START DATE</TableHead>
                 <TableHead className="text-slate-300 font-medium">END DATE</TableHead>
                 <TableHead className="text-slate-300 font-medium text-center">MATCH</TableHead>
-                <TableHead className="text-slate-300 font-medium text-center">MATCH TIME</TableHead>
+                <TableHead className="text-slate-300 font-medium text-center">HALF TIME LENGTH</TableHead>
                 <TableHead className="text-slate-300 font-medium text-center">BREAK</TableHead>
                 <TableHead className="text-slate-300 font-medium text-center">PADDING</TableHead>
                 <TableHead className="text-slate-300 font-medium text-center">TOTAL TIME</TableHead>
@@ -254,7 +254,7 @@ export function FlightConfigurationTable({ eventId }: { eventId: string }) {
                     )}
                   </TableCell>
 
-                  {/* Match Time */}
+                  {/* Half Time Length */}
                   <TableCell className="text-center">
                     {editing.id === flight.id && editing.field === 'matchTime' ? (
                       <div className="flex items-center gap-1 justify-center">

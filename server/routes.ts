@@ -6720,77 +6720,75 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       try {
         const eventId = req.params.id;
 
-        // Fetch all games for this event with related data including gameTimeSlots
-        const schedule = await db
-          .select({
-            game: games,
-            homeTeam: teams,
-            awayTeam: sql<{ id: number; name: string; team_reference_id: string }>`json_build_object('id', ${sql.raw('away_teams')}.id, 'name', ${sql.raw('away_teams')}.name, 'team_reference_id', ${sql.raw('away_teams')}.team_reference_id)`,
-            field: fields,
-            complex: complexes,
-            ageGroup: eventAgeGroups,
-            timeSlot: gameTimeSlots,
-          })
-          .from(games)
-          .leftJoin(teams, eq(games.homeTeamId, teams.id))
-          .leftJoin(sql.raw('teams as away_teams'), eq(games.awayTeamId, sql.raw('away_teams.id')))
-          .leftJoin(fields, eq(games.fieldId, fields.id))
-          .leftJoin(complexes, eq(fields.complexId, complexes.id))
-          .leftJoin(eventAgeGroups, eq(games.ageGroupId, eventAgeGroups.id))
-          .leftJoin(gameTimeSlots, eq(games.timeSlotId, gameTimeSlots.id))
-          .where(eq(games.eventId, eventId))
-          .orderBy(gameTimeSlots.startTime);
+        // Simplified query that ensures team names are properly retrieved
+        const schedule = await db.execute(sql`
+          SELECT 
+            g.id,
+            g.match_number,
+            g.home_team_id,
+            g.away_team_id,
+            g.field_id,
+            g.time_slot_id,
+            g.age_group_id,
+            g.round,
+            g.status,
+            ht.name as home_team_name,
+            at.name as away_team_name,
+            f.name as field_name,
+            f.field_size,
+            c.name as complex_name,
+            eag.age_group,
+            ts.start_time,
+            ts.end_time
+          FROM games g
+          LEFT JOIN teams ht ON g.home_team_id = ht.id
+          LEFT JOIN teams at ON g.away_team_id = at.id
+          LEFT JOIN fields f ON g.field_id = f.id
+          LEFT JOIN complexes c ON f.complex_id = c.id
+          LEFT JOIN event_age_groups eag ON g.age_group_id = eag.id
+          LEFT JOIN game_time_slots ts ON g.time_slot_id = ts.id
+          WHERE g.event_id = ${eventId}
+          ORDER BY ts.start_time NULLS LAST, g.id
+        `);
 
-        console.log(`Found ${schedule.length} games for event ${eventId}`);
-
-        // Debug time slot data
-        schedule.forEach((item, index) => {
-          console.log(`Game ${index + 1} time slot debug:`, {
-            gameId: item.game.id,
-            timeSlotId: item.game.timeSlotId,
-            timeSlotData: item.timeSlot,
-            hasTimeSlot: !!item.timeSlot,
-            startTime: item.timeSlot?.startTime,
-            endTime: item.timeSlot?.endTime
-          });
-        });
+        console.log(`Found ${schedule.rows.length} games for event ${eventId}`);
 
         // Format the schedule for frontend display with enhanced data
-        const formattedSchedule = schedule.map((item, index) => ({
-            id: item.game.id,
-            gameNumber: item.game.matchNumber || index + 1,
-            startTime: item.timeSlot?.startTime || new Date().toISOString(),
-            endTime: item.timeSlot?.endTime || new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(), // 2 hours later
-            fieldName: item.field?.name || 'Unassigned', 
-            fieldId: item.game.fieldId || null,
-            fieldSize: item.field?.fieldSize || 'Unknown',
-            complexId: item.complex?.id || null,
-            complexName: item.complex?.name || 'Unassigned',
-            ageGroup: item.ageGroup?.ageGroup || 'Unassigned',
-            ageGroupId: item.ageGroup?.id || 0,
-            bracket: `${item.ageGroup?.ageGroup || 'Unknown'} Flight A`,
-            round: item.game.round || 'Pool Play',
+        const formattedSchedule = schedule.rows.map((row: any, index: number) => ({
+            id: row.id,
+            gameNumber: row.match_number || index + 1,
+            startTime: row.start_time || new Date().toISOString(),
+            endTime: row.end_time || new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
+            fieldName: row.field_name || 'Unassigned',
+            fieldId: row.field_id || null,
+            fieldSize: row.field_size || 'Unknown',
+            complexId: row.complex_id || null,
+            complexName: row.complex_name || 'Unassigned',
+            ageGroup: row.age_group || 'Unassigned',
+            ageGroupId: row.age_group_id || 0,
+            bracket: `${row.age_group || 'Unknown'} Flight A`,
+            round: row.round || 'Pool Play',
             homeTeam: {
-              id: item.homeTeam?.id || item.game.homeTeamId || 0,
-              name: item.homeTeam?.name || `Team ${item.game.homeTeamId || 'Unknown'}`,
-              clubName: item.homeTeam?.clubName || '',
-              coach: item.homeTeam?.coachName || '',
-              status: item.homeTeam?.status || 'approved',
-              referenceId: item.homeTeam?.teamReferenceId || 'TEMP'
+              id: row.home_team_id || 0,
+              name: row.home_team_name || `Team ${row.home_team_id || 'Unknown'}`,
+              clubName: '',
+              coach: '',
+              status: 'approved',
+              referenceId: 'TEMP'
             },
-            homeTeamId: item.homeTeam?.id || item.game.homeTeamId || 0,
-            homeTeamRefId: item.homeTeam?.teamReferenceId || 'TEMP',
+            homeTeamId: row.home_team_id || 0,
+            homeTeamRefId: 'TEMP',
             awayTeam: {
-              id: (item.awayTeam as any)?.id || item.game.awayTeamId || 0,
-              name: (item.awayTeam as { name: string })?.name || `Team ${item.game.awayTeamId || 'Unknown'}`,
-              clubName: (item.awayTeam as any)?.clubName || '',
-              coach: (item.awayTeam as any)?.coachName || '',
-              status: (item.awayTeam as any)?.status || 'approved',
-              referenceId: (item.awayTeam as any)?.team_reference_id || 'TEMP'
+              id: row.away_team_id || 0,
+              name: row.away_team_name || `Team ${row.away_team_id || 'Unknown'}`,
+              clubName: '',
+              coach: '',
+              status: 'approved',
+              referenceId: 'TEMP'
             },
-            awayTeamId: (item.awayTeam as any)?.id || item.game.awayTeamId || 0,
-            awayTeamRefId: (item.awayTeam as any)?.team_reference_id || 'TEMP',
-            status: item.game.status || 'scheduled',
+            awayTeamId: row.away_team_id || 0,
+            awayTeamRefId: 'TEMP',
+            status: row.status || 'scheduled',
           }));
 
         console.log(`Returning ${formattedSchedule.length} formatted games`);

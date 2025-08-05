@@ -149,6 +149,17 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
       const uniqueDates = new Set(transformedGames.map((g: any) => g.date).filter((d: string) => d !== 'TBD'));
       const dates = Array.from(uniqueDates) as string[];
 
+      // Calculate unique teams from games
+      const uniqueTeams = new Set();
+      transformedGames.forEach((game: any) => {
+        if (game.homeTeam && !game.homeTeam.includes('Team Unknown')) {
+          uniqueTeams.add(game.homeTeam);
+        }
+        if (game.awayTeam && !game.awayTeam.includes('Team Unknown')) {
+          uniqueTeams.add(game.awayTeam);
+        }
+      });
+
       return {
         games: transformedGames,
         fields,
@@ -159,9 +170,9 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
         isPreview: false,
         actualData: {
           gamesInDatabase: transformedGames.length,
-          teamsInDatabase: 0,
+          teamsInDatabase: uniqueTeams.size,
           ageGroupsConfigured: ageGroups.length,
-          realTeamsFound: 0,
+          realTeamsFound: uniqueTeams.size,
           scheduledGamesFound: transformedGames.length,
           scheduleType: 'Tournament Schedule'
         },

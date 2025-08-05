@@ -160,7 +160,7 @@ export function WorkflowDataFlow({ eventId }: { eventId: string }) {
                   
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                     <div>
-                      <span className="text-slate-400">Match Time:</span>
+                      <span className="text-slate-400">Half Time Length:</span>
                       <div className="text-white font-medium">{config.matchTime} min</div>
                     </div>
                     <div>
