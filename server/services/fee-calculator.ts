@@ -17,8 +17,16 @@ export const DEFAULT_PLATFORM_FEE_RATE = 0.04; // 4% MatchPro fee
 export const STRIPE_PERCENTAGE_FEE = 0.029; // 2.9%
 export const STRIPE_FIXED_FEE = 30; // $0.30 in cents
 
-// Platform fee is fixed at 4% as agreed - no volume discounts
-export const FIXED_PLATFORM_FEE_RATE = 0.04; // 4% MatchPro fee (fixed)
+// Volume discount tiers for platform fees
+// Designed to ensure MatchPro profitability while providing volume incentives
+export const VOLUME_DISCOUNT_TIERS = [
+  { minAmount: 0, maxAmount: 10000, platformFeeRate: 0.04 }, // 4% for $0-$100
+  { minAmount: 10001, maxAmount: 50000, platformFeeRate: 0.04 }, // 4% for $100.01-$500  
+  { minAmount: 50001, maxAmount: 100000, platformFeeRate: 0.04 }, // 4% for $500.01-$1000
+  { minAmount: 100001, maxAmount: 250000, platformFeeRate: 0.038 }, // 3.8% for $1000.01-$2500
+  { minAmount: 250001, maxAmount: 500000, platformFeeRate: 0.036 }, // 3.6% for $2500.01-$5000
+  { minAmount: 500001, maxAmount: Infinity, platformFeeRate: 0.035 }, // 3.5% for $5000+
+];
 
 export interface FeeCalculation {
   // Input amounts
@@ -50,11 +58,13 @@ export interface EventVolumeData {
 }
 
 /**
- * Get platform fee rate - FIXED at 4% as agreed
- * No volume discounts applied
+ * Get volume-based platform fee rate
  */
 export function getPlatformFeeRate(totalVolume: number): number {
-  return FIXED_PLATFORM_FEE_RATE; // Always 4%, regardless of volume
+  const tier = VOLUME_DISCOUNT_TIERS.find(
+    tier => totalVolume >= tier.minAmount && totalVolume <= tier.maxAmount
+  );
+  return tier?.platformFeeRate || DEFAULT_PLATFORM_FEE_RATE;
 }
 
 /**

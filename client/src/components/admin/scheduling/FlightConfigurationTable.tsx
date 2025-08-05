@@ -15,10 +15,10 @@ interface FlightConfig {
   startDate: string;
   endDate: string;
   matchCount: number;
-  matchTime: number; // Half time length in minutes (will be doubled for total game time)
+  matchTime: number; // in minutes
   breakTime: number; // in minutes
   paddingTime: number; // in minutes
-  totalTime: number; // calculated: (matchTime × 2) + breakTime + paddingTime
+  totalTime: number; // calculated
   formatName: string;
   teamCount: number;
   ageGroupId: number;
@@ -95,10 +95,8 @@ export function FlightConfigurationTable({ eventId }: { eventId: string }) {
     setEditing({ id: null, field: null, value: '' });
   };
 
-  const calculateTotalTime = (halfTimeLength: number, breakTime: number, paddingTime: number) => {
-    // Total time = (Half Time Length × 2) + Break Time + Padding Time
-    const fullGameTime = halfTimeLength * 2;
-    return fullGameTime + breakTime + paddingTime;
+  const calculateTotalTime = (matchTime: number, breakTime: number, paddingTime: number) => {
+    return matchTime + breakTime + paddingTime;
   };
 
   const formatDate = (dateString: string) => {

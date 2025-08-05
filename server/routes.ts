@@ -5,7 +5,8 @@ import { setupWebSocketServer } from "./websocket";
 import { log } from "./vite";
 import { crypto } from "./crypto";
 import { db } from "@db";
-import { emailTemplates, insertPlayerSchema } from "@db/schema";
+import { emailTemplates, insertPlayerSchema, fields, complexes } from "@db/schema";
+import { sql, eq } from "drizzle-orm";
 import Stripe from 'stripe';
 import { isAdmin, hasEventAccess } from "./middleware";
 import { authenticateTournamentDirector } from "./middleware/tournament-director-auth";
@@ -67,6 +68,7 @@ import scheduleViewerRouter from "./routes/admin/schedule-viewer";
 import unifiedScheduleRouter from "./routes/admin/unified-schedule";
 import scheduleManagementRouter from "./routes/admin/schedule-management";
 import scheduleCalendarRouter from "./routes/admin/schedule-calendar";
+import fieldsRouter from "./routes/admin/fields";
 import fieldManagementRouter from "./routes/admin/field-management";
 import enhancedConflictDetectionRouter from "./routes/admin/enhanced-conflict-detection";
 import enhancedFieldManagementRouter from "./routes/admin/enhanced-field-management";
@@ -297,19 +299,11 @@ export function registerRoutes(app: Express): Server {
         
         const team = teamResult[0];
         
-        // Get event name for display  
-        let eventResult;
-        if (typeof team.eventId === 'string') {
-          eventResult = await db
-            .select({ name: events.name })
-            .from(events)
-            .where(eq(events.id, parseInt(team.eventId, 10)));
-        } else {
-          eventResult = await db
-            .select({ name: events.name })
-            .from(events)
-            .where(eq(events.id, team.eventId));
-        }
+        // Get event name for display
+        const eventResult = await db
+          .select({ name: events.name })
+          .from(events)
+          .where(eq(events.id, team.eventId));
         
         const eventName = eventResult.length > 0 ? eventResult[0].name : 'Unknown Event';
         
@@ -444,7 +438,7 @@ export function registerRoutes(app: Express): Server {
           const paymentMethod = await stripe.paymentMethods.retrieve(paymentMethodId);
           
           const customer = await stripe.customers.create({
-            email: team.managerEmail || team.submitterEmail || undefined,
+            email: team.managerEmail,
             name: team.managerName,
             metadata: {
               teamId: team.id.toString(),
@@ -496,18 +490,10 @@ export function registerRoutes(app: Express): Server {
         // Calculate total amount including platform fees using the same logic as approval workflow
         
         // Get event details for fee calculation
-        let eventResult;
-        if (typeof team.eventId === 'string') {
-          eventResult = await db
-            .select()
-            .from(events)
-            .where(eq(events.id, parseInt(team.eventId, 10)));
-        } else {
-          eventResult = await db
-            .select()
-            .from(events)
-            .where(eq(events.id, team.eventId));
-        }
+        const eventResult = await db
+          .select()
+          .from(events)
+          .where(eq(events.id, team.eventId));
         
         if (!eventResult || eventResult.length === 0) {
           return res.status(400).json({ error: 'Event not found for fee calculation' });
@@ -767,7 +753,7 @@ export function registerRoutes(app: Express): Server {
           }
           
           // Import sendTemplatedEmail from email service
-          const { sendTemplatedEmail } = await import('./services/emailService');
+          const { sendTemplatedEmail } = await import('./services/email-service');
           
           // Send approval notification to all recipients
           for (const recipient of emailRecipients) {
@@ -806,7 +792,7 @@ export function registerRoutes(app: Express): Server {
         });
         
       } catch (error) {
-        console.log(`Error completing payment intent for team ${req.params.teamId}: ${error}`);
+        console.log(`Error completing payment intent for team ${teamId}: ${error}`);
         
         return res.status(500).json({
           error: 'Failed to complete payment intent',
@@ -1056,7 +1042,6 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/events', isAdmin, tournamentStatusRouter); // Tournament status display
     app.use('/api/admin/events', isAdmin, scheduleViewerRouter); // Schedule viewing and management
     app.use('/api/admin', isAdmin, unifiedScheduleRouter); // Unified single-screen schedule generator
-    app.use('/api/admin', isAdmin, scheduleCalendarRouter); // Schedule calendar with drag-and-drop reschedule
     
     // Register schedule management router
     app.use('/api/admin', isAdmin, scheduleManagementRouter); // Schedule management (delete games)
@@ -6735,7 +6720,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       try {
         const eventId = req.params.id;
 
-        // Corrected query that matches actual database schema
+        // Simplified query that ensures team names are properly retrieved
         const schedule = await db.execute(sql`
           SELECT 
             g.id,
@@ -6763,28 +6748,18 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           LEFT JOIN event_age_groups eag ON g.age_group_id = eag.id
           LEFT JOIN game_time_slots ts ON g.time_slot_id = ts.id
           WHERE g.event_id = ${eventId}
-          ORDER BY COALESCE(ts.start_time, '9999-12-31'), g.id
+          ORDER BY ts.start_time NULLS LAST, g.id
         `);
 
         console.log(`Found ${schedule.rows.length} games for event ${eventId}`);
 
         // Format the schedule for frontend display with enhanced data
-        const formattedSchedule = schedule.rows.map((row: any, index: number) => {
-          // Handle missing time slots - show "TBD" for unscheduled games
-          const hasTimeSlot = row.start_time && row.end_time;
-          const startTime = hasTimeSlot ? row.start_time : 'TBD';
-          const endTime = hasTimeSlot ? row.end_time : 'TBD';
-          
-          // Handle missing field assignments - show proper "Unassigned" for unscheduled games
-          const fieldName = row.field_name || 'Unassigned';
-          console.log(`Game ${row.id}: field_id=${row.field_id}, field_name=${row.field_name}, fieldName=${fieldName}`);
-          
-          return {
+        const formattedSchedule = schedule.rows.map((row: any, index: number) => ({
             id: row.id,
             gameNumber: row.match_number || index + 1,
-            startTime: startTime,
-            endTime: endTime,
-            fieldName: fieldName,
+            startTime: row.start_time || new Date().toISOString(),
+            endTime: row.end_time || new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
+            fieldName: row.field_name || 'Unassigned',
             fieldId: row.field_id || null,
             fieldSize: row.field_size || 'Unknown',
             complexId: row.complex_id || null,
@@ -6793,16 +6768,28 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
             ageGroupId: row.age_group_id || 0,
             bracket: `${row.age_group || 'Unknown'} Flight A`,
             round: row.round || 'Pool Play',
-            // Return team names directly as strings for frontend compatibility
-            homeTeam: row.home_team_name || `Team ${row.home_team_id || 'Unknown'}`,
-            awayTeam: row.away_team_name || `Team ${row.away_team_id || 'Unknown'}`,
+            homeTeam: {
+              id: row.home_team_id || 0,
+              name: row.home_team_name || `Team ${row.home_team_id || 'Unknown'}`,
+              clubName: '',
+              coach: '',
+              status: 'approved',
+              referenceId: 'TEMP'
+            },
             homeTeamId: row.home_team_id || 0,
             homeTeamRefId: 'TEMP',
+            awayTeam: {
+              id: row.away_team_id || 0,
+              name: row.away_team_name || `Team ${row.away_team_id || 'Unknown'}`,
+              clubName: '',
+              coach: '',
+              status: 'approved',
+              referenceId: 'TEMP'
+            },
             awayTeamId: row.away_team_id || 0,
             awayTeamRefId: 'TEMP',
             status: row.status || 'scheduled',
-          };
-        });
+          }));
 
         console.log(`Returning ${formattedSchedule.length} formatted games`);
         res.json({ games: formattedSchedule });

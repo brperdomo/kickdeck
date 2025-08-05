@@ -12,7 +12,7 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
     
     console.log(`[Schedule Calendar] Fetching calendar data for event ${eventId}`);
 
-    // Get event details first to get proper dates  
+    // Get event details first to get proper dates
     const event = await db.query.events.findFirst({
       where: eq(events.id, eventId)
     });
@@ -212,64 +212,49 @@ function addMinutesToTime(timeStr: string, minutes: number): string {
   return `${newHours.toString().padStart(2, '0')}:${newMins.toString().padStart(2, '0')}`;
 }
 
+  } catch (error) {
+    console.error('[Schedule Calendar] Error:', error);
+    res.status(500).json({ 
+      error: 'Failed to fetch calendar schedule data',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
 // PUT /api/admin/games/:gameId/reschedule - Update game field and time
 router.put('/games/:gameId/reschedule', async (req, res) => {
-  console.log(`[Game Reschedule] ROUTE HIT: PUT /games/${req.params.gameId}/reschedule`);
   try {
     const { gameId } = req.params;
-    const { fieldId, startTime, eventId } = req.body;
+    const { fieldId, startTime } = req.body;
 
-    console.log(`[Game Reschedule] Updating game ${gameId} to field ${fieldId} at ${startTime} for event ${eventId}`);
+    console.log(`[Game Reschedule] Updating game ${gameId} to field ${fieldId} at ${startTime}`);
 
     // Calculate end time (assuming 90 minute games)
     const start = new Date(startTime);
     const end = new Date(start.getTime() + 90 * 60 * 1000);
     const endTime = end.toISOString();
 
-    // Create or find time slot for this assignment
-    let timeSlot;
-    try {
-      // First try to create a new time slot
-      const [newTimeSlot] = await db
-        .insert(gameTimeSlots)
-        .values({
-          eventId: eventId || '1844329078',
-          fieldId: parseInt(fieldId),
-          startTime: startTime,
-          endTime: endTime,
-          isAvailable: false,
-          dayIndex: 0
-        })
-        .returning();
-      timeSlot = newTimeSlot;
-      console.log(`[Game Reschedule] Created new time slot with ID ${timeSlot.id}`);
-    } catch (insertError) {
-      console.log(`[Game Reschedule] Time slot creation failed, using field assignment only`);
-      timeSlot = null;
-    }
-
-    // CRITICAL: Update the games table with field and time slot assignments
-    const updatedGame = await db
-      .update(games)
+    // Update the game time slot
+    const updatedTimeSlot = await db
+      .update(gameTimeSlots)
       .set({
         fieldId: parseInt(fieldId),
-        timeSlotId: timeSlot?.id || null,
-        // Update any other scheduling fields if needed
-        status: 'scheduled'
+        startTime: startTime,
+        endTime: endTime,
+        isAvailable: false
       })
-      .where(eq(games.id, parseInt(gameId)))
+      .where(eq(gameTimeSlots.eventId, req.body.eventId || '1656618593')) // Fallback event ID
       .returning();
 
-    console.log(`[Game Reschedule] FIXED: Updated games table for game ${gameId}`, updatedGame[0]);
+    console.log(`[Game Reschedule] Updated time slot for game ${gameId}`);
 
     res.json({
       success: true,
       gameId: parseInt(gameId),
       fieldId: parseInt(fieldId),
-      timeSlotId: timeSlot?.id || null,
       startTime,
       endTime,
-      message: 'Game rescheduled successfully and games table updated'
+      message: 'Game rescheduled successfully'
     });
 
   } catch (error) {
