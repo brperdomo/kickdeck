@@ -112,8 +112,12 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
           raw: game,
           homeTeamStructure: game.homeTeam,
           awayTeamStructure: game.awayTeam,
-          fieldStructure: game.fieldName || game.field
+          fieldStructure: game.fieldName || game.field,
+          rawFieldName: game.fieldName,
+          rawField: game.field
         });
+        
+        console.log(`Game ${index + 1} API data:`, JSON.stringify(game, null, 2));
         
         // Handle team names - the API is returning them directly as strings in homeTeam/awayTeam
         const homeTeamName = game.homeTeam || game.homeTeamName || `Team ${game.homeTeamId || 'Unknown'}`;

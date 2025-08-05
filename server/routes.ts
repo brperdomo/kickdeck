@@ -6762,6 +6762,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           
           // Handle missing field assignments - show proper "Unassigned" for unscheduled games
           const fieldName = row.field_name || 'Unassigned';
+          console.log(`Game ${row.id}: field_id=${row.field_id}, field_name=${row.field_name}, fieldName=${fieldName}`);
           
           return {
             id: row.id,
