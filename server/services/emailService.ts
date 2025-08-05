@@ -213,8 +213,8 @@ support@matchpro.ai`;
 
   // General HTML to text conversion (basic)
   let text = html
-    .replace(/<style[^>]*>.*?<\/style>/gi, "") // Remove style tags
-    .replace(/<script[^>]*>.*?<\/script>/gi, "") // Remove script tags
+    .replace(/<style[^>]*>.*?<\/style>/gis, "") // Remove style tags
+    .replace(/<script[^>]*>.*?<\/script>/gis, "") // Remove script tags
     .replace(/<[^>]+>/g, "") // Remove HTML tags
     .replace(/&nbsp;/g, " ") // Replace &nbsp; with space
     .replace(/&amp;/g, "&") // Replace &amp; with &

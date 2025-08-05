@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { db } from '@db';
 import { games, teams, eventAgeGroups, fields, complexes, events, gameTimeSlots } from '@db/schema';
-import { eq, count, sql, and, asc } from 'drizzle-orm';
+import { eq, count } from 'drizzle-orm';
 
 const router = Router();
 
@@ -69,7 +69,7 @@ router.get('/:eventId/schedule', async (req, res) => {
       .from(teams)
       .where(eq(teams.eventId, eventId));
 
-    // Get actual games with real team and field data
+    // Get actual games with real team and field data including time slots
     const actualGamesData = await db
       .select({
         gameId: games.id,
@@ -77,6 +77,7 @@ router.get('/:eventId/schedule', async (req, res) => {
         awayTeamId: games.awayTeamId,
         ageGroupId: games.ageGroupId,
         fieldId: games.fieldId,
+        timeSlotId: games.timeSlotId,
         status: games.status,
         homeScore: games.homeScore,
         awayScore: games.awayScore,
@@ -84,53 +85,16 @@ router.get('/:eventId/schedule', async (req, res) => {
         fieldName: fields.name,
         fieldSize: fields.fieldSize,
         complexName: complexes.name,
-        complexAddress: complexes.address
+        complexAddress: complexes.address,
+        // Get time slot data if available
+        timeSlotStart: gameTimeSlots.startTime,
+        timeSlotEnd: gameTimeSlots.endTime
       })
       .from(games)
       .leftJoin(fields, eq(games.fieldId, fields.id))
       .leftJoin(complexes, eq(fields.complexId, complexes.id))
+      .leftJoin(gameTimeSlots, eq(games.timeSlotId, gameTimeSlots.id))
       .where(eq(games.eventId, eventId));
-
-    // Get all time slots for the event
-    const allTimeSlots = await db
-      .select({
-        fieldId: gameTimeSlots.fieldId,
-        startTime: gameTimeSlots.startTime,
-        endTime: gameTimeSlots.endTime,
-        dayIndex: gameTimeSlots.dayIndex
-      })
-      .from(gameTimeSlots)
-      .where(eq(gameTimeSlots.eventId, eventId))
-      .orderBy(asc(gameTimeSlots.fieldId), asc(gameTimeSlots.startTime));
-
-    // Group time slots by field
-    const timeSlotsByField = new Map();
-    for (const slot of allTimeSlots) {
-      if (!timeSlotsByField.has(slot.fieldId)) {
-        timeSlotsByField.set(slot.fieldId, []);
-      }
-      timeSlotsByField.get(slot.fieldId).push(slot);
-    }
-
-    // Assign time slots to games - distribute games across available time slots for each field
-    const gameTimeSlotMap = new Map();
-    const fieldGameCounts = new Map(); // Track how many games assigned per field
-
-    for (const game of actualGamesData) {
-      if (game.fieldId && timeSlotsByField.has(game.fieldId)) {
-        const availableSlots = timeSlotsByField.get(game.fieldId);
-        const currentGameCount = fieldGameCounts.get(game.fieldId) || 0;
-        
-        // Cycle through available time slots for this field
-        const slotIndex = currentGameCount % availableSlots.length;
-        const assignedSlot = availableSlots[slotIndex];
-        
-        gameTimeSlotMap.set(game.gameId, assignedSlot);
-        fieldGameCounts.set(game.fieldId, currentGameCount + 1);
-        
-        console.log(`[Schedule Viewer] Assigned game ${game.gameId} to field ${game.fieldId} slot ${slotIndex}: ${assignedSlot.startTime}`);
-      }
-    }
 
     // Create team lookup map
     const teamsMap = actualTeamsData.reduce((acc, team) => {
@@ -164,26 +128,12 @@ router.get('/:eventId/schedule', async (req, res) => {
       let gameDate = tournamentDates[0]; // Default to first day
       let gameTime = '08:00';
       
-      // Get time slot data for this game
-      const timeSlot = gameTimeSlotMap.get(game.gameId);
-      
-      if (timeSlot && timeSlot.startTime && timeSlot.dayIndex !== null) {
-        // Use actual scheduled time from time slot - parse from time string format
-        console.log(`[Schedule Viewer] Found time slot for game ${game.gameId}: ${timeSlot.startTime}, day ${timeSlot.dayIndex}`);
-        
-        // Calculate the actual date based on day index
-        const targetDate = new Date(startDate);
-        targetDate.setDate(targetDate.getDate() + (timeSlot.dayIndex || 0));
-        gameDate = targetDate.toISOString().split('T')[0];
-        
-        // Extract time from time slot (should be in HH:MM format)
-        gameTime = timeSlot.startTime;
-        
+      if (game.timeSlotStart) {
+        // Use actual scheduled time from time slot
+        const startTime = new Date(game.timeSlotStart);
+        gameDate = startTime.toISOString().split('T')[0];
+        gameTime = startTime.toTimeString().substring(0, 5);
         console.log(`[Schedule Viewer] Using real time slot for game ${game.gameId}: ${gameDate} ${gameTime}`);
-      } else if (timeSlot && timeSlot.startTime) {
-        // Handle case where we have time but no day index - use time directly
-        gameTime = timeSlot.startTime;
-        console.log(`[Schedule Viewer] Using time slot time only for game ${game.gameId}: ${gameTime}`);
       } else {
         // Distribute games evenly across tournament days with realistic times
         const gamesPerDay = Math.ceil(actualGamesData.length / tournamentDates.length);
@@ -197,8 +147,6 @@ router.get('/:eventId/schedule', async (req, res) => {
         const hour = 8 + slotIndex;
         const minute = (gameIndexInDay % 2) * 30; // Alternate between :00 and :30
         gameTime = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-        
-        console.log(`[Schedule Viewer] Generated fallback time for game ${game.gameId}: ${gameDate} ${gameTime}`);
       }
       
       return {
