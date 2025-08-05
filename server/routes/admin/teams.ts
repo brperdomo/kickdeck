@@ -290,7 +290,7 @@ async function processTeamApprovalPaymentFallback(team: any, teamId: string): Pr
     log(`  - destinationAccountId: ${eventInfo.stripeConnectAccountId}`, 'admin');
     
     // Calculate the total amount including platform fees
-    const { calculateEventFees } = await import('../services/fee-calculator.js');
+    const { calculateEventFees } = await import('../../services/fee-calculator');
     const feeCalculation = await calculateEventFees(team.eventId, team.totalAmount);
     
     log(`FALLBACK Fee calculation:`, 'admin');
@@ -299,7 +299,7 @@ async function processTeamApprovalPaymentFallback(team: any, teamId: string): Pr
     log(`  - platform fee: $${(feeCalculation.platformFeeAmount / 100).toFixed(2)}`, 'admin');
     
     const paymentResult = await processDestinationCharge(
-      teamId,
+      parseInt(teamId, 10),
       team.eventId,
       setupIntent.payment_method as string,
       feeCalculation.totalChargedAmount, // Use total amount including platform fees
@@ -735,7 +735,7 @@ async function updateTeamStatus(req: Request, res: Response) {
                       log(`Attempting direct payment with burned payment method ${originalPaymentMethod}`, 'admin');
                       
                       // Try to charge the payment method directly without customer association
-                      const { calculateEventFees } = await import('../services/fee-calculator.js');
+                      const { calculateEventFees } = await import('../../services/fee-calculator');
                       const feeCalculation = await calculateEventFees(currentTeam.eventId, currentTeam.totalAmount);
                       
                       // Get event Connect account info
@@ -746,7 +746,7 @@ async function updateTeamStatus(req: Request, res: Response) {
                           connectChargesEnabled: events.connectChargesEnabled
                         })
                         .from(events)
-                        .where(eq(events.id, currentTeam.eventId));
+                        .where(eq(events.id, typeof currentTeam.eventId === 'string' ? parseInt(currentTeam.eventId, 10) : currentTeam.eventId));
                       
                       if (eventInfo?.stripeConnectAccountId && 
                           eventInfo.connectAccountStatus === 'active' && 
@@ -780,7 +780,7 @@ async function updateTeamStatus(req: Request, res: Response) {
                             .set({
                               paymentIntentId: directPaymentIntent.id,
                               paymentStatus: 'paid',
-                              paymentMethodId: originalPaymentMethod,
+                              paymentMethodId: typeof originalPaymentMethod === 'string' ? originalPaymentMethod : originalPaymentMethod?.id,
                               stripeCustomerId: correctCustomerId
                             })
                             .where(eq(teams.id, parseInt(teamId, 10)));
@@ -2253,11 +2253,11 @@ async function generatePaymentIntentCompletionUrl(req: Request, res: Response) {
       columns: {
         id: true,
         name: true,
-        payment_status: true,
-        payment_intent_id: true,
-        setup_intent_id: true,
-        total_amount: true,
-        submitter_email: true
+        paymentStatus: true,
+        paymentIntentId: true,
+        setupIntentId: true,
+        totalAmount: true,
+        submitterEmail: true
       }
     });
 
@@ -2265,22 +2265,22 @@ async function generatePaymentIntentCompletionUrl(req: Request, res: Response) {
       return res.status(404).json({ error: 'Team not found' });
     }
 
-    if (!team.payment_intent_id) {
+    if (!team.paymentIntentId) {
       return res.status(400).json({ error: 'No payment intent found for this team' });
     }
 
     // Check if payment is already complete (unless force override)
-    if (team.payment_status === 'paid' && !forceGenerate) {
+    if (team.paymentStatus === 'paid' && !forceGenerate) {
       return res.status(400).json({ error: 'Payment already completed for this team' });
     }
 
     // Retrieve the payment intent from Stripe to get client secret
-    const paymentIntent = await stripe.paymentIntents.retrieve(team.payment_intent_id);
+    const paymentIntent = await stripe.paymentIntents.retrieve(team.paymentIntentId);
     
     if (paymentIntent.status === 'succeeded') {
       // Payment actually succeeded, update team status
       await db.update(teams)
-        .set({ payment_status: 'paid' })
+        .set({ paymentStatus: 'paid' })
         .where(eq(teams.id, teamId));
       
       return res.status(400).json({ 
@@ -2298,10 +2298,10 @@ async function generatePaymentIntentCompletionUrl(req: Request, res: Response) {
       ? 'https://app.matchpro.ai' 
       : `${req.protocol}://${req.get('host')}`;
     
-    const completionUrl = `${baseUrl}/complete-payment?payment_intent=${team.payment_intent_id}&payment_intent_client_secret=${paymentIntent.client_secret}`;
+    const completionUrl = `${baseUrl}/complete-payment?payment_intent=${team.paymentIntentId}&payment_intent_client_secret=${paymentIntent.client_secret}`;
 
     log(`Generated payment completion URL for Team ${teamId} (${team.name}):`, 'admin');
-    log(`Payment Intent: ${team.payment_intent_id} - Status: ${paymentIntent.status}`, 'admin');
+    log(`Payment Intent: ${team.paymentIntentId} - Status: ${paymentIntent.status}`, 'admin');
     if (paymentIntent.last_payment_error) {
       log(`Last Payment Error: ${paymentIntent.last_payment_error.message}`, 'admin');
     }

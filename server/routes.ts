@@ -5,8 +5,7 @@ import { setupWebSocketServer } from "./websocket";
 import { log } from "./vite";
 import { crypto } from "./crypto";
 import { db } from "@db";
-import { emailTemplates, insertPlayerSchema, fields, complexes } from "@db/schema";
-import { sql, eq } from "drizzle-orm";
+import { emailTemplates, insertPlayerSchema } from "@db/schema";
 import Stripe from 'stripe';
 import { isAdmin, hasEventAccess } from "./middleware";
 import { authenticateTournamentDirector } from "./middleware/tournament-director-auth";
@@ -68,7 +67,6 @@ import scheduleViewerRouter from "./routes/admin/schedule-viewer";
 import unifiedScheduleRouter from "./routes/admin/unified-schedule";
 import scheduleManagementRouter from "./routes/admin/schedule-management";
 import scheduleCalendarRouter from "./routes/admin/schedule-calendar";
-import fieldsRouter from "./routes/admin/fields";
 import fieldManagementRouter from "./routes/admin/field-management";
 import enhancedConflictDetectionRouter from "./routes/admin/enhanced-conflict-detection";
 import enhancedFieldManagementRouter from "./routes/admin/enhanced-field-management";
@@ -299,11 +297,19 @@ export function registerRoutes(app: Express): Server {
         
         const team = teamResult[0];
         
-        // Get event name for display
-        const eventResult = await db
-          .select({ name: events.name })
-          .from(events)
-          .where(eq(events.id, team.eventId));
+        // Get event name for display  
+        let eventResult;
+        if (typeof team.eventId === 'string') {
+          eventResult = await db
+            .select({ name: events.name })
+            .from(events)
+            .where(eq(events.id, parseInt(team.eventId, 10)));
+        } else {
+          eventResult = await db
+            .select({ name: events.name })
+            .from(events)
+            .where(eq(events.id, team.eventId));
+        }
         
         const eventName = eventResult.length > 0 ? eventResult[0].name : 'Unknown Event';
         
@@ -438,7 +444,7 @@ export function registerRoutes(app: Express): Server {
           const paymentMethod = await stripe.paymentMethods.retrieve(paymentMethodId);
           
           const customer = await stripe.customers.create({
-            email: team.managerEmail,
+            email: team.managerEmail || team.submitterEmail || undefined,
             name: team.managerName,
             metadata: {
               teamId: team.id.toString(),
@@ -490,10 +496,18 @@ export function registerRoutes(app: Express): Server {
         // Calculate total amount including platform fees using the same logic as approval workflow
         
         // Get event details for fee calculation
-        const eventResult = await db
-          .select()
-          .from(events)
-          .where(eq(events.id, team.eventId));
+        let eventResult;
+        if (typeof team.eventId === 'string') {
+          eventResult = await db
+            .select()
+            .from(events)
+            .where(eq(events.id, parseInt(team.eventId, 10)));
+        } else {
+          eventResult = await db
+            .select()
+            .from(events)
+            .where(eq(events.id, team.eventId));
+        }
         
         if (!eventResult || eventResult.length === 0) {
           return res.status(400).json({ error: 'Event not found for fee calculation' });
@@ -753,7 +767,7 @@ export function registerRoutes(app: Express): Server {
           }
           
           // Import sendTemplatedEmail from email service
-          const { sendTemplatedEmail } = await import('./services/email-service');
+          const { sendTemplatedEmail } = await import('./services/emailService');
           
           // Send approval notification to all recipients
           for (const recipient of emailRecipients) {
@@ -792,7 +806,7 @@ export function registerRoutes(app: Express): Server {
         });
         
       } catch (error) {
-        console.log(`Error completing payment intent for team ${teamId}: ${error}`);
+        console.log(`Error completing payment intent for team ${req.params.teamId}: ${error}`);
         
         return res.status(500).json({
           error: 'Failed to complete payment intent',
