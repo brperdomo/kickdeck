@@ -1,0 +1,356 @@
+Flight configs loaded: 72 flights
+UnifiedTournamentControlCenter-DYfab0LL.js:1 Configured flights: 10 of 72
+10Fetch finished loading: GET "<URL>".
+UnifiedTournamentControlCenter-DYfab0LL.js:1 Flight configs loaded: 72 flights
+UnifiedTournamentControlCenter-DYfab0LL.js:1 Configured flights: 10 of 72
+UnifiedScheduleSetup-VLak4BBi.js:1 QUICK SCHEDULER DEBUG: Fetching teams for event 1844329078
+UnifiedScheduleSetup-VLak4BBi.js:1 QUICK SCHEDULER DEBUG: API URL: /api/admin/teams?eventId=1844329078
+UnifiedScheduleSetup-VLak4BBi.js:1 QUICK SCHEDULER DEBUG: Response status: 200
+UnifiedScheduleSetup-VLak4BBi.js:1 QUICK SCHEDULER DEBUG: Response ok: true
+UnifiedScheduleSetup-VLak4BBi.js:1 QUICK SCHEDULER DEBUG: Teams Data for event 1844329078 : (305) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+UnifiedScheduleSetup-VLak4BBi.js:1 QUICK SCHEDULER DEBUG: Total teams received: 305
+UnifiedScheduleSetup-VLak4BBi.js:1 QUICK SCHEDULER DEBUG: Status breakdown: {registered: 16, waitlisted: 11, placeholder: 2, approved: 257, rejected: 18, …}
+UnifiedScheduleSetup-VLak4BBi.js:1 QUICK SCHEDULER DEBUG: Approved teams count: 257
+UnifiedScheduleSetup-VLak4BBi.js:1 Age Groups Data: (24) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+UnifiedScheduleSetup-VLak4BBi.js:2 AUTO-FORMAT: U15 → 11v11, 90min, Full Size field
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+UnifiedScheduleSetup-VLak4BBi.js:2 Fetch finished loading: POST "https://app.matchpro.ai/api/admin/events/1844329078/unified-schedule".
+mutationFn @ UnifiedScheduleSetup-VLak4BBi.js:2
+fn @ index-BqXeKt2T.js:41
+f @ index-BqXeKt2T.js:41
+start @ index-BqXeKt2T.js:41
+execute @ index-BqXeKt2T.js:41
+await in execute
+mutate @ index-BqXeKt2T.js:41
+(anonymous) @ index-BqXeKt2T.js:41
+te @ UnifiedScheduleSetup-VLak4BBi.js:3
+_ue @ index-BqXeKt2T.js:38
+Due @ index-BqXeKt2T.js:38
+Iue @ index-BqXeKt2T.js:38
+pM @ index-BqXeKt2T.js:38
+Xq @ index-BqXeKt2T.js:38
+(anonymous) @ index-BqXeKt2T.js:38
+NO @ index-BqXeKt2T.js:41
+bq @ index-BqXeKt2T.js:38
+E2 @ index-BqXeKt2T.js:38
+X4 @ index-BqXeKt2T.js:38
+Xue @ index-BqXeKt2T.js:38
+ScheduleViewerFixed-D8fZY5pM.js:6 Schedule API Response: {games: Array(15), fields: Array(12), ageGroups: Array(24), dates: Array(2), totalGames: 15, …}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 1 transformation debug: {raw: {…}, homeTeamStructure: 'Sporting California Girls 2011 ECNL RL SoCal', awayTeamStructure: 'Sporting CA USA ECNL RL G11- GS', fieldStructure: 'f1', rawFieldName: 'f1', …}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 1 API data: {
+  "id": 6588,
+  "homeTeam": "Sporting California Girls 2011 ECNL RL SoCal",
+  "awayTeam": "Sporting CA USA ECNL RL G11- GS",
+  "homeTeamClub": "Sporting California USA",
+  "awayTeamClub": "Sporting California USA",
+  "ageGroup": "U15",
+  "field": "f1 (Galway Downs Soccer Complex)",
+  "fieldName": "f1",
+  "complexName": "Galway Downs Soccer Complex",
+  "complexAddress": "38801 Los Corralitos Road, Temecula, California 92592, United States",
+  "fieldSize": "11v11",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 1 transformed: {id: 6588, homeTeam: 'Sporting California Girls 2011 ECNL RL SoCal', awayTeam: 'Sporting CA USA ECNL RL G11- GS', ageGroup: 'U15', field: 'f1', …}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 2 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf North G2011A-1', awayTeamStructure: 'Desert Empire Surf G11 Academy', fieldStructure: 'f1', rawFieldName: 'f1', …}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 2 API data: {
+  "id": 6576,
+  "homeTeam": "Empire Surf North G2011A-1",
+  "awayTeam": "Desert Empire Surf G11 Academy",
+  "homeTeamClub": "Empire Surf",
+  "awayTeamClub": "Desert Empire Surf",
+  "ageGroup": "U15",
+  "field": "f1 (Galway Downs Soccer Complex)",
+  "fieldName": "f1",
+  "complexName": "Galway Downs Soccer Complex",
+  "complexAddress": "38801 Los Corralitos Road, Temecula, California 92592, United States",
+  "fieldSize": "11v11",
+  "date": "2025-08-16",
+  "time": "09:30",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 2 transformed: {id: 6576, homeTeam: 'Empire Surf North G2011A-1', awayTeam: 'Desert Empire Surf G11 Academy', ageGroup: 'U15', field: 'f1', …}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 3 transformation debug: {raw: {…}, homeTeamStructure: 'Sporting CA USA ECNL RL G11- GS', awayTeamStructure: 'ALBION SC Riverside G11 DPL', fieldStructure: 'f2', rawFieldName: 'f2', …}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 3 API data: {
+  "id": 6589,
+  "homeTeam": "Sporting CA USA ECNL RL G11- GS",
+  "awayTeam": "ALBION SC Riverside G11 DPL",
+  "homeTeamClub": "Sporting California USA",
+  "awayTeamClub": "ALBION SC Riverside",
+  "ageGroup": "U15",
+  "field": "f2 (Galway Downs Soccer Complex)",
+  "fieldName": "f2",
+  "complexName": "Galway Downs Soccer Complex",
+  "complexAddress": "38801 Los Corralitos Road, Temecula, California 92592, United States",
+  "fieldSize": "11v11",
+  "date": "2025-08-16",
+  "time": "10:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 3 transformed: {id: 6589, homeTeam: 'Sporting CA USA ECNL RL G11- GS', awayTeam: 'ALBION SC Riverside G11 DPL', ageGroup: 'U15', field: 'f2', …}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 4 transformation debug: {raw: {…}, homeTeamStructure: 'Desert Empire Surf G11 Academy', awayTeamStructure: 'FC Premier Elite G2011', fieldStructure: 'f2', rawFieldName: 'f2', …}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 4 API data: {
+  "id": 6577,
+  "homeTeam": "Desert Empire Surf G11 Academy",
+  "awayTeam": "FC Premier Elite G2011",
+  "homeTeamClub": "Desert Empire Surf",
+  "awayTeamClub": "FC Premier Elite",
+  "ageGroup": "U15",
+  "field": "f2 (Galway Downs Soccer Complex)",
+  "fieldName": "f2",
+  "complexName": "Galway Downs Soccer Complex",
+  "complexAddress": "38801 Los Corralitos Road, Temecula, California 92592, United States",
+  "fieldSize": "11v11",
+  "date": "2025-08-16",
+  "time": "11:30",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 4 transformed: {id: 6577, homeTeam: 'Desert Empire Surf G11 Academy', awayTeam: 'FC Premier Elite G2011', ageGroup: 'U15', field: 'f2', …}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 5 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf North G2011A-1', awayTeamStructure: 'ALBION SC Riverside G11 DPL', fieldStructure: 'A1', rawFieldName: 'A1', …}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 5 API data: {
+  "id": 6590,
+  "homeTeam": "Empire Surf North G2011A-1",
+  "awayTeam": "ALBION SC Riverside G11 DPL",
+  "homeTeamClub": "Empire Surf",
+  "awayTeamClub": "ALBION SC Riverside",
+  "ageGroup": "U15",
+  "field": "A1 (Galway Downs Soccer Complex)",
+  "fieldName": "A1",
+  "complexName": "Galway Downs Soccer Complex",
+  "complexAddress": "38801 Los Corralitos Road, Temecula, California 92592, United States",
+  "fieldSize": "9v9",
+  "date": "2025-08-16",
+  "time": "12:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 5 transformed: {id: 6590, homeTeam: 'Empire Surf North G2011A-1', awayTeam: 'ALBION SC Riverside G11 DPL', ageGroup: 'U15', field: 'A1', …}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 6 transformation debug: {raw: {…}, homeTeamStructure: 'FC Premier Elite G2011', awayTeamStructure: 'Sporting California USA ECNL RL SoCal G2011', fieldStructure: 'A1', rawFieldName: 'A1', …}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 6 API data: {
+  "id": 6578,
+  "homeTeam": "FC Premier Elite G2011",
+  "awayTeam": "Sporting California USA ECNL RL SoCal G2011",
+  "homeTeamClub": "FC Premier Elite",
+  "awayTeamClub": "Sporting California USA",
+  "ageGroup": "U15",
+  "field": "A1 (Galway Downs Soccer Complex)",
+  "fieldName": "A1",
+  "complexName": "Galway Downs Soccer Complex",
+  "complexAddress": "38801 Los Corralitos Road, Temecula, California 92592, United States",
+  "fieldSize": "9v9",
+  "date": "2025-08-16",
+  "time": "13:30",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 6 transformed: {id: 6578, homeTeam: 'FC Premier Elite G2011', awayTeam: 'Sporting California USA ECNL RL SoCal G2011', ageGroup: 'U15', field: 'A1', …}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 7 transformation debug: {raw: {…}, homeTeamStructure: 'Sporting California USA ECNL RL SoCal G2011', awayTeamStructure: 'Empire Surf North G2011 NL', fieldStructure: 'A2', rawFieldName: 'A2', …}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 7 API data: {
+  "id": 6579,
+  "homeTeam": "Sporting California USA ECNL RL SoCal G2011",
+  "awayTeam": "Empire Surf North G2011 NL",
+  "homeTeamClub": "Sporting California USA",
+  "awayTeamClub": "Empire Surf",
+  "ageGroup": "U15",
+  "field": "A2 (Galway Downs Soccer Complex)",
+  "fieldName": "A2",
+  "complexName": "Galway Downs Soccer Complex",
+  "complexAddress": "38801 Los Corralitos Road, Temecula, California 92592, United States",
+  "fieldSize": "9v9",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 7 transformed: {id: 6579, homeTeam: 'Sporting California USA ECNL RL SoCal G2011', awayTeam: 'Empire Surf North G2011 NL', ageGroup: 'U15', field: 'A2', …}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 8 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf North G2011 NL', awayTeamStructure: 'Desert Empire Surf G11 Academy 1', fieldStructure: 'B1', rawFieldName: 'B1', …}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 8 API data: {
+  "id": 6580,
+  "homeTeam": "Empire Surf North G2011 NL",
+  "awayTeam": "Desert Empire Surf G11 Academy 1",
+  "homeTeamClub": "Empire Surf",
+  "awayTeamClub": "Desert Empire Surf",
+  "ageGroup": "U15",
+  "field": "B1 (Galway Downs Soccer Complex)",
+  "fieldName": "B1",
+  "complexName": "Galway Downs Soccer Complex",
+  "complexAddress": "38801 Los Corralitos Road, Temecula, California 92592, United States",
+  "fieldSize": "7v7",
+  "date": "2025-08-16",
+  "time": "15:30",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 8 transformed: {id: 6580, homeTeam: 'Empire Surf North G2011 NL', awayTeam: 'Desert Empire Surf G11 Academy 1', ageGroup: 'U15', field: 'B1', …}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 9 transformation debug: {raw: {…}, homeTeamStructure: 'Desert Empire Surf G11 Academy 1', awayTeamStructure: 'San Diego Force 2011 Girls Academy', fieldStructure: 'B2', rawFieldName: 'B2', …}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 9 API data: {
+  "id": 6581,
+  "homeTeam": "Desert Empire Surf G11 Academy 1",
+  "awayTeam": "San Diego Force 2011 Girls Academy",
+  "homeTeamClub": "Desert Empire Surf",
+  "awayTeamClub": "San Diego Force FC",
+  "ageGroup": "U15",
+  "field": "B2 (Galway Downs Soccer Complex)",
+  "fieldName": "B2",
+  "complexName": "Galway Downs Soccer Complex",
+  "complexAddress": "38801 Los Corralitos Road, Temecula, California 92592, United States",
+  "fieldSize": "7v7",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 9 transformed: {id: 6581, homeTeam: 'Desert Empire Surf G11 Academy 1', awayTeam: 'San Diego Force 2011 Girls Academy', ageGroup: 'U15', field: 'B2', …}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 10 transformation debug: {raw: {…}, homeTeamStructure: 'San Diego Force 2011 Girls Academy', awayTeamStructure: 'Empire Surf G2012 A-1 NPL', fieldStructure: 'f3', rawFieldName: 'f3', …}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 10 API data: {
+  "id": 6582,
+  "homeTeam": "San Diego Force 2011 Girls Academy",
+  "awayTeam": "Empire Surf G2012 A-1 NPL",
+  "homeTeamClub": "San Diego Force FC",
+  "awayTeamClub": "Empire Surf",
+  "ageGroup": "U15",
+  "field": "f3 (Galway Downs Soccer Complex)",
+  "fieldName": "f3",
+  "complexName": "Galway Downs Soccer Complex",
+  "complexAddress": "38801 Los Corralitos Road, Temecula, California 92592, United States",
+  "fieldSize": "11v11",
+  "date": "2025-08-17",
+  "time": "09:30",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 10 transformed: {id: 6582, homeTeam: 'San Diego Force 2011 Girls Academy', awayTeam: 'Empire Surf G2012 A-1 NPL', ageGroup: 'U15', field: 'f3', …}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 11 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf G2012 A-1 NPL', awayTeamStructure: 'Legends FC SD North G2011 NL Premier (E64)', fieldStructure: 'f4', rawFieldName: 'f4', …}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 11 API data: {
+  "id": 6583,
+  "homeTeam": "Empire Surf G2012 A-1 NPL",
+  "awayTeam": "Legends FC SD North G2011 NL Premier (E64)",
+  "homeTeamClub": "Empire Surf",
+  "awayTeamClub": "Legends FC SD North ",
+  "ageGroup": "U15",
+  "field": "f4 (Galway Downs Soccer Complex)",
+  "fieldName": "f4",
+  "complexName": "Galway Downs Soccer Complex",
+  "complexAddress": "38801 Los Corralitos Road, Temecula, California 92592, United States",
+  "fieldSize": "11v11",
+  "date": "2025-08-17",
+  "time": "10:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 11 transformed: {id: 6583, homeTeam: 'Empire Surf G2012 A-1 NPL', awayTeam: 'Legends FC SD North G2011 NL Premier (E64)', ageGroup: 'U15', field: 'f4', …}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 12 transformation debug: {raw: {…}, homeTeamStructure: 'Legends FC SD North G2011 NL Premier (E64)', awayTeamStructure: 'City SC San Marcos Gold G2011', fieldStructure: 'f5', rawFieldName: 'f5', …}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 12 API data: {
+  "id": 6584,
+  "homeTeam": "Legends FC SD North G2011 NL Premier (E64)",
+  "awayTeam": "City SC San Marcos Gold G2011",
+  "homeTeamClub": "Legends FC SD North ",
+  "awayTeamClub": "City SC Southwest",
+  "ageGroup": "U15",
+  "field": "f5 (Galway Downs Soccer Complex)",
+  "fieldName": "f5",
+  "complexName": "Galway Downs Soccer Complex",
+  "complexAddress": "38801 Los Corralitos Road, Temecula, California 92592, United States",
+  "fieldSize": "11v11",
+  "date": "2025-08-17",
+  "time": "11:30",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 12 transformed: {id: 6584, homeTeam: 'Legends FC SD North G2011 NL Premier (E64)', awayTeam: 'City SC San Marcos Gold G2011', ageGroup: 'U15', field: 'f5', …}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 13 transformation debug: {raw: {…}, homeTeamStructure: 'City SC San Marcos Gold G2011', awayTeamStructure: 'ELI7E FC - SELECT G2011', fieldStructure: 'f6', rawFieldName: 'f6', …}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 13 API data: {
+  "id": 6585,
+  "homeTeam": "City SC San Marcos Gold G2011",
+  "awayTeam": "ELI7E FC - SELECT G2011",
+  "homeTeamClub": "City SC Southwest",
+  "awayTeamClub": "ELI7E FC",
+  "ageGroup": "U15",
+  "field": "f6 (Galway Downs Soccer Complex)",
+  "fieldName": "f6",
+  "complexName": "Galway Downs Soccer Complex",
+  "complexAddress": "38801 Los Corralitos Road, Temecula, California 92592, United States",
+  "fieldSize": "11v11",
+  "date": "2025-08-17",
+  "time": "12:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 13 transformed: {id: 6585, homeTeam: 'City SC San Marcos Gold G2011', awayTeam: 'ELI7E FC - SELECT G2011', ageGroup: 'U15', field: 'f6', …}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 14 transformation debug: {raw: {…}, homeTeamStructure: 'ELI7E FC - SELECT G2011', awayTeamStructure: 'Future FC G11', fieldStructure: 'Small1', rawFieldName: 'Small1', …}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 14 API data: {
+  "id": 6586,
+  "homeTeam": "ELI7E FC - SELECT G2011",
+  "awayTeam": "Future FC G11",
+  "homeTeamClub": "ELI7E FC",
+  "awayTeamClub": "Future FC",
+  "ageGroup": "U15",
+  "field": "Small1 (Galway Downs Soccer Complex)",
+  "fieldName": "Small1",
+  "complexName": "Galway Downs Soccer Complex",
+  "complexAddress": "38801 Los Corralitos Road, Temecula, California 92592, United States",
+  "fieldSize": "4v4",
+  "date": "2025-08-17",
+  "time": "13:30",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 14 transformed: {id: 6586, homeTeam: 'ELI7E FC - SELECT G2011', awayTeam: 'Future FC G11', ageGroup: 'U15', field: 'Small1', …}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 15 transformation debug: {raw: {…}, homeTeamStructure: 'Future FC G11', awayTeamStructure: 'Sporting California Girls 2011 ECNL RL SoCal', fieldStructure: 'Small2', rawFieldName: 'Small2', …}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 15 API data: {
+  "id": 6587,
+  "homeTeam": "Future FC G11",
+  "awayTeam": "Sporting California Girls 2011 ECNL RL SoCal",
+  "homeTeamClub": "Future FC",
+  "awayTeamClub": "Sporting California USA",
+  "ageGroup": "U15",
+  "field": "Small2 (Galway Downs Soccer Complex)",
+  "fieldName": "Small2",
+  "complexName": "Galway Downs Soccer Complex",
+  "complexAddress": "38801 Los Corralitos Road, Temecula, California 92592, United States",
+  "fieldSize": "4v4",
+  "date": "2025-08-17",
+  "time": "14:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 15 transformed: {id: 6587, homeTeam: 'Future FC G11', awayTeam: 'Sporting California Girls 2011 ECNL RL SoCal', ageGroup: 'U15', field: 'Small2', …}

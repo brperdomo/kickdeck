@@ -100,6 +100,27 @@ router.post('/events/:eventId/unified-schedule', requireAuth, async (req, res) =
       .where(eq(fields.isOpen, true));
 
     console.log(`[Unified Schedule] Available fields: ${eventFields.length}`);
+    
+    // Determine required field size for this age group
+    function getFieldSizeForAgeGroup(ageGroupName: string): string {
+      const ageMatch = ageGroupName.match(/U(\d+)/);
+      if (!ageMatch) return '11v11';
+      
+      const age = parseInt(ageMatch[1]);
+      if (age <= 7) return '4v4';
+      if (age <= 10) return '7v7';
+      if (age <= 12) return '9v9';
+      return '11v11';
+    }
+    
+    const requiredFieldSize = getFieldSizeForAgeGroup(ageGroup.ageGroup);
+    console.log(`[Field Size Logic] Age group ${ageGroup.ageGroup} requires ${requiredFieldSize} fields`);
+    
+    // Filter fields to match the required field size first
+    const suitableFields = eventFields.filter(field => field.fieldSize === requiredFieldSize);
+    const fieldsToUse = suitableFields.length > 0 ? suitableFields : eventFields;
+    
+    console.log(`[Field Assignment] Found ${suitableFields.length} suitable ${requiredFieldSize} fields, using ${fieldsToUse.length} fields total`);
 
     // Generate games for this age group using smart tournament logic
     type GeneratedGame = {
@@ -239,26 +260,26 @@ router.post('/events/:eventId/unified-schedule', requireAuth, async (req, res) =
       const gameSlotDuration = gameDuration + restPeriod;
       const maxSlotsPerFieldPerDay = Math.floor(availableMinutesPerDay / gameSlotDuration);
       
-      console.log(`[Smart Field Assignment] Daily capacity: ${maxSlotsPerFieldPerDay} games per field × ${eventFields.length} fields = ${maxSlotsPerFieldPerDay * eventFields.length} total games per day`);
+      console.log(`[Smart Field Assignment] Daily capacity: ${maxSlotsPerFieldPerDay} games per field × ${fieldsToUse.length} fields = ${maxSlotsPerFieldPerDay * fieldsToUse.length} total games per day`);
       
       // Reset field schedules for this day
-      eventFields.forEach(field => {
+      fieldsToUse.forEach(field => {
         fieldSchedules.set(field.id, []);
       });
       
       let currentTimeSlot = 0;
       let gamesScheduledToday = 0;
-      const maxGamesPerDay = maxSlotsPerFieldPerDay * eventFields.length;
+      const maxGamesPerDay = maxSlotsPerFieldPerDay * fieldsToUse.length;
       
       // Schedule games for current day using round-robin field assignment
       while (gameIndex < generatedGames.length && 
              currentTimeSlot < maxSlotsPerFieldPerDay && 
              gamesScheduledToday < maxGamesPerDay) {
         
-        // Schedule games in parallel across all fields for this time slot
-        for (let fieldIndex = 0; fieldIndex < eventFields.length && gameIndex < generatedGames.length; fieldIndex++) {
+        // Schedule games in parallel across all suitable fields for this time slot
+        for (let fieldIndex = 0; fieldIndex < fieldsToUse.length && gameIndex < generatedGames.length; fieldIndex++) {
           const game = generatedGames[gameIndex];
-          const selectedField = eventFields[fieldIndex];
+          const selectedField = fieldsToUse[fieldIndex];
           
           // Calculate time for this slot
           const slotStartTime = dailyStartTime + (currentTimeSlot * gameSlotDuration);
@@ -293,7 +314,7 @@ router.post('/events/:eventId/unified-schedule', requireAuth, async (req, res) =
         currentTimeSlot++;
       }
       
-      console.log(`[Smart Field Assignment] Day ${dayIndex + 1} Complete: Scheduled ${gamesScheduledToday} games across ${eventFields.length} fields`);
+      console.log(`[Smart Field Assignment] Day ${dayIndex + 1} Complete: Scheduled ${gamesScheduledToday} games across ${fieldsToUse.length} fields`);
       
       // Move to next day
       currentDate.setDate(currentDate.getDate() + 1);
@@ -302,9 +323,9 @@ router.post('/events/:eventId/unified-schedule', requireAuth, async (req, res) =
     
     // Display final field distribution statistics
     console.log(`[Smart Field Assignment] === FINAL DISTRIBUTION SUMMARY ===`);
-    eventFields.forEach(field => {
+    fieldsToUse.forEach(field => {
       const fieldGames = scheduledGames.filter(g => g.fieldId === field.id).length;
-      console.log(`[Smart Field Assignment] ${field.name} (ID: ${field.id}): ${fieldGames} games scheduled`);
+      console.log(`[Smart Field Assignment] ${field.name} (ID: ${field.id}, ${field.fieldSize}): ${fieldGames} games scheduled`);
     });
 
     console.log(`[Unified Schedule] Generated ${scheduledGames.length} scheduled games`);
