@@ -116,8 +116,8 @@ router.get('/:eventId/schedule', async (req, res) => {
       const awayTeam = game.awayTeamId ? teamsMap[game.awayTeamId] : null;
       const ageGroup = ageGroupsMap[game.ageGroupId] || 'Unknown';
       
-      // Use real field data from database
-      const fieldName = game.fieldName || `Field ${game.fieldId}`;
+      // Use real field data from database - handle null field assignments properly
+      const fieldName = game.fieldName || (game.fieldId ? `Field ${game.fieldId}` : 'Unassigned');
       const venue = game.complexName ? `${fieldName} (${game.complexName})` : fieldName;
       
       // Use proper tournament schedule from game_time_slots or distribute evenly
