@@ -1,0 +1,17 @@
+Flight configs loaded: 72 flights
+UnifiedTournamentControlCenter-aX2y_3Pp.js:1 Configured flights: 10 of 72
+UnifiedTournamentControlCenter-aX2y_3Pp.js:1 Flight configs loaded: 72 flights
+UnifiedTournamentControlCenter-aX2y_3Pp.js:1 Configured flights: 10 of 72
+ScheduleViewerFixed-zU903x_5.js:6 Schedule API Response: {games: Array(6), fields: Array(12), ageGroups: Array(24), dates: Array(2), totalGames: 6, …}
+ScheduleViewerFixed-zU903x_5.js:6 Game 1 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest G10 DPL', awayTeamStructure: 'San Diego Force FC G2010 Academy', fieldStructure: 'Field null'}
+ScheduleViewerFixed-zU903x_5.js:6 Game 1 transformed: {id: 6485, homeTeam: 'City SC Southwest G10 DPL', awayTeam: 'San Diego Force FC G2010 Academy', ageGroup: 'U16', field: 'Field null', …}
+ScheduleViewerFixed-zU903x_5.js:6 Game 2 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest-MV G2010', awayTeamStructure: 'San Diego Force FC G2010 Academy', fieldStructure: 'Field null'}
+ScheduleViewerFixed-zU903x_5.js:6 Game 2 transformed: {id: 6484, homeTeam: 'City SC Southwest-MV G2010', awayTeam: 'San Diego Force FC G2010 Academy', ageGroup: 'U16', field: 'Field null', …}
+ScheduleViewerFixed-zU903x_5.js:6 Game 3 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest-MV G2010', awayTeamStructure: 'City SC Southwest G10 DPL', fieldStructure: 'Field null'}
+ScheduleViewerFixed-zU903x_5.js:6 Game 3 transformed: {id: 6483, homeTeam: 'City SC Southwest-MV G2010', awayTeam: 'City SC Southwest G10 DPL', ageGroup: 'U16', field: 'Field null', …}
+ScheduleViewerFixed-zU903x_5.js:6 Game 4 transformation debug: {raw: {…}, homeTeamStructure: 'Future FC G2010 Shy', awayTeamStructure: 'San Diego Force FC G2010 Academy', fieldStructure: 'Field null'}
+ScheduleViewerFixed-zU903x_5.js:6 Game 4 transformed: {id: 6482, homeTeam: 'Future FC G2010 Shy', awayTeam: 'San Diego Force FC G2010 Academy', ageGroup: 'U16', field: 'Field null', …}
+ScheduleViewerFixed-zU903x_5.js:6 Game 5 transformation debug: {raw: {…}, homeTeamStructure: 'Future FC G2010 Shy', awayTeamStructure: 'City SC Southwest G10 DPL', fieldStructure: 'Field null'}
+ScheduleViewerFixed-zU903x_5.js:6 Game 5 transformed: {id: 6481, homeTeam: 'Future FC G2010 Shy', awayTeam: 'City SC Southwest G10 DPL', ageGroup: 'U16', field: 'Field null', …}
+ScheduleViewerFixed-zU903x_5.js:6 Game 6 transformation debug: {raw: {…}, homeTeamStructure: 'Future FC G2010 Shy', awayTeamStructure: 'City SC Southwest-MV G2010', fieldStructure: 'Field null'}
+ScheduleViewerFixed-zU903x_5.js:6 Game 6 transformed: {id: 6480, homeTeam: 'Future FC G2010 Shy', awayTeam: 'City SC Southwest-MV G2010', ageGroup: 'U16', field: 'Field null', …}

@@ -112,19 +112,38 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
           raw: game,
           homeTeamStructure: game.homeTeam,
           awayTeamStructure: game.awayTeam,
-          fieldStructure: game.fieldName || game.field
+          fieldStructure: game.fieldName || game.field,
+          rawFieldName: game.fieldName,
+          rawField: game.field
         });
         
-        // Handle team names - check all possible data structures
-        const homeTeamName = game.homeTeam?.name || game.homeTeamName || `Team ${game.homeTeamId || 'Unknown'}`;
-        const awayTeamName = game.awayTeam?.name || game.awayTeamName || `Team ${game.awayTeamId || 'Unknown'}`;
+        console.log(`Game ${index + 1} API data:`, JSON.stringify(game, null, 2));
         
-        // Handle field names - check all possible structures
+        // Handle team names - the API is returning them directly as strings in homeTeam/awayTeam
+        const homeTeamName = game.homeTeam || game.homeTeamName || `Team ${game.homeTeamId || 'Unknown'}`;
+        const awayTeamName = game.awayTeam || game.awayTeamName || `Team ${game.awayTeamId || 'Unknown'}`;
+        
+        // Handle field names - extract from the "Field null" format or use direct field name
         const fieldName = game.fieldName || game.field?.name || game.field || 'Unassigned';
         
-        // Format times properly
-        const startTime = game.startTime ? new Date(game.startTime) : null;
-        const endTime = game.endTime ? new Date(game.endTime) : null;
+        // Format times properly - handle "TBD" strings from backend
+        let startTime, endTime, dateDisplay, timeDisplay;
+        
+        if (game.startTime === 'TBD' || !game.startTime) {
+          startTime = null;
+          endTime = null;
+          dateDisplay = 'TBD';
+          timeDisplay = 'TBD';
+        } else {
+          startTime = new Date(game.startTime);
+          endTime = game.endTime ? new Date(game.endTime) : null;
+          dateDisplay = startTime.toLocaleDateString();
+          timeDisplay = startTime.toLocaleTimeString('en-US', { 
+            hour: '2-digit', 
+            minute: '2-digit',
+            hour12: false 
+          });
+        }
         
         const transformed = {
           id: game.id,
@@ -132,12 +151,8 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
           awayTeam: awayTeamName,
           ageGroup: game.ageGroup || 'Unknown',
           field: fieldName,
-          date: startTime ? startTime.toLocaleDateString() : 'TBD',
-          time: startTime ? startTime.toLocaleTimeString('en-US', { 
-            hour: '2-digit', 
-            minute: '2-digit',
-            hour12: false 
-          }) : 'TBD',
+          date: dateDisplay,
+          time: timeDisplay,
           duration: game.duration || 90,
           status: game.status || 'scheduled',
           startTime: game.startTime,

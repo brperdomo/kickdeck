@@ -115,8 +115,45 @@ router.patch('/events/:eventId/flight-configurations/:flightId', isAdmin, async 
 
     console.log('Updating flight configuration:', { eventId, flightId, updates });
     
-    // For now, just return success - implement actual updates later
-    res.json({ success: true, message: 'Flight configuration updated' });
+    // Get the existing game format for this flight/bracket
+    const existingFormat = await db.query.gameFormats.findFirst({
+      where: eq(gameFormats.bracketId, parseInt(flightId))
+    });
+
+    if (existingFormat) {
+      // Update existing game format
+      const updateData: any = {};
+      
+      // Map frontend field names to database field names
+      if (updates.matchTime !== undefined) updateData.gameLength = updates.matchTime;
+      if (updates.breakTime !== undefined) updateData.bufferTime = updates.breakTime;
+      if (updates.paddingTime !== undefined) updateData.restPeriod = updates.paddingTime;
+      if (updates.startDate !== undefined) updateData.startDate = updates.startDate;
+      if (updates.endDate !== undefined) updateData.endDate = updates.endDate;
+      if (updates.formatName !== undefined) updateData.templateName = updates.formatName;
+
+      await db.update(gameFormats)
+        .set(updateData)
+        .where(eq(gameFormats.id, existingFormat.id));
+        
+      console.log('Updated existing game format:', updateData);
+    } else {
+      // Create new game format for this bracket
+      const newFormatData = {
+        bracketId: parseInt(flightId),
+        gameLength: updates.matchTime || 90,
+        bufferTime: updates.breakTime || 15,
+        restPeriod: updates.paddingTime || 60,
+        fieldSize: '11v11', // Default
+        maxGamesPerDay: 3, // Default
+        templateName: updates.formatName || 'Custom'
+      };
+
+      await db.insert(gameFormats).values(newFormatData);
+      console.log('Created new game format:', newFormatData);
+    }
+    
+    res.json({ success: true, message: 'Flight configuration updated successfully' });
   } catch (error) {
     console.error('Error updating flight configuration:', error);
     res.status(500).json({ error: 'Failed to update flight configuration' });

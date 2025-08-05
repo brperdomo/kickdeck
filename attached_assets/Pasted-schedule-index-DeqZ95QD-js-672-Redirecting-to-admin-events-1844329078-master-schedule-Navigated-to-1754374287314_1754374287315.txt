@@ -1,0 +1,400 @@
+schedule
+index-DeqZ95QD.js:672 Redirecting to: /admin/events/1844329078/master-schedule
+Navigated to https://app.matchpro.ai/admin/events/1844329078/master-schedule
+js?libraries=places&v=beta&callback=Function.prototype:1377 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1377
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622Understand this warning
+js?libraries=places&v=beta&callback=Function.prototype:1409 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+_.B.send @ js?libraries=places&v=beta&callback=Function.prototype:1409
+hda @ js?libraries=places&v=beta&callback=Function.prototype:1386
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1378
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+index-DeqZ95QD.js:847 Google Maps API key length: 0 characters
+index-DeqZ95QD.js:847 Mapbox API key length: 93 characters
+index-DeqZ95QD.js:847 Google Maps API already loaded
+chunk-FLCULYKI.js:31 orchestration: Initializing config store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing feature flag store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state {pill-player: {…}}
+chunk-FLCULYKI.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+index-DeqZ95QD.js:672 Current route location (Wouter): /admin/events/1844329078/master-schedule
+index-DeqZ95QD.js:672 Current URL: https://app.matchpro.ai/admin/events/1844329078/master-schedule
+index-DeqZ95QD.js:672 Current pathname: /admin/events/1844329078/master-schedule
+index-DeqZ95QD.js:672 Current search: 
+index-DeqZ95QD.js:672 Fetching user with emulation token: not present
+12Fetch finished loading: GET "<URL>".
+index-DeqZ95QD.js:672 User data fetched: {id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: '$2b$12$d6n1CBWgsWFm0fh77F1OX.YxDZy7/O3aLSuJOuq4QkvOtFmSit7BC', firstName: 'Bryan', …}
+index-DeqZ95QD.js:664 Fetch failed loading: GET "https://app.matchpro.ai/api/user".
+queryFn @ index-DeqZ95QD.js:664
+i @ index-DeqZ95QD.js:41
+f @ index-DeqZ95QD.js:41
+start @ index-DeqZ95QD.js:41
+fetch @ index-DeqZ95QD.js:41
+ng @ index-DeqZ95QD.js:41
+onSubscribe @ index-DeqZ95QD.js:41
+subscribe @ index-DeqZ95QD.js:41
+(anonymous) @ index-DeqZ95QD.js:41
+hW @ index-DeqZ95QD.js:39
+k1 @ index-DeqZ95QD.js:41
+Jh @ index-DeqZ95QD.js:41
+qM @ index-DeqZ95QD.js:41
+su @ index-DeqZ95QD.js:39
+hhe @ index-DeqZ95QD.js:41
+ku @ index-DeqZ95QD.js:41
+qW @ index-DeqZ95QD.js:41
+N @ index-DeqZ95QD.js:26
+T @ index-DeqZ95QD.js:26
+UnifiedTournamentControlCenter-BEDkKTzR.js:1 Flight configs loaded: 72 flights
+UnifiedTournamentControlCenter-BEDkKTzR.js:1 Configured flights: 10 of 72
+chunk-CVIZYB43.js:3 [Violation] 'setTimeout' handler took 67ms
+UnifiedScheduleSetup-C1CdMSUv.js:1 QUICK SCHEDULER DEBUG: Fetching teams for event 1844329078
+UnifiedScheduleSetup-C1CdMSUv.js:1 QUICK SCHEDULER DEBUG: API URL: /api/admin/teams?eventId=1844329078
+UnifiedScheduleSetup-C1CdMSUv.js:1 QUICK SCHEDULER DEBUG: Response status: 200
+UnifiedScheduleSetup-C1CdMSUv.js:1 QUICK SCHEDULER DEBUG: Response ok: true
+UnifiedScheduleSetup-C1CdMSUv.js:1 QUICK SCHEDULER DEBUG: Teams Data for event 1844329078 : (304) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+UnifiedScheduleSetup-C1CdMSUv.js:1 QUICK SCHEDULER DEBUG: Total teams received: 304
+UnifiedScheduleSetup-C1CdMSUv.js:1 QUICK SCHEDULER DEBUG: Status breakdown: {registered: 19, placeholder: 2, approved: 257, waitlisted: 7, rejected: 18, …}
+UnifiedScheduleSetup-C1CdMSUv.js:1 QUICK SCHEDULER DEBUG: Approved teams count: 257
+UnifiedScheduleSetup-C1CdMSUv.js:1 Age Groups Data: (24) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+ScheduleViewerFixed-DKas-bc7.js:6 Schedule API Response: {games: Array(6), fields: Array(12), ageGroups: Array(24), dates: Array(2), totalGames: 6, …}
+ScheduleViewerFixed-DKas-bc7.js:6 Game 1 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest G10 DPL', awayTeamStructure: 'San Diego Force FC G2010 Academy', fieldStructure: 'Field null', rawFieldName: 'Field null', …}
+ScheduleViewerFixed-DKas-bc7.js:6 Game 1 API data: {
+  "id": 6491,
+  "homeTeam": "City SC Southwest G10 DPL",
+  "awayTeam": "San Diego Force FC G2010 Academy",
+  "homeTeamClub": "City SC Southwest G10 DPL",
+  "awayTeamClub": "San Diego Force FC",
+  "ageGroup": "U16",
+  "field": "Field null",
+  "fieldName": "Field null",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DKas-bc7.js:6 Game 1 transformed: {id: 6491, homeTeam: 'City SC Southwest G10 DPL', awayTeam: 'San Diego Force FC G2010 Academy', ageGroup: 'U16', field: 'Field null', …}
+ScheduleViewerFixed-DKas-bc7.js:6 Game 2 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest-MV G2010', awayTeamStructure: 'San Diego Force FC G2010 Academy', fieldStructure: 'Field null', rawFieldName: 'Field null', …}
+ScheduleViewerFixed-DKas-bc7.js:6 Game 2 API data: {
+  "id": 6490,
+  "homeTeam": "City SC Southwest-MV G2010",
+  "awayTeam": "San Diego Force FC G2010 Academy",
+  "homeTeamClub": "City SC Southwest",
+  "awayTeamClub": "San Diego Force FC",
+  "ageGroup": "U16",
+  "field": "Field null",
+  "fieldName": "Field null",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "09:30",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DKas-bc7.js:6 Game 2 transformed: {id: 6490, homeTeam: 'City SC Southwest-MV G2010', awayTeam: 'San Diego Force FC G2010 Academy', ageGroup: 'U16', field: 'Field null', …}
+ScheduleViewerFixed-DKas-bc7.js:6 Game 3 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest-MV G2010', awayTeamStructure: 'City SC Southwest G10 DPL', fieldStructure: 'Field null', rawFieldName: 'Field null', …}
+ScheduleViewerFixed-DKas-bc7.js:6 Game 3 API data: {
+  "id": 6489,
+  "homeTeam": "City SC Southwest-MV G2010",
+  "awayTeam": "City SC Southwest G10 DPL",
+  "homeTeamClub": "City SC Southwest",
+  "awayTeamClub": "City SC Southwest G10 DPL",
+  "ageGroup": "U16",
+  "field": "Field null",
+  "fieldName": "Field null",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "10:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DKas-bc7.js:6 Game 3 transformed: {id: 6489, homeTeam: 'City SC Southwest-MV G2010', awayTeam: 'City SC Southwest G10 DPL', ageGroup: 'U16', field: 'Field null', …}
+ScheduleViewerFixed-DKas-bc7.js:6 Game 4 transformation debug: {raw: {…}, homeTeamStructure: 'Future FC G2010 Shy', awayTeamStructure: 'San Diego Force FC G2010 Academy', fieldStructure: 'Field null', rawFieldName: 'Field null', …}
+ScheduleViewerFixed-DKas-bc7.js:6 Game 4 API data: {
+  "id": 6488,
+  "homeTeam": "Future FC G2010 Shy",
+  "awayTeam": "San Diego Force FC G2010 Academy",
+  "homeTeamClub": "Future FC",
+  "awayTeamClub": "San Diego Force FC",
+  "ageGroup": "U16",
+  "field": "Field null",
+  "fieldName": "Field null",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DKas-bc7.js:6 Game 4 transformed: {id: 6488, homeTeam: 'Future FC G2010 Shy', awayTeam: 'San Diego Force FC G2010 Academy', ageGroup: 'U16', field: 'Field null', …}
+ScheduleViewerFixed-DKas-bc7.js:6 Game 5 transformation debug: {raw: {…}, homeTeamStructure: 'Future FC G2010 Shy', awayTeamStructure: 'City SC Southwest G10 DPL', fieldStructure: 'Field null', rawFieldName: 'Field null', …}
+ScheduleViewerFixed-DKas-bc7.js:6 Game 5 API data: {
+  "id": 6487,
+  "homeTeam": "Future FC G2010 Shy",
+  "awayTeam": "City SC Southwest G10 DPL",
+  "homeTeamClub": "Future FC",
+  "awayTeamClub": "City SC Southwest G10 DPL",
+  "ageGroup": "U16",
+  "field": "Field null",
+  "fieldName": "Field null",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-17",
+  "time": "09:30",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DKas-bc7.js:6 Game 5 transformed: {id: 6487, homeTeam: 'Future FC G2010 Shy', awayTeam: 'City SC Southwest G10 DPL', ageGroup: 'U16', field: 'Field null', …}
+ScheduleViewerFixed-DKas-bc7.js:6 Game 6 transformation debug: {raw: {…}, homeTeamStructure: 'Future FC G2010 Shy', awayTeamStructure: 'City SC Southwest-MV G2010', fieldStructure: 'Field null', rawFieldName: 'Field null', …}
+ScheduleViewerFixed-DKas-bc7.js:6 Game 6 API data: {
+  "id": 6486,
+  "homeTeam": "Future FC G2010 Shy",
+  "awayTeam": "City SC Southwest-MV G2010",
+  "homeTeamClub": "Future FC",
+  "awayTeamClub": "City SC Southwest",
+  "ageGroup": "U16",
+  "field": "Field null",
+  "fieldName": "Field null",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-17",
+  "time": "10:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DKas-bc7.js:6 Game 6 transformed: {id: 6486, homeTeam: 'Future FC G2010 Shy', awayTeam: 'City SC Southwest-MV G2010', ageGroup: 'U16', field: 'Field null', …}
+util.js:31 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+Yxa @ util.js:31
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1379
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1379
+setTimeout
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1379
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622Understand this warning
+Navigated to https://app.matchpro.ai/admin/events/1844329078/master-schedule
+index-DeqZ95QD.js:847 Google Maps API key length: 0 characters
+index-DeqZ95QD.js:847 Mapbox API key length: 93 characters
+index-DeqZ95QD.js:847 Updating existing Google Maps script tag
+index-DeqZ95QD.js:847 Updated Google Maps script with API key
+chunk-FLCULYKI.js:31 orchestration: Initializing config store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing feature flag store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+js?libraries=places&v=beta&callback=Function.prototype:1377 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1377
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622Understand this warning
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state {pill-player: {…}}
+chunk-FLCULYKI.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+index-DeqZ95QD.js:672 Current route location (Wouter): /admin/events/1844329078/master-schedule
+index-DeqZ95QD.js:672 Current URL: https://app.matchpro.ai/admin/events/1844329078/master-schedule
+index-DeqZ95QD.js:672 Current pathname: /admin/events/1844329078/master-schedule
+index-DeqZ95QD.js:672 Current search: 
+index-DeqZ95QD.js:672 Fetching user with emulation token: not present
+js?libraries=places&v=beta&callback=Function.prototype:1409 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+_.B.send @ js?libraries=places&v=beta&callback=Function.prototype:1409
+hda @ js?libraries=places&v=beta&callback=Function.prototype:1386
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1378
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+8Fetch finished loading: GET "<URL>".
+index-DeqZ95QD.js:672 User data fetched: {id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: '$2b$12$d6n1CBWgsWFm0fh77F1OX.YxDZy7/O3aLSuJOuq4QkvOtFmSit7BC', firstName: 'Bryan', …}
+index-DeqZ95QD.js:664 Fetch failed loading: GET "https://app.matchpro.ai/api/user".
+queryFn @ index-DeqZ95QD.js:664
+i @ index-DeqZ95QD.js:41
+f @ index-DeqZ95QD.js:41
+start @ index-DeqZ95QD.js:41
+fetch @ index-DeqZ95QD.js:41
+ng @ index-DeqZ95QD.js:41
+onSubscribe @ index-DeqZ95QD.js:41
+subscribe @ index-DeqZ95QD.js:41
+(anonymous) @ index-DeqZ95QD.js:41
+hW @ index-DeqZ95QD.js:39
+k1 @ index-DeqZ95QD.js:41
+Jh @ index-DeqZ95QD.js:41
+qM @ index-DeqZ95QD.js:41
+su @ index-DeqZ95QD.js:39
+hhe @ index-DeqZ95QD.js:41
+ku @ index-DeqZ95QD.js:41
+qW @ index-DeqZ95QD.js:41
+N @ index-DeqZ95QD.js:26
+T @ index-DeqZ95QD.js:26
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+UnifiedTournamentControlCenter-BEDkKTzR.js:1 Flight configs loaded: 72 flights
+UnifiedTournamentControlCenter-BEDkKTzR.js:1 Configured flights: 10 of 72
+chunk-CVIZYB43.js:3 [Violation] 'setTimeout' handler took 62ms
+ScheduleViewerFixed-DKas-bc7.js:6 Schedule API Response: {games: Array(6), fields: Array(12), ageGroups: Array(24), dates: Array(2), totalGames: 6, …}
+ScheduleViewerFixed-DKas-bc7.js:6 Game 1 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest G10 DPL', awayTeamStructure: 'San Diego Force FC G2010 Academy', fieldStructure: 'Field null', rawFieldName: 'Field null', …}
+ScheduleViewerFixed-DKas-bc7.js:6 Game 1 API data: {
+  "id": 6491,
+  "homeTeam": "City SC Southwest G10 DPL",
+  "awayTeam": "San Diego Force FC G2010 Academy",
+  "homeTeamClub": "City SC Southwest G10 DPL",
+  "awayTeamClub": "San Diego Force FC",
+  "ageGroup": "U16",
+  "field": "Field null",
+  "fieldName": "Field null",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DKas-bc7.js:6 Game 1 transformed: {id: 6491, homeTeam: 'City SC Southwest G10 DPL', awayTeam: 'San Diego Force FC G2010 Academy', ageGroup: 'U16', field: 'Field null', …}
+ScheduleViewerFixed-DKas-bc7.js:6 Game 2 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest-MV G2010', awayTeamStructure: 'San Diego Force FC G2010 Academy', fieldStructure: 'Field null', rawFieldName: 'Field null', …}
+ScheduleViewerFixed-DKas-bc7.js:6 Game 2 API data: {
+  "id": 6490,
+  "homeTeam": "City SC Southwest-MV G2010",
+  "awayTeam": "San Diego Force FC G2010 Academy",
+  "homeTeamClub": "City SC Southwest",
+  "awayTeamClub": "San Diego Force FC",
+  "ageGroup": "U16",
+  "field": "Field null",
+  "fieldName": "Field null",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "09:30",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DKas-bc7.js:6 Game 2 transformed: {id: 6490, homeTeam: 'City SC Southwest-MV G2010', awayTeam: 'San Diego Force FC G2010 Academy', ageGroup: 'U16', field: 'Field null', …}
+ScheduleViewerFixed-DKas-bc7.js:6 Game 3 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest-MV G2010', awayTeamStructure: 'City SC Southwest G10 DPL', fieldStructure: 'Field null', rawFieldName: 'Field null', …}
+ScheduleViewerFixed-DKas-bc7.js:6 Game 3 API data: {
+  "id": 6489,
+  "homeTeam": "City SC Southwest-MV G2010",
+  "awayTeam": "City SC Southwest G10 DPL",
+  "homeTeamClub": "City SC Southwest",
+  "awayTeamClub": "City SC Southwest G10 DPL",
+  "ageGroup": "U16",
+  "field": "Field null",
+  "fieldName": "Field null",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "10:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DKas-bc7.js:6 Game 3 transformed: {id: 6489, homeTeam: 'City SC Southwest-MV G2010', awayTeam: 'City SC Southwest G10 DPL', ageGroup: 'U16', field: 'Field null', …}
+ScheduleViewerFixed-DKas-bc7.js:6 Game 4 transformation debug: {raw: {…}, homeTeamStructure: 'Future FC G2010 Shy', awayTeamStructure: 'San Diego Force FC G2010 Academy', fieldStructure: 'Field null', rawFieldName: 'Field null', …}
+ScheduleViewerFixed-DKas-bc7.js:6 Game 4 API data: {
+  "id": 6488,
+  "homeTeam": "Future FC G2010 Shy",
+  "awayTeam": "San Diego Force FC G2010 Academy",
+  "homeTeamClub": "Future FC",
+  "awayTeamClub": "San Diego Force FC",
+  "ageGroup": "U16",
+  "field": "Field null",
+  "fieldName": "Field null",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DKas-bc7.js:6 Game 4 transformed: {id: 6488, homeTeam: 'Future FC G2010 Shy', awayTeam: 'San Diego Force FC G2010 Academy', ageGroup: 'U16', field: 'Field null', …}
+ScheduleViewerFixed-DKas-bc7.js:6 Game 5 transformation debug: {raw: {…}, homeTeamStructure: 'Future FC G2010 Shy', awayTeamStructure: 'City SC Southwest G10 DPL', fieldStructure: 'Field null', rawFieldName: 'Field null', …}
+ScheduleViewerFixed-DKas-bc7.js:6 Game 5 API data: {
+  "id": 6487,
+  "homeTeam": "Future FC G2010 Shy",
+  "awayTeam": "City SC Southwest G10 DPL",
+  "homeTeamClub": "Future FC",
+  "awayTeamClub": "City SC Southwest G10 DPL",
+  "ageGroup": "U16",
+  "field": "Field null",
+  "fieldName": "Field null",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-17",
+  "time": "09:30",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DKas-bc7.js:6 Game 5 transformed: {id: 6487, homeTeam: 'Future FC G2010 Shy', awayTeam: 'City SC Southwest G10 DPL', ageGroup: 'U16', field: 'Field null', …}
+ScheduleViewerFixed-DKas-bc7.js:6 Game 6 transformation debug: {raw: {…}, homeTeamStructure: 'Future FC G2010 Shy', awayTeamStructure: 'City SC Southwest-MV G2010', fieldStructure: 'Field null', rawFieldName: 'Field null', …}
+ScheduleViewerFixed-DKas-bc7.js:6 Game 6 API data: {
+  "id": 6486,
+  "homeTeam": "Future FC G2010 Shy",
+  "awayTeam": "City SC Southwest-MV G2010",
+  "homeTeamClub": "Future FC",
+  "awayTeamClub": "City SC Southwest",
+  "ageGroup": "U16",
+  "field": "Field null",
+  "fieldName": "Field null",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-17",
+  "time": "10:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DKas-bc7.js:6 Game 6 transformed: {id: 6486, homeTeam: 'Future FC G2010 Shy', awayTeam: 'City SC Southwest-MV G2010', ageGroup: 'U16', field: 'Field null', …}
+util.js:31 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+Yxa @ util.js:31
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1379
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1379
+setTimeout
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1379
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622Understand this warning
+util.js:31 Google Maps JavaScript API warning: InvalidKey https://developers.google.com/maps/documentation/javascript/error-messages#invalid-key
+Yxa @ util.js:31
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1379
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1379
+setTimeout
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1379
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622Understand this warning
