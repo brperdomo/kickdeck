@@ -634,10 +634,15 @@ export default function DragDropCalendarScheduler({ eventId }: DragDropCalendarS
                                           Coach: {game.homeTeamCoach || game.awayTeamCoach}
                                         </div>
                                       )}
-                                      <div className="flex items-center justify-between text-xs opacity-60">
+                                      <div className="text-xs opacity-75 mb-1">
                                         <div className="flex items-center gap-1">
                                           <Clock className="h-3 w-3" />
-                                          {game.duration}min
+                                          {game.startTime} - {game.endTime}
+                                        </div>
+                                      </div>
+                                      <div className="flex items-center justify-between text-xs opacity-60">
+                                        <div className="flex items-center gap-1">
+                                          Duration: {game.duration}min
                                         </div>
                                         {conflicts.length > 0 && (
                                           <div className="text-xs font-bold">

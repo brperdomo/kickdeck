@@ -103,7 +103,59 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
       if (!response.ok) {
         throw new Error('Failed to fetch schedule data');
       }
-      return response.json();
+      const data = await response.json();
+      console.log('Schedule API Response:', data);
+      
+      // Transform the API response to match the expected format
+      const transformedGames = data.games?.map((game: any) => ({
+        id: game.id,
+        homeTeam: game.homeTeam?.name || `Team ${game.homeTeamId}`,
+        awayTeam: game.awayTeam?.name || `Team ${game.awayTeamId}`,
+        ageGroup: game.ageGroup,
+        field: game.fieldName || 'Unassigned',
+        date: game.startTime ? new Date(game.startTime).toLocaleDateString() : 'TBD',
+        time: game.startTime ? new Date(game.startTime).toLocaleTimeString('en-US', { 
+          hour: '2-digit', 
+          minute: '2-digit',
+          hour12: false 
+        }) : 'TBD',
+        duration: game.duration || 90,
+        status: game.status || 'scheduled',
+        startTime: game.startTime,
+        endTime: game.endTime,
+        fieldName: game.fieldName
+      })) || [];
+
+      // Extract unique values for filters
+      const fields = [...new Set(transformedGames.map(g => g.field).filter(f => f && f !== 'Unassigned'))]
+        .map(name => ({ name, surface: 'grass', size: '11v11' }));
+      const ageGroups = [...new Set(transformedGames.map(g => g.ageGroup).filter(Boolean))];
+      const dates = [...new Set(transformedGames.map(g => g.date).filter(d => d !== 'TBD'))];
+
+      return {
+        games: transformedGames,
+        fields,
+        ageGroups,
+        dates,
+        totalGames: transformedGames.length,
+        scheduleStatus: 'active',
+        isPreview: false,
+        actualData: {
+          gamesInDatabase: transformedGames.length,
+          teamsInDatabase: 0,
+          ageGroupsConfigured: ageGroups.length,
+          realTeamsFound: 0,
+          scheduledGamesFound: transformedGames.length,
+          scheduleType: 'Tournament Schedule'
+        },
+        teamsList: [],
+        eventId: parseInt(eventId),
+        eventDetails: {
+          name: 'Tournament',
+          startDate: dates[0] || new Date().toISOString(),
+          endDate: dates[dates.length - 1] || new Date().toISOString()
+        }
+      };
     }
   });
 
