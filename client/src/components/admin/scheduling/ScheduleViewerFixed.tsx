@@ -166,7 +166,7 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
 
       // Extract unique values for filters
       const uniqueFields = new Set(transformedGames.map((g: any) => g.field).filter((f: string) => f && f !== 'Unassigned'));
-      const fields = Array.from(uniqueFields).map((name: string) => ({ name, surface: 'grass', size: '11v11' }));
+      const fields = Array.from(uniqueFields).map((name) => ({ name: name as string, surface: 'grass', size: '11v11' }));
       
       const uniqueAgeGroups = new Set(transformedGames.map((g: any) => g.ageGroup).filter(Boolean));
       const ageGroups = Array.from(uniqueAgeGroups) as string[];
