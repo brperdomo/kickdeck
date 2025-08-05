@@ -478,7 +478,7 @@ export class SimpleScheduler {
   }
 
   /**
-   * Generate realistic game time scheduling (synchronous version)
+   * Generate realistic game time scheduling (synchronous version) with proper rest time enforcement
    */
   static generateGameTimeSync(
     gameNumber: number, 
@@ -512,10 +512,18 @@ export class SimpleScheduler {
       timezone = (firstComplex as any).timezone || 'America/Los_Angeles';
     }
     
+    // CRITICAL FIX: Calculate proper time intervals with enforced rest periods
+    // Each game slot needs: game duration + rest time + buffer
+    const bufferTime = 15; // 15-minute buffer for cleanup/setup
+    const timeInterval = gameDuration + restTime + bufferTime; // Total time per game slot including rest
+    
+    console.log(`⏰ REST TIME FIX: Game ${gameNumber} - Duration: ${gameDuration}min + Rest: ${restTime}min + Buffer: ${bufferTime}min = ${timeInterval}min total per slot`);
+    
     // Calculate available hours per day for games
     const dailyOperatingMinutes = (fieldClosingHour - fieldOpeningHour) * 60;
-    const timeInterval = gameDuration + restTime; // Total time per game slot
     const gamesPerDay = Math.floor(dailyOperatingMinutes / timeInterval);
+    
+    console.log(`⏰ REST TIME FIX: Daily capacity: ${dailyOperatingMinutes}min ÷ ${timeInterval}min = ${gamesPerDay} games per day`);
     
     // Determine which day and time slot for this game
     const dayNumber = Math.floor(gameNumber / gamesPerDay);
@@ -537,13 +545,15 @@ export class SimpleScheduler {
     // Format date as YYYY-MM-DD
     const dateStr = targetDate.toISOString().split('T')[0];
     
-    // Calculate the game start time in minutes from field opening
+    // CRITICAL FIX: Calculate game start time with proper rest period enforcement
     const gameStartMinutes = (gameSlotInDay * timeInterval) + additionalMinutes;
     const totalGameHour = fieldOpeningHour + Math.floor(gameStartMinutes / 60);
     const totalGameMinute = gameStartMinutes % 60;
     
     // Create time string in HH:MM:SS format
     const timeStr = `${totalGameHour.toString().padStart(2, '0')}:${totalGameMinute.toString().padStart(2, '0')}:00`;
+    
+    console.log(`⏰ REST TIME FIX: Game ${gameNumber} scheduled at ${timeStr} (Day ${dayNumber}, Slot ${gameSlotInDay})`);
     
     // Return as YYYY-MM-DDTHH:MM:SS (without timezone to avoid UTC conversion)
     return `${dateStr}T${timeStr}`;
