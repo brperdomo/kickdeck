@@ -451,21 +451,26 @@ export class SimpleScheduler {
       }
     }
     
-    if (suitableFields.length === 0) {
-      // Fallback to any available field
-      for (const complex of realComplexes) {
-        if (complex.fields && Array.isArray(complex.fields)) {
-          suitableFields.push(...complex.fields);
-        }
-      }
-    }
+    console.log(`🎯 Total suitable ${requiredFieldSize} fields found: ${suitableFields.length}`);
     
     if (suitableFields.length === 0) {
+      console.log(`⚠️ WARNING: No ${requiredFieldSize} fields found for ${bracketName}. Available field sizes:`);
+      for (const complex of realComplexes) {
+        if (complex.fields && Array.isArray(complex.fields)) {
+          complex.fields.forEach((field: any) => {
+            console.log(`  - ${field.name}: ${field.fieldSize}`);
+          });
+        }
+      }
+      
+      // RETURN NULL INSTEAD OF FALLBACK - this will show "Needs Assignment"
+      console.log(`❌ Returning NULL to indicate field assignment needed for ${bracketName}`);
       return null;
     }
     
     // Round-robin field assignment
     const selectedField = suitableFields[gameNumber % suitableFields.length];
+    console.log(`✅ Assigned field ${selectedField.name} (${selectedField.fieldSize}) for ${bracketName}`);
     return selectedField.id;
   }
 
@@ -493,21 +498,15 @@ export class SimpleScheduler {
     }
     
     if (suitableFields.length === 0) {
-      // Fallback to any available field
-      for (const complex of realComplexes) {
-        if (complex.fields && Array.isArray(complex.fields)) {
-          suitableFields.push(...complex.fields);
-        }
-      }
-    }
-    
-    if (suitableFields.length === 0) {
+      console.log(`⚠️ No ${requiredFieldSize} fields found for ${bracketName} - returning NULL for proper assignment`);
       return null;
     }
     
     // Simple round-robin field assignment
     const fieldIndex = gameNumber % suitableFields.length;
-    return suitableFields[fieldIndex].id;
+    const selectedField = suitableFields[fieldIndex];
+    console.log(`✅ Assigned field ${selectedField.name} (${selectedField.fieldSize}) for ${bracketName}`);
+    return selectedField.id;
   }
 
   /**
