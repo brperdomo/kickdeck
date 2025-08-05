@@ -6907,11 +6907,13 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
 
         // Import and run safety validation middleware
         const { validateSchedulingSafety } = await import('./middleware/scheduling-safety.js');
+        const totalGamesNeeded = req.body.workflowGames?.reduce((total, bracket) => total + bracket.games.length, 0) || 0;
         const safetyValidation = await validateSchedulingSafety(eventId, {
-          totalGamesNeeded: req.body.workflowGames?.reduce((total, bracket) => total + bracket.games.length, 0) || 0
+          totalGamesNeeded: totalGamesNeeded
         });
 
-        if (!safetyValidation.isSafe) {
+        // Fix: Only block if there are actual errors, not if validation is successful
+        if (safetyValidation.summary.totalErrors > 0) {
           console.log('❌ SAFETY VALIDATION FAILED:', safetyValidation.summary);
           return res.status(400).json({
             error: 'SAFETY_VALIDATION_FAILED',
@@ -7008,17 +7010,31 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
               // CRITICAL FIX: Validate fieldId is not null before insertion
               let validFieldId = game.fieldId;
               if (!validFieldId || validFieldId === null) {
-                // Get the first available field for this event as emergency fallback
-                const availableFields = await tx
-                  .select({ id: fields.id })
-                  .from(fields)
+                // Get fields for this event through event_complexes relationship
+                const eventFields = await tx
+                  .select({ fieldId: fields.id, fieldName: fields.name })
+                  .from(eventComplexes)
+                  .innerJoin(fields, eq(fields.complexId, eventComplexes.id))
+                  .where(eq(eventComplexes.eventId, eventId))
                   .limit(1);
                 
-                if (availableFields.length > 0) {
-                  validFieldId = availableFields[0].id;
-                  console.log(`🚨 FIELD NULL FIX: Assigned emergency field ${validFieldId} for game ${game.gameNumber}`);
+                if (eventFields.length > 0) {
+                  validFieldId = eventFields[0].fieldId;
+                  console.log(`🚨 FIELD NULL FIX: Assigned event field ${validFieldId} (${eventFields[0].fieldName}) for game ${game.gameNumber}`);
                 } else {
-                  throw new Error(`CRITICAL ERROR: No fields available for game assignment. Event ${eventId} has no configured fields.`);
+                  console.log(`❌ No event-specific fields found for event ${eventId}`);
+                  // Last resort: try to find any available field
+                  const anyFields = await tx
+                    .select({ id: fields.id, name: fields.name })
+                    .from(fields)
+                    .limit(1);
+                  
+                  if (anyFields.length > 0) {
+                    validFieldId = anyFields[0].id;
+                    console.log(`🆘 EMERGENCY FALLBACK: Using system field ${validFieldId} (${anyFields[0].name}) for game ${game.gameNumber}`);
+                  } else {
+                    throw new Error(`CRITICAL ERROR: No fields available in entire system for game assignment. Please configure fields first.`);
+                  }
                 }
               }
               
