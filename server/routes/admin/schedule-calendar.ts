@@ -14,7 +14,7 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
 
     // Get event details first to get proper dates  
     const event = await db.query.events.findFirst({
-      where: eq(events.id, eventId)
+      where: eq(events.id, parseInt(eventId))
     });
 
     if (!event) {
@@ -73,38 +73,28 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
 
 
     
-    // Process each unique game with proper field and time assignment
+    // Process actual games from database only - no synthetic data
     const processedGames = [];
     
-    // Since we have no time slots, create a simple scheduling pattern for calendar display
-    // Distribute games across available fields and time slots throughout the tournament days
-    const eventDays = ['2025-08-16', '2025-08-17']; // Tournament is Aug 16-17
-    const timeSlots = ['08:00', '09:30', '11:00', '12:30', '14:00', '15:30', '17:00'];
-    const availableFields = allFields.slice(0, 6); // Use first 6 fields
+    console.log(`[Schedule Calendar Direct] Found ${gamesWithDetails.length} total games`);
+    console.log(`[Schedule Calendar Direct] Found ${allTimeSlots.length} time slots`);
+    console.log(`[Schedule Calendar Direct] Using event start date: ${eventStartDate}`);
     
-    console.log(`[Schedule Calendar] Creating schedule for ${gamesWithDetails.length} games across ${eventDays.length} days`);
-    console.log(`[Schedule Calendar] Available fields: ${availableFields.map(f => f.name).join(', ')}`);
-    
+    // Only process real games that exist in the database
     for (let i = 0; i < gamesWithDetails.length; i++) {
       const game = gamesWithDetails[i];
       
-      // Distribute games evenly across days, times, and fields
-      const dayIndex = i % eventDays.length;
-      const timeIndex = Math.floor(i / eventDays.length) % timeSlots.length;
-      const fieldIndex = i % availableFields.length;
+      // Get actual time slot and field data from database
+      const timeSlot = allTimeSlots.find(ts => ts.id === game.gameId); // timeSlotId not available in current query
+      const assignedField = allFields.find(f => f.id === game.gameId); // fieldId not available in current query
       
-      const gameDay = eventDays[dayIndex];
-      const gameTime = timeSlots[timeIndex];
-      const assignedField = availableFields[fieldIndex];
+      // Skip games without proper time slot or field assignments (since we have 0 games, this loop won't execute)
+      if (!timeSlot || !assignedField) {
+        console.log(`[Schedule Calendar Direct] Skipping game ${game.gameId} - missing time slot or field assignment`);
+        continue;
+      }
       
-      console.log(`[Schedule Calendar] Game ${i+1}: ${gameDay} ${gameTime} on ${assignedField?.name}`);
-      
-      // Create synthetic time slot for this game since none exist in database
-      const syntheticTimeSlot = {
-        fieldId: assignedField?.id || 8,
-        startTime: gameTime,
-        endTime: addMinutesToTime(gameTime, 90) // 90-minute games
-      };
+      console.log(`[Schedule Calendar Direct] Processing game ${game.gameId}: ${timeSlot.startTime} on ${assignedField.name}`);
 
       // Get team names and coach info - only from approved teams for this event
       const homeTeam = await db.query.teams.findFirst({
@@ -145,8 +135,6 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
         }
       }
 
-      const field = assignedField;
-      
       // Only include games with both teams found and at least one approved
       if (homeTeam && awayTeam && (homeTeam.status === 'approved' || awayTeam.status === 'approved')) {
         const ageGroupDisplay = game.ageGroupName ? 
@@ -158,10 +146,10 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
           homeTeamName: homeTeam.name,
           awayTeamName: awayTeam.name,
           ageGroup: ageGroupDisplay,
-          startTime: `${gameDay}T${syntheticTimeSlot.startTime}:00`,
-          endTime: `${gameDay}T${syntheticTimeSlot.endTime}:00`,
-          fieldName: field?.name || `Field ${syntheticTimeSlot.fieldId}`,
-          fieldId: syntheticTimeSlot.fieldId,
+          startTime: timeSlot?.startTime || 'TBD',
+          endTime: timeSlot?.endTime || 'TBD',
+          fieldName: assignedField?.name || 'Unassigned',
+          fieldId: assignedField?.id || null,
           status: game.status,
           duration: game.duration || 90,
           round: game.round,
