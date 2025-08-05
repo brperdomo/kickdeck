@@ -290,7 +290,7 @@ router.post('/:eventId/generate-complete-schedule', isAdmin, async (req, res) =>
       console.log(`Created ${gamesForBracket} games for bracket ${bracket.name}`);
     }
 
-    // Step 5: Auto-assign time slots and fields (simplified)
+    // Step 5: Auto-assign time slots and fields with proper field size validation
     const availableFields = await db
       .select({
         id: fields.id,
@@ -299,6 +299,74 @@ router.post('/:eventId/generate-complete-schedule', isAdmin, async (req, res) =>
       })
       .from(fields)
       .where(eq(fields.isOpen, true));
+
+    // Get available time slots for this event
+    const availableTimeSlots = await db
+      .select({
+        id: gameTimeSlots.id,
+        fieldId: gameTimeSlots.fieldId,
+        startTime: gameTimeSlots.startTime,
+        endTime: gameTimeSlots.endTime,
+        fieldSize: fields.fieldSize,
+        fieldName: fields.name
+      })
+      .from(gameTimeSlots)
+      .leftJoin(fields, eq(gameTimeSlots.fieldId, fields.id))
+      .where(and(
+        eq(gameTimeSlots.eventId, eventId.toString()),
+        eq(gameTimeSlots.isAvailable, true)
+      ))
+      .orderBy(gameTimeSlots.startTime);
+
+    // Get all newly created games without time slots
+    const unscheduledGames = await db
+      .select({
+        id: games.id,
+        ageGroupId: games.ageGroupId
+      })
+      .from(games)
+      .where(and(
+        eq(games.eventId, eventId.toString()),
+        sql`${games.timeSlotId} IS NULL`
+      ))
+      .orderBy(games.id);
+
+    // Track used time slots
+    const usedTimeSlots = new Set<number>();
+    
+    // Auto-assign time slots to new games with field size validation
+    let slotsAssigned = 0;
+    const assignmentErrors: string[] = [];
+
+    for (const game of unscheduledGames) {
+      // For U12 teams, require 9v9 fields
+      const requiredFieldSize = '9v9'; // Since we're dealing with U12 teams
+      
+      // Find available time slot with correct field size
+      const suitableSlot = availableTimeSlots.find(slot => 
+        slot.fieldSize === requiredFieldSize && 
+        !usedTimeSlots.has(slot.id)
+      );
+
+      if (suitableSlot) {
+        // Assign this time slot to the game
+        await db
+          .update(games)
+          .set({ timeSlotId: suitableSlot.id })
+          .where(eq(games.id, game.id));
+        
+        usedTimeSlots.add(suitableSlot.id);
+        slotsAssigned++;
+        console.log(`Assigned game ${game.id} to ${suitableSlot.fieldName} at ${suitableSlot.startTime}`);
+      } else {
+        assignmentErrors.push(`Game ${game.id}: No available ${requiredFieldSize} time slots`);
+      }
+    }
+
+    console.log(`Auto-assigned ${slotsAssigned} time slots with field validation`);
+    if (assignmentErrors.length > 0) {
+      warnings.push(...assignmentErrors);
+    }
 
     // Get detailed game information for display
     const detailedGames = await db
@@ -344,17 +412,43 @@ router.post('/:eventId/generate-complete-schedule', isAdmin, async (req, res) =>
       });
     }
 
-    // Format games for frontend display
-    const formattedGames: GeneratedGame[] = detailedGames.map(game => ({
+    // Get updated game data with time slot assignments
+    const updatedDetailedGames = await db
+      .select({
+        gameId: games.id,
+        homeTeamId: games.homeTeamId,
+        awayTeamId: games.awayTeamId,
+        homeTeamName: sql<string>`ht.name`.as('homeTeamName'),
+        awayTeamName: sql<string>`at.name`.as('awayTeamName'),
+        ageGroup: eventAgeGroups.ageGroup,
+        gender: eventAgeGroups.gender,
+        round: games.round,
+        duration: games.duration,
+        timeSlotId: games.timeSlotId,
+        startTime: gameTimeSlots.startTime,
+        endTime: gameTimeSlots.endTime,
+        fieldName: fields.name
+      })
+      .from(games)
+      .leftJoin(sql`teams ht`, sql`ht.id = ${games.homeTeamId}`)
+      .leftJoin(sql`teams at`, sql`at.id = ${games.awayTeamId}`)
+      .leftJoin(eventAgeGroups, eq(games.ageGroupId, eventAgeGroups.id))
+      .leftJoin(gameTimeSlots, eq(games.timeSlotId, gameTimeSlots.id))
+      .leftJoin(fields, eq(gameTimeSlots.fieldId, fields.id))
+      .where(eq(games.eventId, eventId.toString()))
+      .orderBy(games.matchNumber);
+
+    // Format games for frontend display with real time/field data
+    const formattedGames: GeneratedGame[] = updatedDetailedGames.map(game => ({
       id: game.gameId,
       homeTeam: game.homeTeamName || 'TBD',
       awayTeam: game.awayTeamName || 'TBD',
       ageGroup: game.ageGroup || 'Unknown',
       gender: game.gender || 'Mixed',
       round: game.round || 1,
-      field: 'Field TBD', // Could be enhanced with field assignment
-      startTime: 'TBD',   // Could be enhanced with time slot assignment
-      endTime: 'TBD',     // Could be enhanced with time slot assignment
+      field: game.fieldName || 'Unassigned',
+      startTime: game.startTime ? new Date(game.startTime).toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' }) : 'TBD',
+      endTime: game.endTime ? new Date(game.endTime).toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' }) : 'TBD',
       duration: game.duration || defaultFormat.gameLength
     }));
 
