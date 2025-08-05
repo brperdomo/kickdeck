@@ -1,0 +1,161 @@
+orchestration: Initializing config store with state Object
+chunk-FLCULYKI.js:31 orchestration: Initializing feature flag store with state Object
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state Object
+chunk-FLCULYKI.js:31 orchestration: Updating combined state Object
+index-BqXeKt2T.js:847 Google Maps API key length: 0 characters
+index-BqXeKt2T.js:847 Mapbox API key length: 93 characters
+index-BqXeKt2T.js:847 Google Maps API already loaded
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+index-BqXeKt2T.js:672 Current route location (Wouter): /admin/events/1844329078/master-schedule
+index-BqXeKt2T.js:672 Current URL: https://app.matchpro.ai/admin/events/1844329078/master-schedule
+index-BqXeKt2T.js:672 Current pathname: /admin/events/1844329078/master-schedule
+index-BqXeKt2T.js:672 Current search: 
+index-BqXeKt2T.js:672 Fetching user with emulation token: not present
+index-BqXeKt2T.js:672 User data fetched: Object
+UnifiedTournamentControlCenter-DYfab0LL.js:1 Flight configs loaded: 72 flights
+UnifiedTournamentControlCenter-DYfab0LL.js:1 Configured flights: 10 of 72
+util.js:31 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+Yxa @ util.js:31Understand this warning
+UnifiedTournamentControlCenter-DYfab0LL.js:1 Flight configs loaded: 72 flights
+UnifiedTournamentControlCenter-DYfab0LL.js:1 Configured flights: 10 of 72
+UnifiedTournamentControlCenter-DYfab0LL.js:1 Flight configs loaded: 72 flights
+UnifiedTournamentControlCenter-DYfab0LL.js:1 Configured flights: 10 of 72
+MasterSchedulePage-Cei-r1vH.js:42 [Calendar] Fetching real schedule calendar data for event: 1844329078
+MasterSchedulePage-Cei-r1vH.js:42 [Calendar] Response status: 200
+MasterSchedulePage-Cei-r1vH.js:42 [Calendar] Received schedule calendar data: Object
+MasterSchedulePage-Cei-r1vH.js:42 [Coach Colors] Initializing coach color assignments
+MasterSchedulePage-Cei-r1vH.js:42 [Coach Colors] Assigned bg-purple-100 border-purple-400 text-purple-800 to Team-Empire Surf North G2012 Academy
+MasterSchedulePage-Cei-r1vH.js:42 [Coach Colors] Assigned bg-blue-100 border-blue-400 text-blue-800 to Team-Future FC G12
+MasterSchedulePage-Cei-r1vH.js:42 [Coach Colors] Assigned bg-green-100 border-green-400 text-green-800 to Team-ALBION SC Riverside G12 DPL
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+ScheduleViewerFixed-D8fZY5pM.js:6 Schedule API Response: Object
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 1 transformation debug: Object
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 1 API data: {
+  "id": 6531,
+  "homeTeam": "Empire Surf North G2012 Academy",
+  "awayTeam": "Future FC G12",
+  "homeTeamClub": "Empire Surf",
+  "awayTeamClub": "Future FC",
+  "ageGroup": "U14",
+  "field": "Unassigned",
+  "fieldName": "Unassigned",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 1 transformed: Object
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 2 transformation debug: Object
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 2 API data: {
+  "id": 6532,
+  "homeTeam": "Empire Surf North G2012 Academy",
+  "awayTeam": "ALBION SC Riverside G12 DPL",
+  "homeTeamClub": "Empire Surf",
+  "awayTeamClub": "ALBION SC Riverside",
+  "ageGroup": "U14",
+  "field": "Unassigned",
+  "fieldName": "Unassigned",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "09:30",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 2 transformed: Object
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 3 transformation debug: Object
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 3 API data: {
+  "id": 6533,
+  "homeTeam": "Empire Surf North G2012 Academy",
+  "awayTeam": "Cal Elite SC G2012",
+  "homeTeamClub": "Empire Surf",
+  "awayTeamClub": "California Elite Soccer Club",
+  "ageGroup": "U14",
+  "field": "Unassigned",
+  "fieldName": "Unassigned",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "10:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 3 transformed: ObjectageGroup: "U14"awayTeam: "Cal Elite SC G2012"date: "TBD"duration: 90endTime: undefinedfield: "Unassigned"fieldName: "Unassigned"homeTeam: "Empire Surf North G2012 Academy"id: 6533startTime: undefinedstatus: "scheduled"time: "TBD"[[Prototype]]: Object
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 4 transformation debug: ObjectawayTeamStructure: "ALBION SC Riverside G12 DPL"fieldStructure: "Unassigned"homeTeamStructure: "Future FC G12"raw: {id: 6534, homeTeam: 'Future FC G12', awayTeam: 'ALBION SC Riverside G12 DPL', homeTeamClub: 'Future FC', awayTeamClub: 'ALBION SC Riverside', …}rawField: "Unassigned"rawFieldName: "Unassigned"[[Prototype]]: Object
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 4 API data: {
+  "id": 6534,
+  "homeTeam": "Future FC G12",
+  "awayTeam": "ALBION SC Riverside G12 DPL",
+  "homeTeamClub": "Future FC",
+  "awayTeamClub": "ALBION SC Riverside",
+  "ageGroup": "U14",
+  "field": "Unassigned",
+  "fieldName": "Unassigned",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 4 transformed: Object
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 5 transformation debug: Object
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 5 API data: {
+  "id": 6535,
+  "homeTeam": "Future FC G12",
+  "awayTeam": "Cal Elite SC G2012",
+  "homeTeamClub": "Future FC",
+  "awayTeamClub": "California Elite Soccer Club",
+  "ageGroup": "U14",
+  "field": "Unassigned",
+  "fieldName": "Unassigned",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-17",
+  "time": "09:30",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 5 transformed: ObjectageGroup: "U14"awayTeam: "Cal Elite SC G2012"date: "TBD"duration: 90endTime: undefinedfield: "Unassigned"fieldName: "Unassigned"homeTeam: "Future FC G12"id: 6535startTime: undefinedstatus: "scheduled"time: "TBD"[[Prototype]]: Object
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 6 transformation debug: ObjectawayTeamStructure: "Cal Elite SC G2012"fieldStructure: "Unassigned"homeTeamStructure: "ALBION SC Riverside G12 DPL"raw: {id: 6536, homeTeam: 'ALBION SC Riverside G12 DPL', awayTeam: 'Cal Elite SC G2012', homeTeamClub: 'ALBION SC Riverside', awayTeamClub: 'California Elite Soccer Club', …}rawField: "Unassigned"rawFieldName: "Unassigned"[[Prototype]]: Object
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 6 API data: {
+  "id": 6536,
+  "homeTeam": "ALBION SC Riverside G12 DPL",
+  "awayTeam": "Cal Elite SC G2012",
+  "homeTeamClub": "ALBION SC Riverside",
+  "awayTeamClub": "California Elite Soccer Club",
+  "ageGroup": "U14",
+  "field": "Unassigned",
+  "fieldName": "Unassigned",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-17",
+  "time": "10:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-D8fZY5pM.js:6 Game 6 transformed: Object
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning

@@ -6,8 +6,8 @@
  */
 
 import { db } from "../../db";
-import { eq, inArray } from "drizzle-orm";
-import { games, eventBrackets, complexes, fields, teams, events, gameTimeSlots } from "../../db/schema";
+import { eq, inArray, notInArray } from "drizzle-orm";
+import { games, eventBrackets, complexes, fields, teams, events, gameTimeSlots, eventComplexes } from "../../db/schema";
 
 export class SimpleScheduler {
   static async generateSchedule(eventId: string, workflowData: any, options: {
@@ -34,6 +34,7 @@ export class SimpleScheduler {
     // Get real complex and field data for this event
     const realComplexes = await SimpleScheduler.getRealComplexesForEvent(eventId);
     console.log(`📍 Found ${realComplexes.length} complexes with fields for event ${eventId}`);
+    console.log(`📍 Complex details:`, JSON.stringify(realComplexes, null, 2));
 
     // Get team coach information for conflict detection
     const teamCoaches = await SimpleScheduler.getTeamCoachInfo(eventId);
@@ -140,7 +141,7 @@ export class SimpleScheduler {
       console.log(`📅 Creating time slots for ${gamesByDate.size} tournament days`);
       
       // Create time slots for each game
-      for (const [date, dateGames] of gamesByDate) {
+      for (const [date, dateGames] of Array.from(gamesByDate.entries())) {
         console.log(`📅 Processing ${dateGames.length} games for ${date}`);
         
         for (const game of dateGames) {
@@ -229,7 +230,7 @@ export class SimpleScheduler {
       // Get time slots for these games to check for overlaps
       const gameTimeSlotIds = existingGames
         .filter(g => g.timeSlotId !== null)
-        .map(g => g.timeSlotId);
+        .map(g => g.timeSlotId as number);
       
       if (gameTimeSlotIds.length > 0) {
         const existingTimeSlots = await db
@@ -311,6 +312,21 @@ export class SimpleScheduler {
    */
   static async getRealComplexesForEvent(eventId: string) {
     try {
+      console.log(`🏟️ Fetching complexes for event ${eventId}...`);
+      
+      // First test the join query
+      const testQuery = await db
+        .select({
+          eventId: eventComplexes.eventId,
+          complexId: eventComplexes.complexId,
+          complexName: complexes.name
+        })
+        .from(eventComplexes)
+        .innerJoin(complexes, eq(eventComplexes.complexId, complexes.id))
+        .where(eq(eventComplexes.eventId, eventId));
+      
+      console.log(`🏟️ Event-Complex join test result:`, JSON.stringify(testQuery, null, 2));
+      
       const complexesWithFields = await db
         .select({
           id: complexes.id,
@@ -329,9 +345,12 @@ export class SimpleScheduler {
             closeTime: fields.closeTime,
           }
         })
-        .from(complexes)
+        .from(eventComplexes)
+        .innerJoin(complexes, eq(eventComplexes.complexId, complexes.id))
         .leftJoin(fields, eq(complexes.id, fields.complexId))
-        .where(eq(fields.isOpen, true));
+        .where(eq(eventComplexes.eventId, eventId));
+      
+      console.log(`🏟️ Raw complexes query result: ${JSON.stringify(complexesWithFields, null, 2)}`);
 
       // Group fields by complex
       const complexMap = new Map();
