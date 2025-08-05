@@ -82,18 +82,19 @@ router.get('/:eventId/schedule', async (req, res) => {
         homeScore: games.homeScore,
         awayScore: games.awayScore,
         createdAt: games.createdAt,
+        // Get field data from time slot's field, not game's field
         fieldName: fields.name,
         fieldSize: fields.fieldSize,
         complexName: complexes.name,
         complexAddress: complexes.address,
-        // Get time slot data if available
+        // Get time slot data - this is the key fix
         timeSlotStart: gameTimeSlots.startTime,
         timeSlotEnd: gameTimeSlots.endTime
       })
       .from(games)
-      .leftJoin(fields, eq(games.fieldId, fields.id))
-      .leftJoin(complexes, eq(fields.complexId, complexes.id))
       .leftJoin(gameTimeSlots, eq(games.timeSlotId, gameTimeSlots.id))
+      .leftJoin(fields, eq(gameTimeSlots.fieldId, fields.id))
+      .leftJoin(complexes, eq(fields.complexId, complexes.id))
       .where(eq(games.eventId, eventId));
 
     // Create team lookup map
@@ -124,29 +125,25 @@ router.get('/:eventId/schedule', async (req, res) => {
       const fieldName = game.fieldName || (game.fieldId ? `Field ${game.fieldId}` : 'Unassigned');
       const venue = game.complexName ? `${fieldName} (${game.complexName})` : fieldName;
       
-      // Use real time slot data if available, otherwise generate realistic schedule
+      // Use real time slot data since all games now have proper time assignments
       let gameDate = tournamentDates[0]; // Default to first day
       let gameTime = '08:00';
+      let startTime = game.timeSlotStart;
+      let endTime = game.timeSlotEnd;
       
       if (game.timeSlotStart) {
         // Use actual scheduled time from time slot
-        const startTime = new Date(game.timeSlotStart);
-        gameDate = startTime.toISOString().split('T')[0];
-        gameTime = startTime.toTimeString().substring(0, 5);
-        console.log(`[Schedule Viewer] Using real time slot for game ${game.gameId}: ${gameDate} ${gameTime}`);
+        const slotStart = new Date(game.timeSlotStart);
+        gameDate = slotStart.toISOString().split('T')[0];
+        gameTime = slotStart.toTimeString().substring(0, 5);
+        startTime = game.timeSlotStart;
+        endTime = game.timeSlotEnd;
+        console.log(`[Schedule Viewer] Using real time slot for game ${game.gameId}: ${gameDate} ${gameTime} on ${game.fieldName || 'Unknown Field'}`);
       } else {
-        // Distribute games evenly across tournament days with realistic times
-        const gamesPerDay = Math.ceil(actualGamesData.length / tournamentDates.length);
-        const dayIndex = Math.floor(index / gamesPerDay);
-        gameDate = tournamentDates[dayIndex % tournamentDates.length];
-        
-        // Generate realistic game times (8 AM to 6 PM, games every 90 minutes)
-        const gameIndexInDay = index % gamesPerDay;
-        const slotsPerDay = 10; // 8AM-6PM = 10 hours, ~1 game per hour
-        const slotIndex = gameIndexInDay % slotsPerDay;
-        const hour = 8 + slotIndex;
-        const minute = (gameIndexInDay % 2) * 30; // Alternate between :00 and :30
-        gameTime = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+        console.log(`[Schedule Viewer] WARNING: Game ${game.gameId} missing time slot data`);
+        // Fallback - should not happen now that all games have time slots
+        startTime = 'TBD';
+        endTime = 'TBD';
       }
       
       return {
@@ -163,7 +160,9 @@ router.get('/:eventId/schedule', async (req, res) => {
         fieldSize: game.fieldSize || '',
         date: gameDate,
         time: gameTime,
-        duration: 90,
+        startTime: startTime,
+        endTime: endTime,
+        duration: 75, // U12 games are 75 minutes
         status: game.status || 'scheduled',
         homeScore: game.homeScore,
         awayScore: game.awayScore
