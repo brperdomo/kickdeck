@@ -324,35 +324,24 @@ export async function processDestinationCharge(
     console.log(`  MatchPro Revenue to Record: $${(feeCalculation.matchproReceives / 100).toFixed(2)}`);
     console.log(`  Application Fee Amount: $${(feeCalculation.platformFeeAmount / 100).toFixed(2)}`);
     
-    // Record comprehensive transaction in database with detailed fee breakdown
+    // Record transaction in database with core payment details
     await db.insert(paymentTransactions).values({
-      teamId: parseInt(teamId.toString()),
       eventId: parseInt(eventId.toString()),
       paymentIntentId: paymentIntent.id,
       transactionType: 'payment',
-      amount: chargeAmount, // Use the actual amount charged
-      platformFeeAmount: feeCalculation.platformFeeAmount, // ✓ Add platform fee to dedicated column
-      stripeFee: feeCalculation.stripeFeeAmount,
-      netAmount: feeCalculation.tournamentReceives,
-      matchproRevenue: feeCalculation.matchproReceives, // ✓ Add MatchPro revenue field
-      applicationFeeAmount: feeCalculation.platformFeeAmount, // ✓ Record what was sent to Stripe
+      amount: chargeAmount,
       status: paymentIntent.status,
-      cardBrand: cardBrand || null, // ✓ Add card brand (visa, mastercard, etc.)
-      cardLastFour: cardLastFour || null, // ✓ Add last 4 digits
-      paymentMethodType: paymentMethodType || null, // ✓ Add payment method type
-      connectAccountId: connectAccountId,
       metadata: {
+        teamId: teamId.toString(),
         tournamentCost: totalAmountCents.toString(),
         platformFeeRate: feeCalculation.platformFeeRate,
         platformFeeAmount: feeCalculation.platformFeeAmount,
         connectAccountId: connectAccountId,
-        feeCalculationBreakdown: feeCalculation,
-        // Add verification data
-        stripeApplicationFeeAmount: feeCalculation.platformFeeAmount,
+        cardBrand: cardBrand || null,
+        cardLastFour: cardLastFour || null,
+        paymentMethodType: paymentMethodType || null,
         recordedAt: new Date().toISOString()
-      },
-      createdAt: new Date(),
-      updatedAt: new Date()
+      }
     });
     
     console.log(`✅ TRANSACTION RECORDED - Platform fee: $${(feeCalculation.platformFeeAmount / 100).toFixed(2)}, MatchPro revenue: $${(feeCalculation.matchproReceives / 100).toFixed(2)}`);
@@ -363,9 +352,8 @@ export async function processDestinationCharge(
         paymentIntentId: paymentIntent.id,
         paymentStatus: paymentIntent.status === 'succeeded' ? 'paid' : 'payment_pending',
         paymentDate: paymentIntent.status === 'succeeded' ? new Date() : null,
-        cardBrand: cardBrand || null, // Store card brand for future reference
-        cardLastFour: cardLastFour || null, // Store last 4 digits
-        paymentMethodType: paymentMethodType || null // Store payment method type
+        // Note: Card details stored in payment transactions table instead
+        stripeCustomerId: customerIdToUse || null // This can be null for setup intent payments without customers
       })
       .where(eq(teams.id, teamId));
 
