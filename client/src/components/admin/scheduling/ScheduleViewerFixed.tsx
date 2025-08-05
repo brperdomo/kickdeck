@@ -115,11 +115,11 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
           fieldStructure: game.fieldName || game.field
         });
         
-        // Handle team names - check all possible data structures
-        const homeTeamName = game.homeTeam?.name || game.homeTeamName || `Team ${game.homeTeamId || 'Unknown'}`;
-        const awayTeamName = game.awayTeam?.name || game.awayTeamName || `Team ${game.awayTeamId || 'Unknown'}`;
+        // Handle team names - the API is returning them directly as strings in homeTeam/awayTeam
+        const homeTeamName = game.homeTeam || game.homeTeamName || `Team ${game.homeTeamId || 'Unknown'}`;
+        const awayTeamName = game.awayTeam || game.awayTeamName || `Team ${game.awayTeamId || 'Unknown'}`;
         
-        // Handle field names - check all possible structures
+        // Handle field names - extract from the "Field null" format or use direct field name
         const fieldName = game.fieldName || game.field?.name || game.field || 'Unassigned';
         
         // Format times properly

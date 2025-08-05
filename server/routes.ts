@@ -6768,24 +6768,11 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
             ageGroupId: row.age_group_id || 0,
             bracket: `${row.age_group || 'Unknown'} Flight A`,
             round: row.round || 'Pool Play',
-            homeTeam: {
-              id: row.home_team_id || 0,
-              name: row.home_team_name || `Team ${row.home_team_id || 'Unknown'}`,
-              clubName: '',
-              coach: '',
-              status: 'approved',
-              referenceId: 'TEMP'
-            },
+            // Return team names directly as strings for frontend compatibility
+            homeTeam: row.home_team_name || `Team ${row.home_team_id || 'Unknown'}`,
+            awayTeam: row.away_team_name || `Team ${row.away_team_id || 'Unknown'}`,
             homeTeamId: row.home_team_id || 0,
             homeTeamRefId: 'TEMP',
-            awayTeam: {
-              id: row.away_team_id || 0,
-              name: row.away_team_name || `Team ${row.away_team_id || 'Unknown'}`,
-              clubName: '',
-              coach: '',
-              status: 'approved',
-              referenceId: 'TEMP'
-            },
             awayTeamId: row.away_team_id || 0,
             awayTeamRefId: 'TEMP',
             status: row.status || 'scheduled',
