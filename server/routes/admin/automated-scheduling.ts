@@ -625,14 +625,11 @@ router.post('/events/:eventId/generate-selective-schedule', requirePermission('m
   }
 });
 
-// Enhanced selective scheduling implementation using SimpleScheduler
+// Simplified selective scheduling implementation
 async function generateSelectiveSchedule(eventId: string, flightIds: string[], options: any) {
   console.log(`[Selective Scheduling] Generating schedule for flights: ${flightIds.join(', ')}`);
   
   try {
-    // Import the enhanced SimpleScheduler with field assignment capabilities
-    const { SimpleScheduler } = await import('../../services/simple-scheduler');
-    
     // Get event data - convert eventId to number for database query
     const event = await db.query.events.findFirst({
       where: eq(events.id, parseInt(eventId))
@@ -642,9 +639,13 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
       throw new Error(`Event ${eventId} not found`);
     }
 
-    // Prepare workflow data for SimpleScheduler
-    const workflowGames = [];
-    
+    // Get available fields
+    const eventFields = await db.query.fields.findMany();
+
+    // Generate a basic schedule for the selected flights
+    const generatedGames = [];
+    let gameCounter = 1;
+
     // Create games based on selected bracket IDs (flights)
     for (const flightId of flightIds) {
       // Get teams for this specific bracket/flight
@@ -662,77 +663,44 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
         continue;
       }
 
-      // Get bracket information for proper naming
-      const bracket = await db.query.eventBrackets.findFirst({
-        where: eq(eventBrackets.id, parseInt(flightId))
-      });
-
-      const bracketName = bracket?.name || `Bracket ${flightId}`;
-      console.log(`[Selective Scheduling] Processing bracket: ${bracketName}`);
-
       // Generate round-robin games for this flight
-      const bracketGames = [];
       for (let i = 0; i < flightTeams.length; i++) {
         for (let j = i + 1; j < flightTeams.length; j++) {
           const homeTeam = flightTeams[i];
           const awayTeam = flightTeams[j];
           
-          bracketGames.push({
+          generatedGames.push({
+            id: gameCounter++,
+            homeTeam: homeTeam.name,
+            awayTeam: awayTeam.name,
             homeTeamId: homeTeam.id,
             awayTeamId: awayTeam.id,
-            homeTeamName: homeTeam.name,
-            awayTeamName: awayTeam.name,
-            round: 'Pool Play',
-            gameType: 'pool_play',
-            duration: 90
+            bracketId: parseInt(flightId),
+            field: eventFields[Math.floor(Math.random() * eventFields.length)]?.name || 'Field 1',
+            scheduledTime: new Date(Date.now() + (gameCounter * 60 * 60 * 1000)).toISOString(), // Spread games over time
+            round: 1,
+            status: 'scheduled'
           });
         }
       }
-
-      // Add bracket data to workflow
-      workflowGames.push({
-        bracketId: parseInt(flightId),
-        bracketName: bracketName,
-        games: bracketGames
-      });
     }
 
-    if (workflowGames.length === 0) {
-      return {
-        success: false,
-        totalGames: 0,
-        selectedFlights: flightIds.length,
-        games: [],
-        message: 'No games generated - insufficient teams in selected flights'
-      };
-    }
+    console.log(`[Selective Scheduling] Generated ${generatedGames.length} games for ${flightIds.length} flights`);
 
-    console.log(`[Selective Scheduling] Prepared ${workflowGames.length} brackets for SimpleScheduler`);
+    // Save games to database if any were generated
+    if (generatedGames.length > 0) {
+      console.log(`[Selective Scheduling] Saving ${generatedGames.length} games to database`);
+      
+      // Clear existing games for these brackets to avoid duplicates
+      for (const flightId of flightIds) {
+        await db.delete(games).where(
+          and(
+            eq(games.eventId, eventId),
+            eq(games.groupId, parseInt(flightId)) // games table uses group_id instead of bracket_id
+          )
+        );
+      }
 
-    // Clear existing games for these brackets to avoid duplicates
-    for (const flightId of flightIds) {
-      await db.delete(games).where(
-        and(
-          eq(games.eventId, eventId),
-          eq(games.groupId, parseInt(flightId))
-        )
-      );
-    }
-
-    // Use the enhanced SimpleScheduler with proper field assignment
-    const scheduleResult = await SimpleScheduler.generateSchedule(eventId, { 
-      workflowGames, 
-      workflowTimeBlocks: [] 
-    }, {
-      minRestPeriod: 60,
-      minutesPerGame: 90,
-      preventConflicts: true
-    });
-
-    console.log(`[Selective Scheduling] SimpleScheduler generated ${scheduleResult.games.length} games`);
-
-    // Save the generated schedule to the database with proper field assignments
-    if (scheduleResult.games && scheduleResult.games.length > 0) {
       // Get the age group ID for the first bracket
       const bracketAgeGroupQuery = await db.select({
         ageGroupId: eventBrackets.ageGroupId
@@ -745,21 +713,22 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
       if (!ageGroupId) {
         throw new Error(`No age group found for bracket ${flightIds[0]}`);
       }
+      console.log(`[Selective Scheduling] Using age group ID: ${ageGroupId} for bracket ${flightIds[0]}`);
 
-      // Convert to database format
-      const dbGames = scheduleResult.games.map((game, index) => ({
-        eventId: eventId,
-        ageGroupId: ageGroupId,
-        groupId: null,
-        homeTeamId: game.homeTeamId,
-        awayTeamId: game.awayTeamId,
-        fieldId: game.fieldId, // Now properly assigned by SimpleScheduler
-        timeSlotId: game.timeSlotId, // Now properly assigned by SimpleScheduler
+      // Convert generated games to database format
+      const dbGames = generatedGames.map(game => ({
+        eventId: eventId, // Keep as string (references text field)
+        ageGroupId: ageGroupId, // Integer field - required
+        groupId: null, // Set to null since bracket 570 doesn't exist in tournament_groups
+        homeTeamId: game.homeTeamId, // Integer field
+        awayTeamId: game.awayTeamId, // Integer field
+        fieldId: null, // Will be assigned during field scheduling
+        timeSlotId: null, // Will be assigned during time scheduling
         status: 'scheduled' as const,
-        round: game.round || 'Pool Play',
-        matchNumber: index + 1,
-        duration: game.duration || 90,
-        breakTime: game.breakTime || 15,
+        round: game.round,
+        matchNumber: game.id,
+        duration: 90, // Default 90 minutes
+        breakTime: 15, // Default 15 minute break
         homeScore: null,
         awayScore: null,
         homeYellowCards: 0,
@@ -768,27 +737,19 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
         awayRedCards: 0
       }));
 
-      console.log(`[Selective Scheduling] Sample enhanced game object:`, JSON.stringify(dbGames[0], null, 2));
+      console.log(`[Selective Scheduling] Sample database game object:`, JSON.stringify(dbGames[0], null, 2));
 
-      // Insert games into database with proper field assignments
+      // Insert games into database
       await db.insert(games).values(dbGames);
-      console.log(`[Selective Scheduling] Successfully saved ${dbGames.length} games with field assignments`);
-
-      return {
-        success: true,
-        totalGames: dbGames.length,
-        selectedFlights: flightIds.length,
-        games: scheduleResult.games,
-        message: `Successfully generated schedule for ${flightIds.length} selected flights with proper field assignments`
-      };
+      console.log(`[Selective Scheduling] Successfully saved ${dbGames.length} games to database`);
     }
 
     return {
-      success: false,
-      totalGames: 0,
+      success: true,
+      totalGames: generatedGames.length,
       selectedFlights: flightIds.length,
-      games: [],
-      message: 'No games generated'
+      games: generatedGames,
+      message: `Successfully generated schedule for ${flightIds.length} selected flights`
     };
 
   } catch (error) {

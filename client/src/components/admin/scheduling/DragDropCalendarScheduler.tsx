@@ -200,14 +200,14 @@ export default function DragDropCalendarScheduler({ eventId }: DragDropCalendarS
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ fieldId: game2Field, startTime: game2Time, eventId })
+        body: JSON.stringify({ fieldId: game2Field, startTime: game2Time })
       });
       
       const response2 = await fetch(`/api/admin/games/${game2Id}/reschedule`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ fieldId: game1Field, startTime: game1Time, eventId })
+        body: JSON.stringify({ fieldId: game1Field, startTime: game1Time })
       });
 
       if (!response1.ok || !response2.ok) {
@@ -237,7 +237,7 @@ export default function DragDropCalendarScheduler({ eventId }: DragDropCalendarS
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ fieldId, startTime, eventId })
+        body: JSON.stringify({ fieldId, startTime })
       });
       if (!response.ok) throw new Error('Failed to update game');
       return response.json();
