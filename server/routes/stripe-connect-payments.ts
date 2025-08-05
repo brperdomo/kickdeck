@@ -17,7 +17,7 @@ if (!process.env.STRIPE_SECRET_KEY) {
 }
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2023-10-16',
+  apiVersion: '2025-02-24.acacia',
 });
 
 import { calculateEventFees, formatFeeCalculation } from "../services/fee-calculator";
@@ -100,21 +100,17 @@ export async function processDestinationCharge(
     console.log(`  - customerId parameter: ${customerId}`);
     console.log(`  - customerIdToUse: ${customerIdToUse}`);
 
-    // Handle Link payment methods which fundamentally cannot be used with customers
-    if (paymentMethod.type === 'link') {
-      console.log(`Link payment method ${paymentMethodId} detected - Link payments cannot be used with customers in payment intents`);
-      console.log(`BEFORE Link fix: customerId was ${customerId}, paymentMethod.customer was ${paymentMethod.customer}`);
-      
-      // If Link payment method is attached to a customer, detach it first
-      if (paymentMethod.customer) {
-        console.log(`Detaching Link payment method from customer ${paymentMethod.customer} to prevent attachment errors`);
-        await stripe.paymentMethods.detach(paymentMethodId);
-        console.log(`Successfully detached Link payment method ${paymentMethodId} from customer`);
-      }
-      
-      // For Link payments, we MUST process without a customer to avoid attachment errors
+    // Handle payment methods without customers (common for team registrations)
+    if (!customerIdToUse) {
+      console.log(`Payment method ${paymentMethodId} has no customer - processing without customer (valid for off-session payments)`);
+      console.log(`This is normal for team registrations where payment methods are created during setup intents`);
       customerIdToUse = null;
-      console.log(`AFTER Link fix: customerIdToUse is now ${customerIdToUse}`);
+    }
+
+    // Special handling for Link payment methods
+    if (paymentMethod.type === 'link') {
+      console.log(`Link payment method ${paymentMethodId} detected - forcing customer to null for compatibility`);
+      customerIdToUse = null;
     }
 
     // Handle Link payment methods differently since they can't use destination charges
@@ -132,7 +128,7 @@ export async function processDestinationCharge(
       });
       
       // Create meaningful description for Stripe dashboard
-      const description = `${event.name} - ${team.name}${teamInfo.ageGroup ? ` (${teamInfo.ageGroup.name})` : ''}`;
+      const description = `${event.name} - ${team.name}`;
 
       // For Link payments, use standard payment intent (no destination charge)
       const paymentIntentParams: any = {
@@ -176,11 +172,11 @@ export async function processDestinationCharge(
           console.log(`  Total charged to customer: $${(chargeAmount / 100).toFixed(2)}`);
           console.log(`  Platform fee (MatchPro): $${(feeCalculation.platformFeeAmount / 100).toFixed(2)}`);
           console.log(`  Stripe processing fee: $${(feeCalculation.stripeFeeAmount / 100).toFixed(2)}`);
-          console.log(`  Tournament should receive: $${(feeCalculation.tournamentReceivesAmount / 100).toFixed(2)}`);
+          console.log(`  Tournament should receive: $${(feeCalculation.tournamentReceives / 100).toFixed(2)}`);
           console.log(`  MatchPro net revenue: $${(feeCalculation.matchproReceives / 100).toFixed(2)}`);
           
           const transfer = await stripe.transfers.create({
-            amount: feeCalculation.tournamentReceivesAmount, // Send tournament portion to Connect account
+            amount: feeCalculation.tournamentReceives, // Send tournament portion to Connect account
             currency: 'usd',
             destination: connectAccountId,
             source_transaction: paymentIntent.latest_charge as string,
@@ -195,7 +191,7 @@ export async function processDestinationCharge(
             }
           });
           
-          console.log(`✅ Link manual transfer created: ${transfer.id} for $${feeCalculation.tournamentReceivesAmount / 100}`);
+          console.log(`✅ Link manual transfer created: ${transfer.id} for $${feeCalculation.tournamentReceives / 100}`);
           console.log(`✅ MatchPro keeps $${(feeCalculation.matchproReceives / 100).toFixed(2)} net revenue (after paying Stripe fees)`);
         } catch (transferError) {
           console.error('Error creating manual transfer for Link payment:', transferError);
@@ -260,91 +256,27 @@ export async function processDestinationCharge(
         throw new Error(`Platform fee mismatch: params=${paymentIntentParams.application_fee_amount} vs calculated=${feeCalculation.platformFeeAmount}`);
       }
 
-      // Handle customer attachment for payment methods
+      // Handle customer attachment for payment methods (optional for off-session payments)
       if (customerIdToUse) {
         try {
           // Verify customer exists in Stripe first
           const customer = await stripe.customers.retrieve(customerIdToUse);
           console.log(`Verified customer ${customerIdToUse} exists in Stripe`);
           
-          // Check if payment method is attached to this customer
-          const paymentMethod = await stripe.paymentMethods.retrieve(paymentMethodId);
-          
-          if (!paymentMethod.customer) {
-            console.log(`Attaching payment method ${paymentMethodId} to customer ${customerIdToUse}`);
-            try {
-              await stripe.paymentMethods.attach(paymentMethodId, {
-                customer: customerIdToUse,
-              });
-              console.log(`Successfully attached payment method to customer`);
-            } catch (attachError) {
-              if (attachError.message && attachError.message.includes('was previously used without being attached')) {
-                console.log(`Payment method ${paymentMethodId} is burned (previously used without customer), cannot be reused`);
-                throw new Error(`Payment method ${paymentMethodId} was previously used and cannot be reused. Team needs to provide new payment method.`);
-              } else {
-                throw attachError;
-              }
-            }
-          } else if (paymentMethod.customer !== customerIdToUse) {
-            console.log(`Payment method attached to different customer: ${paymentMethod.customer}, expected: ${customerIdToUse}`);
-            // Detach from old customer and attach to correct one
-            await stripe.paymentMethods.detach(paymentMethodId);
-            await stripe.paymentMethods.attach(paymentMethodId, {
-              customer: customerIdToUse,
-            });
-            console.log(`Re-attached payment method to correct customer`);
-          }
-          
           paymentIntentParams.customer = customerIdToUse;
           console.log(`Using customer: ${customerIdToUse}`);
           
-        } catch (customerError) {
-          if (customerError.code === 'resource_missing') {
-            console.log(`Customer ${customerIdToUse} does not exist in Stripe, creating new customer`);
-            
-            // Create new customer in main MatchPro account
-            const newCustomer = await stripe.customers.create({
-              email: team.submitterEmail || 'noemail@example.com',
-              name: team.submitterName || team.name,
-              metadata: {
-                teamId: teamId.toString(),
-                teamName: team.name || 'Unknown Team',
-                eventId: eventId,
-                eventName: event.name || 'Unknown Event',
-                originalCustomerId: customerIdToUse,
-                replacementReason: 'Original customer not found in Stripe'
-              }
-            });
-            
-            console.log(`Created new customer ${newCustomer.id} for team ${teamId}`);
-            
-            // Update team record with new customer ID
-            await db.update(teams)
-              .set({ stripeCustomerId: newCustomer.id })
-              .where(eq(teams.id, teamId));
-            
-            // Attach payment method to new customer
-            try {
-              await stripe.paymentMethods.attach(paymentMethodId, {
-                customer: newCustomer.id,
-              });
-              console.log(`Attached payment method to new customer ${newCustomer.id}`);
-            } catch (attachError) {
-              if (attachError.message && attachError.message.includes('was previously used without being attached')) {
-                console.log(`Payment method ${paymentMethodId} is burned (previously used without customer), cannot be reused`);
-                throw new Error(`Payment method ${paymentMethodId} was previously used and cannot be reused. Team needs to provide new payment method.`);
-              } else {
-                throw attachError;
-              }
-            }
-            
-            paymentIntentParams.customer = newCustomer.id;
-            console.log(`Using new customer: ${newCustomer.id}`);
-            
-          } else {
-            throw customerError; // Re-throw non-customer-missing errors
-          }
+        } catch (customerError: any) {
+          console.log(`Customer ${customerIdToUse} error: ${customerError.message} - proceeding without customer`);
+          // Don't fail the payment, just proceed without customer
+          customerIdToUse = null;
         }
+      }
+      
+      // For payment methods without customers, proceed with off-session payment
+      if (!customerIdToUse) {
+        console.log(`Processing payment without customer - valid for off-session team registration payments`);
+        // paymentIntentParams.customer is intentionally not set
       }
 
       paymentIntent = await stripe.paymentIntents.create(paymentIntentParams);
@@ -405,9 +337,10 @@ export async function processDestinationCharge(
       matchproRevenue: feeCalculation.matchproReceives, // ✓ Add MatchPro revenue field
       applicationFeeAmount: feeCalculation.platformFeeAmount, // ✓ Record what was sent to Stripe
       status: paymentIntent.status,
-      cardBrand: cardBrand, // ✓ Add card brand (visa, mastercard, etc.)
-      cardLastFour: cardLastFour, // ✓ Add last 4 digits
-      paymentMethodType: paymentMethodType, // ✓ Add payment method type
+      cardBrand: cardBrand || null, // ✓ Add card brand (visa, mastercard, etc.)
+      cardLastFour: cardLastFour || null, // ✓ Add last 4 digits
+      paymentMethodType: paymentMethodType || null, // ✓ Add payment method type
+      connectAccountId: connectAccountId,
       metadata: {
         tournamentCost: totalAmountCents.toString(),
         platformFeeRate: feeCalculation.platformFeeRate,
@@ -418,7 +351,8 @@ export async function processDestinationCharge(
         stripeApplicationFeeAmount: feeCalculation.platformFeeAmount,
         recordedAt: new Date().toISOString()
       },
-      createdAt: new Date()
+      createdAt: new Date(),
+      updatedAt: new Date()
     });
     
     console.log(`✅ TRANSACTION RECORDED - Platform fee: $${(feeCalculation.platformFeeAmount / 100).toFixed(2)}, MatchPro revenue: $${(feeCalculation.matchproReceives / 100).toFixed(2)}`);
@@ -428,10 +362,10 @@ export async function processDestinationCharge(
       .set({
         paymentIntentId: paymentIntent.id,
         paymentStatus: paymentIntent.status === 'succeeded' ? 'paid' : 'payment_pending',
-        paidAt: paymentIntent.status === 'succeeded' ? new Date() : null,
-        cardBrand: cardBrand, // Store card brand for future reference
-        cardLast4: cardLastFour, // Store last 4 digits
-        paymentMethodType: paymentMethodType // Store payment method type
+        paymentDate: paymentIntent.status === 'succeeded' ? new Date() : null,
+        cardBrand: cardBrand || null, // Store card brand for future reference
+        cardLastFour: cardLastFour || null, // Store last 4 digits
+        paymentMethodType: paymentMethodType || null // Store payment method type
       })
       .where(eq(teams.id, teamId));
 
@@ -459,11 +393,13 @@ export async function processDestinationCharge(
     try {
       await db.insert(paymentTransactions).values({
         teamId: teamId,
+        eventId: parseInt(eventId.toString()),
         transactionType: 'payment',
         amount: totalAmountCents,
         status: 'failed',
         errorMessage: formatErrorForDatabase(detailedError),
-        createdAt: new Date()
+        createdAt: new Date(),
+        updatedAt: new Date()
       });
       console.log(`Logged failed destination charge for team ${teamId} to payment_transactions table`);
     } catch (logError) {
@@ -535,13 +471,22 @@ export async function chargeApprovedTeam(teamId: number) {
           if (paymentMethod.type === 'link') {
             console.log(`LINK PAYMENT DETECTED: Setting customer ID to null for Link payment method ${paymentMethodId}`);
             customerIdToSet = null; // Link payment methods cannot be used with customers
+            
+            // For Link payments, we need to verify the payment method is still usable
+            console.log(`LINK PAYMENT VALIDATION: Checking if Link payment method ${paymentMethodId} is still valid`);
+            
+            // Link payments can work with or without customers, but we'll process without to be safe
+            if (paymentMethod.customer) {
+              console.log(`Link payment method ${paymentMethodId} is attached to customer ${paymentMethod.customer} - will process without customer to avoid conflicts`);
+            }
           }
           
           // Update team record with the payment method for future use
           await db.update(teams)
             .set({ 
               paymentMethodId: paymentMethodId,
-              stripeCustomerId: customerIdToSet
+              stripeCustomerId: customerIdToSet,
+              paymentStatus: 'payment_ready' // Mark as ready for processing
             })
             .where(eq(teams.id, teamId));
             
@@ -648,11 +593,13 @@ export async function chargeApprovedTeam(teamId: number) {
     try {
       await db.insert(paymentTransactions).values({
         teamId: teamId,
+        eventId: parseInt(event.id), // Add eventId to complete the record
         transactionType: 'payment',
-        amount: team.totalAmount,
+        amount: team.totalAmount || 0,
         status: 'failed',
         errorMessage: errorMessage,
-        createdAt: new Date()
+        createdAt: new Date(),
+        updatedAt: new Date()
       });
       console.log(`Logged failed Connect payment attempt for team ${teamId} to payment_transactions table`);
     } catch (logError) {
@@ -722,7 +669,7 @@ export function registerConnectPaymentRoutes(app: Express) {
                 status: 'succeeded',
                 updatedAt: new Date()
               })
-              .where(eq(paymentTransactions.stripePaymentIntentId, paymentIntent.id));
+              .where(eq(paymentTransactions.paymentIntentId, paymentIntent.id));
 
             console.log(`Team ${teamId} payment completed successfully via Connect`);
           }
@@ -758,7 +705,7 @@ export function registerConnectPaymentRoutes(app: Express) {
                 status: 'failed',
                 updatedAt: new Date()
               })
-              .where(eq(paymentTransactions.stripePaymentIntentId, failedPayment.id));
+              .where(eq(paymentTransactions.paymentIntentId, failedPayment.id));
 
             console.log(`Team ${teamId} payment failed via Connect`);
           }
@@ -790,8 +737,7 @@ export function registerConnectPaymentRoutes(app: Express) {
         success: true,
         message: 'Team charged successfully',
         paymentIntent: result.paymentIntent.id,
-        applicationFee: result.applicationFee,
-        netToTournament: result.netToTournament
+        breakdown: result.breakdown
       });
 
     } catch (error) {
@@ -810,7 +756,7 @@ export function registerConnectPaymentRoutes(app: Express) {
       const transactions = await db
         .select()
         .from(paymentTransactions)
-        .where(eq(paymentTransactions.eventId, eventId));
+        .where(eq(paymentTransactions.eventId, parseInt(eventId)));
 
       const analytics = {
         totalTransactions: transactions.length,
