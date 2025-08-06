@@ -76,6 +76,7 @@ router.get('/:eventId/bracket-creation', async (req, res) => {
             .where(eq(gameFormats.bracketId, flight.flightId))
             .limit(1);
             
+          // A format is considered configured if the record exists, regardless of template_name
           hasFormat = formatResult.length > 0;
           templateName = hasFormat ? formatResult[0]?.templateName : null;
           
@@ -99,20 +100,25 @@ router.get('/:eventId/bracket-creation', async (req, res) => {
         let isConfigured = hasFormat;
         let estimatedGames = 0;
 
-        // If we have a format but no template name, create a default name
-        if (hasFormat && !templateName) {
-          templateName = `${assignedTeams.length}-Team Single Bracket`;
-          bracketType = templateName;
-          estimatedGames = Math.max(0, assignedTeams.length + 2); // Pool + playoffs
-        } else if (hasFormat && templateName) {
-          bracketType = templateName;
-          // Estimate games based on template
-          if (templateName.includes('Single Bracket')) {
+        // If we have a format record, it's configured regardless of template name
+        if (hasFormat) {
+          // Use template name if available, otherwise create a descriptive name
+          if (templateName) {
+            bracketType = templateName;
+          } else {
+            bracketType = `Custom Format (${assignedTeams.length} teams)`;
+          }
+          
+          // Estimate games based on template or team count
+          if (templateName && templateName.includes('Single Bracket')) {
             estimatedGames = 7; // Pool play (6) + final (1)
-          } else if (templateName.includes('Crossover')) {
+          } else if (templateName && templateName.includes('Crossover')) {
             estimatedGames = 10; // Crossover pool (9) + final (1)
-          } else if (templateName.includes('Dual')) {
+          } else if (templateName && templateName.includes('Dual')) {
             estimatedGames = 13; // Dual brackets (12) + final (1)
+          } else {
+            // Default estimation for custom formats
+            estimatedGames = Math.max(0, assignedTeams.length + 2);
           }
         } else if (assignedTeams.length > 0) {
           // Default bracket type based on team count
