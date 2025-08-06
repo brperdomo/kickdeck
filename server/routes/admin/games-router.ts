@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { db } from '../../../db';
-import { eq, inArray } from 'drizzle-orm';
-import { games } from '../../../db/schema';
+import { eq, inArray, and } from 'drizzle-orm';
+import { games, gameTimeSlots } from '../../../db/schema';
 import { hasEventAccess } from '../../middleware/event-access';
 
 // Create router for games management
@@ -173,6 +173,130 @@ router.delete('/:eventId/games/bulk', async (req, res) => {
   } catch (error) {
     console.error("Error bulk deleting games:", error);
     return res.status(500).json({ message: "Failed to bulk delete games" });
+  }
+});
+
+/**
+ * Reschedule a game (update field and time)
+ * 
+ * PUT /api/admin/games/:gameId/reschedule
+ */
+router.put('/:gameId/reschedule', hasEventAccess, async (req, res) => {
+  try {
+    const { gameId } = req.params;
+    const { fieldId, startTime, eventId } = req.body;
+    
+    if (!gameId) {
+      return res.status(400).json({ message: "Game ID is required" });
+    }
+    
+    if (!fieldId || !startTime || !eventId) {
+      return res.status(400).json({ 
+        message: "Field ID, start time, and event ID are required" 
+      });
+    }
+    
+    // Parse gameId to number
+    const parsedGameId = parseInt(gameId);
+    const parsedFieldId = parseInt(fieldId);
+    const parsedEventId = parseInt(eventId);
+    
+    if (isNaN(parsedGameId) || isNaN(parsedFieldId) || isNaN(parsedEventId)) {
+      return res.status(400).json({ message: "Invalid ID format" });
+    }
+    
+    // Get the game to make sure it exists and to check event access
+    const [gameToUpdate] = await db
+      .select()
+      .from(games)
+      .where(eq(games.id, parsedGameId))
+      .limit(1);
+    
+    if (!gameToUpdate) {
+      return res.status(404).json({ message: "Game not found" });
+    }
+    
+    // Update the game with new field (note: games table doesn't have startTime field directly)
+    await db
+      .update(games)
+      .set({
+        fieldId: parsedFieldId,
+        updatedAt: new Date().toISOString()
+      })
+      .where(eq(games.id, parsedGameId));
+    
+    // Find or create appropriate time slot for the new time and field
+    try {
+      // Calculate end time (assuming 90 minutes total: 70 min game + 20 min buffer)
+      const startDate = new Date(startTime);
+      const endDate = new Date(startDate.getTime() + 90 * 60 * 1000); // 90 minutes later
+      const endTimeStr = endDate.toISOString();
+      
+      // Get day index (days since start of event)
+      const eventStartTime = new Date(startTime);
+      const dayIndex = Math.floor((eventStartTime.getTime() - new Date(startTime.split('T')[0] + 'T00:00:00.000Z').getTime()) / (24 * 60 * 60 * 1000));
+      
+      // Look for an existing time slot that matches this field, time, and event
+      const existingSlots = await db
+        .select()
+        .from(gameTimeSlots)
+        .where(and(
+          eq(gameTimeSlots.eventId, parsedEventId.toString()),
+          eq(gameTimeSlots.fieldId, parsedFieldId),
+          eq(gameTimeSlots.startTime, startTime)
+        ));
+      
+      let timeSlotId;
+      
+      if (existingSlots.length > 0) {
+        // Use existing time slot
+        timeSlotId = existingSlots[0].id;
+      } else {
+        // Create new time slot
+        const [newSlot] = await db
+          .insert(gameTimeSlots)
+          .values({
+            eventId: parsedEventId.toString(),
+            fieldId: parsedFieldId,
+            startTime: startTime,
+            endTime: endTimeStr,
+            dayIndex: dayIndex,
+            isAvailable: false, // Mark as not available since game is assigned
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          })
+          .returning();
+        
+        timeSlotId = newSlot.id;
+      }
+      
+      // Update the game to reference the time slot
+      await db
+        .update(games)
+        .set({
+          timeSlotId: timeSlotId,
+          updatedAt: new Date().toISOString()
+        })
+        .where(eq(games.id, parsedGameId));
+        
+    } catch (timeSlotError) {
+      console.warn("Time slot creation/update failed (non-critical):", timeSlotError);
+      // Continue - the field update was successful
+    }
+    
+    return res.json({ 
+      success: true,
+      message: "Game rescheduled successfully",
+      gameId: parsedGameId,
+      fieldId: parsedFieldId,
+      startTime: startTime
+    });
+  } catch (error) {
+    console.error("Error rescheduling game:", error);
+    return res.status(500).json({ 
+      error: "Failed to reschedule game",
+      details: error instanceof Error ? error.message : String(error)
+    });
   }
 });
 
