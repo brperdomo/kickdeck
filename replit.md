@@ -28,6 +28,7 @@ Preferred communication style: Simple, everyday language.
     - **Email Communication**: Dynamic template system via SendGrid for automated notifications.
     - **Administrative Features**: Role-based access, team approval/rejection, payment tracking, audit trails, and comprehensive user/team management.
     - **Tournament-Wide Flight Management**: Unified flight category system where changes apply to all age groups simultaneously. Flight templates (Top Flight, Middle Flight, Bottom Flight) are configured once at tournament level and propagate automatically.
+        - **Nike Flight Classifications**: Nike Classic = bottom-flight, Nike Premier = middle-flight, Nike Elite = top-flight
     - **Enhanced Bracket Creation Engine**: Comprehensive team assignment interface with manual assignment, seeding functionality, and proper flight name formatting (e.g., "U10 Boys Middle Flight").
     - **Scheduling Engine**: Advanced multi-tier system with constraint-aware optimization.
         - **Scheduling Approaches**: TournamentScheduler, SimpleScheduler, OpenAI-Service (AI-powered), SwissSystemScheduler.
