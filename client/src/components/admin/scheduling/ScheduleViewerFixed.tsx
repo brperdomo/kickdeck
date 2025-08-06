@@ -166,7 +166,7 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
 
       // Extract unique values for filters
       const uniqueFields = new Set(transformedGames.map((g: any) => g.field).filter((f: string) => f && f !== 'Unassigned'));
-      const fields = Array.from(uniqueFields).map((name: string) => ({ name, surface: 'grass', size: '11v11' }));
+      const fields = Array.from(uniqueFields).map((name) => ({ name: name as string, surface: 'grass', size: '11v11' }));
       
       const uniqueAgeGroups = new Set(transformedGames.map((g: any) => g.ageGroup).filter(Boolean));
       const ageGroups = Array.from(uniqueAgeGroups) as string[];
@@ -353,6 +353,27 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
     } else {
       setSelectedGames(filteredGames.map(g => g.id));
     }
+  };
+
+  // Generate tooltip message for TBD/unassigned games
+  const getUnassignedTooltip = (game: Game) => {
+    const issues = [];
+    
+    if (game.time === 'TBD' || !game.time) {
+      issues.push('No time assigned - scheduling algorithm couldn\'t find suitable time slot');
+    }
+    
+    if (game.field === 'Unassigned' || game.field === 'TBD' || !game.field) {
+      issues.push('No field assigned - field requirements may conflict with availability');
+    }
+    
+    if (game.date === 'TBD' || !game.date) {
+      issues.push('No date assigned - tournament dates may be incomplete');
+    }
+
+    if (issues.length === 0) return null;
+    
+    return `⚠️ Assignment Issues:\n${issues.map(issue => `• ${issue}`).join('\n')}\n\nSolutions:\n• Use Calendar Interface to manually assign\n• Check field availability and size requirements\n• Verify tournament dates are properly configured`;
   };
 
   const handleExportSchedule = () => {
@@ -607,10 +628,18 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
             </div>
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              {filteredGames.map((game) => (
-                <Card key={game.id} className={`border transition-colors ${
-                  selectedGames.includes(game.id) ? 'border-blue-300 bg-blue-50' : 'border-gray-200'
-                }`}>
+              {filteredGames.map((game) => {
+                const tooltipMessage = getUnassignedTooltip(game);
+                const hasUnassignedFields = game.time === 'TBD' || game.field === 'Unassigned' || game.field === 'TBD' || game.date === 'TBD';
+                
+                return (
+                <Card 
+                  key={game.id} 
+                  className={`border transition-colors ${
+                    selectedGames.includes(game.id) ? 'border-blue-300 bg-blue-50' : 'border-gray-200'
+                  } ${hasUnassignedFields ? 'border-yellow-300 bg-yellow-50' : ''}`}
+                  title={tooltipMessage || undefined}
+                >
                   <CardContent className="p-4">
                     <div className="flex items-start justify-between">
                       <div className="flex items-center space-x-3">
@@ -621,17 +650,20 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                         <div className="space-y-1">
                           <div className="font-medium text-gray-900">
                             {game.homeTeam} vs {game.awayTeam}
+                            {hasUnassignedFields && (
+                              <AlertTriangle className="h-4 w-4 text-yellow-600 inline ml-2" />
+                            )}
                           </div>
                           <div className="flex items-center space-x-4 text-sm text-gray-600">
-                            <span className="flex items-center">
+                            <span className={`flex items-center ${game.date === 'TBD' ? 'text-yellow-600 font-medium' : ''}`}>
                               <Calendar className="h-3 w-3 mr-1" />
                               {game.date}
                             </span>
-                            <span className="flex items-center">
+                            <span className={`flex items-center ${game.time === 'TBD' ? 'text-yellow-600 font-medium' : ''}`}>
                               <Clock className="h-3 w-3 mr-1" />
                               {game.time}
                             </span>
-                            <span className="flex items-center">
+                            <span className={`flex items-center ${(game.field === 'Unassigned' || game.field === 'TBD') ? 'text-yellow-600 font-medium' : ''}`}>
                               <MapPin className="h-3 w-3 mr-1" />
                               {game.field}
                             </span>
@@ -660,7 +692,8 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                     </div>
                   </CardContent>
                 </Card>
-              ))}
+                );
+              })}
             </div>
           )}
         </CardContent>
