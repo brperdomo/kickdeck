@@ -64,12 +64,13 @@ export function BracketCreator({ eventId, workflowData, onComplete, onError }: B
       
       // Check if this flight has 8 teams and uses dual bracket format
       const totalTeams = flightTeams.length;
-      const shouldUseDualBrackets = totalTeams === 8 && (
-        flight.gameFormat?.tournamentFormat === 'dual_bracket_8_teams' ||
-        flight.gameFormat?.bracketStructure?.type === 'dual_flight_championship' ||
-        flight.selectedMatchupTemplate?.name === '8-Team Dual Brackets' ||
-        flight.selectedMatchupTemplate?.teamCount === 8
-      );
+      console.log(`[BracketCreator] Processing flight ${flight.name}: ${totalTeams} teams`);
+      console.log(`[BracketCreator] Flight gameFormat:`, flight.gameFormat);
+      console.log(`[BracketCreator] Flight format name:`, flight.gameFormat?.templateName);
+      
+      // For 8-team flights, automatically create dual brackets regardless of format setting
+      // This ensures the UI always creates Pool A, Pool B, and Championship structure for 8 teams
+      const shouldUseDualBrackets = totalTeams === 8;
       
       if (shouldUseDualBrackets) {
         console.log(`[BracketCreator] Creating dual brackets for ${flight.name} with ${totalTeams} teams`);
@@ -83,7 +84,7 @@ export function BracketCreator({ eventId, workflowData, onComplete, onError }: B
         brackets.push({
           id: `${flight.id}_bracket_A`,
           flightId: flight.id,
-          flightName: `${flight.name} A`,
+          flightName: `${flight.name} (Pool A)`,
           teamCount: teamsPerBracket,
           format: format as any,
           poolCount: 1, // Single pool within each bracket
@@ -101,7 +102,7 @@ export function BracketCreator({ eventId, workflowData, onComplete, onError }: B
         brackets.push({
           id: `${flight.id}_bracket_B`,
           flightId: flight.id,
-          flightName: `${flight.name} B`,
+          flightName: `${flight.name} (Pool B)`,
           teamCount: teamsPerBracket,
           format: format as any,
           poolCount: 1, // Single pool within each bracket
@@ -116,7 +117,7 @@ export function BracketCreator({ eventId, workflowData, onComplete, onError }: B
         brackets.push({
           id: `${flight.id}_championship`,
           flightId: flight.id,
-          flightName: `${flight.name} Championship`,
+          flightName: `${flight.name} (Championship Final)`,
           teamCount: 2, // Winner of A vs Winner of B
           format: 'knockout' as any,
           poolCount: 0,

@@ -11,7 +11,9 @@ Preferred communication style: Simple, everyday language.
 - **Enhanced Bracket Schema**: Added tournament_format and tournament_settings columns to event_brackets table with comprehensive validation schema supporting multiple tournament types and configurations.
 - **Dynamic Format Detection**: Updated automated scheduling system to query database for bracket formats instead of using hardcoded rules based on names.
 - **Nike Classic Format Migration**: Updated all existing Nike Classic brackets to use 'round_robin_final' format, ensuring 6 pool games + 1 championship final generation.
-- **Schedule API Persistence Fix**: Corrected database schema type mismatches in schedule-calendar endpoint to properly load and display games with drag-and-drop persistence.
+- **Schedule API Persistence Fix**: Corrected database schema type mismatches in schedule-calendar endpoint to properly load and display games with drag-and-drag persistence.
+- **Flight Configuration Display Fixes**: Updated format names from technical codes to user-friendly labels, changed "90min halves" to "90min games", fixed padding time persistence, and added Rest Period column.
+- **8-Team Dual Bracket Auto-Creation**: Fixed automatic dual bracket creation for 8-team flights to always generate Pool A (4 teams), Pool B (4 teams), and Championship Final (1 game) structure regardless of format setting. Enhanced bracket preview display with proper Pool A/B/Championship labels.
 
 ## System Architecture
 
