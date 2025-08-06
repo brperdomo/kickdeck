@@ -79,16 +79,22 @@ router.get('/events/:eventId/flight-configurations', isAdmin, async (req, res) =
 
       console.log(`Processing flight ${flight.flightName}: ${teamCountData?.teamCount || 0} teams, configured = ${isCompletelyConfigured}`);
 
+      // Get the proper game format data from event_game_formats table
+      const halfLength = Math.floor((flight.gameLength || 90) / 2);
+      const breakTime = 5; // Standard halftime break
+      const paddingTime = flight.bufferTime || 15;
+      const calculatedTotalTime = halfLength * 2 + breakTime + paddingTime;
+
       return {
         id: flight.flightId.toString(),
         divisionName: `${flight.ageGroup} ${flight.gender} - ${flight.flightName}`,
         startDate: startDate,
         endDate: endDate,
         matchCount: 2, // Default halves
-        matchTime: flight.gameLength || 35,
-        breakTime: 5, // Default
-        paddingTime: flight.bufferTime || 10,
-        totalTime: flight.gameLength || 35,
+        matchTime: halfLength, // Half time length (what frontend expects)
+        breakTime: breakTime,
+        paddingTime: paddingTime,
+        totalTime: calculatedTotalTime, // Properly calculated total
         formatName: flight.templateName || (isCompletelyConfigured ? 'Configured' : 'Not Configured'),
         teamCount: teamCountData?.teamCount || 0,
         ageGroupId: flight.ageGroupId,
