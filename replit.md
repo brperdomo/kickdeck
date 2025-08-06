@@ -12,11 +12,6 @@ Preferred communication style: Simple, everyday language.
 - **Global Field Size Application**: Field sizes set in Event Age Groups tab now apply consistently throughout the entire MatchPro platform
 - **Enhanced Display Names**: Flight levels display proper hierarchical names (Top/Middle/Bottom Flight) rather than raw Nike naming
 - **Enhanced Drag-Drop Scheduler**: Created Google Calendar-style scheduler with 5/10/15 minute time intervals, smooth drag operations, conflict detection, and optimistic updates to prevent games from disappearing
-- **Sequential Scheduling Fix**: Replaced scoring-based algorithm with true sequential allocation - games now schedule chronologically instead of clustering at 8am
-- **Authentication Testing Solution**: Created QuickLogin component and test admin account (testadmin@test.com/password) for drag-and-drop persistence testing
-- **Database Schema Alignment**: Fixed LSP errors by correcting field name mismatches and adding missing birthYear field in age group configuration
-- **Deployment Health Check Fix**: Resolved routing conflicts and health check issues to ensure proper deployment functionality
-- **Quick Schedule API**: Registered quick-schedule router with proper authentication and route structure for testing drag-and-drop functionality
 
 ## System Architecture
 

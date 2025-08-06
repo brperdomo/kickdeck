@@ -51,7 +51,6 @@ router.post('/events/:eventId/quick-schedule', isAdmin, async (req, res) => {
       eventId: eventId,
       ageGroup: selectedAgeGroup,
       gender: 'Mixed',
-      birthYear: new Date().getFullYear() - getMaxAgeFromGroup(selectedAgeGroup), // Calculate birth year from max age
       minAge: getMinAgeFromGroup(selectedAgeGroup),
       maxAge: getMaxAgeFromGroup(selectedAgeGroup),
       fieldSize: gameFormat,
@@ -173,34 +172,20 @@ router.post('/events/:eventId/quick-schedule', isAdmin, async (req, res) => {
     
     const generatedGames = generateGamesForTeamsWithConstraints(teams, selectedAgeGroup, timeSlots, enhancedConstraints);
 
-    // Create team records if they don't exist (using team names as IDs for now)
-    const teamIds = new Map<string, number>();
-    const homeTeamNames = generatedGames.map(g => g.homeTeam);
-    const awayTeamNames = generatedGames.map(g => g.awayTeam);
-    const allTeamNames = Array.from(new Set([...homeTeamNames, ...awayTeamNames]));
-    
-    for (const teamName of allTeamNames) {
-      // For now, use a simple hash to create team IDs (in real scenario, these would be actual team records)
-      const teamId = Math.abs(teamName.split('').reduce((a: number, b: string) => a + b.charCodeAt(0), 0) % 1000000);
-      teamIds.set(teamName, teamId);
-    }
-
-    // Save games with proper schema fields matching database structure
-    const gameInserts = generatedGames.map((game, index) => {
-      return {
-        eventId: eventId,
-        ageGroupId: 1, // Default age group ID
-        homeTeamId: teamIds.get(game.homeTeam), // Use proper team ID references
-        awayTeamId: teamIds.get(game.awayTeam), // Use proper team ID references
-        fieldId: game.fieldId,
-        timeSlotId: null, // Will link to time slots when they exist
-        status: 'scheduled' as const,
-        round: game.round || 1,
-        matchNumber: index + 1,
-        duration: parseInt(gameDuration?.toString() || '90', 10), // Use provided game duration
-        breakTime: 15 // Standard 15-minute break
-      };
-    });
+    // Save games with proper schema fields
+    const gameInserts = generatedGames.map((game, index) => ({
+      eventId: eventId,
+      ageGroupId: 1, // Default age group ID
+      homeTeam: game.homeTeam,
+      awayTeam: game.awayTeam,
+      scheduledTime: game.scheduledTime,
+      fieldId: game.fieldId,
+      status: 'scheduled' as const,
+      gameNumber: index + 1,
+      matchNumber: index + 1,
+      duration: 90, // Default 90 minutes
+      round: game.round || 1
+    }));
 
     await db.delete(games).where(eq(games.eventId, eventId));
     await db.insert(games).values(gameInserts);
@@ -370,24 +355,28 @@ function generateGamesForTeamsWithConstraints(teams: string[], ageGroup: string,
     }
   }
 
-  // Sort time slots by date and time for SEQUENTIAL assignment (earliest first)
+  // Sort time slots by date and time for optimal assignment
   const sortedSlots = timeSlots.sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
   
-  // Track used slots to avoid double-booking
-  const usedSlots = new Set<string>();
+  // Group slots by day for better distribution
+  const slotsByDay: { [date: string]: any[] } = {};
+  sortedSlots.forEach(slot => {
+    const date = new Date(slot.startTime).toISOString().split('T')[0];
+    if (!slotsByDay[date]) slotsByDay[date] = [];
+    slotsByDay[date].push(slot);
+  });
   
-  // SEQUENTIAL game assignment: assign each game to the FIRST available slot
+  // Intelligent game assignment with constraint validation and fair distribution
   for (const matchup of matchups) {
     let assignedSlot = null;
+    let bestScore = -1;
     
-    // Find the FIRST available slot (sequential allocation)
+    // Try to find the best slot considering multiple factors
     for (const slot of sortedSlots) {
-      const slotKey = `${slot.startTime}-${slot.fieldId}`;
+      const slotTime = new Date(slot.startTime);
+      const slotDate = slotTime.toISOString().split('T')[0];
       
-      // Skip if this exact slot is already used
-      if (usedSlots.has(slotKey)) {
-        continue;
-      }
+      // Removed duplicate field check - handled below with better logging
       
       // CRITICAL: Check if either team is already playing at this exact time (ANY FIELD)
       const teamConflict = games.find(g => 
@@ -397,7 +386,7 @@ function generateGamesForTeamsWithConstraints(teams: string[], ageGroup: string,
       );
       
       if (teamConflict) {
-        console.log(`🚫 TEAM CONFLICT: ${matchup.homeTeam} vs ${matchup.awayTeam} at ${slot.startTime}`);
+        console.log(`🚫 TEAM CONFLICT BLOCKED: ${matchup.homeTeam} vs ${matchup.awayTeam} at ${slot.startTime} - ${teamConflict.homeTeam} vs ${teamConflict.awayTeam} already scheduled`);
         continue;
       }
       
@@ -407,16 +396,19 @@ function generateGamesForTeamsWithConstraints(teams: string[], ageGroup: string,
       );
       
       if (fieldConflict) {
-        console.log(`🚫 FIELD CONFLICT: Field ${slot.fieldName} occupied at ${slot.startTime}`);
+        console.log(`🚫 FIELD CONFLICT BLOCKED: Field ${slot.fieldName} already occupied at ${slot.startTime} by ${fieldConflict.homeTeam} vs ${fieldConflict.awayTeam}`);
         continue;
       }
       
       // Validate constraints for both teams
       if (isSlotValidForTeams(matchup.homeTeam, matchup.awayTeam, slot, teamLastGameTime, teamGamesPerDay, constraints)) {
-        // ASSIGN TO FIRST VALID SLOT (sequential allocation)
-        assignedSlot = slot;
-        usedSlots.add(slotKey); // Mark this slot as used
-        break; // Exit loop immediately after finding first valid slot
+        // Calculate assignment score for optimal distribution
+        const score = calculateSlotScore(matchup.homeTeam, matchup.awayTeam, slot, teamLastGameTime, teamGamesPerDay, games);
+        
+        if (score > bestScore) {
+          bestScore = score;
+          assignedSlot = slot;
+        }
       }
     }
     
@@ -441,9 +433,9 @@ function generateGamesForTeamsWithConstraints(teams: string[], ageGroup: string,
         pool: matchup.pool || null
       });
       
-      console.log(`✅ SEQUENTIAL ASSIGNMENT: ${matchup.homeTeam} vs ${matchup.awayTeam} at ${assignedSlot.startTime} on ${assignedSlot.fieldName} (Slot #${games.length + 1})`);
+      console.log(`✅ GAME SCHEDULED: ${matchup.homeTeam} vs ${matchup.awayTeam} at ${assignedSlot.startTime} on ${assignedSlot.fieldName}`);
     } else {
-      console.warn(`❌ SCHEDULING FAILED: ${matchup.homeTeam} vs ${matchup.awayTeam} - no valid time slots found`);
+      console.warn(`Could not schedule game: ${matchup.homeTeam} vs ${matchup.awayTeam} - no valid time slots found`);
     }
   }
   

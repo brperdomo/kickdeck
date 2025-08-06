@@ -303,31 +303,25 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
     }
   });
 
-  // Function to move game to different day with intelligent scheduling
+  // Function to move game to different day
   const moveGameToDay = useCallback(async (game: Game, newDate: string) => {
     try {
-      // Find the best available time slot for this game
-      const availableSlot = await findNextAvailableSlot(newDate, game);
+      // Calculate new start time for the selected day at 8:00 AM
+      const newStartTime = `${newDate}T08:00:00.000Z`;
       
-      if (!availableSlot) {
-        toast({
-          title: "No Available Slots",
-          description: `No suitable time slots available on ${availableDays.find(d => d.value === newDate)?.label}`,
-          variant: "destructive"
-        });
-        return;
-      }
+      // Find the first available field for this game
+      const firstAvailableField = fields.find((f: Field) => f.isOpen)?.id || game.fieldId;
       
-      // Call the reschedule API with the calculated optimal time
+      // Call the reschedule API with new date
       updateGameMutation.mutate({
         gameId: game.id,
-        fieldId: availableSlot.fieldId,
-        startTime: availableSlot.startTime
+        fieldId: firstAvailableField,
+        startTime: newStartTime
       });
       
       toast({
-        title: "Game Scheduled",
-        description: `${game.homeTeamName} vs ${game.awayTeamName} scheduled for ${new Date(availableSlot.startTime).toLocaleTimeString()} on ${availableSlot.fieldName}`
+        title: "Game Moved",
+        description: `${game.homeTeamName} vs ${game.awayTeamName} moved to ${availableDays.find(d => d.value === newDate)?.label}`
       });
       
       // Switch to the new date to show the moved game
@@ -341,68 +335,6 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
       });
     }
   }, [updateGameMutation, toast, availableDays, setSelectedDate]);
-
-  // Helper function to find the next available time slot and field
-  const findNextAvailableSlot = useCallback(async (targetDate: string, game: Game) => {
-    try {
-      // Get current games for the target date
-      const response = await fetch(`/api/schedule-calendar/${eventId}/schedule-calendar?date=${targetDate}`, {
-        credentials: 'include'
-      });
-      const data = await response.json();
-      
-      const existingGames = data.games || [];
-      const availableFields = (data.fields || fields).filter((f: Field) => f.isOpen);
-      
-      if (availableFields.length === 0) {
-        return null;
-      }
-      
-      // Generate time slots for the day (8 AM to 8 PM in 30-minute intervals)
-      const startHour = 8;
-      const endHour = 20;
-      const intervalMinutes = 30;
-      const gameDurationMinutes = game.duration || 90; // Including buffer time
-      
-      // Find the first available slot that can accommodate this game
-      for (let hour = startHour; hour < endHour; hour++) {
-        for (let minute = 0; minute < 60; minute += intervalMinutes) {
-          const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-          const startTime = `${targetDate}T${timeString}:00.000Z`;
-          const endTime = new Date(new Date(startTime).getTime() + gameDurationMinutes * 60 * 1000).toISOString();
-          
-          // Check each field for availability at this time
-          for (const field of availableFields) {
-            const isSlotAvailable = !existingGames.some((existingGame: any) => {
-              if (existingGame.fieldId !== field.id) return false;
-              
-              const existingStart = new Date(existingGame.startTime);
-              const existingEnd = new Date(existingStart.getTime() + (existingGame.duration || 90) * 60 * 1000);
-              const newStart = new Date(startTime);
-              const newEnd = new Date(endTime);
-              
-              // Check for time overlap
-              return (newStart < existingEnd && newEnd > existingStart);
-            });
-            
-            if (isSlotAvailable) {
-              return {
-                startTime,
-                endTime,
-                fieldId: field.id,
-                fieldName: field.name
-              };
-            }
-          }
-        }
-      }
-      
-      return null;
-    } catch (error) {
-      console.error('Error finding available slot:', error);
-      return null;
-    }
-  }, [eventId, fields]);
 
   // Handle drag start
   const handleDragStart = (e: React.DragEvent, game: Game) => {

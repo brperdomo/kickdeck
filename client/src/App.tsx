@@ -68,7 +68,6 @@ import MemberRosterUpload from "@/pages/member-roster-upload";
 import MemberDashboard from "@/pages/member-dashboard";
 // Complex locations map
 import ComplexLocationsMapPage from "@/pages/complex-locations-map";
-import { QuickLogin } from "@/components/auth/QuickLogin";
 
 // Member merge interface - lazy loaded for admin use
 const MemberMergeInterface = lazy(() => import("@/components/admin/MemberMergeInterface").then(m => ({ default: m.default })));
@@ -437,13 +436,6 @@ function Router() {
           </Route>
           <Route path="/admin/roles">
             {user.isAdmin ? <AdminDashboard initialView="roles" /> : <NotFound />}
-          </Route>
-          
-          {/* Quick login for testing drag-and-drop */}
-          <Route path="/test-login">
-            <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-              <QuickLogin />
-            </div>
           </Route>
           <Route path="/admin/account">
             {user.isAdmin ? <AdminDashboard initialView="account" /> : <NotFound />}
