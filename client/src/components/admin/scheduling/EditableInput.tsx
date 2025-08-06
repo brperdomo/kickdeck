@@ -17,7 +17,7 @@ export function EditableInput({ type, value, onChange, className = '', autoFocus
       className={`bg-slate-800 border-slate-500 text-white focus:bg-slate-700 focus:border-blue-400 focus:text-white placeholder-slate-400 ${className}`}
       style={{
         backgroundColor: '#1e293b',
-        color: '#ffffff',
+        color: '#3058bf',
         borderColor: '#64748b'
       }}
       autoFocus={autoFocus}
