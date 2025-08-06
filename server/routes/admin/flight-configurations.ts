@@ -146,7 +146,8 @@ router.patch('/events/:eventId/flight-configurations/:flightId', isAdmin, async 
         .set(updateData)
         .where(eq(gameFormats.id, existingFormat.id));
         
-      console.log('Updated existing game format:', updateData);
+      console.log(`[FLIGHT CONFIG] Updated existing game format for bracketId ${parseInt(flightId)}:`, updateData);
+      console.log(`[FLIGHT CONFIG] Template name set to: "${updates.formatName}" -> "${updateData.templateName}"`);
 
       // Also update the corresponding event_game_formats if it exists
       if (updates.matchTime !== undefined || updates.breakTime !== undefined || updates.paddingTime !== undefined) {
@@ -184,7 +185,8 @@ router.patch('/events/:eventId/flight-configurations/:flightId', isAdmin, async 
       };
 
       await db.insert(gameFormats).values(newFormatData);
-      console.log('Created new game format:', newFormatData);
+      console.log(`[FLIGHT CONFIG] Created new game format for bracketId ${parseInt(flightId)}:`, newFormatData);
+      console.log(`[FLIGHT CONFIG] Template name set to: "${updates.formatName}" -> "${newFormatData.templateName}"`);
     }
     
     res.json({ success: true, message: 'Flight configuration updated successfully' });

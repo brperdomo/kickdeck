@@ -65,6 +65,7 @@ router.get('/:eventId/bracket-creation', async (req, res) => {
         let templateName = null;
         
         try {
+          // Try to find format by bracketId (which matches flightId)
           const formatResult = await db
             .select({
               id: gameFormats.id,
@@ -79,6 +80,14 @@ router.get('/:eventId/bracket-creation', async (req, res) => {
           // A format is considered configured if the record exists, regardless of template_name
           hasFormat = formatResult.length > 0;
           templateName = hasFormat ? formatResult[0]?.templateName : null;
+          
+          // Debug logging for all flights to understand the data structure
+          console.log(`[BRACKET DEBUG] Flight ${flight.flightId} (${flight.ageGroup} ${flight.gender} ${flight.name}):`, {
+            hasFormat,
+            templateName,
+            formatCount: formatResult.length,
+            formatData: formatResult[0] || 'No format found'
+          });
           
           // Log all Nike Elite flights for debugging
           if (flight.name === 'Nike Elite') {
