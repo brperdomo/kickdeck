@@ -31,6 +31,8 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
         homeTeamId: games.homeTeamId,
         awayTeamId: games.awayTeamId,
         ageGroupId: games.ageGroupId,
+        fieldId: games.fieldId,
+        timeSlotId: games.timeSlotId,
         status: games.status,
         duration: games.duration,
         round: games.round,
@@ -40,7 +42,7 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
       })
       .from(games)
       .leftJoin(eventAgeGroups, eq(games.ageGroupId, eventAgeGroups.id))
-      .where(eq(games.eventId, eventId));
+      .where(eq(games.eventId, parseInt(eventId)));
 
     console.log(`[Schedule Calendar] Found ${gamesWithDetails.length} total games with age group data`);
     console.log(`[Schedule Calendar] Sample game:`, gamesWithDetails[0]);
@@ -84,14 +86,17 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
     for (let i = 0; i < gamesWithDetails.length; i++) {
       const game = gamesWithDetails[i];
       
-      // Get actual time slot and field data from database
-      const timeSlot = allTimeSlots.find(ts => ts.id === game.gameId); // timeSlotId not available in current query
-      const assignedField = allFields.find(f => f.id === game.gameId); // fieldId not available in current query
+      // Get actual time slot and field data from database using proper IDs
+      const timeSlot = allTimeSlots.find(ts => ts.id === game.timeSlotId);
+      const assignedField = allFields.find(f => f.id === game.fieldId);
       
-      // Skip games without proper time slot or field assignments (since we have 0 games, this loop won't execute)
-      if (!timeSlot || !assignedField) {
-        console.log(`[Schedule Calendar Direct] Skipping game ${game.gameId} - missing time slot or field assignment`);
-        continue;
+      // Process games even without time slots or field assignments for now
+      // This allows us to see the games in the calendar interface
+      if (!timeSlot) {
+        console.log(`[Schedule Calendar Direct] Game ${game.gameId} has no time slot assigned`);
+      }
+      if (!assignedField) {
+        console.log(`[Schedule Calendar Direct] Game ${game.gameId} has no field assigned`);
       }
       
       console.log(`[Schedule Calendar Direct] Processing game ${game.gameId}: ${timeSlot.startTime} on ${assignedField.name}`);
