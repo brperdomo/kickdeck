@@ -7,6 +7,10 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 Preferred communication style: Simple, everyday language.
 
 ## Recent Updates (August 6, 2025)
+- **CRITICAL FIX - Sequential Scheduling Database Bug**: Fixed database save operation where games were saving with NULL field_id and time_slot_id values, causing all games to appear at 8am on same field. Now creates time slots first, then properly links games with correct field assignments.
+- **CRITICAL FIX - Field Size Constraint Validation**: Implemented strict field size filtering in unified scheduler. Age groups now only schedule on compatible field sizes (U8 on 7v7 fields only, U12 on 9v9 fields only, etc.). Prevents scheduling violations where young teams were assigned to inappropriate field sizes.
+- **Enhanced Coach Conflict Detection**: Improved coach conflict detection system to properly parse JSON coach data from multiple sources with fallback handling for different data structures.
+- **TypeScript Compilation Fixes**: Resolved Map iteration and type annotation errors in conflict detection system.
 - **Field Size Auto-Population Fix**: Age group field sizes (7v7, 9v9, 11v11) now properly auto-populate as defaults in Game Format Engine globally across the platform
 - **Flight Level Classification Fix**: Nike Elite correctly shows as "Top Flight", Premier as "Middle Flight", Classic as "Bottom Flight" instead of showing raw flight names
 - **Global Field Size Application**: Field sizes set in Event Age Groups tab now apply consistently throughout the entire MatchPro platform
