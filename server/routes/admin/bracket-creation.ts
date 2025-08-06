@@ -7,7 +7,7 @@ import {
   teams,
   gameFormats 
 } from '@db/schema';
-import { eq, and } from 'drizzle-orm';
+import { eq, and, isNull } from 'drizzle-orm';
 import { isAdmin } from '../../middleware/auth.js';
 
 const router = Router();
@@ -18,7 +18,7 @@ router.use(isAdmin);
 // Get bracket creation data for an event
 router.get('/:eventId/bracket-creation', async (req, res) => {
   try {
-    const eventId = parseInt(req.params.eventId);
+    const eventId = req.params.eventId; // Keep as string since eventId is text in schema
     
     console.log(`[Bracket Creation] GET /${eventId}/bracket-creation`);
 
@@ -99,7 +99,7 @@ router.get('/:eventId/bracket-creation', async (req, res) => {
             });
           }
         } catch (error) {
-          console.error(`Failed to check format for flight ${flight.flightId}:`, error);
+          console.error(`Failed to check format for flight ${flight.flightId}:`, error as Error);
           hasFormat = false;
           templateName = null;
         }
@@ -235,7 +235,7 @@ router.get('/:eventId/bracket-creation', async (req, res) => {
     console.error('[Bracket Creation] Error fetching bracket creation data:', error);
     res.status(500).json({ 
       error: 'Failed to fetch bracket creation data',
-      details: error.message 
+      details: (error as Error).message 
     });
   }
 });
@@ -243,7 +243,7 @@ router.get('/:eventId/bracket-creation', async (req, res) => {
 // Auto-assign teams to flights
 router.post('/:eventId/bracket-creation/auto-assign', async (req, res) => {
   try {
-    const eventId = parseInt(req.params.eventId);
+    const eventId = req.params.eventId;
     const { method = 'balanced' } = req.body;
 
     console.log(`[Bracket Creation] POST /${eventId}/bracket-creation/auto-assign - Method: ${method}`);
