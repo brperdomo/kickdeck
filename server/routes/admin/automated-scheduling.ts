@@ -742,6 +742,11 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
       // Insert games into database
       await db.insert(games).values(dbGames);
       console.log(`[Selective Scheduling] Successfully saved ${dbGames.length} games to database`);
+      
+      // Apply field assignments with size validation
+      const { assignFieldsToGames } = await import('./tournament-control');
+      await assignFieldsToGames(eventId);
+      console.log(`[Selective Scheduling] Applied field assignments with size validation`);
     }
 
     return {
