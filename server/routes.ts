@@ -1267,7 +1267,7 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/events', isAdmin, conflictDetectionRouter); // Comprehensive conflict detection system
     app.use('/api/admin/events', isAdmin, adminBracketsRouter); // Bracket generation and management
     app.use('/api/admin/events', isAdmin, flightTemplatesRouter); // Tournament-wide flight template management
-    app.use('/api/admin/events', isAdmin, adminGamesRouter); // Game scheduling and management
+    app.use('/api/admin/games', isAdmin, adminGamesRouter); // Game scheduling and management
     app.use('/api/admin/events', isAdmin, fieldsRouter); // Field assignment and management
     app.use('/api/admin/field-management', isAdmin, fieldManagementRouter); // Real field availability service
     app.use('/api/admin/enhanced-conflict-detection', isAdmin, enhancedConflictDetectionRouter); // Advanced conflict analysis
