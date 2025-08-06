@@ -181,6 +181,18 @@ export class TournamentScheduler {
         games.push(...this.generateRoundRobinGames(bracket, teams, gameCounter));
         break;
         
+      case '4-Team Single Bracket':
+      case 'round_robin_final':
+        // Generate pool play games (6 games) + championship final (1 game) = 7 total
+        const poolPlayGames = this.generateRoundRobinGames(bracket, teams, gameCounter);
+        games.push(...poolPlayGames);
+        gameCounter += poolPlayGames.length;
+        
+        // Add championship final with placeholders
+        const championshipGame = this.generateChampionshipGame(bracket, gameCounter);
+        games.push(championshipGame);
+        break;
+        
       case 'pool_play':
         games.push(...this.generatePoolPlayGames(bracket, teams, pools, gameCounter));
         break;
@@ -213,6 +225,29 @@ export class TournamentScheduler {
   }
   
   /**
+   * Generate championship final game with placeholders
+   */
+  private static generateChampionshipGame(
+    bracket: any,
+    gameNumber: number
+  ): Game {
+    return {
+      id: `${bracket.bracketId}_final_${gameNumber}`,
+      homeTeamId: null, // Placeholder for 1st place team
+      homeTeamName: '1st Place',
+      awayTeamId: null, // Placeholder for 2nd place team  
+      awayTeamName: '2nd Place',
+      bracketId: bracket.bracketId,
+      bracketName: bracket.bracketName,
+      round: 'Championship',
+      gameType: 'final',
+      gameNumber: gameNumber,
+      duration: 90,
+      isPlaceholder: true // Mark as placeholder game
+    };
+  }
+
+  /**
    * Generate round-robin games (everyone plays everyone)
    */
   private static generateRoundRobinGames(
@@ -234,7 +269,7 @@ export class TournamentScheduler {
           awayTeamName: teams[j].name,
           bracketId: bracket.bracketId,
           bracketName: bracket.bracketName,
-          round: 'Round Robin',
+          round: 'Pool Play',
           gameType: 'pool_play',
           gameNumber: gameCounter++,
           duration: 90 // Standard 90-minute game
