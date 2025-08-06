@@ -542,16 +542,22 @@ async function generateGamesForFlight(eventId: string, flight: any) {
 }
 
 async function assignFieldsToGames(eventId: string) {
-  // Get unscheduled games
+  // Get unscheduled games with their age group field size requirements
   const unscheduledGames = await db
-    .select()
+    .select({
+      id: games.id,
+      ageGroupId: games.ageGroupId,
+      eventId: games.eventId,
+      fieldSize: eventAgeGroups.fieldSize
+    })
     .from(games)
+    .leftJoin(eventAgeGroups, eq(games.ageGroupId, eventAgeGroups.id))
     .where(and(
       eq(games.eventId, eventId),
       isNull(games.fieldId)
     ));
 
-  // Get available fields
+  // Get available fields grouped by field size
   const availableFields = await db
     .select()
     .from(fields)
@@ -562,20 +568,47 @@ async function assignFieldsToGames(eventId: string) {
     return;
   }
 
-  // Simple field assignment - distribute games across available fields
-  let fieldIndex = 0;
+  // Group fields by size for efficient assignment
+  const fieldsBySize: { [size: string]: typeof availableFields } = {};
+  availableFields.forEach(field => {
+    const size = field.fieldSize || '11v11';
+    if (!fieldsBySize[size]) {
+      fieldsBySize[size] = [];
+    }
+    fieldsBySize[size].push(field);
+  });
+
+  console.log('[Assign Fields] Available fields by size:', 
+    Object.keys(fieldsBySize).map(size => `${size}: ${fieldsBySize[size].length} fields`));
+
+  // Field assignment with size compatibility checking
   const updates = [];
+  const fieldIndexes: { [size: string]: number } = {};
 
   for (const game of unscheduledGames) {
-    const assignedField = availableFields[fieldIndex % availableFields.length];
+    const requiredSize = game.fieldSize || '11v11';
+    const compatibleFields = fieldsBySize[requiredSize];
     
-    // For now, assign field without size compatibility check since fieldSize doesn't exist in games table
+    if (!compatibleFields || compatibleFields.length === 0) {
+      console.warn(`[Assign Fields] No ${requiredSize} fields available for game ${game.id} - skipping`);
+      continue;
+    }
+    
+    // Initialize field index for this size if not exists
+    if (!(requiredSize in fieldIndexes)) {
+      fieldIndexes[requiredSize] = 0;
+    }
+    
+    // Round-robin assignment within compatible fields
+    const assignedField = compatibleFields[fieldIndexes[requiredSize] % compatibleFields.length];
+    fieldIndexes[requiredSize]++;
+    
     updates.push({
       gameId: game.id,
-      fieldId: assignedField.id
+      fieldId: assignedField.id,
+      fieldSize: requiredSize,
+      fieldName: assignedField.name
     });
-    
-    fieldIndex++;
   }
 
   // Apply field assignments
@@ -588,7 +621,17 @@ async function assignFieldsToGames(eventId: string) {
       .where(eq(games.id, update.gameId));
   }
 
-  console.log(`[Assign Fields] Assigned fields to ${updates.length} games`);
+  console.log(`[Assign Fields] Successfully assigned ${updates.length} games to size-compatible fields`);
+  
+  // Log assignment summary
+  const assignmentSummary: { [size: string]: number } = {};
+  updates.forEach(update => {
+    assignmentSummary[update.fieldSize] = (assignmentSummary[update.fieldSize] || 0) + 1;
+  });
+  
+  Object.entries(assignmentSummary).forEach(([size, count]) => {
+    console.log(`[Assign Fields] ${size} games: ${count} assigned`);
+  });
 }
 
 
