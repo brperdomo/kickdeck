@@ -8,7 +8,8 @@ import {
   events,
   teams,
   formatTemplates,
-  gameFormats
+  gameFormats,
+  matchupTemplates
 } from '@db/schema';
 
 const router = Router();
@@ -42,6 +43,7 @@ interface GameFormat {
   restPeriod: number;
   maxGamesPerDay: number;
   templateName?: string;
+  matchupTemplateId?: number;
   bracketStructure?: BracketStructure;
 }
 
@@ -60,9 +62,12 @@ router.get('/events/:eventId/flight-formats', isAdmin, async (req, res) => {
 
     console.log(`[Flight Formats] Found ${flights.length} flights`);
 
-    // Get all game formats for flights in this event
+    // Get all game formats for flights in this event with matchup templates
     const gameFormatsQuery = await db.query.gameFormats.findMany({
-      where: sql`bracket_id IN (SELECT id FROM event_brackets WHERE event_id = ${eventId})`
+      where: sql`bracket_id IN (SELECT id FROM event_brackets WHERE event_id = ${eventId})`,
+      with: {
+        matchupTemplate: true
+      }
     });
 
     console.log(`[Flight Formats] Found ${gameFormatsQuery.length} game formats`);
@@ -370,8 +375,8 @@ router.post('/events/:eventId/flights/:flightId/format', isAdmin, async (req, re
       bufferTime: format.bufferTime,
       restPeriod: format.restPeriod,
       maxGamesPerDay: format.maxGamesPerDay,
-      templateName: format.templateName || null
-      // bracketStructure will be added when we extend the schema
+      templateName: format.templateName || null,
+      matchupTemplateId: format.matchupTemplateId || null
     };
 
     if (gameFormat) {

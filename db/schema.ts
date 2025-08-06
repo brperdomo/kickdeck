@@ -714,7 +714,23 @@ export const formatTemplates = pgTable("format_templates", {
   updatedAt: text("updated_at").notNull().default(new Date().toISOString()),
 });
 
-// Game Formats - Flight-specific format configurations
+// Matchup Logic Templates - Define how matches are generated for different team counts and bracket structures
+export const matchupTemplates = pgTable("matchup_templates", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(), // e.g., "4-Team Single Bracket", "6-Team Crossover", "8-Team Dual Bracket"
+  description: text("description").notNull(),
+  teamCount: integer("team_count").notNull(), // Expected number of teams (4, 6, 8, etc.)
+  bracketStructure: text("bracket_structure").notNull(), // "single", "crossover", "dual", "round_robin"
+  matchupPattern: jsonb("matchup_pattern").notNull(), // JSON array of matchup pairs
+  totalGames: integer("total_games").notNull(), // Pre-calculated total games this template generates
+  hasPlayoffGame: boolean("has_playoff_game").default(false), // Whether final/playoff game is included
+  playoffDescription: text("playoff_description"), // Description of playoff game logic
+  isActive: boolean("is_active").default(true),
+  createdAt: text("created_at").notNull().default(new Date().toISOString()),
+  updatedAt: text("updated_at").notNull().default(new Date().toISOString()),
+});
+
+// Game Formats - Flight-specific format configurations with matchup templates
 export const gameFormats = pgTable("game_formats", {
   id: serial("id").primaryKey(),
   bracketId: integer("bracket_id").notNull().references(() => eventBrackets.id, { onDelete: 'cascade' }),
@@ -724,6 +740,7 @@ export const gameFormats = pgTable("game_formats", {
   restPeriod: integer("rest_period").notNull(), // minimum rest between team games
   maxGamesPerDay: integer("max_games_per_day").notNull(),
   templateName: text("template_name"), // Reference to template used (if any)
+  matchupTemplateId: integer("matchup_template_id").references(() => matchupTemplates.id), // Selected matchup logic
   createdAt: text("created_at").notNull().default(new Date().toISOString()),
   updatedAt: text("updated_at").notNull().default(new Date().toISOString()),
 });
@@ -738,6 +755,17 @@ export const insertFormatTemplateSchema = createInsertSchema(formatTemplates, {
   maxGamesPerDay: z.number().int().min(1).max(8, "Max games per day must be 1-8"),
 });
 
+export const insertMatchupTemplateSchema = createInsertSchema(matchupTemplates, {
+  name: z.string().min(1, "Template name is required"),
+  description: z.string().min(1, "Description is required"), 
+  teamCount: z.number().int().min(3).max(16, "Team count must be 3-16"),
+  bracketStructure: z.enum(["single", "crossover", "dual", "round_robin", "swiss"]),
+  matchupPattern: z.array(z.array(z.string())).min(1, "At least one matchup required"),
+  totalGames: z.number().int().min(1, "Total games must be at least 1"),
+  hasPlayoffGame: z.boolean().default(false),
+  playoffDescription: z.string().optional(),
+});
+
 export const insertGameFormatSchema = createInsertSchema(gameFormats, {
   gameLength: z.number().int().min(20).max(50, "Game length must be 20-50 minutes"),
   fieldSize: z.enum(["7v7", "9v9", "11v11"]),
@@ -745,13 +773,17 @@ export const insertGameFormatSchema = createInsertSchema(gameFormats, {
   restPeriod: z.number().int().min(30).max(300, "Rest period must be 30-300 minutes"),
   maxGamesPerDay: z.number().int().min(1).max(8, "Max games per day must be 1-8"),
   templateName: z.string().optional(),
+  matchupTemplateId: z.number().int().optional(),
 });
 
 export const selectFormatTemplateSchema = createSelectSchema(formatTemplates);
+export const selectMatchupTemplateSchema = createSelectSchema(matchupTemplates);
 export const selectGameFormatSchema = createSelectSchema(gameFormats);
 
 export type InsertFormatTemplate = typeof formatTemplates.$inferInsert;
 export type SelectFormatTemplate = typeof formatTemplates.$inferSelect;
+export type InsertMatchupTemplate = typeof matchupTemplates.$inferInsert;
+export type SelectMatchupTemplate = typeof matchupTemplates.$inferSelect;
 export type InsertGameFormat = typeof gameFormats.$inferInsert;
 export type SelectGameFormat = typeof gameFormats.$inferSelect;
 
@@ -761,6 +793,14 @@ export const gameFormatsRelations = relations(gameFormats, ({ one }) => ({
     fields: [gameFormats.bracketId],
     references: [eventBrackets.id]
   }),
+  matchupTemplate: one(matchupTemplates, {
+    fields: [gameFormats.matchupTemplateId],
+    references: [matchupTemplates.id]
+  }),
+}));
+
+export const matchupTemplatesRelations = relations(matchupTemplates, ({ many }) => ({
+  gameFormats: many(gameFormats),
 }));
 
 export const eventBracketsRelations = relations(eventBrackets, ({ one, many }) => ({

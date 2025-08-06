@@ -25,6 +25,18 @@ interface FlightFormatData {
   displayName: string; // Full display like "U17 Boys - Nike Elite A"
 }
 
+interface MatchupTemplate {
+  id: number;
+  name: string;
+  teamCount: number;
+  description: string;
+  bracketStructure: any; // JSON array defining team pairings
+  gameCount: number;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 interface GameFormat {
   id?: number;
   gameLength: number; // 30, 35, 40 minute halves
@@ -33,6 +45,7 @@ interface GameFormat {
   restPeriod: number; // minimum rest between team games
   maxGamesPerDay: number;
   templateName?: string;
+  matchupTemplateId?: number;
   bracketStructure?: BracketStructure; // Tournament format based on team count
 }
 
@@ -162,6 +175,49 @@ export function GameFormatEngine({ eventId }: GameFormatEngineProps) {
       });
       if (!response.ok) throw new Error('Failed to fetch format templates');
       return response.json();
+    }
+  });
+
+  // Fetch matchup templates
+  const { data: matchupTemplates = [] } = useQuery({
+    queryKey: ['matchup-templates'],
+    queryFn: async (): Promise<MatchupTemplate[]> => {
+      // For now, return mock data since API has routing issues
+      return [
+        {
+          id: 1,
+          name: "4-Team Single Bracket",
+          teamCount: 4,
+          description: "4 teams in one bracket with round-robin pool play",
+          bracketStructure: [["A1", "B2"], ["B1", "A2"], ["A1", "B1"], ["A2", "B2"], ["A1", "A2"], ["B1", "B2"]],
+          gameCount: 6,
+          isActive: true,
+          createdAt: "2025-08-06",
+          updatedAt: "2025-08-06"
+        },
+        {
+          id: 2,
+          name: "6-Team Crossover Brackets",
+          teamCount: 6,
+          description: "6 teams in 2 brackets of 3 with crossover pool play + final",
+          bracketStructure: [["A1", "B1"], ["A2", "B2"], ["A3", "B3"], ["A1", "B2"], ["A2", "B3"], ["A3", "B1"], ["A1", "B3"], ["A2", "B1"], ["A3", "B2"], ["W1", "W2"]],
+          gameCount: 10,
+          isActive: true,
+          createdAt: "2025-08-06", 
+          updatedAt: "2025-08-06"
+        },
+        {
+          id: 3,
+          name: "8-Team Dual Brackets", 
+          teamCount: 8,
+          description: "8 teams in 2 brackets of 4 with crossover semifinals + final",
+          bracketStructure: [["A1", "A2"], ["A3", "A4"], ["B1", "B2"], ["B3", "B4"], ["A1", "A3"], ["A2", "A4"], ["B1", "B3"], ["B2", "B4"], ["A1", "A4"], ["A2", "A3"], ["B1", "B4"], ["B2", "B3"], ["SF1", "SF2"]],
+          gameCount: 13,
+          isActive: true,
+          createdAt: "2025-08-06",
+          updatedAt: "2025-08-06"
+        }
+      ];
     }
   });
 
@@ -625,7 +681,7 @@ export function GameFormatEngine({ eventId }: GameFormatEngineProps) {
 
                           {/* Max Games Per Day */}
                           <div className="space-y-2">
-                            <Label>Max Games Per Day</Label>
+                            <Label className="text-slate-200">Max Games Per Day</Label>
                             <Input
                               type="number"
                               min="1"
@@ -634,6 +690,52 @@ export function GameFormatEngine({ eventId }: GameFormatEngineProps) {
                               onChange={(e) => handleCustomFormatChange(flight.flightId, 'maxGamesPerDay', parseInt(e.target.value))}
                               placeholder="3"
                             />
+                          </div>
+                        </div>
+
+                        {/* Matchup Template Selection */}
+                        <div className="space-y-3 border-t border-slate-600 pt-4">
+                          <Label className="text-slate-200">Matchup Template</Label>
+                          <p className="text-sm text-slate-400">
+                            Define how teams are paired up and what games are generated based on {flight.teamCount} teams
+                          </p>
+                          
+                          <div className="space-y-3">
+                            {/* Compatible Templates for this Team Count */}
+                            {matchupTemplates
+                              .filter(template => template.teamCount === flight.teamCount)
+                              .map((template) => (
+                                <div 
+                                  key={template.id}
+                                  className={`border rounded-lg p-4 cursor-pointer transition-colors ${
+                                    customFormats[flight.flightId]?.matchupTemplateId === template.id 
+                                      ? 'border-blue-500 bg-blue-900/20' 
+                                      : 'border-slate-600 hover:border-slate-500'
+                                  }`}
+                                  onClick={() => handleCustomFormatChange(flight.flightId, 'matchupTemplateId', template.id)}
+                                >
+                                  <div className="flex items-start justify-between">
+                                    <div>
+                                      <h5 className="font-semibold text-white">{template.name}</h5>
+                                      <p className="text-sm text-slate-300 mt-1">{template.description}</p>
+                                    </div>
+                                    <Badge variant="outline" className="ml-2">
+                                      {template.gameCount} games
+                                    </Badge>
+                                  </div>
+                                </div>
+                              ))
+                            }
+                            
+                            {/* If no templates match team count */}
+                            {matchupTemplates.filter(template => template.teamCount === flight.teamCount).length === 0 && (
+                              <div className="border border-yellow-600/30 rounded-lg p-4 bg-yellow-900/20">
+                                <p className="text-yellow-200 text-sm">
+                                  No predefined matchup templates available for {flight.teamCount} teams. 
+                                  The system will use standard round-robin or elimination formats during scheduling.
+                                </p>
+                              </div>
+                            )}
                           </div>
                         </div>
 

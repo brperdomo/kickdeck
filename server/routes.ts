@@ -38,6 +38,7 @@ import memberMergeRouter from "./routes/admin/member-merge";
 import feeAdjustmentsRouter from "./routes/admin/fee-adjustments";
 import gameMetadataRouter from "./routes/admin/game-metadata";
 import gameFormatsRouter from "./routes/admin/game-formats";
+// import matchupTemplatesRouter from "./routes/admin/matchup-templates.js";
 import bracketCreationSqlRouter from "./routes/admin/bracket-creation-fixed";
 import bracketSubdivisionRouter from "./routes/admin/bracket-subdivision";
 import conflictDetectionRouter from "./routes/admin/conflict-detection";
@@ -948,6 +949,7 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin', isAdmin, intelligentSchedulingRouter); // Intelligent scheduling system router
     app.use('/api/admin/events', isAdmin, gameMetadataRouter); // Game metadata and scheduling rules router
     app.use('/api/admin', isAdmin, gameFormatsRouter); // Game format configuration router
+    // app.use('/api/admin/matchup-templates', matchupTemplatesRouter); // Matchup templates router
 
   // Debug endpoint for testing templates without authentication
   app.get('/api/debug/format-templates', async (req, res) => {
