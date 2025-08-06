@@ -58,7 +58,7 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
     const allTimeSlots = await db
       .select()
       .from(gameTimeSlots)
-      .where(eq(gameTimeSlots.eventId, eventId));
+      .where(eq(gameTimeSlots.eventId, eventId.toString()));
 
     console.log(`[Schedule Calendar] Found ${allTimeSlots.length} time slots`);
 
