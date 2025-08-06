@@ -35,9 +35,9 @@ interface EditingState {
 }
 
 const formatOptions = [
-  { value: 'group_of_4', label: 'Group of 4' },
-  { value: 'group_of_6', label: 'Group of 6' },
-  { value: 'group_of_8', label: 'Group of 8' },
+  { value: 'group_of_4', label: '4-Team Single Bracket' },
+  { value: 'group_of_6', label: '6-Team Crossover Brackets' },
+  { value: 'group_of_8', label: '8-Team Dual Brackets' },
   { value: 'round_robin', label: 'Round Robin' },
   { value: 'single_elimination', label: 'Single Elimination' },
   { value: 'double_elimination', label: 'Double Elimination' },

@@ -478,7 +478,7 @@ export function GameFormatEngine({ eventId }: GameFormatEngineProps) {
     return (
       <div className="flex gap-1 flex-wrap">
         <Badge variant="default" className="bg-blue-600 text-white">{format.fieldSize}</Badge>
-        <Badge variant="secondary" className="bg-slate-600 text-slate-200">{format.gameLength}min halves</Badge>
+        <Badge variant="secondary" className="bg-slate-600 text-slate-200">{format.gameLength}min games</Badge>
         {format.templateName && (
           <Badge variant="outline" className="border-slate-500 text-slate-300">{format.templateName}</Badge>
         )}
