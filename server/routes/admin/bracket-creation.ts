@@ -53,10 +53,60 @@ router.get('/:eventId/bracket-creation', async (req, res) => {
             eq(teams.status, 'approved')
           ));
 
+        // Check if this flight has a game format configured
+        // Query game_formats table directly using raw SQL with proper parameterization
+        const formatCheckResult = await db.execute(`
+          SELECT gf.id, mt.name as template_name
+          FROM game_formats gf
+          LEFT JOIN matchup_templates mt ON gf.matchup_template_id = mt.id
+          WHERE gf.bracket_id = $1
+          LIMIT 1
+        `, [flight.flightId]);
+
+        const hasFormat = formatCheckResult.rows && formatCheckResult.rows.length > 0;
+        const templateName = hasFormat ? formatCheckResult.rows[0]?.template_name : null;
+        
+        // Determine bracket type and configuration status
+        let bracketType = 'Not Configured';
+        let isConfigured = hasFormat;
+        let estimatedGames = 0;
+
+        if (hasFormat && templateName) {
+          bracketType = templateName;
+          // Estimate games based on template
+          if (templateName.includes('Single Bracket')) {
+            estimatedGames = 7; // Pool play (6) + final (1)
+          } else if (templateName.includes('Crossover')) {
+            estimatedGames = 10; // Crossover pool (9) + final (1)
+          } else if (templateName.includes('Dual')) {
+            estimatedGames = 13; // Dual brackets (12) + final (1)
+          }
+        } else if (assignedTeams.length > 0) {
+          // Default bracket type based on team count
+          bracketType = 'Single Elimination (Default)';
+          estimatedGames = Math.max(0, assignedTeams.length - 1);
+        }
+
         return {
-          ...flight,
+          flightId: flight.flightId,
+          name: flight.name,
+          ageGroup: flight.ageGroup,
+          gender: flight.gender,
+          level: flight.level,
           teamCount: assignedTeams.length,
-          registeredTeams: assignedTeams
+          assignedTeams: assignedTeams.length,
+          unassignedTeams: 0,
+          bracketType,
+          estimatedGames,
+          isConfigured,
+          registeredTeams: assignedTeams.map(t => ({
+            ...t,
+            seed: 0,
+            ageGroupId: 0,
+            isPlaceholder: false,
+            flightId: flight.flightId
+          })),
+          ageGroupId: 0 // We'll set this properly later if needed
         };
       })
     );

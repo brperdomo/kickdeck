@@ -1077,15 +1077,181 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-center py-8">
-                <Trophy className="h-12 w-12 text-slate-400 mx-auto mb-4" />
-                <p className="text-slate-300">
-                  Bracket preview will be displayed here
-                </p>
-                <p className="text-sm text-muted-foreground mt-2">
-                  Features: Visual brackets, matchup previews, export options
-                </p>
-              </div>
+              {flights && flights.length > 0 ? (
+                <div className="space-y-6">
+                  {flights
+                    .filter(flight => flight.isConfigured && flight.bracketType && flight.bracketType !== 'Not Configured')
+                    .map((flight) => (
+                      <div key={flight.id} className="border border-slate-600 rounded-lg p-4 bg-slate-700/30">
+                        <div className="flex items-center justify-between mb-4">
+                          <div>
+                            <h3 className="text-lg font-semibold text-white">
+                              {formatFlightName(flight.name, flight.level, flight.ageGroup, flight.gender)}
+                            </h3>
+                            <p className="text-sm text-slate-300">
+                              {flight.assignedTeams} teams • {flight.bracketType}
+                            </p>
+                          </div>
+                          <Badge variant="outline" className="border-blue-500 text-blue-300">
+                            {flight.bracketType}
+                          </Badge>
+                        </div>
+                        
+                        {flight.assignedTeams >= 4 ? (
+                          <div className="space-y-4">
+                            {/* Matchup Template Info */}
+                            <div className="bg-slate-800 rounded-lg p-3">
+                              <h4 className="font-medium text-white mb-2">Tournament Structure</h4>
+                              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                                <div>
+                                  <span className="text-slate-400">Teams:</span>
+                                  <p className="font-medium text-white">{flight.assignedTeams}</p>
+                                </div>
+                                <div>
+                                  <span className="text-slate-400">Total Games:</span>
+                                  <p className="font-medium text-white">
+                                    {flight.bracketType?.includes('Single Bracket') ? '7' : 
+                                     flight.bracketType?.includes('Crossover') ? '10' : 
+                                     flight.bracketType?.includes('Dual') ? '13' : 'TBD'}
+                                  </p>
+                                </div>
+                                <div>
+                                  <span className="text-slate-400">Pool Games:</span>
+                                  <p className="font-medium text-white">
+                                    {flight.bracketType?.includes('Single Bracket') ? '6' : 
+                                     flight.bracketType?.includes('Crossover') ? '9' : 
+                                     flight.bracketType?.includes('Dual') ? '12' : 'TBD'}
+                                  </p>
+                                </div>
+                                <div>
+                                  <span className="text-slate-400">Finals:</span>
+                                  <p className="font-medium text-white">1 game</p>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Visual Matchup Preview */}
+                            <div className="bg-slate-800 rounded-lg p-4">
+                              <h4 className="font-medium text-white mb-3">Matchup Pattern</h4>
+                              <div className="space-y-3">
+                                {flight.bracketType === '4-Team Single Bracket' && (
+                                  <div className="space-y-2">
+                                    <div className="text-sm text-slate-300 mb-2">Pool Play (6 games):</div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                                      <div className="bg-slate-700 p-2 rounded">Game 1: Team A vs Team B</div>
+                                      <div className="bg-slate-700 p-2 rounded">Game 2: Team C vs Team D</div>
+                                      <div className="bg-slate-700 p-2 rounded">Game 3: Team A vs Team C</div>
+                                      <div className="bg-slate-700 p-2 rounded">Game 4: Team B vs Team D</div>
+                                      <div className="bg-slate-700 p-2 rounded">Game 5: Team A vs Team D</div>
+                                      <div className="bg-slate-700 p-2 rounded">Game 6: Team B vs Team C</div>
+                                    </div>
+                                    <div className="text-sm text-slate-300 mt-3 mb-2">Final:</div>
+                                    <div className="bg-blue-900/30 border border-blue-500 p-2 rounded text-sm">
+                                      Game 7: 1st Place vs 2nd Place (by points)
+                                    </div>
+                                  </div>
+                                )}
+                                
+                                {flight.bracketType === '6-Team Crossover Brackets' && (
+                                  <div className="space-y-2">
+                                    <div className="text-sm text-slate-300 mb-2">Crossover Pool (9 games):</div>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-sm">
+                                      <div className="bg-slate-700 p-2 rounded">Flight A1 vs Flight B1</div>
+                                      <div className="bg-slate-700 p-2 rounded">Flight A2 vs Flight B2</div>
+                                      <div className="bg-slate-700 p-2 rounded">Flight A3 vs Flight B3</div>
+                                      <div className="bg-slate-700 p-2 rounded">Flight A1 vs Flight B2</div>
+                                      <div className="bg-slate-700 p-2 rounded">Flight A2 vs Flight B3</div>
+                                      <div className="bg-slate-700 p-2 rounded">Flight A3 vs Flight B1</div>
+                                      <div className="bg-slate-700 p-2 rounded">Flight A1 vs Flight B3</div>
+                                      <div className="bg-slate-700 p-2 rounded">Flight A2 vs Flight B1</div>
+                                      <div className="bg-slate-700 p-2 rounded">Flight A3 vs Flight B2</div>
+                                    </div>
+                                    <div className="text-sm text-slate-300 mt-3 mb-2">Final:</div>
+                                    <div className="bg-blue-900/30 border border-blue-500 p-2 rounded text-sm">
+                                      Game 10: Overall 1st vs Overall 2nd (by points)
+                                    </div>
+                                  </div>
+                                )}
+                                
+                                {flight.bracketType === '8-Team Dual Brackets' && (
+                                  <div className="space-y-2">
+                                    <div className="text-sm text-slate-300 mb-2">Dual Flight Pool (12 games):</div>
+                                    <div className="space-y-1">
+                                      <div className="text-xs text-slate-400">Bracket A (6 games):</div>
+                                      <div className="grid grid-cols-1 md:grid-cols-2 gap-1 text-sm ml-4">
+                                        <div className="bg-slate-700 p-2 rounded">A1 vs A2</div>
+                                        <div className="bg-slate-700 p-2 rounded">A3 vs A4</div>
+                                        <div className="bg-slate-700 p-2 rounded">A1 vs A3</div>
+                                        <div className="bg-slate-700 p-2 rounded">A2 vs A4</div>
+                                        <div className="bg-slate-700 p-2 rounded">A1 vs A4</div>
+                                        <div className="bg-slate-700 p-2 rounded">A2 vs A3</div>
+                                      </div>
+                                      <div className="text-xs text-slate-400 mt-2">Bracket B (6 games):</div>
+                                      <div className="grid grid-cols-1 md:grid-cols-2 gap-1 text-sm ml-4">
+                                        <div className="bg-slate-700 p-2 rounded">B1 vs B2</div>
+                                        <div className="bg-slate-700 p-2 rounded">B3 vs B4</div>
+                                        <div className="bg-slate-700 p-2 rounded">B1 vs B3</div>
+                                        <div className="bg-slate-700 p-2 rounded">B2 vs B4</div>
+                                        <div className="bg-slate-700 p-2 rounded">B1 vs B4</div>
+                                        <div className="bg-slate-700 p-2 rounded">B2 vs B3</div>
+                                      </div>
+                                    </div>
+                                    <div className="text-sm text-slate-300 mt-3 mb-2">Final:</div>
+                                    <div className="bg-blue-900/30 border border-blue-500 p-2 rounded text-sm">
+                                      Game 13: Bracket A Winner vs Bracket B Winner
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Team Assignment Preview */}
+                            <div className="bg-slate-800 rounded-lg p-4">
+                              <h4 className="font-medium text-white mb-3">Team Assignments</h4>
+                              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                                {[...Array(flight.assignedTeams)].map((_, index) => (
+                                  <div key={index} className="bg-slate-700 p-2 rounded text-center text-sm">
+                                    <div className="text-slate-300">Position {index + 1}</div>
+                                    <div className="font-medium text-white">Team {String.fromCharCode(65 + index)}</div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="text-center py-4 text-slate-400">
+                            <AlertTriangle className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                            <p className="text-sm">
+                              Need at least 4 teams to show bracket preview
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  
+                  {flights.filter(flight => flight.isConfigured && flight.bracketType && flight.bracketType !== 'Not Configured').length === 0 && (
+                    <div className="text-center py-8">
+                      <Trophy className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+                      <p className="text-slate-300">
+                        No configured brackets to preview
+                      </p>
+                      <p className="text-sm text-slate-400 mt-2">
+                        Configure game formats and team assignments first
+                      </p>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <Trophy className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+                  <p className="text-slate-300">
+                    Bracket preview will be displayed here
+                  </p>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Features: Visual brackets, matchup previews, export options
+                  </p>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
