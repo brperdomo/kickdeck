@@ -1,0 +1,430 @@
+Schedule API Response: {games: Array(6), fields: Array(12), ageGroups: Array(24), dates: Array(2), totalGames: 6, …}
+ScheduleViewerFixed-BysviVuT.js:6 Game 1 transformation debug: {raw: {…}, homeTeamStructure: 'Desert Empire SURF G14 Pre-NPL Cortes ', awayTeamStructure: 'Empire Surf North G2013A-1 Silva', fieldStructure: 'B1', rawFieldName: 'B1', …}
+ScheduleViewerFixed-BysviVuT.js:6 Game 1 API data: {
+  "id": 7415,
+  "homeTeam": "Desert Empire SURF G14 Pre-NPL Cortes ",
+  "awayTeam": "Empire Surf North G2013A-1 Silva",
+  "homeTeamClub": "Desert Empire Surf",
+  "awayTeamClub": "Empire Surf",
+  "ageGroup": "U13",
+  "field": "B1 (Galway Downs Soccer Complex)",
+  "fieldName": "B1",
+  "complexName": "Galway Downs Soccer Complex",
+  "complexAddress": "38801 Los Corralitos Road, Temecula, California 92592, United States",
+  "fieldSize": "7v7",
+  "date": "2025-08-16",
+  "time": "09:15",
+  "startTime": "2025-08-16T09:15:00.000Z",
+  "endTime": "2025-08-16T10:45:00.000Z",
+  "duration": 75,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-BysviVuT.js:6 Game 1 transformed: {id: 7415, homeTeam: 'Desert Empire SURF G14 Pre-NPL Cortes ', awayTeam: 'Empire Surf North G2013A-1 Silva', ageGroup: 'U13', field: 'B1', …}
+ScheduleViewerFixed-BysviVuT.js:6 Game 2 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf North G2013A-1 Silva', awayTeamStructure: 'San Diego Force G2013 Academy 1', fieldStructure: 'f3', rawFieldName: 'f3', …}
+ScheduleViewerFixed-BysviVuT.js:6 Game 2 API data: {
+  "id": 7418,
+  "homeTeam": "Empire Surf North G2013A-1 Silva",
+  "awayTeam": "San Diego Force G2013 Academy 1",
+  "homeTeamClub": "Empire Surf",
+  "awayTeamClub": "San Diego Force FC",
+  "ageGroup": "U13",
+  "field": "f3 (Galway Downs Soccer Complex)",
+  "fieldName": "f3",
+  "complexName": "Galway Downs Soccer Complex",
+  "complexAddress": "38801 Los Corralitos Road, Temecula, California 92592, United States",
+  "fieldSize": "11v11",
+  "date": "2025-08-16",
+  "time": "09:15",
+  "startTime": "2025-08-16T09:15:00.000Z",
+  "endTime": "2025-08-16T10:45:00.000Z",
+  "duration": 75,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-BysviVuT.js:6 Game 2 transformed: {id: 7418, homeTeam: 'Empire Surf North G2013A-1 Silva', awayTeam: 'San Diego Force G2013 Academy 1', ageGroup: 'U13', field: 'f3', …}
+ScheduleViewerFixed-BysviVuT.js:6 Game 3 transformation debug: {raw: {…}, homeTeamStructure: 'San Diego Force G2013 Academy 1', awayTeamStructure: 'Empire Surf G2013 Academy 1', fieldStructure: 'Field 17', rawFieldName: 'Field 17', …}
+ScheduleViewerFixed-BysviVuT.js:6 Game 3 API data: {
+  "id": 7420,
+  "homeTeam": "San Diego Force G2013 Academy 1",
+  "awayTeam": "Empire Surf G2013 Academy 1",
+  "homeTeamClub": "San Diego Force FC",
+  "awayTeamClub": "Empire Surf",
+  "ageGroup": "U13",
+  "field": "Field 17",
+  "fieldName": "Field 17",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "TBD",
+  "endTime": "TBD",
+  "duration": 75,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-BysviVuT.js:6 Game 3 transformed: {id: 7420, homeTeam: 'San Diego Force G2013 Academy 1', awayTeam: 'Empire Surf G2013 Academy 1', ageGroup: 'U13', field: 'Field 17', …}
+ScheduleViewerFixed-BysviVuT.js:6 Game 4 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf North G2013A-1 Silva', awayTeamStructure: 'Empire Surf G2013 Academy 1', fieldStructure: 'Field 16', rawFieldName: 'Field 16', …}
+ScheduleViewerFixed-BysviVuT.js:6 Game 4 API data: {
+  "id": 7419,
+  "homeTeam": "Empire Surf North G2013A-1 Silva",
+  "awayTeam": "Empire Surf G2013 Academy 1",
+  "homeTeamClub": "Empire Surf",
+  "awayTeamClub": "Empire Surf",
+  "ageGroup": "U13",
+  "field": "Field 16",
+  "fieldName": "Field 16",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "TBD",
+  "endTime": "TBD",
+  "duration": 75,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-BysviVuT.js:6 Game 4 transformed: {id: 7419, homeTeam: 'Empire Surf North G2013A-1 Silva', awayTeam: 'Empire Surf G2013 Academy 1', ageGroup: 'U13', field: 'Field 16', …}
+ScheduleViewerFixed-BysviVuT.js:6 Game 5 transformation debug: {raw: {…}, homeTeamStructure: 'Desert Empire SURF G14 Pre-NPL Cortes ', awayTeamStructure: 'Empire Surf G2013 Academy 1', fieldStructure: 'Field 14', rawFieldName: 'Field 14', …}
+ScheduleViewerFixed-BysviVuT.js:6 Game 5 API data: {
+  "id": 7417,
+  "homeTeam": "Desert Empire SURF G14 Pre-NPL Cortes ",
+  "awayTeam": "Empire Surf G2013 Academy 1",
+  "homeTeamClub": "Desert Empire Surf",
+  "awayTeamClub": "Empire Surf",
+  "ageGroup": "U13",
+  "field": "Field 14",
+  "fieldName": "Field 14",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "TBD",
+  "endTime": "TBD",
+  "duration": 75,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-BysviVuT.js:6 Game 5 transformed: {id: 7417, homeTeam: 'Desert Empire SURF G14 Pre-NPL Cortes ', awayTeam: 'Empire Surf G2013 Academy 1', ageGroup: 'U13', field: 'Field 14', …}
+ScheduleViewerFixed-BysviVuT.js:6 Game 6 transformation debug: {raw: {…}, homeTeamStructure: 'Desert Empire SURF G14 Pre-NPL Cortes ', awayTeamStructure: 'San Diego Force G2013 Academy 1', fieldStructure: 'Field 9', rawFieldName: 'Field 9', …}
+ScheduleViewerFixed-BysviVuT.js:6 Game 6 API data: {
+  "id": 7416,
+  "homeTeam": "Desert Empire SURF G14 Pre-NPL Cortes ",
+  "awayTeam": "San Diego Force G2013 Academy 1",
+  "homeTeamClub": "Desert Empire Surf",
+  "awayTeamClub": "San Diego Force FC",
+  "ageGroup": "U13",
+  "field": "Field 9",
+  "fieldName": "Field 9",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "TBD",
+  "endTime": "TBD",
+  "duration": 75,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-BysviVuT.js:6 Game 6 transformed: {id: 7416, homeTeam: 'Desert Empire SURF G14 Pre-NPL Cortes ', awayTeam: 'San Diego Force G2013 Academy 1', ageGroup: 'U13', field: 'Field 9', …}
+util.js:31 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+Yxa @ util.js:31
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1379
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1379
+setTimeout
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1379
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622Understand this warning
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+Promise.then
+S @ out-4.5.44.js:1
+y @ out-4.5.44.js:1
+E @ out-4.5.44.js:1
+e.onload @ inner.html:1
+script
+(anonymous) @ inner.html:1
+(anonymous) @ inner.html:1
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+h @ out-4.5.44.js:1
+e @ inner.html:1
+index-DuFRClxI.js:838 🎬 [ENHANCED DRAG DROP] Drag started for game 7416
+index-DuFRClxI.js:838 📋 Dragging: Desert Empire SURF G14 Pre-NPL Cortes  vs San Diego Force G2013 Academy 1 (U13 Girls)
+index-DuFRClxI.js:838 📍 Current position: Field f1 at 2025-08-16T08:00:00
+index-DuFRClxI.js:838 
+🎯 [ENHANCED DRAG DROP] Drop Operation Started
+index-DuFRClxI.js:839 📋 Game Details:
+index-DuFRClxI.js:839    • Game ID: 7416
+index-DuFRClxI.js:839    • Match: Desert Empire SURF G14 Pre-NPL Cortes  vs San Diego Force G2013 Academy 1
+index-DuFRClxI.js:839    • Age Group: U13 Girls
+index-DuFRClxI.js:839    • Current Field: f1 (ID: 8)
+index-DuFRClxI.js:839    • Current Time: 2025-08-16T08:00:00
+index-DuFRClxI.js:839 📍 New Destination:
+index-DuFRClxI.js:839    • Target Field: B1 (ID: 12)
+index-DuFRClxI.js:839    • Target Time Slot: 09:30
+index-DuFRClxI.js:839    • Target Full Time: 2025-08-16T09:30:00.000Z
+index-DuFRClxI.js:839    • Target Date: 2025-08-16
+index-DuFRClxI.js:839 🚀 Starting optimistic update and backend mutation...
+index-DuFRClxI.js:838 🚀 [ENHANCED MUTATION] Sending reschedule request to backend...
+index-DuFRClxI.js:838 📤 Request details: gameId=7416, fieldId=12, startTime=2025-08-16T09:30:00.000Z, eventId=1844329078
+index-DuFRClxI.js:838 Fetch finished loading: PUT "https://app.matchpro.ai/api/admin/games/7416/reschedule".
+mutationFn @ index-DuFRClxI.js:838
+fn @ index-DuFRClxI.js:41
+f @ index-DuFRClxI.js:41
+start @ index-DuFRClxI.js:41
+execute @ index-DuFRClxI.js:41
+await in execute
+mutate @ index-DuFRClxI.js:41
+(anonymous) @ index-DuFRClxI.js:41
+I @ index-DuFRClxI.js:839
+onDrop @ index-DuFRClxI.js:846
+_ue @ index-DuFRClxI.js:38
+Due @ index-DuFRClxI.js:38
+Iue @ index-DuFRClxI.js:38
+pM @ index-DuFRClxI.js:38
+Xq @ index-DuFRClxI.js:38
+(anonymous) @ index-DuFRClxI.js:38
+NO @ index-DuFRClxI.js:41
+bq @ index-DuFRClxI.js:38
+E2 @ index-DuFRClxI.js:38
+X4 @ index-DuFRClxI.js:38
+Xue @ index-DuFRClxI.js:38
+index-DuFRClxI.js:838 ✅ [ENHANCED MUTATION] Request successful
+index-DuFRClxI.js:838 📥 Response data: {success: true, message: 'Game rescheduled successfully', game: {…}, timeSlot: {…}}
+index-DuFRClxI.js:838 🎉 [ENHANCED MUTATION SUCCESS] Game reschedule completed successfully
+index-DuFRClxI.js:838 📊 Server response: {success: true, message: 'Game rescheduled successfully', game: {…}, timeSlot: {…}}
+index-DuFRClxI.js:838 🔄 Clearing optimistic update and refreshing data...
+index-DuFRClxI.js:838 🎬 [ENHANCED DRAG DROP] Drag started for game 7417
+index-DuFRClxI.js:838 📋 Dragging: Desert Empire SURF G14 Pre-NPL Cortes  vs Empire Surf G2013 Academy 1 (U13 Girls)
+index-DuFRClxI.js:838 📍 Current position: Field f1 at 2025-08-16T08:00:00
+index-DuFRClxI.js:839 🏁 [ENHANCED DRAG DROP] Drag ended, cleaning up state
+index-DuFRClxI.js:838 🎬 [ENHANCED DRAG DROP] Drag started for game 7417
+index-DuFRClxI.js:838 📋 Dragging: Desert Empire SURF G14 Pre-NPL Cortes  vs Empire Surf G2013 Academy 1 (U13 Girls)
+index-DuFRClxI.js:838 📍 Current position: Field f1 at 2025-08-16T08:00:00
+index-DuFRClxI.js:838 
+🎯 [ENHANCED DRAG DROP] Drop Operation Started
+index-DuFRClxI.js:839 📋 Game Details:
+index-DuFRClxI.js:839    • Game ID: 7417
+index-DuFRClxI.js:839    • Match: Desert Empire SURF G14 Pre-NPL Cortes  vs Empire Surf G2013 Academy 1
+index-DuFRClxI.js:839    • Age Group: U13 Girls
+index-DuFRClxI.js:839    • Current Field: f1 (ID: 8)
+index-DuFRClxI.js:839    • Current Time: 2025-08-16T08:00:00
+index-DuFRClxI.js:839 📍 New Destination:
+index-DuFRClxI.js:839    • Target Field: f2 (ID: 9)
+index-DuFRClxI.js:839    • Target Time Slot: 08:00
+index-DuFRClxI.js:839    • Target Full Time: 2025-08-16T08:00:00.000Z
+index-DuFRClxI.js:839    • Target Date: 2025-08-16
+index-DuFRClxI.js:839 🚀 Starting optimistic update and backend mutation...
+index-DuFRClxI.js:838 🚀 [ENHANCED MUTATION] Sending reschedule request to backend...
+index-DuFRClxI.js:838 📤 Request details: gameId=7417, fieldId=9, startTime=2025-08-16T08:00:00.000Z, eventId=1844329078
+index-DuFRClxI.js:838 Fetch finished loading: PUT "https://app.matchpro.ai/api/admin/games/7417/reschedule".
+mutationFn @ index-DuFRClxI.js:838
+fn @ index-DuFRClxI.js:41
+f @ index-DuFRClxI.js:41
+start @ index-DuFRClxI.js:41
+execute @ index-DuFRClxI.js:41
+await in execute
+mutate @ index-DuFRClxI.js:41
+(anonymous) @ index-DuFRClxI.js:41
+I @ index-DuFRClxI.js:839
+onDrop @ index-DuFRClxI.js:846
+_ue @ index-DuFRClxI.js:38
+Due @ index-DuFRClxI.js:38
+Iue @ index-DuFRClxI.js:38
+pM @ index-DuFRClxI.js:38
+Xq @ index-DuFRClxI.js:38
+(anonymous) @ index-DuFRClxI.js:38
+NO @ index-DuFRClxI.js:41
+bq @ index-DuFRClxI.js:38
+E2 @ index-DuFRClxI.js:38
+X4 @ index-DuFRClxI.js:38
+Xue @ index-DuFRClxI.js:38
+index-DuFRClxI.js:838 ✅ [ENHANCED MUTATION] Request successful
+index-DuFRClxI.js:838 📥 Response data: {success: true, message: 'Game rescheduled successfully', game: {…}, timeSlot: {…}}
+index-DuFRClxI.js:838 🎉 [ENHANCED MUTATION SUCCESS] Game reschedule completed successfully
+index-DuFRClxI.js:838 📊 Server response: {success: true, message: 'Game rescheduled successfully', game: {…}, timeSlot: {…}}
+index-DuFRClxI.js:838 🔄 Clearing optimistic update and refreshing data...
+index-DuFRClxI.js:838 🎬 [ENHANCED DRAG DROP] Drag started for game 7415
+index-DuFRClxI.js:838 📋 Dragging: Desert Empire SURF G14 Pre-NPL Cortes  vs Empire Surf North G2013A-1 Silva (U13 Girls)
+index-DuFRClxI.js:838 📍 Current position: Field A1 at 2025-08-16T09:30:00
+index-DuFRClxI.js:838 
+🎯 [ENHANCED DRAG DROP] Drop Operation Started
+index-DuFRClxI.js:839 📋 Game Details:
+index-DuFRClxI.js:839    • Game ID: 7415
+index-DuFRClxI.js:839    • Match: Desert Empire SURF G14 Pre-NPL Cortes  vs Empire Surf North G2013A-1 Silva
+index-DuFRClxI.js:839    • Age Group: U13 Girls
+index-DuFRClxI.js:839    • Current Field: A1 (ID: 10)
+index-DuFRClxI.js:839    • Current Time: 2025-08-16T09:30:00
+index-DuFRClxI.js:839 📍 New Destination:
+index-DuFRClxI.js:839    • Target Field: f1 (ID: 8)
+index-DuFRClxI.js:839    • Target Time Slot: 11:45
+index-DuFRClxI.js:839    • Target Full Time: 2025-08-16T11:45:00.000Z
+index-DuFRClxI.js:839    • Target Date: 2025-08-16
+index-DuFRClxI.js:839 🚀 Starting optimistic update and backend mutation...
+index-DuFRClxI.js:838 🚀 [ENHANCED MUTATION] Sending reschedule request to backend...
+index-DuFRClxI.js:838 📤 Request details: gameId=7415, fieldId=8, startTime=2025-08-16T11:45:00.000Z, eventId=1844329078
+index-DuFRClxI.js:838 Fetch finished loading: PUT "https://app.matchpro.ai/api/admin/games/7415/reschedule".
+mutationFn @ index-DuFRClxI.js:838
+fn @ index-DuFRClxI.js:41
+f @ index-DuFRClxI.js:41
+start @ index-DuFRClxI.js:41
+execute @ index-DuFRClxI.js:41
+await in execute
+mutate @ index-DuFRClxI.js:41
+(anonymous) @ index-DuFRClxI.js:41
+I @ index-DuFRClxI.js:839
+onDrop @ index-DuFRClxI.js:846
+_ue @ index-DuFRClxI.js:38
+Due @ index-DuFRClxI.js:38
+Iue @ index-DuFRClxI.js:38
+pM @ index-DuFRClxI.js:38
+Xq @ index-DuFRClxI.js:38
+(anonymous) @ index-DuFRClxI.js:38
+NO @ index-DuFRClxI.js:41
+bq @ index-DuFRClxI.js:38
+E2 @ index-DuFRClxI.js:38
+X4 @ index-DuFRClxI.js:38
+Xue @ index-DuFRClxI.js:38
+index-DuFRClxI.js:838 ✅ [ENHANCED MUTATION] Request successful
+index-DuFRClxI.js:838 📥 Response data: {success: true, message: 'Game rescheduled successfully', game: {…}, timeSlot: {…}}
+index-DuFRClxI.js:838 🎉 [ENHANCED MUTATION SUCCESS] Game reschedule completed successfully
+index-DuFRClxI.js:838 📊 Server response: {success: true, message: 'Game rescheduled successfully', game: {…}, timeSlot: {…}}
+index-DuFRClxI.js:838 🔄 Clearing optimistic update and refreshing data...
+index-DuFRClxI.js:838 🎬 [ENHANCED DRAG DROP] Drag started for game 7418
+index-DuFRClxI.js:838 📋 Dragging: Empire Surf North G2013A-1 Silva vs San Diego Force G2013 Academy 1 (U13 Girls)
+index-DuFRClxI.js:838 📍 Current position: Field A1 at 2025-08-16T09:30:00
+index-DuFRClxI.js:839 🏁 [ENHANCED DRAG DROP] Drag ended, cleaning up state
+Navigated to https://app.matchpro.ai/admin/events/1844329078/master-schedule
+js?libraries=places&v=beta&callback=Function.prototype:1377 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1377
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622Understand this warning
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+js?libraries=places&v=beta&callback=Function.prototype:1409 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+_.B.send @ js?libraries=places&v=beta&callback=Function.prototype:1409
+hda @ js?libraries=places&v=beta&callback=Function.prototype:1386
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1378
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+index-DuFRClxI.js:863 Google Maps API key length: 0 characters
+index-DuFRClxI.js:863 Mapbox API key length: 93 characters
+index-DuFRClxI.js:863 Google Maps API already loaded
+index-DuFRClxI.js:672 Current route location (Wouter): /admin/events/1844329078/master-schedule
+index-DuFRClxI.js:672 Current URL: https://app.matchpro.ai/admin/events/1844329078/master-schedule
+index-DuFRClxI.js:672 Current pathname: /admin/events/1844329078/master-schedule
+index-DuFRClxI.js:672 Current search: 
+index-DuFRClxI.js:672 Fetching user with emulation token: not present
+chunk-FLCULYKI.js:31 orchestration: Initializing config store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing feature flag store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state {pill-player: {…}}
+chunk-FLCULYKI.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+8Fetch finished loading: GET "<URL>".
+index-DuFRClxI.js:672 User data fetched: {id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: '$2b$12$d6n1CBWgsWFm0fh77F1OX.YxDZy7/O3aLSuJOuq4QkvOtFmSit7BC', firstName: 'Bryan', …}
+index-DuFRClxI.js:664 Fetch failed loading: GET "https://app.matchpro.ai/api/user".
+queryFn @ index-DuFRClxI.js:664
+i @ index-DuFRClxI.js:41
+f @ index-DuFRClxI.js:41
+start @ index-DuFRClxI.js:41
+fetch @ index-DuFRClxI.js:41
+ng @ index-DuFRClxI.js:41
+onSubscribe @ index-DuFRClxI.js:41
+subscribe @ index-DuFRClxI.js:41
+(anonymous) @ index-DuFRClxI.js:41
+hW @ index-DuFRClxI.js:39
+k1 @ index-DuFRClxI.js:41
+Zh @ index-DuFRClxI.js:41
+qM @ index-DuFRClxI.js:41
+au @ index-DuFRClxI.js:39
+hhe @ index-DuFRClxI.js:41
+Eu @ index-DuFRClxI.js:41
+qW @ index-DuFRClxI.js:41
+N @ index-DuFRClxI.js:26
+T @ index-DuFRClxI.js:26
+shared-b4e6d5a1352782d87f9a562898951ded.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+(anonymous) @ shared-b4e6d5a1352782d87f9a562898951ded.js:1
+e @ shared-b4e6d5a1352782d87f9a562898951ded.js:1
+c @ shared-b4e6d5a1352782d87f9a562898951ded.js:1
+g @ shared-b4e6d5a1352782d87f9a562898951ded.js:1
+value @ shared-b4e6d5a1352782d87f9a562898951ded.js:1
+value @ shared-b4e6d5a1352782d87f9a562898951ded.js:1
+value @ controller-with-preconnect-d957d2ded4331de44abc6e5d635e3ad1.js:1
+e @ controller-with-preconnect-d957d2ded4331de44abc6e5d635e3ad1.js:1
+value @ controller-with-preconnect-d957d2ded4331de44abc6e5d635e3ad1.js:1
+e @ controller-with-preconnect-d957d2ded4331de44abc6e5d635e3ad1.js:1
+89836 @ controller-with-preconnect-d957d2ded4331de44abc6e5d635e3ad1.js:1
+e @ controller-with-preconnect-d957d2ded4331de44abc6e5d635e3ad1.js:1
+(anonymous) @ controller-with-preconnect-d957d2ded4331de44abc6e5d635e3ad1.js:1
+e.O @ controller-with-preconnect-d957d2ded4331de44abc6e5d635e3ad1.js:1
+(anonymous) @ controller-with-preconnect-d957d2ded4331de44abc6e5d635e3ad1.js:1
+(anonymous) @ controller-with-preconnect-d957d2ded4331de44abc6e5d635e3ad1.js:1
+shared-b4e6d5a1352782d87f9a562898951ded.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+(anonymous) @ shared-b4e6d5a1352782d87f9a562898951ded.js:1
+e @ shared-b4e6d5a1352782d87f9a562898951ded.js:1
+c @ shared-b4e6d5a1352782d87f9a562898951ded.js:1
+g @ shared-b4e6d5a1352782d87f9a562898951ded.js:1
+value @ shared-b4e6d5a1352782d87f9a562898951ded.js:1
+value @ shared-b4e6d5a1352782d87f9a562898951ded.js:1
+log @ shared-b4e6d5a1352782d87f9a562898951ded.js:1
+log @ controller-with-preconnect-d957d2ded4331de44abc6e5d635e3ad1.js:1
+e @ controller-with-preconnect-d957d2ded4331de44abc6e5d635e3ad1.js:1
+89836 @ controller-with-preconnect-d957d2ded4331de44abc6e5d635e3ad1.js:1
+e @ controller-with-preconnect-d957d2ded4331de44abc6e5d635e3ad1.js:1
+(anonymous) @ controller-with-preconnect-d957d2ded4331de44abc6e5d635e3ad1.js:1
+e.O @ controller-with-preconnect-d957d2ded4331de44abc6e5d635e3ad1.js:1
+(anonymous) @ controller-with-preconnect-d957d2ded4331de44abc6e5d635e3ad1.js:1
+(anonymous) @ controller-with-preconnect-d957d2ded4331de44abc6e5d635e3ad1.js:1
+UnifiedTournamentControlCenter-CGRljhF6.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentControlCenter-CGRljhF6.js:1 Configured flights: 1 of 76
+chunk-CVIZYB43.js:3 [Violation] 'setTimeout' handler took 64ms
+util.js:31 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+Yxa @ util.js:31
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1379
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1379
+setTimeout
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1379
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622Understand this warning
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+Promise.then
+S @ out-4.5.44.js:1
+y @ out-4.5.44.js:1
+E @ out-4.5.44.js:1
+e.onload @ inner.html:1
+script
+(anonymous) @ inner.html:1
+(anonymous) @ inner.html:1
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+h @ out-4.5.44.js:1
+e @ inner.html:1

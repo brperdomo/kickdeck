@@ -215,7 +215,7 @@ router.put('/:gameId/reschedule', isAdmin, async (req, res) => {
     console.log(`🔍 Searching for existing time slot...`);
     let timeSlot = await db.query.gameTimeSlots.findFirst({
       where: and(
-        eq(gameTimeSlots.eventId, parseInt(eventId)),
+        eq(gameTimeSlots.eventId, eventId.toString()),
         eq(gameTimeSlots.startTime, startTime),
         eq(gameTimeSlots.fieldId, fieldId)
       )
@@ -232,12 +232,11 @@ router.put('/:gameId/reschedule', isAdmin, async (req, res) => {
       console.log(`   • End: ${endTime} (90-minute duration)`);
       
       const [newTimeSlot] = await db.insert(gameTimeSlots).values({
-        eventId: parseInt(eventId),
+        eventId: eventId.toString(),
         fieldId: fieldId,
         startTime: startTime,
         endTime: endTime,
         isAvailable: true,
-        slotType: 'regular',
         dayIndex: Math.floor((new Date(startTime).getTime() - new Date('2025-08-16').getTime()) / (24 * 60 * 60 * 1000)),
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
