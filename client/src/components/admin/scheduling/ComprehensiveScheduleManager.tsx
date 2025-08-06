@@ -17,6 +17,7 @@ import {
   RefreshCw
 } from 'lucide-react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import EnhancedDragDropScheduler from './EnhancedDragDropScheduler';
 
 interface Team {
   id: number;
@@ -439,6 +440,7 @@ export function ComprehensiveScheduleManager({ eventId }: ComprehensiveScheduleM
         <Tabs defaultValue="grid" className="w-full">
           <TabsList>
             <TabsTrigger value="grid">Grid View</TabsTrigger>
+            <TabsTrigger value="calendar">Calendar Interface</TabsTrigger>
             <TabsTrigger value="timeline">Timeline View</TabsTrigger>
             <TabsTrigger value="conflicts">Conflicts</TabsTrigger>
           </TabsList>
@@ -537,6 +539,11 @@ export function ComprehensiveScheduleManager({ eventId }: ComprehensiveScheduleM
                 })}
               </div>
             </DragDropContext>
+          </TabsContent>
+          
+          <TabsContent value="calendar">
+            {/* Enhanced Calendar Interface with Drag & Drop */}
+            <EnhancedDragDropScheduler eventId={eventId} />
           </TabsContent>
           
           <TabsContent value="timeline">
