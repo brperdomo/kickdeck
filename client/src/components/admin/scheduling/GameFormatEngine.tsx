@@ -12,17 +12,17 @@ import { Settings, Clock, Users, MapPin, Save, Copy, Trash2, CheckCircle, FileTe
 import { FormatTemplateManager } from '@/components/admin/templates/FormatTemplateManager';
 
 interface FlightFormatData {
-  flightId: number; // Representative bracket ID
+  flightId: number; // Individual flight/bracket ID
   flightName: string;
   ageGroup: string;
   gender: string;
-  teamCount: number; // Total teams across all brackets in this flight
-  bracketCount: number; // Number of brackets in this flight
-  bracketIds: number[]; // All bracket IDs that will inherit this format
-  ageGroupFieldSize: string; // Field size from age group settings (7v7, 9v9, 11v11)
+  teamCount: number; // Teams in this individual flight
+  bracketCount: number; // Always 1 for individual flights
+  bracketIds: number[]; // Array containing just this flight's ID
+  ageGroupFieldSize?: string; // Field size from age group settings (7v7, 9v9, 11v11)
   currentFormat?: GameFormat;
   level: string; // Flight level like "top_flight", "middle_flight"
-  displayName: string; // Full display like "U17 Boys - Top Flight"
+  displayName: string; // Full display like "U17 Boys - Nike Elite A"
 }
 
 interface GameFormat {
@@ -146,7 +146,7 @@ export function GameFormatEngine({ eventId }: GameFormatEngineProps) {
       });
       if (!response.ok) throw new Error('Failed to fetch flight format data');
       const data = await response.json();
-      console.log(`[Frontend] Received ${data.length} flights, configured: ${data.filter((f: any) => f.currentFormat).length}`);
+      console.log(`[Frontend] Received ${data.length} flights, configured: ${data.filter((f: any) => f.currentFormat).length}, unconfigured: ${data.filter((f: any) => !f.currentFormat).length}`);
       return data;
     },
     staleTime: 0, // Always refetch
