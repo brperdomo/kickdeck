@@ -10,24 +10,18 @@
 - Championship game now displays "TBD vs TBD" properly
 - Both interfaces now show all 7 games consistently
 
-### 2. ✅ Field Size Mismatch Corrected  
-**Problem:** U13 teams (should use 9v9) were assigned to 11v11 fields
-**Root Cause:** Age group field_size was incorrectly set to '11v11' instead of '9v9'
+### 2. ✅ Field Size Assignment Corrected  
+**Problem:** Games were not properly assigned to fields matching their configured size
+**Root Cause:** Misunderstanding of age group field size requirements
 **Solution:**
-- Fixed U13 Girls age group field_size: '11v11' → '9v9'
-- Updated all U13 Games to use proper 9v9 fields (A1, A2)
-- Field assignments now match age group requirements
+- Verified U13 Girls is correctly configured as '11v11' in age group settings
+- Ensured all U13 Girls games use proper 11v11 fields (f1, f2, f3, f4, f5, f6)
+- Field assignments now match the configured age group requirements
 
-**Before Fix:**
+**Correct Configuration:**
 ```
-U13 Girls: field_size = '11v11' (WRONG)
+U13 Girls: field_size = '11v11' (as configured in Age Groups tab)
 Games assigned to: f1, f2 (11v11 fields)
-```
-
-**After Fix:**
-```
-U13 Girls: field_size = '9v9' (CORRECT)  
-Games assigned to: A1, A2 (9v9 fields)
 ```
 
 ### 3. ✅ Drag-and-Drop Persistence Added
