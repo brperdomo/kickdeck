@@ -216,12 +216,19 @@ export default function DragDropCalendarScheduler({ eventId }: DragDropCalendarS
 
       return { game1: await response1.json(), game2: await response2.json() };
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log(`✅ [GAME SWAP SUCCESS]`);
+      console.log(`🎉 Games successfully swapped in database`);
+      console.log(`📊 Server response:`, data);
+      console.log(`🔄 Refreshing calendar data...`);
+      
       queryClient.invalidateQueries({ queryKey: ['/api/schedule-calendar', eventId, 'schedule-calendar'] });
       toast({ title: 'Games swapped successfully' });
     },
     onError: (error) => {
-      console.error('[Game Swap] Error:', error);
+      console.error(`❌ [GAME SWAP FAILED]`);
+      console.error(`💥 Error details:`, error);
+      console.error(`📝 Error message:`, error.message);
       toast({ 
         title: 'Failed to swap games', 
         description: error.message || 'Please check the console for details', 
@@ -242,7 +249,12 @@ export default function DragDropCalendarScheduler({ eventId }: DragDropCalendarS
       if (!response.ok) throw new Error('Failed to update game');
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log(`✅ [GAME RESCHEDULE SUCCESS]`);
+      console.log(`🎉 Game successfully moved to new position`);
+      console.log(`📊 Server response:`, data);
+      console.log(`🔄 Refreshing all calendar data...`);
+      
       // Invalidate all relevant schedule queries
       queryClient.invalidateQueries({ queryKey: ['/api/schedule-calendar', eventId, 'schedule-calendar'] });
       queryClient.invalidateQueries({ queryKey: ['/api/admin/events', eventId, 'schedule'] });
@@ -251,7 +263,9 @@ export default function DragDropCalendarScheduler({ eventId }: DragDropCalendarS
       toast({ title: 'Game rescheduled successfully' });
     },
     onError: (error) => {
-      console.error('[Drag Drop] Reschedule error:', error);
+      console.error(`❌ [GAME RESCHEDULE FAILED]`);
+      console.error(`💥 Error details:`, error);
+      console.error(`📝 Error message:`, error.message);
       toast({ 
         title: 'Failed to reschedule game', 
         description: error.message || 'Please check the console for details', 
@@ -354,7 +368,10 @@ export default function DragDropCalendarScheduler({ eventId }: DragDropCalendarS
   }, [gamesData?.games, gamesData?.fields, selectedDate]); // Fix dependencies to prevent infinite loop
 
   const handleDragEnd = (result: DropResult) => {
-    if (!result.destination) return;
+    if (!result.destination) {
+      console.log(`[Drag Drop] ❌ Drop cancelled - no destination`);
+      return;
+    }
 
     const { source, destination, draggableId } = result;
     const draggedGameId = parseInt(draggableId.split('-')[1]);
@@ -364,26 +381,49 @@ export default function DragDropCalendarScheduler({ eventId }: DragDropCalendarS
     const destFieldIdNum = parseInt(destFieldId.replace('field-', ''));
     const destStartTime = `${selectedDate}T${destTimeSlot}:00.000Z`;
 
-    console.log(`[Drag Drop] Game ${draggedGameId} dropped on field ${destFieldIdNum} at ${destStartTime}`);
-    console.log(`[Drag Drop] Source:`, source);
-    console.log(`[Drag Drop] Destination:`, destination);
+    // Get the game being dragged for detailed logging
+    const draggedGame = gamesData?.games?.find((g: Game) => g.id === draggedGameId);
+    const destField = fields.find(f => f.id === destFieldIdNum);
+
+    console.log(`\n🎯 [DRAG DROP OPERATION STARTED]`);
+    console.log(`📋 Game Details:`);
+    console.log(`   • Game ID: ${draggedGameId}`);
+    console.log(`   • Match: ${draggedGame?.homeTeamName} vs ${draggedGame?.awayTeamName}`);
+    console.log(`   • Current Field: ${draggedGame?.fieldName || 'Unknown'} (ID: ${draggedGame?.fieldId})`);
+    console.log(`   • Current Time: ${draggedGame?.startTime || 'Unscheduled'}`);
+    console.log(`📍 New Destination:`);
+    console.log(`   • Target Field: ${destField?.name || 'Unknown'} (ID: ${destFieldIdNum})`);
+    console.log(`   • Target Time: ${destStartTime}`);
+    console.log(`   • Target Date: ${selectedDate}`);
+    console.log(`🔄 Source/Dest Details:`, { source, destination });
 
     // Check if there's already a game in the destination slot
     const destTimeSlotObj = timeSlots.find(slot => slot.id === `${selectedDate}-${destTimeSlot}`);
     const destFieldGames = destTimeSlotObj?.games?.filter(game => game.fieldId === destFieldIdNum) || [];
     
     if (destFieldGames.length > 0) {
+      console.log(`⚠️  [Conflict Detection] Found ${destFieldGames.length} game(s) already scheduled:`);
+      destFieldGames.forEach((game, index) => {
+        console.log(`   ${index + 1}. ${game.homeTeamName} vs ${game.awayTeamName} (Game ${game.id})`);
+      });
+
       // There's a game in the destination slot - perform a swap
       const targetGame = destFieldGames[0];
+      const targetGameInfo = gamesData?.games?.find((g: Game) => g.id === targetGame.id);
       
       // Get source game info
       const [sourceFieldId, sourceTimeSlot] = source.droppableId.split('-time-');
       const sourceFieldIdNum = parseInt(sourceFieldId.replace('field-', ''));
       const sourceStartTime = `${selectedDate}T${sourceTimeSlot}:00.000Z`;
-      
-      console.log(`[Drag Drop] Swapping games: ${draggedGameId} <-> ${targetGame.id}`);
-      console.log(`[Drag Drop] Game ${draggedGameId}: ${sourceFieldIdNum}@${sourceTimeSlot} -> ${destFieldIdNum}@${destTimeSlot}`);
-      console.log(`[Drag Drop] Game ${targetGame.id}: ${destFieldIdNum}@${destTimeSlot} -> ${sourceFieldIdNum}@${sourceTimeSlot}`);
+      const sourceField = fields.find(f => f.id === sourceFieldIdNum);
+
+      console.log(`🔄 [GAME SWAP INITIATED]`);
+      console.log(`🎯 Swapping positions between two games:`);
+      console.log(`   📋 Game A (${draggedGameId}): ${draggedGame?.homeTeamName} vs ${draggedGame?.awayTeamName}`);
+      console.log(`      └── Moving TO: ${destField?.name} at ${destTimeSlot}`);
+      console.log(`   📋 Game B (${targetGame.id}): ${targetGameInfo?.homeTeamName} vs ${targetGameInfo?.awayTeamName}`);
+      console.log(`      └── Moving TO: ${sourceField?.name} at ${sourceTimeSlot}`);
+      console.log(`🚀 Executing swap mutation...`);
       
       // Perform swap
       swapGamesMutation.mutate({
@@ -396,7 +436,13 @@ export default function DragDropCalendarScheduler({ eventId }: DragDropCalendarS
       });
     } else {
       // Empty slot - simple move
-      console.log(`[Drag Drop] Simple move: Game ${draggedGameId} -> ${destFieldIdNum}@${destTimeSlot}`);
+      console.log(`✅ [SIMPLE MOVE INITIATED]`);
+      console.log(`📋 Moving game to empty slot:`);
+      console.log(`   • Game: ${draggedGame?.homeTeamName} vs ${draggedGame?.awayTeamName} (ID: ${draggedGameId})`);
+      console.log(`   • Destination: ${destField?.name} at ${destTimeSlot}`);
+      console.log(`   • Full timestamp: ${destStartTime}`);
+      console.log(`🚀 Executing update mutation...`);
+
       updateGameMutation.mutate({ 
         gameId: draggedGameId, 
         fieldId: destFieldIdNum, 

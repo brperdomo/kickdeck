@@ -203,9 +203,16 @@ router.put('/:gameId/reschedule', isAdmin, async (req, res) => {
     const { gameId } = req.params;
     const { fieldId, startTime, eventId } = req.body;
 
-    console.log(`[Game Reschedule] Updating game ${gameId}: field=${fieldId}, time=${startTime}, event=${eventId}`);
+    console.log(`\n🎯 [BACKEND] Game Reschedule Request Received`);
+    console.log(`📋 Request Details:`);
+    console.log(`   • Game ID: ${gameId}`);
+    console.log(`   • Target Field ID: ${fieldId}`);
+    console.log(`   • Target Start Time: ${startTime}`);
+    console.log(`   • Event ID: ${eventId}`);
+    console.log(`🔍 Starting database operations...`);
 
     // First, find or create the time slot
+    console.log(`🔍 Searching for existing time slot...`);
     let timeSlot = await db.query.gameTimeSlots.findFirst({
       where: and(
         eq(gameTimeSlots.eventId, parseInt(eventId)),
@@ -215,9 +222,14 @@ router.put('/:gameId/reschedule', isAdmin, async (req, res) => {
     });
 
     if (!timeSlot) {
-      console.log(`[Game Reschedule] Creating new time slot for ${startTime} on field ${fieldId}`);
+      console.log(`📅 Time slot not found - creating new one`);
+      console.log(`   • Event: ${eventId}`);
+      console.log(`   • Field: ${fieldId}`);
+      console.log(`   • Start: ${startTime}`);
+      
       // Create time slot with 90-minute duration
       const endTime = new Date(new Date(startTime).getTime() + 90 * 60 * 1000).toISOString();
+      console.log(`   • End: ${endTime} (90-minute duration)`);
       
       const [newTimeSlot] = await db.insert(gameTimeSlots).values({
         eventId: parseInt(eventId),
@@ -232,9 +244,17 @@ router.put('/:gameId/reschedule', isAdmin, async (req, res) => {
       }).returning();
       
       timeSlot = newTimeSlot;
+      console.log(`✅ New time slot created with ID: ${timeSlot.id}`);
+    } else {
+      console.log(`✅ Found existing time slot ID: ${timeSlot.id}`);
     }
 
     // Update the game with new field and time slot
+    console.log(`🎮 Updating game in database...`);
+    console.log(`   • Game ID: ${gameId}`);
+    console.log(`   • New Field ID: ${fieldId}`);
+    console.log(`   • New Time Slot ID: ${timeSlot.id}`);
+    
     const [updatedGame] = await db
       .update(games)
       .set({
@@ -245,7 +265,12 @@ router.put('/:gameId/reschedule', isAdmin, async (req, res) => {
       .where(eq(games.id, parseInt(gameId)))
       .returning();
 
-    console.log(`[Game Reschedule] Successfully updated game ${gameId}`);
+    console.log(`✅ [BACKEND] Game successfully rescheduled!`);
+    console.log(`📊 Updated game data:`, {
+      gameId: updatedGame.id,
+      fieldId: updatedGame.fieldId,
+      timeSlotId: updatedGame.timeSlotId
+    });
     
     res.json({
       success: true,
@@ -255,7 +280,10 @@ router.put('/:gameId/reschedule', isAdmin, async (req, res) => {
     });
 
   } catch (error) {
-    console.error('[Game Reschedule] Error:', error);
+    console.error(`❌ [BACKEND] Game reschedule failed!`);
+    console.error(`💥 Error type:`, error.constructor.name);
+    console.error(`📝 Error message:`, error instanceof Error ? error.message : 'Unknown error');
+    console.error(`🔍 Full error:`, error);
     res.status(500).json({ 
       error: 'Failed to reschedule game',
       details: error instanceof Error ? error.message : 'Unknown error'
