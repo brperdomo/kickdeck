@@ -189,18 +189,20 @@ async function testDbConnection() {
     // Set up appropriate middleware based on environment
     if (nodeEnv === "production") {
       try {
-        // Try production static files first
+        // Use production static files
         serveStatic(app);
         log("Static file serving configured for production");
-      } catch (error) {
-        // If production files don't exist, use development mode without HMR WebSockets
-        log(
-          "Production files not found, using development mode with stable configuration",
-        );
+        
+        // Create HTTP server for production
         const { createServer } = await import("http");
         server = createServer(app);
-        await setupVite(app, server);
-        log("Development mode configured for production stability");
+      } catch (error) {
+        log("Error setting up production static files: " + (error as Error).message);
+        // Fallback to basic static serving
+        const { createServer } = await import("http");
+        server = createServer(app);
+        serveStatic(app);
+        log("Production fallback configured");
       }
     } else {
       // In development, create a temporary server for Vite HMR
@@ -245,17 +247,13 @@ async function testDbConnection() {
     };
 
     try {
-      const availablePort = await findAvailablePort(PORT);
+      // Use the exact PORT specified (don't search for available ports in production)
+      const portToUse = nodeEnv === "production" ? PORT : await findAvailablePort(PORT);
 
-      // Create and start the server properly
-      if (nodeEnv === "production") {
-        // In production, create a new server instance
-        const { createServer } = await import("http");
-        server = createServer(app);
-      }
-
-      server.listen(availablePort, HOST, () => {
-        log(`Server started successfully on ${HOST}:${availablePort}`);
+      server.listen(portToUse, HOST, () => {
+        log(`Server started successfully on ${HOST}:${portToUse}`);
+        log(`Server environment: ${nodeEnv}`);
+        log(`Server ready for connections`);
       });
     } catch (error) {
       log(`Error starting server: ${(error as Error).message}`);
