@@ -17,8 +17,9 @@ interface FlightFormatData {
   ageGroup: string;
   gender: string;
   teamCount: number;
+  ageGroupFieldSize: string; // Field size from age group settings (7v7, 9v9, 11v11)
   currentFormat?: GameFormat;
-  level: string; // Flight level like "top-flight", "middle-flight"
+  level: string; // Flight level like "top_flight", "middle_flight"
   displayName: string; // Full display like "U17 Boys - Top Flight"
 }
 
@@ -297,11 +298,14 @@ export function GameFormatEngine({ eventId }: GameFormatEngineProps) {
 
   const applyRecommendedFormat = (flightId: number, bracketStructure: BracketStructure) => {
     // Apply default format with the recommended bracket structure
+    const flight = flightData?.find(f => f.flightId === flightId);
+    const defaultFieldSize = flight?.ageGroupFieldSize || '9v9'; // Use age group field size as default
+    
     setCustomFormats(prev => ({
       ...prev,
       [flightId]: {
         gameLength: 35, // Default 35-minute halves
-        fieldSize: '9v9', // Default field size
+        fieldSize: defaultFieldSize, // Use age group's field size
         bufferTime: 10,
         restPeriod: 90,
         maxGamesPerDay: 3,
@@ -649,7 +653,21 @@ export function GameFormatEngine({ eventId }: GameFormatEngineProps) {
                     {!customFormats[flight.flightId] && editingFlight !== flight.flightId && (
                       <Button
                         variant="outline"
-                        onClick={() => setEditingFlight(flight.flightId)}
+                        onClick={() => {
+                          setEditingFlight(flight.flightId);
+                          // Initialize custom format with age group defaults
+                          const defaultFieldSize = flight.ageGroupFieldSize || '9v9';
+                          setCustomFormats(prev => ({
+                            ...prev,
+                            [flight.flightId]: {
+                              gameLength: 35,
+                              fieldSize: defaultFieldSize, // Use age group field size as default
+                              bufferTime: 10,
+                              restPeriod: 90,
+                              maxGamesPerDay: 3
+                            }
+                          }));
+                        }}
                       >
                         <Settings className="h-4 w-4 mr-2" />
                         Custom Configuration
@@ -666,7 +684,7 @@ export function GameFormatEngine({ eventId }: GameFormatEngineProps) {
           {configuredFlights.map((flight) => (
             <Card key={flight.flightId} className="border-slate-600 bg-slate-800">
               <CardHeader>
-                <CardTitle className="text-white">{flight.ageGroup} {flight.gender} - {flight.flightName}</CardTitle>
+                <CardTitle className="text-white">{flight.displayName || `${flight.ageGroup} ${flight.gender} - ${flight.flightName}`}</CardTitle>
                 <CardDescription className="text-slate-300">
                   {flight.teamCount} teams • Format configured and ready
                 </CardDescription>

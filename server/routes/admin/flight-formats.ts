@@ -20,13 +20,14 @@ router.get('/events/:eventId/flight-formats', async (req, res) => {
     const { eventId } = req.params;
     console.log(`[Flight Formats] Fetching formats for event ${eventId}`);
 
-    // Get all flights (brackets) with their teams and format configurations
+    // Get all flights (brackets) with their teams and format configurations, including field size from age group
     const flightsWithTeams = await db
       .select({
         flightId: eventBrackets.id,
         flightName: eventBrackets.name,
         ageGroup: eventAgeGroups.ageGroup,
         gender: eventAgeGroups.gender,
+        ageGroupFieldSize: eventAgeGroups.fieldSize, // Get field size from age group for defaults
         currentFormat: {
           id: gameFormats.id,
           gameLength: gameFormats.gameLength,
@@ -55,15 +56,31 @@ router.get('/events/:eventId/flight-formats', async (req, res) => {
             )
           );
 
+        // Map flight names to proper levels
+        let level = 'other';
+        let displayLevel = flight.flightName;
+        
+        if (flight.flightName.toLowerCase().includes('elite')) {
+          level = 'top_flight';
+          displayLevel = 'Top Flight';
+        } else if (flight.flightName.toLowerCase().includes('premier')) {
+          level = 'middle_flight';
+          displayLevel = 'Middle Flight';
+        } else if (flight.flightName.toLowerCase().includes('classic')) {
+          level = 'bottom_flight';
+          displayLevel = 'Bottom Flight';
+        }
+
         return {
           flightId: flight.flightId,
           flightName: flight.flightName,
           ageGroup: flight.ageGroup,
           gender: flight.gender,
           teamCount: teamCount.length,
+          ageGroupFieldSize: flight.ageGroupFieldSize, // Include age group field size for frontend defaults
           currentFormat: flight.currentFormat?.id ? flight.currentFormat : undefined,
-          level: flight.flightName.toLowerCase(), // Add level for compatibility
-          displayName: `${flight.ageGroup} ${flight.gender} - ${flight.flightName}` // Add full display name
+          level: level,
+          displayName: `${flight.ageGroup} ${flight.gender} - ${displayLevel}` // Use proper flight level name
         };
       })
     );

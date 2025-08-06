@@ -6,6 +6,12 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 ## User Preferences
 Preferred communication style: Simple, everyday language.
 
+## Recent Updates (August 6, 2025)
+- **Field Size Auto-Population Fix**: Age group field sizes (7v7, 9v9, 11v11) now properly auto-populate as defaults in Game Format Engine globally across the platform
+- **Flight Level Classification Fix**: Nike Elite correctly shows as "Top Flight", Premier as "Middle Flight", Classic as "Bottom Flight" instead of showing raw flight names
+- **Global Field Size Application**: Field sizes set in Event Age Groups tab now apply consistently throughout the entire MatchPro platform
+- **Enhanced Display Names**: Flight levels display proper hierarchical names (Top/Middle/Bottom Flight) rather than raw Nike naming
+
 ## System Architecture
 
 ### Frontend
