@@ -1,0 +1,330 @@
+Flight configs loaded: 76 flights
+UnifiedTournamentControlCenter-Bk4L9jYH.js:1 Configured flights: 1 of 76
+chunk-CVIZYB43.js:3 [Violation] 'setTimeout' handler took 58ms
+UnifiedTournamentControlCenter-Bk4L9jYH.js:1 Fetch finished loading: POST "https://app.matchpro.ai/api/admin/events/1844329078/generate-selective-schedule".
+mutationFn @ UnifiedTournamentControlCenter-Bk4L9jYH.js:1
+fn @ index-CfuBnb3q.js:41
+f @ index-CfuBnb3q.js:41
+start @ index-CfuBnb3q.js:41
+execute @ index-CfuBnb3q.js:41
+await in execute
+mutate @ index-CfuBnb3q.js:41
+(anonymous) @ index-CfuBnb3q.js:41
+Q @ UnifiedTournamentControlCenter-Bk4L9jYH.js:1
+_ue @ index-CfuBnb3q.js:38
+Due @ index-CfuBnb3q.js:38
+Iue @ index-CfuBnb3q.js:38
+pR @ index-CfuBnb3q.js:38
+Xq @ index-CfuBnb3q.js:38
+(anonymous) @ index-CfuBnb3q.js:38
+NO @ index-CfuBnb3q.js:41
+bq @ index-CfuBnb3q.js:38
+E2 @ index-CfuBnb3q.js:38
+X4 @ index-CfuBnb3q.js:38
+Xue @ index-CfuBnb3q.js:38
+UnifiedTournamentControlCenter-Bk4L9jYH.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentControlCenter-Bk4L9jYH.js:1 Configured flights: 1 of 76
+chunk-CVIZYB43.js:3 [Violation] 'setTimeout' handler took 56ms
+Navigated to https://app.matchpro.ai/admin/events/1844329078/master-schedule
+js?libraries=places&v=beta&callback=Function.prototype:1377 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1377
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622Understand this warning
+index-CfuBnb3q.js:862 Google Maps API key length: 0 characters
+index-CfuBnb3q.js:862 Mapbox API key length: 93 characters
+index-CfuBnb3q.js:862 Google Maps API already loaded
+index-CfuBnb3q.js:672 Current route location (Wouter): /admin/events/1844329078/master-schedule
+index-CfuBnb3q.js:672 Current URL: https://app.matchpro.ai/admin/events/1844329078/master-schedule
+index-CfuBnb3q.js:672 Current pathname: /admin/events/1844329078/master-schedule
+index-CfuBnb3q.js:672 Current search: 
+index-CfuBnb3q.js:672 Fetching user with emulation token: not present
+js?libraries=places&v=beta&callback=Function.prototype:1409 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+_.B.send @ js?libraries=places&v=beta&callback=Function.prototype:1409
+hda @ js?libraries=places&v=beta&callback=Function.prototype:1386
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1378
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+9Fetch finished loading: GET "<URL>".
+chunk-FLCULYKI.js:31 orchestration: Initializing config store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+index-CfuBnb3q.js:672 User data fetched: {id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: '$2b$12$d6n1CBWgsWFm0fh77F1OX.YxDZy7/O3aLSuJOuq4QkvOtFmSit7BC', firstName: 'Bryan', …}
+chunk-FLCULYKI.js:31 orchestration: Initializing feature flag store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state {pill-player: {…}}
+chunk-FLCULYKI.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+index-CfuBnb3q.js:664 Fetch failed loading: GET "https://app.matchpro.ai/api/user".
+queryFn @ index-CfuBnb3q.js:664
+i @ index-CfuBnb3q.js:41
+f @ index-CfuBnb3q.js:41
+start @ index-CfuBnb3q.js:41
+fetch @ index-CfuBnb3q.js:41
+ng @ index-CfuBnb3q.js:41
+onSubscribe @ index-CfuBnb3q.js:41
+subscribe @ index-CfuBnb3q.js:41
+(anonymous) @ index-CfuBnb3q.js:41
+hW @ index-CfuBnb3q.js:39
+k1 @ index-CfuBnb3q.js:41
+Zh @ index-CfuBnb3q.js:41
+qR @ index-CfuBnb3q.js:41
+au @ index-CfuBnb3q.js:39
+hhe @ index-CfuBnb3q.js:41
+Eu @ index-CfuBnb3q.js:41
+qW @ index-CfuBnb3q.js:41
+N @ index-CfuBnb3q.js:26
+T @ index-CfuBnb3q.js:26
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+UnifiedTournamentControlCenter-Bk4L9jYH.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentControlCenter-Bk4L9jYH.js:1 Configured flights: 1 of 76
+chunk-CVIZYB43.js:3 [Violation] 'setTimeout' handler took 73ms
+ScheduleViewerFixed-DJ51AJ4i.js:6 Schedule API Response: {games: Array(6), fields: Array(12), ageGroups: Array(24), dates: Array(2), totalGames: 6, …}
+ScheduleViewerFixed-DJ51AJ4i.js:6 Game 1 transformation debug: {raw: {…}, homeTeamStructure: 'Desert Empire SURF G14 Pre-NPL Cortes ', awayTeamStructure: 'Empire Surf North G2013A-1 Silva', fieldStructure: 'Unassigned', rawFieldName: 'Unassigned', …}
+ScheduleViewerFixed-DJ51AJ4i.js:6 Game 1 API data: {
+  "id": 7373,
+  "homeTeam": "Desert Empire SURF G14 Pre-NPL Cortes ",
+  "awayTeam": "Empire Surf North G2013A-1 Silva",
+  "homeTeamClub": "Desert Empire Surf",
+  "awayTeamClub": "Empire Surf",
+  "ageGroup": "U13",
+  "field": "Unassigned",
+  "fieldName": "Unassigned",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "TBD",
+  "endTime": "TBD",
+  "duration": 75,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DJ51AJ4i.js:6 Game 1 transformed: {id: 7373, homeTeam: 'Desert Empire SURF G14 Pre-NPL Cortes ', awayTeam: 'Empire Surf North G2013A-1 Silva', ageGroup: 'U13', field: 'Unassigned', …}
+ScheduleViewerFixed-DJ51AJ4i.js:6 Game 2 transformation debug: {raw: {…}, homeTeamStructure: 'Desert Empire SURF G14 Pre-NPL Cortes ', awayTeamStructure: 'San Diego Force G2013 Academy 1', fieldStructure: 'Unassigned', rawFieldName: 'Unassigned', …}
+ScheduleViewerFixed-DJ51AJ4i.js:6 Game 2 API data: {
+  "id": 7374,
+  "homeTeam": "Desert Empire SURF G14 Pre-NPL Cortes ",
+  "awayTeam": "San Diego Force G2013 Academy 1",
+  "homeTeamClub": "Desert Empire Surf",
+  "awayTeamClub": "San Diego Force FC",
+  "ageGroup": "U13",
+  "field": "Unassigned",
+  "fieldName": "Unassigned",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "TBD",
+  "endTime": "TBD",
+  "duration": 75,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DJ51AJ4i.js:6 Game 2 transformed: {id: 7374, homeTeam: 'Desert Empire SURF G14 Pre-NPL Cortes ', awayTeam: 'San Diego Force G2013 Academy 1', ageGroup: 'U13', field: 'Unassigned', …}
+ScheduleViewerFixed-DJ51AJ4i.js:6 Game 3 transformation debug: {raw: {…}, homeTeamStructure: 'Desert Empire SURF G14 Pre-NPL Cortes ', awayTeamStructure: 'Empire Surf G2013 Academy 1', fieldStructure: 'Unassigned', rawFieldName: 'Unassigned', …}
+ScheduleViewerFixed-DJ51AJ4i.js:6 Game 3 API data: {
+  "id": 7375,
+  "homeTeam": "Desert Empire SURF G14 Pre-NPL Cortes ",
+  "awayTeam": "Empire Surf G2013 Academy 1",
+  "homeTeamClub": "Desert Empire Surf",
+  "awayTeamClub": "Empire Surf",
+  "ageGroup": "U13",
+  "field": "Unassigned",
+  "fieldName": "Unassigned",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "TBD",
+  "endTime": "TBD",
+  "duration": 75,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DJ51AJ4i.js:6 Game 3 transformed: {id: 7375, homeTeam: 'Desert Empire SURF G14 Pre-NPL Cortes ', awayTeam: 'Empire Surf G2013 Academy 1', ageGroup: 'U13', field: 'Unassigned', …}
+ScheduleViewerFixed-DJ51AJ4i.js:6 Game 4 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf North G2013A-1 Silva', awayTeamStructure: 'San Diego Force G2013 Academy 1', fieldStructure: 'Unassigned', rawFieldName: 'Unassigned', …}
+ScheduleViewerFixed-DJ51AJ4i.js:6 Game 4 API data: {
+  "id": 7376,
+  "homeTeam": "Empire Surf North G2013A-1 Silva",
+  "awayTeam": "San Diego Force G2013 Academy 1",
+  "homeTeamClub": "Empire Surf",
+  "awayTeamClub": "San Diego Force FC",
+  "ageGroup": "U13",
+  "field": "Unassigned",
+  "fieldName": "Unassigned",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "TBD",
+  "endTime": "TBD",
+  "duration": 75,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DJ51AJ4i.js:6 Game 4 transformed: {id: 7376, homeTeam: 'Empire Surf North G2013A-1 Silva', awayTeam: 'San Diego Force G2013 Academy 1', ageGroup: 'U13', field: 'Unassigned', …}
+ScheduleViewerFixed-DJ51AJ4i.js:6 Game 5 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf North G2013A-1 Silva', awayTeamStructure: 'Empire Surf G2013 Academy 1', fieldStructure: 'Unassigned', rawFieldName: 'Unassigned', …}
+ScheduleViewerFixed-DJ51AJ4i.js:6 Game 5 API data: {
+  "id": 7377,
+  "homeTeam": "Empire Surf North G2013A-1 Silva",
+  "awayTeam": "Empire Surf G2013 Academy 1",
+  "homeTeamClub": "Empire Surf",
+  "awayTeamClub": "Empire Surf",
+  "ageGroup": "U13",
+  "field": "Unassigned",
+  "fieldName": "Unassigned",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "TBD",
+  "endTime": "TBD",
+  "duration": 75,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DJ51AJ4i.js:6 Game 5 transformed: {id: 7377, homeTeam: 'Empire Surf North G2013A-1 Silva', awayTeam: 'Empire Surf G2013 Academy 1', ageGroup: 'U13', field: 'Unassigned', …}
+ScheduleViewerFixed-DJ51AJ4i.js:6 Game 6 transformation debug: {raw: {…}, homeTeamStructure: 'San Diego Force G2013 Academy 1', awayTeamStructure: 'Empire Surf G2013 Academy 1', fieldStructure: 'Unassigned', rawFieldName: 'Unassigned', …}
+ScheduleViewerFixed-DJ51AJ4i.js:6 Game 6 API data: {
+  "id": 7378,
+  "homeTeam": "San Diego Force G2013 Academy 1",
+  "awayTeam": "Empire Surf G2013 Academy 1",
+  "homeTeamClub": "San Diego Force FC",
+  "awayTeamClub": "Empire Surf",
+  "ageGroup": "U13",
+  "field": "Unassigned",
+  "fieldName": "Unassigned",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "TBD",
+  "endTime": "TBD",
+  "duration": 75,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DJ51AJ4i.js:6 Game 6 transformed: {id: 7378, homeTeam: 'San Diego Force G2013 Academy 1', awayTeam: 'Empire Surf G2013 Academy 1', ageGroup: 'U13', field: 'Unassigned', …}
+shared-f034a22078a9ef06f51d0c35cc2871f6.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+e @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+c @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+value @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+value @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+value @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+value @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+value @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+(anonymous) @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+setTimeout
+value @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+value @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+value @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+(anonymous) @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+value @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+value @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+(anonymous) @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+Promise.then
+value @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+value @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+value @ controller-with-preconnect-ff65c4e314512bc81cd59639655ac2d5.js:1
+e @ controller-with-preconnect-ff65c4e314512bc81cd59639655ac2d5.js:1
+value @ controller-with-preconnect-ff65c4e314512bc81cd59639655ac2d5.js:1
+e @ controller-with-preconnect-ff65c4e314512bc81cd59639655ac2d5.js:1
+89836 @ controller-with-preconnect-ff65c4e314512bc81cd59639655ac2d5.js:1
+e @ controller-with-preconnect-ff65c4e314512bc81cd59639655ac2d5.js:1
+(anonymous) @ controller-with-preconnect-ff65c4e314512bc81cd59639655ac2d5.js:1
+e.O @ controller-with-preconnect-ff65c4e314512bc81cd59639655ac2d5.js:1
+(anonymous) @ controller-with-preconnect-ff65c4e314512bc81cd59639655ac2d5.js:1
+(anonymous) @ controller-with-preconnect-ff65c4e314512bc81cd59639655ac2d5.js:1
+shared-f034a22078a9ef06f51d0c35cc2871f6.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+e @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+c @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+value @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+value @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+value @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+value @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+value @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+(anonymous) @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+setTimeout
+value @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+value @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+value @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+(anonymous) @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+value @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+value @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+(anonymous) @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+Promise.then
+value @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+value @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+log @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+log @ controller-with-preconnect-ff65c4e314512bc81cd59639655ac2d5.js:1
+e @ controller-with-preconnect-ff65c4e314512bc81cd59639655ac2d5.js:1
+89836 @ controller-with-preconnect-ff65c4e314512bc81cd59639655ac2d5.js:1
+e @ controller-with-preconnect-ff65c4e314512bc81cd59639655ac2d5.js:1
+(anonymous) @ controller-with-preconnect-ff65c4e314512bc81cd59639655ac2d5.js:1
+e.O @ controller-with-preconnect-ff65c4e314512bc81cd59639655ac2d5.js:1
+(anonymous) @ controller-with-preconnect-ff65c4e314512bc81cd59639655ac2d5.js:1
+(anonymous) @ controller-with-preconnect-ff65c4e314512bc81cd59639655ac2d5.js:1
+util.js:31 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+Yxa @ util.js:31
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1379
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1379
+setTimeout
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1379
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622Understand this warning
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+Promise.then
+S @ out-4.5.44.js:1
+y @ out-4.5.44.js:1
+E @ out-4.5.44.js:1
+e.onload @ inner.html:1
+script
+(anonymous) @ inner.html:1
+(anonymous) @ inner.html:1
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+h @ out-4.5.44.js:1
+e @ inner.html:1
+shared-f034a22078a9ef06f51d0c35cc2871f6.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+e @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+c @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+value @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+value @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+value @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+value @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+value @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+(anonymous) @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+setTimeout
+value @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+value @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+value @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+(anonymous) @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+value @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+log @ shared-f034a22078a9ef06f51d0c35cc2871f6.js:1
+log @ controller-with-preconnect-ff65c4e314512bc81cd59639655ac2d5.js:1
+value @ controller-with-preconnect-ff65c4e314512bc81cd59639655ac2d5.js:1
+value @ controller-with-preconnect-ff65c4e314512bc81cd59639655ac2d5.js:1
+(anonymous) @ controller-with-preconnect-ff65c4e314512bc81cd59639655ac2d5.js:1
