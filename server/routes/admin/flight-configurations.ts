@@ -131,7 +131,8 @@ router.patch('/events/:eventId/flight-configurations/:flightId', isAdmin, async 
       const updateData: any = {};
       
       // Map frontend field names to database field names
-      if (updates.matchTime !== undefined) updateData.gameLength = updates.matchTime;
+      // matchTime in frontend is half-time length, gameLength in DB is full game length
+      if (updates.matchTime !== undefined) updateData.gameLength = updates.matchTime * 2;
       if (updates.breakTime !== undefined) updateData.bufferTime = updates.breakTime;
       if (updates.paddingTime !== undefined) updateData.restPeriod = updates.paddingTime;
       if (updates.startDate !== undefined) updateData.startDate = updates.startDate;
@@ -143,11 +144,34 @@ router.patch('/events/:eventId/flight-configurations/:flightId', isAdmin, async 
         .where(eq(gameFormats.id, existingFormat.id));
         
       console.log('Updated existing game format:', updateData);
+
+      // Also update the corresponding event_game_formats if it exists
+      if (updates.matchTime !== undefined || updates.breakTime !== undefined || updates.paddingTime !== undefined) {
+        const eventGameFormat = await db.query.eventGameFormats.findFirst({
+          where: eq(eventGameFormats.eventId, eventId)
+        });
+
+        if (eventGameFormat) {
+          const eventFormatUpdates: any = {};
+          if (updates.matchTime !== undefined) {
+            eventFormatUpdates.gameLength = updates.matchTime * 2;
+            eventFormatUpdates.halfLength = updates.matchTime;
+          }
+          if (updates.breakTime !== undefined) eventFormatUpdates.halfTimeBreak = updates.breakTime;
+          if (updates.paddingTime !== undefined) eventFormatUpdates.bufferTime = updates.paddingTime;
+
+          await db.update(eventGameFormats)
+            .set(eventFormatUpdates)
+            .where(eq(eventGameFormats.id, eventGameFormat.id));
+          
+          console.log('Updated event game format:', eventFormatUpdates);
+        }
+      }
     } else {
       // Create new game format for this bracket
       const newFormatData = {
         bracketId: parseInt(flightId),
-        gameLength: updates.matchTime || 90,
+        gameLength: (updates.matchTime || 45) * 2, // matchTime is half-time, gameLength is full game
         bufferTime: updates.breakTime || 15,
         restPeriod: updates.paddingTime || 60,
         fieldSize: '11v11', // Default
