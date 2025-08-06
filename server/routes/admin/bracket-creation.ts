@@ -262,7 +262,7 @@ router.post('/:eventId/bracket-creation/auto-assign', async (req, res) => {
       .where(and(
         eq(eventAgeGroups.eventId, eventId),
         eq(teams.status, 'approved'),
-        eq(teams.bracketId, null)
+        isNull(teams.bracketId)
       ));
 
     console.log(`[Bracket Creation] Found ${unassignedTeams.length} unassigned teams`);
@@ -282,7 +282,7 @@ router.post('/:eventId/bracket-creation/auto-assign', async (req, res) => {
         name: eventBrackets.name,
         level: eventBrackets.level,
         ageGroupId: eventBrackets.ageGroupId,
-        maxTeams: eventBrackets.maxTeams,
+        // maxTeams field doesn't exist in schema
         ageGroup: eventAgeGroups.ageGroup,
         gender: eventAgeGroups.gender
       })
@@ -346,7 +346,7 @@ router.post('/:eventId/bracket-creation/auto-assign', async (req, res) => {
     console.error('[Bracket Creation] Error auto-assigning teams:', error);
     res.status(500).json({ 
       error: 'Failed to auto-assign teams',
-      details: error.message 
+      details: (error as Error).message 
     });
   }
 });
@@ -366,7 +366,7 @@ router.post('/:eventId/bracket-creation/lock', async (req, res) => {
       .where(and(
         eq(eventAgeGroups.eventId, eventId),
         eq(teams.status, 'approved'),
-        eq(teams.bracketId, null)
+        isNull(teams.bracketId)
       ));
 
     if (unassignedTeams.length > 0) {
@@ -388,7 +388,7 @@ router.post('/:eventId/bracket-creation/lock', async (req, res) => {
       .update(events)
       .set({ 
         status: 'brackets_locked',
-        updatedAt: new Date()
+        updatedAt: new Date().toISOString()
       })
       .where(eq(events.id, eventId));
 
@@ -404,7 +404,7 @@ router.post('/:eventId/bracket-creation/lock', async (req, res) => {
     console.error('[Bracket Creation] Error locking brackets:', error);
     res.status(500).json({ 
       error: 'Failed to lock brackets',
-      details: error.message 
+      details: (error as Error).message 
     });
   }
 });
