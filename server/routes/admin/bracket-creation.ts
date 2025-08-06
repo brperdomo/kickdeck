@@ -260,7 +260,7 @@ router.post('/:eventId/bracket-creation/auto-assign', async (req, res) => {
       .from(teams)
       .innerJoin(eventAgeGroups, eq(teams.ageGroupId, eventAgeGroups.id))
       .where(and(
-        eq(eventAgeGroups.eventId, parseInt(eventId)),
+        eq(eventAgeGroups.eventId, eventId),
         eq(teams.status, 'approved'),
         isNull(teams.bracketId)
       ));
@@ -354,7 +354,7 @@ router.post('/:eventId/bracket-creation/auto-assign', async (req, res) => {
 // Lock brackets and create games
 router.post('/:eventId/bracket-creation/lock', async (req, res) => {
   try {
-    const eventId = parseInt(req.params.eventId);
+    const eventId = req.params.eventId; // Keep as string for consistency
     
     console.log(`[Bracket Creation] POST /${eventId}/bracket-creation/lock`);
 
@@ -364,7 +364,7 @@ router.post('/:eventId/bracket-creation/lock', async (req, res) => {
       .from(teams)
       .innerJoin(eventAgeGroups, eq(teams.ageGroupId, eventAgeGroups.id))
       .where(and(
-        eq(eventAgeGroups.eventId, parseInt(eventId)),
+        eq(eventAgeGroups.eventId, eventId),
         eq(teams.status, 'approved'),
         isNull(teams.bracketId)
       ));
@@ -380,7 +380,7 @@ router.post('/:eventId/bracket-creation/lock', async (req, res) => {
     const { assignFieldsToGames } = await import('./tournament-control');
     
     // Apply field assignments to any unassigned games with size validation
-    await assignFieldsToGames(eventId.toString());
+    await assignFieldsToGames(eventId);
     console.log(`[Bracket Creation] Applied field assignments with size validation`);
 
     // Update event status to indicate brackets are locked
@@ -389,7 +389,7 @@ router.post('/:eventId/bracket-creation/lock', async (req, res) => {
       .set({ 
         updatedAt: new Date().toISOString()
       })
-      .where(eq(events.id, eventId));
+      .where(eq(events.id, parseInt(eventId)));
 
     console.log(`[Bracket Creation] Brackets locked for event ${eventId}`);
 
