@@ -43,44 +43,96 @@ router.get('/events/:eventId/flight-formats', async (req, res) => {
       .leftJoin(gameFormats, eq(gameFormats.bracketId, eventBrackets.id))
       .where(eq(eventBrackets.eventId, eventId));
 
-    // Get team counts for each flight
-    const flightData = await Promise.all(
-      flightsWithTeams.map(async (flight) => {
-        const teamCount = await db
-          .select()
-          .from(teams)
-          .where(
-            and(
-              eq(teams.bracketId, flight.flightId),
-              eq(teams.status, 'approved')
-            )
-          );
+    // Group brackets by flight level (age group + gender + competitive level)
+    const flightGroups = new Map<string, {
+      ageGroup: string;
+      gender: string;
+      flightName: string;
+      level: string;
+      displayLevel: string;
+      ageGroupFieldSize: string;
+      brackets: Array<{id: number, currentFormat: any}>;
+      totalTeams: number;
+    }>();
 
-        // Map flight names to proper levels
-        let level = 'other';
-        let displayLevel = flight.flightName;
-        
-        if (flight.flightName.toLowerCase().includes('elite')) {
-          level = 'top_flight';
-          displayLevel = 'Top Flight';
-        } else if (flight.flightName.toLowerCase().includes('premier')) {
-          level = 'middle_flight';
-          displayLevel = 'Middle Flight';
-        } else if (flight.flightName.toLowerCase().includes('classic')) {
-          level = 'bottom_flight';
-          displayLevel = 'Bottom Flight';
+    // First pass: organize brackets into flight groups
+    for (const bracket of flightsWithTeams) {
+      // Map flight names to proper levels
+      let level = 'other';
+      let displayLevel = bracket.flightName;
+      
+      if (bracket.flightName.toLowerCase().includes('elite')) {
+        level = 'top_flight';
+        displayLevel = 'Top Flight';
+      } else if (bracket.flightName.toLowerCase().includes('premier')) {
+        level = 'middle_flight';
+        displayLevel = 'Middle Flight';
+      } else if (bracket.flightName.toLowerCase().includes('classic')) {
+        level = 'bottom_flight';
+        displayLevel = 'Bottom Flight';
+      }
+
+      const flightKey = `${bracket.ageGroup}_${bracket.gender}_${level}`;
+      
+      if (!flightGroups.has(flightKey)) {
+        flightGroups.set(flightKey, {
+          ageGroup: bracket.ageGroup,
+          gender: bracket.gender,
+          flightName: bracket.flightName,
+          level: level,
+          displayLevel: displayLevel,
+          ageGroupFieldSize: bracket.ageGroupFieldSize,
+          brackets: [],
+          totalTeams: 0
+        });
+      }
+      
+      flightGroups.get(flightKey)!.brackets.push({
+        id: bracket.flightId,
+        currentFormat: bracket.currentFormat
+      });
+    }
+
+    // Second pass: get team counts for each flight group
+    const flightData = await Promise.all(
+      Array.from(flightGroups.values()).map(async (flight) => {
+        // Count total teams across all brackets in this flight
+        let totalTeams = 0;
+        let hasExistingFormat = false;
+        let existingFormat = undefined;
+
+        for (const bracket of flight.brackets) {
+          const teamCount = await db
+            .select()
+            .from(teams)
+            .where(
+              and(
+                eq(teams.bracketId, bracket.id),
+                eq(teams.status, 'approved')
+              )
+            );
+          
+          totalTeams += teamCount.length;
+          
+          // Use the first bracket's format if any bracket has a format configured
+          if (bracket.currentFormat?.id && !hasExistingFormat) {
+            hasExistingFormat = true;
+            existingFormat = bracket.currentFormat;
+          }
         }
 
         return {
-          flightId: flight.flightId,
+          flightId: flight.brackets[0].id, // Use first bracket ID as representative
           flightName: flight.flightName,
           ageGroup: flight.ageGroup,
           gender: flight.gender,
-          teamCount: teamCount.length,
-          ageGroupFieldSize: flight.ageGroupFieldSize, // Include age group field size for frontend defaults
-          currentFormat: flight.currentFormat?.id ? flight.currentFormat : undefined,
-          level: level,
-          displayName: `${flight.ageGroup} ${flight.gender} - ${displayLevel}` // Use proper flight level name
+          teamCount: totalTeams,
+          bracketCount: flight.brackets.length,
+          bracketIds: flight.brackets.map(b => b.id), // Include all bracket IDs for format application
+          ageGroupFieldSize: flight.ageGroupFieldSize,
+          currentFormat: existingFormat,
+          level: flight.level,
+          displayName: `${flight.ageGroup} ${flight.gender} - ${flight.displayLevel}`
         };
       })
     );
@@ -182,68 +234,73 @@ router.get('/format-templates', async (req, res) => {
   }
 });
 
-// Save format configuration for a flight
+// Save format configuration for a flight (applies to all brackets in the flight)
 router.post('/events/:eventId/flights/:flightId/format', async (req, res) => {
   try {
     const { eventId, flightId } = req.params;
-    const { gameLength, fieldSize, bufferTime, restPeriod, maxGamesPerDay, templateName } = req.body;
+    const { gameLength, fieldSize, bufferTime, restPeriod, maxGamesPerDay, templateName, bracketIds } = req.body;
 
     // Validate required fields
     if (!gameLength || !fieldSize || !bufferTime || !restPeriod || !maxGamesPerDay) {
       return res.status(400).json({ error: 'All format fields are required' });
     }
 
-    // Check if format already exists for this flight
-    const existingFormat = await db
-      .select()
-      .from(gameFormats)
-      .where(eq(gameFormats.bracketId, parseInt(flightId)))
-      .limit(1);
+    console.log(`[Flight Format Save] Saving format for flight ${flightId}, applying to brackets:`, bracketIds);
 
-    if (existingFormat.length > 0) {
-      // Update existing format
-      await db
-        .update(gameFormats)
-        .set({
-          gameLength: parseInt(gameLength),
-          fieldSize,
-          bufferTime: parseInt(bufferTime),
-          restPeriod: parseInt(restPeriod),
-          maxGamesPerDay: parseInt(maxGamesPerDay),
-          templateName: templateName || null,
-          updatedAt: new Date().toISOString()
-        })
-        .where(eq(gameFormats.bracketId, parseInt(flightId)));
-    } else {
-      // Create new format
-      await db
-        .insert(gameFormats)
-        .values({
-          bracketId: parseInt(flightId),
-          gameLength: parseInt(gameLength),
-          fieldSize,
-          bufferTime: parseInt(bufferTime),
-          restPeriod: parseInt(restPeriod),
-          maxGamesPerDay: parseInt(maxGamesPerDay),
-          templateName: templateName || null,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        });
+    // Get all brackets in this flight if bracketIds provided, otherwise just the representative bracket
+    const targetBracketIds = bracketIds && Array.isArray(bracketIds) ? bracketIds : [parseInt(flightId)];
+
+    const formatData = {
+      gameLength: parseInt(gameLength),
+      fieldSize,
+      bufferTime: parseInt(bufferTime),
+      restPeriod: parseInt(restPeriod),
+      maxGamesPerDay: parseInt(maxGamesPerDay),
+      templateName: templateName || null,
+      updatedAt: new Date().toISOString()
+    };
+
+    // Apply format to all brackets in this flight
+    for (const bracketId of targetBracketIds) {
+      // Check if format already exists for this bracket
+      const existingFormat = await db
+        .select()
+        .from(gameFormats)
+        .where(eq(gameFormats.bracketId, bracketId))
+        .limit(1);
+
+      if (existingFormat.length > 0) {
+        // Update existing format
+        await db
+          .update(gameFormats)
+          .set(formatData)
+          .where(eq(gameFormats.bracketId, bracketId));
+      } else {
+        // Create new format
+        await db
+          .insert(gameFormats)
+          .values({
+            bracketId: bracketId,
+            ...formatData,
+            createdAt: new Date().toISOString()
+          });
+      }
     }
 
-    // Fetch the saved format and return it
+    // Fetch one of the saved formats to return as confirmation
     const savedFormat = await db
       .select()
       .from(gameFormats)
-      .where(eq(gameFormats.bracketId, parseInt(flightId)))
+      .where(eq(gameFormats.bracketId, targetBracketIds[0]))
       .limit(1);
 
-    console.log(`[Flight Format Save] Format saved for flight ${flightId}, returning data:`, savedFormat[0]);
+    console.log(`[Flight Format Save] Format applied to ${targetBracketIds.length} brackets in flight ${flightId}`);
     
     res.json({ 
       success: true, 
-      message: 'Format configuration saved successfully',
+      message: `Format configuration saved successfully for ${targetBracketIds.length} bracket(s)`,
       flightId: parseInt(flightId),
+      appliedToBrackets: targetBracketIds,
       format: savedFormat[0]
     });
   } catch (error) {

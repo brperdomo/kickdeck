@@ -12,11 +12,13 @@ import { Settings, Clock, Users, MapPin, Save, Copy, Trash2, CheckCircle, FileTe
 import { FormatTemplateManager } from '@/components/admin/templates/FormatTemplateManager';
 
 interface FlightFormatData {
-  flightId: number;
+  flightId: number; // Representative bracket ID
   flightName: string;
   ageGroup: string;
   gender: string;
-  teamCount: number;
+  teamCount: number; // Total teams across all brackets in this flight
+  bracketCount: number; // Number of brackets in this flight
+  bracketIds: number[]; // All bracket IDs that will inherit this format
   ageGroupFieldSize: string; // Field size from age group settings (7v7, 9v9, 11v11)
   currentFormat?: GameFormat;
   level: string; // Flight level like "top_flight", "middle_flight"
@@ -180,13 +182,18 @@ export function GameFormatEngine({ eventId }: GameFormatEngineProps) {
 
   // Save format configuration
   const saveFormatMutation = useMutation({
-    mutationFn: async ({ flightId, format }: { flightId: number; format: GameFormat }) => {
-      console.log('Saving format for flight:', flightId, 'with data:', format);
+    mutationFn: async ({ flightId, format, bracketIds }: { flightId: number; format: GameFormat; bracketIds?: number[] }) => {
+      console.log('Saving format for flight:', flightId, 'applying to brackets:', bracketIds, 'with data:', format);
+      const requestBody = {
+        ...format,
+        bracketIds: bracketIds || [flightId] // Include bracket IDs for flight-wide application
+      };
+      
       const response = await fetch(`/api/admin/events/${eventId}/flights/${flightId}/format`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify(format)
+        body: JSON.stringify(requestBody)
       });
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: 'Failed to save format configuration' }));
@@ -334,8 +341,13 @@ export function GameFormatEngine({ eventId }: GameFormatEngineProps) {
 
   const handleSaveFormat = (flightId: number) => {
     const format = customFormats[flightId];
-    if (format) {
-      saveFormatMutation.mutate({ flightId, format });
+    const flight = flightData?.find(f => f.flightId === flightId);
+    if (format && flight) {
+      saveFormatMutation.mutate({ 
+        flightId, 
+        format, 
+        bracketIds: flight.bracketIds // Apply to all brackets in this flight
+      });
     }
   };
 
@@ -464,7 +476,7 @@ export function GameFormatEngine({ eventId }: GameFormatEngineProps) {
                 <CardHeader>
                   <CardTitle className="text-white">{flight.displayName || `${flight.ageGroup} ${flight.gender} - ${flight.flightName}`}</CardTitle>
                   <CardDescription className="text-slate-300">
-                    {flight.teamCount} teams • Configure game format settings
+                    {flight.teamCount} teams across {flight.bracketCount} bracket{flight.bracketCount !== 1 ? 's' : ''} • Configure once, applies to all brackets
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -686,7 +698,7 @@ export function GameFormatEngine({ eventId }: GameFormatEngineProps) {
               <CardHeader>
                 <CardTitle className="text-white">{flight.displayName || `${flight.ageGroup} ${flight.gender} - ${flight.flightName}`}</CardTitle>
                 <CardDescription className="text-slate-300">
-                  {flight.teamCount} teams • Format configured and ready
+                  {flight.teamCount} teams across {flight.bracketCount} bracket{flight.bracketCount !== 1 ? 's' : ''} • Format configured for all brackets
                 </CardDescription>
               </CardHeader>
               <CardContent>
