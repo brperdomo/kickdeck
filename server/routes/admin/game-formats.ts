@@ -78,9 +78,7 @@ router.get('/events/:eventId/flight-formats', isAdmin, async (req, res) => {
       flightLevelMap.set(template.level, template.display_name);
     });
 
-    console.log(`[Flight Formats] Starting flight grouping process...`);
-    
-    // First, process all flights to get their details
+    // Return all flights as individual entries (no grouping)
     const flightDetails = await Promise.all(flights.map(async flight => {
       // Find matching game format by bracket ID
       const matchingFormat = gameFormatsQuery.find(format => 
@@ -89,7 +87,7 @@ router.get('/events/:eventId/flight-formats', isAdmin, async (req, res) => {
 
       const teamCount = await getTeamCountForFlight(eventId, flight.id);
 
-      // Extract components from flight name
+      // Extract components from flight name for display
       const ageGroupMatch = flight.name.match(/(U\d+)/i);
       const genderMatch = flight.name.match(/(Boys|Girls|Mixed)/i);
       
@@ -121,117 +119,44 @@ router.get('/events/:eventId/flight-formats', isAdmin, async (req, res) => {
       ageGroup = ageGroup || 'Unknown Age';
       gender = gender || 'Mixed';
       
-      // Clean flight name
-      let flightName = flight.name;
-      if (ageGroupMatch) {
-        flightName = flightName.replace(ageGroupMatch[0], '').trim();
-      }
-      if (genderMatch) {
-        flightName = flightName.replace(genderMatch[0], '').trim();
-      }
-
-      return {
-        flightId: flight.id,
-        flightName: flightName || flight.name,
-        ageGroup: ageGroup,
-        gender: gender,
-        level: flight.level,
-        teamCount: Number(teamCount) || 0,
-        currentFormat: matchingFormat
-      };
-    }));
-    
-    console.log(`[Flight Formats] Processed ${flightDetails.length} individual brackets`);
-
-    // Group brackets by flight level (age group + gender + competitive level)
-    const flightGroups = new Map<string, {
-      ageGroup: string;
-      gender: string;
-      flightName: string;
-      level: string;
-      displayLevel: string;
-      brackets: Array<{id: number, currentFormat: any}>;
-      totalTeams: number;
-    }>();
-
-    // Group the flights
-    for (const bracket of flightDetails) {
-      // Map flight names to proper levels for display
-      let displayLevel = flightLevelMap.get(bracket.level) || bracket.level;
-      
-      // If no template found, use flight name mapping
-      if (displayLevel === bracket.level) {
-        if (bracket.flightName.toLowerCase().includes('elite')) {
+      // Map flight level to display level
+      let displayLevel = flightLevelMap.get(flight.level) || flight.level;
+      if (displayLevel === flight.level) {
+        if (flight.name.toLowerCase().includes('elite')) {
           displayLevel = 'Top Flight';
-        } else if (bracket.flightName.toLowerCase().includes('premier')) {
+        } else if (flight.name.toLowerCase().includes('premier')) {
           displayLevel = 'Middle Flight';
-        } else if (bracket.flightName.toLowerCase().includes('classic')) {
+        } else if (flight.name.toLowerCase().includes('classic')) {
           displayLevel = 'Bottom Flight';
         }
       }
 
-      const flightKey = `${bracket.ageGroup}_${bracket.gender}_${bracket.level}`;
-      
-      if (!flightGroups.has(flightKey)) {
-        flightGroups.set(flightKey, {
-          ageGroup: bracket.ageGroup,
-          gender: bracket.gender,
-          flightName: bracket.flightName,
-          level: bracket.level,
-          displayLevel: displayLevel,
-          brackets: [],
-          totalTeams: 0
-        });
-      }
-      
-      const group = flightGroups.get(flightKey)!;
-      group.brackets.push({
-        id: bracket.flightId,
-        currentFormat: bracket.currentFormat
-      });
-      group.totalTeams += Number(bracket.teamCount) || 0;
-    }
-
-    console.log(`[Flight Formats] Created ${flightGroups.size} flight groups from ${flightDetails.length} brackets`);
-
-    // Convert flight groups to response format
-    const flightData = Array.from(flightGroups.values()).map(group => {
-      // Check if any bracket in this group has a format configured
-      const hasFormat = group.brackets.some(b => b.currentFormat);
-      
-      // Use the first format found, or undefined
-      const representativeFormat = group.brackets.find(b => b.currentFormat)?.currentFormat;
-      
-      // Create display name: "U17 Boys - Top Flight (3 brackets)"
-      const displayName = `${group.ageGroup} ${group.gender} - ${group.displayLevel} (${group.brackets.length} brackets)`;
-
-      console.log(`[Flight Group] ${displayName}: teams=${group.totalTeams}, hasFormat=${hasFormat}`);
-
       return {
-        flightId: `group_${group.ageGroup}_${group.gender}_${group.level}`, // Unique group ID
-        flightName: group.flightName,
-        ageGroup: group.ageGroup,
-        gender: group.gender,
-        level: group.level,
-        displayName: displayName,
-        teamCount: group.totalTeams,
-        bracketCount: group.brackets.length,
-        bracketIds: group.brackets.map(b => b.id), // Include bracket IDs for saving formats
-        currentFormat: representativeFormat ? {
-          id: representativeFormat.id,
-          gameLength: representativeFormat.gameLength,
-          fieldSize: representativeFormat.fieldSize,
-          bufferTime: representativeFormat.bufferTime,
-          restPeriod: representativeFormat.restPeriod || 90,
-          maxGamesPerDay: representativeFormat.maxGamesPerDay || 3,
-          templateName: representativeFormat.templateName || `${representativeFormat.fieldSize} ${representativeFormat.gameLength}min`
-        } : undefined
+        flightId: flight.id,
+        flightName: flight.name,
+        ageGroup: ageGroup,
+        gender: gender,
+        level: flight.level,
+        displayName: `${ageGroup} ${gender} - ${displayLevel}`,
+        teamCount: Number(teamCount) || 0,
+        bracketCount: 1, // Each flight is individual
+        bracketIds: [flight.id], // Just this single bracket
+        currentFormat: matchingFormat ? {
+          id: matchingFormat.id,
+          gameLength: matchingFormat.gameLength,
+          fieldSize: matchingFormat.fieldSize,
+          bufferTime: matchingFormat.bufferTime,
+          restPeriod: matchingFormat.restPeriod,
+          maxGamesPerDay: matchingFormat.maxGamesPerDay,
+          templateName: matchingFormat.templateName
+        } : null
       };
-    });
+    }));
+    
+    console.log(`[Flight Formats] Processed ${flightDetails.length} individual flights`);
+    console.log(`[Flight Formats] Configured flights: ${flightDetails.filter(f => f.currentFormat).length}/${flightDetails.length}`);
 
-    console.log(`[Flight Formats] Configured flights: ${flightData.filter(f => f.currentFormat).length}/${flightData.length}`);
-
-    res.json(flightData);
+    res.json(flightDetails);
   } catch (error) {
     console.error('[Flight Formats] Error fetching flight formats:', error);
     res.status(500).json({ error: 'Failed to fetch flight formats' });
