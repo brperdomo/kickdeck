@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { ScheduleVisualization } from "@/components/ScheduleVisualization";
+import EnhancedDragDropScheduler from './EnhancedDragDropScheduler';
 
 interface ScheduleBuilderProps {
   eventId: string;
@@ -439,7 +440,7 @@ export function ScheduleBuilder({ eventId, workflowData, onComplete, onError }: 
           <Tabs value={schedulingMethod} onValueChange={(value: any) => setSchedulingMethod(value)}>
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="ai">AI-Powered Scheduling</TabsTrigger>
-              <TabsTrigger value="manual">Manual Drag & Drop</TabsTrigger>
+              <TabsTrigger value="manual">Enhanced Drag & Drop</TabsTrigger>
             </TabsList>
 
             <TabsContent value="ai" className="space-y-4">
@@ -554,17 +555,13 @@ export function ScheduleBuilder({ eventId, workflowData, onComplete, onError }: 
               <Alert>
                 <Users className="h-4 w-4" />
                 <AlertDescription>
-                  Manually drag and drop games to assign them to specific fields and time slots. 
-                  Games from your workflow will be available for scheduling.
+                  Enhanced Google Calendar-style scheduler with 5/10/15 minute time intervals. 
+                  Drag and drop games smoothly with real-time conflict detection and optimistic updates.
                 </AlertDescription>
               </Alert>
 
-              <div className="p-4 bg-gray-50 rounded-lg text-center">
-                <p className="text-gray-600">Manual scheduling interface will be available once games are loaded.</p>
-                <p className="text-sm text-gray-500 mt-2">
-                  {totalGamesFromWorkflow} games ready for manual scheduling
-                </p>
-              </div>
+              {/* Enhanced Drag-Drop Scheduler */}
+              <EnhancedDragDropScheduler eventId={eventId} />
             </TabsContent>
           </Tabs>
         </CardContent>

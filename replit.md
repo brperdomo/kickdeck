@@ -11,6 +11,7 @@ Preferred communication style: Simple, everyday language.
 - **Flight Level Classification Fix**: Nike Elite correctly shows as "Top Flight", Premier as "Middle Flight", Classic as "Bottom Flight" instead of showing raw flight names
 - **Global Field Size Application**: Field sizes set in Event Age Groups tab now apply consistently throughout the entire MatchPro platform
 - **Enhanced Display Names**: Flight levels display proper hierarchical names (Top/Middle/Bottom Flight) rather than raw Nike naming
+- **Enhanced Drag-Drop Scheduler**: Created Google Calendar-style scheduler with 5/10/15 minute time intervals, smooth drag operations, conflict detection, and optimistic updates to prevent games from disappearing
 
 ## System Architecture
 
