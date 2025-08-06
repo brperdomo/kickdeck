@@ -182,42 +182,62 @@ export function GameFormatEngine({ eventId }: GameFormatEngineProps) {
   const { data: matchupTemplates = [] } = useQuery({
     queryKey: ['matchup-templates'],
     queryFn: async (): Promise<MatchupTemplate[]> => {
-      // For now, return mock data since API has routing issues
-      return [
-        {
-          id: 1,
-          name: "4-Team Single Bracket",
-          teamCount: 4,
-          description: "4 teams in one bracket with round-robin pool play",
-          bracketStructure: [["A1", "B2"], ["B1", "A2"], ["A1", "B1"], ["A2", "B2"], ["A1", "A2"], ["B1", "B2"]],
-          gameCount: 6,
-          isActive: true,
-          createdAt: "2025-08-06",
-          updatedAt: "2025-08-06"
-        },
-        {
-          id: 2,
-          name: "6-Team Crossover Brackets",
-          teamCount: 6,
-          description: "6 teams in 2 brackets of 3 with crossover pool play + final",
-          bracketStructure: [["A1", "B1"], ["A2", "B2"], ["A3", "B3"], ["A1", "B2"], ["A2", "B3"], ["A3", "B1"], ["A1", "B3"], ["A2", "B1"], ["A3", "B2"], ["W1", "W2"]],
-          gameCount: 10,
-          isActive: true,
-          createdAt: "2025-08-06", 
-          updatedAt: "2025-08-06"
-        },
-        {
-          id: 3,
-          name: "8-Team Dual Brackets", 
-          teamCount: 8,
-          description: "8 teams in 2 brackets of 4 with crossover semifinals + final",
-          bracketStructure: [["A1", "A2"], ["A3", "A4"], ["B1", "B2"], ["B3", "B4"], ["A1", "A3"], ["A2", "A4"], ["B1", "B3"], ["B2", "B4"], ["A1", "A4"], ["A2", "A3"], ["B1", "B4"], ["B2", "B3"], ["SF1", "SF2"]],
-          gameCount: 13,
-          isActive: true,
-          createdAt: "2025-08-06",
-          updatedAt: "2025-08-06"
-        }
-      ];
+      const response = await fetch('/api/admin/matchup-templates', {
+        credentials: 'include'
+      });
+      if (!response.ok) {
+        console.warn('Failed to fetch matchup templates from API, using fallback data');
+        // Fallback to mock data if API fails
+        return [
+          {
+            id: 1,
+            name: "4-Team Single Bracket",
+            teamCount: 4,
+            description: "4 teams in single bracket: 6 pool games + 1 final (1st vs 2nd in points)",
+            bracketStructure: [["A1", "A2"], ["A3", "A4"], ["A1", "A3"], ["A2", "A4"], ["A1", "A4"], ["A2", "A3"], ["TBD", "TBD"]],
+            gameCount: 7,
+            isActive: true,
+            createdAt: "2025-08-06",
+            updatedAt: "2025-08-06"
+          },
+          {
+            id: 2,
+            name: "6-Team Crossover Brackets",
+            teamCount: 6,
+            description: "6 teams in 2 brackets of 3 (crossover): 9 pool games + 1 final (1st vs 2nd in points)",
+            bracketStructure: [["A1", "B1"], ["A2", "B2"], ["A3", "B3"], ["A1", "B2"], ["A2", "B3"], ["A3", "B1"], ["A1", "B3"], ["A2", "B1"], ["A3", "B2"], ["TBD", "TBD"]],
+            gameCount: 10,
+            isActive: true,
+            createdAt: "2025-08-06", 
+            updatedAt: "2025-08-06"
+          },
+          {
+            id: 3,
+            name: "8-Team Dual Brackets", 
+            teamCount: 8,
+            description: "8 teams in 2 brackets of 4: 12 pool games + 1 final (1st from A vs 1st from B)",
+            bracketStructure: [["A1", "A2"], ["B1", "B2"], ["A3", "A4"], ["B3", "B4"], ["A1", "A3"], ["B1", "B3"], ["A2", "A4"], ["B2", "B4"], ["A1", "A4"], ["B1", "B4"], ["A2", "A3"], ["B2", "B3"], ["TBD", "TBD"]],
+            gameCount: 13,
+            isActive: true,
+            createdAt: "2025-08-06",
+            updatedAt: "2025-08-06"
+          }
+        ];
+      }
+      
+      const data = await response.json();
+      // Map database fields to frontend interface
+      return data.map((template: any) => ({
+        id: template.id,
+        name: template.name,
+        teamCount: template.teamCount,
+        description: template.description,
+        bracketStructure: template.matchupPattern || template.bracketStructure,
+        gameCount: template.totalGames,
+        isActive: template.isActive,
+        createdAt: template.createdAt,
+        updatedAt: template.updatedAt
+      }));
     }
   });
 

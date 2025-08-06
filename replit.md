@@ -19,6 +19,8 @@ Preferred communication style: Simple, everyday language.
 - **Global Field Size Application**: Field sizes set in Event Age Groups tab now apply consistently throughout the entire MatchPro platform
 - **Enhanced Display Names**: Flight levels display proper hierarchical names (Top/Middle/Bottom Flight) rather than raw Nike naming
 - **Enhanced Drag-Drop Scheduler**: Created Google Calendar-style scheduler with 5/10/15 minute time intervals, smooth drag operations, conflict detection, and optimistic updates to prevent games from disappearing
+- **CRITICAL FIX - Matchup Template Pattern Corrections**: Updated database with accurate bracket logic and game counts based on tournament director requirements. Fixed 4-team bracket (6 pool + 1 final = 7 games), 6-team crossover (9 pool + 1 final = 10 games), and 8-team dual brackets (12 pool + 1 final = 13 games). All templates now include TBD placeholders for manual final assignments since points are tracked offline.
+- **Matchup Templates API Integration**: Resolved routing issues and established working API endpoints for real-time template data retrieval. Frontend now loads authentic database templates instead of mock data, ensuring consistency across tournament configuration workflows.
 
 ## System Architecture
 

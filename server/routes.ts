@@ -949,6 +949,57 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin', isAdmin, intelligentSchedulingRouter); // Intelligent scheduling system router
     app.use('/api/admin/events', isAdmin, gameMetadataRouter); // Game metadata and scheduling rules router
     app.use('/api/admin', isAdmin, gameFormatsRouter); // Game format configuration router
+    
+    // Matchup templates routes (inline to avoid import issues)
+    app.get('/api/admin/matchup-templates', isAdmin, async (req, res) => {
+      try {
+        console.log('[Matchup Templates] Fetching all active templates...');
+        const { db } = await import('@db');
+        const { matchupTemplates } = await import('@db/schema');
+        const { eq, asc } = await import('drizzle-orm');
+        
+        const templates = await db.query.matchupTemplates.findMany({
+          where: eq(matchupTemplates.isActive, true),
+          orderBy: [asc(matchupTemplates.teamCount), asc(matchupTemplates.name)]
+        });
+        
+        console.log(`[Matchup Templates] Found ${templates.length} active templates`);
+        res.json(templates);
+      } catch (error) {
+        console.error('[Matchup Templates] Error:', error);
+        res.status(500).json({ error: 'Failed to fetch matchup templates' });
+      }
+    });
+    
+    app.get('/api/admin/matchup-templates/by-team-count/:teamCount', isAdmin, async (req, res) => {
+      try {
+        const teamCount = parseInt(req.params.teamCount);
+        console.log(`[Matchup Templates] Fetching templates for ${teamCount} teams...`);
+        
+        if (!teamCount || teamCount < 3 || teamCount > 16) {
+          return res.status(400).json({ error: 'Team count must be between 3 and 16' });
+        }
+        
+        const { db } = await import('@db');
+        const { matchupTemplates } = await import('@db/schema');
+        const { eq, and, asc } = await import('drizzle-orm');
+        
+        const templates = await db.query.matchupTemplates.findMany({
+          where: and(
+            eq(matchupTemplates.teamCount, teamCount),
+            eq(matchupTemplates.isActive, true)
+          ),
+          orderBy: [asc(matchupTemplates.name)]
+        });
+        
+        console.log(`[Matchup Templates] Found ${templates.length} templates for ${teamCount} teams`);
+        res.json(templates);
+      } catch (error) {
+        console.error('[Matchup Templates] Error:', error);
+        res.status(500).json({ error: 'Failed to fetch templates by team count' });
+      }
+    });
+    
     // app.use('/api/admin/matchup-templates', matchupTemplatesRouter); // Matchup templates router
 
   // Debug endpoint for testing templates without authentication
