@@ -541,7 +541,7 @@ async function generateGamesForFlight(eventId: string, flight: any) {
   return { gamesCreated: gamesToCreate.length };
 }
 
-async function assignFieldsToGames(eventId: string) {
+export async function assignFieldsToGames(eventId: string) {
   // Get unscheduled games with their age group field size requirements
   const unscheduledGames = await db
     .select({

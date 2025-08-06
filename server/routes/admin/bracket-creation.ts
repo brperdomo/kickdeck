@@ -349,6 +349,13 @@ router.post('/:eventId/bracket-creation/lock', async (req, res) => {
       });
     }
 
+    // Import the field assignment function
+    const { assignFieldsToGames } = await import('./tournament-control');
+    
+    // Apply field assignments to any unassigned games with size validation
+    await assignFieldsToGames(eventId.toString());
+    console.log(`[Bracket Creation] Applied field assignments with size validation`);
+
     // Update event status to indicate brackets are locked
     await db
       .update(events)
