@@ -292,6 +292,9 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
   // Update game position mutation
   const updateGameMutation = useMutation({
     mutationFn: async ({ gameId, fieldId, startTime }: { gameId: number; fieldId: number; startTime: string }) => {
+      console.log(`🚀 [ENHANCED MUTATION] Sending reschedule request to backend...`);
+      console.log(`📤 Request details: gameId=${gameId}, fieldId=${fieldId}, startTime=${startTime}, eventId=${eventId}`);
+      
       const response = await fetch(`/api/admin/games/${gameId}/reschedule`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -301,17 +304,31 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
+        console.error(`❌ [ENHANCED MUTATION] Request failed with status ${response.status}`);
+        console.error(`📝 Error response:`, errorData);
         throw new Error(errorData.error || 'Failed to update game position');
       }
 
-      return response.json();
+      const result = await response.json();
+      console.log(`✅ [ENHANCED MUTATION] Request successful`);
+      console.log(`📥 Response data:`, result);
+      return result;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log(`🎉 [ENHANCED MUTATION SUCCESS] Game reschedule completed successfully`);
+      console.log(`📊 Server response:`, data);
+      console.log(`🔄 Clearing optimistic update and refreshing data...`);
+      
       queryClient.invalidateQueries({ queryKey: ['enhanced-schedule', eventId, selectedDate] });
       setIsOptimisticUpdate(false);
       toast({ title: 'Game moved successfully' });
     },
     onError: (error) => {
+      console.error(`❌ [ENHANCED MUTATION FAILED] Game reschedule failed`);
+      console.error(`💥 Error details:`, error);
+      console.error(`📝 Error message:`, error.message);
+      console.log(`↩️  Reverting optimistic update...`);
+      
       // Revert optimistic update
       setGamePositions(prev => {
         const updated = new Map(prev);
@@ -364,6 +381,10 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
 
   // Handle drag start
   const handleDragStart = (e: React.DragEvent, game: Game) => {
+    console.log(`🎬 [ENHANCED DRAG DROP] Drag started for game ${game.id}`);
+    console.log(`📋 Dragging: ${game.homeTeamName} vs ${game.awayTeamName} (${game.ageGroup})`);
+    console.log(`📍 Current position: Field ${game.fieldName} at ${game.startTime}`);
+    
     setDraggedGame(game);
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('text/plain', game.id.toString());
@@ -388,9 +409,28 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
     e.preventDefault();
     setDragOverSlot(null);
 
-    if (!draggedGame) return;
+    if (!draggedGame) {
+      console.log(`❌ [ENHANCED DRAG DROP] Drop cancelled - no dragged game`);
+      return;
+    }
 
+    // Get field information for detailed logging
+    const targetField = scheduleData?.fields?.find((field: Field) => field.id === fieldId);
     const newStartTime = `${selectedDate}T${timeSlot}:00.000Z`;
+
+    console.log(`\n🎯 [ENHANCED DRAG DROP] Drop Operation Started`);
+    console.log(`📋 Game Details:`);
+    console.log(`   • Game ID: ${draggedGame.id}`);
+    console.log(`   • Match: ${draggedGame.homeTeamName} vs ${draggedGame.awayTeamName}`);
+    console.log(`   • Age Group: ${draggedGame.ageGroup}`);
+    console.log(`   • Current Field: ${draggedGame.fieldName} (ID: ${draggedGame.fieldId})`);
+    console.log(`   • Current Time: ${draggedGame.startTime}`);
+    console.log(`📍 New Destination:`);
+    console.log(`   • Target Field: ${targetField?.name || 'Unknown'} (ID: ${fieldId})`);
+    console.log(`   • Target Time Slot: ${timeSlot}`);
+    console.log(`   • Target Full Time: ${newStartTime}`);
+    console.log(`   • Target Date: ${selectedDate}`);
+    console.log(`🚀 Starting optimistic update and backend mutation...`);
     
     // Optimistic update
     setIsOptimisticUpdate(true);
@@ -408,6 +448,7 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
 
   // Handle drag end
   const handleDragEnd = () => {
+    console.log(`🏁 [ENHANCED DRAG DROP] Drag ended, cleaning up state`);
     setDraggedGame(null);
     setDragOverSlot(null);
   };
