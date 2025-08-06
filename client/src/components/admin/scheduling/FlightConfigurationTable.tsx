@@ -19,6 +19,7 @@ interface FlightConfig {
   matchTime: number; // Half time length in minutes (will be doubled for total game time)
   breakTime: number; // in minutes
   paddingTime: number; // in minutes
+  restPeriod: number; // in minutes - rest time between games for the same team
   totalTime: number; // calculated: (matchTime × 2) + breakTime + paddingTime
   formatName: string;
   teamCount: number;
@@ -147,6 +148,7 @@ export function FlightConfigurationTable({ eventId }: { eventId: string }) {
                 <TableHead className="text-slate-300 font-medium text-center">HALF TIME LENGTH</TableHead>
                 <TableHead className="text-slate-300 font-medium text-center">BREAK</TableHead>
                 <TableHead className="text-slate-300 font-medium text-center">PADDING</TableHead>
+                <TableHead className="text-slate-300 font-medium text-center">REST PERIOD</TableHead>
                 <TableHead className="text-slate-300 font-medium text-center">TOTAL TIME</TableHead>
                 <TableHead className="text-slate-300 font-medium">FORMAT NAME</TableHead>
                 <TableHead className="text-slate-300 font-medium text-center">TEAMS</TableHead>
@@ -341,6 +343,34 @@ export function FlightConfigurationTable({ eventId }: { eventId: string }) {
                         className="px-2 py-1 bg-slate-700 rounded text-center hover:bg-slate-600 transition-colors text-white"
                       >
                         {flight.paddingTime} min
+                      </button>
+                    )}
+                  </TableCell>
+
+                  {/* Rest Period */}
+                  <TableCell className="text-center">
+                    {editing.id === flight.id && editing.field === 'restPeriod' ? (
+                      <div className="flex items-center gap-1 justify-center">
+                        <EditableInput
+                          type="number"
+                          value={editing.value}
+                          onChange={(e) => setEditing({ ...editing, value: parseInt(e.target.value) || 0 })}
+                          className="w-16 h-8 text-center"
+                          autoFocus
+                        />
+                        <Button size="sm" variant="ghost" onClick={handleSave} className="h-8 w-8 p-0">
+                          <Check className="h-4 w-4 text-green-400" />
+                        </Button>
+                        <Button size="sm" variant="ghost" onClick={handleCancel} className="h-8 w-8 p-0">
+                          <X className="h-4 w-4 text-red-400" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => handleEdit(flight.id, 'restPeriod', flight.restPeriod)}
+                        className="px-2 py-1 bg-slate-700 rounded text-center hover:bg-slate-600 transition-colors text-white"
+                      >
+                        {flight.restPeriod} min
                       </button>
                     )}
                   </TableCell>
