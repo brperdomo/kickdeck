@@ -78,7 +78,10 @@ router.get('/events/:eventId/flight-formats', isAdmin, async (req, res) => {
       flightLevelMap.set(template.level, template.display_name);
     });
 
-    const flightData = await Promise.all(flights.map(async flight => {
+    console.log(`[Flight Formats] Starting flight grouping process...`);
+    
+    // First, process all flights to get their details
+    const flightDetails = await Promise.all(flights.map(async flight => {
       // Find matching game format by bracket ID
       const matchingFormat = gameFormatsQuery.find(format => 
         format.bracketId === flight.id
@@ -87,20 +90,13 @@ router.get('/events/:eventId/flight-formats', isAdmin, async (req, res) => {
       const teamCount = await getTeamCountForFlight(eventId, flight.id);
 
       // Extract components from flight name
-      // The flight name might just be "Nike Elite" without age group info
-      // We need to get age group from the flight's relationship or description
-      
-      // Try to extract age group from name first
       const ageGroupMatch = flight.name.match(/(U\d+)/i);
       const genderMatch = flight.name.match(/(Boys|Girls|Mixed)/i);
       
-      // If no age group in name, we need to look up the actual age group
-      // For now, let's get the age group from the flight's associated teams
       let ageGroup = ageGroupMatch ? ageGroupMatch[1] : null;
       let gender = genderMatch ? genderMatch[1] : null;
       
-      // If we don't have age group/gender from the flight name, 
-      // try to get it from the teams in this flight
+      // If we don't have age group/gender from the flight name, get from teams
       if (!ageGroup || !gender) {
         const flightTeams = await db.execute(sql`
           SELECT DISTINCT 
@@ -117,7 +113,6 @@ router.get('/events/:eventId/flight-formats', isAdmin, async (req, res) => {
         if (flightTeams.rows.length > 0) {
           const teamInfo = flightTeams.rows[0] as any;
           ageGroup = ageGroup || teamInfo.age_group_name;
-          // The database already stores 'Boys'/'Girls' correctly
           gender = gender || (teamInfo.gender as string) || 'Mixed';
         }
       }
@@ -126,46 +121,113 @@ router.get('/events/:eventId/flight-formats', isAdmin, async (req, res) => {
       ageGroup = ageGroup || 'Unknown Age';
       gender = gender || 'Mixed';
       
-      // The flight name is typically the flight name itself (Nike Elite, etc.)
+      // Clean flight name
       let flightName = flight.name;
-      
-      // Only remove age group and gender if they were actually in the name
       if (ageGroupMatch) {
         flightName = flightName.replace(ageGroupMatch[0], '').trim();
       }
       if (genderMatch) {
         flightName = flightName.replace(genderMatch[0], '').trim();
       }
-      
-      // Get flight level display name (Top Flight, Middle Flight, etc.)
-      const flightLevelDisplay = flightLevelMap.get(flight.level) || flight.level;
-      
-      // Create comprehensive display name: "U17 Boys Nike Elite - Top Flight"
-      const displayName = flightName 
-        ? `${ageGroup} ${gender} ${flightName} - ${flightLevelDisplay}`
-        : `${ageGroup} ${gender} - ${flightLevelDisplay}`;
-
-      console.log(`[Flight Formats] Flight ${flight.id} (${flight.level}): teams=${teamCount}, hasFormat=${!!matchingFormat}`);
 
       return {
         flightId: flight.id,
-        flightName: flightName || flight.name, // The flight name (Nike Elite, etc.)
+        flightName: flightName || flight.name,
         ageGroup: ageGroup,
         gender: gender,
         level: flight.level,
-        displayName: displayName,
-        teamCount,
-        currentFormat: matchingFormat ? {
-          id: matchingFormat.id,
-          gameLength: matchingFormat.gameLength,
-          fieldSize: matchingFormat.fieldSize,
-          bufferTime: matchingFormat.bufferTime,
-          restPeriod: matchingFormat.restPeriod || 90, // Use saved rest period or default
-          maxGamesPerDay: matchingFormat.maxGamesPerDay || 3, // Use saved max games or default
-          templateName: matchingFormat.templateName || `${matchingFormat.fieldSize} ${matchingFormat.gameLength}min`
-        } : undefined
+        teamCount: Number(teamCount) || 0,
+        currentFormat: matchingFormat
       };
     }));
+    
+    console.log(`[Flight Formats] Processed ${flightDetails.length} individual brackets`);
+
+    // Group brackets by flight level (age group + gender + competitive level)
+    const flightGroups = new Map<string, {
+      ageGroup: string;
+      gender: string;
+      flightName: string;
+      level: string;
+      displayLevel: string;
+      brackets: Array<{id: number, currentFormat: any}>;
+      totalTeams: number;
+    }>();
+
+    // Group the flights
+    for (const bracket of flightDetails) {
+      // Map flight names to proper levels for display
+      let displayLevel = flightLevelMap.get(bracket.level) || bracket.level;
+      
+      // If no template found, use flight name mapping
+      if (displayLevel === bracket.level) {
+        if (bracket.flightName.toLowerCase().includes('elite')) {
+          displayLevel = 'Top Flight';
+        } else if (bracket.flightName.toLowerCase().includes('premier')) {
+          displayLevel = 'Middle Flight';
+        } else if (bracket.flightName.toLowerCase().includes('classic')) {
+          displayLevel = 'Bottom Flight';
+        }
+      }
+
+      const flightKey = `${bracket.ageGroup}_${bracket.gender}_${bracket.level}`;
+      
+      if (!flightGroups.has(flightKey)) {
+        flightGroups.set(flightKey, {
+          ageGroup: bracket.ageGroup,
+          gender: bracket.gender,
+          flightName: bracket.flightName,
+          level: bracket.level,
+          displayLevel: displayLevel,
+          brackets: [],
+          totalTeams: 0
+        });
+      }
+      
+      const group = flightGroups.get(flightKey)!;
+      group.brackets.push({
+        id: bracket.flightId,
+        currentFormat: bracket.currentFormat
+      });
+      group.totalTeams += Number(bracket.teamCount) || 0;
+    }
+
+    console.log(`[Flight Formats] Created ${flightGroups.size} flight groups from ${flightDetails.length} brackets`);
+
+    // Convert flight groups to response format
+    const flightData = Array.from(flightGroups.values()).map(group => {
+      // Check if any bracket in this group has a format configured
+      const hasFormat = group.brackets.some(b => b.currentFormat);
+      
+      // Use the first format found, or undefined
+      const representativeFormat = group.brackets.find(b => b.currentFormat)?.currentFormat;
+      
+      // Create display name: "U17 Boys - Top Flight (3 brackets)"
+      const displayName = `${group.ageGroup} ${group.gender} - ${group.displayLevel} (${group.brackets.length} brackets)`;
+
+      console.log(`[Flight Group] ${displayName}: teams=${group.totalTeams}, hasFormat=${hasFormat}`);
+
+      return {
+        flightId: `group_${group.ageGroup}_${group.gender}_${group.level}`, // Unique group ID
+        flightName: group.flightName,
+        ageGroup: group.ageGroup,
+        gender: group.gender,
+        level: group.level,
+        displayName: displayName,
+        teamCount: group.totalTeams,
+        bracketCount: group.brackets.length,
+        bracketIds: group.brackets.map(b => b.id), // Include bracket IDs for saving formats
+        currentFormat: representativeFormat ? {
+          id: representativeFormat.id,
+          gameLength: representativeFormat.gameLength,
+          fieldSize: representativeFormat.fieldSize,
+          bufferTime: representativeFormat.bufferTime,
+          restPeriod: representativeFormat.restPeriod || 90,
+          maxGamesPerDay: representativeFormat.maxGamesPerDay || 3,
+          templateName: representativeFormat.templateName || `${representativeFormat.fieldSize} ${representativeFormat.gameLength}min`
+        } : undefined
+      };
+    });
 
     console.log(`[Flight Formats] Configured flights: ${flightData.filter(f => f.currentFormat).length}/${flightData.length}`);
 
@@ -453,7 +515,7 @@ async function getTeamCountForFlight(eventId: string, flightId: number): Promise
         eq(teams.status, 'approved')
       ));
     
-    return result[0]?.count || 0;
+    return Number(result[0]?.count) || 0;
   } catch (error) {
     console.error('Error counting teams for flight:', error);
     return 0;
