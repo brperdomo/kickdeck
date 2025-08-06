@@ -8,6 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Pencil, Check, X, Calendar, Clock, Users, Trophy } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { EditableInput } from './EditableInput';
 
 interface FlightConfig {
   id: string;
@@ -235,11 +236,11 @@ export function FlightConfigurationTable({ eventId }: { eventId: string }) {
                   <TableCell className="text-center">
                     {editing.id === flight.id && editing.field === 'matchCount' ? (
                       <div className="flex items-center gap-1 justify-center">
-                        <Input
+                        <EditableInput
                           type="number"
                           value={editing.value}
                           onChange={(e) => setEditing({ ...editing, value: parseInt(e.target.value) || 0 })}
-                          className="w-16 h-8 bg-slate-800 border-slate-500 text-white text-center focus:bg-slate-700 focus:border-blue-400 focus:text-white placeholder-slate-400"
+                          className="w-16 h-8 text-center"
                           autoFocus
                         />
                         <Button size="sm" variant="ghost" onClick={handleSave} className="h-8 w-8 p-0">
@@ -263,11 +264,11 @@ export function FlightConfigurationTable({ eventId }: { eventId: string }) {
                   <TableCell className="text-center">
                     {editing.id === flight.id && editing.field === 'matchTime' ? (
                       <div className="flex items-center gap-1 justify-center">
-                        <Input
+                        <EditableInput
                           type="number"
                           value={editing.value}
                           onChange={(e) => setEditing({ ...editing, value: parseInt(e.target.value) || 0 })}
-                          className="w-16 h-8 bg-slate-800 border-slate-500 text-white text-center focus:bg-slate-700 focus:border-blue-400 focus:text-white placeholder-slate-400"
+                          className="w-16 h-8 text-center"
                           autoFocus
                         />
                         <Button size="sm" variant="ghost" onClick={handleSave} className="h-8 w-8 p-0">
@@ -292,11 +293,11 @@ export function FlightConfigurationTable({ eventId }: { eventId: string }) {
                   <TableCell className="text-center">
                     {editing.id === flight.id && editing.field === 'breakTime' ? (
                       <div className="flex items-center gap-1 justify-center">
-                        <Input
+                        <EditableInput
                           type="number"
                           value={editing.value}
                           onChange={(e) => setEditing({ ...editing, value: parseInt(e.target.value) || 0 })}
-                          className="w-16 h-8 bg-slate-800 border-slate-500 text-white text-center focus:bg-slate-700 focus:border-blue-400 focus:text-white placeholder-slate-400"
+                          className="w-16 h-8 text-center"
                           autoFocus
                         />
                         <Button size="sm" variant="ghost" onClick={handleSave} className="h-8 w-8 p-0">
@@ -320,11 +321,11 @@ export function FlightConfigurationTable({ eventId }: { eventId: string }) {
                   <TableCell className="text-center">
                     {editing.id === flight.id && editing.field === 'paddingTime' ? (
                       <div className="flex items-center gap-1 justify-center">
-                        <Input
+                        <EditableInput
                           type="number"
                           value={editing.value}
                           onChange={(e) => setEditing({ ...editing, value: parseInt(e.target.value) || 0 })}
-                          className="w-16 h-8 bg-slate-800 border-slate-500 text-white text-center focus:bg-slate-700 focus:border-blue-400 focus:text-white placeholder-slate-400"
+                          className="w-16 h-8 text-center"
                           autoFocus
                         />
                         <Button size="sm" variant="ghost" onClick={handleSave} className="h-8 w-8 p-0">
