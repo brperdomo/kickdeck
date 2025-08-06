@@ -87,8 +87,8 @@ router.post('/events/:eventId/unified-schedule', requireAuth, async (req, res) =
       return res.status(404).json({ error: 'Event not found' });
     }
 
-    // Get available fields for this event
-    const eventFields = await db
+    // Get available fields for this event that match age group's field size
+    const allEventFields = await db
       .select({
         id: fields.id,
         name: fields.name,
@@ -99,7 +99,21 @@ router.post('/events/:eventId/unified-schedule', requireAuth, async (req, res) =
       .leftJoin(complexes, eq(fields.complexId, complexes.id))
       .where(eq(fields.isOpen, true));
 
-    console.log(`[Unified Schedule] Available fields: ${eventFields.length}`);
+    // CRITICAL: Filter fields by age group's field size requirements
+    const requiredFieldSize = ageGroup.fieldSize;
+    const eventFields = allEventFields.filter(field => field.fieldSize === requiredFieldSize);
+    
+    console.log(`[Field Size Validation] Age group ${ageGroup.ageGroup} ${ageGroup.gender} requires ${requiredFieldSize} fields`);
+    console.log(`[Field Size Validation] Found ${eventFields.length} compatible fields out of ${allEventFields.length} total fields`);
+    console.log(`[Field Size Validation] Compatible fields:`, eventFields.map(f => `${f.name} (${f.fieldSize})`));
+
+    if (eventFields.length === 0) {
+      return res.status(400).json({ 
+        error: `No ${requiredFieldSize} fields available for ${ageGroup.ageGroup} ${ageGroup.gender}. Available field sizes: ${Array.from(new Set(allEventFields.map(f => f.fieldSize))).join(', ')}` 
+      });
+    }
+
+    console.log(`[Unified Schedule] Compatible fields: ${eventFields.length}`);
 
     // Generate games for this age group using smart tournament logic
     type GeneratedGame = {
