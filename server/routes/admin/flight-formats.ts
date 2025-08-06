@@ -431,4 +431,48 @@ router.post('/events/:eventId/flight-formats/lock', isAdmin, async (req, res) =>
   }
 });
 
+// Delete/reset format configuration for a specific flight
+router.delete('/events/:eventId/flights/:flightId/format', isAdmin, async (req, res) => {
+  try {
+    const { eventId, flightId } = req.params;
+    
+    console.log(`[Reset Format] Resetting format for flight ${flightId} in event ${eventId}`);
+
+    // Find all brackets for this flight (when grouped flights share format)
+    const flightBrackets = await db
+      .select({ id: eventBrackets.id })
+      .from(eventBrackets)
+      .innerJoin(eventAgeGroups, eq(eventBrackets.ageGroupId, eventAgeGroups.id))
+      .where(and(
+        eq(eventAgeGroups.eventId, eventId),
+        eq(eventBrackets.id, parseInt(flightId))
+      ));
+
+    if (flightBrackets.length === 0) {
+      return res.status(404).json({ error: 'Flight not found' });
+    }
+
+    // Delete all format configurations for this flight's brackets
+    const bracketIds = flightBrackets.map(b => b.id);
+    
+    await db
+      .delete(gameFormats)
+      .where(
+        eq(gameFormats.bracketId, parseInt(flightId))
+      );
+
+    console.log(`[Reset Format] Successfully reset format for flight ${flightId}`);
+    
+    res.json({ 
+      success: true, 
+      message: 'Flight format has been reset successfully',
+      flightId: parseInt(flightId),
+      resetBrackets: bracketIds.length
+    });
+  } catch (error) {
+    console.error('Error resetting format:', error);
+    res.status(500).json({ error: 'Failed to reset format configuration' });
+  }
+});
+
 export default router;

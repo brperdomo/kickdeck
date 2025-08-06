@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { Settings, Clock, Users, MapPin, Save, Copy, Trash2, CheckCircle, FileText } from 'lucide-react';
+import { Settings, Clock, Users, MapPin, Save, Copy, Trash2, CheckCircle, FileText, RotateCcw } from 'lucide-react';
 import { FormatTemplateManager } from '@/components/admin/templates/FormatTemplateManager';
 
 interface FlightFormatData {
@@ -356,6 +356,32 @@ export function GameFormatEngine({ eventId }: GameFormatEngineProps) {
           variant: "destructive"
         });
       }
+    }
+  });
+
+  // Reset format mutation
+  const resetFormatMutation = useMutation({
+    mutationFn: async (flightId: number) => {
+      const response = await fetch(`/api/admin/events/${eventId}/flights/${flightId}/format`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+      if (!response.ok) throw new Error('Failed to reset flight format');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['flight-formats', eventId] });
+      toast({
+        title: "Format Reset",
+        description: "Flight format has been reset to 'Needs Configuration' status."
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Failed to reset format",
+        description: error.message,
+        variant: "destructive"
+      });
     }
   });
 
@@ -867,7 +893,7 @@ export function GameFormatEngine({ eventId }: GameFormatEngineProps) {
                   )}
                 </div>
 
-                <div className="flex justify-end mt-4">
+                <div className="flex justify-end gap-2 mt-4">
                   <Button
                     variant="outline"
                     size="sm"
@@ -881,6 +907,19 @@ export function GameFormatEngine({ eventId }: GameFormatEngineProps) {
                   >
                     <Settings className="h-4 w-4 mr-2" />
                     Edit Format
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="border-red-600 text-red-400 hover:bg-red-900/20"
+                    onClick={() => {
+                      if (confirm('Are you sure you want to reset this flight to "Needs Configuration" status? This will remove the current format and require reconfiguration.')) {
+                        resetFormatMutation.mutate(flight.flightId);
+                      }
+                    }}
+                  >
+                    <RotateCcw className="h-4 w-4 mr-2" />
+                    Reset Format
                   </Button>
                 </div>
               </CardContent>

@@ -4,7 +4,8 @@ import {
   events, 
   eventAgeGroups, 
   eventBrackets, 
-  teams 
+  teams,
+  gameFormats 
 } from '@db/schema';
 import { eq, and } from 'drizzle-orm';
 import { isAdmin } from '../../middleware/auth.js';
@@ -21,20 +22,26 @@ router.get('/:eventId/bracket-creation', async (req, res) => {
     
     console.log(`[Bracket Creation] GET /${eventId}/bracket-creation`);
 
-    // Fetch all flights (brackets) for this event with team counts
+    // Fetch all flights (brackets) for this event with team counts  
     const flightsQuery = await db
       .select({
         flightId: eventBrackets.id,
         name: eventBrackets.name,
         level: eventBrackets.level,
         ageGroup: eventAgeGroups.ageGroup,
-        gender: eventAgeGroups.gender,
-        maxTeams: eventBrackets.maxTeams
+        gender: eventAgeGroups.gender
       })
       .from(eventBrackets)
       .innerJoin(eventAgeGroups, eq(eventBrackets.ageGroupId, eventAgeGroups.id))
       .where(eq(eventAgeGroups.eventId, eventId))
       .orderBy(eventBrackets.name, eventAgeGroups.ageGroup, eventAgeGroups.gender);
+
+    console.log(`[Bracket Creation] Found ${flightsQuery.length} flights`);
+    
+    // Log all Nike Elite flights from initial query
+    const nikeEliteFlights = flightsQuery.filter(f => f.name === 'Nike Elite');
+    console.log(`[NIKE ELITE FLIGHTS] Found ${nikeEliteFlights.length} Nike Elite flights:`, 
+      nikeEliteFlights.map(f => `${f.ageGroup} ${f.gender} (ID: ${f.flightId})`));
 
     // Get team counts and team details for each flight
     const flights = await Promise.all(
@@ -53,18 +60,39 @@ router.get('/:eventId/bracket-creation', async (req, res) => {
             eq(teams.status, 'approved')
           ));
 
-        // Check if this flight has a game format configured
-        // Query game_formats table directly using raw SQL with proper parameterization
-        const formatCheckResult = await db.execute(`
-          SELECT gf.id, mt.name as template_name
-          FROM game_formats gf
-          LEFT JOIN matchup_templates mt ON gf.matchup_template_id = mt.id
-          WHERE gf.bracket_id = $1
-          LIMIT 1
-        `, [flight.flightId]);
-
-        const hasFormat = formatCheckResult.rows && formatCheckResult.rows.length > 0;
-        const templateName = hasFormat ? formatCheckResult.rows[0]?.template_name : null;
+        // Check if this flight has a game format configured using Drizzle ORM
+        let hasFormat = false;
+        let templateName = null;
+        
+        try {
+          const formatResult = await db
+            .select({
+              id: gameFormats.id,
+              templateName: gameFormats.templateName,
+              gameLength: gameFormats.gameLength,
+              fieldSize: gameFormats.fieldSize
+            })
+            .from(gameFormats)
+            .where(eq(gameFormats.bracketId, flight.flightId))
+            .limit(1);
+            
+          hasFormat = formatResult.length > 0;
+          templateName = hasFormat ? formatResult[0]?.templateName : null;
+          
+          // Log all Nike Elite flights for debugging
+          if (flight.name === 'Nike Elite') {
+            console.log(`[NIKE ELITE DEBUG] Flight ${flight.flightId} - ${flight.ageGroup} ${flight.gender} ${flight.name}:`, {
+              hasFormat,
+              templateName,
+              formatCount: formatResult.length,
+              formatData: formatResult[0]
+            });
+          }
+        } catch (error) {
+          console.error(`Failed to check format for flight ${flight.flightId}:`, error);
+          hasFormat = false;
+          templateName = null;
+        }
         
         // Determine bracket type and configuration status
         let bracketType = 'Not Configured';
