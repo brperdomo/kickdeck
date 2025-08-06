@@ -181,7 +181,8 @@ export function FlightConfigurationTable({ eventId }: { eventId: string }) {
                           type="date"
                           value={editing.value as string}
                           onChange={(e) => setEditing({ ...editing, value: e.target.value })}
-                          className="w-36 h-8 bg-slate-700 border-slate-600 text-white"
+                          className="w-36 h-8 bg-slate-800 border-slate-500 text-white focus:bg-slate-700 focus:border-blue-400 focus:text-white"
+                          autoFocus
                         />
                         <Button size="sm" variant="ghost" onClick={handleSave} className="h-8 w-8 p-0">
                           <Check className="h-4 w-4 text-green-400" />
@@ -209,7 +210,8 @@ export function FlightConfigurationTable({ eventId }: { eventId: string }) {
                           type="date"
                           value={editing.value as string}
                           onChange={(e) => setEditing({ ...editing, value: e.target.value })}
-                          className="w-36 h-8 bg-slate-700 border-slate-600 text-white"
+                          className="w-36 h-8 bg-slate-800 border-slate-500 text-white focus:bg-slate-700 focus:border-blue-400 focus:text-white"
+                          autoFocus
                         />
                         <Button size="sm" variant="ghost" onClick={handleSave} className="h-8 w-8 p-0">
                           <Check className="h-4 w-4 text-green-400" />
@@ -237,7 +239,8 @@ export function FlightConfigurationTable({ eventId }: { eventId: string }) {
                           type="number"
                           value={editing.value}
                           onChange={(e) => setEditing({ ...editing, value: parseInt(e.target.value) || 0 })}
-                          className="w-16 h-8 bg-slate-700 border-slate-600 text-white text-center"
+                          className="w-16 h-8 bg-slate-800 border-slate-500 text-white text-center focus:bg-slate-700 focus:border-blue-400 focus:text-white placeholder-slate-400"
+                          autoFocus
                         />
                         <Button size="sm" variant="ghost" onClick={handleSave} className="h-8 w-8 p-0">
                           <Check className="h-4 w-4 text-green-400" />
@@ -264,7 +267,8 @@ export function FlightConfigurationTable({ eventId }: { eventId: string }) {
                           type="number"
                           value={editing.value}
                           onChange={(e) => setEditing({ ...editing, value: parseInt(e.target.value) || 0 })}
-                          className="w-16 h-8 bg-slate-700 border-slate-600 text-white text-center"
+                          className="w-16 h-8 bg-slate-800 border-slate-500 text-white text-center focus:bg-slate-700 focus:border-blue-400 focus:text-white placeholder-slate-400"
+                          autoFocus
                         />
                         <Button size="sm" variant="ghost" onClick={handleSave} className="h-8 w-8 p-0">
                           <Check className="h-4 w-4 text-green-400" />
@@ -292,7 +296,8 @@ export function FlightConfigurationTable({ eventId }: { eventId: string }) {
                           type="number"
                           value={editing.value}
                           onChange={(e) => setEditing({ ...editing, value: parseInt(e.target.value) || 0 })}
-                          className="w-16 h-8 bg-slate-700 border-slate-600 text-white text-center"
+                          className="w-16 h-8 bg-slate-800 border-slate-500 text-white text-center focus:bg-slate-700 focus:border-blue-400 focus:text-white placeholder-slate-400"
+                          autoFocus
                         />
                         <Button size="sm" variant="ghost" onClick={handleSave} className="h-8 w-8 p-0">
                           <Check className="h-4 w-4 text-green-400" />
@@ -319,7 +324,8 @@ export function FlightConfigurationTable({ eventId }: { eventId: string }) {
                           type="number"
                           value={editing.value}
                           onChange={(e) => setEditing({ ...editing, value: parseInt(e.target.value) || 0 })}
-                          className="w-16 h-8 bg-slate-700 border-slate-600 text-white text-center"
+                          className="w-16 h-8 bg-slate-800 border-slate-500 text-white text-center focus:bg-slate-700 focus:border-blue-400 focus:text-white placeholder-slate-400"
+                          autoFocus
                         />
                         <Button size="sm" variant="ghost" onClick={handleSave} className="h-8 w-8 p-0">
                           <Check className="h-4 w-4 text-green-400" />
@@ -353,7 +359,7 @@ export function FlightConfigurationTable({ eventId }: { eventId: string }) {
                           value={editing.value as string}
                           onValueChange={(value) => setEditing({ ...editing, value })}
                         >
-                          <SelectTrigger className="w-36 h-8 bg-slate-700 border-slate-600 text-white">
+                          <SelectTrigger className="w-36 h-8 bg-slate-800 border-slate-500 text-white focus:bg-slate-700 focus:border-blue-400">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
