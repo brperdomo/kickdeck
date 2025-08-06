@@ -1138,12 +1138,55 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
                                   <div className="space-y-2">
                                     <div className="text-sm text-slate-300 mb-2">Pool Play (6 games):</div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
-                                      <div className="bg-slate-700 p-2 rounded">Game 1: Team A vs Team B</div>
-                                      <div className="bg-slate-700 p-2 rounded">Game 2: Team C vs Team D</div>
-                                      <div className="bg-slate-700 p-2 rounded">Game 3: Team A vs Team C</div>
-                                      <div className="bg-slate-700 p-2 rounded">Game 4: Team B vs Team D</div>
-                                      <div className="bg-slate-700 p-2 rounded">Game 5: Team A vs Team D</div>
-                                      <div className="bg-slate-700 p-2 rounded">Game 6: Team B vs Team C</div>
+                                      {flight.registeredTeams && flight.registeredTeams.length >= 4 ? (
+                                        <>
+                                          <div className="bg-slate-700 p-2 rounded">
+                                            <div className="font-medium text-blue-300">Game 1:</div>
+                                            <div className="text-xs mt-1">
+                                              {flight.registeredTeams[0]?.name || 'Team A'} vs {flight.registeredTeams[1]?.name || 'Team B'}
+                                            </div>
+                                          </div>
+                                          <div className="bg-slate-700 p-2 rounded">
+                                            <div className="font-medium text-blue-300">Game 2:</div>
+                                            <div className="text-xs mt-1">
+                                              {flight.registeredTeams[2]?.name || 'Team C'} vs {flight.registeredTeams[3]?.name || 'Team D'}
+                                            </div>
+                                          </div>
+                                          <div className="bg-slate-700 p-2 rounded">
+                                            <div className="font-medium text-blue-300">Game 3:</div>
+                                            <div className="text-xs mt-1">
+                                              {flight.registeredTeams[0]?.name || 'Team A'} vs {flight.registeredTeams[2]?.name || 'Team C'}
+                                            </div>
+                                          </div>
+                                          <div className="bg-slate-700 p-2 rounded">
+                                            <div className="font-medium text-blue-300">Game 4:</div>
+                                            <div className="text-xs mt-1">
+                                              {flight.registeredTeams[1]?.name || 'Team B'} vs {flight.registeredTeams[3]?.name || 'Team D'}
+                                            </div>
+                                          </div>
+                                          <div className="bg-slate-700 p-2 rounded">
+                                            <div className="font-medium text-blue-300">Game 5:</div>
+                                            <div className="text-xs mt-1">
+                                              {flight.registeredTeams[0]?.name || 'Team A'} vs {flight.registeredTeams[3]?.name || 'Team D'}
+                                            </div>
+                                          </div>
+                                          <div className="bg-slate-700 p-2 rounded">
+                                            <div className="font-medium text-blue-300">Game 6:</div>
+                                            <div className="text-xs mt-1">
+                                              {flight.registeredTeams[1]?.name || 'Team B'} vs {flight.registeredTeams[2]?.name || 'Team C'}
+                                            </div>
+                                          </div>
+                                        </>
+                                      ) : (
+                                        <>
+                                          <div className="bg-slate-700 p-2 rounded">Game 1: Team A vs Team B</div>
+                                          <div className="bg-slate-700 p-2 rounded">Game 2: Team C vs Team D</div>
+                                          <div className="bg-slate-700 p-2 rounded">Game 3: Team A vs Team C</div>
+                                          <div className="bg-slate-700 p-2 rounded">Game 4: Team B vs Team D</div>
+                                          <div className="bg-slate-700 p-2 rounded">Game 5: Team A vs Team D</div>
+                                          <div className="bg-slate-700 p-2 rounded">Game 6: Team B vs Team C</div>
+                                        </>
+                                      )}
                                     </div>
                                     <div className="text-sm text-slate-300 mt-3 mb-2">Final:</div>
                                     <div className="bg-blue-900/30 border border-blue-500 p-2 rounded text-sm">
@@ -1208,13 +1251,32 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
                             {/* Team Assignment Preview */}
                             <div className="bg-slate-800 rounded-lg p-4">
                               <h4 className="font-medium text-white mb-3">Team Assignments</h4>
-                              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                                {[...Array(flight.assignedTeams)].map((_, index) => (
-                                  <div key={index} className="bg-slate-700 p-2 rounded text-center text-sm">
-                                    <div className="text-slate-300">Position {index + 1}</div>
-                                    <div className="font-medium text-white">Team {String.fromCharCode(65 + index)}</div>
-                                  </div>
-                                ))}
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                {flight.registeredTeams && flight.registeredTeams.length > 0 ? (
+                                  flight.registeredTeams.slice(0, 4).map((team, index) => (
+                                    <div key={team.id || index} className="bg-slate-700 p-3 rounded text-sm">
+                                      <div className="flex items-center justify-between">
+                                        <div className="text-slate-300">Position {index + 1}</div>
+                                        <div className="font-medium text-blue-300">Team {String.fromCharCode(65 + index)}</div>
+                                      </div>
+                                      <div className="font-medium text-white mt-1 text-xs leading-tight">
+                                        {team.name}
+                                      </div>
+                                      {team.clubName && (
+                                        <div className="text-slate-400 text-xs mt-1">
+                                          {team.clubName}
+                                        </div>
+                                      )}
+                                    </div>
+                                  ))
+                                ) : (
+                                  [...Array(flight.assignedTeams)].map((_, index) => (
+                                    <div key={index} className="bg-slate-700 p-2 rounded text-center text-sm">
+                                      <div className="text-slate-300">Position {index + 1}</div>
+                                      <div className="font-medium text-white">Team {String.fromCharCode(65 + index)}</div>
+                                    </div>
+                                  ))
+                                )}
                               </div>
                             </div>
                           </div>
