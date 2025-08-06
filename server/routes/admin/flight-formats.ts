@@ -76,28 +76,33 @@ router.get('/events/:eventId/flight-formats', async (req, res) => {
       
       if (bracket.flightName.toLowerCase().includes('elite')) {
         level = 'top_flight';
-        displayLevel = 'Top Flight';
+        displayLevel = 'Nike Elite';
       } else if (bracket.flightName.toLowerCase().includes('premier')) {
         level = 'middle_flight';
-        displayLevel = 'Middle Flight';
+        displayLevel = 'Nike Premier';
       } else if (bracket.flightName.toLowerCase().includes('classic')) {
         level = 'bottom_flight';
-        displayLevel = 'Bottom Flight';
+        displayLevel = 'Nike Classic';
       }
 
       const flightKey = `${bracket.ageGroup}_${bracket.gender}_${level}`;
       
+      console.log(`[Flight Grouping] Bracket "${bracket.flightName}" (ID: ${bracket.flightId}) -> Key: "${flightKey}" -> Display: "${displayLevel}"`);
+      
       if (!flightGroups.has(flightKey)) {
+        console.log(`[Flight Grouping] Creating new flight group for key: "${flightKey}"`);
         flightGroups.set(flightKey, {
           ageGroup: bracket.ageGroup,
           gender: bracket.gender,
-          flightName: bracket.flightName,
+          flightName: displayLevel, // Use the Nike tier name
           level: level,
           displayLevel: displayLevel,
           ageGroupFieldSize: bracket.ageGroupFieldSize,
           brackets: [],
           totalTeams: 0
         });
+      } else {
+        console.log(`[Flight Grouping] Adding to existing flight group: "${flightKey}"`);
       }
       
       flightGroups.get(flightKey)!.brackets.push({

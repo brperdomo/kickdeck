@@ -49,6 +49,8 @@ interface GameFormat {
 
 // GET /api/admin/events/:eventId/flight-formats
 // Fetch flights with their current format configurations
+// DISABLED: This endpoint has been moved to flight-formats.ts for proper flight grouping
+/* 
 router.get('/events/:eventId/flight-formats', isAdmin, async (req, res) => {
   try {
     const { eventId } = req.params;
@@ -167,6 +169,7 @@ router.get('/events/:eventId/flight-formats', isAdmin, async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch flight formats' });
   }
 });
+*/
 
 // GET /api/admin/format-templates/debug  
 // Debug endpoint to test templates without authentication
