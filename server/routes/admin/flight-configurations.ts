@@ -83,6 +83,7 @@ router.get('/events/:eventId/flight-configurations', isAdmin, async (req, res) =
       const halfLength = Math.floor((flight.gameLength || 90) / 2);
       const breakTime = 5; // Standard halftime break
       const paddingTime = flight.bufferTime || 15;
+      const restPeriod = flight.restPeriod || 90; // Rest period between games
       const calculatedTotalTime = halfLength * 2 + breakTime + paddingTime;
 
       return {
@@ -94,6 +95,7 @@ router.get('/events/:eventId/flight-configurations', isAdmin, async (req, res) =
         matchTime: halfLength, // Half time length (what frontend expects)
         breakTime: breakTime,
         paddingTime: paddingTime,
+        restPeriod: restPeriod, // Rest period between games
         totalTime: calculatedTotalTime, // Properly calculated total
         formatName: flight.templateName || (isCompletelyConfigured ? 'Configured' : 'Not Configured'),
         teamCount: teamCountData?.teamCount || 0,
@@ -135,6 +137,7 @@ router.patch('/events/:eventId/flight-configurations/:flightId', isAdmin, async 
       if (updates.matchTime !== undefined) updateData.gameLength = updates.matchTime * 2;
       if (updates.breakTime !== undefined) updateData.restPeriod = updates.breakTime;
       if (updates.paddingTime !== undefined) updateData.bufferTime = updates.paddingTime;
+      if (updates.restPeriod !== undefined) updateData.restPeriod = updates.restPeriod;
       if (updates.startDate !== undefined) updateData.startDate = updates.startDate;
       if (updates.endDate !== undefined) updateData.endDate = updates.endDate;
       if (updates.formatName !== undefined) updateData.templateName = updates.formatName;
@@ -159,6 +162,7 @@ router.patch('/events/:eventId/flight-configurations/:flightId', isAdmin, async 
           }
           if (updates.breakTime !== undefined) eventFormatUpdates.halfTimeBreak = updates.breakTime;
           if (updates.paddingTime !== undefined) eventFormatUpdates.bufferTime = updates.paddingTime;
+          if (updates.restPeriod !== undefined) eventFormatUpdates.restPeriod = updates.restPeriod;
 
           await db.update(eventGameFormats)
             .set(eventFormatUpdates)
@@ -172,7 +176,7 @@ router.patch('/events/:eventId/flight-configurations/:flightId', isAdmin, async 
       const newFormatData = {
         bracketId: parseInt(flightId),
         gameLength: (updates.matchTime || 45) * 2, // matchTime is half-time, gameLength is full game
-        restPeriod: updates.breakTime || 5,
+        restPeriod: updates.restPeriod || 90,
         bufferTime: updates.paddingTime || 15,
         fieldSize: '11v11', // Default
         maxGamesPerDay: 3, // Default
