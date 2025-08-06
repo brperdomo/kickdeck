@@ -6,6 +6,10 @@ MatchPro AI is a comprehensive sports event management platform for tournament o
 ## User Preferences
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes
+- **Field Size Validation Implementation Complete**: Fixed all game generation workflows to properly assign fields based on Age Groups tab configuration. Games now automatically appear on size-appropriate fields (7v7→B1/B2, 9v9→A1/A2, 11v11→f1-f6).
+- **Cloud Run Deployment Optimization**: Enhanced server startup for faster deployment with non-blocking database operations and proper health check endpoints.
+
 ## System Architecture
 
 ### Frontend

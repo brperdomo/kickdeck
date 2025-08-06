@@ -1,52 +1,71 @@
-# Fix SendGrid in Replit Production Deployment
+# Replit Deployment Fix
 
-## Issue Confirmed
-Your SendGrid API key works perfectly in development but production at app.matchpro.ai has a placeholder value instead of the actual API key.
+## Cloud Run Deployment Issues Resolved
 
-## Solution: Update Replit Deployment Environment Variables
+### Issues Fixed:
 
-### Step 1: Access Your Replit Deployment Settings
-1. Go to your Replit project dashboard
-2. Click on the "Deployments" tab
-3. Find your active deployment (the one running app.matchpro.ai)
-4. Click on the deployment to open its settings
+1. **Host Configuration** ✅
+   - Server already configured to listen on `0.0.0.0` (line 224 in server/index.ts)
+   - Added Cloud Run compatible health check endpoints
 
-### Step 2: Update Environment Variables
-1. Look for "Environment Variables" or "Secrets" section
-2. Find or add: `SENDGRID_API_KEY`
-3. Set the value to your working SendGrid API key: `SG.M0vLlGK...` (your full 69-character key)
-4. Save the changes
+2. **Startup Time Optimization** ✅
+   - Made database connection non-blocking in production
+   - Made database migrations run in background for production
+   - Added fast health check endpoints (`/health` and `/_health`)
 
-### Step 3: Redeploy
-1. Click "Deploy" or "Redeploy" to apply the environment variable changes
-2. Wait for the deployment to complete
+3. **Port Configuration** ✅
+   - Changed default port from 5000 to 8080 (Cloud Run standard)
+   - Uses `process.env.PORT` for dynamic port assignment
 
-### Step 4: Verify the Fix
-1. Go to app.matchpro.ai
-2. Log in as administrator
-3. Navigate to SendGrid Settings
-4. Verify that templates load without authorization errors
+### Changes Made:
 
-## Your Working API Key Details
-- Format: Valid (starts with SG.)
-- Length: 69 characters
-- Status: Working (8 templates accessible)
-- Permissions: Confirmed working
+**File: `server/index.ts`**
+```javascript
+// Health check endpoints for Cloud Run
+app.get("/_health", (req, res) => {
+  res.status(200).json({ status: "OK", timestamp: new Date().toISOString() });
+});
 
-## Alternative: Manual Environment Variable Setup
-If you can't find the environment variables in the deployment dashboard:
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "OK", timestamp: new Date().toISOString() });
+});
 
-1. Add this to your production server's environment:
-   ```
-   SENDGRID_API_KEY=SG.M0vLlGKsT0qKZ4qX4w1NVh2nYtD5BJ7cQ9rP3nM6cK8vL2wX1qZ0nT5gH9jR7sU4p
-   ```
-   (Replace with your actual full API key)
+// Non-blocking startup for production
+if (nodeEnv === "production") {
+  // Database connection and migrations run in background
+  testDbConnection().catch(error => {
+    log("Database connection failed in production: " + error.message);
+    log("Continuing startup - database will retry on first request");
+  });
+  
+  createTables().then(result => {
+    if (result.success) {
+      log("Database migrations completed successfully");
+    } else {
+      log("Migration failed in production: " + result.error);
+    }
+  }).catch(error => {
+    log("Migration error in production: " + error.message);
+  });
+}
 
-2. Restart your production application
+// Cloud Run compatible port configuration
+const PORT = Number(process.env.PORT) || 8080;
+```
 
-## Verification Commands
-After deployment, you can verify by checking these endpoints return valid data instead of 401 errors:
-- https://app.matchpro.ai/api/admin/sendgrid/templates
-- https://app.matchpro.ai/api/admin/sendgrid/template-mappings
+### Environment Configuration:
 
-The fix is simply ensuring your production environment has the same working API key that's already configured in development.
+The application will automatically use Replit's environment variables:
+- `DATABASE_URL` - PostgreSQL connection
+- `PORT` - Dynamic port assignment for Cloud Run
+- `HOST` - Defaults to `0.0.0.0` for external access
+
+### Deployment Ready:
+
+The application is now optimized for Cloud Run deployment with:
+- Fast startup time (non-blocking database operations)
+- Proper health check endpoints
+- Correct host/port configuration
+- Production-ready error handling
+
+The server will start quickly and respond to health checks while database operations complete in the background, preventing timeout issues during deployment.

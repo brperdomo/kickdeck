@@ -62,10 +62,14 @@ app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 // Register upload routes
 app.use("/api/files", uploadRouter);
 
-// Health check endpoint - moved below other middleware but before Vite setup
-// Only apply to /_health to avoid conflicts with the frontend routes
+// Health check endpoint - early in middleware stack for fast response
 app.get("/_health", (req, res) => {
-  res.status(200).send("OK");
+  res.status(200).json({ status: "OK", timestamp: new Date().toISOString() });
+});
+
+// Add startup health check for Cloud Run
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "OK", timestamp: new Date().toISOString() });
 });
 
 // Add request logging middleware
@@ -121,26 +125,47 @@ async function testDbConnection() {
 
     log(`Server starting in ${nodeEnv} mode`);
 
-    // Test database connection first
-    const dbConnected = await testDbConnection();
-    if (!dbConnected) {
-      log("Database connection failed - retrying in 5 seconds...");
-      setTimeout(() => testDbConnection(), 5000);
-      return;
+    // Test database connection first - but don't block startup in production
+    if (nodeEnv === "production") {
+      // In production, attempt connection but don't block startup
+      testDbConnection().catch(error => {
+        log("Database connection failed in production: " + error.message);
+        log("Continuing startup - database will retry on first request");
+      });
+    } else {
+      const dbConnected = await testDbConnection();
+      if (!dbConnected) {
+        log("Database connection failed - retrying in 5 seconds...");
+        setTimeout(() => testDbConnection(), 5000);
+        return;
+      }
     }
 
-    // Run database migrations
-    const migrationsResult = await createTables();
-    if (!migrationsResult.success) {
-      log(
-        "Migration failed: " +
-          migrationsResult.error +
-          " - retrying in 5 seconds...",
-      );
-      setTimeout(() => createTables(), 5000);
-      return;
+    // Run database migrations - but don't block startup in production
+    if (nodeEnv === "production") {
+      // In production, run migrations in background to speed up startup
+      createTables().then(result => {
+        if (result.success) {
+          log("Database migrations completed successfully");
+        } else {
+          log("Migration failed in production: " + result.error);
+        }
+      }).catch(error => {
+        log("Migration error in production: " + error.message);
+      });
+    } else {
+      const migrationsResult = await createTables();
+      if (!migrationsResult.success) {
+        log(
+          "Migration failed: " +
+            migrationsResult.error +
+            " - retrying in 5 seconds...",
+        );
+        setTimeout(() => createTables(), 5000);
+        return;
+      }
+      log("Database migrations completed successfully");
     }
-    log("Database migrations completed successfully");
 
     // Create admin user if it doesn't exist
     await createAdmin();
@@ -152,8 +177,8 @@ async function testDbConnection() {
     // Initialize standard folder structure
     await initializeStandardFolders();
 
-    // Get port configuration
-    const PORT = Number(process.env.PORT) || 5000; // Ensure PORT is a number
+    // Get port configuration - Cloud Run uses PORT environment variable
+    const PORT = Number(process.env.PORT) || 8080; // Cloud Run default port is 8080
 
     // Set up authentication BEFORE registering routes
     setupAuth(app);
