@@ -890,6 +890,52 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/age-groups', isAdmin, ageGroupsRouter); // Add age groups router
     app.use('/api/admin/age-groups', isAdmin, ageGroupFieldSizesRouter); // Add field size update router
     
+    // Game schedule update endpoint for drag-and-drop persistence
+    app.put('/api/admin/games/:gameId/schedule', isAdmin, async (req, res) => {
+      try {
+        const gameId = parseInt(req.params.gameId);
+        const { fieldId, timeSlotId, startTime, endTime, date } = req.body;
+        
+        console.log(`[Game Schedule Update] Updating game ${gameId} with field: ${fieldId}, timeSlot: ${timeSlotId}`);
+        
+        if (!gameId) {
+          return res.status(400).json({ error: 'Game ID is required' });
+        }
+        
+        // Build update object with only provided values
+        const updateData: any = {
+          updatedAt: new Date().toISOString()
+        };
+        
+        if (fieldId !== undefined) updateData.fieldId = fieldId;
+        if (timeSlotId !== undefined) updateData.timeSlotId = timeSlotId;
+        
+        // Update the game
+        const [updatedGame] = await db
+          .update(games)
+          .set(updateData)
+          .where(eq(games.id, gameId))
+          .returning();
+          
+        if (!updatedGame) {
+          return res.status(404).json({ error: 'Game not found' });
+        }
+        
+        console.log(`[Game Schedule Update] Successfully updated game ${gameId}`);
+        res.json({ 
+          success: true, 
+          game: updatedGame,
+          message: 'Game schedule updated successfully'
+        });
+      } catch (error) {
+        console.error('[Game Schedule Update] Error:', error);
+        res.status(500).json({ 
+          error: 'Failed to update game schedule',
+          details: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    });
+
     // Add age group eligibility settings endpoint
     app.put('/api/admin/age-group-eligibility-settings/:ageGroupId', isAdmin, async (req, res) => {
       try {
