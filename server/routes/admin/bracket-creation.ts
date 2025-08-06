@@ -102,22 +102,40 @@ router.get('/:eventId/bracket-creation', async (req, res) => {
 
         // If we have a format record, it's configured regardless of template name
         if (hasFormat) {
-          // Use template name if available, otherwise create a descriptive name
+          // Map technical template names to user-friendly display names
           if (templateName) {
-            bracketType = templateName;
+            switch (templateName) {
+              case 'group_of_4':
+                bracketType = '4-Team Single Bracket';
+                estimatedGames = 7; // Pool play (6) + final (1)
+                break;
+              case 'group_of_6':
+                bracketType = '6-Team Crossover Brackets';
+                estimatedGames = 10; // Crossover pool (9) + final (1)
+                break;
+              case 'group_of_8':
+                bracketType = '8-Team Dual Brackets';
+                estimatedGames = 13; // Dual brackets (12) + final (1)
+                break;
+              default:
+                // Handle legacy format names or custom formats
+                if (templateName.includes('Single Bracket')) {
+                  bracketType = templateName;
+                  estimatedGames = 7;
+                } else if (templateName.includes('Crossover')) {
+                  bracketType = templateName;
+                  estimatedGames = 10;
+                } else if (templateName.includes('Dual')) {
+                  bracketType = templateName;
+                  estimatedGames = 13;
+                } else {
+                  bracketType = templateName;
+                  estimatedGames = Math.max(0, assignedTeams.length + 2);
+                }
+                break;
+            }
           } else {
             bracketType = `Custom Format (${assignedTeams.length} teams)`;
-          }
-          
-          // Estimate games based on template or team count
-          if (templateName && templateName.includes('Single Bracket')) {
-            estimatedGames = 7; // Pool play (6) + final (1)
-          } else if (templateName && templateName.includes('Crossover')) {
-            estimatedGames = 10; // Crossover pool (9) + final (1)
-          } else if (templateName && templateName.includes('Dual')) {
-            estimatedGames = 13; // Dual brackets (12) + final (1)
-          } else {
-            // Default estimation for custom formats
             estimatedGames = Math.max(0, assignedTeams.length + 2);
           }
         } else if (assignedTeams.length > 0) {
