@@ -12,6 +12,7 @@ import { UnifiedScheduleSetup } from '@/components/admin/scheduling/UnifiedSched
 import { UnifiedTournamentControlCenter } from '@/components/admin/scheduling/UnifiedTournamentControlCenter';
 import { ScheduleViewer } from '@/components/admin/scheduling/ScheduleViewerFixed';
 import DragDropCalendarScheduler from '@/components/admin/scheduling/DragDropCalendarScheduler';
+import EnhancedDragDropScheduler from '@/components/admin/scheduling/EnhancedDragDropScheduler';
 import GameCardsGenerator from '@/components/admin/scheduling/GameCardsGenerator';
 import AgeGroupManagementPanel from '@/components/admin/scheduling/AgeGroupManagementPanel';
 import { FlightReviewDashboard } from '@/components/admin/scheduling/FlightReviewDashboard';
@@ -285,7 +286,7 @@ export default function MasterSchedulePage() {
                 between fields and time slots. Perfect for optimizing field usage and resolving conflicts.
               </AlertDescription>
             </Alert>
-            <DragDropCalendarScheduler eventId={eventId} />
+            <EnhancedDragDropScheduler eventId={eventId} />
           </div>
         ) : currentView === 'cards' ? (
           <div className="space-y-6">
