@@ -184,9 +184,17 @@ export class TournamentScheduler {
         games.push(...this.generateRoundRobinGames(bracket, teams, gameCounter));
         break;
         
+      case 'single_bracket_4_teams':
+      case 'crossover_bracket_6_teams': 
+      case 'dual_bracket_8_teams':
+        // Use smart bracket generation based on team count
+        const smartBracketGames = this.generateSmartBracketGames(bracket, teams, gameCounter);
+        games.push(...smartBracketGames);
+        break;
+        
       case '4-Team Single Bracket':
       case 'round_robin_final':
-        // Generate pool play games (6 games) + championship final (1 game) = 7 total
+        // Legacy format - Generate pool play games (6 games) + championship final (1 game) = 7 total
         const poolPlayGames = this.generateRoundRobinGames(bracket, teams, gameCounter);
         games.push(...poolPlayGames);
         gameCounter += poolPlayGames.length;
@@ -227,6 +235,184 @@ export class TournamentScheduler {
     return games;
   }
   
+  /**
+   * Generate smart bracket games based on team count and configured format
+   */
+  private static generateSmartBracketGames(
+    bracket: any,
+    teams: Team[],
+    startingGameNumber: number
+  ): Game[] {
+    const teamCount = teams.length;
+    
+    // Use your three specified tournament scenarios based on team count
+    if (teamCount === 4) {
+      return this.generate4TeamBracket(bracket, teams, startingGameNumber);
+    } else if (teamCount === 6) {
+      return this.generate6TeamCrossover(bracket, teams, startingGameNumber);
+    } else if (teamCount === 8) {
+      return this.generate8TeamDualBracket(bracket, teams, startingGameNumber);
+    } else {
+      // Fallback to standard round robin
+      console.log(`⚠️  No specific format for ${teamCount} teams, using standard round robin`);
+      return this.generateRoundRobinGames(bracket, teams, startingGameNumber);
+    }
+  }
+
+  /**
+   * 4 teams: 6 pool games + 1 final (your first scenario)
+   */
+  private static generate4TeamBracket(
+    bracket: any,
+    teams: Team[],
+    startingGameNumber: number
+  ): Game[] {
+    const games: Game[] = [];
+    let gameCounter = startingGameNumber;
+    
+    // Your specified matchups: A1-A2, A3-A4, A1-A3, A2-A4, A1-A4, A2-A3
+    const matchups = [
+      [0, 1], // A1 vs A2
+      [2, 3], // A3 vs A4
+      [0, 2], // A1 vs A3
+      [1, 3], // A2 vs A4
+      [0, 3], // A1 vs A4  
+      [1, 2]  // A2 vs A3
+    ];
+    
+    matchups.forEach(([homeIdx, awayIdx]) => {
+      games.push({
+        id: `${bracket.bracketId}_pool_${gameCounter}`,
+        homeTeamId: teams[homeIdx].id,
+        homeTeamName: teams[homeIdx].name,
+        awayTeamId: teams[awayIdx].id,
+        awayTeamName: teams[awayIdx].name,
+        bracketId: bracket.bracketId,
+        bracketName: bracket.bracketName,
+        round: 'Pool Play',
+        gameType: 'pool_play',
+        gameNumber: gameCounter++,
+        duration: 90
+      });
+    });
+    
+    // Add final: 1st vs 2nd (TBD vs TBD)
+    games.push(this.generateChampionshipGame(bracket, gameCounter));
+    
+    console.log(`🏆 4-team bracket: 6 pool + 1 final for ${bracket.bracketName}`);
+    return games;
+  }
+
+  /**
+   * 6 teams crossover: 9 pool games + 1 final (your second scenario)
+   */
+  private static generate6TeamCrossover(
+    bracket: any,
+    teams: Team[],
+    startingGameNumber: number
+  ): Game[] {
+    const games: Game[] = [];
+    let gameCounter = startingGameNumber;
+    
+    // Split into A1,A2,A3 and B1,B2,B3
+    const bracketA = teams.slice(0, 3);
+    const bracketB = teams.slice(3, 6);
+    
+    // Your specified crossover matchups: A1-B1, A2-B2, A3-B3, A1-B2, A2-B3, A3-B1, A1-B3, A2-B1, A3-B2
+    const crossoverPairs = [
+      [0, 0], // A1 vs B1
+      [1, 1], // A2 vs B2
+      [2, 2], // A3 vs B3
+      [0, 1], // A1 vs B2
+      [1, 2], // A2 vs B3
+      [2, 0], // A3 vs B1
+      [0, 2], // A1 vs B3
+      [1, 0], // A2 vs B1
+      [2, 1]  // A3 vs B2
+    ];
+    
+    crossoverPairs.forEach(([aIdx, bIdx]) => {
+      games.push({
+        id: `${bracket.bracketId}_cross_${gameCounter}`,
+        homeTeamId: bracketA[aIdx].id,
+        homeTeamName: bracketA[aIdx].name,
+        awayTeamId: bracketB[bIdx].id,
+        awayTeamName: bracketB[bIdx].name,
+        bracketId: bracket.bracketId,
+        bracketName: bracket.bracketName,
+        round: 'Pool Play',
+        gameType: 'pool_play',
+        gameNumber: gameCounter++,
+        duration: 90
+      });
+    });
+    
+    // Add final: 1st vs 2nd (TBD vs TBD)
+    games.push(this.generateChampionshipGame(bracket, gameCounter));
+    
+    console.log(`🏆 6-team crossover: 9 pool + 1 final for ${bracket.bracketName}`);
+    return games;
+  }
+
+  /**
+   * 8 teams dual bracket: 12 pool games + 1 final (your third scenario)
+   */
+  private static generate8TeamDualBracket(
+    bracket: any,
+    teams: Team[],
+    startingGameNumber: number
+  ): Game[] {
+    const games: Game[] = [];
+    let gameCounter = startingGameNumber;
+    
+    // Split into brackets A (0,1,2,3) and B (4,5,6,7)
+    const bracketA = teams.slice(0, 4);
+    const bracketB = teams.slice(4, 8);
+    
+    // Your specified matchups within each bracket: A1-A2, B1-B2, A3-A4, B3-B4, A1-A3, B1-B3, A2-A4, B2-B4, A1-A4, B1-B4, A2-A3, B2-B3
+    [bracketA, bracketB].forEach((bracketTeams, bracketIdx) => {
+      const bracketLetter = bracketIdx === 0 ? 'A' : 'B';
+      
+      // Round robin within bracket
+      for (let i = 0; i < bracketTeams.length; i++) {
+        for (let j = i + 1; j < bracketTeams.length; j++) {
+          games.push({
+            id: `${bracket.bracketId}_${bracketLetter}_${gameCounter}`,
+            homeTeamId: bracketTeams[i].id,
+            homeTeamName: bracketTeams[i].name,
+            awayTeamId: bracketTeams[j].id,
+            awayTeamName: bracketTeams[j].name,
+            bracketId: bracket.bracketId,
+            bracketName: bracket.bracketName,
+            round: 'Pool Play',
+            gameType: 'pool_play',
+            gameNumber: gameCounter++,
+            duration: 90
+          });
+        }
+      }
+    });
+    
+    // Add final: 1st from A vs 1st from B
+    games.push({
+      id: `${bracket.bracketId}_final_${gameCounter}`,
+      homeTeamId: null,
+      homeTeamName: '1st Place Bracket A',
+      awayTeamId: null,
+      awayTeamName: '1st Place Bracket B',
+      bracketId: bracket.bracketId,
+      bracketName: bracket.bracketName,
+      round: 'Championship',
+      gameType: 'final',
+      gameNumber: gameCounter,
+      duration: 90,
+      isPlaceholder: true
+    });
+    
+    console.log(`🏆 8-team dual bracket: 12 pool + 1 final for ${bracket.bracketName}`);
+    return games;
+  }
+
   /**
    * Generate championship final game with placeholders
    */
