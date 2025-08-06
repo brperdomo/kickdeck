@@ -310,7 +310,7 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
       const newStartTime = `${newDate}T08:00:00.000Z`;
       
       // Find the first available field for this game
-      const firstAvailableField = fields.find(f => f.isOpen)?.id || game.fieldId;
+      const firstAvailableField = fields.find((f: Field) => f.isOpen)?.id || game.fieldId;
       
       // Call the reschedule API with new date
       updateGameMutation.mutate({
@@ -334,7 +334,7 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
         variant: "destructive"
       });
     }
-  }, [fields, updateGameMutation, toast, availableDays, setSelectedDate]);
+  }, [updateGameMutation, toast, availableDays, setSelectedDate]);
 
   // Handle drag start
   const handleDragStart = (e: React.DragEvent, game: Game) => {
