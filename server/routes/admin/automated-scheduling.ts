@@ -384,14 +384,18 @@ async function createAutomaticBrackets(eventId: number, flights: any[], teams: a
     
     if (teamCount <= 4) {
       // Single bracket for small flights
+      // Use round_robin_final for Nike Classic to generate 6 pool + 1 championship
+      const format = flight.name.includes('Classic') ? 'round_robin_final' : 'round_robin';
       const bracket = {
         id: `bracket_${flight.id}`,
         flightId: flight.id,
         name: `${flight.name} Bracket`,
-        format: 'round_robin',
+        format: format,
         teams: flight.teams,
         teamCount,
-        estimatedGames: calculateGamesPerTeam(teamCount, 'round_robin') * teamCount / 2
+        estimatedGames: format === 'round_robin_final' ? 
+          (calculateGamesPerTeam(teamCount, 'round_robin') * teamCount / 2) + 1 : // +1 for championship
+          calculateGamesPerTeam(teamCount, 'round_robin') * teamCount / 2
       };
       brackets.push(bracket);
       totalGames += bracket.estimatedGames;
@@ -400,14 +404,18 @@ async function createAutomaticBrackets(eventId: number, flights: any[], teams: a
       const bracketsNeeded = Math.ceil(teamCount / 4);
       for (let i = 0; i < bracketsNeeded; i++) {
         const bracketTeams = flight.teams.slice(i * 4, (i + 1) * 4);
+        // Use round_robin_final for Nike Classic to generate 6 pool + 1 championship
+        const format = flight.name.includes('Classic') ? 'round_robin_final' : 'round_robin';
         const bracket = {
           id: `bracket_${flight.id}_${i + 1}`,
           flightId: flight.id,
           name: `${flight.name} Bracket ${i + 1}`,
-          format: 'round_robin',
+          format: format,
           teams: bracketTeams,
           teamCount: bracketTeams.length,
-          estimatedGames: calculateGamesPerTeam(bracketTeams.length, 'round_robin') * bracketTeams.length / 2
+          estimatedGames: format === 'round_robin_final' ? 
+            (calculateGamesPerTeam(bracketTeams.length, 'round_robin') * bracketTeams.length / 2) + 1 : // +1 for championship
+            calculateGamesPerTeam(bracketTeams.length, 'round_robin') * bracketTeams.length / 2
         };
         brackets.push(bracket);
         totalGames += bracket.estimatedGames;
