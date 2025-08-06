@@ -1273,8 +1273,8 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/field-management', isAdmin, fieldManagementRouter); // Real field availability service
     app.use('/api/admin/enhanced-conflict-detection', isAdmin, enhancedConflictDetectionRouter); // Advanced conflict analysis
     app.use('/api/admin/enhanced-field-management', isAdmin, enhancedFieldManagementRouter); // Flexible time slots and blackouts
-    app.use('/api/admin/constraint-validation', isAdmin, constraintValidationRouter);
-    app.use('/api/admin/events', isAdmin, quickScheduleRouter); // Quick schedule router for testing // Comprehensive constraint validation
+    app.use('/api/admin/constraint-validation', isAdmin, constraintValidationRouter); // Comprehensive constraint validation
+    app.use('/api/admin/quick-schedule', isAdmin, quickScheduleRouter); // Quick schedule router for testing
     app.use('/api/admin/swiss-tournaments', isAdmin, swissTournamentRouter); // Swiss system tournament format
     app.use('/api/admin/facility-constraints', isAdmin, facilityConstraintRouter); // Facility constraint management
     app.use('/api/admin/referees', isAdmin, refereeManagementRouter); // Referee management system

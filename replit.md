@@ -15,6 +15,8 @@ Preferred communication style: Simple, everyday language.
 - **Sequential Scheduling Fix**: Replaced scoring-based algorithm with true sequential allocation - games now schedule chronologically instead of clustering at 8am
 - **Authentication Testing Solution**: Created QuickLogin component and test admin account (testadmin@test.com/password) for drag-and-drop persistence testing
 - **Database Schema Alignment**: Fixed LSP errors by correcting field name mismatches and adding missing birthYear field in age group configuration
+- **Deployment Health Check Fix**: Resolved routing conflicts and health check issues to ensure proper deployment functionality
+- **Quick Schedule API**: Registered quick-schedule router with proper authentication and route structure for testing drag-and-drop functionality
 
 ## System Architecture
 
