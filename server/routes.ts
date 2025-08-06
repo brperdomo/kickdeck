@@ -1220,48 +1220,52 @@ export function registerRoutes(app: Express): Server {
             endTime: endTime
           };
 
-          // Get team names
-          const homeTeam = await db.query.teams.findFirst({
-            where: and(
-              eq(teams.id, game.homeTeamId!),
-              eq(teams.eventId, eventId)
-            )
-          });
+          // Get team names (handle NULL team IDs for championship games)
+          let homeTeam = null;
+          let awayTeam = null;
           
-          const awayTeam = await db.query.teams.findFirst({
-            where: and(
-              eq(teams.id, game.awayTeamId!),
-              eq(teams.eventId, eventId)
-            )
-          });
+          if (game.homeTeamId) {
+            homeTeam = await db.query.teams.findFirst({
+              where: and(
+                eq(teams.id, game.homeTeamId),
+                eq(teams.eventId, eventId)
+              )
+            });
+          }
+          
+          if (game.awayTeamId) {
+            awayTeam = await db.query.teams.findFirst({
+              where: and(
+                eq(teams.id, game.awayTeamId),
+                eq(teams.eventId, eventId)
+              )
+            });
+          }
 
           // Get age group info for proper display
           const ageGroup = await db.query.eventAgeGroups.findFirst({
             where: eq(eventAgeGroups.id, game.ageGroupId!)
           });
 
-
-
-          if (homeTeam && awayTeam) {
-            const ageGroupDisplay = ageGroup ? 
-              `${ageGroup.ageGroup}${ageGroup.gender ? ` ${ageGroup.gender}` : ''}`.trim() : 
-              'Unknown';
-              
-            processedGames.push({
-              id: game.id,
-              homeTeamName: homeTeam.name,
-              awayTeamName: awayTeam.name,
-              ageGroup: ageGroupDisplay,
-              startTime: `${gameDay}T${syntheticTimeSlot.startTime}:00`,
-              endTime: `${gameDay}T${syntheticTimeSlot.endTime}:00`,
-              fieldName: assignedField?.name || `Field ${syntheticTimeSlot.fieldId}`,
-              fieldId: syntheticTimeSlot.fieldId,
-              status: game.status,
-              duration: game.duration || 90,
-              round: game.round,
-              matchNumber: game.matchNumber
-            });
-          }
+          // Always include games, use "TBD" for missing teams (championship games)
+          const ageGroupDisplay = ageGroup ? 
+            `${ageGroup.ageGroup}${ageGroup.gender ? ` ${ageGroup.gender}` : ''}`.trim() : 
+            'Unknown';
+            
+          processedGames.push({
+            id: game.id,
+            homeTeamName: homeTeam?.name || 'TBD',
+            awayTeamName: awayTeam?.name || 'TBD',
+            ageGroup: ageGroupDisplay,
+            startTime: `${gameDay}T${syntheticTimeSlot.startTime}:00`,
+            endTime: `${gameDay}T${syntheticTimeSlot.endTime}:00`,
+            fieldName: assignedField?.name || `Field ${syntheticTimeSlot.fieldId}`,
+            fieldId: syntheticTimeSlot.fieldId,
+            status: game.status,
+            duration: game.duration || 90,
+            round: game.round,
+            matchNumber: game.matchNumber
+          });
         }
 
         // Use authentic Galway Downs field data from database

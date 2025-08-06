@@ -135,31 +135,27 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
         }
       }
 
-      // Only include games with both teams found and at least one approved
-      if (homeTeam && awayTeam && (homeTeam.status === 'approved' || awayTeam.status === 'approved')) {
-        const ageGroupDisplay = game.ageGroupName ? 
-          `${game.ageGroupName}${game.ageGroupGender ? ` ${game.ageGroupGender}` : ''}`.trim() : 
-          'Unknown';
-          
-        processedGames.push({
-          id: game.gameId,
-          homeTeamName: homeTeam.name,
-          awayTeamName: awayTeam.name,
-          ageGroup: ageGroupDisplay,
-          startTime: timeSlot?.startTime || 'TBD',
-          endTime: timeSlot?.endTime || 'TBD',
-          fieldName: assignedField?.name || 'Unassigned',
-          fieldId: assignedField?.id || null,
-          status: game.status,
-          duration: game.duration || 90,
-          round: game.round,
-          matchNumber: game.matchNumber,
-          homeTeamCoach: homeTeamCoach,
-          awayTeamCoach: awayTeamCoach
-        });
-      } else {
-        console.log(`[Schedule Calendar] Skipping game ${game.gameId} - teams not found or not approved: home=${homeTeam?.name}, away=${awayTeam?.name}`);
-      }
+      // Include all games - use "TBD" for championship games without teams
+      const ageGroupDisplay = game.ageGroupName ? 
+        `${game.ageGroupName}${game.ageGroupGender ? ` ${game.ageGroupGender}` : ''}`.trim() : 
+        'Unknown';
+        
+      processedGames.push({
+        id: game.gameId,
+        homeTeamName: homeTeam?.name || 'TBD',
+        awayTeamName: awayTeam?.name || 'TBD',
+        ageGroup: ageGroupDisplay,
+        startTime: timeSlot?.startTime || 'TBD',
+        endTime: timeSlot?.endTime || 'TBD',
+        fieldName: assignedField?.name || 'Unassigned',
+        fieldId: assignedField?.id || null,
+        status: game.status,
+        duration: game.duration || 90,
+        round: game.round,
+        matchNumber: game.matchNumber,
+        homeTeamCoach: homeTeamCoach,
+        awayTeamCoach: awayTeamCoach
+      });
     }
 
     console.log(`[Schedule Calendar] Processed ${processedGames.length} games with team names`);
