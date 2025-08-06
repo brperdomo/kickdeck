@@ -454,7 +454,7 @@ export function GameFormatEngine({ eventId }: GameFormatEngineProps) {
       [flightId]: {
         ...prev[flightId],
         [field]: value,
-        templateName: undefined // Clear template name when customizing
+        // Preserve existing templateName when customizing
       }
     }));
     setSelectedTemplate(prev => ({ ...prev, [flightId]: 0 })); // Clear template selection

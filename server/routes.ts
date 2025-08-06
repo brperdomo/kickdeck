@@ -39,7 +39,7 @@ import feeAdjustmentsRouter from "./routes/admin/fee-adjustments";
 import gameMetadataRouter from "./routes/admin/game-metadata";
 import gameFormatsRouter from "./routes/admin/game-formats";
 // import matchupTemplatesRouter from "./routes/admin/matchup-templates.js";
-import bracketCreationSqlRouter from "./routes/admin/bracket-creation-fixed";
+import bracketCreationSqlRouter from "./routes/admin/bracket-creation";
 import bracketSubdivisionRouter from "./routes/admin/bracket-subdivision";
 import conflictDetectionRouter from "./routes/admin/conflict-detection";
 import adminBracketsRouter from "./routes/admin/brackets";

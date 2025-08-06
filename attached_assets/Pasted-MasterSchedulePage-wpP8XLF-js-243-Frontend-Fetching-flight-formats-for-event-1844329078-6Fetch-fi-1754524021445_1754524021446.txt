@@ -1,0 +1,109 @@
+MasterSchedulePage-_wpP8XLF.js:243 [Frontend] Fetching flight formats for event 1844329078
+6Fetch finished loading: GET "<URL>".
+MasterSchedulePage-_wpP8XLF.js:243 [Frontend] Received 72 flights, configured: 0, unconfigured: 72
+index-DnSFzc1u.js:41 [Violation] 'setTimeout' handler took 94ms
+util.js:31 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+Yxa @ util.js:31
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1379
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1379
+setTimeout
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1379
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622Understand this warning
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+Promise.then
+S @ out-4.5.44.js:1
+y @ out-4.5.44.js:1
+E @ out-4.5.44.js:1
+e.onload @ inner.html:1
+script
+(anonymous) @ inner.html:1
+(anonymous) @ inner.html:1
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+h @ out-4.5.44.js:1
+e @ inner.html:1
+shared-eb945d82d4278aab36557dfc2f95c57f.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+e @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+c @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+(anonymous) @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+setTimeout
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+(anonymous) @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+log @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+log @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+value @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+value @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+(anonymous) @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+MasterSchedulePage-_wpP8XLF.js:243 Saving format for flight: 591 applying to brackets: [591] with data: {gameLength: 35, fieldSize: '9v9', bufferTime: 10, restPeriod: 90, maxGamesPerDay: 3, …}bufferTime: 10fieldSize: "9v9"gameLength: 35matchupTemplateId: 3maxGamesPerDay: 3restPeriod: 90templateName: undefined[[Prototype]]: Objectconstructor: ƒ Object()hasOwnProperty: ƒ hasOwnProperty()isPrototypeOf: ƒ isPrototypeOf()propertyIsEnumerable: ƒ propertyIsEnumerable()toLocaleString: ƒ toLocaleString()toString: ƒ toString()valueOf: ƒ valueOf()__defineGetter__: ƒ __defineGetter__()__defineSetter__: ƒ __defineSetter__()__lookupGetter__: ƒ __lookupGetter__()__lookupSetter__: ƒ __lookupSetter__()__proto__: (...)get __proto__: ƒ __proto__()set __proto__: ƒ __proto__()
+MasterSchedulePage-_wpP8XLF.js:243 Fetch finished loading: POST "https://app.matchpro.ai/api/admin/events/1844329078/flights/591/format".
+mutationFn @ MasterSchedulePage-_wpP8XLF.js:243
+fn @ index-DnSFzc1u.js:41
+f @ index-DnSFzc1u.js:41
+start @ index-DnSFzc1u.js:41
+execute @ index-DnSFzc1u.js:41
+await in execute
+mutate @ index-DnSFzc1u.js:41
+(anonymous) @ index-DnSFzc1u.js:41
+O @ MasterSchedulePage-_wpP8XLF.js:243
+onClick @ MasterSchedulePage-_wpP8XLF.js:243
+_ue @ index-DnSFzc1u.js:38
+Due @ index-DnSFzc1u.js:38
+Iue @ index-DnSFzc1u.js:38
+pM @ index-DnSFzc1u.js:38
+Xq @ index-DnSFzc1u.js:38
+(anonymous) @ index-DnSFzc1u.js:38
+NO @ index-DnSFzc1u.js:41
+bq @ index-DnSFzc1u.js:38
+E2 @ index-DnSFzc1u.js:38
+X4 @ index-DnSFzc1u.js:38
+Xue @ index-DnSFzc1u.js:38
+MasterSchedulePage-_wpP8XLF.js:243 Format saved successfully: {success: true, id: 33}id: 33success: true[[Prototype]]: Objectconstructor: ƒ Object()hasOwnProperty: ƒ hasOwnProperty()isPrototypeOf: ƒ isPrototypeOf()propertyIsEnumerable: ƒ propertyIsEnumerable()toLocaleString: ƒ toLocaleString()toString: ƒ toString()valueOf: ƒ valueOf()__defineGetter__: ƒ __defineGetter__()__defineSetter__: ƒ __defineSetter__()__lookupGetter__: ƒ __lookupGetter__()__lookupSetter__: ƒ __lookupSetter__()__proto__: (...)get __proto__: ƒ __proto__()set __proto__: ƒ __proto__()
+MasterSchedulePage-_wpP8XLF.js:243 [Frontend] Invalidating and refetching flight-formats for event 1844329078
+MasterSchedulePage-_wpP8XLF.js:243 [Frontend] Fetching flight formats for event 1844329078
+MasterSchedulePage-_wpP8XLF.js:243 [Frontend] Fetching flight formats for event 1844329078
+2MasterSchedulePage-_wpP8XLF.js:243 [Frontend] Received 72 flights, configured: 1, unconfigured: 71
+MasterSchedulePage-_wpP8XLF.js:243 [BracketCreationEngine] Fetching bracket data for event: 1844329078
+MasterSchedulePage-_wpP8XLF.js:243 [BracketCreationEngine] Received flights: 76
+injected.js:5 [USO] Button detection aborting due to timeout.
+chunk-CVIZYB43.js:3 [Violation] 'setTimeout' handler took 116ms
+index-DnSFzc1u.js:49 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap
+p0 @ index-DnSFzc1u.js:49
+(anonymous) @ index-DnSFzc1u.js:49
+k1 @ index-DnSFzc1u.js:41
+Zh @ index-DnSFzc1u.js:41
+hhe @ index-DnSFzc1u.js:41
+Eu @ index-DnSFzc1u.js:41
+qM @ index-DnSFzc1u.js:41
+au @ index-DnSFzc1u.js:39
+(anonymous) @ index-DnSFzc1u.js:41Understand this warning
+index-DnSFzc1u.js:49 OTS parsing error: invalid sfntVersion: 791289955
+p0 @ index-DnSFzc1u.js:49
+(anonymous) @ index-DnSFzc1u.js:49
+k1 @ index-DnSFzc1u.js:41
+Zh @ index-DnSFzc1u.js:41
+hhe @ index-DnSFzc1u.js:41
+Eu @ index-DnSFzc1u.js:41
+qM @ index-DnSFzc1u.js:41
+au @ index-DnSFzc1u.js:39
+(anonymous) @ index-DnSFzc1u.js:41Understand this warning
+chunk-CVIZYB43.js:3 [Violation] 'setTimeout' handler took 101ms
+injected.js:5 [USO] Button detection aborting due to timeout.
