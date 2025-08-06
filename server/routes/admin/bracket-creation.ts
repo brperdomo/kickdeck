@@ -99,7 +99,12 @@ router.get('/:eventId/bracket-creation', async (req, res) => {
         let isConfigured = hasFormat;
         let estimatedGames = 0;
 
-        if (hasFormat && templateName) {
+        // If we have a format but no template name, create a default name
+        if (hasFormat && !templateName) {
+          templateName = `${assignedTeams.length}-Team Single Bracket`;
+          bracketType = templateName;
+          estimatedGames = Math.max(0, assignedTeams.length + 2); // Pool + playoffs
+        } else if (hasFormat && templateName) {
           bracketType = templateName;
           // Estimate games based on template
           if (templateName.includes('Single Bracket')) {
