@@ -228,6 +228,15 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
   const detectConflicts = useCallback((games: Game[]): ConflictInfo[] => {
     const conflicts: ConflictInfo[] = [];
     const timeSlots = generateTimeSlots();
+    
+    console.log(`🔍 [CONFLICT DETECTION] Starting conflict detection for ${games.length} games`);
+    console.log(`🔍 [CONFLICT DETECTION] Time slots: ${timeSlots.length}`);
+    console.log(`🔍 [CONFLICT DETECTION] Sample games:`, games.slice(0, 3).map(g => ({
+      id: g.id,
+      homeTeamName: g.homeTeamName,
+      awayTeamName: g.awayTeamName,
+      startTime: g.startTime
+    })));
 
     timeSlots.forEach(slot => {
       const slotGames = games.filter(game => {
@@ -238,46 +247,80 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
         return gameTime === slot.startTime;
       });
 
-      // Coach conflict detection with improved coach data extraction
+      // Enhanced coach conflict detection using coach emails
       const coachGames = new Map<string, Game[]>();
       slotGames.forEach(game => {
-        // Try to extract coach information from multiple sources
-        let coachInfo = game.homeTeamCoach || game.awayTeamCoach;
+        // Extract coach emails from both teams
+        const coaches = [];
         
-        // If no direct coach info, try to extract from team data
-        if (!coachInfo && (game as any).homeTeam?.coach) {
+        // Home team coach extraction
+        if ((game as any).homeTeam?.coach) {
           try {
             const coachData = typeof (game as any).homeTeam.coach === 'string' 
               ? JSON.parse((game as any).homeTeam.coach) 
               : (game as any).homeTeam.coach;
-            coachInfo = coachData.name || coachData.headCoachName;
+            if (coachData.email) {
+              coaches.push({ email: coachData.email, name: coachData.name || coachData.headCoachName, team: game.homeTeamName });
+            }
           } catch (e) {
-            // Silent fail - use fallback
+            // Silent fail
           }
         }
         
-        if (!coachInfo && (game as any).awayTeam?.coach) {
+        // Away team coach extraction
+        if ((game as any).awayTeam?.coach) {
           try {
             const coachData = typeof (game as any).awayTeam.coach === 'string' 
               ? JSON.parse((game as any).awayTeam.coach) 
               : (game as any).awayTeam.coach;
-            coachInfo = coachData.name || coachData.headCoachName;
+            if (coachData.email) {
+              coaches.push({ email: coachData.email, name: coachData.name || coachData.headCoachName, team: game.awayTeamName });
+            }
           } catch (e) {
-            // Silent fail - use fallback
+            // Silent fail
           }
         }
         
-        const coach = coachInfo || `Team-${game.homeTeamName}`;
-        if (!coachGames.has(coach)) coachGames.set(coach, []);
-        coachGames.get(coach)!.push(game);
+        // Map coaches by email to detect conflicts
+        coaches.forEach(coach => {
+          const coachKey = coach.email;
+          if (!coachGames.has(coachKey)) coachGames.set(coachKey, []);
+          coachGames.get(coachKey)!.push({ ...game, coachInfo: coach });
+        });
       });
 
-      coachGames.forEach((games, coach) => {
+      coachGames.forEach((games, coachEmail) => {
         if (games.length > 1) {
+          const coachName = (games[0] as any).coachInfo?.name || coachEmail;
+          const teams = games.map(g => (g as any).coachInfo?.team).filter(Boolean);
+          const uniqueTeams = [...new Set(teams)];
+          
           conflicts.push({
             type: 'coach',
             severity: 'error',
-            message: `Coach ${coach} has ${games.length} overlapping games at ${slot.displayTime}`,
+            message: `Coach ${coachName} (${coachEmail}) has ${games.length} overlapping games at ${slot.displayTime} with teams: ${uniqueTeams.join(', ')}`,
+            gameIds: games.map(g => g.id)
+          });
+        }
+      });
+
+      // CRITICAL: Same team conflict detection - same team cannot play multiple games at same time
+      const teamGames = new Map<string, Game[]>();
+      slotGames.forEach(game => {
+        // Check both home and away teams
+        [game.homeTeamName, game.awayTeamName].forEach(teamName => {
+          if (!teamGames.has(teamName)) teamGames.set(teamName, []);
+          teamGames.get(teamName)!.push(game);
+        });
+      });
+
+      teamGames.forEach((games, teamName) => {
+        if (games.length > 1) {
+          console.log(`🚨 [TEAM CONFLICT] ${teamName} has ${games.length} games at ${slot.displayTime}:`, games.map(g => ({ id: g.id, vs: `${g.homeTeamName} vs ${g.awayTeamName}` })));
+          conflicts.push({
+            type: 'team_conflict',
+            severity: 'error',
+            message: `${teamName} is scheduled for ${games.length} games at the same time (${slot.displayTime})`,
             gameIds: games.map(g => g.id)
           });
         }
