@@ -1,0 +1,138 @@
+ScheduleViewerFixed-BX1k022H.js:6 Game 6 transformed: 
+{id: 8681, homeTeam: 'Future FC G12', awayTeam: 'Cal Elite SC G2012', ageGroup: 'U14 Girls', field: '20', …}
+ScheduleViewerFixed-BX1k022H.js:6 Game 7 transformation debug: 
+{raw: {…}, homeTeamStructure: 'ALBION SC Riverside G12 DPL', awayTeamStructure: 'Cal Elite SC G2012', fieldStructure: 'f1', rawFieldName: undefined, …}
+ScheduleViewerFixed-BX1k022H.js:6 Game 7 API data: {
+  "id": 8682,
+  "homeTeam": "ALBION SC Riverside G12 DPL",
+  "awayTeam": "Cal Elite SC G2012",
+  "ageGroup": "U14 Girls",
+  "field": "f1",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-BX1k022H.js:6 Game 7 transformed: 
+{id: 8682, homeTeam: 'ALBION SC Riverside G12 DPL', awayTeam: 'Cal Elite SC G2012', ageGroup: 'U14 Girls', field: 'f1', …}
+util.js:31 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+index-BfHVu2Oq.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: 
+{isLoading: true, error: null, scheduleData: undefined, fieldsCount: 0, gamesCount: 0, …}
+index-BfHVu2Oq.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: 
+{isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 7, …}
+index-BfHVu2Oq.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: 
+{isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 7, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state 
+{pill-player: {…}}
+chunk-FLCULYKI.js:31 orchestration: Updating combined state 
+{anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state 
+{pill-player: {…}}
+chunk-FLCULYKI.js:31 orchestration: Updating combined state 
+{anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+master-schedule:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state 
+{pill-player: {…}}
+chunk-FLCULYKI.js:31 orchestration: Updating combined state 
+{anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+index-BfHVu2Oq.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: 
+{isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 7, …}
+index-BfHVu2Oq.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: 
+{isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 7, …}
+[Violation] Forced reflow while executing JavaScript took 39ms
+index-BfHVu2Oq.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: 
+{isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 7, …}
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955
+index-BfHVu2Oq.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: 
+{isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 7, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state 
+{pill-player: {…}}
+chunk-FLCULYKI.js:31 orchestration: Updating combined state 
+{anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state 
+{pill-player: {…}}
+index-BfHVu2Oq.js:838 
+ GET https://app.matchpro.ai/api/admin/events/1844329078/schedule-calendar 401 (Unauthorized)
+index-BfHVu2Oq.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: 
+{isLoading: false, error: Error: Failed to fetch schedule data
+    at queryFn (https://app.matchpro.ai/assets/index-BfHVu2Oq.…, scheduleData: {…}, fieldsCount: 28, gamesCount: 7, …}
+index-BfHVu2Oq.js:839 🚨 [ENHANCED DRAG DROP] API Error: Error: Failed to fetch schedule data
+    at queryFn (index-BfHVu2Oq.js:838:56818)
+index-BfHVu2Oq.js:838 Fetch failed loading: GET "https://app.matchpro.ai/api/admin/events/1844329078/schedule-calendar".
+chunk-FLCULYKI.js:31 orchestration: Updating combined state 
+{anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+Navigated to https://app.matchpro.ai/admin/events/1844329078/master-schedule
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state 
+{pill-player: {…}}
+js?libraries=places&…tion.prototype:1377 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+index-C7k7qtoN.js:863 Google Maps API key length: 0 characters
+index-C7k7qtoN.js:863 Mapbox API key length: 93 characters
+index-C7k7qtoN.js:863 Google Maps API already loaded
+index-C7k7qtoN.js:672 Current route location (Wouter): /admin/events/1844329078/master-schedule
+index-C7k7qtoN.js:672 Current URL: https://app.matchpro.ai/admin/events/1844329078/master-schedule
+index-C7k7qtoN.js:672 Current pathname: /admin/events/1844329078/master-schedule
+index-C7k7qtoN.js:672 Current search: 
+index-C7k7qtoN.js:672 Fetching user with emulation token: not present
+js?libraries=places&…tion.prototype:1409 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+index-C7k7qtoN.js:672 
+ GET https://app.matchpro.ai/api/user 401 (Unauthorized)
+index-C7k7qtoN.js:664 AnimatedBackground initialized with type: particles
+index-C7k7qtoN.js:672 Setting redirect based on current protected URL: /admin/events/1844329078/master-schedule
+index-C7k7qtoN.js:672 Fetch failed loading: GET "https://app.matchpro.ai/api/user".
+index-C7k7qtoN.js:664 
+ GET https://app.matchpro.ai/api/user 401 (Unauthorized)
+index-C7k7qtoN.js:664 Fetch failed loading: GET "https://app.matchpro.ai/api/user".
+chunk-FLCULYKI.js:31 orchestration: Initializing config store with state 
+{anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing feature flag store with state 
+{anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Updating combined state 
+{anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955
+chunk-UVKO6OCU.js:6 [Violation] Added non-passive event listener to a scroll-blocking 'wheel' event. Consider marking event handler as 'passive' to make the page more responsive. See https://www.chromestatus.com/feature/5745543795965952
+app.matchpro.ai.png:1 
+ GET https://c.1password.com/richicons/images/login/120/app.matchpro.ai.png 404 (Not Found)
+index-C7k7qtoN.js:672 Submitting login with email: bperdomo@zoho.com
+index-C7k7qtoN.js:664 Login mutation called with: bperdomo@zoho.com
+index-C7k7qtoN.js:664 Sending login request with data: 
+{email: 'bperdomo@zoho.com', passwordLength: 8}
+index-C7k7qtoN.js:664 Login response status: 200
+index-C7k7qtoN.js:664 Login successful, received user data: Yes
+index-C7k7qtoN.js:664 Fetching current user after login
+index-C7k7qtoN.js:664 Fetch finished loading: POST "https://app.matchpro.ai/api/login?t=1754589114481".
+index-C7k7qtoN.js:664 Fetch finished loading: GET "https://app.matchpro.ai/api/user".
+index-C7k7qtoN.js:664 User data fetched after login: success
+index-C7k7qtoN.js:672 Login mutation completed successfully
+index-C7k7qtoN.js:672 Performing explicit user data fetch after login
+index-C7k7qtoN.js:672 AUTH REDIRECT: User logged in, handling redirect
+index-C7k7qtoN.js:664 Fetch finished loading: GET "https://app.matchpro.ai/api/user".
+index-C7k7qtoN.js:672 Fetch finished loading: GET "https://app.matchpro.ai/api/user".
+index-C7k7qtoN.js:672 User data retrieved after login: success
+index-C7k7qtoN.js:672 Found redirect path: /admin/events/1844329078/master-schedule
+index-C7k7qtoN.js:672 Redirecting to: /admin/events/1844329078/master-schedule
+Navigated to https://app.matchpro.ai/admin/events/1844329078/master-schedule
+js?libraries=places&…tion.prototype:1377 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+5
+Failed to decode downloaded font: <URL>
+5
+OTS parsing error: invalid sfntVersion: 791289955
+js?libraries=places&…tion.prototype:1409 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+index-C7k7qtoN.js:863 Google Maps API key length: 0 characters
+index-C7k7qtoN.js:863 Mapbox API key length: 93 characters
+index-C7k7qtoN.js:863 Google Maps API already loaded
+chunk-FLCULYKI.js:31 orchestration: Initializing config store with state 
+{anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing feature flag store with state 
+{anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state 
+{pill-player: {…}}
+chunk-FLCULYKI.js:31 orchestration: Updating combined state 
+{anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+﻿
+
