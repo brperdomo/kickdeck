@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { requirePermission } from '../../middleware/auth.js';
 import { db } from '../../../db/index.js';
-import { teams, events, eventGameFormats, complexes, fields, games, eventBrackets } from '../../../db/schema.js';
+import { teams, events, eventGameFormats, complexes, fields, games, eventBrackets, matchupTemplates } from '../../../db/schema.js';
 import { eq, and, inArray, sql } from 'drizzle-orm';
 import { validateSchedulingSafety, validateFieldCapacity, validateNoDuplicateGames } from '../../middleware/scheduling-safety.js';
 import { TournamentScheduler } from '../../services/tournament-scheduler.js';
@@ -691,14 +691,72 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
         continue;
       }
 
-      // For now, let's create a simple game generation for round_robin format
-      // since TournamentScheduler expects complex workflow data structure
-      console.log(`[Selective Scheduling] Generating ${bracket.tournamentFormat} games for ${flightTeams.length} teams`);
+      // Get the tournament format template from database
+      const formatTemplate = await db.query.matchupTemplates.findFirst({
+        where: eq(matchupTemplates.name, bracket.tournamentFormat)
+      });
+      
+      console.log(`[Selective Scheduling] Processing ${bracket.tournamentFormat} format for ${flightTeams.length} teams`);
       
       let bracketGames = [];
       
-      if (bracket.tournamentFormat === 'round_robin' && flightTeams.length >= 2) {
-        // Generate round-robin games directly
+      if (formatTemplate && flightTeams.length >= formatTemplate.teamCount) {
+        console.log(`[Selective Scheduling] Using template: ${formatTemplate.name} (${formatTemplate.teamCount} teams, ${formatTemplate.totalGames} games)`);
+        
+        // Generate games based on the matchup pattern from the template
+        const matchupPattern = formatTemplate.matchupPattern as any[][];
+        let gameNumber = 1;
+        
+        // Assign teams to slots (A1, A2, A3, A4, B1, B2, B3, B4 for 8-Team Dual)
+        const teamSlots: { [key: string]: any } = {};
+        if (formatTemplate.name === '8-Team Dual Brackets') {
+          // Pool A: first 4 teams, Pool B: next 4 teams
+          teamSlots['A1'] = flightTeams[0];
+          teamSlots['A2'] = flightTeams[1];
+          teamSlots['A3'] = flightTeams[2];
+          teamSlots['A4'] = flightTeams[3];
+          teamSlots['B1'] = flightTeams[4];
+          teamSlots['B2'] = flightTeams[5];
+          teamSlots['B3'] = flightTeams[6];
+          teamSlots['B4'] = flightTeams[7];
+        }
+        
+        // Generate games from matchup pattern
+        for (const matchup of matchupPattern) {
+          const [homeSlot, awaySlot] = matchup;
+          
+          // Skip TBD games (finals) for now - they'll be determined later
+          if (homeSlot === 'TBD' || awaySlot === 'TBD') {
+            continue;
+          }
+          
+          const homeTeam = teamSlots[homeSlot];
+          const awayTeam = teamSlots[awaySlot];
+          
+          if (homeTeam && awayTeam) {
+            // Determine round (as integer) and game type
+            let roundNumber = 1; // Pool play is round 1
+            let gameType = 'pool_play';
+            
+            bracketGames.push({
+              id: `${flightId}-${gameNumber}`,
+              homeTeamId: homeTeam.id,
+              homeTeamName: homeTeam.name,
+              awayTeamId: awayTeam.id,
+              awayTeamName: awayTeam.name,
+              bracketId: parseInt(flightId),
+              bracketName: bracket.name,
+              round: roundNumber,
+              gameType: gameType,
+              duration: 90,
+              gameNumber: gameNumber++
+            });
+          }
+        }
+        
+        console.log(`[Selective Scheduling] Generated ${bracketGames.length} games using ${formatTemplate.name} template`);
+      } else if (bracket.tournamentFormat === 'round_robin' && flightTeams.length >= 2) {
+        // Fallback to simple round-robin for legacy formats
         let gameNumber = 1;
         for (let i = 0; i < flightTeams.length; i++) {
           for (let j = i + 1; j < flightTeams.length; j++) {
@@ -710,16 +768,16 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
               awayTeamName: flightTeams[j].name,
               bracketId: parseInt(flightId),
               bracketName: bracket.name,
-              round: 'Round Robin',
+              round: 1, // Pool play round number
               gameType: 'pool_play',
               duration: 90,
               gameNumber: gameNumber++
             });
           }
         }
-        console.log(`[Selective Scheduling] Generated ${bracketGames.length} round-robin games for ${bracket.name}`);
+        console.log(`[Selective Scheduling] Generated ${bracketGames.length} round-robin games (fallback)`);
       } else {
-        console.log(`[Selective Scheduling] Unsupported format or insufficient teams: ${bracket.tournamentFormat}, teams: ${flightTeams.length}`);
+        console.log(`[Selective Scheduling] Cannot generate games: format=${bracket.tournamentFormat}, teams=${flightTeams.length}, template found=${!!formatTemplate}`);
       }
       
       console.log(`[Selective Scheduling] Generated ${bracketGames.length} games for bracket ${bracket.name} (template: ${bracket.tournamentFormat})`);
@@ -735,7 +793,7 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
           bracketId: parseInt(flightId),
           field: game.field || 'TBD', // Will be assigned by field availability service
           scheduledTime: new Date(Date.now() + (gameCounter * 60 * 60 * 1000)).toISOString(),
-          round: game.round || 'Pool Play',
+          round: game.round || 1, // Use integer for round
           gameType: game.gameType || 'pool_play',
           duration: game.duration || 90,
           status: 'scheduled'

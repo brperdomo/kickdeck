@@ -1,0 +1,89 @@
+Flight configs loaded: 76 flights
+UnifiedTournamentControlCenter-FPitOhGC.js:1 Configured flights: 1 of 76
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+Promise.then
+S @ out-4.5.44.js:1
+y @ out-4.5.44.js:1
+E @ out-4.5.44.js:1
+e.onload @ inner.html:1
+script
+(anonymous) @ inner.html:1
+(anonymous) @ inner.html:1
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+h @ out-4.5.44.js:1
+e @ inner.html:1
+shared-eb945d82d4278aab36557dfc2f95c57f.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+e @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+c @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+(anonymous) @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+setTimeout
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+(anonymous) @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+log @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+log @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+value @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+value @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+(anonymous) @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+chunk-CVIZYB43.js:3 [Violation] 'setTimeout' handler took 51ms
+UnifiedTournamentControlCenter-FPitOhGC.js:1 Fetch failed loading: POST "https://app.matchpro.ai/api/admin/events/1844329078/generate-selective-schedule".
+mutationFn @ UnifiedTournamentControlCenter-FPitOhGC.js:1
+fn @ index-CHq9oVjM.js:41
+f @ index-CHq9oVjM.js:41
+start @ index-CHq9oVjM.js:41
+execute @ index-CHq9oVjM.js:41
+await in execute
+mutate @ index-CHq9oVjM.js:41
+(anonymous) @ index-CHq9oVjM.js:41
+Q @ UnifiedTournamentControlCenter-FPitOhGC.js:1
+_ue @ index-CHq9oVjM.js:38
+Due @ index-CHq9oVjM.js:38
+Iue @ index-CHq9oVjM.js:38
+pM @ index-CHq9oVjM.js:38
+Xq @ index-CHq9oVjM.js:38
+(anonymous) @ index-CHq9oVjM.js:38
+NO @ index-CHq9oVjM.js:41
+bq @ index-CHq9oVjM.js:38
+E2 @ index-CHq9oVjM.js:38
+X4 @ index-CHq9oVjM.js:38
+Xue @ index-CHq9oVjM.js:38
+UnifiedTournamentControlCenter-FPitOhGC.js:1  POST https://app.matchpro.ai/api/admin/events/1844329078/generate-selective-schedule 500 (Internal Server Error)
+mutationFn @ UnifiedTournamentControlCenter-FPitOhGC.js:1
+fn @ index-CHq9oVjM.js:41
+f @ index-CHq9oVjM.js:41
+start @ index-CHq9oVjM.js:41
+execute @ index-CHq9oVjM.js:41
+await in execute
+mutate @ index-CHq9oVjM.js:41
+(anonymous) @ index-CHq9oVjM.js:41
+Q @ UnifiedTournamentControlCenter-FPitOhGC.js:1
+_ue @ index-CHq9oVjM.js:38
+Due @ index-CHq9oVjM.js:38
+Iue @ index-CHq9oVjM.js:38
+pM @ index-CHq9oVjM.js:38
+Xq @ index-CHq9oVjM.js:38
+(anonymous) @ index-CHq9oVjM.js:38
+NO @ index-CHq9oVjM.js:41
+bq @ index-CHq9oVjM.js:38
+E2 @ index-CHq9oVjM.js:38
+X4 @ index-CHq9oVjM.js:38
+Xue @ index-CHq9oVjM.js:38Understand this error
+chunk-CVIZYB43.js:3 [Violation] 'setTimeout' handler took 71ms
+UnifiedTournamentControlCenter-FPitOhGC.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentControlCenter-FPitOhGC.js:1 Configured flights: 1 of 76

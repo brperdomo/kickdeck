@@ -7,6 +7,11 @@ MatchPro AI is a comprehensive sports event management platform for tournament o
 Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
+- **CRITICAL: Selective Scheduling 500 Error Fix (Aug 2025)**: Fixed major selective scheduling bug that prevented game generation for configured brackets.
+  - **Root Cause**: Database schema mismatch - `round` field expected integer, code was inserting string values
+  - **Tournament Format Fix**: Updated U12 Boys Nike Premier from stale `round_robin` to proper `8-Team Dual Brackets` format
+  - **Proper Template Integration**: Implemented matchup pattern parsing from user's 3 custom tournament formats
+  - **8-Team Dual Brackets Logic**: Pool A (teams 1-4) vs Pool B (teams 5-8) with 12 pool games following A1/A2/B1/B2 slot assignments
 - **Configurable Tournament Format System**: Eliminated hardcoded bracket rules and implemented database-driven tournament format configuration. Tournament directors can now assign any format (round_robin, round_robin_final, single_elimination, etc.) to any bracket, and the game generator creates games accordingly.
 - **Enhanced Bracket Schema**: Added tournament_format and tournament_settings columns to event_brackets table with comprehensive validation schema supporting multiple tournament types and configurations.
 - **Dynamic Format Detection**: Updated automated scheduling system to query database for bracket formats instead of using hardcoded rules based on names.
