@@ -178,8 +178,8 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
     }));
 
     // Get unique age groups and dates
-    const ageGroups = [...new Set(processedGames.map(game => game.ageGroup))];
-    const dates = [...new Set(processedGames.map(game => game.date))];
+    const ageGroups = Array.from(new Set(processedGames.map(game => game.ageGroup)));
+    const dates = Array.from(new Set(processedGames.map(game => game.date)));
 
     const response = {
       games: processedGames,

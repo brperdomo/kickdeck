@@ -1,0 +1,691 @@
+MasterSchedulePage-BspitBRF.js:243 Fetch finished loading: GET "https://app.matchpro.ai/api/schedule/events/1844329078/schedule-conflicts".
+queryFn @ MasterSchedulePage-BspitBRF.js:243
+i @ index-7KI011nV.js:41
+f @ index-7KI011nV.js:41
+start @ index-7KI011nV.js:41
+fetch @ index-7KI011nV.js:41
+ng @ index-7KI011nV.js:41
+fetch @ index-7KI011nV.js:41
+refetch @ index-7KI011nV.js:41
+p @ MasterSchedulePage-BspitBRF.js:243
+(anonymous) @ MasterSchedulePage-BspitBRF.js:243
+k1 @ index-7KI011nV.js:41
+Zh @ index-7KI011nV.js:41
+hhe @ index-7KI011nV.js:41
+Eu @ index-7KI011nV.js:41
+qM @ index-7KI011nV.js:41
+au @ index-7KI011nV.js:39
+(anonymous) @ index-7KI011nV.js:41
+chunk-CVIZYB43.js:3 [Violation] 'setTimeout' handler took 51ms
+chunk-CVIZYB43.js:3 [Violation] 'setTimeout' handler took 60ms
+UnifiedTournamentControlCenter-BgX8FSxC.js:1 Fetch finished loading: POST "https://app.matchpro.ai/api/admin/events/1844329078/generate-selective-schedule".
+mutationFn @ UnifiedTournamentControlCenter-BgX8FSxC.js:1
+fn @ index-7KI011nV.js:41
+f @ index-7KI011nV.js:41
+start @ index-7KI011nV.js:41
+execute @ index-7KI011nV.js:41
+await in execute
+mutate @ index-7KI011nV.js:41
+(anonymous) @ index-7KI011nV.js:41
+Q @ UnifiedTournamentControlCenter-BgX8FSxC.js:1
+_ue @ index-7KI011nV.js:38
+Due @ index-7KI011nV.js:38
+Iue @ index-7KI011nV.js:38
+pM @ index-7KI011nV.js:38
+Xq @ index-7KI011nV.js:38
+(anonymous) @ index-7KI011nV.js:38
+NO @ index-7KI011nV.js:41
+bq @ index-7KI011nV.js:38
+E2 @ index-7KI011nV.js:38
+X4 @ index-7KI011nV.js:38
+Xue @ index-7KI011nV.js:38
+UnifiedTournamentControlCenter-BgX8FSxC.js:1 Fetch finished loading: GET "https://app.matchpro.ai/api/admin/tournaments/1844329078/status".
+queryFn @ UnifiedTournamentControlCenter-BgX8FSxC.js:1
+i @ index-7KI011nV.js:41
+f @ index-7KI011nV.js:41
+start @ index-7KI011nV.js:41
+fetch @ index-7KI011nV.js:41
+ng @ index-7KI011nV.js:41
+fetch @ index-7KI011nV.js:41
+refetch @ index-7KI011nV.js:41
+onSuccess @ UnifiedTournamentControlCenter-BgX8FSxC.js:1
+execute @ index-7KI011nV.js:41
+await in execute
+mutate @ index-7KI011nV.js:41
+(anonymous) @ index-7KI011nV.js:41
+Q @ UnifiedTournamentControlCenter-BgX8FSxC.js:1
+_ue @ index-7KI011nV.js:38
+Due @ index-7KI011nV.js:38
+Iue @ index-7KI011nV.js:38
+pM @ index-7KI011nV.js:38
+Xq @ index-7KI011nV.js:38
+(anonymous) @ index-7KI011nV.js:38
+NO @ index-7KI011nV.js:41
+bq @ index-7KI011nV.js:38
+E2 @ index-7KI011nV.js:38
+X4 @ index-7KI011nV.js:38
+Xue @ index-7KI011nV.js:38
+UnifiedTournamentControlCenter-BgX8FSxC.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentControlCenter-BgX8FSxC.js:1 Configured flights: 1 of 76
+UnifiedTournamentControlCenter-BgX8FSxC.js:1 Fetch finished loading: GET "https://app.matchpro.ai/api/admin/events/1844329078/flight-configurations".
+queryFn @ UnifiedTournamentControlCenter-BgX8FSxC.js:1
+i @ index-7KI011nV.js:41
+f @ index-7KI011nV.js:41
+start @ index-7KI011nV.js:41
+fetch @ index-7KI011nV.js:41
+ng @ index-7KI011nV.js:41
+(anonymous) @ index-7KI011nV.js:41
+setInterval
+kP @ index-7KI011nV.js:41
+EP @ index-7KI011nV.js:41
+onSubscribe @ index-7KI011nV.js:41
+subscribe @ index-7KI011nV.js:41
+(anonymous) @ index-7KI011nV.js:41
+hW @ index-7KI011nV.js:39
+k1 @ index-7KI011nV.js:41
+Zh @ index-7KI011nV.js:41
+hhe @ index-7KI011nV.js:41
+Eu @ index-7KI011nV.js:41
+qM @ index-7KI011nV.js:41
+au @ index-7KI011nV.js:39
+(anonymous) @ index-7KI011nV.js:41
+Navigated to https://app.matchpro.ai/admin/events/1844329078/master-schedule
+js?libraries=places&v=beta&callback=Function.prototype:1377 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1377
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622Understand this warning
+js?libraries=places&v=beta&callback=Function.prototype:1409 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+_.B.send @ js?libraries=places&v=beta&callback=Function.prototype:1409
+hda @ js?libraries=places&v=beta&callback=Function.prototype:1386
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1378
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+chunk-FLCULYKI.js:31 orchestration: Initializing config store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing feature flag store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state {pill-player: {…}}
+chunk-FLCULYKI.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+index-7KI011nV.js:863 Google Maps API key length: 0 characters
+index-7KI011nV.js:863 Mapbox API key length: 93 characters
+index-7KI011nV.js:863 Google Maps API already loaded
+index-7KI011nV.js:672 Current route location (Wouter): /admin/events/1844329078/master-schedule
+index-7KI011nV.js:672 Current URL: https://app.matchpro.ai/admin/events/1844329078/master-schedule
+index-7KI011nV.js:672 Current pathname: /admin/events/1844329078/master-schedule
+index-7KI011nV.js:672 Current search: 
+index-7KI011nV.js:672 Fetching user with emulation token: not present
+11Fetch finished loading: GET "<URL>".
+index-7KI011nV.js:672 User data fetched: {id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: '$2b$12$d6n1CBWgsWFm0fh77F1OX.YxDZy7/O3aLSuJOuq4QkvOtFmSit7BC', firstName: 'Bryan', …}
+index-7KI011nV.js:664 Fetch failed loading: GET "https://app.matchpro.ai/api/user".
+queryFn @ index-7KI011nV.js:664
+i @ index-7KI011nV.js:41
+f @ index-7KI011nV.js:41
+start @ index-7KI011nV.js:41
+fetch @ index-7KI011nV.js:41
+ng @ index-7KI011nV.js:41
+onSubscribe @ index-7KI011nV.js:41
+subscribe @ index-7KI011nV.js:41
+(anonymous) @ index-7KI011nV.js:41
+hW @ index-7KI011nV.js:39
+k1 @ index-7KI011nV.js:41
+Zh @ index-7KI011nV.js:41
+qM @ index-7KI011nV.js:41
+au @ index-7KI011nV.js:39
+hhe @ index-7KI011nV.js:41
+Eu @ index-7KI011nV.js:41
+qW @ index-7KI011nV.js:41
+w @ index-7KI011nV.js:26
+T @ index-7KI011nV.js:26
+shared-eb945d82d4278aab36557dfc2f95c57f.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+(anonymous) @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+e @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+c @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+g @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+e @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+value @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+e @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+16720 @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+e @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+(anonymous) @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+e.O @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+(anonymous) @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+(anonymous) @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+shared-eb945d82d4278aab36557dfc2f95c57f.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+(anonymous) @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+e @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+c @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+g @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+log @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+log @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+e @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+16720 @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+e @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+(anonymous) @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+e.O @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+(anonymous) @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+(anonymous) @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+UnifiedTournamentControlCenter-BgX8FSxC.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentControlCenter-BgX8FSxC.js:1 Configured flights: 1 of 76
+shared-eb945d82d4278aab36557dfc2f95c57f.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+e @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+c @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+(anonymous) @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+setTimeout
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+(anonymous) @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+(anonymous) @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+Promise.then
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+e @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+value @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+e @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+16720 @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+e @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+(anonymous) @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+e.O @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+(anonymous) @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+(anonymous) @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+shared-eb945d82d4278aab36557dfc2f95c57f.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+e @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+c @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+(anonymous) @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+setTimeout
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+(anonymous) @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+(anonymous) @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+Promise.then
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+log @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+log @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+e @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+16720 @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+e @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+(anonymous) @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+e.O @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+(anonymous) @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+(anonymous) @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+ScheduleViewerFixed-DIeofLTW.js:6 Schedule API Response: {games: Array(26), fields: Array(28), ageGroups: Array(1), dates: Array(3), totalGames: 26, …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 1 transformation debug: {raw: {…}, homeTeamStructure: 'Albion San Diego EC B2014 Flores', awayTeamStructure: 'Future FC B2014', fieldStructure: '4', rawFieldName: undefined, …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 1 API data: {
+  "id": 8168,
+  "homeTeam": "Albion San Diego EC B2014 Flores",
+  "awayTeam": "Future FC B2014",
+  "ageGroup": "U12 Boys",
+  "field": "4",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 1 transformed: {id: 8168, homeTeam: 'Albion San Diego EC B2014 Flores', awayTeam: 'Future FC B2014', ageGroup: 'U12 Boys', field: '4', …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 2 transformation debug: {raw: {…}, homeTeamStructure: 'Vista Storm B2014 Red', awayTeamStructure: 'ALBION SC San Diego CV B14', fieldStructure: '4', rawFieldName: undefined, …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 2 API data: {
+  "id": 8169,
+  "homeTeam": "Vista Storm B2014 Red",
+  "awayTeam": "ALBION SC San Diego CV B14",
+  "ageGroup": "U12 Boys",
+  "field": "4",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 2 transformed: {id: 8169, homeTeam: 'Vista Storm B2014 Red', awayTeam: 'ALBION SC San Diego CV B14', ageGroup: 'U12 Boys', field: '4', …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 3 transformation debug: {raw: {…}, homeTeamStructure: 'ALBION SC Riverside B14 EA II', awayTeamStructure: 'City SC SW B14 Premier MUR - Strom', fieldStructure: '4', rawFieldName: undefined, …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 3 API data: {
+  "id": 8170,
+  "homeTeam": "ALBION SC Riverside B14 EA II",
+  "awayTeam": "City SC SW B14 Premier MUR - Strom",
+  "ageGroup": "U12 Boys",
+  "field": "4",
+  "date": "2025-08-16",
+  "time": "09:30",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 3 transformed: {id: 8170, homeTeam: 'ALBION SC Riverside B14 EA II', awayTeam: 'City SC SW B14 Premier MUR - Strom', ageGroup: 'U12 Boys', field: '4', …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 4 transformation debug: {raw: {…}, homeTeamStructure: ' Cal Elite SC', awayTeamStructure: 'SD Force Ortega B2014 Premier III ', fieldStructure: '4', rawFieldName: undefined, …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 4 API data: {
+  "id": 8171,
+  "homeTeam": " Cal Elite SC",
+  "awayTeam": "SD Force Ortega B2014 Premier III ",
+  "ageGroup": "U12 Boys",
+  "field": "4",
+  "date": "2025-08-17",
+  "time": "13:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 4 transformed: {id: 8171, homeTeam: ' Cal Elite SC', awayTeam: 'SD Force Ortega B2014 Premier III ', ageGroup: 'U12 Boys', field: '4', …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 5 transformation debug: {raw: {…}, homeTeamStructure: 'Albion San Diego EC B2014 Flores', awayTeamStructure: 'ALBION SC Riverside B14 EA II', fieldStructure: '4', rawFieldName: undefined, …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 5 API data: {
+  "id": 8172,
+  "homeTeam": "Albion San Diego EC B2014 Flores",
+  "awayTeam": "ALBION SC Riverside B14 EA II",
+  "ageGroup": "U12 Boys",
+  "field": "4",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 5 transformed: {id: 8172, homeTeam: 'Albion San Diego EC B2014 Flores', awayTeam: 'ALBION SC Riverside B14 EA II', ageGroup: 'U12 Boys', field: '4', …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 6 transformation debug: {raw: {…}, homeTeamStructure: 'Vista Storm B2014 Red', awayTeamStructure: ' Cal Elite SC', fieldStructure: '4', rawFieldName: undefined, …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 6 API data: {
+  "id": 8173,
+  "homeTeam": "Vista Storm B2014 Red",
+  "awayTeam": " Cal Elite SC",
+  "ageGroup": "U12 Boys",
+  "field": "4",
+  "date": "2025-08-16",
+  "time": "10:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 6 transformed: {id: 8173, homeTeam: 'Vista Storm B2014 Red', awayTeam: ' Cal Elite SC', ageGroup: 'U12 Boys', field: '4', …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 7 transformation debug: {raw: {…}, homeTeamStructure: 'Future FC B2014', awayTeamStructure: 'City SC SW B14 Premier MUR - Strom', fieldStructure: '4', rawFieldName: undefined, …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 7 API data: {
+  "id": 8174,
+  "homeTeam": "Future FC B2014",
+  "awayTeam": "City SC SW B14 Premier MUR - Strom",
+  "ageGroup": "U12 Boys",
+  "field": "4",
+  "date": "2025-08-16",
+  "time": "12:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 7 transformed: {id: 8174, homeTeam: 'Future FC B2014', awayTeam: 'City SC SW B14 Premier MUR - Strom', ageGroup: 'U12 Boys', field: '4', …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 8 transformation debug: {raw: {…}, homeTeamStructure: 'ALBION SC San Diego CV B14', awayTeamStructure: 'SD Force Ortega B2014 Premier III ', fieldStructure: '4', rawFieldName: undefined, …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 8 API data: {
+  "id": 8175,
+  "homeTeam": "ALBION SC San Diego CV B14",
+  "awayTeam": "SD Force Ortega B2014 Premier III ",
+  "ageGroup": "U12 Boys",
+  "field": "4",
+  "date": "2025-08-16",
+  "time": "12:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 8 transformed: {id: 8175, homeTeam: 'ALBION SC San Diego CV B14', awayTeam: 'SD Force Ortega B2014 Premier III ', ageGroup: 'U12 Boys', field: '4', …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 9 transformation debug: {raw: {…}, homeTeamStructure: 'Albion San Diego EC B2014 Flores', awayTeamStructure: 'City SC SW B14 Premier MUR - Strom', fieldStructure: '4', rawFieldName: undefined, …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 9 API data: {
+  "id": 8176,
+  "homeTeam": "Albion San Diego EC B2014 Flores",
+  "awayTeam": "City SC SW B14 Premier MUR - Strom",
+  "ageGroup": "U12 Boys",
+  "field": "4",
+  "date": "2025-08-17",
+  "time": "10:30",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 9 transformed: {id: 8176, homeTeam: 'Albion San Diego EC B2014 Flores', awayTeam: 'City SC SW B14 Premier MUR - Strom', ageGroup: 'U12 Boys', field: '4', …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 10 transformation debug: {raw: {…}, homeTeamStructure: 'Vista Storm B2014 Red', awayTeamStructure: 'SD Force Ortega B2014 Premier III ', fieldStructure: '4', rawFieldName: undefined, …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 10 API data: {
+  "id": 8177,
+  "homeTeam": "Vista Storm B2014 Red",
+  "awayTeam": "SD Force Ortega B2014 Premier III ",
+  "ageGroup": "U12 Boys",
+  "field": "4",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 10 transformed: {id: 8177, homeTeam: 'Vista Storm B2014 Red', awayTeam: 'SD Force Ortega B2014 Premier III ', ageGroup: 'U12 Boys', field: '4', …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 11 transformation debug: {raw: {…}, homeTeamStructure: 'Future FC B2014', awayTeamStructure: 'ALBION SC Riverside B14 EA II', fieldStructure: '4', rawFieldName: undefined, …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 11 API data: {
+  "id": 8178,
+  "homeTeam": "Future FC B2014",
+  "awayTeam": "ALBION SC Riverside B14 EA II",
+  "ageGroup": "U12 Boys",
+  "field": "4",
+  "date": "2025-08-17",
+  "time": "12:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 11 transformed: {id: 8178, homeTeam: 'Future FC B2014', awayTeam: 'ALBION SC Riverside B14 EA II', ageGroup: 'U12 Boys', field: '4', …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 12 transformation debug: {raw: {…}, homeTeamStructure: 'ALBION SC San Diego CV B14', awayTeamStructure: ' Cal Elite SC', fieldStructure: '4', rawFieldName: undefined, …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 12 API data: {
+  "id": 8179,
+  "homeTeam": "ALBION SC San Diego CV B14",
+  "awayTeam": " Cal Elite SC",
+  "ageGroup": "U12 Boys",
+  "field": "4",
+  "date": "2025-08-17",
+  "time": "09:45",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 12 transformed: {id: 8179, homeTeam: 'ALBION SC San Diego CV B14', awayTeam: ' Cal Elite SC', ageGroup: 'U12 Boys', field: '4', …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 13 transformation debug: {raw: {…}, homeTeamStructure: 'TBD', awayTeamStructure: 'TBD', fieldStructure: 'A1', rawFieldName: undefined, …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 13 API data: {
+  "id": 8180,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "ageGroup": "U12 Boys",
+  "field": "A1",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "duration": 90,
+  "status": "pending",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 13 transformed: {id: 8180, homeTeam: 'TBD', awayTeam: 'TBD', ageGroup: 'U12 Boys', field: 'A1', …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 14 transformation debug: {raw: {…}, homeTeamStructure: 'TBD', awayTeamStructure: 'TBD', fieldStructure: 'Field Unknown', rawFieldName: undefined, …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 14 API data: {
+  "id": 8206,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "ageGroup": "U12 Boys",
+  "field": "Field Unknown",
+  "date": "TBD",
+  "time": "TBD",
+  "duration": 90,
+  "status": "pending",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 14 transformed: {id: 8206, homeTeam: 'TBD', awayTeam: 'TBD', ageGroup: 'U12 Boys', field: 'Field Unknown', …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 15 transformation debug: {raw: {…}, homeTeamStructure: 'Albion San Diego EC B2014 Flores', awayTeamStructure: 'Future FC B2014', fieldStructure: '4', rawFieldName: undefined, …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 15 API data: {
+  "id": 8194,
+  "homeTeam": "Albion San Diego EC B2014 Flores",
+  "awayTeam": "Future FC B2014",
+  "ageGroup": "U12 Boys",
+  "field": "4",
+  "date": "TBD",
+  "time": "TBD",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 15 transformed: {id: 8194, homeTeam: 'Albion San Diego EC B2014 Flores', awayTeam: 'Future FC B2014', ageGroup: 'U12 Boys', field: '4', …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 16 transformation debug: {raw: {…}, homeTeamStructure: 'Vista Storm B2014 Red', awayTeamStructure: 'ALBION SC San Diego CV B14', fieldStructure: '4', rawFieldName: undefined, …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 16 API data: {
+  "id": 8195,
+  "homeTeam": "Vista Storm B2014 Red",
+  "awayTeam": "ALBION SC San Diego CV B14",
+  "ageGroup": "U12 Boys",
+  "field": "4",
+  "date": "TBD",
+  "time": "TBD",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 16 transformed: {id: 8195, homeTeam: 'Vista Storm B2014 Red', awayTeam: 'ALBION SC San Diego CV B14', ageGroup: 'U12 Boys', field: '4', …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 17 transformation debug: {raw: {…}, homeTeamStructure: 'ALBION SC Riverside B14 EA II', awayTeamStructure: 'City SC SW B14 Premier MUR - Strom', fieldStructure: '4', rawFieldName: undefined, …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 17 API data: {
+  "id": 8196,
+  "homeTeam": "ALBION SC Riverside B14 EA II",
+  "awayTeam": "City SC SW B14 Premier MUR - Strom",
+  "ageGroup": "U12 Boys",
+  "field": "4",
+  "date": "TBD",
+  "time": "TBD",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 17 transformed: {id: 8196, homeTeam: 'ALBION SC Riverside B14 EA II', awayTeam: 'City SC SW B14 Premier MUR - Strom', ageGroup: 'U12 Boys', field: '4', …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 18 transformation debug: {raw: {…}, homeTeamStructure: ' Cal Elite SC', awayTeamStructure: 'SD Force Ortega B2014 Premier III ', fieldStructure: '4', rawFieldName: undefined, …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 18 API data: {
+  "id": 8197,
+  "homeTeam": " Cal Elite SC",
+  "awayTeam": "SD Force Ortega B2014 Premier III ",
+  "ageGroup": "U12 Boys",
+  "field": "4",
+  "date": "TBD",
+  "time": "TBD",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 18 transformed: {id: 8197, homeTeam: ' Cal Elite SC', awayTeam: 'SD Force Ortega B2014 Premier III ', ageGroup: 'U12 Boys', field: '4', …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 19 transformation debug: {raw: {…}, homeTeamStructure: 'Albion San Diego EC B2014 Flores', awayTeamStructure: 'ALBION SC Riverside B14 EA II', fieldStructure: '4', rawFieldName: undefined, …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 19 API data: {
+  "id": 8198,
+  "homeTeam": "Albion San Diego EC B2014 Flores",
+  "awayTeam": "ALBION SC Riverside B14 EA II",
+  "ageGroup": "U12 Boys",
+  "field": "4",
+  "date": "TBD",
+  "time": "TBD",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 19 transformed: {id: 8198, homeTeam: 'Albion San Diego EC B2014 Flores', awayTeam: 'ALBION SC Riverside B14 EA II', ageGroup: 'U12 Boys', field: '4', …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 20 transformation debug: {raw: {…}, homeTeamStructure: 'Vista Storm B2014 Red', awayTeamStructure: ' Cal Elite SC', fieldStructure: '4', rawFieldName: undefined, …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 20 API data: {
+  "id": 8199,
+  "homeTeam": "Vista Storm B2014 Red",
+  "awayTeam": " Cal Elite SC",
+  "ageGroup": "U12 Boys",
+  "field": "4",
+  "date": "TBD",
+  "time": "TBD",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 20 transformed: {id: 8199, homeTeam: 'Vista Storm B2014 Red', awayTeam: ' Cal Elite SC', ageGroup: 'U12 Boys', field: '4', …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 21 transformation debug: {raw: {…}, homeTeamStructure: 'Future FC B2014', awayTeamStructure: 'City SC SW B14 Premier MUR - Strom', fieldStructure: '4', rawFieldName: undefined, …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 21 API data: {
+  "id": 8200,
+  "homeTeam": "Future FC B2014",
+  "awayTeam": "City SC SW B14 Premier MUR - Strom",
+  "ageGroup": "U12 Boys",
+  "field": "4",
+  "date": "TBD",
+  "time": "TBD",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 21 transformed: {id: 8200, homeTeam: 'Future FC B2014', awayTeam: 'City SC SW B14 Premier MUR - Strom', ageGroup: 'U12 Boys', field: '4', …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 22 transformation debug: {raw: {…}, homeTeamStructure: 'ALBION SC San Diego CV B14', awayTeamStructure: 'SD Force Ortega B2014 Premier III ', fieldStructure: '4', rawFieldName: undefined, …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 22 API data: {
+  "id": 8201,
+  "homeTeam": "ALBION SC San Diego CV B14",
+  "awayTeam": "SD Force Ortega B2014 Premier III ",
+  "ageGroup": "U12 Boys",
+  "field": "4",
+  "date": "TBD",
+  "time": "TBD",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 22 transformed: {id: 8201, homeTeam: 'ALBION SC San Diego CV B14', awayTeam: 'SD Force Ortega B2014 Premier III ', ageGroup: 'U12 Boys', field: '4', …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 23 transformation debug: {raw: {…}, homeTeamStructure: 'Albion San Diego EC B2014 Flores', awayTeamStructure: 'City SC SW B14 Premier MUR - Strom', fieldStructure: '4', rawFieldName: undefined, …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 23 API data: {
+  "id": 8202,
+  "homeTeam": "Albion San Diego EC B2014 Flores",
+  "awayTeam": "City SC SW B14 Premier MUR - Strom",
+  "ageGroup": "U12 Boys",
+  "field": "4",
+  "date": "TBD",
+  "time": "TBD",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 23 transformed: {id: 8202, homeTeam: 'Albion San Diego EC B2014 Flores', awayTeam: 'City SC SW B14 Premier MUR - Strom', ageGroup: 'U12 Boys', field: '4', …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 24 transformation debug: {raw: {…}, homeTeamStructure: 'Vista Storm B2014 Red', awayTeamStructure: 'SD Force Ortega B2014 Premier III ', fieldStructure: '4', rawFieldName: undefined, …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 24 API data: {
+  "id": 8203,
+  "homeTeam": "Vista Storm B2014 Red",
+  "awayTeam": "SD Force Ortega B2014 Premier III ",
+  "ageGroup": "U12 Boys",
+  "field": "4",
+  "date": "TBD",
+  "time": "TBD",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 24 transformed: {id: 8203, homeTeam: 'Vista Storm B2014 Red', awayTeam: 'SD Force Ortega B2014 Premier III ', ageGroup: 'U12 Boys', field: '4', …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 25 transformation debug: {raw: {…}, homeTeamStructure: 'Future FC B2014', awayTeamStructure: 'ALBION SC Riverside B14 EA II', fieldStructure: '4', rawFieldName: undefined, …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 25 API data: {
+  "id": 8204,
+  "homeTeam": "Future FC B2014",
+  "awayTeam": "ALBION SC Riverside B14 EA II",
+  "ageGroup": "U12 Boys",
+  "field": "4",
+  "date": "TBD",
+  "time": "TBD",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 25 transformed: {id: 8204, homeTeam: 'Future FC B2014', awayTeam: 'ALBION SC Riverside B14 EA II', ageGroup: 'U12 Boys', field: '4', …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 26 transformation debug: {raw: {…}, homeTeamStructure: 'ALBION SC San Diego CV B14', awayTeamStructure: ' Cal Elite SC', fieldStructure: '4', rawFieldName: undefined, …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 26 API data: {
+  "id": 8205,
+  "homeTeam": "ALBION SC San Diego CV B14",
+  "awayTeam": " Cal Elite SC",
+  "ageGroup": "U12 Boys",
+  "field": "4",
+  "date": "TBD",
+  "time": "TBD",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 26 transformed: {id: 8205, homeTeam: 'ALBION SC San Diego CV B14', awayTeam: ' Cal Elite SC', ageGroup: 'U12 Boys', field: '4', …}
+util.js:31 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+Yxa @ util.js:31
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1379
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1379
+setTimeout
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1379
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622Understand this warning
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+Promise.then
+S @ out-4.5.44.js:1
+y @ out-4.5.44.js:1
+E @ out-4.5.44.js:1
+e.onload @ inner.html:1
+script
+(anonymous) @ inner.html:1
+(anonymous) @ inner.html:1
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+h @ out-4.5.44.js:1
+e @ inner.html:1
+shared-eb945d82d4278aab36557dfc2f95c57f.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+e @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+c @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+(anonymous) @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+setTimeout
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+(anonymous) @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+log @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+log @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+value @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+value @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+(anonymous) @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+index-7KI011nV.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: true, error: null, scheduleData: undefined, fieldsCount: 0, gamesCount: 0, …}
+index-7KI011nV.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 26, …}
+index-7KI011nV.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 26, …}
+index-7KI011nV.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: true, error: null, scheduleData: undefined, fieldsCount: 0, gamesCount: 0, …}
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+index-7KI011nV.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 26, …}
+index-7KI011nV.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 26, …}
+index-7KI011nV.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: true, error: null, scheduleData: undefined, fieldsCount: 0, gamesCount: 0, …}
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+index-7KI011nV.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 26, …}
+index-7KI011nV.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 26, …}
