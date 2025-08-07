@@ -95,9 +95,9 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
   const queryClient = useQueryClient();
 
   const { data: scheduleData, isLoading, error } = useQuery<ScheduleData>({
-    queryKey: ['/api/admin/events', eventId, 'schedule'],
+    queryKey: ['/api/admin/events', eventId, 'schedule-calendar'],
     queryFn: async () => {
-      const response = await fetch(`/api/admin/events/${eventId}/schedule`, {
+      const response = await fetch(`/api/admin/events/${eventId}/schedule-calendar`, {
         credentials: 'include'
       });
       if (!response.ok) {

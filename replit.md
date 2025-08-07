@@ -7,6 +7,12 @@ MatchPro AI is a comprehensive sports event management platform for tournament o
 Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
+- **CRITICAL: Schedule Grid Time Slot Assignment Complete Success (Aug 2025)**: Fully resolved time slot assignment and Schedule Grid display issues.
+  - **Time Slot Assignment Fix**: All 13 games now properly assigned to field f2 (field_id=9) with time_slot_id=15132 and start_time=2025-08-16T08:00:00.000Z
+  - **Schedule Grid API Fix**: Updated ScheduleViewer component to use correct `/api/admin/events/${eventId}/schedule-calendar` endpoint
+  - **API Response Format Fix**: Updated schedule-calendar endpoint to return proper game data format with homeTeam/awayTeam fields for frontend display
+  - **Field Assignment Correction**: Fixed database field assignment mismatch where games were assigned to field_id=23 but time slots existed for different field IDs
+  - **Championship Game Fix**: Properly assigned time slots to championship placeholder game with null team assignments
 - **CRITICAL: Selective Scheduling Complete Success (Aug 2025)**: Fully resolved selective scheduling system to generate all 13 games correctly.
   - **Root Cause**: Database schema mismatch - `round` field expected integer, code was inserting string values
   - **Tournament Format Fix**: Updated U12 Boys Nike Premier from stale `round_robin` to proper `8-Team Dual Brackets` format

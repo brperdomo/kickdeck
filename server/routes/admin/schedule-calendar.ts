@@ -42,7 +42,7 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
       })
       .from(games)
       .leftJoin(eventAgeGroups, eq(games.ageGroupId, eventAgeGroups.id))
-      .where(eq(games.eventId, parseInt(eventId)));
+      .where(eq(games.eventId, eventId));
 
     console.log(`[Schedule Calendar] Found ${gamesWithDetails.length} total games with age group data`);
     console.log(`[Schedule Calendar] Sample game:`, gamesWithDetails[0]);
@@ -99,7 +99,7 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
         console.log(`[Schedule Calendar Direct] Game ${game.gameId} has no field assigned`);
       }
       
-      console.log(`[Schedule Calendar Direct] Processing game ${game.gameId}: ${timeSlot.startTime} on ${assignedField.name}`);
+      console.log(`[Schedule Calendar Direct] Processing game ${game.gameId}: ${timeSlot?.startTime || 'No time'} on ${assignedField?.name || 'No field'}`);
 
       // Get team names and coach info - only from approved teams for this event
       const homeTeam = await db.query.teams.findFirst({
@@ -144,44 +144,70 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
       const ageGroupDisplay = game.ageGroupName ? 
         `${game.ageGroupName}${game.ageGroupGender ? ` ${game.ageGroupGender}` : ''}`.trim() : 
         'Unknown';
-        
+
+      // Format time properly from time slot
+      let formattedDate = 'TBD';
+      let formattedTime = 'TBD';
+      
+      if (timeSlot?.startTime) {
+        const startDate = new Date(timeSlot.startTime);
+        formattedDate = startDate.toISOString().split('T')[0]; // YYYY-MM-DD
+        formattedTime = startDate.toTimeString().split(' ')[0].substr(0, 5); // HH:MM
+      }
+
       processedGames.push({
         id: game.gameId,
-        homeTeamName: homeTeam?.name || 'TBD',
-        awayTeamName: awayTeam?.name || 'TBD',
+        homeTeam: homeTeam?.name || 'TBD',
+        awayTeam: awayTeam?.name || 'TBD', 
         ageGroup: ageGroupDisplay,
-        startTime: timeSlot?.startTime || 'TBD',
-        endTime: timeSlot?.endTime || 'TBD',
-        fieldName: assignedField?.name || 'Unassigned',
-        fieldId: assignedField?.id || null,
-        status: game.status,
+        field: assignedField?.name || 'Field Unknown',
+        date: formattedDate,
+        time: formattedTime,
         duration: game.duration || 90,
-        round: game.round,
-        matchNumber: game.matchNumber,
-        homeTeamCoach: homeTeamCoach,
-        awayTeamCoach: awayTeamCoach
+        status: game.status,
+        homeScore: null,
+        awayScore: null
       });
     }
 
-    console.log(`[Schedule Calendar] Processed ${processedGames.length} games with team names`);
-    console.log(`[Schedule Calendar] Sample processed game:`, processedGames[0]);
-
-    // Add fields data to response
-    const responseFields = allFields.map(field => ({
-      id: field.id,
+    // Get fields data
+    const processedFields = allFields.map(field => ({
       name: field.name,
-      fieldSize: field.fieldSize || '11v11',
-      complexName: field.complexName || 'Tournament Complex',
-      isOpen: true
+      surface: 'Grass',
+      size: field.fieldSize || '11v11'
     }));
 
-    res.json({
-      success: true,
+    // Get unique age groups and dates
+    const ageGroups = [...new Set(processedGames.map(game => game.ageGroup))];
+    const dates = [...new Set(processedGames.map(game => game.date))];
+
+    const response = {
       games: processedGames,
-      fields: responseFields,
+      fields: processedFields, 
+      ageGroups: ageGroups,
+      dates: dates,
       totalGames: processedGames.length,
-      eventId: eventId
-    });
+      scheduleStatus: 'active',
+      isPreview: false,
+      actualData: {
+        gamesInDatabase: processedGames.length,
+        teamsInDatabase: processedGames.filter(g => g.homeTeam !== 'TBD' && g.awayTeam !== 'TBD').length,
+        ageGroupsConfigured: ageGroups.length,
+        realTeamsFound: processedGames.filter(g => g.homeTeam !== 'TBD' || g.awayTeam !== 'TBD').length,
+        scheduledGamesFound: processedGames.filter(g => g.date !== 'TBD').length,
+        scheduleType: 'generated'
+      },
+      teamsList: [],
+      eventId: parseInt(eventId),
+      eventDetails: {
+        name: event.name || 'Tournament',
+        startDate: event.startDate,
+        endDate: event.endDate
+      }
+    };
+
+    console.log(`[Schedule Calendar] Returning ${response.games.length} games for Schedule Grid`);
+    res.json(response);
 
   } catch (error) {
     console.error('[Schedule Calendar] Error:', error);
