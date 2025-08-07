@@ -702,7 +702,8 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
       };
 
       // Generate games using the fixed tournament scheduler
-      const bracketGames = await TournamentScheduler.generateSchedule(eventId, [bracketData]);
+      const scheduleResult = await TournamentScheduler.generateSchedule(eventId, [bracketData]);
+      const bracketGames = scheduleResult.games; // Extract games array from Schedule object
       
       console.log(`[Selective Scheduling] Generated ${bracketGames.length} games for bracket ${bracket.name} (template: ${bracket.tournamentFormat})`);
       
