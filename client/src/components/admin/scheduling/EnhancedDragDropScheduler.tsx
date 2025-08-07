@@ -242,9 +242,12 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
       const slotGames = games.filter(game => {
         const position = gamePositions.get(game.id);
         const effectiveStartTime = position?.startTime ?? game.startTime;
+        const gameDate = effectiveStartTime?.split('T')[0] || effectiveStartTime?.split(' ')[0];
         const gameTime = effectiveStartTime?.split('T')[1]?.split(':').slice(0, 2).join(':') || 
                         effectiveStartTime?.split(' ')[1]?.split(':').slice(0, 2).join(':');
-        return gameTime === slot.startTime;
+        
+        // CRITICAL FIX: Only check conflicts for games on the SAME DAY as the selected date
+        return gameDate === selectedDate && gameTime === slot.startTime;
       });
 
       // Enhanced coach conflict detection using coach emails
@@ -341,9 +344,13 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
           const conflictGames = games.filter(g => {
             const position = gamePositions.get(g.id);
             const effectiveStartTime = position?.startTime ?? g.startTime;
+            const gameDate = effectiveStartTime?.split('T')[0] || effectiveStartTime?.split(' ')[0];
             const gameTime = effectiveStartTime?.split('T')[1]?.split(':').slice(0, 2).join(':') || 
                             effectiveStartTime?.split(' ')[1]?.split(':').slice(0, 2).join(':');
-            return gameTime === conflictSlot.startTime && 
+            
+            // CRITICAL FIX: Only check rest conflicts for games on the SAME DAY as the selected date
+            return gameDate === selectedDate && 
+                   gameTime === conflictSlot.startTime && 
                    (teams.includes(g.homeTeamName) || teams.includes(g.awayTeamName));
           });
 
