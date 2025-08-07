@@ -126,15 +126,20 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
         // Handle field names - extract from the "Field null" format or use direct field name
         const fieldName = game.fieldName || game.field?.name || game.field || 'Unassigned';
         
-        // Format times properly - handle "TBD" strings from backend
+        // Format times properly - use new date/time fields from API
         let startTime, endTime, dateDisplay, timeDisplay;
         
-        if (game.startTime === 'TBD' || !game.startTime) {
-          startTime = null;
-          endTime = null;
-          dateDisplay = 'TBD';
-          timeDisplay = 'TBD';
-        } else {
+        // Check if we have the new date/time format from the enhanced API
+        if (game.date && game.date !== 'TBD' && game.time && game.time !== 'TBD') {
+          // Use the new separated date/time fields
+          dateDisplay = game.date; // Already in YYYY-MM-DD format
+          timeDisplay = game.time; // Already in HH:MM format
+          
+          // Create startTime for sorting/calculations
+          startTime = new Date(`${game.date}T${game.time}:00`);
+          endTime = new Date(startTime.getTime() + (game.duration || 90) * 60 * 1000);
+        } else if (game.startTime && game.startTime !== 'TBD') {
+          // Fallback to old startTime format
           startTime = new Date(game.startTime);
           endTime = game.endTime ? new Date(game.endTime) : null;
           dateDisplay = startTime.toLocaleDateString();
@@ -143,6 +148,12 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
             minute: '2-digit',
             hour12: false 
           });
+        } else {
+          // No valid time data
+          startTime = null;
+          endTime = null;
+          dateDisplay = 'TBD';
+          timeDisplay = 'TBD';
         }
         
         const transformed = {

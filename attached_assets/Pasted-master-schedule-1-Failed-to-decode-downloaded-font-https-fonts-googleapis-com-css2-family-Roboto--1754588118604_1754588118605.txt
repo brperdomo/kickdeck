@@ -1,0 +1,163 @@
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955
+index-7KI011nV.js:863 Google Maps API key length: 0 characters
+index-7KI011nV.js:863 Mapbox API key length: 93 characters
+index-7KI011nV.js:863 Google Maps API already loaded
+index-7KI011nV.js:672 Current route location (Wouter): /admin/events/1844329078/master-schedule
+index-7KI011nV.js:672 Current URL: https://app.matchpro.ai/admin/events/1844329078/master-schedule
+index-7KI011nV.js:672 Current pathname: /admin/events/1844329078/master-schedule
+index-7KI011nV.js:672 Current search: 
+index-7KI011nV.js:672 Fetching user with emulation token: not present
+js?libraries=places&…tion.prototype:1409 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+shared-eb945d82d4278…557dfc2f95c57f.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+shared-eb945d82d4278…557dfc2f95c57f.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+chunk-FLCULYKI.js:31 orchestration: Initializing config store with state 
+{anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+index-7KI011nV.js:672 User data fetched: 
+{id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: '$2b$12$d6n1CBWgsWFm0fh77F1OX.YxDZy7/O3aLSuJOuq4QkvOtFmSit7BC', firstName: 'Bryan', …}
+chunk-FLCULYKI.js:31 orchestration: Initializing feature flag store with state 
+{anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state 
+{pill-player: {…}}
+chunk-FLCULYKI.js:31 orchestration: Updating combined state 
+{anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+9
+Fetch finished loading: GET "<URL>".
+index-7KI011nV.js:664 Fetch failed loading: GET "https://app.matchpro.ai/api/user".
+UnifiedTournamentCon…enter-BgX8FSxC.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentCon…enter-BgX8FSxC.js:1 Configured flights: 3 of 76
+shared-eb945d82d4278…557dfc2f95c57f.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+shared-eb945d82d4278…557dfc2f95c57f.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+ScheduleViewerFixed-DIeofLTW.js:6 Schedule API Response: 
+{games: Array(7), fields: Array(28), ageGroups: Array(1), dates: Array(2), totalGames: 7, …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 1 transformation debug: 
+{raw: {…}, homeTeamStructure: 'TBD', awayTeamStructure: 'TBD', fieldStructure: 'Field Unknown', rawFieldName: undefined, …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 1 API data: {
+  "id": 8676,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "ageGroup": "U14 Girls",
+  "field": "Field Unknown",
+  "date": "TBD",
+  "time": "TBD",
+  "duration": 90,
+  "status": "pending",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 1 transformed: 
+{id: 8676, homeTeam: 'TBD', awayTeam: 'TBD', ageGroup: 'U14 Girls', field: 'Field Unknown', …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 2 transformation debug: 
+{raw: {…}, homeTeamStructure: 'Empire Surf North G2012 Academy', awayTeamStructure: 'Future FC G12', fieldStructure: '12', rawFieldName: undefined, …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 2 API data: {
+  "id": 8670,
+  "homeTeam": "Empire Surf North G2012 Academy",
+  "awayTeam": "Future FC G12",
+  "ageGroup": "U14 Girls",
+  "field": "12",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 2 transformed: 
+{id: 8670, homeTeam: 'Empire Surf North G2012 Academy', awayTeam: 'Future FC G12', ageGroup: 'U14 Girls', field: '12', …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 3 transformation debug: 
+{raw: {…}, homeTeamStructure: 'Empire Surf North G2012 Academy', awayTeamStructure: 'ALBION SC Riverside G12 DPL', fieldStructure: '13', rawFieldName: undefined, …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 3 API data: {
+  "id": 8671,
+  "homeTeam": "Empire Surf North G2012 Academy",
+  "awayTeam": "ALBION SC Riverside G12 DPL",
+  "ageGroup": "U14 Girls",
+  "field": "13",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 3 transformed: 
+{id: 8671, homeTeam: 'Empire Surf North G2012 Academy', awayTeam: 'ALBION SC Riverside G12 DPL', ageGroup: 'U14 Girls', field: '13', …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 4 transformation debug: 
+{raw: {…}, homeTeamStructure: 'Empire Surf North G2012 Academy', awayTeamStructure: 'Cal Elite SC G2012', fieldStructure: '14', rawFieldName: undefined, …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 4 API data: {
+  "id": 8672,
+  "homeTeam": "Empire Surf North G2012 Academy",
+  "awayTeam": "Cal Elite SC G2012",
+  "ageGroup": "U14 Girls",
+  "field": "14",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 4 transformed: 
+{id: 8672, homeTeam: 'Empire Surf North G2012 Academy', awayTeam: 'Cal Elite SC G2012', ageGroup: 'U14 Girls', field: '14', …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 5 transformation debug: 
+{raw: {…}, homeTeamStructure: 'Future FC G12', awayTeamStructure: 'ALBION SC Riverside G12 DPL', fieldStructure: '15', rawFieldName: undefined, …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 5 API data: {
+  "id": 8673,
+  "homeTeam": "Future FC G12",
+  "awayTeam": "ALBION SC Riverside G12 DPL",
+  "ageGroup": "U14 Girls",
+  "field": "15",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 5 transformed: 
+{id: 8673, homeTeam: 'Future FC G12', awayTeam: 'ALBION SC Riverside G12 DPL', ageGroup: 'U14 Girls', field: '15', …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 6 transformation debug: 
+{raw: {…}, homeTeamStructure: 'Future FC G12', awayTeamStructure: 'Cal Elite SC G2012', fieldStructure: '20', rawFieldName: undefined, …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 6 API data: {
+  "id": 8674,
+  "homeTeam": "Future FC G12",
+  "awayTeam": "Cal Elite SC G2012",
+  "ageGroup": "U14 Girls",
+  "field": "20",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 6 transformed: 
+{id: 8674, homeTeam: 'Future FC G12', awayTeam: 'Cal Elite SC G2012', ageGroup: 'U14 Girls', field: '20', …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 7 transformation debug: 
+{raw: {…}, homeTeamStructure: 'ALBION SC Riverside G12 DPL', awayTeamStructure: 'Cal Elite SC G2012', fieldStructure: 'f1', rawFieldName: undefined, …}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 7 API data: {
+  "id": 8675,
+  "homeTeam": "ALBION SC Riverside G12 DPL",
+  "awayTeam": "Cal Elite SC G2012",
+  "ageGroup": "U14 Girls",
+  "field": "f1",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-DIeofLTW.js:6 Game 7 transformed: 
+{id: 8675, homeTeam: 'ALBION SC Riverside G12 DPL', awayTeam: 'Cal Elite SC G2012', ageGroup: 'U14 Girls', field: 'f1', …}
+util.js:31 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+shared-eb945d82d4278…557dfc2f95c57f.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+index-7KI011nV.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: 
+{isLoading: true, error: null, scheduleData: undefined, fieldsCount: 0, gamesCount: 0, …}
+index-7KI011nV.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: 
+{isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 7, …}
+index-7KI011nV.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: 
+{isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 7, …}
+﻿
+

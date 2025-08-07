@@ -25,12 +25,16 @@ Preferred communication style: Simple, everyday language.
     - **group_of_4**: 4-5 teams → 6 pool + 1 championship = 7 games
     - **group_of_6**: 6 teams → 9 pool + 1 championship = 10 games (2 pools of 3)  
     - **group_of_8**: 7-8 teams → 12 pool + 1 championship = 13 games (2 pools of 4)
-- **CRITICAL: Enhanced Field Assignment System Complete (Aug 2025)**: Implemented comprehensive field assignment with time scheduling for generated games.
-  - **Intelligent Field Size Matching**: U14 Girls automatically assigned to 11v11 fields (f1-f6) based on bracket name parsing
+- **CRITICAL: Complete Field Assignment with Date/Time Scheduling System (Aug 2025)**: Fully implemented and operational field assignment with real event date/time integration.
+  - **Intelligent Field Size Matching**: U14 Girls automatically assigned to 11v11 fields (f1-f6, fields 31-35, 8) based on bracket name parsing
+  - **Real Event Date Integration**: Games scheduled using actual tournament dates (Aug 16-17, 2025) instead of synthetic dates
   - **Time-Based Scheduling**: Games assigned starting from field open times (8:00 AM) with proper 90-minute durations + 15-minute breaks
   - **Multi-Field Distribution**: Automatically distributes games across available fields using earliest-available-time algorithm
-  - **Database Integration**: Updates games table with fieldId, scheduledDate, and scheduledTime during game generation
-  - **Field Constraint Validation**: Ensures proper field size requirements (7v7→B1/B2, 9v9→A1/A2, 11v11→f1-f6)
+  - **Database Integration**: Enhanced games table with scheduled_date and scheduled_time columns
+  - **API Enhancement**: Schedule calendar API returns actual dates/times instead of "TBD"
+  - **Frontend Integration**: Fixed ScheduleViewerFixed component to consume new date/time API format
+  - **Championship Game Scheduling**: Properly schedules championship games with later time slots (10:45 AM)
+  - **Complete Pipeline**: Field assignment + date assignment + time assignment in single operation
 - **CRITICAL: Date/Time Scheduling Integration Complete (Aug 2025)**: Enhanced field assignment with real event dates and scheduled times.
   - **Event Date Integration**: Uses actual event start/end dates (Aug 16-17, 2025) for game scheduling
   - **Time Slot Management**: Games scheduled starting from field open times (8:00 AM) within event period
