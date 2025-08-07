@@ -280,9 +280,24 @@ export class TournamentScheduler {
         return this.generate8TeamDualBracket(bracket, teams, startingGameNumber);
       
       default:
-        // Fallback based on team count for legacy support
+        // Fallback based on team count for legacy support - but check for group_of_4 first
         if (teamCount === 4) {
-          return this.generate4TeamBracket(bracket, teams, startingGameNumber);
+          console.log(`🎯 4-team bracket detected - using group_of_4 logic (6 pool + 1 championship)`);
+          // Use the corrected logic for 4-team brackets
+          const games = [];
+          let gameCounter = startingGameNumber;
+          
+          // Generate 6 pool games (round-robin)
+          const poolPlayGames = this.generateRoundRobinGames(bracket, teams, gameCounter);
+          games.push(...poolPlayGames);
+          gameCounter += poolPlayGames.length;
+          
+          // Add championship final
+          const championshipGame = this.generateChampionshipGame(bracket, gameCounter);
+          games.push(championshipGame);
+          
+          console.log(`🏆 4-team bracket: Generated ${poolPlayGames.length} pool + 1 championship = ${games.length} total games`);
+          return games;
         } else if (teamCount === 6) {
           return this.generate6TeamCrossover(bracket, teams, startingGameNumber);
         } else if (teamCount === 8) {

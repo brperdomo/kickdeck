@@ -11,6 +11,7 @@ Preferred communication style: Simple, everyday language.
   - **Root Cause**: generateSelectiveSchedule function bypassed tournament scheduler and used round-robin fallback for group_of_4
   - **Fix**: Added specific group_of_4 handling in /schedule-selected-flights endpoint generating exactly 6 pool + 1 championship = 7 games
   - **Global Application**: Fix applies to both tournament scheduler AND Select Flights interface for any bracket using group_of_4 format
+  - **Universal Coverage**: Added failsafe to tournament scheduler default case ensuring all 4-team brackets generate 7 games regardless of path taken
   - **U14 Girls Nike Elite**: Bracket (id=593) properly configured with group_of_4 format ready for 7-game generation
 - **CRITICAL: Proper Field Distribution & Schedule Grid Complete Success (Aug 2025)**: Fully resolved field size validation and Galway Downs field visibility.
   - **Correct Field Size Assignment**: U12 Boys games now properly assigned to 9v9 fields (A1, A2) instead of incorrect 11v11 field assignment
