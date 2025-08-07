@@ -74,7 +74,7 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
   const { data: scheduleData, isLoading, error } = useQuery({
     queryKey: ['enhanced-schedule', eventId, selectedDate],
     queryFn: async () => {
-      const response = await fetch(`/api/schedule-calendar/${eventId}/schedule-calendar`);
+      const response = await fetch(`/api/admin/events/${eventId}/schedule-calendar`);
       if (!response.ok) throw new Error('Failed to fetch schedule data');
       return response.json();
     },
