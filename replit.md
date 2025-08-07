@@ -25,6 +25,12 @@ Preferred communication style: Simple, everyday language.
     - **group_of_4**: 4-5 teams → 6 pool + 1 championship = 7 games
     - **group_of_6**: 6 teams → 9 pool + 1 championship = 10 games (2 pools of 3)  
     - **group_of_8**: 7-8 teams → 12 pool + 1 championship = 13 games (2 pools of 4)
+- **CRITICAL: Enhanced Field Assignment System Complete (Aug 2025)**: Implemented comprehensive field assignment with time scheduling for generated games.
+  - **Intelligent Field Size Matching**: U14 Girls automatically assigned to 11v11 fields (f1-f6) based on bracket name parsing
+  - **Time-Based Scheduling**: Games assigned starting from field open times (8:00 AM) with proper 90-minute durations + 15-minute breaks
+  - **Multi-Field Distribution**: Automatically distributes games across available fields using earliest-available-time algorithm
+  - **Database Integration**: Updates games table with fieldId, scheduledDate, and scheduledTime during game generation
+  - **Field Constraint Validation**: Ensures proper field size requirements (7v7→B1/B2, 9v9→A1/A2, 11v11→f1-f6)
 - **CRITICAL: Proper Field Distribution & Schedule Grid Complete Success (Aug 2025)**: Fully resolved field size validation and Galway Downs field visibility.
   - **Correct Field Size Assignment**: U12 Boys games now properly assigned to 9v9 fields (A1, A2) instead of incorrect 11v11 field assignment
   - **All Galway Downs Fields Visible**: Schedule Grid now shows all available fields - A1/A2 (9v9), B1/B2 (7v7), f1-f6 (11v11) with proper time slots

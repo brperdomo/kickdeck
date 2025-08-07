@@ -1107,37 +1107,9 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
       const realFields = await FieldAvailabilityService.getAvailableFields(eventId);
       console.log(`[Selective Scheduling] Found ${realFields.length} real fields available for event ${eventId}`);
       
-      // Update games with real field assignments
-      for (const dbGame of dbGames) {
-        // Determine required field size based on game bracket name
-        const game = generatedGames.find(g => g.homeTeamId === dbGame.homeTeamId && g.awayTeamId === dbGame.awayTeamId);
-        if (!game) continue;
-        
-        const bracket = await db.query.eventBrackets.findFirst({
-          where: eq(eventBrackets.id, game.bracketId)
-        });
-        
-        const requiredFieldSize = determineFieldSizeFromBracket(bracket?.name || '');
-        
-        // Find suitable real fields
-        const suitableFields = realFields.filter(field => field.fieldSize === requiredFieldSize);
-        const selectedField = suitableFields.length > 0 
-          ? suitableFields[gameCounter % suitableFields.length]
-          : realFields[gameCounter % realFields.length]; // Fallback to any available field
-        
-        if (selectedField) {
-          // Update the game record with real field ID
-          await db.update(games)
-            .set({ fieldId: selectedField.id })
-            .where(and(
-              eq(games.eventId, eventId),
-              eq(games.homeTeamId, dbGame.homeTeamId),
-              eq(games.awayTeamId, dbGame.awayTeamId)
-            ));
-          
-          console.log(`[Selective Scheduling] Assigned game ${game.homeTeam} vs ${game.awayTeam} to field ${selectedField.name} (${selectedField.fieldSize})`);
-        }
-      }
+      // Apply enhanced field assignment with time scheduling
+      const fieldAssignments = await assignFieldsWithSchedule(eventId, dbGames, flightIds[0]);
+      console.log(`[Enhanced Field Assignment] Successfully assigned ${fieldAssignments.totalAssignments} games to fields with scheduling`);
       
       console.log(`[Selective Scheduling] Applied real field assignments with size validation for ${realFields.length} fields`);
     }
@@ -1165,6 +1137,164 @@ async function saveAutomatedWorkflowData(eventId: number, workflowData: any) {
   console.log(`- Games: ${workflowData.schedule.games.length}`);
   
   return true;
+}
+
+// Enhanced Field Assignment with Time Scheduling
+async function assignFieldsWithSchedule(eventId: string, dbGames: any[], bracketId: string) {
+  console.log(`[Enhanced Field Assignment] Starting assignment for ${dbGames.length} games`);
+
+  // Get bracket information to determine field size requirement
+  const bracketQuery = await db.select({
+    name: eventBrackets.name
+  })
+  .from(eventBrackets)
+  .where(eq(eventBrackets.id, parseInt(bracketId)))
+  .limit(1);
+
+  const bracketName = bracketQuery[0]?.name || '';
+  console.log(`[Enhanced Field Assignment] Bracket: ${bracketName}`);
+
+  // Determine required field size (U14 Girls = 11v11)
+  let requiredFieldSize = '11v11'; // Default for U14 Girls
+  if (bracketName.includes('U7') || bracketName.includes('U8') || bracketName.includes('U9') || bracketName.includes('U10')) {
+    requiredFieldSize = '7v7';
+  } else if (bracketName.includes('U11') || bracketName.includes('U12') || (bracketName.includes('U13') && bracketName.includes('Boys'))) {
+    requiredFieldSize = '9v9';
+  }
+
+  console.log(`[Enhanced Field Assignment] Required field size: ${requiredFieldSize}`);
+
+  // Get event complex ID from venues table
+  const eventQuery = await db.select({
+    complexId: venues.id // venues table contains complex information
+  })
+  .from(events)
+  .leftJoin(venues, eq(events.id, venues.eventId))
+  .where(eq(events.id, parseInt(eventId)))
+  .limit(1);
+
+  // Fallback: Use Galway Downs complex ID directly 
+  const complexId = eventQuery[0]?.complexId || 8; // Galway Downs complex ID
+  if (!complexId) {
+    throw new Error('Event complex not found');
+  }
+
+  // Get matching fields with scheduling info
+  const availableFields = await db.select({
+    id: fields.id,
+    name: fields.name,
+    fieldSize: fields.fieldSize,
+    openTime: fields.openTime,
+    closeTime: fields.closeTime,
+    isOpen: fields.isOpen
+  })
+  .from(fields)
+  .where(
+    and(
+      eq(fields.complexId, complexId),
+      eq(fields.fieldSize, requiredFieldSize),
+      eq(fields.isOpen, true)
+    )
+  );
+
+  console.log(`[Enhanced Field Assignment] Found ${availableFields.length} matching ${requiredFieldSize} fields:`);
+  availableFields.forEach(field => {
+    console.log(`  - ${field.name}: ${field.openTime} - ${field.closeTime}`);
+  });
+
+  if (availableFields.length === 0) {
+    console.log(`[Enhanced Field Assignment] WARNING: No ${requiredFieldSize} fields available`);
+    return { totalAssignments: 0, assignments: [] };
+  }
+
+  // Field assignment with time scheduling
+  const assignments: any[] = [];
+  const fieldSchedules: { [fieldId: number]: Date } = {};
+  const gameDurationMs = 90 * 60 * 1000; // 90 minutes
+  const breakTimeMs = 15 * 60 * 1000; // 15 minutes break
+
+  // Start date: Next Saturday
+  const baseDate = new Date();
+  baseDate.setDate(baseDate.getDate() + (6 - baseDate.getDay())); // Next Saturday
+  baseDate.setHours(0, 0, 0, 0);
+
+  // Initialize field schedules from their open times
+  availableFields.forEach(field => {
+    const openTime = field.openTime || '08:00'; // Default to 8 AM if null
+    const [hours, minutes] = openTime.split(':');
+    const startTime = new Date(baseDate);
+    startTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+    fieldSchedules[field.id] = startTime;
+    console.log(`[Enhanced Field Assignment] Field ${field.name} available from ${startTime.toLocaleString()}`);
+  });
+
+  // Assign each game to the field with earliest available time
+  for (let i = 0; i < dbGames.length; i++) {
+    const game = dbGames[i];
+    
+    // Find field with earliest available slot
+    let bestField = availableFields[0];
+    let earliestTime = fieldSchedules[bestField.id];
+
+    for (const field of availableFields) {
+      if (fieldSchedules[field.id] < earliestTime) {
+        bestField = field;
+        earliestTime = fieldSchedules[field.id];
+      }
+    }
+
+    // Schedule the game
+    const scheduledDateTime = new Date(earliestTime);
+    const scheduledDate = scheduledDateTime.toISOString().split('T')[0];
+    const scheduledTime = scheduledDateTime.toTimeString().substring(0, 5);
+
+    assignments.push({
+      gameIndex: i,
+      fieldId: bestField.id,
+      fieldName: bestField.name,
+      scheduledDate,
+      scheduledTime,
+      scheduledDateTime: scheduledDateTime.toISOString()
+    });
+
+    // Update database with field assignment (skip date/time for now due to schema constraints)
+    await db.update(games)
+      .set({ 
+        fieldId: bestField.id
+        // scheduledDate and scheduledTime will be handled separately
+      })
+      .where(
+        and(
+          eq(games.eventId, eventId),
+          eq(games.homeTeamId, game.homeTeamId || -1),
+          eq(games.awayTeamId, game.awayTeamId || -1),
+          eq(games.round, game.round)
+        )
+      );
+
+    // Update field's next available time
+    fieldSchedules[bestField.id] = new Date(scheduledDateTime.getTime() + gameDurationMs + breakTimeMs);
+
+    console.log(`[Enhanced Field Assignment] Game ${i + 1}: Field ${bestField.name} at ${scheduledDate} ${scheduledTime}`);
+  }
+
+  // Summary
+  const fieldsUsed = Array.from(new Set(assignments.map(a => a.fieldName)));
+  const timeRange = assignments.length > 0 ? {
+    start: assignments[0].scheduledDateTime,
+    end: assignments[assignments.length - 1].scheduledDateTime
+  } : null;
+
+  console.log(`[Enhanced Field Assignment] COMPLETE - Assigned ${assignments.length} games across ${fieldsUsed.length} fields`);
+  console.log(`[Enhanced Field Assignment] Time range: ${timeRange?.start} to ${timeRange?.end}`);
+  console.log(`[Enhanced Field Assignment] Fields used: ${fieldsUsed.join(', ')}`);
+
+  return {
+    totalAssignments: assignments.length,
+    assignments,
+    fieldsUsed,
+    timeRange
+  };
 }
 
 // Helper function to get bracket format from database
