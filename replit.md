@@ -10,7 +10,7 @@ Preferred communication style: Simple, everyday language.
 - **CRITICAL: Proper Field Distribution & Schedule Grid Complete Success (Aug 2025)**: Fully resolved field size validation and Galway Downs field visibility.
   - **Correct Field Size Assignment**: U12 Boys games now properly assigned to 9v9 fields (A1, A2) instead of incorrect 11v11 field assignment
   - **All Galway Downs Fields Visible**: Schedule Grid now shows all available fields - A1/A2 (9v9), B1/B2 (7v7), f1-f6 (11v11) with proper time slots
-  - **Distributed Game Scheduling**: 13 games spread across A1 (7 games) and A2 (6 games) with unique time slots from 8:00 AM to 4:00 PM over 2 days
+  - **Constraint-Compliant Game Scheduling**: 13 games distributed across A1/A2 fields with proper 90+ minute rest periods and maximum 2 games per team per day
   - **Schedule Grid API Fix**: Updated ScheduleViewer component to use correct `/api/admin/events/${eventId}/schedule-calendar` endpoint
   - **API Response Format Fix**: Updated schedule-calendar endpoint to return proper game data format with homeTeam/awayTeam fields for frontend display
   - **Championship Game Scheduling**: Properly assigned time slots to championship placeholder game with TBD team assignments
