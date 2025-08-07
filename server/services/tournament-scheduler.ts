@@ -254,8 +254,22 @@ export class TournamentScheduler {
     // Match template names to specific tournament scenarios
     switch (templateName) {
       case 'group_of_4':
-        console.log(`📋 Using group_of_4 template for ${teamCount} teams`);
-        return this.generate4TeamBracket(bracket, teams, startingGameNumber);
+        console.log(`📋 Using group_of_4 template for ${teamCount} teams - generating 6 pool + 1 championship = 7 games`);
+        // Generate 6 pool games (round robin) + 1 championship final
+        const games = [];
+        let gameCounter = startingGameNumber;
+        
+        // Generate pool play games (6 games)
+        const poolPlayGames = this.generateRoundRobinGames(bracket, teams, gameCounter);
+        games.push(...poolPlayGames);
+        gameCounter += poolPlayGames.length;
+        
+        // Add championship final with placeholders
+        const championshipGame = this.generateChampionshipGame(bracket, gameCounter);
+        games.push(championshipGame);
+        
+        console.log(`🏆 group_of_4: Generated ${poolPlayGames.length} pool + 1 championship = ${games.length} total games`);
+        return games;
       
       case 'group_of_6':
         console.log(`📋 Using group_of_6 template for ${teamCount} teams`);
