@@ -190,12 +190,24 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
       });
     }
 
-    // Get fields data
+    // Get fields data - include id field for proper game-field matching
     const processedFields = allFields.map(field => ({
+      id: field.id,
       name: field.name,
       surface: 'Grass',
-      size: field.fieldSize || '11v11'
+      fieldSize: field.fieldSize || '11v11'
     }));
+    
+    // Debug field mapping
+    console.log(`[Schedule Calendar] Processed ${processedFields.length} fields:`, 
+      processedFields.map(f => `${f.id}:${f.name}`));
+    
+    // Debug which fields have games
+    const fieldsWithGames = processedFields.filter(field => 
+      processedGames.some(game => game.fieldId === field.id)
+    );
+    console.log(`[Schedule Calendar] Fields with games (${fieldsWithGames.length}):`, 
+      fieldsWithGames.map(f => `${f.id}:${f.name}`));
 
     // Get unique age groups and dates
     const ageGroups = Array.from(new Set(processedGames.map(game => game.ageGroup)));

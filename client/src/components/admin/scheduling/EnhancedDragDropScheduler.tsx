@@ -98,6 +98,11 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
       console.log('🎯 [ENHANCED DRAG DROP] Transformed games for calendar:', transformedGames);
       console.log('🎯 [ENHANCED DRAG DROP] Fields data:', data.fields);
       
+      // Debug game-field mapping
+      transformedGames.forEach((game: any) => {
+        console.log(`🎯 [GAME-FIELD DEBUG] Game ${game.id}: fieldId=${game.fieldId}, fieldName="${game.fieldName}", startTime="${game.startTime}"`);
+      });
+      
       return {
         ...data,
         games: transformedGames
@@ -489,6 +494,21 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
   const timeSlots = generateTimeSlots();
   const fields = scheduleData?.fields || [];
   const games = scheduleData?.games || [];
+  
+  // Debug field data visibility
+  console.log('🎯 [FIELD DEBUG] All available fields:', fields.map(f => ({ id: f.id, name: f.name, fieldSize: f.fieldSize })));
+  
+  // Debug which fields have games assigned
+  const fieldsWithGames = new Set(games.map((g: any) => g.fieldId));
+  console.log('🎯 [FIELD DEBUG] Fields with games assigned:', Array.from(fieldsWithGames));
+  
+  // Debug field name mapping
+  fields.forEach(field => {
+    const gamesOnField = games.filter((g: any) => g.fieldId === field.id);
+    if (gamesOnField.length > 0) {
+      console.log(`🎯 [FIELD DEBUG] Field ${field.id} (${field.name}) has ${gamesOnField.length} games`);
+    }
+  });
 
   console.log('🎯 [ENHANCED DRAG DROP] Debug Info:', {
     isLoading,
