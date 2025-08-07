@@ -1,0 +1,59 @@
+Navigated to https://app.matchpro.ai/admin/events/1844329078/master-schedule
+chunk-FLCULYKI.js:31 orchestration: Initializing config store with state 
+{anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing feature flag store with state 
+{anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state 
+{pill-player: {…}}
+chunk-FLCULYKI.js:31 orchestration: Updating combined state 
+{anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+js?libraries=places&…tion.prototype:1377 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+js?libraries=places&…tion.prototype:1409 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+index-C7k7qtoN.js:863 Google Maps API key length: 0 characters
+index-C7k7qtoN.js:863 Mapbox API key length: 93 characters
+index-C7k7qtoN.js:863 Google Maps API already loaded
+index-C7k7qtoN.js:672 Current route location (Wouter): /admin/events/1844329078/master-schedule
+index-C7k7qtoN.js:672 Current URL: https://app.matchpro.ai/admin/events/1844329078/master-schedule
+index-C7k7qtoN.js:672 Current pathname: /admin/events/1844329078/master-schedule
+index-C7k7qtoN.js:672 Current search: 
+index-C7k7qtoN.js:672 Fetching user with emulation token: not present
+11
+Fetch finished loading: GET "<URL>".
+index-C7k7qtoN.js:672 User data fetched: 
+{id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: '$2b$12$d6n1CBWgsWFm0fh77F1OX.YxDZy7/O3aLSuJOuq4QkvOtFmSit7BC', firstName: 'Bryan', …}
+index-C7k7qtoN.js:664 Fetch failed loading: GET "https://app.matchpro.ai/api/user".
+shared-eb945d82d4278…557dfc2f95c57f.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+shared-eb945d82d4278…557dfc2f95c57f.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955
+UnifiedTournamentCon…enter-BIi6FeB7.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentCon…enter-BIi6FeB7.js:1 Configured flights: 3 of 76
+chunk-CVIZYB43.js:3 [Violation] 'setTimeout' handler took 76ms
+shared-eb945d82d4278…557dfc2f95c57f.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+shared-eb945d82d4278…557dfc2f95c57f.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+index-C7k7qtoN.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: 
+{isLoading: true, error: null, scheduleData: undefined, fieldsCount: 0, gamesCount: 0, …}
+index-C7k7qtoN.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: 
+{isLoading: false, error: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON, scheduleData: undefined, fieldsCount: 0, gamesCount: 0, …}
+index-C7k7qtoN.js:839 🚨 [ENHANCED DRAG DROP] API Error: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+util.js:31 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+index-C7k7qtoN.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: 
+{isLoading: true, error: null, scheduleData: undefined, fieldsCount: 0, gamesCount: 0, …}
+index-C7k7qtoN.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: 
+{isLoading: false, error: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON, scheduleData: undefined, fieldsCount: 0, gamesCount: 0, …}
+index-C7k7qtoN.js:839 🚨 [ENHANCED DRAG DROP] API Error: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+shared-eb945d82d4278…557dfc2f95c57f.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+index-C7k7qtoN.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: 
+{isLoading: true, error: null, scheduleData: undefined, fieldsCount: 0, gamesCount: 0, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state 
+{pill-player: {…}}
+index-C7k7qtoN.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: 
+{isLoading: false, error: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON, scheduleData: undefined, fieldsCount: 0, gamesCount: 0, …}
+index-C7k7qtoN.js:839 🚨 [ENHANCED DRAG DROP] API Error: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+chunk-FLCULYKI.js:31 orchestration: Updating combined state 
+{anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+shared-eb945d82d4278…557dfc2f95c57f.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+﻿
+
