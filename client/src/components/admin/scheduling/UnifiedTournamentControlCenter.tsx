@@ -162,7 +162,12 @@ export function UnifiedTournamentControlCenter({ eventId }: TournamentControlCen
         title: "Games Deleted Successfully",
         description: `${data.message || `Deleted ${data.deletedCount} games from the tournament`}`,
       });
+      
+      // Force refresh of all related queries to clear cache
       refetchStatus();
+      
+      // Invalidate all schedule-related cache entries
+      window.location.reload(); // Force full page refresh to clear any stale cache
     },
     onError: (error) => {
       toast({
@@ -249,6 +254,12 @@ export function UnifiedTournamentControlCenter({ eventId }: TournamentControlCen
     setIsProcessing(true);
     setAutoMode(true);
     autoScheduleMutation.mutate();
+  };
+
+  const handleBulkDelete = () => {
+    if (confirm('Are you sure you want to delete all games for this tournament? This action cannot be undone.')) {
+      bulkDeleteMutation.mutate();
+    }
   };
   
   const handleSelectiveSchedule = () => {
