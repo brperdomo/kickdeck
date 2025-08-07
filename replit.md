@@ -31,6 +31,12 @@ Preferred communication style: Simple, everyday language.
   - **Multi-Field Distribution**: Automatically distributes games across available fields using earliest-available-time algorithm
   - **Database Integration**: Updates games table with fieldId, scheduledDate, and scheduledTime during game generation
   - **Field Constraint Validation**: Ensures proper field size requirements (7v7→B1/B2, 9v9→A1/A2, 11v11→f1-f6)
+- **CRITICAL: Date/Time Scheduling Integration Complete (Aug 2025)**: Enhanced field assignment with real event dates and scheduled times.
+  - **Event Date Integration**: Uses actual event start/end dates (Aug 16-17, 2025) for game scheduling
+  - **Time Slot Management**: Games scheduled starting from field open times (8:00 AM) within event period
+  - **Database Schema Enhancement**: Added scheduled_date and scheduled_time columns to games table
+  - **Smart Date Distribution**: Automatically spreads games across event dates when needed
+  - **Complete Scheduling Pipeline**: Field assignment + date assignment + time assignment in single operation
 - **CRITICAL: Proper Field Distribution & Schedule Grid Complete Success (Aug 2025)**: Fully resolved field size validation and Galway Downs field visibility.
   - **Correct Field Size Assignment**: U12 Boys games now properly assigned to 9v9 fields (A1, A2) instead of incorrect 11v11 field assignment
   - **All Galway Downs Fields Visible**: Schedule Grid now shows all available fields - A1/A2 (9v9), B1/B2 (7v7), f1-f6 (11v11) with proper time slots

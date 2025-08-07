@@ -1195,22 +1195,37 @@ async function assignFieldsWithSchedule(eventId: string, dbGames: any[], bracket
     return { totalAssignments: 0, assignments: [] };
   }
 
-  // Field assignment with time scheduling
+  // Get event dates for scheduling
+  const eventDatesQuery = await db.select({
+    startDate: events.startDate,
+    endDate: events.endDate,
+    timezone: events.timezone
+  })
+  .from(events)
+  .where(eq(events.id, parseInt(eventId)))
+  .limit(1);
+
+  const eventDates = eventDatesQuery[0];
+  if (!eventDates) {
+    throw new Error('Event dates not found');
+  }
+
+  // Parse event dates
+  const eventStartDate = new Date(eventDates.startDate);
+  const eventEndDate = new Date(eventDates.endDate);
+  console.log(`[Enhanced Field Assignment] Event dates: ${eventStartDate.toDateString()} to ${eventEndDate.toDateString()}`);
+
+  // Field assignment with real date/time scheduling
   const assignments: any[] = [];
   const fieldSchedules: { [fieldId: number]: Date } = {};
   const gameDurationMs = 90 * 60 * 1000; // 90 minutes
   const breakTimeMs = 15 * 60 * 1000; // 15 minutes break
 
-  // Start date: Next Saturday
-  const baseDate = new Date();
-  baseDate.setDate(baseDate.getDate() + (6 - baseDate.getDay())); // Next Saturday
-  baseDate.setHours(0, 0, 0, 0);
-
-  // Initialize field schedules from their open times
+  // Initialize field schedules from event start date and field open times
   availableFields.forEach(field => {
     const openTime = field.openTime || '08:00'; // Default to 8 AM if null
     const [hours, minutes] = openTime.split(':');
-    const startTime = new Date(baseDate);
+    const startTime = new Date(eventStartDate);
     startTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
     fieldSchedules[field.id] = startTime;
     console.log(`[Enhanced Field Assignment] Field ${field.name} available from ${startTime.toLocaleString()}`);
@@ -1231,8 +1246,24 @@ async function assignFieldsWithSchedule(eventId: string, dbGames: any[], bracket
       }
     }
 
-    // Schedule the game
+    // Schedule the game (ensure it's within event dates)
     const scheduledDateTime = new Date(earliestTime);
+    
+    // If scheduled time goes beyond event end date, move to next day within event period
+    if (scheduledDateTime > eventEndDate) {
+      console.log(`[Enhanced Field Assignment] Game ${i + 1} scheduled beyond event end date, adjusting...`);
+      // Reset to event start date + 1 day if we've exceeded the event period
+      const nextDayStart = new Date(eventStartDate);
+      nextDayStart.setDate(nextDayStart.getDate() + 1);
+      const [hours, minutes] = (bestField.openTime || '08:00').split(':');
+      nextDayStart.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+      
+      if (nextDayStart <= eventEndDate) {
+        scheduledDateTime.setTime(nextDayStart.getTime());
+        fieldSchedules[bestField.id] = new Date(scheduledDateTime.getTime());
+      }
+    }
+    
     const scheduledDate = scheduledDateTime.toISOString().split('T')[0];
     const scheduledTime = scheduledDateTime.toTimeString().substring(0, 5);
 
@@ -1245,20 +1276,39 @@ async function assignFieldsWithSchedule(eventId: string, dbGames: any[], bracket
       scheduledDateTime: scheduledDateTime.toISOString()
     });
 
-    // Update database with field assignment (skip date/time for now due to schema constraints)
-    await db.update(games)
-      .set({ 
-        fieldId: bestField.id
-        // scheduledDate and scheduledTime will be handled separately
-      })
-      .where(
-        and(
-          eq(games.eventId, eventId),
-          eq(games.homeTeamId, game.homeTeamId || -1),
-          eq(games.awayTeamId, game.awayTeamId || -1),
-          eq(games.round, game.round)
-        )
-      );
+    // Update database with field and schedule assignment
+    try {
+      // Use raw SQL to update with date/time since Drizzle schema may not have these columns yet
+      await db.execute(sql`
+        UPDATE games 
+        SET field_id = ${bestField.id},
+            scheduled_date = ${scheduledDate},
+            scheduled_time = ${scheduledTime}
+        WHERE event_id = ${eventId}
+          AND home_team_id = ${game.homeTeamId || -1}
+          AND away_team_id = ${game.awayTeamId || -1}
+          AND round = ${game.round}
+      `);
+      console.log(`[Enhanced Field Assignment] Updated game ${i + 1}: Field ${bestField.name} at ${scheduledDate} ${scheduledTime}`);
+    } catch (updateError) {
+      console.error(`[Enhanced Field Assignment] Error updating game ${i + 1}:`, updateError);
+      // Fallback: Just update field ID
+      try {
+        await db.update(games)
+          .set({ fieldId: bestField.id })
+          .where(
+            and(
+              eq(games.eventId, eventId),
+              eq(games.homeTeamId, game.homeTeamId || -1),
+              eq(games.awayTeamId, game.awayTeamId || -1),
+              eq(games.round, game.round)
+            )
+          );
+        console.log(`[Enhanced Field Assignment] Fallback: Updated game ${i + 1} with field ${bestField.name} only`);
+      } catch (fallbackError) {
+        console.error(`[Enhanced Field Assignment] Fallback failed for game ${i + 1}:`, fallbackError);
+      }
+    }
 
     // Update field's next available time
     fieldSchedules[bestField.id] = new Date(scheduledDateTime.getTime() + gameDurationMs + breakTimeMs);
