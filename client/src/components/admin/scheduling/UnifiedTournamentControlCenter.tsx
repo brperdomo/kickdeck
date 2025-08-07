@@ -255,12 +255,6 @@ export function UnifiedTournamentControlCenter({ eventId }: TournamentControlCen
     setAutoMode(true);
     autoScheduleMutation.mutate();
   };
-
-  const handleBulkDelete = () => {
-    if (confirm('Are you sure you want to delete all games for this tournament? This action cannot be undone.')) {
-      bulkDeleteMutation.mutate();
-    }
-  };
   
   const handleSelectiveSchedule = () => {
     if (selectedFlights.length === 0) {
