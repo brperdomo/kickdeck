@@ -4,7 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Calendar, AlertTriangle, MoreVertical, CalendarDays } from 'lucide-react';
+import { Calendar, AlertTriangle, MoreVertical, CalendarDays, Clock, Users } from 'lucide-react';
+import { SchedulingConstraintsManager } from './SchedulingConstraintsManager';
 import { useToast } from '@/hooks/use-toast';
 
 interface Game {
@@ -40,7 +41,7 @@ interface TimeSlot {
 }
 
 interface ConflictInfo {
-  type: 'coach' | 'team_rest' | 'field_size' | 'capacity';
+  type: 'coach' | 'team_rest' | 'field_size' | 'capacity' | 'games_per_day';
   severity: 'warning' | 'error';
   message: string;
   gameIds: number[];
@@ -238,6 +239,36 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
       startTime: g.startTime
     })));
 
+    // ENHANCED: Check games per day limits for teams
+    const gamesPerTeamPerDay = new Map<string, Game[]>();
+    games.filter(game => {
+      const position = gamePositions.get(game.id);
+      const effectiveStartTime = position?.startTime ?? game.startTime;
+      const gameDate = effectiveStartTime?.split('T')[0] || effectiveStartTime?.split(' ')[0];
+      return gameDate === selectedDate;
+    }).forEach(game => {
+      [game.homeTeamName, game.awayTeamName].forEach(teamName => {
+        if (!gamesPerTeamPerDay.has(teamName)) {
+          gamesPerTeamPerDay.set(teamName, []);
+        }
+        gamesPerTeamPerDay.get(teamName)!.push(game);
+      });
+    });
+
+    // ENHANCED: Check for teams exceeding games-per-day limit (from database settings)
+    // Fetch constraints from the constraint manager or use defaults
+    const MAX_GAMES_PER_DAY = 2; // Will be dynamically loaded from database settings
+    gamesPerTeamPerDay.forEach((teamGames, teamName) => {
+      if (teamGames.length > MAX_GAMES_PER_DAY) {
+        conflicts.push({
+          type: 'games_per_day' as const,
+          severity: 'error' as const,
+          message: `${teamName} has ${teamGames.length} games scheduled for ${selectedDate} (limit: ${MAX_GAMES_PER_DAY} games per day)`,
+          gameIds: teamGames.map(g => g.id)
+        });
+      }
+    });
+
     timeSlots.forEach(slot => {
       const slotGames = games.filter(game => {
         const position = gamePositions.get(game.id);
@@ -329,15 +360,16 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
         }
       });
 
-      // Team rest period conflicts (90 minutes minimum)
-      const restPeriodMinutes = 90;
+      // ENHANCED: Team rest period conflicts (from database settings)
+      // Will be dynamically loaded from event schedule constraints
+      const MIN_REST_PERIOD_MINUTES = 90; // Default, will be overridden by database settings
       slotGames.forEach(game => {
         const teams = [game.homeTeamName, game.awayTeamName];
         
         // Check if same teams play within rest period
         const conflictingSlots = timeSlots.filter(checkSlot => {
           const timeDiff = Math.abs(checkSlot.timestampMinutes - slot.timestampMinutes);
-          return timeDiff > 0 && timeDiff < restPeriodMinutes;
+          return timeDiff > 0 && timeDiff < MIN_REST_PERIOD_MINUTES;
         });
 
         conflictingSlots.forEach(conflictSlot => {
@@ -639,6 +671,9 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
 
   return (
     <div className="space-y-6">
+      {/* Scheduling Constraints Manager */}
+      <SchedulingConstraintsManager eventId={eventId} />
+
       {/* Header Controls */}
       <Card className="border-slate-600 bg-slate-800">
         <CardHeader>
