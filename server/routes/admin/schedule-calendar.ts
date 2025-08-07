@@ -78,7 +78,7 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
 
     
     // Process actual games from database only - no synthetic data
-    const processedGames = [];
+    const processedGames: any[] = [];
     
     console.log(`[Schedule Calendar Direct] Found ${gamesWithDetails.rows.length} total games`);
     console.log(`[Schedule Calendar Direct] Found ${allTimeSlots.length} time slots`);
@@ -111,7 +111,7 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
         homeTeam = await db.query.teams.findFirst({
           where: and(
             eq(teams.id, game.homeTeamId),
-            eq(teams.eventId, parseInt(eventId))
+            eq(teams.eventId, eventId)
           )
         });
       }
@@ -120,7 +120,7 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
         awayTeam = await db.query.teams.findFirst({
           where: and(
             eq(teams.id, game.awayTeamId),
-            eq(teams.eventId, parseInt(eventId))
+            eq(teams.eventId, eventId)
           )
         });
       }

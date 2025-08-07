@@ -440,6 +440,7 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
 
   // Handle drop
   const handleDrop = (e: React.DragEvent, fieldId: number, timeSlot: string) => {
+    console.log(`🔥 [ENHANCED DRAG DROP] DROP EVENT TRIGGERED!`);
     e.preventDefault();
     setDragOverSlot(null);
 
@@ -471,11 +472,17 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
     setGamePositions(prev => new Map(prev.set(draggedGame.id, { fieldId, startTime: newStartTime })));
 
     // Update backend
-    updateGameMutation.mutate({
-      gameId: draggedGame.id,
-      fieldId,
-      startTime: newStartTime
-    });
+    console.log(`🚀 [ENHANCED DRAG DROP] About to call updateGameMutation.mutate...`);
+    try {
+      updateGameMutation.mutate({
+        gameId: draggedGame.id,
+        fieldId,
+        startTime: newStartTime
+      });
+      console.log(`✅ [ENHANCED DRAG DROP] updateGameMutation.mutate called successfully`);
+    } catch (error) {
+      console.error(`❌ [ENHANCED DRAG DROP] Error calling updateGameMutation:`, error);
+    }
 
     setDraggedGame(null);
   };

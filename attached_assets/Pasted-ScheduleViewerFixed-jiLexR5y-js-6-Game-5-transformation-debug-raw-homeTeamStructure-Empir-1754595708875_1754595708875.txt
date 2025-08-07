@@ -1,0 +1,176 @@
+ScheduleViewerFixed-jiLexR5y.js:6 Game 5 transformation debug: 
+{raw: {…}, homeTeamStructure: 'Empire Surf North G2012 Academy', awayTeamStructure: 'Future FC G12', fieldStructure: '12', rawFieldName: '12', …}
+ScheduleViewerFixed-jiLexR5y.js:6 Game 5 API data: {
+  "id": 8677,
+  "homeTeam": "Empire Surf North G2012 Academy",
+  "awayTeam": "Future FC G12",
+  "ageGroup": "U14 Girls",
+  "field": "12",
+  "fieldId": 31,
+  "fieldName": "12",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf North G2012 Academy",
+  "awayTeamName": "Future FC G12"
+}
+ScheduleViewerFixed-jiLexR5y.js:6 Game 5 transformed: 
+{id: 8677, homeTeam: 'Empire Surf North G2012 Academy', awayTeam: 'Future FC G12', ageGroup: 'U14 Girls', field: '12', …}
+ScheduleViewerFixed-jiLexR5y.js:6 Game 6 transformation debug: 
+{raw: {…}, homeTeamStructure: 'Future FC G12', awayTeamStructure: 'ALBION SC Riverside G12 DPL', fieldStructure: '15', rawFieldName: '15', …}
+ScheduleViewerFixed-jiLexR5y.js:6 Game 6 API data: {
+  "id": 8680,
+  "homeTeam": "Future FC G12",
+  "awayTeam": "ALBION SC Riverside G12 DPL",
+  "ageGroup": "U14 Girls",
+  "field": "15",
+  "fieldId": 34,
+  "fieldName": "15",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Future FC G12",
+  "awayTeamName": "ALBION SC Riverside G12 DPL"
+}
+ScheduleViewerFixed-jiLexR5y.js:6 Game 6 transformed: 
+{id: 8680, homeTeam: 'Future FC G12', awayTeam: 'ALBION SC Riverside G12 DPL', ageGroup: 'U14 Girls', field: '15', …}
+ScheduleViewerFixed-jiLexR5y.js:6 Game 7 transformation debug: 
+{raw: {…}, homeTeamStructure: 'ALBION SC Riverside G12 DPL', awayTeamStructure: 'Cal Elite SC G2012', fieldStructure: 'f1', rawFieldName: 'f1', …}
+ScheduleViewerFixed-jiLexR5y.js:6 Game 7 API data: {
+  "id": 8682,
+  "homeTeam": "ALBION SC Riverside G12 DPL",
+  "awayTeam": "Cal Elite SC G2012",
+  "ageGroup": "U14 Girls",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "ALBION SC Riverside G12 DPL",
+  "awayTeamName": "Cal Elite SC G2012"
+}
+ScheduleViewerFixed-jiLexR5y.js:6 Game 7 transformed: 
+{id: 8682, homeTeam: 'ALBION SC Riverside G12 DPL', awayTeam: 'Cal Elite SC G2012', ageGroup: 'U14 Girls', field: 'f1', …}
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] All available fields: 
+[]
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Fields with games assigned: 
+[]
+index-8MQgYEVQ.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: 
+{isLoading: true, error: null, scheduleData: undefined, fieldsCount: 0, gamesCount: 0, …}
+index-8MQgYEVQ.js:838 🎯 [ENHANCED DRAG DROP] Transformed games for calendar: 
+(7) [{…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-8MQgYEVQ.js:838 🎯 [ENHANCED DRAG DROP] Fields data: 
+(28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-8MQgYEVQ.js:838 🎯 [GAME-FIELD DEBUG] Game 8683: fieldId=9, fieldName="f2", startTime="2025-08-16T10:45:00"
+index-8MQgYEVQ.js:838 🎯 [GAME-FIELD DEBUG] Game 8681: fieldId=35, fieldName="20", startTime="2025-08-16T08:00:00"
+index-8MQgYEVQ.js:838 🎯 [GAME-FIELD DEBUG] Game 8679: fieldId=33, fieldName="14", startTime="2025-08-16T08:00:00"
+index-8MQgYEVQ.js:838 🎯 [GAME-FIELD DEBUG] Game 8678: fieldId=9, fieldName="f2", startTime="2025-08-16T08:00:00"
+index-8MQgYEVQ.js:838 🎯 [GAME-FIELD DEBUG] Game 8677: fieldId=31, fieldName="12", startTime="2025-08-16T08:00:00"
+index-8MQgYEVQ.js:838 🎯 [GAME-FIELD DEBUG] Game 8680: fieldId=34, fieldName="15", startTime="2025-08-16T08:00:00"
+index-8MQgYEVQ.js:838 🎯 [GAME-FIELD DEBUG] Game 8682: fieldId=8, fieldName="f1", startTime="2025-08-16T08:00:00"
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] All available fields: 
+(28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Fields with games assigned: 
+(6) [9, 35, 33, 31, 34, 8]
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Field 31 (12) has 1 games
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Field 33 (14) has 1 games
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Field 34 (15) has 1 games
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Field 35 (20) has 1 games
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Field 8 (f1) has 1 games
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Field 9 (f2) has 2 games
+index-8MQgYEVQ.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: 
+{isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 7, …}
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] All available fields: 
+(28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Fields with games assigned: 
+(6) [9, 35, 33, 31, 34, 8]
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Field 31 (12) has 1 games
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Field 33 (14) has 1 games
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Field 34 (15) has 1 games
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Field 35 (20) has 1 games
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Field 8 (f1) has 1 games
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Field 9 (f2) has 2 games
+index-8MQgYEVQ.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: 
+{isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 7, …}
+index-8MQgYEVQ.js:838 🎬 [ENHANCED DRAG DROP] Drag started for game 8678
+index-8MQgYEVQ.js:838 📋 Dragging: Empire Surf North G2012 Academy vs ALBION SC Riverside G12 DPL (U14 Girls)
+index-8MQgYEVQ.js:838 📍 Current position: Field f2 at 2025-08-16T08:00:00
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] All available fields: 
+(28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Fields with games assigned: 
+(6) [9, 35, 33, 31, 34, 8]
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Field 31 (12) has 1 games
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Field 33 (14) has 1 games
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Field 34 (15) has 1 games
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Field 35 (20) has 1 games
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Field 8 (f1) has 1 games
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Field 9 (f2) has 2 games
+index-8MQgYEVQ.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: 
+{isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 7, …}
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] All available fields: 
+(28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Fields with games assigned: 
+(6) [9, 35, 33, 31, 34, 8]
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Field 31 (12) has 1 games
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Field 33 (14) has 1 games
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Field 34 (15) has 1 games
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Field 35 (20) has 1 games
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Field 8 (f1) has 1 games
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Field 9 (f2) has 2 games
+index-8MQgYEVQ.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: 
+{isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 7, …}
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] All available fields: 
+(28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Fields with games assigned: 
+(6) [9, 35, 33, 31, 34, 8]
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Field 31 (12) has 1 games
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Field 33 (14) has 1 games
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Field 34 (15) has 1 games
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Field 35 (20) has 1 games
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Field 8 (f1) has 1 games
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Field 9 (f2) has 2 games
+index-8MQgYEVQ.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: 
+{isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 7, …}
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] All available fields: 
+(28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Fields with games assigned: 
+(6) [9, 35, 33, 31, 34, 8]
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Field 31 (12) has 1 games
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Field 33 (14) has 1 games
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Field 34 (15) has 1 games
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Field 35 (20) has 1 games
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Field 8 (f1) has 1 games
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Field 9 (f2) has 2 games
+index-8MQgYEVQ.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: 
+{isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 7, …}
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] All available fields: 
+(28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Fields with games assigned: 
+(6) [9, 35, 33, 31, 34, 8]
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Field 31 (12) has 1 games
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Field 33 (14) has 1 games
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Field 34 (15) has 1 games
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Field 35 (20) has 1 games
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Field 8 (f1) has 1 games
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Field 9 (f2) has 2 games
+index-8MQgYEVQ.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: 
+{isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 7, …}
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] All available fields: 
+(28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-8MQgYEVQ.js:839 🎯 [FIELD DEBUG] Fields with games assigned: 
+(6) [9, 35, 33, 31, 34, 8]
+﻿
+
