@@ -598,47 +598,7 @@ router.post('/schedule-selected-flights', requirePermission('manage_events'), as
   }
 });
 
-// Generate selective automated schedule for specific flights (new endpoint)
-router.post('/events/:eventId/generate-selective-schedule', requirePermission('manage_events'), async (req, res) => {
-  try {
-    const { eventId } = req.params;
-    const { flightIds, includeReferees, includeFacilities } = req.body;
-
-    console.log(`[Selective Scheduling] Starting selective schedule generation for event ${eventId}`);
-    console.log(`[Selective Scheduling] Selected flights: ${flightIds.join(', ')}`);
-
-    if (!flightIds || !Array.isArray(flightIds) || flightIds.length === 0) {
-      return res.status(400).json({ error: 'Flight IDs are required for selective scheduling' });
-    }
-
-    // For now, we'll use a simplified approach by calling the existing endpoint
-    // This endpoint will be enhanced to support selective scheduling
-    console.log(`[Selective Scheduling] Processing ${flightIds.length} flight IDs`);
-
-    // For now, create a simplified selective scheduling implementation
-    // This will be enhanced to integrate with the full scheduling engine
-    const result = await generateSelectiveSchedule(eventId, flightIds, {
-      includeReferees: includeReferees !== false,
-      includeFacilities: includeFacilities !== false
-    });
-
-    res.json({
-      success: result.success,
-      message: result.message || `Schedule generated successfully for ${flightIds.length} selected flights`,
-      selectedFlights: result.selectedFlights || flightIds.length,
-      totalGames: result.totalGames || 0,
-      flightNames: flightIds,
-      games: result.games || []
-    });
-
-  } catch (error) {
-    console.error('Selective scheduling error:', error);
-    res.status(500).json({ 
-      error: 'Failed to generate selective schedule',
-      details: error instanceof Error ? error.message : String(error)
-    });
-  }
-});
+// REMOVED DUPLICATE ROUTE - CONSOLIDATED INTO SINGLE ENDPOINT ABOVE
 
 // Simplified selective scheduling implementation
 async function generateSelectiveSchedule(eventId: string, flightIds: string[], options: any) {
