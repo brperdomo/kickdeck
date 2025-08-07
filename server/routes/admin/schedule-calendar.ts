@@ -111,7 +111,7 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
         homeTeam = await db.query.teams.findFirst({
           where: and(
             eq(teams.id, game.homeTeamId),
-            eq(teams.eventId, parseInt(eventId))
+            eq(teams.eventId, eventId)
           )
         });
       }
@@ -120,7 +120,7 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
         awayTeam = await db.query.teams.findFirst({
           where: and(
             eq(teams.id, game.awayTeamId),
-            eq(teams.eventId, parseInt(eventId))
+            eq(teams.eventId, eventId)
           )
         });
       }
@@ -176,12 +176,17 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
         awayTeam: awayTeam?.name || 'TBD', 
         ageGroup: ageGroupDisplay,
         field: assignedField?.name || 'Field Unknown',
+        fieldId: game.fieldId || null,
+        fieldName: assignedField?.name || 'Field Unknown',
         date: formattedDate,
         time: formattedTime,
+        startTime: formattedDate !== 'TBD' && formattedTime !== 'TBD' ? `${formattedDate}T${formattedTime}:00` : null,
         duration: game.duration || 90,
         status: game.status,
         homeScore: null,
-        awayScore: null
+        awayScore: null,
+        homeTeamName: homeTeam?.name || 'TBD',
+        awayTeamName: awayTeam?.name || 'TBD'
       });
     }
 

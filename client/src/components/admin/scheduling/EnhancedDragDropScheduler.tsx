@@ -76,7 +76,32 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
     queryFn: async () => {
       const response = await fetch(`/api/admin/events/${eventId}/schedule-calendar`);
       if (!response.ok) throw new Error('Failed to fetch schedule data');
-      return response.json();
+      const data = await response.json();
+      
+      // Transform the games data to match calendar interface expectations
+      const transformedGames = data.games?.map((game: any) => ({
+        id: game.id,
+        homeTeamName: game.homeTeam || 'TBD',
+        awayTeamName: game.awayTeam || 'TBD',
+        ageGroup: game.ageGroup || 'Unknown',
+        fieldId: game.fieldId,
+        fieldName: game.fieldName || game.field || 'Field Unknown',
+        startTime: game.startTime || (game.date !== 'TBD' && game.time !== 'TBD' ? `${game.date}T${game.time}:00` : null),
+        endTime: game.endTime || null,
+        duration: game.duration || 90,
+        status: game.status || 'scheduled',
+        homeTeamCoach: game.homeTeamCoach || '',
+        awayTeamCoach: game.awayTeamCoach || '',
+        bracketName: game.bracketName || ''
+      })) || [];
+      
+      console.log('🎯 [ENHANCED DRAG DROP] Transformed games for calendar:', transformedGames);
+      console.log('🎯 [ENHANCED DRAG DROP] Fields data:', data.fields);
+      
+      return {
+        ...data,
+        games: transformedGames
+      };
     },
     staleTime: 0,
     refetchOnWindowFocus: true
