@@ -779,27 +779,29 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
         });
         
         console.log(`[Selective Scheduling] SUCCESS: Generated 6 pool + 1 championship = ${bracketGames.length} games for group_of_4 (used ${selectedTeams.length} of ${flightTeams.length} teams)`);
-      } else if (flightTeams.length >= 6 && flightTeams.length <= 8) {
-        // Smart fallback: Use group_of_6 or group_of_8 based on team count
-        const smartFormat = flightTeams.length <= 6 ? 'group_of_6' : 'group_of_8';
-        console.log(`[Selective Scheduling] SMART FALLBACK: ${bracket.tournamentFormat} not handled, using ${smartFormat} for ${flightTeams.length} teams`);
+      } else if (flightTeams.length === 6) {
+        // Smart fallback: Use group_of_6 (9 pool games + 1 championship = 10 games)
+        console.log(`[Selective Scheduling] SMART FALLBACK: ${bracket.tournamentFormat} not handled, using group_of_6 for ${flightTeams.length} teams`);
         
-        // Generate appropriate games based on team count
         let gameNumber = 1;
-        const selectedTeams = flightTeams.slice(0, smartFormat === 'group_of_6' ? 6 : 8);
+        const selectedTeams = flightTeams.slice(0, 6);
         
-        // Generate round-robin pool games
-        for (let i = 0; i < selectedTeams.length; i++) {
-          for (let j = i + 1; j < selectedTeams.length; j++) {
+        // Generate 9 pool games (2 groups of 3: Pool A vs Pool B)
+        const poolA = selectedTeams.slice(0, 3);
+        const poolB = selectedTeams.slice(3, 6);
+        
+        // Pool A round-robin (3 games)
+        for (let i = 0; i < poolA.length; i++) {
+          for (let j = i + 1; j < poolA.length; j++) {
             bracketGames.push({
               id: `${flightId}-${gameNumber}`,
-              homeTeamId: selectedTeams[i].id,
-              homeTeamName: selectedTeams[i].name,
-              awayTeamId: selectedTeams[j].id,
-              awayTeamName: selectedTeams[j].name,
+              homeTeamId: poolA[i].id,
+              homeTeamName: poolA[i].name,
+              awayTeamId: poolA[j].id,
+              awayTeamName: poolA[j].name,
               bracketId: parseInt(flightId),
               bracketName: bracket.name,
-              round: 1, // Pool play round number
+              round: 1,
               gameType: 'pool_play',
               duration: 90,
               gameNumber: gameNumber++
@@ -807,26 +809,127 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
           }
         }
         
-        // Add championship final for larger groups
-        if (selectedTeams.length >= 6) {
+        // Pool B round-robin (3 games)  
+        for (let i = 0; i < poolB.length; i++) {
+          for (let j = i + 1; j < poolB.length; j++) {
+            bracketGames.push({
+              id: `${flightId}-${gameNumber}`,
+              homeTeamId: poolB[i].id,
+              homeTeamName: poolB[i].name,
+              awayTeamId: poolB[j].id,
+              awayTeamName: poolB[j].name,
+              bracketId: parseInt(flightId),
+              bracketName: bracket.name,
+              round: 1,
+              gameType: 'pool_play',
+              duration: 90,
+              gameNumber: gameNumber++
+            });
+          }
+        }
+        
+        // Cross-pool games (3 games: each Pool A team plays each Pool B team)
+        for (let i = 0; i < poolA.length; i++) {
           bracketGames.push({
             id: `${flightId}-${gameNumber}`,
-            homeTeamId: null,
-            homeTeamName: '1st Place',
-            awayTeamId: null,
-            awayTeamName: '2nd Place',
+            homeTeamId: poolA[i].id,
+            homeTeamName: poolA[i].name,
+            awayTeamId: poolB[i].id,
+            awayTeamName: poolB[i].name,
             bracketId: parseInt(flightId),
             bracketName: bracket.name,
-            round: 2,
-            gameType: 'championship',
+            round: 1,
+            gameType: 'pool_play',
             duration: 90,
-            gameNumber: gameNumber++,
-            notes: 'Championship Final - Teams TBD based on pool standings',
-            isPending: true
+            gameNumber: gameNumber++
           });
         }
         
-        console.log(`[Selective Scheduling] Generated ${bracketGames.length} games using smart ${smartFormat} fallback`);
+        // Championship final (10th game)
+        bracketGames.push({
+          id: `${flightId}-${gameNumber}`,
+          homeTeamId: null,
+          homeTeamName: '1st Place',
+          awayTeamId: null,
+          awayTeamName: '2nd Place',
+          bracketId: parseInt(flightId),
+          bracketName: bracket.name,
+          round: 2,
+          gameType: 'championship',
+          duration: 90,
+          gameNumber: gameNumber++,
+          notes: 'Championship Final - Teams TBD based on pool standings',
+          isPending: true
+        });
+        
+        console.log(`[Selective Scheduling] Generated ${bracketGames.length} games using smart group_of_6 fallback (9 pool + 1 championship)`);
+      } else if (flightTeams.length >= 7 && flightTeams.length <= 8) {
+        // Smart fallback: Use group_of_8 (12 pool games + 1 championship = 13 games)
+        console.log(`[Selective Scheduling] SMART FALLBACK: ${bracket.tournamentFormat} not handled, using group_of_8 for ${flightTeams.length} teams`);
+        
+        let gameNumber = 1;
+        const selectedTeams = flightTeams.slice(0, 8);
+        
+        // Generate 12 pool games (2 groups of 4: Pool A vs Pool B)
+        const poolA = selectedTeams.slice(0, 4);
+        const poolB = selectedTeams.slice(4, 8);
+        
+        // Pool A round-robin (6 games)
+        for (let i = 0; i < poolA.length; i++) {
+          for (let j = i + 1; j < poolA.length; j++) {
+            bracketGames.push({
+              id: `${flightId}-${gameNumber}`,
+              homeTeamId: poolA[i].id,
+              homeTeamName: poolA[i].name,
+              awayTeamId: poolA[j].id,
+              awayTeamName: poolA[j].name,
+              bracketId: parseInt(flightId),
+              bracketName: bracket.name,
+              round: 1,
+              gameType: 'pool_play',
+              duration: 90,
+              gameNumber: gameNumber++
+            });
+          }
+        }
+        
+        // Pool B round-robin (6 games)
+        for (let i = 0; i < poolB.length; i++) {
+          for (let j = i + 1; j < poolB.length; j++) {
+            bracketGames.push({
+              id: `${flightId}-${gameNumber}`,
+              homeTeamId: poolB[i].id,
+              homeTeamName: poolB[i].name,
+              awayTeamId: poolB[j].id,
+              awayTeamName: poolB[j].name,
+              bracketId: parseInt(flightId),
+              bracketName: bracket.name,
+              round: 1,
+              gameType: 'pool_play',
+              duration: 90,
+              gameNumber: gameNumber++
+            });
+          }
+        }
+        
+        // Championship final (13th game)
+        bracketGames.push({
+          id: `${flightId}-${gameNumber}`,
+          homeTeamId: null,
+          homeTeamName: 'Pool A Winner',
+          awayTeamId: null,
+          awayTeamName: 'Pool B Winner',
+          bracketId: parseInt(flightId),
+          bracketName: bracket.name,
+          round: 2,
+          gameType: 'championship',
+          duration: 90,
+          gameNumber: gameNumber++,
+          notes: 'Championship Final - Pool A Winner vs Pool B Winner',
+          isPending: true
+        });
+        
+        console.log(`[Selective Scheduling] Generated ${bracketGames.length} games using smart group_of_8 fallback (12 pool + 1 championship)`);
       } else if (flightTeams.length === 4 || flightTeams.length === 5) {
         // Smart fallback: Use group_of_4 for 4-5 teams
         console.log(`[Selective Scheduling] SMART FALLBACK: ${bracket.tournamentFormat} not handled, using group_of_4 for ${flightTeams.length} teams`);

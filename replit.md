@@ -21,7 +21,10 @@ Preferred communication style: Simple, everyday language.
   - **U14 Girls Nike Elite**: Bracket (id=593) properly configured with group_of_4 format ready for 7-game generation
   - **Team Count Issue Resolved**: Modified group_of_4 logic to work regardless of actual team count by selecting first 4 teams
   - **CRITICAL DUPLICATE ROUTE FIX**: Removed duplicate `/generate-selective-schedule` route that was bypassing group_of_4 logic completely
-  - **INTELLIGENT FALLBACK SYSTEM**: Replaced round-robin fallbacks with smart group format selection (group_of_4 for 4-5 teams, group_of_6 for 6 teams, group_of_8 for 7-8 teams)
+  - **INTELLIGENT FALLBACK SYSTEM**: Replaced round-robin fallbacks with smart group format selection:
+    - **group_of_4**: 4-5 teams → 6 pool + 1 championship = 7 games
+    - **group_of_6**: 6 teams → 9 pool + 1 championship = 10 games (2 pools of 3)  
+    - **group_of_8**: 7-8 teams → 12 pool + 1 championship = 13 games (2 pools of 4)
 - **CRITICAL: Proper Field Distribution & Schedule Grid Complete Success (Aug 2025)**: Fully resolved field size validation and Galway Downs field visibility.
   - **Correct Field Size Assignment**: U12 Boys games now properly assigned to 9v9 fields (A1, A2) instead of incorrect 11v11 field assignment
   - **All Galway Downs Fields Visible**: Schedule Grid now shows all available fields - A1/A2 (9v9), B1/B2 (7v7), f1-f6 (11v11) with proper time slots
