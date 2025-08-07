@@ -1,4 +1,4 @@
-import { pgTable, text, serial, boolean, jsonb, timestamp, integer, bigint, date, varchar } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, boolean, jsonb, timestamp, integer, bigint, date, varchar, time } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { relations } from "drizzle-orm";
 import { z } from "zod";
@@ -450,6 +450,8 @@ export const games = pgTable("games", {
   matchNumber: integer("match_number").notNull(),
   duration: integer("duration").notNull(),
   breakTime: integer("break_time").notNull().default(5),
+  scheduledDate: date("scheduled_date"), // Date for the scheduled game
+  scheduledTime: time("scheduled_time"), // Time for the scheduled game
   createdAt: text("created_at").notNull().default(new Date().toISOString()),
   updatedAt: text("updated_at").notNull().default(new Date().toISOString()),
 });
