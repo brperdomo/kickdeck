@@ -1,7 +1,7 @@
 import express from 'express';
 import { db } from '@db';
 import { games, teams, eventAgeGroups, fields, complexes, gameTimeSlots, events } from '@db/schema';
-import { eq, and } from 'drizzle-orm';
+import { eq, and, sql } from 'drizzle-orm';
 
 const router = express.Router();
 
@@ -24,30 +24,32 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
     const eventStartDate = event.startDate; // Use actual tournament start date (2025-08-16)
     console.log(`[Schedule Calendar] Using event start date: ${eventStartDate}`);
 
-    // Get games with proper age group information using JOIN first
-    const gamesWithDetails = await db
-      .select({
-        gameId: games.id,
-        homeTeamId: games.homeTeamId,
-        awayTeamId: games.awayTeamId,
-        ageGroupId: games.ageGroupId,
-        fieldId: games.fieldId,
-        timeSlotId: games.timeSlotId,
-        status: games.status,
-        duration: games.duration,
-        round: games.round,
-        matchNumber: games.matchNumber,
-        ageGroupName: eventAgeGroups.ageGroup,
-        ageGroupGender: eventAgeGroups.gender
-      })
-      .from(games)
-      .leftJoin(eventAgeGroups, eq(games.ageGroupId, eventAgeGroups.id))
-      .where(eq(games.eventId, eventId));
+    // Get games with proper age group information using raw SQL to include scheduled_date and scheduled_time
+    const gamesWithDetails = await db.execute(sql`
+      SELECT 
+        g.id as "gameId",
+        g.home_team_id as "homeTeamId",
+        g.away_team_id as "awayTeamId", 
+        g.age_group_id as "ageGroupId",
+        g.field_id as "fieldId",
+        g.time_slot_id as "timeSlotId",
+        g.scheduled_date as "scheduledDate",
+        g.scheduled_time as "scheduledTime",
+        g.status,
+        g.duration,
+        g.round,
+        g.match_number as "matchNumber",
+        ag.age_group as "ageGroupName",
+        ag.gender as "ageGroupGender"
+      FROM games g
+      LEFT JOIN event_age_groups ag ON g.age_group_id = ag.id
+      WHERE g.event_id = ${eventId}
+    `);
 
-    console.log(`[Schedule Calendar] Found ${gamesWithDetails.length} total games with age group data`);
-    console.log(`[Schedule Calendar] Sample game:`, gamesWithDetails[0]);
+    console.log(`[Schedule Calendar] Found ${gamesWithDetails.rows.length} total games with age group data`);
+    console.log(`[Schedule Calendar] Sample game:`, gamesWithDetails.rows[0]);
     
-    if (gamesWithDetails.length === 0) {
+    if (gamesWithDetails.rows.length === 0) {
       console.log(`[Schedule Calendar] No games found for event ${eventId}, checking database...`);
       // Check if the event exists
       const eventCheck = await db.select().from(games).limit(5);
@@ -78,13 +80,13 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
     // Process actual games from database only - no synthetic data
     const processedGames = [];
     
-    console.log(`[Schedule Calendar Direct] Found ${gamesWithDetails.length} total games`);
+    console.log(`[Schedule Calendar Direct] Found ${gamesWithDetails.rows.length} total games`);
     console.log(`[Schedule Calendar Direct] Found ${allTimeSlots.length} time slots`);
     console.log(`[Schedule Calendar Direct] Using event start date: ${eventStartDate}`);
     
     // Only process real games that exist in the database
-    for (let i = 0; i < gamesWithDetails.length; i++) {
-      const game = gamesWithDetails[i];
+    for (let i = 0; i < gamesWithDetails.rows.length; i++) {
+      const game = gamesWithDetails.rows[i];
       
       // Get actual time slot and field data from database using proper IDs
       const timeSlot = allTimeSlots.find(ts => ts.id === game.timeSlotId);
@@ -102,19 +104,26 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
       console.log(`[Schedule Calendar Direct] Processing game ${game.gameId}: ${timeSlot?.startTime || 'No time'} on ${assignedField?.name || 'No field'}`);
 
       // Get team names and coach info - only from approved teams for this event
-      const homeTeam = await db.query.teams.findFirst({
-        where: and(
-          eq(teams.id, game.homeTeamId!),
-          eq(teams.eventId, eventId)
-        )
-      });
+      let homeTeam = null;
+      let awayTeam = null;
       
-      const awayTeam = await db.query.teams.findFirst({
-        where: and(
-          eq(teams.id, game.awayTeamId!),
-          eq(teams.eventId, eventId)
-        )
-      });
+      if (game.homeTeamId) {
+        homeTeam = await db.query.teams.findFirst({
+          where: and(
+            eq(teams.id, game.homeTeamId),
+            eq(teams.eventId, parseInt(eventId))
+          )
+        });
+      }
+      
+      if (game.awayTeamId) {
+        awayTeam = await db.query.teams.findFirst({
+          where: and(
+            eq(teams.id, game.awayTeamId),
+            eq(teams.eventId, parseInt(eventId))
+          )
+        });
+      }
 
       // Extract coach information from teams
       let homeTeamCoach = '';
@@ -145,14 +154,20 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
         `${game.ageGroupName}${game.ageGroupGender ? ` ${game.ageGroupGender}` : ''}`.trim() : 
         'Unknown';
 
-      // Format time properly from time slot
+      // Format time properly from scheduled_date and scheduled_time or time slot
       let formattedDate = 'TBD';
       let formattedTime = 'TBD';
       
-      if (timeSlot?.startTime) {
+      // First try to use the new scheduled_date and scheduled_time fields
+      if (game.scheduledDate && game.scheduledTime) {
+        formattedDate = String(game.scheduledDate); // Convert to string and format as YYYY-MM-DD
+        formattedTime = String(game.scheduledTime).substr(0, 5); // Convert to string and get HH:MM format
+        console.log(`[Schedule Calendar] Using scheduled date/time: ${formattedDate} ${formattedTime}`);
+      } else if (timeSlot?.startTime) {
         const startDate = new Date(timeSlot.startTime);
         formattedDate = startDate.toISOString().split('T')[0]; // YYYY-MM-DD
         formattedTime = startDate.toTimeString().split(' ')[0].substr(0, 5); // HH:MM
+        console.log(`[Schedule Calendar] Using time slot: ${formattedDate} ${formattedTime}`);
       }
 
       processedGames.push({
