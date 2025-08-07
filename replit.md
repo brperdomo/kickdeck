@@ -6,6 +6,12 @@ MatchPro AI is a comprehensive sports event management platform for tournament o
 ## User Preferences
 Preferred communication style: Simple, everyday language.
 
+**CRITICAL DATA STRUCTURE (User Emphasis)**:
+- AGE GROUP → FLIGHTS → BRACKETS → Teams
+- Tournament formats are assigned to FLIGHTS (represented as event_brackets in database)
+- FLIGHTS are competitive levels (Nike Elite, Nike Premier, Nike Classic) within age groups
+- Each FLIGHT generates its own brackets and matchups based on the assigned tournament_format
+
 ## Recent Changes
 - **CRITICAL: Group_of_4 Format Fix Complete (Aug 2025)**: Resolved persistent 10-game generation bug in Select Flights scheduling workflow.
   - **Root Cause**: generateSelectiveSchedule function bypassed tournament scheduler and used round-robin fallback for group_of_4
