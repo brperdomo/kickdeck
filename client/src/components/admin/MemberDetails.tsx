@@ -41,6 +41,8 @@ import {
   AlertCircle,
   Edit,
   Users,
+  Download,
+  Filter,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -81,6 +83,7 @@ const MemberDetails: React.FC = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedEventId, setSelectedEventId] = useState<string>('all');
   const [selectedMemberId, setSelectedMemberId] = useState<number | null>(null);
   const [memberDetailsOpen, setMemberDetailsOpen] = useState(false);
   const [confirmResendOpen, setConfirmResendOpen] = useState(false);
@@ -92,13 +95,32 @@ const MemberDetails: React.FC = () => {
   const [mergeDialogOpen, setMergeDialogOpen] = useState(false);
   const [mergeSearchTerm, setMergeSearchTerm] = useState('');
   const [selectedSourceMember, setSelectedSourceMember] = useState<Member | null>(null);
+  const [isExporting, setIsExporting] = useState(false);
 
-  // Query to fetch members with pagination and search
+  // Reset to first page when filters change
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedEventId]);
+
+  // Query to fetch all events for the dropdown filter
+  const eventsQuery = useQuery({
+    queryKey: ['events'],
+    queryFn: async () => {
+      const response = await fetch('/api/admin/events');
+      if (!response.ok) {
+        throw new Error('Failed to fetch events');
+      }
+      return response.json();
+    },
+  });
+
+  // Query to fetch members with pagination, search, and event filtering
   const membersQuery = useQuery({
-    queryKey: ['members', currentPage, pageSize, searchTerm],
+    queryKey: ['members', currentPage, pageSize, searchTerm, selectedEventId],
     queryFn: async () => {
       const searchParams = new URLSearchParams();
       if (searchTerm) searchParams.append('search', searchTerm);
+      if (selectedEventId && selectedEventId !== 'all') searchParams.append('eventId', selectedEventId);
       searchParams.append('page', currentPage.toString());
       searchParams.append('limit', pageSize.toString());
       
@@ -251,6 +273,48 @@ const MemberDetails: React.FC = () => {
     },
   });
 
+  // Handle CSV export
+  const handleExportCSV = async () => {
+    try {
+      setIsExporting(true);
+      
+      const searchParams = new URLSearchParams();
+      if (searchTerm) searchParams.append('search', searchTerm);
+      if (selectedEventId && selectedEventId !== 'all') searchParams.append('eventId', selectedEventId);
+      
+      const response = await fetch(`/api/admin/members/export-csv?${searchParams.toString()}`);
+      if (!response.ok) {
+        throw new Error('Failed to export members');
+      }
+      
+      // Create a blob from the response and download it
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = response.headers.get('Content-Disposition')?.split('filename=')[1]?.replace(/"/g, '') || 'members-export.csv';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      
+      toast({
+        title: "Export Successful",
+        description: "Member data has been exported to CSV successfully.",
+      });
+      
+    } catch (error) {
+      console.error('Error exporting CSV:', error);
+      toast({
+        title: "Export Failed",
+        description: "Failed to export member data. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   const handleOpenMemberDetails = (memberId: number) => {
     setSelectedMemberId(memberId);
     setMemberDetailsOpen(true);
@@ -323,8 +387,42 @@ const MemberDetails: React.FC = () => {
             View and manage all registered members in the system.
           </p>
         </div>
-        <div className="flex items-center gap-2 w-full md:w-[300px]">
-          <div className="relative w-full">
+        <div className="flex items-center gap-3">
+          {/* Event Filter Dropdown */}
+          <div className="flex items-center gap-2">
+            <Filter className="h-4 w-4 text-muted-foreground" />
+            <Select value={selectedEventId} onValueChange={setSelectedEventId}>
+              <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder="Filter by event" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Events</SelectItem>
+                {eventsQuery.data?.events?.map((event: any) => (
+                  <SelectItem key={event.id} value={event.id.toString()}>
+                    {event.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          
+          {/* Export Button */}
+          <Button 
+            onClick={handleExportCSV}
+            disabled={isExporting}
+            variant="outline"
+            className="flex items-center gap-2"
+          >
+            {isExporting ? (
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+            ) : (
+              <Download className="h-4 w-4" />
+            )}
+            Export CSV
+          </Button>
+          
+          {/* Search Input */}
+          <div className="relative w-[300px]">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search members..."
@@ -339,9 +437,20 @@ const MemberDetails: React.FC = () => {
       {/* Members table */}
       <Card className="border shadow-sm">
         <CardHeader className="bg-card">
-          <CardTitle>Members</CardTitle>
+          <CardTitle className="flex items-center justify-between">
+            <span>Members</span>
+            <div className="text-sm text-muted-foreground">
+              {selectedEventId === 'all' ? 'All Events' : 
+                eventsQuery.data?.events?.find((e: any) => e.id.toString() === selectedEventId)?.name || 'Event Filter'}
+              {membersQuery.data?.pagination && (
+                <span className="ml-2">
+                  ({membersQuery.data.pagination.total} members)
+                </span>
+              )}
+            </div>
+          </CardTitle>
           <CardDescription>
-            Manage and track all members, their registrations, and payment information.
+            View members filtered by event and export contact information to CSV.
           </CardDescription>
         </CardHeader>
         <CardContent>

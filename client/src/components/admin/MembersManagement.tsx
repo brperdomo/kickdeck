@@ -41,7 +41,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Mail, Search, UserCircle, Filter, CheckCircle, XCircle, RotateCw, Users } from 'lucide-react';
+import { Loader2, Mail, Search, UserCircle, Filter, CheckCircle, XCircle, RotateCw, Users, Download, FileText } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Pagination } from '@/components/ui/pagination';
 import { formatDate } from '@/lib/utils';
@@ -52,6 +52,7 @@ export function MemberManagement() {
   const [pageSize, setPageSize] = useState(10);
   const [sort, setSort] = useState('lastName');
   const [order, setOrder] = useState('asc');
+  const [selectedEvent, setSelectedEvent] = useState<string>(''); // State for event filtering
   const [selectedMember, setSelectedMember] = useState<any>(null);
   const [selectedRegistration, setSelectedRegistration] = useState<any>(null);
   const [isResendDialogOpen, setIsResendDialogOpen] = useState(false);
@@ -59,17 +60,30 @@ export function MemberManagement() {
   const queryClient = useQueryClient();
   const [, navigate] = useLocation();
 
+  // Query events for the dropdown
+  const { data: eventsData } = useQuery({
+    queryKey: ['events'],
+    queryFn: async () => {
+      const response = await fetch('/api/admin/events');
+      if (!response.ok) {
+        throw new Error('Failed to fetch events');
+      }
+      return response.json();
+    }
+  });
+
   // Query members with search, pagination and sorting
   const { data: membersData, isLoading, isError } = useQuery({
-    queryKey: ['members', search, page, pageSize, sort, order],
+    queryKey: ['members', search, page, pageSize, sort, order, selectedEvent],
     queryFn: async () => {
       const searchParams = new URLSearchParams();
       if (search) searchParams.append('search', search);
+      if (selectedEvent) searchParams.append('eventId', selectedEvent); // Append selected event
       searchParams.append('page', page.toString());
       searchParams.append('limit', pageSize.toString());
       searchParams.append('sort', sort);
       searchParams.append('order', order);
-      
+
       const response = await fetch(`/api/admin/members?${searchParams.toString()}`);
       if (!response.ok) {
         throw new Error('Failed to fetch members');
@@ -78,12 +92,53 @@ export function MemberManagement() {
     }
   });
 
+  // Function to export members to CSV
+  const exportMembersToCSV = async () => {
+    const searchParams = new URLSearchParams();
+    if (search) searchParams.append('search', search);
+    if (selectedEvent) searchParams.append('eventId', selectedEvent); // Filter by selected event
+
+    try {
+      const response = await fetch(`/api/admin/members/export?${searchParams.toString()}`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'text/csv',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to export members');
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = 'members.csv';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      toast({
+        title: "Export successful",
+        description: "Members have been exported to CSV.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Export failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+
   // Query member details when a member is selected
   const { data: memberDetails, isLoading: isLoadingDetails } = useQuery({
     queryKey: ['member', selectedMember?.id],
     queryFn: async () => {
       if (!selectedMember?.id) return null;
-      
+
       const response = await fetch(`/api/admin/members/${selectedMember.id}`);
       if (!response.ok) {
         throw new Error('Failed to fetch member details');
@@ -98,7 +153,7 @@ export function MemberManagement() {
     queryKey: ['registration', selectedRegistration?.team?.id],
     queryFn: async () => {
       if (!selectedRegistration?.team?.id) return null;
-      
+
       const response = await fetch(`/api/admin/members/registration/${selectedRegistration.team.id}`);
       if (!response.ok) {
         throw new Error('Failed to fetch registration details');
@@ -114,12 +169,12 @@ export function MemberManagement() {
       const response = await fetch(`/api/admin/members/registration/${teamId}/resend-confirmation`, {
         method: 'POST',
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Failed to resend confirmation');
       }
-      
+
       return response.json();
     },
     onSuccess: () => {
@@ -140,7 +195,7 @@ export function MemberManagement() {
 
   // Calculate pagination 
   const totalPages = membersData?.pagination?.totalPages || 1;
-  
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     setPage(1); // Reset to first page on new search
@@ -207,7 +262,7 @@ export function MemberManagement() {
             View and manage all registered members in the system
           </p>
         </div>
-        
+
         <div className="flex gap-2">
           <Button
             variant="outline"
@@ -218,8 +273,21 @@ export function MemberManagement() {
             <Users className="h-4 w-4" />
             Member Merge
           </Button>
-          
+
           <form onSubmit={handleSearch} className="flex gap-2">
+            <Select onValueChange={setSelectedEvent} value={selectedEvent}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Filter by Event" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">All Events</SelectItem>
+                {eventsData?.events?.map((event: { id: string; name: string }) => (
+                  <SelectItem key={event.id} value={event.id}>
+                    {event.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             <div className="relative">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
@@ -232,6 +300,15 @@ export function MemberManagement() {
             </div>
             <Button type="submit" size="sm">Search</Button>
           </form>
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={exportMembersToCSV}
+            className="flex items-center gap-2"
+          >
+            <Download className="h-4 w-4" />
+            Export CSV
+          </Button>
         </div>
       </div>
 
@@ -251,7 +328,7 @@ export function MemberManagement() {
         <Card>
           <CardContent className="pt-6">
             <p className="text-center text-muted-foreground">
-              No members found. Try a different search term.
+              No members found. Try a different search term or event.
             </p>
           </CardContent>
         </Card>
@@ -310,7 +387,7 @@ export function MemberManagement() {
             <div className="text-sm text-muted-foreground">
               Showing page {page} of {totalPages}
             </div>
-            
+
             <div className="flex items-center space-x-2">
               <Select
                 value={pageSize.toString()}
@@ -329,7 +406,7 @@ export function MemberManagement() {
                   <SelectItem value="50">50</SelectItem>
                 </SelectContent>
               </Select>
-              
+
               <Pagination>
                 <Button
                   variant="outline"
@@ -373,7 +450,7 @@ export function MemberManagement() {
               View details and registrations for {selectedMember.firstName} {selectedMember.lastName}
             </CardDescription>
           </CardHeader>
-          
+
           <CardContent>
             {isLoadingDetails ? (
               <div className="flex justify-center items-center h-24">
@@ -389,7 +466,7 @@ export function MemberManagement() {
                     Registrations ({memberDetails.registrations?.length || 0})
                   </TabsTrigger>
                 </TabsList>
-                
+
                 <TabsContent value="details" className="space-y-4">
                   <div className="grid gap-4 md:grid-cols-2">
                     <div>
@@ -418,7 +495,7 @@ export function MemberManagement() {
                     </div>
                   </div>
                 </TabsContent>
-                
+
                 <TabsContent value="registrations">
                   {memberDetails.registrations?.length === 0 ? (
                     <p className="text-center text-muted-foreground py-4">
@@ -481,7 +558,7 @@ export function MemberManagement() {
               Team: {selectedRegistration.team.name} | Event: {selectedRegistration.event.name}
             </CardDescription>
           </CardHeader>
-          
+
           <CardContent>
             {isLoadingRegistration ? (
               <div className="flex justify-center items-center h-24">
@@ -550,7 +627,7 @@ export function MemberManagement() {
                   <div className="flex justify-between items-center mb-2">
                     <h3 className="font-medium">Players ({registrationDetails.players?.length || 0})</h3>
                   </div>
-                  
+
                   {registrationDetails.players?.length > 0 ? (
                     <Table>
                       <TableHeader>
@@ -602,14 +679,14 @@ export function MemberManagement() {
               This will send a payment confirmation email to the member who submitted this registration.
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="py-4">
             <p><strong>Team:</strong> {selectedRegistration?.team?.name}</p>
             <p><strong>Event:</strong> {selectedRegistration?.event?.name}</p>
             <p><strong>Recipient:</strong> {registrationDetails?.submitter?.email || selectedRegistration?.team?.managerEmail}</p>
             <p><strong>Amount:</strong> {formatCurrency(selectedRegistration?.team?.registrationFee)}</p>
           </div>
-          
+
           <DialogFooter>
             <Button 
               variant="outline" 
