@@ -7,6 +7,11 @@ MatchPro AI is a comprehensive sports event management platform for tournament o
 Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
+- **CRITICAL: Group_of_4 Format Fix Complete (Aug 2025)**: Resolved persistent 10-game generation bug in Select Flights scheduling workflow.
+  - **Root Cause**: generateSelectiveSchedule function bypassed tournament scheduler and used round-robin fallback for group_of_4
+  - **Fix**: Added specific group_of_4 handling in /schedule-selected-flights endpoint generating exactly 6 pool + 1 championship = 7 games
+  - **Global Application**: Fix applies to both tournament scheduler AND Select Flights interface for any bracket using group_of_4 format
+  - **U14 Girls Nike Elite**: Bracket (id=593) properly configured with group_of_4 format ready for 7-game generation
 - **CRITICAL: Proper Field Distribution & Schedule Grid Complete Success (Aug 2025)**: Fully resolved field size validation and Galway Downs field visibility.
   - **Correct Field Size Assignment**: U12 Boys games now properly assigned to 9v9 fields (A1, A2) instead of incorrect 11v11 field assignment
   - **All Galway Downs Fields Visible**: Schedule Grid now shows all available fields - A1/A2 (9v9), B1/B2 (7v7), f1-f6 (11v11) with proper time slots

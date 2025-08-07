@@ -771,6 +771,48 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
         }
         
         console.log(`[Selective Scheduling] Generated ${bracketGames.length} games using ${formatTemplate.name} template`);
+      } else if (bracket.tournamentFormat === 'group_of_4' && flightTeams.length === 4) {
+        // Handle group_of_4 format - 6 pool games + 1 championship = 7 total
+        console.log(`[Selective Scheduling] Using group_of_4 format for 4 teams - generating 6 pool + 1 championship`);
+        let gameNumber = 1;
+        
+        // Generate 6 pool play games (round-robin)
+        for (let i = 0; i < flightTeams.length; i++) {
+          for (let j = i + 1; j < flightTeams.length; j++) {
+            bracketGames.push({
+              id: `${flightId}-${gameNumber}`,
+              homeTeamId: flightTeams[i].id,
+              homeTeamName: flightTeams[i].name,
+              awayTeamId: flightTeams[j].id,
+              awayTeamName: flightTeams[j].name,
+              bracketId: parseInt(flightId),
+              bracketName: bracket.name,
+              round: 1, // Pool play is round 1
+              gameType: 'pool_play',
+              duration: 90,
+              gameNumber: gameNumber++
+            });
+          }
+        }
+        
+        // Add championship final (7th game)
+        bracketGames.push({
+          id: `${flightId}-${gameNumber}`,
+          homeTeamId: null, // TBD based on standings
+          homeTeamName: '1st Place',
+          awayTeamId: null, // TBD based on standings  
+          awayTeamName: '2nd Place',
+          bracketId: parseInt(flightId),
+          bracketName: bracket.name,
+          round: 2, // Championship is round 2
+          gameType: 'championship',
+          duration: 90,
+          gameNumber: gameNumber++,
+          notes: 'Championship Final - Teams TBD based on pool standings',
+          isPending: true
+        });
+        
+        console.log(`[Selective Scheduling] Generated 6 pool + 1 championship = ${bracketGames.length} games for group_of_4`);
       } else if (bracket.tournamentFormat === 'round_robin' && flightTeams.length >= 2) {
         // Fallback to simple round-robin for legacy formats
         let gameNumber = 1;
