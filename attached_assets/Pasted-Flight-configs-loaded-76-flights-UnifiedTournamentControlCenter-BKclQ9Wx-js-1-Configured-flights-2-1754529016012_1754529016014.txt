@@ -1,0 +1,771 @@
+Flight configs loaded: 76 flights
+UnifiedTournamentControlCenter-BKclQ9Wx.js:1 Configured flights: 2 of 76
+chunk-CVIZYB43.js:3 [Violation] 'setTimeout' handler took 71ms
+UnifiedTournamentControlCenter-BKclQ9Wx.js:1 Fetch finished loading: POST "https://app.matchpro.ai/api/admin/events/1844329078/generate-selective-schedule".
+mutationFn @ UnifiedTournamentControlCenter-BKclQ9Wx.js:1
+fn @ index-BTO6jWak.js:41
+f @ index-BTO6jWak.js:41
+start @ index-BTO6jWak.js:41
+execute @ index-BTO6jWak.js:41
+await in execute
+mutate @ index-BTO6jWak.js:41
+(anonymous) @ index-BTO6jWak.js:41
+Q @ UnifiedTournamentControlCenter-BKclQ9Wx.js:1
+_ue @ index-BTO6jWak.js:38
+Due @ index-BTO6jWak.js:38
+Iue @ index-BTO6jWak.js:38
+pM @ index-BTO6jWak.js:38
+Xq @ index-BTO6jWak.js:38
+(anonymous) @ index-BTO6jWak.js:38
+NO @ index-BTO6jWak.js:41
+bq @ index-BTO6jWak.js:38
+E2 @ index-BTO6jWak.js:38
+X4 @ index-BTO6jWak.js:38
+Xue @ index-BTO6jWak.js:38
+UnifiedTournamentControlCenter-BKclQ9Wx.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentControlCenter-BKclQ9Wx.js:1 Configured flights: 2 of 76
+Navigated to https://app.matchpro.ai/admin/events/1844329078/master-schedule
+js?libraries=places&v=beta&callback=Function.prototype:1377 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1377
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622Understand this warning
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+index-BTO6jWak.js:863 Google Maps API key length: 0 characters
+index-BTO6jWak.js:863 Mapbox API key length: 93 characters
+index-BTO6jWak.js:863 Google Maps API already loaded
+js?libraries=places&v=beta&callback=Function.prototype:1409 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+_.B.send @ js?libraries=places&v=beta&callback=Function.prototype:1409
+hda @ js?libraries=places&v=beta&callback=Function.prototype:1386
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1378
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+index-BTO6jWak.js:672 Current route location (Wouter): /admin/events/1844329078/master-schedule
+index-BTO6jWak.js:672 Current URL: https://app.matchpro.ai/admin/events/1844329078/master-schedule
+index-BTO6jWak.js:672 Current pathname: /admin/events/1844329078/master-schedule
+index-BTO6jWak.js:672 Current search: 
+index-BTO6jWak.js:672 Fetching user with emulation token: not present
+chunk-FLCULYKI.js:31 orchestration: Initializing config store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing feature flag store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state {pill-player: {…}}
+chunk-FLCULYKI.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+index-BTO6jWak.js:672 User data fetched: {id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: '$2b$12$d6n1CBWgsWFm0fh77F1OX.YxDZy7/O3aLSuJOuq4QkvOtFmSit7BC', firstName: 'Bryan', …}
+13Fetch finished loading: GET "<URL>".
+shared-eb945d82d4278aab36557dfc2f95c57f.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+(anonymous) @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+e @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+c @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+g @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+e @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+value @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+e @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+16720 @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+e @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+(anonymous) @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+e.O @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+(anonymous) @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+(anonymous) @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+shared-eb945d82d4278aab36557dfc2f95c57f.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+(anonymous) @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+e @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+c @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+g @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+value @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+log @ shared-eb945d82d4278aab36557dfc2f95c57f.js:1
+log @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+e @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+16720 @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+e @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+(anonymous) @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+e.O @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+(anonymous) @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+(anonymous) @ controller-with-preconnect-eb3ebb678abb15a7a725cab7f1f80af3.js:1
+UnifiedTournamentControlCenter-BKclQ9Wx.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentControlCenter-BKclQ9Wx.js:1 Configured flights: 2 of 76
+ScheduleViewerFixed-BvsOqqBJ.js:6 Schedule API Response: {games: Array(28), fields: Array(28), ageGroups: Array(24), dates: Array(2), totalGames: 28, …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 1 transformation debug: {raw: {…}, homeTeamStructure: 'Empire surf boy 2015 academy ', awayTeamStructure: 'City SC Southwest B15 Gold Temecula ', fieldStructure: 'Field 10', rawFieldName: 'Field 10', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 1 API data: {
+  "id": 7506,
+  "homeTeam": "Empire surf boy 2015 academy ",
+  "awayTeam": "City SC Southwest B15 Gold Temecula ",
+  "homeTeamClub": "Empire Surf",
+  "awayTeamClub": "City SC Southwest",
+  "ageGroup": "U11",
+  "field": "Field 10",
+  "fieldName": "Field 10",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "TBD",
+  "endTime": "TBD",
+  "duration": 75,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 1 transformed: {id: 7506, homeTeam: 'Empire surf boy 2015 academy ', awayTeam: 'City SC Southwest B15 Gold Temecula ', ageGroup: 'U11', field: 'Field 10', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 2 transformation debug: {raw: {…}, homeTeamStructure: 'Empire surf boy 2015 academy ', awayTeamStructure: 'Fc Premier Elite B2015 Dominguez', fieldStructure: 'Field 11', rawFieldName: 'Field 11', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 2 API data: {
+  "id": 7507,
+  "homeTeam": "Empire surf boy 2015 academy ",
+  "awayTeam": "Fc Premier Elite B2015 Dominguez",
+  "homeTeamClub": "Empire Surf",
+  "awayTeamClub": "FC Premier Elite",
+  "ageGroup": "U11",
+  "field": "Field 11",
+  "fieldName": "Field 11",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "TBD",
+  "endTime": "TBD",
+  "duration": 75,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 2 transformed: {id: 7507, homeTeam: 'Empire surf boy 2015 academy ', awayTeam: 'Fc Premier Elite B2015 Dominguez', ageGroup: 'U11', field: 'Field 11', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 3 transformation debug: {raw: {…}, homeTeamStructure: 'Empire surf boy 2015 academy ', awayTeamStructure: 'Empire Surf B2015A-1', fieldStructure: 'Field 10', rawFieldName: 'Field 10', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 3 API data: {
+  "id": 7508,
+  "homeTeam": "Empire surf boy 2015 academy ",
+  "awayTeam": "Empire Surf B2015A-1",
+  "homeTeamClub": "Empire Surf",
+  "awayTeamClub": "Empire Surf",
+  "ageGroup": "U11",
+  "field": "Field 10",
+  "fieldName": "Field 10",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "TBD",
+  "endTime": "TBD",
+  "duration": 75,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 3 transformed: {id: 7508, homeTeam: 'Empire surf boy 2015 academy ', awayTeam: 'Empire Surf B2015A-1', ageGroup: 'U11', field: 'Field 10', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 4 transformation debug: {raw: {…}, homeTeamStructure: 'Empire surf boy 2015 academy ', awayTeamStructure: 'City SC Southwest B15 White MUR', fieldStructure: 'Field 11', rawFieldName: 'Field 11', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 4 API data: {
+  "id": 7509,
+  "homeTeam": "Empire surf boy 2015 academy ",
+  "awayTeam": "City SC Southwest B15 White MUR",
+  "homeTeamClub": "Empire Surf",
+  "awayTeamClub": "",
+  "ageGroup": "U11",
+  "field": "Field 11",
+  "fieldName": "Field 11",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "TBD",
+  "endTime": "TBD",
+  "duration": 75,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 4 transformed: {id: 7509, homeTeam: 'Empire surf boy 2015 academy ', awayTeam: 'City SC Southwest B15 White MUR', ageGroup: 'U11', field: 'Field 11', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 5 transformation debug: {raw: {…}, homeTeamStructure: 'Empire surf boy 2015 academy ', awayTeamStructure: 'Desert Empire Surf Boys 2015 WHITE', fieldStructure: 'Field 10', rawFieldName: 'Field 10', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 5 API data: {
+  "id": 7510,
+  "homeTeam": "Empire surf boy 2015 academy ",
+  "awayTeam": "Desert Empire Surf Boys 2015 WHITE",
+  "homeTeamClub": "Empire Surf",
+  "awayTeamClub": "Empire Surf",
+  "ageGroup": "U11",
+  "field": "Field 10",
+  "fieldName": "Field 10",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "TBD",
+  "endTime": "TBD",
+  "duration": 75,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 5 transformed: {id: 7510, homeTeam: 'Empire surf boy 2015 academy ', awayTeam: 'Desert Empire Surf Boys 2015 WHITE', ageGroup: 'U11', field: 'Field 10', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 6 transformation debug: {raw: {…}, homeTeamStructure: 'Empire surf boy 2015 academy ', awayTeamStructure: 'Desert Empire Surf Boys 2015 Blue', fieldStructure: 'Field 11', rawFieldName: 'Field 11', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 6 API data: {
+  "id": 7511,
+  "homeTeam": "Empire surf boy 2015 academy ",
+  "awayTeam": "Desert Empire Surf Boys 2015 Blue",
+  "homeTeamClub": "Empire Surf",
+  "awayTeamClub": "Empire Surf",
+  "ageGroup": "U11",
+  "field": "Field 11",
+  "fieldName": "Field 11",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "TBD",
+  "endTime": "TBD",
+  "duration": 75,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 6 transformed: {id: 7511, homeTeam: 'Empire surf boy 2015 academy ', awayTeam: 'Desert Empire Surf Boys 2015 Blue', ageGroup: 'U11', field: 'Field 11', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 7 transformation debug: {raw: {…}, homeTeamStructure: 'Empire surf boy 2015 academy ', awayTeamStructure: 'FC Premier Elite B2015', fieldStructure: 'Field 10', rawFieldName: 'Field 10', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 7 API data: {
+  "id": 7512,
+  "homeTeam": "Empire surf boy 2015 academy ",
+  "awayTeam": "FC Premier Elite B2015",
+  "homeTeamClub": "Empire Surf",
+  "awayTeamClub": "FC Premier Elite",
+  "ageGroup": "U11",
+  "field": "Field 10",
+  "fieldName": "Field 10",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "TBD",
+  "endTime": "TBD",
+  "duration": 75,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 7 transformed: {id: 7512, homeTeam: 'Empire surf boy 2015 academy ', awayTeam: 'FC Premier Elite B2015', ageGroup: 'U11', field: 'Field 10', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 8 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest B15 Gold Temecula ', awayTeamStructure: 'Fc Premier Elite B2015 Dominguez', fieldStructure: 'Field 11', rawFieldName: 'Field 11', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 8 API data: {
+  "id": 7513,
+  "homeTeam": "City SC Southwest B15 Gold Temecula ",
+  "awayTeam": "Fc Premier Elite B2015 Dominguez",
+  "homeTeamClub": "City SC Southwest",
+  "awayTeamClub": "FC Premier Elite",
+  "ageGroup": "U11",
+  "field": "Field 11",
+  "fieldName": "Field 11",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "TBD",
+  "endTime": "TBD",
+  "duration": 75,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 8 transformed: {id: 7513, homeTeam: 'City SC Southwest B15 Gold Temecula ', awayTeam: 'Fc Premier Elite B2015 Dominguez', ageGroup: 'U11', field: 'Field 11', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 9 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest B15 Gold Temecula ', awayTeamStructure: 'Empire Surf B2015A-1', fieldStructure: 'Field 10', rawFieldName: 'Field 10', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 9 API data: {
+  "id": 7514,
+  "homeTeam": "City SC Southwest B15 Gold Temecula ",
+  "awayTeam": "Empire Surf B2015A-1",
+  "homeTeamClub": "City SC Southwest",
+  "awayTeamClub": "Empire Surf",
+  "ageGroup": "U11",
+  "field": "Field 10",
+  "fieldName": "Field 10",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "TBD",
+  "endTime": "TBD",
+  "duration": 75,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 9 transformed: {id: 7514, homeTeam: 'City SC Southwest B15 Gold Temecula ', awayTeam: 'Empire Surf B2015A-1', ageGroup: 'U11', field: 'Field 10', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 10 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest B15 Gold Temecula ', awayTeamStructure: 'City SC Southwest B15 White MUR', fieldStructure: 'Field 11', rawFieldName: 'Field 11', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 10 API data: {
+  "id": 7515,
+  "homeTeam": "City SC Southwest B15 Gold Temecula ",
+  "awayTeam": "City SC Southwest B15 White MUR",
+  "homeTeamClub": "City SC Southwest",
+  "awayTeamClub": "",
+  "ageGroup": "U11",
+  "field": "Field 11",
+  "fieldName": "Field 11",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "TBD",
+  "endTime": "TBD",
+  "duration": 75,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 10 transformed: {id: 7515, homeTeam: 'City SC Southwest B15 Gold Temecula ', awayTeam: 'City SC Southwest B15 White MUR', ageGroup: 'U11', field: 'Field 11', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 11 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest B15 Gold Temecula ', awayTeamStructure: 'Desert Empire Surf Boys 2015 WHITE', fieldStructure: 'Field 10', rawFieldName: 'Field 10', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 11 API data: {
+  "id": 7516,
+  "homeTeam": "City SC Southwest B15 Gold Temecula ",
+  "awayTeam": "Desert Empire Surf Boys 2015 WHITE",
+  "homeTeamClub": "City SC Southwest",
+  "awayTeamClub": "Empire Surf",
+  "ageGroup": "U11",
+  "field": "Field 10",
+  "fieldName": "Field 10",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "TBD",
+  "endTime": "TBD",
+  "duration": 75,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 11 transformed: {id: 7516, homeTeam: 'City SC Southwest B15 Gold Temecula ', awayTeam: 'Desert Empire Surf Boys 2015 WHITE', ageGroup: 'U11', field: 'Field 10', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 12 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest B15 Gold Temecula ', awayTeamStructure: 'Desert Empire Surf Boys 2015 Blue', fieldStructure: 'Field 11', rawFieldName: 'Field 11', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 12 API data: {
+  "id": 7517,
+  "homeTeam": "City SC Southwest B15 Gold Temecula ",
+  "awayTeam": "Desert Empire Surf Boys 2015 Blue",
+  "homeTeamClub": "City SC Southwest",
+  "awayTeamClub": "Empire Surf",
+  "ageGroup": "U11",
+  "field": "Field 11",
+  "fieldName": "Field 11",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "TBD",
+  "endTime": "TBD",
+  "duration": 75,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 12 transformed: {id: 7517, homeTeam: 'City SC Southwest B15 Gold Temecula ', awayTeam: 'Desert Empire Surf Boys 2015 Blue', ageGroup: 'U11', field: 'Field 11', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 13 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest B15 Gold Temecula ', awayTeamStructure: 'FC Premier Elite B2015', fieldStructure: 'Field 10', rawFieldName: 'Field 10', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 13 API data: {
+  "id": 7518,
+  "homeTeam": "City SC Southwest B15 Gold Temecula ",
+  "awayTeam": "FC Premier Elite B2015",
+  "homeTeamClub": "City SC Southwest",
+  "awayTeamClub": "FC Premier Elite",
+  "ageGroup": "U11",
+  "field": "Field 10",
+  "fieldName": "Field 10",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "TBD",
+  "endTime": "TBD",
+  "duration": 75,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 13 transformed: {id: 7518, homeTeam: 'City SC Southwest B15 Gold Temecula ', awayTeam: 'FC Premier Elite B2015', ageGroup: 'U11', field: 'Field 10', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 14 transformation debug: {raw: {…}, homeTeamStructure: 'Fc Premier Elite B2015 Dominguez', awayTeamStructure: 'Empire Surf B2015A-1', fieldStructure: 'Field 11', rawFieldName: 'Field 11', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 14 API data: {
+  "id": 7519,
+  "homeTeam": "Fc Premier Elite B2015 Dominguez",
+  "awayTeam": "Empire Surf B2015A-1",
+  "homeTeamClub": "FC Premier Elite",
+  "awayTeamClub": "Empire Surf",
+  "ageGroup": "U11",
+  "field": "Field 11",
+  "fieldName": "Field 11",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "TBD",
+  "endTime": "TBD",
+  "duration": 75,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 14 transformed: {id: 7519, homeTeam: 'Fc Premier Elite B2015 Dominguez', awayTeam: 'Empire Surf B2015A-1', ageGroup: 'U11', field: 'Field 11', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 15 transformation debug: {raw: {…}, homeTeamStructure: 'Fc Premier Elite B2015 Dominguez', awayTeamStructure: 'City SC Southwest B15 White MUR', fieldStructure: 'Field 10', rawFieldName: 'Field 10', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 15 API data: {
+  "id": 7520,
+  "homeTeam": "Fc Premier Elite B2015 Dominguez",
+  "awayTeam": "City SC Southwest B15 White MUR",
+  "homeTeamClub": "FC Premier Elite",
+  "awayTeamClub": "",
+  "ageGroup": "U11",
+  "field": "Field 10",
+  "fieldName": "Field 10",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "TBD",
+  "endTime": "TBD",
+  "duration": 75,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 15 transformed: {id: 7520, homeTeam: 'Fc Premier Elite B2015 Dominguez', awayTeam: 'City SC Southwest B15 White MUR', ageGroup: 'U11', field: 'Field 10', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 16 transformation debug: {raw: {…}, homeTeamStructure: 'Fc Premier Elite B2015 Dominguez', awayTeamStructure: 'Desert Empire Surf Boys 2015 WHITE', fieldStructure: 'Field 11', rawFieldName: 'Field 11', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 16 API data: {
+  "id": 7521,
+  "homeTeam": "Fc Premier Elite B2015 Dominguez",
+  "awayTeam": "Desert Empire Surf Boys 2015 WHITE",
+  "homeTeamClub": "FC Premier Elite",
+  "awayTeamClub": "Empire Surf",
+  "ageGroup": "U11",
+  "field": "Field 11",
+  "fieldName": "Field 11",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "TBD",
+  "endTime": "TBD",
+  "duration": 75,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 16 transformed: {id: 7521, homeTeam: 'Fc Premier Elite B2015 Dominguez', awayTeam: 'Desert Empire Surf Boys 2015 WHITE', ageGroup: 'U11', field: 'Field 11', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 17 transformation debug: {raw: {…}, homeTeamStructure: 'Fc Premier Elite B2015 Dominguez', awayTeamStructure: 'Desert Empire Surf Boys 2015 Blue', fieldStructure: 'Field 10', rawFieldName: 'Field 10', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 17 API data: {
+  "id": 7522,
+  "homeTeam": "Fc Premier Elite B2015 Dominguez",
+  "awayTeam": "Desert Empire Surf Boys 2015 Blue",
+  "homeTeamClub": "FC Premier Elite",
+  "awayTeamClub": "Empire Surf",
+  "ageGroup": "U11",
+  "field": "Field 10",
+  "fieldName": "Field 10",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "TBD",
+  "endTime": "TBD",
+  "duration": 75,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 17 transformed: {id: 7522, homeTeam: 'Fc Premier Elite B2015 Dominguez', awayTeam: 'Desert Empire Surf Boys 2015 Blue', ageGroup: 'U11', field: 'Field 10', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 18 transformation debug: {raw: {…}, homeTeamStructure: 'Fc Premier Elite B2015 Dominguez', awayTeamStructure: 'FC Premier Elite B2015', fieldStructure: 'Field 11', rawFieldName: 'Field 11', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 18 API data: {
+  "id": 7523,
+  "homeTeam": "Fc Premier Elite B2015 Dominguez",
+  "awayTeam": "FC Premier Elite B2015",
+  "homeTeamClub": "FC Premier Elite",
+  "awayTeamClub": "FC Premier Elite",
+  "ageGroup": "U11",
+  "field": "Field 11",
+  "fieldName": "Field 11",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "TBD",
+  "endTime": "TBD",
+  "duration": 75,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 18 transformed: {id: 7523, homeTeam: 'Fc Premier Elite B2015 Dominguez', awayTeam: 'FC Premier Elite B2015', ageGroup: 'U11', field: 'Field 11', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 19 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf B2015A-1', awayTeamStructure: 'City SC Southwest B15 White MUR', fieldStructure: 'Field 10', rawFieldName: 'Field 10', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 19 API data: {
+  "id": 7524,
+  "homeTeam": "Empire Surf B2015A-1",
+  "awayTeam": "City SC Southwest B15 White MUR",
+  "homeTeamClub": "Empire Surf",
+  "awayTeamClub": "",
+  "ageGroup": "U11",
+  "field": "Field 10",
+  "fieldName": "Field 10",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "TBD",
+  "endTime": "TBD",
+  "duration": 75,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 19 transformed: {id: 7524, homeTeam: 'Empire Surf B2015A-1', awayTeam: 'City SC Southwest B15 White MUR', ageGroup: 'U11', field: 'Field 10', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 20 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf B2015A-1', awayTeamStructure: 'Desert Empire Surf Boys 2015 WHITE', fieldStructure: 'Field 11', rawFieldName: 'Field 11', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 20 API data: {
+  "id": 7525,
+  "homeTeam": "Empire Surf B2015A-1",
+  "awayTeam": "Desert Empire Surf Boys 2015 WHITE",
+  "homeTeamClub": "Empire Surf",
+  "awayTeamClub": "Empire Surf",
+  "ageGroup": "U11",
+  "field": "Field 11",
+  "fieldName": "Field 11",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "TBD",
+  "endTime": "TBD",
+  "duration": 75,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 20 transformed: {id: 7525, homeTeam: 'Empire Surf B2015A-1', awayTeam: 'Desert Empire Surf Boys 2015 WHITE', ageGroup: 'U11', field: 'Field 11', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 21 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf B2015A-1', awayTeamStructure: 'Desert Empire Surf Boys 2015 Blue', fieldStructure: 'Field 10', rawFieldName: 'Field 10', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 21 API data: {
+  "id": 7526,
+  "homeTeam": "Empire Surf B2015A-1",
+  "awayTeam": "Desert Empire Surf Boys 2015 Blue",
+  "homeTeamClub": "Empire Surf",
+  "awayTeamClub": "Empire Surf",
+  "ageGroup": "U11",
+  "field": "Field 10",
+  "fieldName": "Field 10",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "TBD",
+  "endTime": "TBD",
+  "duration": 75,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 21 transformed: {id: 7526, homeTeam: 'Empire Surf B2015A-1', awayTeam: 'Desert Empire Surf Boys 2015 Blue', ageGroup: 'U11', field: 'Field 10', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 22 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf B2015A-1', awayTeamStructure: 'FC Premier Elite B2015', fieldStructure: 'Field 11', rawFieldName: 'Field 11', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 22 API data: {
+  "id": 7527,
+  "homeTeam": "Empire Surf B2015A-1",
+  "awayTeam": "FC Premier Elite B2015",
+  "homeTeamClub": "Empire Surf",
+  "awayTeamClub": "FC Premier Elite",
+  "ageGroup": "U11",
+  "field": "Field 11",
+  "fieldName": "Field 11",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "TBD",
+  "endTime": "TBD",
+  "duration": 75,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 22 transformed: {id: 7527, homeTeam: 'Empire Surf B2015A-1', awayTeam: 'FC Premier Elite B2015', ageGroup: 'U11', field: 'Field 11', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 23 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest B15 White MUR', awayTeamStructure: 'Desert Empire Surf Boys 2015 WHITE', fieldStructure: 'Field 10', rawFieldName: 'Field 10', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 23 API data: {
+  "id": 7528,
+  "homeTeam": "City SC Southwest B15 White MUR",
+  "awayTeam": "Desert Empire Surf Boys 2015 WHITE",
+  "homeTeamClub": "",
+  "awayTeamClub": "Empire Surf",
+  "ageGroup": "U11",
+  "field": "Field 10",
+  "fieldName": "Field 10",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "TBD",
+  "endTime": "TBD",
+  "duration": 75,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 23 transformed: {id: 7528, homeTeam: 'City SC Southwest B15 White MUR', awayTeam: 'Desert Empire Surf Boys 2015 WHITE', ageGroup: 'U11', field: 'Field 10', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 24 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest B15 White MUR', awayTeamStructure: 'Desert Empire Surf Boys 2015 Blue', fieldStructure: 'Field 11', rawFieldName: 'Field 11', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 24 API data: {
+  "id": 7529,
+  "homeTeam": "City SC Southwest B15 White MUR",
+  "awayTeam": "Desert Empire Surf Boys 2015 Blue",
+  "homeTeamClub": "",
+  "awayTeamClub": "Empire Surf",
+  "ageGroup": "U11",
+  "field": "Field 11",
+  "fieldName": "Field 11",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "TBD",
+  "endTime": "TBD",
+  "duration": 75,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 24 transformed: {id: 7529, homeTeam: 'City SC Southwest B15 White MUR', awayTeam: 'Desert Empire Surf Boys 2015 Blue', ageGroup: 'U11', field: 'Field 11', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 25 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest B15 White MUR', awayTeamStructure: 'FC Premier Elite B2015', fieldStructure: 'Field 10', rawFieldName: 'Field 10', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 25 API data: {
+  "id": 7530,
+  "homeTeam": "City SC Southwest B15 White MUR",
+  "awayTeam": "FC Premier Elite B2015",
+  "homeTeamClub": "",
+  "awayTeamClub": "FC Premier Elite",
+  "ageGroup": "U11",
+  "field": "Field 10",
+  "fieldName": "Field 10",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "TBD",
+  "endTime": "TBD",
+  "duration": 75,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 25 transformed: {id: 7530, homeTeam: 'City SC Southwest B15 White MUR', awayTeam: 'FC Premier Elite B2015', ageGroup: 'U11', field: 'Field 10', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 26 transformation debug: {raw: {…}, homeTeamStructure: 'Desert Empire Surf Boys 2015 WHITE', awayTeamStructure: 'Desert Empire Surf Boys 2015 Blue', fieldStructure: 'Field 11', rawFieldName: 'Field 11', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 26 API data: {
+  "id": 7531,
+  "homeTeam": "Desert Empire Surf Boys 2015 WHITE",
+  "awayTeam": "Desert Empire Surf Boys 2015 Blue",
+  "homeTeamClub": "Empire Surf",
+  "awayTeamClub": "Empire Surf",
+  "ageGroup": "U11",
+  "field": "Field 11",
+  "fieldName": "Field 11",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "TBD",
+  "endTime": "TBD",
+  "duration": 75,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 26 transformed: {id: 7531, homeTeam: 'Desert Empire Surf Boys 2015 WHITE', awayTeam: 'Desert Empire Surf Boys 2015 Blue', ageGroup: 'U11', field: 'Field 11', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 27 transformation debug: {raw: {…}, homeTeamStructure: 'Desert Empire Surf Boys 2015 WHITE', awayTeamStructure: 'FC Premier Elite B2015', fieldStructure: 'Field 10', rawFieldName: 'Field 10', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 27 API data: {
+  "id": 7532,
+  "homeTeam": "Desert Empire Surf Boys 2015 WHITE",
+  "awayTeam": "FC Premier Elite B2015",
+  "homeTeamClub": "Empire Surf",
+  "awayTeamClub": "FC Premier Elite",
+  "ageGroup": "U11",
+  "field": "Field 10",
+  "fieldName": "Field 10",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "TBD",
+  "endTime": "TBD",
+  "duration": 75,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 27 transformed: {id: 7532, homeTeam: 'Desert Empire Surf Boys 2015 WHITE', awayTeam: 'FC Premier Elite B2015', ageGroup: 'U11', field: 'Field 10', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 28 transformation debug: {raw: {…}, homeTeamStructure: 'Desert Empire Surf Boys 2015 Blue', awayTeamStructure: 'FC Premier Elite B2015', fieldStructure: 'Field 11', rawFieldName: 'Field 11', …}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 28 API data: {
+  "id": 7533,
+  "homeTeam": "Desert Empire Surf Boys 2015 Blue",
+  "awayTeam": "FC Premier Elite B2015",
+  "homeTeamClub": "Empire Surf",
+  "awayTeamClub": "FC Premier Elite",
+  "ageGroup": "U11",
+  "field": "Field 11",
+  "fieldName": "Field 11",
+  "complexName": "",
+  "complexAddress": "",
+  "fieldSize": "",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "TBD",
+  "endTime": "TBD",
+  "duration": 75,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null
+}
+ScheduleViewerFixed-BvsOqqBJ.js:6 Game 28 transformed: {id: 7533, homeTeam: 'Desert Empire Surf Boys 2015 Blue', awayTeam: 'FC Premier Elite B2015', ageGroup: 'U11', field: 'Field 11', …}
+util.js:31 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+Yxa @ util.js:31
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1379
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1379
+setTimeout
+jda @ js?libraries=places&v=beta&callback=Function.prototype:1379
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1622Understand this warning
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+Promise.then
+S @ out-4.5.44.js:1
+y @ out-4.5.44.js:1
+E @ out-4.5.44.js:1
+e.onload @ inner.html:1
+script
+(anonymous) @ inner.html:1
+(anonymous) @ inner.html:1
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+h @ out-4.5.44.js:1
+e @ inner.html:1
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state {pill-player: {…}}
+chunk-FLCULYKI.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state {pill-player: {…}}
+chunk-FLCULYKI.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}

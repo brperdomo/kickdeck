@@ -653,11 +653,24 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
     const eventFields = await db.query.fields.findMany();
 
     // Generate a basic schedule for the selected flights
-    const generatedGames = [];
+    const generatedGames: any[] = [];
     let gameCounter = 1;
 
-    // Create games based on selected bracket IDs (flights)
+    // Use the enhanced tournament scheduler with proper template handling
+    const { TournamentScheduler } = await import('../../services/tournament-scheduler');
+    
+    // Create games based on selected bracket IDs (flights) using the fixed tournament scheduler
     for (const flightId of flightIds) {
+      // Get bracket information including tournament format
+      const bracket = await db.query.eventBrackets.findFirst({
+        where: eq(eventBrackets.id, parseInt(flightId))
+      });
+      
+      if (!bracket) {
+        console.log(`[Selective Scheduling] Skipping bracket ${flightId} - bracket not found`);
+        continue;
+      }
+
       // Get teams for this specific bracket/flight
       const flightTeams = await db.query.teams.findMany({
         where: and(
@@ -667,32 +680,49 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
       });
 
       console.log(`[Selective Scheduling] Found ${flightTeams.length} teams for bracket/flight ${flightId}`);
+      console.log(`[Selective Scheduling] Bracket format: ${bracket.tournamentFormat}, Name: ${bracket.name}`);
 
       if (flightTeams.length < 2) {
         console.log(`[Selective Scheduling] Skipping bracket ${flightId} - not enough teams (${flightTeams.length})`);
         continue;
       }
 
-      // Generate round-robin games for this flight
-      for (let i = 0; i < flightTeams.length; i++) {
-        for (let j = i + 1; j < flightTeams.length; j++) {
-          const homeTeam = flightTeams[i];
-          const awayTeam = flightTeams[j];
-          
-          generatedGames.push({
-            id: gameCounter++,
-            homeTeam: homeTeam.name,
-            awayTeam: awayTeam.name,
-            homeTeamId: homeTeam.id,
-            awayTeamId: awayTeam.id,
-            bracketId: parseInt(flightId),
-            field: eventFields[Math.floor(Math.random() * eventFields.length)]?.name || 'Field 1',
-            scheduledTime: new Date(Date.now() + (gameCounter * 60 * 60 * 1000)).toISOString(), // Spread games over time
-            round: 1,
-            status: 'scheduled'
-          });
-        }
-      }
+      // Create bracket object with templateName for proper game generation
+      const bracketData = {
+        bracketId: parseInt(flightId),
+        bracketName: bracket.name,
+        format: bracket.tournamentFormat,
+        tournamentFormat: bracket.tournamentFormat,
+        templateName: bracket.tournamentFormat, // This ensures proper template matching
+        teams: flightTeams.map(team => ({
+          id: team.id,
+          name: team.name,
+          bracketId: team.bracketId
+        }))
+      };
+
+      // Generate games using the fixed tournament scheduler
+      const bracketGames = await TournamentScheduler.generateSchedule(eventId, [bracketData]);
+      
+      console.log(`[Selective Scheduling] Generated ${bracketGames.length} games for bracket ${bracket.name} (template: ${bracket.tournamentFormat})`);
+      
+      // Convert tournament scheduler games to the expected format
+      bracketGames.forEach((game: any) => {
+        generatedGames.push({
+          id: gameCounter++,
+          homeTeam: game.homeTeamName,
+          awayTeam: game.awayTeamName,
+          homeTeamId: game.homeTeamId,
+          awayTeamId: game.awayTeamId,
+          bracketId: parseInt(flightId),
+          field: game.field || 'TBD', // Will be assigned by field availability service
+          scheduledTime: new Date(Date.now() + (gameCounter * 60 * 60 * 1000)).toISOString(),
+          round: game.round || 'Pool Play',
+          gameType: game.gameType || 'pool_play',
+          duration: game.duration || 90,
+          status: 'scheduled'
+        });
+      });
     }
 
     console.log(`[Selective Scheduling] Generated ${generatedGames.length} games for ${flightIds.length} flights`);
@@ -753,10 +783,46 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
       await db.insert(games).values(dbGames);
       console.log(`[Selective Scheduling] Successfully saved ${dbGames.length} games to database`);
       
-      // Apply field assignments with size validation
-      const { assignFieldsToGames } = await import('./tournament-control');
-      await assignFieldsToGames(eventId);
-      console.log(`[Selective Scheduling] Applied field assignments with size validation`);
+      // Apply field assignments using real Galway Downs fields with proper size validation
+      const { FieldAvailabilityService } = await import('../../services/field-availability-service');
+      
+      // Get real fields for this event
+      const realFields = await FieldAvailabilityService.getAvailableFields(eventId);
+      console.log(`[Selective Scheduling] Found ${realFields.length} real fields available for event ${eventId}`);
+      
+      // Update games with real field assignments
+      for (const dbGame of dbGames) {
+        // Determine required field size based on game bracket name
+        const game = generatedGames.find(g => g.homeTeamId === dbGame.homeTeamId && g.awayTeamId === dbGame.awayTeamId);
+        if (!game) continue;
+        
+        const bracket = await db.query.eventBrackets.findFirst({
+          where: eq(eventBrackets.id, game.bracketId)
+        });
+        
+        const requiredFieldSize = determineFieldSizeFromBracket(bracket?.name || '');
+        
+        // Find suitable real fields
+        const suitableFields = realFields.filter(field => field.fieldSize === requiredFieldSize);
+        const selectedField = suitableFields.length > 0 
+          ? suitableFields[gameCounter % suitableFields.length]
+          : realFields[gameCounter % realFields.length]; // Fallback to any available field
+        
+        if (selectedField) {
+          // Update the game record with real field ID
+          await db.update(games)
+            .set({ fieldId: selectedField.id })
+            .where(and(
+              eq(games.eventId, eventId),
+              eq(games.homeTeamId, dbGame.homeTeamId),
+              eq(games.awayTeamId, dbGame.awayTeamId)
+            ));
+          
+          console.log(`[Selective Scheduling] Assigned game ${game.homeTeam} vs ${game.awayTeam} to field ${selectedField.name} (${selectedField.fieldSize})`);
+        }
+      }
+      
+      console.log(`[Selective Scheduling] Applied real field assignments with size validation for ${realFields.length} fields`);
     }
 
     return {
@@ -799,6 +865,24 @@ async function getBracketFormat(eventId: number, flightName: string): Promise<st
   } catch (error) {
     console.error('Error fetching bracket format:', error);
     return null;
+  }
+}
+
+// Helper function to determine field size from bracket name
+function determineFieldSizeFromBracket(bracketName: string): string {
+  if (!bracketName) return '11v11';
+  
+  // Comprehensive field size validation based on age groups
+  if (bracketName.includes('U7') || bracketName.includes('U8') || bracketName.includes('U9') || bracketName.includes('U10')) {
+    return '7v7'; // Maps to fields B1, B2
+  } else if (bracketName.includes('U11') || bracketName.includes('U12') || (bracketName.includes('U13') && bracketName.includes('Boys'))) {
+    return '9v9'; // Maps to fields A1, A2
+  } else if (bracketName.includes('U13') && bracketName.includes('Girls')) {
+    return '11v11'; // U13 Girls MUST use 11v11 fields (f1-f6)
+  } else if (bracketName.match(/U1[4-9]/)) { // U14-U19
+    return '11v11'; // Maps to fields f1-f6
+  } else {
+    return '11v11';
   }
 }
 
