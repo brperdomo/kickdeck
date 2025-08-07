@@ -254,11 +254,22 @@ router.put('/:gameId/reschedule', isAdmin, async (req, res) => {
     console.log(`   • New Field ID: ${fieldId}`);
     console.log(`   • New Time Slot ID: ${timeSlot.id}`);
     
+    // Parse the startTime to extract date and time components
+    const startTimeDate = new Date(startTime);
+    const scheduledDate = startTimeDate.toISOString().split('T')[0]; // YYYY-MM-DD format
+    const scheduledTime = startTimeDate.toISOString().split('T')[1].split('.')[0]; // HH:MM:SS format
+    
+    console.log(`📅 Extracted date/time components:`);
+    console.log(`   • Scheduled Date: ${scheduledDate}`);
+    console.log(`   • Scheduled Time: ${scheduledTime}`);
+
     const [updatedGame] = await db
       .update(games)
       .set({
         fieldId: fieldId,
         timeSlotId: timeSlot.id,
+        scheduledDate: scheduledDate,
+        scheduledTime: scheduledTime,
         updatedAt: new Date().toISOString()
       })
       .where(eq(games.id, parseInt(gameId)))
