@@ -1,0 +1,50 @@
+Flight configs loaded: 76 flights
+UnifiedTournamentControlCenter-FPitOhGC.js:1 Configured flights: 1 of 76
+UnifiedTournamentControlCenter-FPitOhGC.js:1  POST https://app.matchpro.ai/api/admin/events/1844329078/generate-selective-schedule 500 (Internal Server Error)
+mutationFn @ UnifiedTournamentControlCenter-FPitOhGC.js:1
+fn @ index-CHq9oVjM.js:41
+f @ index-CHq9oVjM.js:41
+start @ index-CHq9oVjM.js:41
+execute @ index-CHq9oVjM.js:41
+await in execute
+mutate @ index-CHq9oVjM.js:41
+(anonymous) @ index-CHq9oVjM.js:41
+Q @ UnifiedTournamentControlCenter-FPitOhGC.js:1
+_ue @ index-CHq9oVjM.js:38
+Due @ index-CHq9oVjM.js:38
+Iue @ index-CHq9oVjM.js:38
+pM @ index-CHq9oVjM.js:38
+Xq @ index-CHq9oVjM.js:38
+(anonymous) @ index-CHq9oVjM.js:38
+NO @ index-CHq9oVjM.js:41
+bq @ index-CHq9oVjM.js:38
+E2 @ index-CHq9oVjM.js:38
+X4 @ index-CHq9oVjM.js:38
+Xue @ index-CHq9oVjM.js:38Understand this error
+UnifiedTournamentControlCenter-FPitOhGC.js:1 Fetch failed loading: POST "https://app.matchpro.ai/api/admin/events/1844329078/generate-selective-schedule".
+mutationFn @ UnifiedTournamentControlCenter-FPitOhGC.js:1
+fn @ index-CHq9oVjM.js:41
+f @ index-CHq9oVjM.js:41
+start @ index-CHq9oVjM.js:41
+execute @ index-CHq9oVjM.js:41
+await in execute
+mutate @ index-CHq9oVjM.js:41
+(anonymous) @ index-CHq9oVjM.js:41
+Q @ UnifiedTournamentControlCenter-FPitOhGC.js:1
+_ue @ index-CHq9oVjM.js:38
+Due @ index-CHq9oVjM.js:38
+Iue @ index-CHq9oVjM.js:38
+pM @ index-CHq9oVjM.js:38
+Xq @ index-CHq9oVjM.js:38
+(anonymous) @ index-CHq9oVjM.js:38
+NO @ index-CHq9oVjM.js:41
+bq @ index-CHq9oVjM.js:38
+E2 @ index-CHq9oVjM.js:38
+X4 @ index-CHq9oVjM.js:38
+Xue @ index-CHq9oVjM.js:38
+chunk-CVIZYB43.js:3 [Violation] 'setTimeout' handler took 69ms
+UnifiedTournamentControlCenter-FPitOhGC.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentControlCenter-FPitOhGC.js:1 Configured flights: 1 of 76
+chunk-CVIZYB43.js:3 [Violation] 'setTimeout' handler took 62ms
+UnifiedTournamentControlCenter-FPitOhGC.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentControlCenter-FPitOhGC.js:1 Configured flights: 1 of 76

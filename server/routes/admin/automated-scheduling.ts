@@ -741,7 +741,7 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
               duration: 90,
               gameNumber: gameNumber++,
               notes: 'Championship Final - Teams TBD based on pool standings',
-          isPending: true
+              isPending: true
             });
             continue;
           }
@@ -848,28 +848,37 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
       console.log(`[Selective Scheduling] Using age group ID: ${ageGroupId} for bracket ${flightIds[0]}`);
 
       // Convert generated games to database format
-      const dbGames = generatedGames.map(game => ({
-        eventId: eventId, // Keep as string (references text field)
-        ageGroupId: ageGroupId, // Integer field - required
-        groupId: null, // Set to null since bracket 570 doesn't exist in tournament_groups
-        homeTeamId: game.homeTeamId || -1, // Use -1 for placeholder championship games (null not allowed)
-        awayTeamId: game.awayTeamId || -2, // Use -2 for placeholder championship games (null not allowed)
-        fieldId: null, // Will be assigned during field scheduling
-        timeSlotId: null, // Will be assigned during time scheduling
-        status: game.gameType === 'championship' ? 'pending' : 'scheduled', // Championship games start as pending
-        round: game.round,
-        matchNumber: game.id,
-        duration: 90, // Default 90 minutes
-        breakTime: 15, // Default 15 minute break
-        homeScore: null,
-        awayScore: null,
-        homeYellowCards: 0,
-        awayYellowCards: 0,
-        homeRedCards: 0,
-        awayRedCards: 0
-      }));
+      const dbGames = generatedGames.map(game => {
+        console.log(`[Debug] Processing game: homeTeamId=${game.homeTeamId}, awayTeamId=${game.awayTeamId}, gameType=${game.gameType}`);
+        return {
+          eventId: eventId, // Keep as string (references text field)
+          ageGroupId: ageGroupId, // Integer field - required
+          groupId: null, // Set to null since bracket 570 doesn't exist in tournament_groups
+          homeTeamId: game.homeTeamId, // Allow null for championship games (will be set later)
+          awayTeamId: game.awayTeamId, // Allow null for championship games (will be set later)
+          fieldId: null, // Will be assigned during field scheduling
+          timeSlotId: null, // Will be assigned during time scheduling
+          status: game.gameType === 'championship' ? 'pending' : 'scheduled', // Championship games start as pending
+          round: game.round,
+          matchNumber: game.id,
+          duration: 90, // Default 90 minutes
+          breakTime: 15, // Default 15 minute break
+          homeScore: null,
+          awayScore: null,
+          homeYellowCards: 0,
+          awayYellowCards: 0,
+          homeRedCards: 0,
+          awayRedCards: 0
+        };
+      });
 
       console.log(`[Selective Scheduling] Sample database game object:`, JSON.stringify(dbGames[0], null, 2));
+      
+      // Debug: Log all generated games to find the problematic -1
+      console.log(`[Selective Scheduling] Debug - All ${dbGames.length} games being inserted:`);
+      dbGames.forEach((game, index) => {
+        console.log(`Game ${index + 1}: homeTeamId=${game.homeTeamId}, awayTeamId=${game.awayTeamId}, status=${game.status}, round=${game.round}`);
+      });
 
       // Insert games into database
       await db.insert(games).values(dbGames);
