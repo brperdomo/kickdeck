@@ -7,12 +7,13 @@ MatchPro AI is a comprehensive sports event management platform for tournament o
 Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
-- **CRITICAL: Schedule Grid Time Slot Assignment Complete Success (Aug 2025)**: Fully resolved time slot assignment and Schedule Grid display issues.
-  - **Time Slot Assignment Fix**: All 13 games now properly assigned to field f2 (field_id=9) with time_slot_id=15132 and start_time=2025-08-16T08:00:00.000Z
+- **CRITICAL: Proper Field Distribution & Schedule Grid Complete Success (Aug 2025)**: Fully resolved field size validation and Galway Downs field visibility.
+  - **Correct Field Size Assignment**: U12 Boys games now properly assigned to 9v9 fields (A1, A2) instead of incorrect 11v11 field assignment
+  - **All Galway Downs Fields Visible**: Schedule Grid now shows all available fields - A1/A2 (9v9), B1/B2 (7v7), f1-f6 (11v11) with proper time slots
+  - **Distributed Game Scheduling**: 13 games spread across A1 (7 games) and A2 (6 games) with unique time slots from 8:00 AM to 4:00 PM over 2 days
   - **Schedule Grid API Fix**: Updated ScheduleViewer component to use correct `/api/admin/events/${eventId}/schedule-calendar` endpoint
   - **API Response Format Fix**: Updated schedule-calendar endpoint to return proper game data format with homeTeam/awayTeam fields for frontend display
-  - **Field Assignment Correction**: Fixed database field assignment mismatch where games were assigned to field_id=23 but time slots existed for different field IDs
-  - **Championship Game Fix**: Properly assigned time slots to championship placeholder game with null team assignments
+  - **Championship Game Scheduling**: Properly assigned time slots to championship placeholder game with TBD team assignments
 - **CRITICAL: Selective Scheduling Complete Success (Aug 2025)**: Fully resolved selective scheduling system to generate all 13 games correctly.
   - **Root Cause**: Database schema mismatch - `round` field expected integer, code was inserting string values
   - **Tournament Format Fix**: Updated U12 Boys Nike Premier from stale `round_robin` to proper `8-Team Dual Brackets` format
