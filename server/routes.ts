@@ -1193,8 +1193,7 @@ export function registerRoutes(app: Express): Server {
       }
     });
 
-    // Schedule calendar route - use proper router
-    app.use('/api/admin/events', scheduleCalendarRouter);
+    // Schedule calendar route already registered above with admin auth at line 1144
 
 
 
