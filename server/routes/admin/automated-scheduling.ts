@@ -725,8 +725,24 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
         for (const matchup of matchupPattern) {
           const [homeSlot, awaySlot] = matchup;
           
-          // Skip TBD games (finals) for now - they'll be determined later
+          // Handle TBD games (finals) as placeholder championship games
           if (homeSlot === 'TBD' || awaySlot === 'TBD') {
+            // This is the championship final - create placeholder game
+            bracketGames.push({
+              id: `${flightId}-${gameNumber}`,
+              homeTeamId: null, // Will be determined after pool play
+              homeTeamName: 'Pool A Winner',
+              awayTeamId: null, // Will be determined after pool play
+              awayTeamName: 'Pool B Winner',
+              bracketId: parseInt(flightId),
+              bracketName: bracket.name,
+              round: 2, // Championship final is round 2
+              gameType: 'championship',
+              duration: 90,
+              gameNumber: gameNumber++,
+              notes: 'Championship Final - Teams TBD based on pool standings',
+          isPending: true
+            });
             continue;
           }
           
@@ -836,11 +852,11 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
         eventId: eventId, // Keep as string (references text field)
         ageGroupId: ageGroupId, // Integer field - required
         groupId: null, // Set to null since bracket 570 doesn't exist in tournament_groups
-        homeTeamId: game.homeTeamId, // Integer field
-        awayTeamId: game.awayTeamId, // Integer field
+        homeTeamId: game.homeTeamId || -1, // Use -1 for placeholder championship games (null not allowed)
+        awayTeamId: game.awayTeamId || -2, // Use -2 for placeholder championship games (null not allowed)
         fieldId: null, // Will be assigned during field scheduling
         timeSlotId: null, // Will be assigned during time scheduling
-        status: 'scheduled' as const,
+        status: game.gameType === 'championship' ? 'pending' : 'scheduled', // Championship games start as pending
         round: game.round,
         matchNumber: game.id,
         duration: 90, // Default 90 minutes
