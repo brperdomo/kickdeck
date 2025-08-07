@@ -286,8 +286,9 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
 
   const deleteAllGamesMutation = useMutation({
     mutationFn: async () => {
-      const response = await fetch(`/api/admin/events/${eventId}/games/delete-all`, {
+      const response = await fetch(`/api/admin/events/${eventId}/games/bulk`, {
         method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
         credentials: 'include'
       });
       if (!response.ok) {
@@ -300,8 +301,15 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
     retry: false, // Disable retries to prevent exponential requests
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/events', eventId, 'schedule'] });
-      toast({ title: 'Successfully deleted all games', variant: 'default' });
+      toast({ 
+        title: 'Games Deleted Successfully', 
+        description: `${data.message || `Deleted ${data.deletedCount} games from the tournament`}`,
+        variant: 'default' 
+      });
       setShowDeleteConfirm(false);
+      
+      // Force refresh to clear any cached data
+      window.location.reload();
     },
     onError: (error) => {
       console.error('Delete all games mutation error:', error);
