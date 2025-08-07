@@ -685,6 +685,7 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
 
       console.log(`[Selective Scheduling] Found ${flightTeams.length} teams for bracket/flight ${flightId}`);
       console.log(`[Selective Scheduling] Bracket format: ${bracket.tournamentFormat}, Name: ${bracket.name}`);
+      console.log(`[Selective Scheduling] *** TRACE POINT 1: About to check tournament format logic ***`);
 
       if (flightTeams.length < 2) {
         console.log(`[Selective Scheduling] Skipping bracket ${flightId} - not enough teams (${flightTeams.length})`);
@@ -774,7 +775,7 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
         console.log(`[Selective Scheduling] Generated ${bracketGames.length} games using ${formatTemplate.name} template`);
       } else if (bracket.tournamentFormat === 'group_of_4') {
         // Handle group_of_4 format - ALWAYS generate 6 pool games + 1 championship = 7 total (regardless of team count)
-        console.log(`[Selective Scheduling] USING group_of_4 format - generating 6 pool + 1 championship regardless of actual team count (${flightTeams.length} teams)`);
+        console.log(`[Selective Scheduling] *** HIT GROUP_OF_4 LOGIC! *** USING group_of_4 format - generating 6 pool + 1 championship regardless of actual team count (${flightTeams.length} teams)`);
         let gameNumber = 1;
         
         // Take only first 4 teams for group_of_4 format
@@ -841,7 +842,7 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
         }
         console.log(`[Selective Scheduling] Generated ${bracketGames.length} round-robin games (fallback)`);
       } else {
-        console.log(`[Selective Scheduling] Cannot generate games: format=${bracket.tournamentFormat}, teams=${flightTeams.length}, template found=${!!formatTemplate}`);
+        console.log(`[Selective Scheduling] *** UNEXPECTED PATH! *** Cannot generate games: format=${bracket.tournamentFormat}, teams=${flightTeams.length}, template found=${!!formatTemplate}`);
       }
       
       console.log(`[Selective Scheduling] Generated ${bracketGames.length} games for bracket ${bracket.name} (template: ${bracket.tournamentFormat})`);
