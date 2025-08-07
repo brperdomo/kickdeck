@@ -95,7 +95,7 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
   const queryClient = useQueryClient();
 
   const { data: scheduleData, isLoading, error } = useQuery<ScheduleData>({
-    queryKey: ['/api/admin/events', eventId, 'schedule-calendar'],
+    queryKey: ['schedule-data', eventId],
     queryFn: async () => {
       const response = await fetch(`/api/admin/events/${eventId}/schedule-calendar`, {
         credentials: 'include'
@@ -220,7 +220,10 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
           endDate: dates[dates.length - 1] || new Date().toISOString()
         }
       };
-    }
+    },
+    refetchOnWindowFocus: true,
+    refetchInterval: 5000, // Auto-refresh every 5 seconds for real-time updates
+    staleTime: 1000 // Consider data stale after 1 second
   });
 
   // Memoize filtered games to prevent unnecessary recalculations

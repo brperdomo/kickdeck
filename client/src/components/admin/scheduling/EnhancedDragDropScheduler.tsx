@@ -349,9 +349,13 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
       console.log(`📊 Server response:`, data);
       console.log(`🔄 Clearing optimistic update and refreshing data...`);
       
+      // Invalidate both Calendar Interface and Schedule Viewer queries
       queryClient.invalidateQueries({ queryKey: ['enhanced-schedule', eventId, selectedDate] });
+      queryClient.invalidateQueries({ queryKey: ['schedule-data', eventId] });
+      queryClient.invalidateQueries({ queryKey: ['event-schedule', eventId] });
+      
       setIsOptimisticUpdate(false);
-      toast({ title: 'Game moved successfully' });
+      toast({ title: 'Game moved successfully', description: 'Schedule Viewer will refresh automatically' });
     },
     onError: (error) => {
       console.error(`❌ [ENHANCED MUTATION FAILED] Game reschedule failed`);

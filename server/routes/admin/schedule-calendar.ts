@@ -295,13 +295,21 @@ router.put('/games/:gameId/reschedule', async (req, res) => {
       timeSlot = null;
     }
 
-    // CRITICAL: Update the games table with field and time slot assignments
+    // Parse date and time from startTime for scheduled_date and scheduled_time fields
+    const startDate = new Date(startTime);
+    const scheduledDate = startDate.toISOString().split('T')[0]; // YYYY-MM-DD
+    const scheduledTime = startDate.toTimeString().split(' ')[0].substr(0, 8); // HH:MM:SS
+    
+    console.log(`[Game Reschedule] Parsed date: ${scheduledDate}, time: ${scheduledTime}`);
+
+    // CRITICAL: Update the games table with field, time slot, AND scheduled_date/scheduled_time
     const updatedGame = await db
       .update(games)
       .set({
         fieldId: parseInt(fieldId),
         timeSlotId: timeSlot?.id || null,
-        // Update any other scheduling fields if needed
+        scheduledDate: scheduledDate,
+        scheduledTime: scheduledTime,
         status: 'scheduled'
       })
       .where(eq(games.id, parseInt(gameId)))
