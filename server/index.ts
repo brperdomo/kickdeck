@@ -209,6 +209,10 @@ async function testDbConnection() {
     const { default: schedulingReadinessRoutes } = await import('./routes/admin/scheduling-readiness');
     app.use('/api/admin', schedulingReadinessRoutes);
 
+    // Register multi-flight scheduling routes for intelligent gap-filling
+    const { default: multiFlightSchedulingRoutes } = await import('./routes/admin/multi-flight-scheduling');
+    app.use('/api/admin', multiFlightSchedulingRoutes);
+
     log("API routes registered");
 
     // Set up appropriate middleware based on environment

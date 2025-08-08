@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Calendar, AlertTriangle, MoreVertical, CalendarDays, Clock, Users } from 'lucide-react';
 import { SchedulingConstraintsManager } from './SchedulingConstraintsManager';
+import { GapFillingOptimizer } from './GapFillingOptimizer';
 import { useToast } from '@/hooks/use-toast';
 
 interface Game {
@@ -719,6 +720,9 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
                 </SelectContent>
               </Select>
             </div>
+
+            {/* Intelligent Gap-Filling Optimizer */}
+            <GapFillingOptimizer eventId={eventId} selectedDate={selectedDate} />
 
             {/* Status Indicators */}
             <div className="flex items-center gap-4 ml-auto">

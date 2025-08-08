@@ -82,6 +82,7 @@ export const complexes = pgTable("complexes", {
 export const fields = pgTable("fields", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
+  sortOrder: integer("sort_order").default(0).notNull(), // NEW: Proximity ordering (0=closest, higher=farther)
   hasLights: boolean("has_lights").default(false).notNull(),
   hasParking: boolean("has_parking").default(false).notNull(),
   hasConcessions: boolean("has_concessions").default(false).notNull(),

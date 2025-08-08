@@ -13,6 +13,7 @@ import {
   ArrowRight, Settings, Play, Loader2, Lock, AlertTriangle, Building2, Target
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { GapFillingStatusIndicator } from './GapFillingStatusIndicator';
 
 interface UnifiedSetupData {
   // Age Group & Teams
@@ -248,14 +249,40 @@ export function UnifiedScheduleSetup({ eventId, onComplete }: UnifiedScheduleSet
     }
   };
 
-  // Quick schedule generation
+  // Enhanced schedule generation with intelligent gap-filling
   const generateScheduleMutation = useMutation({
     mutationFn: async (data: UnifiedSetupData) => {
+      // Check for existing games to enable gap-filling optimization
+      const existingGamesResponse = await fetch(`/api/admin/events/${eventId}/games/count`, {
+        credentials: 'include'
+      });
+      const gamesCount = existingGamesResponse.ok ? await existingGamesResponse.json() : { totalGames: 0 };
+      
+      // Enhanced scheduling payload with gap-filling intelligence
+      const enhancedData = {
+        ...data,
+        // Enable intelligent gap-filling if there are existing games
+        enableGapFilling: gamesCount.totalGames > 0,
+        optimizeFieldUtilization: true,
+        resolveFieldConflicts: true,
+        minimizeTeamTravel: true,
+        // Advanced optimization parameters
+        proximityBasedScheduling: true,
+        dynamicRestPeriodEnforcement: true,
+        multiFlightOptimization: gamesCount.totalGames > 0,
+        // Field assignment preferences
+        preferClosestFields: true,
+        maximizeFieldUsage: true,
+        // Scheduling intelligence mode
+        autoMode: true,
+        generateAll: true
+      };
+
       const response = await fetch(`/api/admin/events/${eventId}/unified-schedule`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify(data)
+        body: JSON.stringify(enhancedData)
       });
       if (!response.ok) throw new Error('Failed to generate schedule');
       return response.json();
@@ -745,6 +772,9 @@ export function UnifiedScheduleSetup({ eventId, onComplete }: UnifiedScheduleSet
           </Card>
         </div>
       </div>
+
+      {/* Intelligent Gap-Filling Detection */}
+      <GapFillingStatusIndicator eventId={eventId} />
 
       {/* Auto-Configuration Info */}
       <Alert className="border-blue-200 bg-blue-50">
