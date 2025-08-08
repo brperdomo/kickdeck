@@ -1,0 +1,1234 @@
+🎯 [FIELD DEBUG] All available fields: []
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Fields with games assigned: []
+index-mh1iSiA3.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: true, error: null, scheduleData: undefined, fieldsCount: 0, gamesCount: 0, …}
+5Fetch finished loading: GET "<URL>".
+index-mh1iSiA3.js:823 🎯 [ENHANCED DRAG DROP] Transformed games for calendar: (14) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-mh1iSiA3.js:823 🎯 [ENHANCED DRAG DROP] Fields data: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9922: fieldId=34, fieldName="15", startTime="2025-08-16T08:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9917: fieldId=35, fieldName="20", startTime="2025-08-16T08:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9921: fieldId=33, fieldName="14", startTime="2025-08-16T14:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9918: fieldId=34, fieldName="15", startTime="2025-08-16T14:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9920: fieldId=33, fieldName="14", startTime="2025-08-17T08:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9919: fieldId=34, fieldName="15", startTime="2025-08-17T08:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9923: fieldId=31, fieldName="12", startTime="2025-08-16T08:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9915: fieldId=32, fieldName="13", startTime="2025-08-16T08:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9910: fieldId=33, fieldName="14", startTime="2025-08-16T08:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9914: fieldId=31, fieldName="12", startTime="2025-08-16T14:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9911: fieldId=32, fieldName="13", startTime="2025-08-16T14:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9913: fieldId=31, fieldName="12", startTime="2025-08-17T08:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9912: fieldId=32, fieldName="13", startTime="2025-08-17T08:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9916: fieldId=32, fieldName="13", startTime="2025-08-17T10:30:00"
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Fields with games assigned: (5) [34, 35, 33, 31, 32]
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 31 (12) has 3 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 32 (13) has 4 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 33 (14) has 3 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 34 (15) has 3 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 35 (20) has 1 games
+index-mh1iSiA3.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 14, …}
+index-mh1iSiA3.js:823 🔍 [CONFLICT DETECTION] Starting conflict detection for 14 games
+index-mh1iSiA3.js:823 🔍 [CONFLICT DETECTION] Time slots: 48
+index-mh1iSiA3.js:823 🔍 [CONFLICT DETECTION] Sample games: (3) [{…}, {…}, {…}]
+index-mh1iSiA3.js:823 🚨 [TEAM CONFLICT] TBD has 2 games at 8 AM: (2) [{…}, {…}]
+index-mh1iSiA3.js:41 [Violation] 'setTimeout' handler took 60ms
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Fields with games assigned: (5) [34, 35, 33, 31, 32]
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 31 (12) has 3 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 32 (13) has 4 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 33 (14) has 3 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 34 (15) has 3 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 35 (20) has 1 games
+index-mh1iSiA3.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 14, …}
+index-mh1iSiA3.js:823 Fetch finished loading: POST "https://app.matchpro.ai/api/admin/events/1844329078/optimize-schedule".
+mutationFn @ index-mh1iSiA3.js:823
+fn @ index-mh1iSiA3.js:41
+f @ index-mh1iSiA3.js:41
+start @ index-mh1iSiA3.js:41
+execute @ index-mh1iSiA3.js:41
+await in execute
+mutate @ index-mh1iSiA3.js:41
+(anonymous) @ index-mh1iSiA3.js:41
+h @ index-mh1iSiA3.js:823
+wue @ index-mh1iSiA3.js:38
+Sue @ index-mh1iSiA3.js:38
+Cue @ index-mh1iSiA3.js:38
+dM @ index-mh1iSiA3.js:38
+V7 @ index-mh1iSiA3.js:38
+(anonymous) @ index-mh1iSiA3.js:38
+yO @ index-mh1iSiA3.js:41
+f7 @ index-mh1iSiA3.js:38
+N2 @ index-mh1iSiA3.js:38
+H4 @ index-mh1iSiA3.js:38
+zue @ index-mh1iSiA3.js:38
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Fields with games assigned: (5) [34, 35, 33, 31, 32]
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 31 (12) has 3 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 32 (13) has 4 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 33 (14) has 3 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 34 (15) has 3 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 35 (20) has 1 games
+index-mh1iSiA3.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 14, …}
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Fields with games assigned: (5) [34, 35, 33, 31, 32]
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 31 (12) has 3 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 32 (13) has 4 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 33 (14) has 3 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 34 (15) has 3 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 35 (20) has 1 games
+index-mh1iSiA3.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 14, …}
+index-mh1iSiA3.js:41 TypeError: Cannot read properties of undefined (reading 'length')
+    at NFe (index-mh1iSiA3.js:823:67759)
+    at uO (index-mh1iSiA3.js:39:17031)
+    at rP (index-mh1iSiA3.js:41:3143)
+    at VW (index-mh1iSiA3.js:41:44880)
+    at zW (index-mh1iSiA3.js:41:39822)
+    at the (index-mh1iSiA3.js:41:39748)
+    at nw (index-mh1iSiA3.js:41:39598)
+    at fP (index-mh1iSiA3.js:41:35960)
+    at $W (index-mh1iSiA3.js:41:34907)
+    at w (index-mh1iSiA3.js:26:1556)
+nP @ index-mh1iSiA3.js:41
+r.callback @ index-mh1iSiA3.js:41
+bM @ index-mh1iSiA3.js:39
+MM @ index-mh1iSiA3.js:41
+MW @ index-mh1iSiA3.js:41
+Jme @ index-mh1iSiA3.js:41
+rhe @ index-mh1iSiA3.js:41
+ku @ index-mh1iSiA3.js:41
+$W @ index-mh1iSiA3.js:41
+w @ index-mh1iSiA3.js:26
+T @ index-mh1iSiA3.js:26Understand this error
+index-mh1iSiA3.js:823 Uncaught TypeError: Cannot read properties of undefined (reading 'length')
+    at NFe (index-mh1iSiA3.js:823:67759)
+    at uO (index-mh1iSiA3.js:39:17031)
+    at rP (index-mh1iSiA3.js:41:3143)
+    at VW (index-mh1iSiA3.js:41:44880)
+    at zW (index-mh1iSiA3.js:41:39822)
+    at the (index-mh1iSiA3.js:41:39748)
+    at nw (index-mh1iSiA3.js:41:39598)
+    at fP (index-mh1iSiA3.js:41:35960)
+    at $W (index-mh1iSiA3.js:41:34907)
+    at w (index-mh1iSiA3.js:26:1556)
+NFe @ index-mh1iSiA3.js:823
+uO @ index-mh1iSiA3.js:39
+rP @ index-mh1iSiA3.js:41
+VW @ index-mh1iSiA3.js:41
+zW @ index-mh1iSiA3.js:41
+the @ index-mh1iSiA3.js:41
+nw @ index-mh1iSiA3.js:41
+fP @ index-mh1iSiA3.js:41
+$W @ index-mh1iSiA3.js:41
+w @ index-mh1iSiA3.js:26
+T @ index-mh1iSiA3.js:26Understand this error
+index-mh1iSiA3.js:823 🎯 [ENHANCED DRAG DROP] Transformed games for calendar: (14) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-mh1iSiA3.js:823 🎯 [ENHANCED DRAG DROP] Fields data: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9922: fieldId=34, fieldName="15", startTime="2025-08-16T08:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9917: fieldId=35, fieldName="20", startTime="2025-08-16T08:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9921: fieldId=33, fieldName="14", startTime="2025-08-16T14:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9918: fieldId=34, fieldName="15", startTime="2025-08-16T14:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9920: fieldId=33, fieldName="14", startTime="2025-08-17T08:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9919: fieldId=34, fieldName="15", startTime="2025-08-17T08:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9923: fieldId=31, fieldName="12", startTime="2025-08-16T08:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9915: fieldId=32, fieldName="13", startTime="2025-08-16T08:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9910: fieldId=33, fieldName="14", startTime="2025-08-16T08:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9914: fieldId=31, fieldName="12", startTime="2025-08-16T14:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9911: fieldId=32, fieldName="13", startTime="2025-08-16T14:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9913: fieldId=31, fieldName="12", startTime="2025-08-17T08:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9912: fieldId=32, fieldName="13", startTime="2025-08-17T08:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9916: fieldId=32, fieldName="13", startTime="2025-08-17T10:30:00"
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state {pill-player: {…}}
+chunk-FLCULYKI.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+9Fetch finished loading: POST "<URL>".
+Navigated to https://app.matchpro.ai/admin/events/1844329078/master-schedule
+ Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+Tda @ js:1382
+google.maps.Load @ js:14
+(anonymous) @ js:1641
+(anonymous) @ js:1641Understand this warning
+ XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+_.B.send @ js:1414
+Qda @ js:1391
+Tda @ js:1383
+google.maps.Load @ js:14
+(anonymous) @ js:1641
+(anonymous) @ js:1641
+ Google Maps API key length: 0 characters
+ Mapbox API key length: 93 characters
+ Google Maps API already loaded
+ orchestration: Initializing config store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+ orchestration: Initializing feature flag store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+ orchestration: Initializing user store with state {pill-player: {…}}
+ orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+ Current route location (Wouter): /admin/events/1844329078/master-schedule
+ Current URL: https://app.matchpro.ai/admin/events/1844329078/master-schedule
+ Current pathname: /admin/events/1844329078/master-schedule
+ Current search: 
+ Fetching user with emulation token: not present
+13Fetch finished loading: GET "<URL>".
+ User data fetched: {id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: '$2b$12$d6n1CBWgsWFm0fh77F1OX.YxDZy7/O3aLSuJOuq4QkvOtFmSit7BC', firstName: 'Bryan', …}
+ Fetch failed loading: GET "https://app.matchpro.ai/api/user".
+queryFn @ /assets/index-mh1iSiA3.js:649
+i @ /assets/index-mh1iSiA3.js:41
+f @ /assets/index-mh1iSiA3.js:41
+start @ /assets/index-mh1iSiA3.js:41
+fetch @ /assets/index-mh1iSiA3.js:41
+ng @ /assets/index-mh1iSiA3.js:41
+onSubscribe @ /assets/index-mh1iSiA3.js:41
+subscribe @ /assets/index-mh1iSiA3.js:41
+(anonymous) @ /assets/index-mh1iSiA3.js:41
+iW @ /assets/index-mh1iSiA3.js:39
+SS @ /assets/index-mh1iSiA3.js:41
+Jh @ /assets/index-mh1iSiA3.js:41
+BM @ /assets/index-mh1iSiA3.js:41
+iu @ /assets/index-mh1iSiA3.js:39
+rhe @ /assets/index-mh1iSiA3.js:41
+ku @ /assets/index-mh1iSiA3.js:41
+$W @ /assets/index-mh1iSiA3.js:41
+w @ /assets/index-mh1iSiA3.js:26
+T @ /assets/index-mh1iSiA3.js:26
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+6Fetch finished loading: GET "<URL>".
+ Flight configs loaded: 76 flights
+ Configured flights: 8 of 76
+ Schedule API Response: {games: Array(14), fields: Array(28), ageGroups: Array(2), dates: Array(2), totalGames: 14, …}
+ Game 1 transformation debug: {raw: {…}, homeTeamStructure: 'ALBION SC Riverside G12 DPL', awayTeamStructure: 'Cal Elite SC G2012', fieldStructure: '15', rawFieldName: '15', …}
+ Game 1 API data: {
+  "id": 9922,
+  "homeTeam": "ALBION SC Riverside G12 DPL",
+  "awayTeam": "Cal Elite SC G2012",
+  "ageGroup": "U14 Girls",
+  "field": "15",
+  "fieldId": 34,
+  "fieldName": "15",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "ALBION SC Riverside G12 DPL",
+  "awayTeamName": "Cal Elite SC G2012"
+}
+ Game 1 transformed: {id: 9922, homeTeam: 'ALBION SC Riverside G12 DPL', awayTeam: 'Cal Elite SC G2012', ageGroup: 'U14 Girls', field: '15', …}
+ Game 2 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf North G2012 Academy', awayTeamStructure: 'Future FC G12', fieldStructure: '20', rawFieldName: '20', …}
+ Game 2 API data: {
+  "id": 9917,
+  "homeTeam": "Empire Surf North G2012 Academy",
+  "awayTeam": "Future FC G12",
+  "ageGroup": "U14 Girls",
+  "field": "20",
+  "fieldId": 35,
+  "fieldName": "20",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf North G2012 Academy",
+  "awayTeamName": "Future FC G12"
+}
+ Game 2 transformed: {id: 9917, homeTeam: 'Empire Surf North G2012 Academy', awayTeam: 'Future FC G12', ageGroup: 'U14 Girls', field: '20', …}
+ Game 3 transformation debug: {raw: {…}, homeTeamStructure: 'Future FC G12', awayTeamStructure: 'Cal Elite SC G2012', fieldStructure: '14', rawFieldName: '14', …}
+ Game 3 API data: {
+  "id": 9921,
+  "homeTeam": "Future FC G12",
+  "awayTeam": "Cal Elite SC G2012",
+  "ageGroup": "U14 Girls",
+  "field": "14",
+  "fieldId": 33,
+  "fieldName": "14",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Future FC G12",
+  "awayTeamName": "Cal Elite SC G2012"
+}
+ Game 3 transformed: {id: 9921, homeTeam: 'Future FC G12', awayTeam: 'Cal Elite SC G2012', ageGroup: 'U14 Girls', field: '14', …}
+ Game 4 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf North G2012 Academy', awayTeamStructure: 'ALBION SC Riverside G12 DPL', fieldStructure: '15', rawFieldName: '15', …}
+ Game 4 API data: {
+  "id": 9918,
+  "homeTeam": "Empire Surf North G2012 Academy",
+  "awayTeam": "ALBION SC Riverside G12 DPL",
+  "ageGroup": "U14 Girls",
+  "field": "15",
+  "fieldId": 34,
+  "fieldName": "15",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf North G2012 Academy",
+  "awayTeamName": "ALBION SC Riverside G12 DPL"
+}
+ Game 4 transformed: {id: 9918, homeTeam: 'Empire Surf North G2012 Academy', awayTeam: 'ALBION SC Riverside G12 DPL', ageGroup: 'U14 Girls', field: '15', …}
+ Game 5 transformation debug: {raw: {…}, homeTeamStructure: 'Future FC G12', awayTeamStructure: 'ALBION SC Riverside G12 DPL', fieldStructure: '14', rawFieldName: '14', …}
+ Game 5 API data: {
+  "id": 9920,
+  "homeTeam": "Future FC G12",
+  "awayTeam": "ALBION SC Riverside G12 DPL",
+  "ageGroup": "U14 Girls",
+  "field": "14",
+  "fieldId": 33,
+  "fieldName": "14",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Future FC G12",
+  "awayTeamName": "ALBION SC Riverside G12 DPL"
+}
+ Game 5 transformed: {id: 9920, homeTeam: 'Future FC G12', awayTeam: 'ALBION SC Riverside G12 DPL', ageGroup: 'U14 Girls', field: '14', …}
+ Game 6 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf North G2012 Academy', awayTeamStructure: 'Cal Elite SC G2012', fieldStructure: '15', rawFieldName: '15', …}
+ Game 6 API data: {
+  "id": 9919,
+  "homeTeam": "Empire Surf North G2012 Academy",
+  "awayTeam": "Cal Elite SC G2012",
+  "ageGroup": "U14 Girls",
+  "field": "15",
+  "fieldId": 34,
+  "fieldName": "15",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf North G2012 Academy",
+  "awayTeamName": "Cal Elite SC G2012"
+}
+ Game 6 transformed: {id: 9919, homeTeam: 'Empire Surf North G2012 Academy', awayTeam: 'Cal Elite SC G2012', ageGroup: 'U14 Girls', field: '15', …}
+ Game 7 transformation debug: {raw: {…}, homeTeamStructure: 'TBD', awayTeamStructure: 'TBD', fieldStructure: '12', rawFieldName: '12', …}
+ Game 7 API data: {
+  "id": 9923,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "ageGroup": "U14 Girls",
+  "field": "12",
+  "fieldId": 31,
+  "fieldName": "12",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "pending",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD"
+}
+ Game 7 transformed: {id: 9923, homeTeam: 'TBD', awayTeam: 'TBD', ageGroup: 'U14 Girls', field: '12', …}
+ Game 8 transformation debug: {raw: {…}, homeTeamStructure: "Tiffiny's B07- Jose ", awayTeamStructure: 'Pro Alliance B07 Academy', fieldStructure: '13', rawFieldName: '13', …}
+ Game 8 API data: {
+  "id": 9915,
+  "homeTeam": "Tiffiny's B07- Jose ",
+  "awayTeam": "Pro Alliance B07 Academy",
+  "ageGroup": "U19 Boys",
+  "field": "13",
+  "fieldId": 32,
+  "fieldName": "13",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Tiffiny's B07- Jose ",
+  "awayTeamName": "Pro Alliance B07 Academy"
+}
+ Game 8 transformed: {id: 9915, homeTeam: "Tiffiny's B07- Jose ", awayTeam: 'Pro Alliance B07 Academy', ageGroup: 'U19 Boys', field: '13', …}
+ Game 9 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest B07/08', awayTeamStructure: 'Cal Elite SC B2007', fieldStructure: '14', rawFieldName: '14', …}
+ Game 9 API data: {
+  "id": 9910,
+  "homeTeam": "City SC Southwest B07/08",
+  "awayTeam": "Cal Elite SC B2007",
+  "ageGroup": "U19 Boys",
+  "field": "14",
+  "fieldId": 33,
+  "fieldName": "14",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B07/08",
+  "awayTeamName": "Cal Elite SC B2007"
+}
+ Game 9 transformed: {id: 9910, homeTeam: 'City SC Southwest B07/08', awayTeam: 'Cal Elite SC B2007', ageGroup: 'U19 Boys', field: '14', …}
+ Game 10 transformation debug: {raw: {…}, homeTeamStructure: 'Cal Elite SC B2007', awayTeamStructure: 'Pro Alliance B07 Academy', fieldStructure: '12', rawFieldName: '12', …}
+ Game 10 API data: {
+  "id": 9914,
+  "homeTeam": "Cal Elite SC B2007",
+  "awayTeam": "Pro Alliance B07 Academy",
+  "ageGroup": "U19 Boys",
+  "field": "12",
+  "fieldId": 31,
+  "fieldName": "12",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Cal Elite SC B2007",
+  "awayTeamName": "Pro Alliance B07 Academy"
+}
+ Game 10 transformed: {id: 9914, homeTeam: 'Cal Elite SC B2007', awayTeam: 'Pro Alliance B07 Academy', ageGroup: 'U19 Boys', field: '12', …}
+ Game 11 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest B07/08', awayTeamStructure: "Tiffiny's B07- Jose ", fieldStructure: '13', rawFieldName: '13', …}
+ Game 11 API data: {
+  "id": 9911,
+  "homeTeam": "City SC Southwest B07/08",
+  "awayTeam": "Tiffiny's B07- Jose ",
+  "ageGroup": "U19 Boys",
+  "field": "13",
+  "fieldId": 32,
+  "fieldName": "13",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B07/08",
+  "awayTeamName": "Tiffiny's B07- Jose "
+}
+ Game 11 transformed: {id: 9911, homeTeam: 'City SC Southwest B07/08', awayTeam: "Tiffiny's B07- Jose ", ageGroup: 'U19 Boys', field: '13', …}
+ Game 12 transformation debug: {raw: {…}, homeTeamStructure: 'Cal Elite SC B2007', awayTeamStructure: "Tiffiny's B07- Jose ", fieldStructure: '12', rawFieldName: '12', …}
+ Game 12 API data: {
+  "id": 9913,
+  "homeTeam": "Cal Elite SC B2007",
+  "awayTeam": "Tiffiny's B07- Jose ",
+  "ageGroup": "U19 Boys",
+  "field": "12",
+  "fieldId": 31,
+  "fieldName": "12",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Cal Elite SC B2007",
+  "awayTeamName": "Tiffiny's B07- Jose "
+}
+ Game 12 transformed: {id: 9913, homeTeam: 'Cal Elite SC B2007', awayTeam: "Tiffiny's B07- Jose ", ageGroup: 'U19 Boys', field: '12', …}
+ Game 13 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest B07/08', awayTeamStructure: 'Pro Alliance B07 Academy', fieldStructure: '13', rawFieldName: '13', …}
+ Game 13 API data: {
+  "id": 9912,
+  "homeTeam": "City SC Southwest B07/08",
+  "awayTeam": "Pro Alliance B07 Academy",
+  "ageGroup": "U19 Boys",
+  "field": "13",
+  "fieldId": 32,
+  "fieldName": "13",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B07/08",
+  "awayTeamName": "Pro Alliance B07 Academy"
+}
+ Game 13 transformed: {id: 9912, homeTeam: 'City SC Southwest B07/08', awayTeam: 'Pro Alliance B07 Academy', ageGroup: 'U19 Boys', field: '13', …}
+ Game 14 transformation debug: {raw: {…}, homeTeamStructure: 'TBD', awayTeamStructure: 'TBD', fieldStructure: '13', rawFieldName: '13', …}
+ Game 14 API data: {
+  "id": 9916,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "ageGroup": "U19 Boys",
+  "field": "13",
+  "fieldId": 32,
+  "fieldName": "13",
+  "date": "2025-08-17",
+  "time": "10:30",
+  "startTime": "2025-08-17T10:30:00",
+  "duration": 90,
+  "status": "pending",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD"
+}
+ Game 14 transformed: {id: 9916, homeTeam: 'TBD', awayTeam: 'TBD', ageGroup: 'U19 Boys', field: '13', …}
+ Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+$Aa @ util.js:33
+(anonymous) @ js:1384
+Promise.then
+(anonymous) @ js:1384
+setTimeout
+Tda @ js:1384
+google.maps.Load @ js:14
+(anonymous) @ js:1641
+(anonymous) @ js:1641Understand this warning
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+Promise.then
+S @ out-4.5.44.js:1
+y @ out-4.5.44.js:1
+E @ out-4.5.44.js:1
+e.onload @ inner.html:1
+script
+(anonymous) @ inner.html:1
+(anonymous) @ inner.html:1
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+h @ out-4.5.44.js:1
+e @ inner.html:1
+ 🎯 [FIELD DEBUG] All available fields: []
+ 🎯 [FIELD DEBUG] Fields with games assigned: []
+ 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: true, error: null, scheduleData: undefined, fieldsCount: 0, gamesCount: 0, …}
+ 🎯 [ENHANCED DRAG DROP] Transformed games for calendar: (14) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+ 🎯 [ENHANCED DRAG DROP] Fields data: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+ 🎯 [GAME-FIELD DEBUG] Game 9922: fieldId=34, fieldName="15", startTime="2025-08-16T08:00:00"
+ 🎯 [GAME-FIELD DEBUG] Game 9917: fieldId=35, fieldName="20", startTime="2025-08-16T08:00:00"
+ 🎯 [GAME-FIELD DEBUG] Game 9921: fieldId=33, fieldName="14", startTime="2025-08-16T14:00:00"
+ 🎯 [GAME-FIELD DEBUG] Game 9918: fieldId=34, fieldName="15", startTime="2025-08-16T14:00:00"
+ 🎯 [GAME-FIELD DEBUG] Game 9920: fieldId=33, fieldName="14", startTime="2025-08-17T08:00:00"
+ 🎯 [GAME-FIELD DEBUG] Game 9919: fieldId=34, fieldName="15", startTime="2025-08-17T08:00:00"
+ 🎯 [GAME-FIELD DEBUG] Game 9923: fieldId=31, fieldName="12", startTime="2025-08-16T08:00:00"
+ 🎯 [GAME-FIELD DEBUG] Game 9915: fieldId=32, fieldName="13", startTime="2025-08-16T08:00:00"
+ 🎯 [GAME-FIELD DEBUG] Game 9910: fieldId=33, fieldName="14", startTime="2025-08-16T08:00:00"
+ 🎯 [GAME-FIELD DEBUG] Game 9914: fieldId=31, fieldName="12", startTime="2025-08-16T14:00:00"
+ 🎯 [GAME-FIELD DEBUG] Game 9911: fieldId=32, fieldName="13", startTime="2025-08-16T14:00:00"
+ 🎯 [GAME-FIELD DEBUG] Game 9913: fieldId=31, fieldName="12", startTime="2025-08-17T08:00:00"
+ 🎯 [GAME-FIELD DEBUG] Game 9912: fieldId=32, fieldName="13", startTime="2025-08-17T08:00:00"
+ 🎯 [GAME-FIELD DEBUG] Game 9916: fieldId=32, fieldName="13", startTime="2025-08-17T10:30:00"
+ 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+ 🎯 [FIELD DEBUG] Fields with games assigned: (5) [34, 35, 33, 31, 32]
+ 🎯 [FIELD DEBUG] Field 31 (12) has 3 games
+ 🎯 [FIELD DEBUG] Field 32 (13) has 4 games
+ 🎯 [FIELD DEBUG] Field 33 (14) has 3 games
+ 🎯 [FIELD DEBUG] Field 34 (15) has 3 games
+ 🎯 [FIELD DEBUG] Field 35 (20) has 1 games
+ 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 14, …}
+ 🔍 [CONFLICT DETECTION] Starting conflict detection for 14 games
+ 🔍 [CONFLICT DETECTION] Time slots: 48
+ 🔍 [CONFLICT DETECTION] Sample games: (3) [{…}, {…}, {…}]
+ 🚨 [TEAM CONFLICT] TBD has 2 games at 8 AM: (2) [{…}, {…}]
+/assets/index-mh1iSiA3.js:41 [Violation] 'setTimeout' handler took 68ms
+ 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+ 🎯 [FIELD DEBUG] Fields with games assigned: (5) [34, 35, 33, 31, 32]
+ 🎯 [FIELD DEBUG] Field 31 (12) has 3 games
+ 🎯 [FIELD DEBUG] Field 32 (13) has 4 games
+ 🎯 [FIELD DEBUG] Field 33 (14) has 3 games
+ 🎯 [FIELD DEBUG] Field 34 (15) has 3 games
+ 🎯 [FIELD DEBUG] Field 35 (20) has 1 games
+ 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 14, …}
+ Fetch finished loading: POST "https://app.matchpro.ai/api/admin/events/1844329078/optimize-schedule".
+mutationFn @ /assets/index-mh1iSiA3.js:823
+fn @ /assets/index-mh1iSiA3.js:41
+f @ /assets/index-mh1iSiA3.js:41
+start @ /assets/index-mh1iSiA3.js:41
+execute @ /assets/index-mh1iSiA3.js:41
+await in execute
+mutate @ /assets/index-mh1iSiA3.js:41
+(anonymous) @ /assets/index-mh1iSiA3.js:41
+h @ /assets/index-mh1iSiA3.js:823
+wue @ /assets/index-mh1iSiA3.js:38
+Sue @ /assets/index-mh1iSiA3.js:38
+Cue @ /assets/index-mh1iSiA3.js:38
+dM @ /assets/index-mh1iSiA3.js:38
+V7 @ /assets/index-mh1iSiA3.js:38
+(anonymous) @ /assets/index-mh1iSiA3.js:38
+yO @ /assets/index-mh1iSiA3.js:41
+f7 @ /assets/index-mh1iSiA3.js:38
+N2 @ /assets/index-mh1iSiA3.js:38
+H4 @ /assets/index-mh1iSiA3.js:38
+zue @ /assets/index-mh1iSiA3.js:38
+ 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+ 🎯 [FIELD DEBUG] Fields with games assigned: (5) [34, 35, 33, 31, 32]
+ 🎯 [FIELD DEBUG] Field 31 (12) has 3 games
+ 🎯 [FIELD DEBUG] Field 32 (13) has 4 games
+ 🎯 [FIELD DEBUG] Field 33 (14) has 3 games
+ 🎯 [FIELD DEBUG] Field 34 (15) has 3 games
+ 🎯 [FIELD DEBUG] Field 35 (20) has 1 games
+ 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 14, …}
+ 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+ 🎯 [FIELD DEBUG] Fields with games assigned: (5) [34, 35, 33, 31, 32]
+ 🎯 [FIELD DEBUG] Field 31 (12) has 3 games
+ 🎯 [FIELD DEBUG] Field 32 (13) has 4 games
+ 🎯 [FIELD DEBUG] Field 33 (14) has 3 games
+ 🎯 [FIELD DEBUG] Field 34 (15) has 3 games
+ 🎯 [FIELD DEBUG] Field 35 (20) has 1 games
+ 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 14, …}
+ TypeError: Cannot read properties of undefined (reading 'length')
+    at NFe (/assets/index-mh1iSiA3.js:823:67759)
+    at uO (/assets/index-mh1iSiA3.js:39:17031)
+    at rP (/assets/index-mh1iSiA3.js:41:3143)
+    at VW (/assets/index-mh1iSiA3.js:41:44880)
+    at zW (/assets/index-mh1iSiA3.js:41:39822)
+    at the (/assets/index-mh1iSiA3.js:41:39748)
+    at nw (/assets/index-mh1iSiA3.js:41:39598)
+    at fP (/assets/index-mh1iSiA3.js:41:35960)
+    at $W (/assets/index-mh1iSiA3.js:41:34907)
+    at w (/assets/index-mh1iSiA3.js:26:1556)
+nP @ /assets/index-mh1iSiA3.js:41
+r.callback @ /assets/index-mh1iSiA3.js:41
+bM @ /assets/index-mh1iSiA3.js:39
+MM @ /assets/index-mh1iSiA3.js:41
+MW @ /assets/index-mh1iSiA3.js:41
+Jme @ /assets/index-mh1iSiA3.js:41
+rhe @ /assets/index-mh1iSiA3.js:41
+ku @ /assets/index-mh1iSiA3.js:41
+$W @ /assets/index-mh1iSiA3.js:41
+w @ /assets/index-mh1iSiA3.js:26
+T @ /assets/index-mh1iSiA3.js:26Understand this error
+/assets/index-mh1iSiA3.js:823 Uncaught TypeError: Cannot read properties of undefined (reading 'length')
+    at NFe (/assets/index-mh1iSiA3.js:823:67759)
+    at uO (/assets/index-mh1iSiA3.js:39:17031)
+    at rP (/assets/index-mh1iSiA3.js:41:3143)
+    at VW (/assets/index-mh1iSiA3.js:41:44880)
+    at zW (/assets/index-mh1iSiA3.js:41:39822)
+    at the (/assets/index-mh1iSiA3.js:41:39748)
+    at nw (/assets/index-mh1iSiA3.js:41:39598)
+    at fP (/assets/index-mh1iSiA3.js:41:35960)
+    at $W (/assets/index-mh1iSiA3.js:41:34907)
+    at w (/assets/index-mh1iSiA3.js:26:1556)
+NFe @ /assets/index-mh1iSiA3.js:823
+uO @ /assets/index-mh1iSiA3.js:39
+rP @ /assets/index-mh1iSiA3.js:41
+VW @ /assets/index-mh1iSiA3.js:41
+zW @ /assets/index-mh1iSiA3.js:41
+the @ /assets/index-mh1iSiA3.js:41
+nw @ /assets/index-mh1iSiA3.js:41
+fP @ /assets/index-mh1iSiA3.js:41
+$W @ /assets/index-mh1iSiA3.js:41
+w @ /assets/index-mh1iSiA3.js:26
+T @ /assets/index-mh1iSiA3.js:26Understand this error
+ 🎯 [ENHANCED DRAG DROP] Transformed games for calendar: (14) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+ 🎯 [ENHANCED DRAG DROP] Fields data: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+ 🎯 [GAME-FIELD DEBUG] Game 9922: fieldId=34, fieldName="15", startTime="2025-08-16T08:00:00"
+ 🎯 [GAME-FIELD DEBUG] Game 9917: fieldId=35, fieldName="20", startTime="2025-08-16T08:00:00"
+ 🎯 [GAME-FIELD DEBUG] Game 9921: fieldId=33, fieldName="14", startTime="2025-08-16T14:00:00"
+ 🎯 [GAME-FIELD DEBUG] Game 9918: fieldId=34, fieldName="15", startTime="2025-08-16T14:00:00"
+ 🎯 [GAME-FIELD DEBUG] Game 9920: fieldId=33, fieldName="14", startTime="2025-08-17T08:00:00"
+ 🎯 [GAME-FIELD DEBUG] Game 9919: fieldId=34, fieldName="15", startTime="2025-08-17T08:00:00"
+ 🎯 [GAME-FIELD DEBUG] Game 9923: fieldId=31, fieldName="12", startTime="2025-08-16T08:00:00"
+ 🎯 [GAME-FIELD DEBUG] Game 9915: fieldId=32, fieldName="13", startTime="2025-08-16T08:00:00"
+ 🎯 [GAME-FIELD DEBUG] Game 9910: fieldId=33, fieldName="14", startTime="2025-08-16T08:00:00"
+ 🎯 [GAME-FIELD DEBUG] Game 9914: fieldId=31, fieldName="12", startTime="2025-08-16T14:00:00"
+ 🎯 [GAME-FIELD DEBUG] Game 9911: fieldId=32, fieldName="13", startTime="2025-08-16T14:00:00"
+ 🎯 [GAME-FIELD DEBUG] Game 9913: fieldId=31, fieldName="12", startTime="2025-08-17T08:00:00"
+ 🎯 [GAME-FIELD DEBUG] Game 9912: fieldId=32, fieldName="13", startTime="2025-08-17T08:00:00"
+ 🎯 [GAME-FIELD DEBUG] Game 9916: fieldId=32, fieldName="13", startTime="2025-08-17T10:30:00"
+master-schedule:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this error
+ orchestration: Initializing user store with state {pill-player: {…}}
+ orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+Navigated to https://app.matchpro.ai/admin/events/1844329078/master-schedule
+ orchestration: Initializing config store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+ orchestration: Initializing feature flag store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+ orchestration: Initializing user store with state {pill-player: {…}}
+ orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+ Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+Tda @ js:1382
+google.maps.Load @ js:14
+(anonymous) @ js:1641
+(anonymous) @ js:1641Understand this warning
+ XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+_.B.send @ js:1414
+Qda @ js:1391
+Tda @ js:1383
+google.maps.Load @ js:14
+(anonymous) @ js:1641
+(anonymous) @ js:1641
+ Google Maps API key length: 0 characters
+ Mapbox API key length: 93 characters
+ Google Maps API already loaded
+ Current route location (Wouter): /admin/events/1844329078/master-schedule
+ Current URL: https://app.matchpro.ai/admin/events/1844329078/master-schedule
+ Current pathname: /admin/events/1844329078/master-schedule
+ Current search: 
+ Fetching user with emulation token: not present
+  GET https://app.matchpro.ai/api/user 401 (Unauthorized)
+GSe @ index--sKVPCwK.js:657
+i @ index--sKVPCwK.js:41
+f @ index--sKVPCwK.js:41
+start @ index--sKVPCwK.js:41
+fetch @ index--sKVPCwK.js:41
+ng @ index--sKVPCwK.js:41
+onSubscribe @ index--sKVPCwK.js:41
+subscribe @ index--sKVPCwK.js:41
+(anonymous) @ index--sKVPCwK.js:41
+iW @ index--sKVPCwK.js:39
+SS @ index--sKVPCwK.js:41
+Jh @ index--sKVPCwK.js:41
+BM @ index--sKVPCwK.js:41
+iu @ index--sKVPCwK.js:39
+rhe @ index--sKVPCwK.js:41
+ku @ index--sKVPCwK.js:41
+$W @ index--sKVPCwK.js:41
+w @ index--sKVPCwK.js:26
+T @ index--sKVPCwK.js:26Understand this error
+ AnimatedBackground initialized with type: particles
+ Setting redirect based on current protected URL: /admin/events/1844329078/master-schedule
+ Fetch failed loading: GET "https://app.matchpro.ai/api/user".
+GSe @ index--sKVPCwK.js:657
+i @ index--sKVPCwK.js:41
+f @ index--sKVPCwK.js:41
+start @ index--sKVPCwK.js:41
+fetch @ index--sKVPCwK.js:41
+ng @ index--sKVPCwK.js:41
+onSubscribe @ index--sKVPCwK.js:41
+subscribe @ index--sKVPCwK.js:41
+(anonymous) @ index--sKVPCwK.js:41
+iW @ index--sKVPCwK.js:39
+SS @ index--sKVPCwK.js:41
+Jh @ index--sKVPCwK.js:41
+BM @ index--sKVPCwK.js:41
+iu @ index--sKVPCwK.js:39
+rhe @ index--sKVPCwK.js:41
+ku @ index--sKVPCwK.js:41
+$W @ index--sKVPCwK.js:41
+w @ index--sKVPCwK.js:26
+T @ index--sKVPCwK.js:26
+  GET https://app.matchpro.ai/api/user 401 (Unauthorized)
+queryFn @ index--sKVPCwK.js:649
+i @ index--sKVPCwK.js:41
+f @ index--sKVPCwK.js:41
+start @ index--sKVPCwK.js:41
+fetch @ index--sKVPCwK.js:41
+ng @ index--sKVPCwK.js:41
+onSubscribe @ index--sKVPCwK.js:41
+subscribe @ index--sKVPCwK.js:41
+(anonymous) @ index--sKVPCwK.js:41
+iW @ index--sKVPCwK.js:39
+SS @ index--sKVPCwK.js:41
+Jh @ index--sKVPCwK.js:41
+BM @ index--sKVPCwK.js:41
+iu @ index--sKVPCwK.js:39
+rhe @ index--sKVPCwK.js:41
+ku @ index--sKVPCwK.js:41
+$W @ index--sKVPCwK.js:41
+w @ index--sKVPCwK.js:26
+T @ index--sKVPCwK.js:26Understand this error
+ Fetch failed loading: GET "https://app.matchpro.ai/api/user".
+queryFn @ index--sKVPCwK.js:649
+i @ index--sKVPCwK.js:41
+f @ index--sKVPCwK.js:41
+start @ index--sKVPCwK.js:41
+fetch @ index--sKVPCwK.js:41
+ng @ index--sKVPCwK.js:41
+onSubscribe @ index--sKVPCwK.js:41
+subscribe @ index--sKVPCwK.js:41
+(anonymous) @ index--sKVPCwK.js:41
+iW @ index--sKVPCwK.js:39
+SS @ index--sKVPCwK.js:41
+Jh @ index--sKVPCwK.js:41
+BM @ index--sKVPCwK.js:41
+iu @ index--sKVPCwK.js:39
+rhe @ index--sKVPCwK.js:41
+ku @ index--sKVPCwK.js:41
+$W @ index--sKVPCwK.js:41
+w @ index--sKVPCwK.js:26
+T @ index--sKVPCwK.js:26
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6 [Violation] Added non-passive event listener to a scroll-blocking 'wheel' event. Consider marking event handler as 'passive' to make the page more responsive. See https://www.chromestatus.com/feature/5745543795965952
+re @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+m @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+ge @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+m @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+ge @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+m @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+p @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+pe @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+Y @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+c.1password.com/richicons/images/login/120/app.matchpro.ai.png:1  GET https://c.1password.com/richicons/images/login/120/app.matchpro.ai.png 404 (Not Found)
+Image
+J @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+c @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+Ln @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+c @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+c @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+c @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+c @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+Ln @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+c @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+Ln @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+c @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+c @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+Ln @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+c @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+c @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+c @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+c @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+Ln @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+c @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+Ln @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+c @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+p @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+pe @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+Y @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+Promise.then
+Pt @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+$e @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+(anonymous) @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+(anonymous) @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+o @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+i @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+(anonymous) @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:3
+Promise.then
+gr @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:3
+ve @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:3
+Lt @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+Rn @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:3
+Eo @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+yt @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+we @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:3
+Lt @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+Ln @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:3
+Ro @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+yt @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+br @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:3
+p @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:3
+pe @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+Y @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+Promise.then
+Pt @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+$e @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+(anonymous) @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+(anonymous) @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:3
+Promise.then
+Be @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:3
+Lt @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+jn @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:3
+Lo @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+yt @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+me @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:3
+Lt @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+zn @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:3
+jo @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+yt @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+le @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:3
+Lt @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+In @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:3
+qo @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+Lt @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/chunks/chunk-UVKO6OCU.js:6
+Un @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+Xr @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101
+(anonymous) @ chrome-extension://aeblfdkhhhdcdjpifhhbdiojplfjncoa/inline/menu/menu.js:101Understand this error
+ Submitting login with email: bperdomo@zoho.com
+ Login mutation called with: bperdomo@zoho.com
+ Sending login request with data: {email: 'bperdomo@zoho.com', passwordLength: 8}
+ Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+$Aa @ util.js:33
+(anonymous) @ js:1384
+Promise.then
+(anonymous) @ js:1384
+setTimeout
+Tda @ js:1384
+google.maps.Load @ js:14
+(anonymous) @ js:1641
+(anonymous) @ js:1641Understand this warning
+ Login response status: 200
+ Login successful, received user data: Yes
+ Fetching current user after login
+ Fetch finished loading: POST "https://app.matchpro.ai/api/login?t=1754695936117".
+mutationFn @ index--sKVPCwK.js:649
+fn @ index--sKVPCwK.js:41
+f @ index--sKVPCwK.js:41
+start @ index--sKVPCwK.js:41
+execute @ index--sKVPCwK.js:41
+await in execute
+mutate @ index--sKVPCwK.js:41
+o @ index--sKVPCwK.js:657
+(anonymous) @ index--sKVPCwK.js:649
+await in (anonymous)
+wue @ index--sKVPCwK.js:38
+Sue @ index--sKVPCwK.js:38
+Cue @ index--sKVPCwK.js:38
+dM @ index--sKVPCwK.js:38
+V7 @ index--sKVPCwK.js:38
+(anonymous) @ index--sKVPCwK.js:38
+yO @ index--sKVPCwK.js:41
+f7 @ index--sKVPCwK.js:38
+N2 @ index--sKVPCwK.js:38
+H4 @ index--sKVPCwK.js:38
+zue @ index--sKVPCwK.js:38
+submit @ injected.js:5
+is @ injected.js:5
+uD @ injected.js:5
+await in uD
+Ox @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+n @ injected.js:5
+ Fetch finished loading: GET "https://app.matchpro.ai/api/user".
+mutationFn @ index--sKVPCwK.js:649
+await in mutationFn
+fn @ index--sKVPCwK.js:41
+f @ index--sKVPCwK.js:41
+start @ index--sKVPCwK.js:41
+execute @ index--sKVPCwK.js:41
+await in execute
+mutate @ index--sKVPCwK.js:41
+o @ index--sKVPCwK.js:657
+(anonymous) @ index--sKVPCwK.js:649
+await in (anonymous)
+wue @ index--sKVPCwK.js:38
+Sue @ index--sKVPCwK.js:38
+Cue @ index--sKVPCwK.js:38
+dM @ index--sKVPCwK.js:38
+V7 @ index--sKVPCwK.js:38
+(anonymous) @ index--sKVPCwK.js:38
+yO @ index--sKVPCwK.js:41
+f7 @ index--sKVPCwK.js:38
+N2 @ index--sKVPCwK.js:38
+H4 @ index--sKVPCwK.js:38
+zue @ index--sKVPCwK.js:38
+submit @ injected.js:5
+is @ injected.js:5
+uD @ injected.js:5
+await in uD
+Ox @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+n @ injected.js:5
+ User data fetched after login: success
+ Login mutation completed successfully
+ Performing explicit user data fetch after login
+ AUTH REDIRECT: User logged in, handling redirect
+ Found redirect path: /admin/events/1844329078/master-schedule
+ Redirecting to: /admin/events/1844329078/master-schedule
+ User data retrieved after login: success
+ Fetch finished loading: GET "https://app.matchpro.ai/api/user".
+o @ index--sKVPCwK.js:657
+await in o
+(anonymous) @ index--sKVPCwK.js:649
+await in (anonymous)
+wue @ index--sKVPCwK.js:38
+Sue @ index--sKVPCwK.js:38
+Cue @ index--sKVPCwK.js:38
+dM @ index--sKVPCwK.js:38
+V7 @ index--sKVPCwK.js:38
+(anonymous) @ index--sKVPCwK.js:38
+yO @ index--sKVPCwK.js:41
+f7 @ index--sKVPCwK.js:38
+N2 @ index--sKVPCwK.js:38
+H4 @ index--sKVPCwK.js:38
+zue @ index--sKVPCwK.js:38
+submit @ injected.js:5
+is @ injected.js:5
+uD @ injected.js:5
+await in uD
+Ox @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+n @ injected.js:5
+ Fetch finished loading: GET "https://app.matchpro.ai/api/user".
+queryFn @ index--sKVPCwK.js:649
+i @ index--sKVPCwK.js:41
+f @ index--sKVPCwK.js:41
+start @ index--sKVPCwK.js:41
+fetch @ index--sKVPCwK.js:41
+(anonymous) @ index--sKVPCwK.js:41
+(anonymous) @ index--sKVPCwK.js:41
+batch @ index--sKVPCwK.js:41
+refetchQueries @ index--sKVPCwK.js:41
+(anonymous) @ index--sKVPCwK.js:41
+batch @ index--sKVPCwK.js:41
+invalidateQueries @ index--sKVPCwK.js:41
+onSuccess @ index--sKVPCwK.js:649
+execute @ index--sKVPCwK.js:41
+await in execute
+mutate @ index--sKVPCwK.js:41
+o @ index--sKVPCwK.js:657
+(anonymous) @ index--sKVPCwK.js:649
+await in (anonymous)
+wue @ index--sKVPCwK.js:38
+Sue @ index--sKVPCwK.js:38
+Cue @ index--sKVPCwK.js:38
+dM @ index--sKVPCwK.js:38
+V7 @ index--sKVPCwK.js:38
+(anonymous) @ index--sKVPCwK.js:38
+yO @ index--sKVPCwK.js:41
+f7 @ index--sKVPCwK.js:38
+N2 @ index--sKVPCwK.js:38
+H4 @ index--sKVPCwK.js:38
+zue @ index--sKVPCwK.js:38
+submit @ injected.js:5
+is @ injected.js:5
+uD @ injected.js:5
+await in uD
+Ox @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+n @ injected.js:5
+Navigated to https://app.matchpro.ai/admin/events/1844329078/master-schedule
+js?libraries=places&v=beta&callback=Function.prototype:1382 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+Tda @ js?libraries=places&v=beta&callback=Function.prototype:1382
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641Understand this warning
+js?libraries=places&v=beta&callback=Function.prototype:1414 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+_.B.send @ js?libraries=places&v=beta&callback=Function.prototype:1414
+Qda @ js?libraries=places&v=beta&callback=Function.prototype:1391
+Tda @ js?libraries=places&v=beta&callback=Function.prototype:1383
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641
+chunk-FLCULYKI.js:31 orchestration: Initializing config store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+chunk-FLCULYKI.js:31 orchestration: Initializing feature flag store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state {pill-player: {…}}
+chunk-FLCULYKI.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+index--sKVPCwK.js:848 Google Maps API key length: 0 characters
+index--sKVPCwK.js:848 Mapbox API key length: 93 characters
+index--sKVPCwK.js:848 Google Maps API already loaded
+index--sKVPCwK.js:657 Current route location (Wouter): /admin/events/1844329078/master-schedule
+index--sKVPCwK.js:657 Current URL: https://app.matchpro.ai/admin/events/1844329078/master-schedule
+index--sKVPCwK.js:657 Current pathname: /admin/events/1844329078/master-schedule
+index--sKVPCwK.js:657 Current search: 
+index--sKVPCwK.js:657 Fetching user with emulation token: not present
+index--sKVPCwK.js:657 User data fetched: {id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: '$2b$12$d6n1CBWgsWFm0fh77F1OX.YxDZy7/O3aLSuJOuq4QkvOtFmSit7BC', firstName: 'Bryan', …}
+14Fetch finished loading: GET "<URL>".
+index--sKVPCwK.js:649 Fetch failed loading: GET "https://app.matchpro.ai/api/user".
+queryFn @ index--sKVPCwK.js:649
+i @ index--sKVPCwK.js:41
+f @ index--sKVPCwK.js:41
+start @ index--sKVPCwK.js:41
+fetch @ index--sKVPCwK.js:41
+ng @ index--sKVPCwK.js:41
+onSubscribe @ index--sKVPCwK.js:41
+subscribe @ index--sKVPCwK.js:41
+(anonymous) @ index--sKVPCwK.js:41
+iW @ index--sKVPCwK.js:39
+SS @ index--sKVPCwK.js:41
+Jh @ index--sKVPCwK.js:41
+BM @ index--sKVPCwK.js:41
+iu @ index--sKVPCwK.js:39
+rhe @ index--sKVPCwK.js:41
+ku @ index--sKVPCwK.js:41
+$W @ index--sKVPCwK.js:41
+w @ index--sKVPCwK.js:26
+T @ index--sKVPCwK.js:26
+UnifiedTournamentControlCenter-BemPTPPW.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentControlCenter-BemPTPPW.js:1 Configured flights: 8 of 76
+chunk-CVIZYB43.js:3 [Violation] 'setTimeout' handler took 64ms
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] All available fields: []
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Fields with games assigned: []
+index--sKVPCwK.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: true, error: null, scheduleData: undefined, fieldsCount: 0, gamesCount: 0, …}
+index--sKVPCwK.js:823 🎯 [ENHANCED DRAG DROP] Transformed games for calendar: (14) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index--sKVPCwK.js:823 🎯 [ENHANCED DRAG DROP] Fields data: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index--sKVPCwK.js:823 🎯 [GAME-FIELD DEBUG] Game 9922: fieldId=34, fieldName="15", startTime="2025-08-16T08:00:00"
+index--sKVPCwK.js:823 🎯 [GAME-FIELD DEBUG] Game 9917: fieldId=35, fieldName="20", startTime="2025-08-16T08:00:00"
+index--sKVPCwK.js:823 🎯 [GAME-FIELD DEBUG] Game 9921: fieldId=33, fieldName="14", startTime="2025-08-16T14:00:00"
+index--sKVPCwK.js:823 🎯 [GAME-FIELD DEBUG] Game 9918: fieldId=34, fieldName="15", startTime="2025-08-16T14:00:00"
+index--sKVPCwK.js:823 🎯 [GAME-FIELD DEBUG] Game 9920: fieldId=33, fieldName="14", startTime="2025-08-17T08:00:00"
+index--sKVPCwK.js:823 🎯 [GAME-FIELD DEBUG] Game 9919: fieldId=34, fieldName="15", startTime="2025-08-17T08:00:00"
+index--sKVPCwK.js:823 🎯 [GAME-FIELD DEBUG] Game 9923: fieldId=31, fieldName="12", startTime="2025-08-16T08:00:00"
+index--sKVPCwK.js:823 🎯 [GAME-FIELD DEBUG] Game 9915: fieldId=32, fieldName="13", startTime="2025-08-16T08:00:00"
+index--sKVPCwK.js:823 🎯 [GAME-FIELD DEBUG] Game 9910: fieldId=33, fieldName="14", startTime="2025-08-16T08:00:00"
+index--sKVPCwK.js:823 🎯 [GAME-FIELD DEBUG] Game 9914: fieldId=31, fieldName="12", startTime="2025-08-16T14:00:00"
+index--sKVPCwK.js:823 🎯 [GAME-FIELD DEBUG] Game 9911: fieldId=32, fieldName="13", startTime="2025-08-16T14:00:00"
+index--sKVPCwK.js:823 🎯 [GAME-FIELD DEBUG] Game 9913: fieldId=31, fieldName="12", startTime="2025-08-17T08:00:00"
+index--sKVPCwK.js:823 🎯 [GAME-FIELD DEBUG] Game 9912: fieldId=32, fieldName="13", startTime="2025-08-17T08:00:00"
+index--sKVPCwK.js:823 🎯 [GAME-FIELD DEBUG] Game 9916: fieldId=32, fieldName="13", startTime="2025-08-17T10:30:00"
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Fields with games assigned: (5) [34, 35, 33, 31, 32]
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Field 31 (12) has 3 games
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Field 32 (13) has 4 games
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Field 33 (14) has 3 games
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Field 34 (15) has 3 games
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Field 35 (20) has 1 games
+index--sKVPCwK.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 14, …}
+index--sKVPCwK.js:823 🔍 [CONFLICT DETECTION] Starting conflict detection for 14 games
+index--sKVPCwK.js:823 🔍 [CONFLICT DETECTION] Time slots: 48
+index--sKVPCwK.js:823 🔍 [CONFLICT DETECTION] Sample games: (3) [{…}, {…}, {…}]
+index--sKVPCwK.js:823 🚨 [TEAM CONFLICT] TBD has 2 games at 8 AM: (2) [{…}, {…}]
+index--sKVPCwK.js:41 [Violation] 'setTimeout' handler took 64ms
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Fields with games assigned: (5) [34, 35, 33, 31, 32]
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Field 31 (12) has 3 games
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Field 32 (13) has 4 games
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Field 33 (14) has 3 games
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Field 34 (15) has 3 games
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Field 35 (20) has 1 games
+index--sKVPCwK.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 14, …}
+util.js:33 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+$Aa @ util.js:33
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1384
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1384
+setTimeout
+Tda @ js?libraries=places&v=beta&callback=Function.prototype:1384
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641Understand this warning
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+Promise.then
+S @ out-4.5.44.js:1
+y @ out-4.5.44.js:1
+E @ out-4.5.44.js:1
+e.onload @ inner.html:1
+script
+(anonymous) @ inner.html:1
+(anonymous) @ inner.html:1
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+h @ out-4.5.44.js:1
+e @ inner.html:1
+index--sKVPCwK.js:823 Fetch finished loading: POST "https://app.matchpro.ai/api/admin/events/1844329078/optimize-schedule".
+mutationFn @ index--sKVPCwK.js:823
+fn @ index--sKVPCwK.js:41
+f @ index--sKVPCwK.js:41
+start @ index--sKVPCwK.js:41
+execute @ index--sKVPCwK.js:41
+await in execute
+mutate @ index--sKVPCwK.js:41
+(anonymous) @ index--sKVPCwK.js:41
+h @ index--sKVPCwK.js:823
+wue @ index--sKVPCwK.js:38
+Sue @ index--sKVPCwK.js:38
+Cue @ index--sKVPCwK.js:38
+dM @ index--sKVPCwK.js:38
+V7 @ index--sKVPCwK.js:38
+(anonymous) @ index--sKVPCwK.js:38
+yO @ index--sKVPCwK.js:41
+f7 @ index--sKVPCwK.js:38
+N2 @ index--sKVPCwK.js:38
+H4 @ index--sKVPCwK.js:38
+zue @ index--sKVPCwK.js:38
+index--sKVPCwK.js:823 🎯 [OPTIMIZATION SUCCESS] Response received: {success: true, optimizationsApplied: 0, fieldUtilizationImproved: 0, message: 'Successfully consolidated 0 games to priority fields', fieldUtilization: Array(5), …}
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Fields with games assigned: (5) [34, 35, 33, 31, 32]
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Field 31 (12) has 3 games
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Field 32 (13) has 4 games
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Field 33 (14) has 3 games
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Field 34 (15) has 3 games
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Field 35 (20) has 1 games
+index--sKVPCwK.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 14, …}
+index--sKVPCwK.js:823 🎯 [ENHANCED DRAG DROP] Transformed games for calendar: (14) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index--sKVPCwK.js:823 🎯 [ENHANCED DRAG DROP] Fields data: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index--sKVPCwK.js:823 🎯 [GAME-FIELD DEBUG] Game 9922: fieldId=34, fieldName="15", startTime="2025-08-16T08:00:00"
+index--sKVPCwK.js:823 🎯 [GAME-FIELD DEBUG] Game 9917: fieldId=35, fieldName="20", startTime="2025-08-16T08:00:00"
+index--sKVPCwK.js:823 🎯 [GAME-FIELD DEBUG] Game 9921: fieldId=33, fieldName="14", startTime="2025-08-16T14:00:00"
+index--sKVPCwK.js:823 🎯 [GAME-FIELD DEBUG] Game 9918: fieldId=34, fieldName="15", startTime="2025-08-16T14:00:00"
+index--sKVPCwK.js:823 🎯 [GAME-FIELD DEBUG] Game 9920: fieldId=33, fieldName="14", startTime="2025-08-17T08:00:00"
+index--sKVPCwK.js:823 🎯 [GAME-FIELD DEBUG] Game 9919: fieldId=34, fieldName="15", startTime="2025-08-17T08:00:00"
+index--sKVPCwK.js:823 🎯 [GAME-FIELD DEBUG] Game 9923: fieldId=31, fieldName="12", startTime="2025-08-16T08:00:00"
+index--sKVPCwK.js:823 🎯 [GAME-FIELD DEBUG] Game 9915: fieldId=32, fieldName="13", startTime="2025-08-16T08:00:00"
+index--sKVPCwK.js:823 🎯 [GAME-FIELD DEBUG] Game 9910: fieldId=33, fieldName="14", startTime="2025-08-16T08:00:00"
+index--sKVPCwK.js:823 🎯 [GAME-FIELD DEBUG] Game 9914: fieldId=31, fieldName="12", startTime="2025-08-16T14:00:00"
+index--sKVPCwK.js:823 🎯 [GAME-FIELD DEBUG] Game 9911: fieldId=32, fieldName="13", startTime="2025-08-16T14:00:00"
+index--sKVPCwK.js:823 🎯 [GAME-FIELD DEBUG] Game 9913: fieldId=31, fieldName="12", startTime="2025-08-17T08:00:00"
+index--sKVPCwK.js:823 🎯 [GAME-FIELD DEBUG] Game 9912: fieldId=32, fieldName="13", startTime="2025-08-17T08:00:00"
+index--sKVPCwK.js:823 🎯 [GAME-FIELD DEBUG] Game 9916: fieldId=32, fieldName="13", startTime="2025-08-17T10:30:00"
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Fields with games assigned: (5) [34, 35, 33, 31, 32]
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Field 31 (12) has 3 games
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Field 32 (13) has 4 games
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Field 33 (14) has 3 games
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Field 34 (15) has 3 games
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Field 35 (20) has 1 games
+index--sKVPCwK.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 14, …}
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Fields with games assigned: (5) [34, 35, 33, 31, 32]
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Field 31 (12) has 3 games
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Field 32 (13) has 4 games
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Field 33 (14) has 3 games
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Field 34 (15) has 3 games
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Field 35 (20) has 1 games
+index--sKVPCwK.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 14, …}
+index--sKVPCwK.js:823 Fetch finished loading: POST "https://app.matchpro.ai/api/admin/events/1844329078/optimize-schedule".
+mutationFn @ index--sKVPCwK.js:823
+fn @ index--sKVPCwK.js:41
+f @ index--sKVPCwK.js:41
+start @ index--sKVPCwK.js:41
+execute @ index--sKVPCwK.js:41
+await in execute
+mutate @ index--sKVPCwK.js:41
+(anonymous) @ index--sKVPCwK.js:41
+h @ index--sKVPCwK.js:823
+wue @ index--sKVPCwK.js:38
+Sue @ index--sKVPCwK.js:38
+Cue @ index--sKVPCwK.js:38
+dM @ index--sKVPCwK.js:38
+V7 @ index--sKVPCwK.js:38
+(anonymous) @ index--sKVPCwK.js:38
+yO @ index--sKVPCwK.js:41
+f7 @ index--sKVPCwK.js:38
+N2 @ index--sKVPCwK.js:38
+H4 @ index--sKVPCwK.js:38
+zue @ index--sKVPCwK.js:38
+index--sKVPCwK.js:823 🎯 [OPTIMIZATION SUCCESS] Response received: {success: true, optimizationsApplied: 0, fieldUtilizationImproved: 0, message: 'Successfully consolidated 0 games to priority fields', fieldUtilization: Array(5), …}
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Fields with games assigned: (5) [34, 35, 33, 31, 32]
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Field 31 (12) has 3 games
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Field 32 (13) has 4 games
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Field 33 (14) has 3 games
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Field 34 (15) has 3 games
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Field 35 (20) has 1 games
+index--sKVPCwK.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 14, …}
+index--sKVPCwK.js:823 🎯 [ENHANCED DRAG DROP] Transformed games for calendar: (14) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index--sKVPCwK.js:823 🎯 [ENHANCED DRAG DROP] Fields data: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index--sKVPCwK.js:823 🎯 [GAME-FIELD DEBUG] Game 9922: fieldId=34, fieldName="15", startTime="2025-08-16T08:00:00"
+index--sKVPCwK.js:823 🎯 [GAME-FIELD DEBUG] Game 9917: fieldId=35, fieldName="20", startTime="2025-08-16T08:00:00"
+index--sKVPCwK.js:823 🎯 [GAME-FIELD DEBUG] Game 9921: fieldId=33, fieldName="14", startTime="2025-08-16T14:00:00"
+index--sKVPCwK.js:823 🎯 [GAME-FIELD DEBUG] Game 9918: fieldId=34, fieldName="15", startTime="2025-08-16T14:00:00"
+index--sKVPCwK.js:823 🎯 [GAME-FIELD DEBUG] Game 9920: fieldId=33, fieldName="14", startTime="2025-08-17T08:00:00"
+index--sKVPCwK.js:823 🎯 [GAME-FIELD DEBUG] Game 9919: fieldId=34, fieldName="15", startTime="2025-08-17T08:00:00"
+index--sKVPCwK.js:823 🎯 [GAME-FIELD DEBUG] Game 9923: fieldId=31, fieldName="12", startTime="2025-08-16T08:00:00"
+index--sKVPCwK.js:823 🎯 [GAME-FIELD DEBUG] Game 9915: fieldId=32, fieldName="13", startTime="2025-08-16T08:00:00"
+index--sKVPCwK.js:823 🎯 [GAME-FIELD DEBUG] Game 9910: fieldId=33, fieldName="14", startTime="2025-08-16T08:00:00"
+index--sKVPCwK.js:823 🎯 [GAME-FIELD DEBUG] Game 9914: fieldId=31, fieldName="12", startTime="2025-08-16T14:00:00"
+index--sKVPCwK.js:823 🎯 [GAME-FIELD DEBUG] Game 9911: fieldId=32, fieldName="13", startTime="2025-08-16T14:00:00"
+index--sKVPCwK.js:823 🎯 [GAME-FIELD DEBUG] Game 9913: fieldId=31, fieldName="12", startTime="2025-08-17T08:00:00"
+index--sKVPCwK.js:823 🎯 [GAME-FIELD DEBUG] Game 9912: fieldId=32, fieldName="13", startTime="2025-08-17T08:00:00"
+index--sKVPCwK.js:823 🎯 [GAME-FIELD DEBUG] Game 9916: fieldId=32, fieldName="13", startTime="2025-08-17T10:30:00"
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Fields with games assigned: (5) [34, 35, 33, 31, 32]
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Field 31 (12) has 3 games
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Field 32 (13) has 4 games
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Field 33 (14) has 3 games
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Field 34 (15) has 3 games
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Field 35 (20) has 1 games
+index--sKVPCwK.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 14, …}
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Fields with games assigned: (5) [34, 35, 33, 31, 32]
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Field 31 (12) has 3 games
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Field 32 (13) has 4 games
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Field 33 (14) has 3 games
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Field 34 (15) has 3 games
+index--sKVPCwK.js:824 🎯 [FIELD DEBUG] Field 35 (20) has 1 games
+index--sKVPCwK.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 14, …}

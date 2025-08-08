@@ -10,15 +10,16 @@ const router = Router();
  * POST /api/admin/events/:eventId/optimize-schedule
  * Field consolidation optimization - moves games from outer fields to priority fields
  */
-router.post('/events/:eventId/optimize-schedule', isAdmin, async (req, res) => {
+router.post('/events/:id/consolidate-fields', isAdmin, async (req, res) => {
   try {
-    const eventId = parseInt(req.params.eventId);
+    console.log(`🚀🚀🚀 FIELD CONSOLIDATION ENDPOINT HIT! Event: ${req.params.id}`);
+    const eventId = parseInt(req.params.id);
     let { targetDate = '2025-08-16' } = req.body;
   
-  // If no target date provided, use the date that has games (based on frontend logs)
-  if (!targetDate || targetDate === '2025-08-09') {
-    targetDate = '2025-08-16'; // Use the date that actually has games
-  }
+    // If no target date provided, use the date that has games (based on frontend logs)
+    if (!targetDate || targetDate === '2025-08-09') {
+      targetDate = '2025-08-16'; // Use the date that actually has games
+    }
     
     console.log(`🚀 Starting field consolidation for Event ${eventId} on ${targetDate}`);
     console.log(`🎯 REQUEST BODY:`, JSON.stringify(req.body, null, 2));

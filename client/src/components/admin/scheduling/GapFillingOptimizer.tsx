@@ -51,7 +51,7 @@ export function GapFillingOptimizer({ eventId, selectedDate }: GapFillingOptimiz
   // Run intelligent gap-filling optimization
   const optimizeMutation = useMutation({
     mutationFn: async () => {
-      const response = await fetch(`/api/admin/events/${eventId}/optimize-schedule`, {
+      const response = await fetch(`/api/admin/events/${eventId}/consolidate-fields`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
