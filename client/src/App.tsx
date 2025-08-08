@@ -68,6 +68,13 @@ import MemberRosterUpload from "@/pages/member-roster-upload";
 import MemberDashboard from "@/pages/member-dashboard";
 // Complex locations map
 import ComplexLocationsMapPage from "@/pages/complex-locations-map";
+// Public schedules (no auth required)
+import PublicSchedules from "@/pages/public/PublicSchedules";
+
+// Lazy-loaded components that may not exist yet
+const ScoreReportPage = lazy(() => import("@/pages/score-report").catch(() => ({ default: () => <NotFound /> })));
+const CardReportPage = lazy(() => import("@/pages/card-report").catch(() => ({ default: () => <NotFound /> })));
+const LandingPage = lazy(() => import("@/pages/landing").catch(() => ({ default: () => <NotFound /> })));
 
 // Member merge interface - lazy loaded for admin use
 const MemberMergeInterface = lazy(() => import("@/components/admin/MemberMergeInterface").then(m => ({ default: m.default })));
@@ -95,7 +102,6 @@ const MasterSchedulePage = lazy(() => import("@/pages/admin/MasterSchedulePage")
 const UnifiedTournamentControlPage = lazy(() => import("@/pages/UnifiedTournamentControlPage"));
 
 // Import landing page components
-import LandingPage from "@/pages/landing-page";
 import { isMainDomain } from "@/lib/domainHelper";
 
 // Import fully implemented components for preview mode
@@ -106,8 +112,7 @@ import RegistrationPreview from '@/pages/registration-preview';
 import GameMetadataPage from "@/pages/admin/GameMetadataPage";
 import FlexibleAgeGroupsPage from "@/pages/admin/FlexibleAgeGroupsPage";
 import TournamentParametersPage from "@/pages/admin/TournamentParametersPage";
-import ScoreReportPage from "@/pages/ScoreReportPage";
-import CardReportPage from "@/pages/CardReportPage";
+// Score and card report pages moved to lazy loading above
 
 function Router() {
   const { user, isLoading } = useUser();
@@ -208,6 +213,9 @@ function Router() {
       {/* QR Code accessible score and card reporting - no auth required */}
       <Route path="/score-report/:gameId" component={ScoreReportPage} />
       <Route path="/card-report/:gameId" component={CardReportPage} />
+      
+      {/* Public schedules - no auth required */}
+      <Route path="/public/schedules/:eventId" component={PublicSchedules} />
       
       {/* Handle other routes based on auth status */}
       {!user ? (

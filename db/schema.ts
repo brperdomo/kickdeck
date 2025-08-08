@@ -1805,4 +1805,28 @@ export const selectWorkflowProgressSchema = createSelectSchema(workflowProgress)
 export type InsertWorkflowProgress = typeof workflowProgress.$inferInsert;
 export type SelectWorkflowProgress = typeof workflowProgress.$inferSelect;
 
+// Published schedules table for public viewing
+export const publishedSchedules = pgTable("published_schedules", {
+  id: serial("id").primaryKey(),
+  eventId: integer("event_id").notNull().references(() => events.id, { onDelete: 'cascade' }),
+  publishedAt: timestamp("published_at").notNull().defaultNow(),
+  publishedBy: integer("published_by").notNull().references(() => users.id),
+  isActive: boolean("is_active").notNull().default(true),
+  scheduleData: jsonb("schedule_data").notNull(), // Contains games, standings, flights data
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const insertPublishedScheduleSchema = createInsertSchema(publishedSchedules, {
+  eventId: z.number().int().positive("Event ID is required"),
+  publishedBy: z.number().int().positive("Published by user ID is required"),
+  scheduleData: z.object({}).passthrough(),
+  isActive: z.boolean().default(true),
+});
+
+export const selectPublishedScheduleSchema = createSelectSchema(publishedSchedules);
+
+export type InsertPublishedSchedule = typeof publishedSchedules.$inferInsert;
+export type SelectPublishedSchedule = typeof publishedSchedules.$inferSelect;
+
 // Note: Clubs table already defined at the top of the file

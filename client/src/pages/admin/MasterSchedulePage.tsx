@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { 
   Calendar, Zap, Eye, Settings, ArrowRight, 
-  CheckCircle, Clock, Users, Trophy, ArrowLeft, Home, FileText, Plane 
+  CheckCircle, Clock, Users, Trophy, ArrowLeft, Home, FileText, Plane, Globe 
 } from 'lucide-react';
 import { UnifiedScheduleSetup } from '@/components/admin/scheduling/UnifiedScheduleSetup';
 import { UnifiedTournamentControlCenter } from '@/components/admin/scheduling/UnifiedTournamentControlCenter';
@@ -21,11 +21,12 @@ import { FlightConfigurationTable } from '@/components/admin/scheduling/FlightCo
 import { WorkflowDataFlow } from '@/components/admin/scheduling/WorkflowDataFlow';
 import BracketCreationEngine from '@/components/admin/scheduling/BracketCreationEngine';
 import { MasterScheduleConflictDetection } from '@/components/admin/scheduling/MasterScheduleConflictDetection';
+import { PublishSchedules } from '@/components/admin/scheduling/PublishSchedules';
 
 export default function MasterSchedulePage() {
   const { eventId } = useParams<{ eventId: string }>();
   const [, setLocation] = useLocation();
-  const [currentView, setCurrentView] = useState<'quick' | 'view' | 'calendar' | 'cards' | 'manage' | 'flights' | 'formats' | 'brackets' | 'overview' | 'workflow'>('overview');
+  const [currentView, setCurrentView] = useState<'quick' | 'view' | 'calendar' | 'cards' | 'manage' | 'flights' | 'formats' | 'brackets' | 'overview' | 'workflow' | 'publish'>('overview');
 
   if (!eventId) {
     return <div>Event ID not found</div>;
@@ -181,6 +182,20 @@ export default function MasterSchedulePage() {
             <FileText className="h-4 w-4" />
             Game Cards
           </Button>
+          
+          {/* Post Schedules Tab */}
+          <Button
+            variant={currentView === 'publish' ? 'default' : 'outline'}
+            onClick={() => setCurrentView('publish')}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 whitespace-nowrap ${
+              currentView === 'publish' 
+                ? 'bg-green-600 text-white shadow-lg shadow-green-600/25 hover:bg-green-500' 
+                : 'bg-slate-700 text-slate-200 hover:bg-slate-600 border border-slate-600 hover:border-slate-500'
+            }`}
+          >
+            <Globe className="h-4 w-4" />
+            Post Schedules
+          </Button>
         </div>
 
         {/* Content Area */}
@@ -319,6 +334,17 @@ export default function MasterSchedulePage() {
               </AlertDescription>
             </Alert>
             <BracketCreationEngine eventId={eventId} />
+          </div>
+        ) : currentView === 'publish' ? (
+          <div className="space-y-6">
+            <Alert className="border-slate-600 bg-slate-800">
+              <Globe className="h-4 w-4 text-green-400" />
+              <AlertDescription className="text-slate-200">
+                <strong>Post Schedules:</strong> Publish your finalized tournament schedules and standings for public viewing. 
+                Create public links organized by age groups and flights that teams and spectators can access without authentication.
+              </AlertDescription>
+            </Alert>
+            <PublishSchedules eventId={eventId} />
           </div>
         ) : (
           <div className="space-y-6">
