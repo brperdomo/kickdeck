@@ -1355,12 +1355,34 @@ async function assignFieldsWithSchedule(eventId: string, dbGames: any[], bracket
   let currentTimeSlot = new Date(eventStartDate);
   currentTimeSlot.setHours(8, 0, 0, 0); // Start at 8:00 AM
   
+  // CRITICAL: Track field occupancy across ALL time slots to prevent overlaps
+  const fieldOccupancy: { [fieldId: number]: { [timeSlot: string]: boolean } } = {};
+  
+  // Initialize field occupancy tracking
+  availableFields.forEach(field => {
+    fieldOccupancy[field.id] = {};
+  });
+  
   while (unscheduledGames.length > 0) {
     console.log(`\n[Enhanced Field Assignment] === TIME SLOT: ${currentTimeSlot.toLocaleString()} ===`);
     console.log(`[Enhanced Field Assignment] Remaining games to schedule: ${unscheduledGames.length}`);
     
     const scheduledThisRound: any[] = [];
-    const availableFieldsThisSlot = [...availableFields];
+    const currentTimeSlotKey = currentTimeSlot.toISOString();
+    
+    // Get available fields for this specific time slot (not occupied)
+    const availableFieldsThisSlot = availableFields.filter(field => 
+      !fieldOccupancy[field.id][currentTimeSlotKey]
+    );
+    
+    console.log(`[Enhanced Field Assignment] Available fields for ${currentTimeSlot.toLocaleTimeString()}: ${availableFieldsThisSlot.length}/${availableFields.length} (${availableFieldsThisSlot.map(f => f.name).join(', ')})`);
+    
+    // If no fields available, advance to next time slot immediately
+    if (availableFieldsThisSlot.length === 0) {
+      console.log(`[Enhanced Field Assignment] ⏸️ No fields available at ${currentTimeSlot.toLocaleTimeString()}, advancing to next slot`);
+      currentTimeSlot = new Date(currentTimeSlot.getTime() + (15 * 60 * 1000));
+      continue;
+    }
     
     // Try to schedule as many games as possible at this time slot
     for (let gameIndex = unscheduledGames.length - 1; gameIndex >= 0; gameIndex--) {
@@ -1419,13 +1441,28 @@ async function assignFieldsWithSchedule(eventId: string, dbGames: any[], bracket
         }
       }
       
-      // Find available field
-      if (canSchedule && availableFieldsThisSlot.length > 0) {
-        const assignedField = availableFieldsThisSlot.shift()!; // Take first available field (guaranteed to exist)
+      // Find available field that's not already taken this round
+      const actuallyAvailableFields = availableFieldsThisSlot.filter(field => 
+        !scheduledThisRound.some(scheduled => scheduled.fieldId === field.id)
+      );
+      
+      if (canSchedule && actuallyAvailableFields.length > 0) {
+        const assignedField = actuallyAvailableFields[0]; // Take first truly available field
         
         const scheduledDateTime = new Date(currentTimeSlot);
         const scheduledDate = scheduledDateTime.toISOString().split('T')[0];
         const scheduledTime = scheduledDateTime.toTimeString().substring(0, 5);
+
+        // CRITICAL: Mark field as occupied for this time slot AND duration
+        const gameEndTimeForOccupancy = new Date(currentTimeSlot.getTime() + gameDurationMs);
+        let occupancyTime = new Date(currentTimeSlot);
+        while (occupancyTime < gameEndTimeForOccupancy) {
+          const occupancyKey = occupancyTime.toISOString();
+          fieldOccupancy[assignedField.id][occupancyKey] = true;
+          occupancyTime = new Date(occupancyTime.getTime() + (15 * 60 * 1000)); // Mark every 15 minutes
+        }
+        
+        console.log(`[Enhanced Field Assignment] 🔒 FIELD OCCUPIED: Field ${assignedField.name} from ${scheduledTime} to ${gameEndTimeForOccupancy.toTimeString().substring(0, 5)}`);
 
         // Record this game as scheduled
         const assignment = {
@@ -1442,19 +1479,16 @@ async function assignFieldsWithSchedule(eventId: string, dbGames: any[], bracket
         assignments.push(assignment);
         scheduledThisRound.push(assignment);
 
-        // Update database with field and schedule assignment
+        // Update database with field and schedule assignment - Use specific game ID to prevent duplicates
         try {
           await db.execute(sql`
             UPDATE games 
             SET field_id = ${assignedField.id},
                 scheduled_date = ${scheduledDate},
                 scheduled_time = ${scheduledTime}
-            WHERE event_id = ${eventId}
-              AND home_team_id = ${game.homeTeamId || -1}
-              AND away_team_id = ${game.awayTeamId || -1}
-              AND round = ${game.round}
+            WHERE id = ${game.id}
           `);
-          console.log(`[Enhanced Field Assignment] ✅ CONCURRENT: Game ${game.originalIndex + 1} scheduled at ${scheduledTime} on ${assignedField.name}`);
+          console.log(`[Enhanced Field Assignment] ✅ CONCURRENT: Game ${game.originalIndex + 1} (ID: ${game.id}) scheduled at ${scheduledTime} on ${assignedField.name}`);
         } catch (updateError) {
           console.error(`[Enhanced Field Assignment] Error updating game ${game.originalIndex + 1}:`, updateError);
         }

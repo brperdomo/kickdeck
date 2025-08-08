@@ -1,0 +1,1471 @@
+16Fetch finished loading: GET "<URL>".
+UnifiedTournamentControlCenter-DaK27tu8.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentControlCenter-DaK27tu8.js:1 Configured flights: 3 of 76
+chunk-CVIZYB43.js:3 [Violation] 'setTimeout' handler took 70ms
+UnifiedTournamentControlCenter-DaK27tu8.js:1 Fetch finished loading: POST "https://app.matchpro.ai/api/admin/events/1844329078/generate-selective-schedule".
+mutationFn @ UnifiedTournamentControlCenter-DaK27tu8.js:1
+fn @ index-B4-lBkPr.js:41
+f @ index-B4-lBkPr.js:41
+start @ index-B4-lBkPr.js:41
+execute @ index-B4-lBkPr.js:41
+await in execute
+mutate @ index-B4-lBkPr.js:41
+(anonymous) @ index-B4-lBkPr.js:41
+Q @ UnifiedTournamentControlCenter-DaK27tu8.js:1
+_ue @ index-B4-lBkPr.js:38
+Due @ index-B4-lBkPr.js:38
+Iue @ index-B4-lBkPr.js:38
+pM @ index-B4-lBkPr.js:38
+Xq @ index-B4-lBkPr.js:38
+(anonymous) @ index-B4-lBkPr.js:38
+NO @ index-B4-lBkPr.js:41
+bq @ index-B4-lBkPr.js:38
+k2 @ index-B4-lBkPr.js:38
+X4 @ index-B4-lBkPr.js:38
+Xue @ index-B4-lBkPr.js:38
+UnifiedTournamentControlCenter-DaK27tu8.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentControlCenter-DaK27tu8.js:1 Configured flights: 3 of 76
+ScheduleViewerFixed-C4Xm7eC1.js:6 Schedule API Response: {games: Array(10), fields: Array(28), ageGroups: Array(1), dates: Array(2), totalGames: 10, …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 1 transformation debug: {raw: {…}, homeTeamStructure: 'Rebels SC B2016 Premier 1 - Rowe', awayTeamStructure: 'Empire Surf North B2016A-2', fieldStructure: '12', rawFieldName: '12', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 1 API data: {
+  "id": 8920,
+  "homeTeam": "Rebels SC B2016 Premier 1 - Rowe",
+  "awayTeam": "Empire Surf North B2016A-2",
+  "ageGroup": "U10 Boys",
+  "field": "12",
+  "fieldId": 31,
+  "fieldName": "12",
+  "date": "2025-08-16",
+  "time": "10:00",
+  "startTime": "2025-08-16T10:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Rebels SC B2016 Premier 1 - Rowe",
+  "awayTeamName": "Empire Surf North B2016A-2"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 1 transformed: {id: 8920, homeTeam: 'Rebels SC B2016 Premier 1 - Rowe', awayTeam: 'Empire Surf North B2016A-2', ageGroup: 'U10 Boys', field: '12', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 2 transformation debug: {raw: {…}, homeTeamStructure: 'Desert Empire Surf B16 Academy', awayTeamStructure: 'ALBION SC Riverside B16 Premier', fieldStructure: '13', rawFieldName: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 2 API data: {
+  "id": 8917,
+  "homeTeam": "Desert Empire Surf B16 Academy",
+  "awayTeam": "ALBION SC Riverside B16 Premier",
+  "ageGroup": "U10 Boys",
+  "field": "13",
+  "fieldId": 32,
+  "fieldName": "13",
+  "date": "2025-08-16",
+  "time": "10:00",
+  "startTime": "2025-08-16T10:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Desert Empire Surf B16 Academy",
+  "awayTeamName": "ALBION SC Riverside B16 Premier"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 2 transformed: {id: 8917, homeTeam: 'Desert Empire Surf B16 Academy', awayTeam: 'ALBION SC Riverside B16 Premier', ageGroup: 'U10 Boys', field: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 3 transformation debug: {raw: {…}, homeTeamStructure: 'Rebels B2016 Academy', awayTeamStructure: 'Empire Surf North B2016A-2', fieldStructure: '12', rawFieldName: '12', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 3 API data: {
+  "id": 8919,
+  "homeTeam": "Rebels B2016 Academy",
+  "awayTeam": "Empire Surf North B2016A-2",
+  "ageGroup": "U10 Boys",
+  "field": "12",
+  "fieldId": 31,
+  "fieldName": "12",
+  "date": "2025-08-16",
+  "time": "12:00",
+  "startTime": "2025-08-16T12:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Rebels B2016 Academy",
+  "awayTeamName": "Empire Surf North B2016A-2"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 3 transformed: {id: 8919, homeTeam: 'Rebels B2016 Academy', awayTeam: 'Empire Surf North B2016A-2', ageGroup: 'U10 Boys', field: '12', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 4 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf B2016 North A-3', awayTeamStructure: 'ALBION SC Riverside B16 Premier', fieldStructure: '13', rawFieldName: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 4 API data: {
+  "id": 8916,
+  "homeTeam": "Empire Surf B2016 North A-3",
+  "awayTeam": "ALBION SC Riverside B16 Premier",
+  "ageGroup": "U10 Boys",
+  "field": "13",
+  "fieldId": 32,
+  "fieldName": "13",
+  "date": "2025-08-16",
+  "time": "12:00",
+  "startTime": "2025-08-16T12:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B2016 North A-3",
+  "awayTeamName": "ALBION SC Riverside B16 Premier"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 4 transformed: {id: 8916, homeTeam: 'Empire Surf B2016 North A-3', awayTeam: 'ALBION SC Riverside B16 Premier', ageGroup: 'U10 Boys', field: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 5 transformation debug: {raw: {…}, homeTeamStructure: 'Rebels B2016 Academy', awayTeamStructure: 'Rebels SC B2016 Premier 1 - Rowe', fieldStructure: '12', rawFieldName: '12', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 5 API data: {
+  "id": 8918,
+  "homeTeam": "Rebels B2016 Academy",
+  "awayTeam": "Rebels SC B2016 Premier 1 - Rowe",
+  "ageGroup": "U10 Boys",
+  "field": "12",
+  "fieldId": 31,
+  "fieldName": "12",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Rebels B2016 Academy",
+  "awayTeamName": "Rebels SC B2016 Premier 1 - Rowe"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 5 transformed: {id: 8918, homeTeam: 'Rebels B2016 Academy', awayTeam: 'Rebels SC B2016 Premier 1 - Rowe', ageGroup: 'U10 Boys', field: '12', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 6 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf B2016 North A-3', awayTeamStructure: 'Desert Empire Surf B16 Academy', fieldStructure: '13', rawFieldName: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 6 API data: {
+  "id": 8915,
+  "homeTeam": "Empire Surf B2016 North A-3",
+  "awayTeam": "Desert Empire Surf B16 Academy",
+  "ageGroup": "U10 Boys",
+  "field": "13",
+  "fieldId": 32,
+  "fieldName": "13",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B2016 North A-3",
+  "awayTeamName": "Desert Empire Surf B16 Academy"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 6 transformed: {id: 8915, homeTeam: 'Empire Surf B2016 North A-3', awayTeam: 'Desert Empire Surf B16 Academy', ageGroup: 'U10 Boys', field: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 7 transformation debug: {raw: {…}, homeTeamStructure: 'TBD', awayTeamStructure: 'TBD', fieldStructure: 'Field Unknown', rawFieldName: 'Field Unknown', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 7 API data: {
+  "id": 8924,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "ageGroup": "U10 Boys",
+  "field": "Field Unknown",
+  "fieldId": null,
+  "fieldName": "Field Unknown",
+  "date": "TBD",
+  "time": "TBD",
+  "startTime": null,
+  "duration": 90,
+  "status": "pending",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 7 transformed: {id: 8924, homeTeam: 'TBD', awayTeam: 'TBD', ageGroup: 'U10 Boys', field: 'Field Unknown', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 8 transformation debug: {raw: {…}, homeTeamStructure: 'ALBION SC Riverside B16 Premier', awayTeamStructure: 'Empire Surf North B2016A-2', fieldStructure: '13', rawFieldName: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 8 API data: {
+  "id": 8923,
+  "homeTeam": "ALBION SC Riverside B16 Premier",
+  "awayTeam": "Empire Surf North B2016A-2",
+  "ageGroup": "U10 Boys",
+  "field": "13",
+  "fieldId": 32,
+  "fieldName": "13",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "ALBION SC Riverside B16 Premier",
+  "awayTeamName": "Empire Surf North B2016A-2"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 8 transformed: {id: 8923, homeTeam: 'ALBION SC Riverside B16 Premier', awayTeam: 'Empire Surf North B2016A-2', ageGroup: 'U10 Boys', field: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 9 transformation debug: {raw: {…}, homeTeamStructure: 'Desert Empire Surf B16 Academy', awayTeamStructure: 'Rebels SC B2016 Premier 1 - Rowe', fieldStructure: '14', rawFieldName: '14', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 9 API data: {
+  "id": 8922,
+  "homeTeam": "Desert Empire Surf B16 Academy",
+  "awayTeam": "Rebels SC B2016 Premier 1 - Rowe",
+  "ageGroup": "U10 Boys",
+  "field": "14",
+  "fieldId": 33,
+  "fieldName": "14",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Desert Empire Surf B16 Academy",
+  "awayTeamName": "Rebels SC B2016 Premier 1 - Rowe"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 9 transformed: {id: 8922, homeTeam: 'Desert Empire Surf B16 Academy', awayTeam: 'Rebels SC B2016 Premier 1 - Rowe', ageGroup: 'U10 Boys', field: '14', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 10 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf B2016 North A-3', awayTeamStructure: 'Rebels B2016 Academy', fieldStructure: '15', rawFieldName: '15', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 10 API data: {
+  "id": 8921,
+  "homeTeam": "Empire Surf B2016 North A-3",
+  "awayTeam": "Rebels B2016 Academy",
+  "ageGroup": "U10 Boys",
+  "field": "15",
+  "fieldId": 34,
+  "fieldName": "15",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B2016 North A-3",
+  "awayTeamName": "Rebels B2016 Academy"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 10 transformed: {id: 8921, homeTeam: 'Empire Surf B2016 North A-3', awayTeam: 'Rebels B2016 Academy', ageGroup: 'U10 Boys', field: '15', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Schedule API Response: {games: Array(10), fields: Array(28), ageGroups: Array(1), dates: Array(2), totalGames: 10, …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 1 transformation debug: {raw: {…}, homeTeamStructure: 'Rebels SC B2016 Premier 1 - Rowe', awayTeamStructure: 'Empire Surf North B2016A-2', fieldStructure: '12', rawFieldName: '12', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 1 API data: {
+  "id": 8920,
+  "homeTeam": "Rebels SC B2016 Premier 1 - Rowe",
+  "awayTeam": "Empire Surf North B2016A-2",
+  "ageGroup": "U10 Boys",
+  "field": "12",
+  "fieldId": 31,
+  "fieldName": "12",
+  "date": "2025-08-16",
+  "time": "10:00",
+  "startTime": "2025-08-16T10:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Rebels SC B2016 Premier 1 - Rowe",
+  "awayTeamName": "Empire Surf North B2016A-2"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 1 transformed: {id: 8920, homeTeam: 'Rebels SC B2016 Premier 1 - Rowe', awayTeam: 'Empire Surf North B2016A-2', ageGroup: 'U10 Boys', field: '12', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 2 transformation debug: {raw: {…}, homeTeamStructure: 'Desert Empire Surf B16 Academy', awayTeamStructure: 'ALBION SC Riverside B16 Premier', fieldStructure: '13', rawFieldName: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 2 API data: {
+  "id": 8917,
+  "homeTeam": "Desert Empire Surf B16 Academy",
+  "awayTeam": "ALBION SC Riverside B16 Premier",
+  "ageGroup": "U10 Boys",
+  "field": "13",
+  "fieldId": 32,
+  "fieldName": "13",
+  "date": "2025-08-16",
+  "time": "10:00",
+  "startTime": "2025-08-16T10:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Desert Empire Surf B16 Academy",
+  "awayTeamName": "ALBION SC Riverside B16 Premier"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 2 transformed: {id: 8917, homeTeam: 'Desert Empire Surf B16 Academy', awayTeam: 'ALBION SC Riverside B16 Premier', ageGroup: 'U10 Boys', field: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 3 transformation debug: {raw: {…}, homeTeamStructure: 'Rebels B2016 Academy', awayTeamStructure: 'Empire Surf North B2016A-2', fieldStructure: '12', rawFieldName: '12', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 3 API data: {
+  "id": 8919,
+  "homeTeam": "Rebels B2016 Academy",
+  "awayTeam": "Empire Surf North B2016A-2",
+  "ageGroup": "U10 Boys",
+  "field": "12",
+  "fieldId": 31,
+  "fieldName": "12",
+  "date": "2025-08-16",
+  "time": "12:00",
+  "startTime": "2025-08-16T12:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Rebels B2016 Academy",
+  "awayTeamName": "Empire Surf North B2016A-2"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 3 transformed: {id: 8919, homeTeam: 'Rebels B2016 Academy', awayTeam: 'Empire Surf North B2016A-2', ageGroup: 'U10 Boys', field: '12', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 4 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf B2016 North A-3', awayTeamStructure: 'ALBION SC Riverside B16 Premier', fieldStructure: '13', rawFieldName: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 4 API data: {
+  "id": 8916,
+  "homeTeam": "Empire Surf B2016 North A-3",
+  "awayTeam": "ALBION SC Riverside B16 Premier",
+  "ageGroup": "U10 Boys",
+  "field": "13",
+  "fieldId": 32,
+  "fieldName": "13",
+  "date": "2025-08-16",
+  "time": "12:00",
+  "startTime": "2025-08-16T12:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B2016 North A-3",
+  "awayTeamName": "ALBION SC Riverside B16 Premier"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 4 transformed: {id: 8916, homeTeam: 'Empire Surf B2016 North A-3', awayTeam: 'ALBION SC Riverside B16 Premier', ageGroup: 'U10 Boys', field: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 5 transformation debug: {raw: {…}, homeTeamStructure: 'Rebels B2016 Academy', awayTeamStructure: 'Rebels SC B2016 Premier 1 - Rowe', fieldStructure: '12', rawFieldName: '12', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 5 API data: {
+  "id": 8918,
+  "homeTeam": "Rebels B2016 Academy",
+  "awayTeam": "Rebels SC B2016 Premier 1 - Rowe",
+  "ageGroup": "U10 Boys",
+  "field": "12",
+  "fieldId": 31,
+  "fieldName": "12",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Rebels B2016 Academy",
+  "awayTeamName": "Rebels SC B2016 Premier 1 - Rowe"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 5 transformed: {id: 8918, homeTeam: 'Rebels B2016 Academy', awayTeam: 'Rebels SC B2016 Premier 1 - Rowe', ageGroup: 'U10 Boys', field: '12', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 6 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf B2016 North A-3', awayTeamStructure: 'Desert Empire Surf B16 Academy', fieldStructure: '13', rawFieldName: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 6 API data: {
+  "id": 8915,
+  "homeTeam": "Empire Surf B2016 North A-3",
+  "awayTeam": "Desert Empire Surf B16 Academy",
+  "ageGroup": "U10 Boys",
+  "field": "13",
+  "fieldId": 32,
+  "fieldName": "13",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B2016 North A-3",
+  "awayTeamName": "Desert Empire Surf B16 Academy"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 6 transformed: {id: 8915, homeTeam: 'Empire Surf B2016 North A-3', awayTeam: 'Desert Empire Surf B16 Academy', ageGroup: 'U10 Boys', field: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 7 transformation debug: {raw: {…}, homeTeamStructure: 'TBD', awayTeamStructure: 'TBD', fieldStructure: 'Field Unknown', rawFieldName: 'Field Unknown', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 7 API data: {
+  "id": 8924,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "ageGroup": "U10 Boys",
+  "field": "Field Unknown",
+  "fieldId": null,
+  "fieldName": "Field Unknown",
+  "date": "TBD",
+  "time": "TBD",
+  "startTime": null,
+  "duration": 90,
+  "status": "pending",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 7 transformed: {id: 8924, homeTeam: 'TBD', awayTeam: 'TBD', ageGroup: 'U10 Boys', field: 'Field Unknown', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 8 transformation debug: {raw: {…}, homeTeamStructure: 'ALBION SC Riverside B16 Premier', awayTeamStructure: 'Empire Surf North B2016A-2', fieldStructure: '13', rawFieldName: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 8 API data: {
+  "id": 8923,
+  "homeTeam": "ALBION SC Riverside B16 Premier",
+  "awayTeam": "Empire Surf North B2016A-2",
+  "ageGroup": "U10 Boys",
+  "field": "13",
+  "fieldId": 32,
+  "fieldName": "13",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "ALBION SC Riverside B16 Premier",
+  "awayTeamName": "Empire Surf North B2016A-2"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 8 transformed: {id: 8923, homeTeam: 'ALBION SC Riverside B16 Premier', awayTeam: 'Empire Surf North B2016A-2', ageGroup: 'U10 Boys', field: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 9 transformation debug: {raw: {…}, homeTeamStructure: 'Desert Empire Surf B16 Academy', awayTeamStructure: 'Rebels SC B2016 Premier 1 - Rowe', fieldStructure: '14', rawFieldName: '14', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 9 API data: {
+  "id": 8922,
+  "homeTeam": "Desert Empire Surf B16 Academy",
+  "awayTeam": "Rebels SC B2016 Premier 1 - Rowe",
+  "ageGroup": "U10 Boys",
+  "field": "14",
+  "fieldId": 33,
+  "fieldName": "14",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Desert Empire Surf B16 Academy",
+  "awayTeamName": "Rebels SC B2016 Premier 1 - Rowe"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 9 transformed: {id: 8922, homeTeam: 'Desert Empire Surf B16 Academy', awayTeam: 'Rebels SC B2016 Premier 1 - Rowe', ageGroup: 'U10 Boys', field: '14', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 10 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf B2016 North A-3', awayTeamStructure: 'Rebels B2016 Academy', fieldStructure: '15', rawFieldName: '15', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 10 API data: {
+  "id": 8921,
+  "homeTeam": "Empire Surf B2016 North A-3",
+  "awayTeam": "Rebels B2016 Academy",
+  "ageGroup": "U10 Boys",
+  "field": "15",
+  "fieldId": 34,
+  "fieldName": "15",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B2016 North A-3",
+  "awayTeamName": "Rebels B2016 Academy"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 10 transformed: {id: 8921, homeTeam: 'Empire Surf B2016 North A-3', awayTeam: 'Rebels B2016 Academy', ageGroup: 'U10 Boys', field: '15', …}
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Fields with games assigned: (5) [null, 32, 33, 34, 31]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 31 (12) has 3 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 32 (13) has 4 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 33 (14) has 1 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 34 (15) has 1 games
+index-B4-lBkPr.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 10, …}
+index-B4-lBkPr.js:838 🔍 [CONFLICT DETECTION] Starting conflict detection for 10 games
+index-B4-lBkPr.js:838 🔍 [CONFLICT DETECTION] Time slots: 48
+index-B4-lBkPr.js:838 🔍 [CONFLICT DETECTION] Sample games: (3) [{…}, {…}, {…}]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Fields with games assigned: (5) [null, 32, 33, 34, 31]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 31 (12) has 3 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 32 (13) has 4 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 33 (14) has 1 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 34 (15) has 1 games
+index-B4-lBkPr.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 10, …}
+index-B4-lBkPr.js:838 🎯 [ENHANCED DRAG DROP] Transformed games for calendar: (10) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-B4-lBkPr.js:838 🎯 [ENHANCED DRAG DROP] Fields data: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-B4-lBkPr.js:838 🎯 [GAME-FIELD DEBUG] Game 8920: fieldId=31, fieldName="12", startTime="2025-08-16T10:00:00"
+index-B4-lBkPr.js:838 🎯 [GAME-FIELD DEBUG] Game 8917: fieldId=32, fieldName="13", startTime="2025-08-16T10:00:00"
+index-B4-lBkPr.js:838 🎯 [GAME-FIELD DEBUG] Game 8919: fieldId=31, fieldName="12", startTime="2025-08-16T12:00:00"
+index-B4-lBkPr.js:838 🎯 [GAME-FIELD DEBUG] Game 8916: fieldId=32, fieldName="13", startTime="2025-08-16T12:00:00"
+index-B4-lBkPr.js:838 🎯 [GAME-FIELD DEBUG] Game 8918: fieldId=31, fieldName="12", startTime="2025-08-16T14:00:00"
+index-B4-lBkPr.js:838 🎯 [GAME-FIELD DEBUG] Game 8915: fieldId=32, fieldName="13", startTime="2025-08-16T14:00:00"
+index-B4-lBkPr.js:838 🎯 [GAME-FIELD DEBUG] Game 8924: fieldId=null, fieldName="Field Unknown", startTime="null"
+index-B4-lBkPr.js:838 🎯 [GAME-FIELD DEBUG] Game 8923: fieldId=32, fieldName="13", startTime="2025-08-16T08:00:00"
+index-B4-lBkPr.js:838 🎯 [GAME-FIELD DEBUG] Game 8922: fieldId=33, fieldName="14", startTime="2025-08-16T08:00:00"
+index-B4-lBkPr.js:838 🎯 [GAME-FIELD DEBUG] Game 8921: fieldId=34, fieldName="15", startTime="2025-08-16T08:00:00"
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Fields with games assigned: (5) [31, 32, null, 33, 34]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 31 (12) has 3 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 32 (13) has 4 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 33 (14) has 1 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 34 (15) has 1 games
+index-B4-lBkPr.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 10, …}
+index-B4-lBkPr.js:838 🔍 [CONFLICT DETECTION] Starting conflict detection for 10 games
+index-B4-lBkPr.js:838 🔍 [CONFLICT DETECTION] Time slots: 48
+index-B4-lBkPr.js:838 🔍 [CONFLICT DETECTION] Sample games: (3) [{…}, {…}, {…}]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Fields with games assigned: (5) [31, 32, null, 33, 34]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 31 (12) has 3 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 32 (13) has 4 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 33 (14) has 1 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 34 (15) has 1 games
+index-B4-lBkPr.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 10, …}
+chunk-CVIZYB43.js:3 [Violation] 'setTimeout' handler took 72ms
+chunk-CVIZYB43.js:3 [Violation] 'setTimeout' handler took 72ms
+UnifiedTournamentControlCenter-DaK27tu8.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentControlCenter-DaK27tu8.js:1 Configured flights: 3 of 76
+UnifiedTournamentControlCenter-DaK27tu8.js:1 Fetch finished loading: POST "https://app.matchpro.ai/api/admin/events/1844329078/generate-selective-schedule".
+mutationFn @ UnifiedTournamentControlCenter-DaK27tu8.js:1
+fn @ index-B4-lBkPr.js:41
+f @ index-B4-lBkPr.js:41
+start @ index-B4-lBkPr.js:41
+execute @ index-B4-lBkPr.js:41
+await in execute
+mutate @ index-B4-lBkPr.js:41
+(anonymous) @ index-B4-lBkPr.js:41
+Q @ UnifiedTournamentControlCenter-DaK27tu8.js:1
+_ue @ index-B4-lBkPr.js:38
+Due @ index-B4-lBkPr.js:38
+Iue @ index-B4-lBkPr.js:38
+pM @ index-B4-lBkPr.js:38
+Xq @ index-B4-lBkPr.js:38
+(anonymous) @ index-B4-lBkPr.js:38
+NO @ index-B4-lBkPr.js:41
+bq @ index-B4-lBkPr.js:38
+k2 @ index-B4-lBkPr.js:38
+X4 @ index-B4-lBkPr.js:38
+Xue @ index-B4-lBkPr.js:38
+chunk-CVIZYB43.js:3 [Violation] 'setTimeout' handler took 61ms
+ScheduleViewerFixed-C4Xm7eC1.js:6 Schedule API Response: {games: Array(17), fields: Array(28), ageGroups: Array(2), dates: Array(2), totalGames: 17, …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 1 transformation debug: {raw: {…}, homeTeamStructure: 'Rebels SC B2016 Premier 1 - Rowe', awayTeamStructure: 'Empire Surf North B2016A-2', fieldStructure: '12', rawFieldName: '12', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 1 API data: {
+  "id": 8920,
+  "homeTeam": "Rebels SC B2016 Premier 1 - Rowe",
+  "awayTeam": "Empire Surf North B2016A-2",
+  "ageGroup": "U10 Boys",
+  "field": "12",
+  "fieldId": 31,
+  "fieldName": "12",
+  "date": "2025-08-16",
+  "time": "10:00",
+  "startTime": "2025-08-16T10:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Rebels SC B2016 Premier 1 - Rowe",
+  "awayTeamName": "Empire Surf North B2016A-2"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 1 transformed: {id: 8920, homeTeam: 'Rebels SC B2016 Premier 1 - Rowe', awayTeam: 'Empire Surf North B2016A-2', ageGroup: 'U10 Boys', field: '12', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 2 transformation debug: {raw: {…}, homeTeamStructure: 'Desert Empire Surf B16 Academy', awayTeamStructure: 'ALBION SC Riverside B16 Premier', fieldStructure: '13', rawFieldName: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 2 API data: {
+  "id": 8917,
+  "homeTeam": "Desert Empire Surf B16 Academy",
+  "awayTeam": "ALBION SC Riverside B16 Premier",
+  "ageGroup": "U10 Boys",
+  "field": "13",
+  "fieldId": 32,
+  "fieldName": "13",
+  "date": "2025-08-16",
+  "time": "10:00",
+  "startTime": "2025-08-16T10:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Desert Empire Surf B16 Academy",
+  "awayTeamName": "ALBION SC Riverside B16 Premier"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 2 transformed: {id: 8917, homeTeam: 'Desert Empire Surf B16 Academy', awayTeam: 'ALBION SC Riverside B16 Premier', ageGroup: 'U10 Boys', field: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 3 transformation debug: {raw: {…}, homeTeamStructure: 'Rebels B2016 Academy', awayTeamStructure: 'Empire Surf North B2016A-2', fieldStructure: '12', rawFieldName: '12', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 3 API data: {
+  "id": 8919,
+  "homeTeam": "Rebels B2016 Academy",
+  "awayTeam": "Empire Surf North B2016A-2",
+  "ageGroup": "U10 Boys",
+  "field": "12",
+  "fieldId": 31,
+  "fieldName": "12",
+  "date": "2025-08-16",
+  "time": "12:00",
+  "startTime": "2025-08-16T12:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Rebels B2016 Academy",
+  "awayTeamName": "Empire Surf North B2016A-2"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 3 transformed: {id: 8919, homeTeam: 'Rebels B2016 Academy', awayTeam: 'Empire Surf North B2016A-2', ageGroup: 'U10 Boys', field: '12', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 4 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf B2016 North A-3', awayTeamStructure: 'ALBION SC Riverside B16 Premier', fieldStructure: '13', rawFieldName: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 4 API data: {
+  "id": 8916,
+  "homeTeam": "Empire Surf B2016 North A-3",
+  "awayTeam": "ALBION SC Riverside B16 Premier",
+  "ageGroup": "U10 Boys",
+  "field": "13",
+  "fieldId": 32,
+  "fieldName": "13",
+  "date": "2025-08-16",
+  "time": "12:00",
+  "startTime": "2025-08-16T12:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B2016 North A-3",
+  "awayTeamName": "ALBION SC Riverside B16 Premier"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 4 transformed: {id: 8916, homeTeam: 'Empire Surf B2016 North A-3', awayTeam: 'ALBION SC Riverside B16 Premier', ageGroup: 'U10 Boys', field: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 5 transformation debug: {raw: {…}, homeTeamStructure: 'Rebels B2016 Academy', awayTeamStructure: 'Rebels SC B2016 Premier 1 - Rowe', fieldStructure: '12', rawFieldName: '12', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 5 API data: {
+  "id": 8918,
+  "homeTeam": "Rebels B2016 Academy",
+  "awayTeam": "Rebels SC B2016 Premier 1 - Rowe",
+  "ageGroup": "U10 Boys",
+  "field": "12",
+  "fieldId": 31,
+  "fieldName": "12",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Rebels B2016 Academy",
+  "awayTeamName": "Rebels SC B2016 Premier 1 - Rowe"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 5 transformed: {id: 8918, homeTeam: 'Rebels B2016 Academy', awayTeam: 'Rebels SC B2016 Premier 1 - Rowe', ageGroup: 'U10 Boys', field: '12', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 6 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf B2016 North A-3', awayTeamStructure: 'Desert Empire Surf B16 Academy', fieldStructure: '13', rawFieldName: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 6 API data: {
+  "id": 8915,
+  "homeTeam": "Empire Surf B2016 North A-3",
+  "awayTeam": "Desert Empire Surf B16 Academy",
+  "ageGroup": "U10 Boys",
+  "field": "13",
+  "fieldId": 32,
+  "fieldName": "13",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B2016 North A-3",
+  "awayTeamName": "Desert Empire Surf B16 Academy"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 6 transformed: {id: 8915, homeTeam: 'Empire Surf B2016 North A-3', awayTeam: 'Desert Empire Surf B16 Academy', ageGroup: 'U10 Boys', field: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 7 transformation debug: {raw: {…}, homeTeamStructure: 'TBD', awayTeamStructure: 'TBD', fieldStructure: 'Field Unknown', rawFieldName: 'Field Unknown', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 7 API data: {
+  "id": 8924,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "ageGroup": "U10 Boys",
+  "field": "Field Unknown",
+  "fieldId": null,
+  "fieldName": "Field Unknown",
+  "date": "TBD",
+  "time": "TBD",
+  "startTime": null,
+  "duration": 90,
+  "status": "pending",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 7 transformed: {id: 8924, homeTeam: 'TBD', awayTeam: 'TBD', ageGroup: 'U10 Boys', field: 'Field Unknown', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 8 transformation debug: {raw: {…}, homeTeamStructure: 'ALBION SC Riverside B16 Premier', awayTeamStructure: 'Empire Surf North B2016A-2', fieldStructure: '13', rawFieldName: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 8 API data: {
+  "id": 8923,
+  "homeTeam": "ALBION SC Riverside B16 Premier",
+  "awayTeam": "Empire Surf North B2016A-2",
+  "ageGroup": "U10 Boys",
+  "field": "13",
+  "fieldId": 32,
+  "fieldName": "13",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "ALBION SC Riverside B16 Premier",
+  "awayTeamName": "Empire Surf North B2016A-2"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 8 transformed: {id: 8923, homeTeam: 'ALBION SC Riverside B16 Premier', awayTeam: 'Empire Surf North B2016A-2', ageGroup: 'U10 Boys', field: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 9 transformation debug: {raw: {…}, homeTeamStructure: 'Desert Empire Surf B16 Academy', awayTeamStructure: 'Rebels SC B2016 Premier 1 - Rowe', fieldStructure: '14', rawFieldName: '14', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 9 API data: {
+  "id": 8922,
+  "homeTeam": "Desert Empire Surf B16 Academy",
+  "awayTeam": "Rebels SC B2016 Premier 1 - Rowe",
+  "ageGroup": "U10 Boys",
+  "field": "14",
+  "fieldId": 33,
+  "fieldName": "14",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Desert Empire Surf B16 Academy",
+  "awayTeamName": "Rebels SC B2016 Premier 1 - Rowe"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 9 transformed: {id: 8922, homeTeam: 'Desert Empire Surf B16 Academy', awayTeam: 'Rebels SC B2016 Premier 1 - Rowe', ageGroup: 'U10 Boys', field: '14', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 10 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf B2016 North A-3', awayTeamStructure: 'Rebels B2016 Academy', fieldStructure: '15', rawFieldName: '15', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 10 API data: {
+  "id": 8921,
+  "homeTeam": "Empire Surf B2016 North A-3",
+  "awayTeam": "Rebels B2016 Academy",
+  "ageGroup": "U10 Boys",
+  "field": "15",
+  "fieldId": 34,
+  "fieldName": "15",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B2016 North A-3",
+  "awayTeamName": "Rebels B2016 Academy"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 10 transformed: {id: 8921, homeTeam: 'Empire Surf B2016 North A-3', awayTeam: 'Rebels B2016 Academy', ageGroup: 'U10 Boys', field: '15', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 11 transformation debug: {raw: {…}, homeTeamStructure: 'TBD', awayTeamStructure: 'TBD', fieldStructure: 'Field Unknown', rawFieldName: 'Field Unknown', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 11 API data: {
+  "id": 8931,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "ageGroup": "U14 Girls",
+  "field": "Field Unknown",
+  "fieldId": null,
+  "fieldName": "Field Unknown",
+  "date": "TBD",
+  "time": "TBD",
+  "startTime": null,
+  "duration": 90,
+  "status": "pending",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 11 transformed: {id: 8931, homeTeam: 'TBD', awayTeam: 'TBD', ageGroup: 'U14 Girls', field: 'Field Unknown', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 12 transformation debug: {raw: {…}, homeTeamStructure: 'ALBION SC Riverside G12 DPL', awayTeamStructure: 'Cal Elite SC G2012', fieldStructure: '13', rawFieldName: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 12 API data: {
+  "id": 8930,
+  "homeTeam": "ALBION SC Riverside G12 DPL",
+  "awayTeam": "Cal Elite SC G2012",
+  "ageGroup": "U14 Girls",
+  "field": "13",
+  "fieldId": 32,
+  "fieldName": "13",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "ALBION SC Riverside G12 DPL",
+  "awayTeamName": "Cal Elite SC G2012"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 12 transformed: {id: 8930, homeTeam: 'ALBION SC Riverside G12 DPL', awayTeam: 'Cal Elite SC G2012', ageGroup: 'U14 Girls', field: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 13 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf North G2012 Academy', awayTeamStructure: 'Future FC G12', fieldStructure: '14', rawFieldName: '14', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 13 API data: {
+  "id": 8925,
+  "homeTeam": "Empire Surf North G2012 Academy",
+  "awayTeam": "Future FC G12",
+  "ageGroup": "U14 Girls",
+  "field": "14",
+  "fieldId": 33,
+  "fieldName": "14",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf North G2012 Academy",
+  "awayTeamName": "Future FC G12"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 13 transformed: {id: 8925, homeTeam: 'Empire Surf North G2012 Academy', awayTeam: 'Future FC G12', ageGroup: 'U14 Girls', field: '14', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 14 transformation debug: {raw: {…}, homeTeamStructure: 'Future FC G12', awayTeamStructure: 'Cal Elite SC G2012', fieldStructure: '12', rawFieldName: '12', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 14 API data: {
+  "id": 8929,
+  "homeTeam": "Future FC G12",
+  "awayTeam": "Cal Elite SC G2012",
+  "ageGroup": "U14 Girls",
+  "field": "12",
+  "fieldId": 31,
+  "fieldName": "12",
+  "date": "2025-08-16",
+  "time": "10:00",
+  "startTime": "2025-08-16T10:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Future FC G12",
+  "awayTeamName": "Cal Elite SC G2012"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 14 transformed: {id: 8929, homeTeam: 'Future FC G12', awayTeam: 'Cal Elite SC G2012', ageGroup: 'U14 Girls', field: '12', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 15 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf North G2012 Academy', awayTeamStructure: 'ALBION SC Riverside G12 DPL', fieldStructure: '13', rawFieldName: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 15 API data: {
+  "id": 8926,
+  "homeTeam": "Empire Surf North G2012 Academy",
+  "awayTeam": "ALBION SC Riverside G12 DPL",
+  "ageGroup": "U14 Girls",
+  "field": "13",
+  "fieldId": 32,
+  "fieldName": "13",
+  "date": "2025-08-16",
+  "time": "10:00",
+  "startTime": "2025-08-16T10:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf North G2012 Academy",
+  "awayTeamName": "ALBION SC Riverside G12 DPL"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 15 transformed: {id: 8926, homeTeam: 'Empire Surf North G2012 Academy', awayTeam: 'ALBION SC Riverside G12 DPL', ageGroup: 'U14 Girls', field: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 16 transformation debug: {raw: {…}, homeTeamStructure: 'Future FC G12', awayTeamStructure: 'ALBION SC Riverside G12 DPL', fieldStructure: '12', rawFieldName: '12', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 16 API data: {
+  "id": 8928,
+  "homeTeam": "Future FC G12",
+  "awayTeam": "ALBION SC Riverside G12 DPL",
+  "ageGroup": "U14 Girls",
+  "field": "12",
+  "fieldId": 31,
+  "fieldName": "12",
+  "date": "2025-08-16",
+  "time": "12:00",
+  "startTime": "2025-08-16T12:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Future FC G12",
+  "awayTeamName": "ALBION SC Riverside G12 DPL"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 16 transformed: {id: 8928, homeTeam: 'Future FC G12', awayTeam: 'ALBION SC Riverside G12 DPL', ageGroup: 'U14 Girls', field: '12', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 17 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf North G2012 Academy', awayTeamStructure: 'Cal Elite SC G2012', fieldStructure: '13', rawFieldName: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 17 API data: {
+  "id": 8927,
+  "homeTeam": "Empire Surf North G2012 Academy",
+  "awayTeam": "Cal Elite SC G2012",
+  "ageGroup": "U14 Girls",
+  "field": "13",
+  "fieldId": 32,
+  "fieldName": "13",
+  "date": "2025-08-16",
+  "time": "12:00",
+  "startTime": "2025-08-16T12:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf North G2012 Academy",
+  "awayTeamName": "Cal Elite SC G2012"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 17 transformed: {id: 8927, homeTeam: 'Empire Surf North G2012 Academy', awayTeam: 'Cal Elite SC G2012', ageGroup: 'U14 Girls', field: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Schedule API Response: {games: Array(17), fields: Array(28), ageGroups: Array(2), dates: Array(2), totalGames: 17, …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 1 transformation debug: {raw: {…}, homeTeamStructure: 'Rebels SC B2016 Premier 1 - Rowe', awayTeamStructure: 'Empire Surf North B2016A-2', fieldStructure: '12', rawFieldName: '12', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 1 API data: {
+  "id": 8920,
+  "homeTeam": "Rebels SC B2016 Premier 1 - Rowe",
+  "awayTeam": "Empire Surf North B2016A-2",
+  "ageGroup": "U10 Boys",
+  "field": "12",
+  "fieldId": 31,
+  "fieldName": "12",
+  "date": "2025-08-16",
+  "time": "10:00",
+  "startTime": "2025-08-16T10:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Rebels SC B2016 Premier 1 - Rowe",
+  "awayTeamName": "Empire Surf North B2016A-2"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 1 transformed: {id: 8920, homeTeam: 'Rebels SC B2016 Premier 1 - Rowe', awayTeam: 'Empire Surf North B2016A-2', ageGroup: 'U10 Boys', field: '12', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 2 transformation debug: {raw: {…}, homeTeamStructure: 'Desert Empire Surf B16 Academy', awayTeamStructure: 'ALBION SC Riverside B16 Premier', fieldStructure: '13', rawFieldName: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 2 API data: {
+  "id": 8917,
+  "homeTeam": "Desert Empire Surf B16 Academy",
+  "awayTeam": "ALBION SC Riverside B16 Premier",
+  "ageGroup": "U10 Boys",
+  "field": "13",
+  "fieldId": 32,
+  "fieldName": "13",
+  "date": "2025-08-16",
+  "time": "10:00",
+  "startTime": "2025-08-16T10:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Desert Empire Surf B16 Academy",
+  "awayTeamName": "ALBION SC Riverside B16 Premier"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 2 transformed: {id: 8917, homeTeam: 'Desert Empire Surf B16 Academy', awayTeam: 'ALBION SC Riverside B16 Premier', ageGroup: 'U10 Boys', field: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 3 transformation debug: {raw: {…}, homeTeamStructure: 'Rebels B2016 Academy', awayTeamStructure: 'Empire Surf North B2016A-2', fieldStructure: '12', rawFieldName: '12', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 3 API data: {
+  "id": 8919,
+  "homeTeam": "Rebels B2016 Academy",
+  "awayTeam": "Empire Surf North B2016A-2",
+  "ageGroup": "U10 Boys",
+  "field": "12",
+  "fieldId": 31,
+  "fieldName": "12",
+  "date": "2025-08-16",
+  "time": "12:00",
+  "startTime": "2025-08-16T12:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Rebels B2016 Academy",
+  "awayTeamName": "Empire Surf North B2016A-2"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 3 transformed: {id: 8919, homeTeam: 'Rebels B2016 Academy', awayTeam: 'Empire Surf North B2016A-2', ageGroup: 'U10 Boys', field: '12', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 4 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf B2016 North A-3', awayTeamStructure: 'ALBION SC Riverside B16 Premier', fieldStructure: '13', rawFieldName: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 4 API data: {
+  "id": 8916,
+  "homeTeam": "Empire Surf B2016 North A-3",
+  "awayTeam": "ALBION SC Riverside B16 Premier",
+  "ageGroup": "U10 Boys",
+  "field": "13",
+  "fieldId": 32,
+  "fieldName": "13",
+  "date": "2025-08-16",
+  "time": "12:00",
+  "startTime": "2025-08-16T12:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B2016 North A-3",
+  "awayTeamName": "ALBION SC Riverside B16 Premier"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 4 transformed: {id: 8916, homeTeam: 'Empire Surf B2016 North A-3', awayTeam: 'ALBION SC Riverside B16 Premier', ageGroup: 'U10 Boys', field: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 5 transformation debug: {raw: {…}, homeTeamStructure: 'Rebels B2016 Academy', awayTeamStructure: 'Rebels SC B2016 Premier 1 - Rowe', fieldStructure: '12', rawFieldName: '12', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 5 API data: {
+  "id": 8918,
+  "homeTeam": "Rebels B2016 Academy",
+  "awayTeam": "Rebels SC B2016 Premier 1 - Rowe",
+  "ageGroup": "U10 Boys",
+  "field": "12",
+  "fieldId": 31,
+  "fieldName": "12",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Rebels B2016 Academy",
+  "awayTeamName": "Rebels SC B2016 Premier 1 - Rowe"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 5 transformed: {id: 8918, homeTeam: 'Rebels B2016 Academy', awayTeam: 'Rebels SC B2016 Premier 1 - Rowe', ageGroup: 'U10 Boys', field: '12', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 6 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf B2016 North A-3', awayTeamStructure: 'Desert Empire Surf B16 Academy', fieldStructure: '13', rawFieldName: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 6 API data: {
+  "id": 8915,
+  "homeTeam": "Empire Surf B2016 North A-3",
+  "awayTeam": "Desert Empire Surf B16 Academy",
+  "ageGroup": "U10 Boys",
+  "field": "13",
+  "fieldId": 32,
+  "fieldName": "13",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B2016 North A-3",
+  "awayTeamName": "Desert Empire Surf B16 Academy"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 6 transformed: {id: 8915, homeTeam: 'Empire Surf B2016 North A-3', awayTeam: 'Desert Empire Surf B16 Academy', ageGroup: 'U10 Boys', field: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 7 transformation debug: {raw: {…}, homeTeamStructure: 'TBD', awayTeamStructure: 'TBD', fieldStructure: 'Field Unknown', rawFieldName: 'Field Unknown', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 7 API data: {
+  "id": 8924,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "ageGroup": "U10 Boys",
+  "field": "Field Unknown",
+  "fieldId": null,
+  "fieldName": "Field Unknown",
+  "date": "TBD",
+  "time": "TBD",
+  "startTime": null,
+  "duration": 90,
+  "status": "pending",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 7 transformed: {id: 8924, homeTeam: 'TBD', awayTeam: 'TBD', ageGroup: 'U10 Boys', field: 'Field Unknown', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 8 transformation debug: {raw: {…}, homeTeamStructure: 'ALBION SC Riverside B16 Premier', awayTeamStructure: 'Empire Surf North B2016A-2', fieldStructure: '13', rawFieldName: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 8 API data: {
+  "id": 8923,
+  "homeTeam": "ALBION SC Riverside B16 Premier",
+  "awayTeam": "Empire Surf North B2016A-2",
+  "ageGroup": "U10 Boys",
+  "field": "13",
+  "fieldId": 32,
+  "fieldName": "13",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "ALBION SC Riverside B16 Premier",
+  "awayTeamName": "Empire Surf North B2016A-2"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 8 transformed: {id: 8923, homeTeam: 'ALBION SC Riverside B16 Premier', awayTeam: 'Empire Surf North B2016A-2', ageGroup: 'U10 Boys', field: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 9 transformation debug: {raw: {…}, homeTeamStructure: 'Desert Empire Surf B16 Academy', awayTeamStructure: 'Rebels SC B2016 Premier 1 - Rowe', fieldStructure: '14', rawFieldName: '14', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 9 API data: {
+  "id": 8922,
+  "homeTeam": "Desert Empire Surf B16 Academy",
+  "awayTeam": "Rebels SC B2016 Premier 1 - Rowe",
+  "ageGroup": "U10 Boys",
+  "field": "14",
+  "fieldId": 33,
+  "fieldName": "14",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Desert Empire Surf B16 Academy",
+  "awayTeamName": "Rebels SC B2016 Premier 1 - Rowe"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 9 transformed: {id: 8922, homeTeam: 'Desert Empire Surf B16 Academy', awayTeam: 'Rebels SC B2016 Premier 1 - Rowe', ageGroup: 'U10 Boys', field: '14', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 10 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf B2016 North A-3', awayTeamStructure: 'Rebels B2016 Academy', fieldStructure: '15', rawFieldName: '15', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 10 API data: {
+  "id": 8921,
+  "homeTeam": "Empire Surf B2016 North A-3",
+  "awayTeam": "Rebels B2016 Academy",
+  "ageGroup": "U10 Boys",
+  "field": "15",
+  "fieldId": 34,
+  "fieldName": "15",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B2016 North A-3",
+  "awayTeamName": "Rebels B2016 Academy"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 10 transformed: {id: 8921, homeTeam: 'Empire Surf B2016 North A-3', awayTeam: 'Rebels B2016 Academy', ageGroup: 'U10 Boys', field: '15', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 11 transformation debug: {raw: {…}, homeTeamStructure: 'TBD', awayTeamStructure: 'TBD', fieldStructure: 'Field Unknown', rawFieldName: 'Field Unknown', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 11 API data: {
+  "id": 8931,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "ageGroup": "U14 Girls",
+  "field": "Field Unknown",
+  "fieldId": null,
+  "fieldName": "Field Unknown",
+  "date": "TBD",
+  "time": "TBD",
+  "startTime": null,
+  "duration": 90,
+  "status": "pending",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 11 transformed: {id: 8931, homeTeam: 'TBD', awayTeam: 'TBD', ageGroup: 'U14 Girls', field: 'Field Unknown', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 12 transformation debug: {raw: {…}, homeTeamStructure: 'ALBION SC Riverside G12 DPL', awayTeamStructure: 'Cal Elite SC G2012', fieldStructure: '13', rawFieldName: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 12 API data: {
+  "id": 8930,
+  "homeTeam": "ALBION SC Riverside G12 DPL",
+  "awayTeam": "Cal Elite SC G2012",
+  "ageGroup": "U14 Girls",
+  "field": "13",
+  "fieldId": 32,
+  "fieldName": "13",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "ALBION SC Riverside G12 DPL",
+  "awayTeamName": "Cal Elite SC G2012"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 12 transformed: {id: 8930, homeTeam: 'ALBION SC Riverside G12 DPL', awayTeam: 'Cal Elite SC G2012', ageGroup: 'U14 Girls', field: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 13 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf North G2012 Academy', awayTeamStructure: 'Future FC G12', fieldStructure: '14', rawFieldName: '14', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 13 API data: {
+  "id": 8925,
+  "homeTeam": "Empire Surf North G2012 Academy",
+  "awayTeam": "Future FC G12",
+  "ageGroup": "U14 Girls",
+  "field": "14",
+  "fieldId": 33,
+  "fieldName": "14",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf North G2012 Academy",
+  "awayTeamName": "Future FC G12"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 13 transformed: {id: 8925, homeTeam: 'Empire Surf North G2012 Academy', awayTeam: 'Future FC G12', ageGroup: 'U14 Girls', field: '14', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 14 transformation debug: {raw: {…}, homeTeamStructure: 'Future FC G12', awayTeamStructure: 'Cal Elite SC G2012', fieldStructure: '12', rawFieldName: '12', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 14 API data: {
+  "id": 8929,
+  "homeTeam": "Future FC G12",
+  "awayTeam": "Cal Elite SC G2012",
+  "ageGroup": "U14 Girls",
+  "field": "12",
+  "fieldId": 31,
+  "fieldName": "12",
+  "date": "2025-08-16",
+  "time": "10:00",
+  "startTime": "2025-08-16T10:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Future FC G12",
+  "awayTeamName": "Cal Elite SC G2012"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 14 transformed: {id: 8929, homeTeam: 'Future FC G12', awayTeam: 'Cal Elite SC G2012', ageGroup: 'U14 Girls', field: '12', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 15 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf North G2012 Academy', awayTeamStructure: 'ALBION SC Riverside G12 DPL', fieldStructure: '13', rawFieldName: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 15 API data: {
+  "id": 8926,
+  "homeTeam": "Empire Surf North G2012 Academy",
+  "awayTeam": "ALBION SC Riverside G12 DPL",
+  "ageGroup": "U14 Girls",
+  "field": "13",
+  "fieldId": 32,
+  "fieldName": "13",
+  "date": "2025-08-16",
+  "time": "10:00",
+  "startTime": "2025-08-16T10:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf North G2012 Academy",
+  "awayTeamName": "ALBION SC Riverside G12 DPL"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 15 transformed: {id: 8926, homeTeam: 'Empire Surf North G2012 Academy', awayTeam: 'ALBION SC Riverside G12 DPL', ageGroup: 'U14 Girls', field: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 16 transformation debug: {raw: {…}, homeTeamStructure: 'Future FC G12', awayTeamStructure: 'ALBION SC Riverside G12 DPL', fieldStructure: '12', rawFieldName: '12', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 16 API data: {
+  "id": 8928,
+  "homeTeam": "Future FC G12",
+  "awayTeam": "ALBION SC Riverside G12 DPL",
+  "ageGroup": "U14 Girls",
+  "field": "12",
+  "fieldId": 31,
+  "fieldName": "12",
+  "date": "2025-08-16",
+  "time": "12:00",
+  "startTime": "2025-08-16T12:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Future FC G12",
+  "awayTeamName": "ALBION SC Riverside G12 DPL"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 16 transformed: {id: 8928, homeTeam: 'Future FC G12', awayTeam: 'ALBION SC Riverside G12 DPL', ageGroup: 'U14 Girls', field: '12', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 17 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf North G2012 Academy', awayTeamStructure: 'Cal Elite SC G2012', fieldStructure: '13', rawFieldName: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 17 API data: {
+  "id": 8927,
+  "homeTeam": "Empire Surf North G2012 Academy",
+  "awayTeam": "Cal Elite SC G2012",
+  "ageGroup": "U14 Girls",
+  "field": "13",
+  "fieldId": 32,
+  "fieldName": "13",
+  "date": "2025-08-16",
+  "time": "12:00",
+  "startTime": "2025-08-16T12:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf North G2012 Academy",
+  "awayTeamName": "Cal Elite SC G2012"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 17 transformed: {id: 8927, homeTeam: 'Empire Surf North G2012 Academy', awayTeam: 'Cal Elite SC G2012', ageGroup: 'U14 Girls', field: '13', …}
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Fields with games assigned: (5) [31, 32, null, 33, 34]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 31 (12) has 3 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 32 (13) has 4 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 33 (14) has 1 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 34 (15) has 1 games
+index-B4-lBkPr.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 10, …}
+index-B4-lBkPr.js:838 🔍 [CONFLICT DETECTION] Starting conflict detection for 10 games
+index-B4-lBkPr.js:838 🔍 [CONFLICT DETECTION] Time slots: 48
+index-B4-lBkPr.js:838 🔍 [CONFLICT DETECTION] Sample games: (3) [{…}, {…}, {…}]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Fields with games assigned: (5) [31, 32, null, 33, 34]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 31 (12) has 3 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 32 (13) has 4 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 33 (14) has 1 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 34 (15) has 1 games
+index-B4-lBkPr.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 10, …}
+index-B4-lBkPr.js:838 🎯 [ENHANCED DRAG DROP] Transformed games for calendar: (17) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-B4-lBkPr.js:838 🎯 [ENHANCED DRAG DROP] Fields data: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-B4-lBkPr.js:838 🎯 [GAME-FIELD DEBUG] Game 8920: fieldId=31, fieldName="12", startTime="2025-08-16T10:00:00"
+index-B4-lBkPr.js:838 🎯 [GAME-FIELD DEBUG] Game 8917: fieldId=32, fieldName="13", startTime="2025-08-16T10:00:00"
+index-B4-lBkPr.js:838 🎯 [GAME-FIELD DEBUG] Game 8919: fieldId=31, fieldName="12", startTime="2025-08-16T12:00:00"
+index-B4-lBkPr.js:838 🎯 [GAME-FIELD DEBUG] Game 8916: fieldId=32, fieldName="13", startTime="2025-08-16T12:00:00"
+index-B4-lBkPr.js:838 🎯 [GAME-FIELD DEBUG] Game 8918: fieldId=31, fieldName="12", startTime="2025-08-16T14:00:00"
+index-B4-lBkPr.js:838 🎯 [GAME-FIELD DEBUG] Game 8915: fieldId=32, fieldName="13", startTime="2025-08-16T14:00:00"
+index-B4-lBkPr.js:838 🎯 [GAME-FIELD DEBUG] Game 8924: fieldId=null, fieldName="Field Unknown", startTime="null"
+index-B4-lBkPr.js:838 🎯 [GAME-FIELD DEBUG] Game 8923: fieldId=32, fieldName="13", startTime="2025-08-16T08:00:00"
+index-B4-lBkPr.js:838 🎯 [GAME-FIELD DEBUG] Game 8922: fieldId=33, fieldName="14", startTime="2025-08-16T08:00:00"
+index-B4-lBkPr.js:838 🎯 [GAME-FIELD DEBUG] Game 8921: fieldId=34, fieldName="15", startTime="2025-08-16T08:00:00"
+index-B4-lBkPr.js:838 🎯 [GAME-FIELD DEBUG] Game 8931: fieldId=null, fieldName="Field Unknown", startTime="null"
+index-B4-lBkPr.js:838 🎯 [GAME-FIELD DEBUG] Game 8930: fieldId=32, fieldName="13", startTime="2025-08-16T08:00:00"
+index-B4-lBkPr.js:838 🎯 [GAME-FIELD DEBUG] Game 8925: fieldId=33, fieldName="14", startTime="2025-08-16T08:00:00"
+index-B4-lBkPr.js:838 🎯 [GAME-FIELD DEBUG] Game 8929: fieldId=31, fieldName="12", startTime="2025-08-16T10:00:00"
+index-B4-lBkPr.js:838 🎯 [GAME-FIELD DEBUG] Game 8926: fieldId=32, fieldName="13", startTime="2025-08-16T10:00:00"
+index-B4-lBkPr.js:838 🎯 [GAME-FIELD DEBUG] Game 8928: fieldId=31, fieldName="12", startTime="2025-08-16T12:00:00"
+index-B4-lBkPr.js:838 🎯 [GAME-FIELD DEBUG] Game 8927: fieldId=32, fieldName="13", startTime="2025-08-16T12:00:00"
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Fields with games assigned: (5) [31, 32, null, 33, 34]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 31 (12) has 5 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 32 (13) has 7 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 33 (14) has 2 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 34 (15) has 1 games
+index-B4-lBkPr.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 17, …}
+index-B4-lBkPr.js:838 🔍 [CONFLICT DETECTION] Starting conflict detection for 17 games
+index-B4-lBkPr.js:838 🔍 [CONFLICT DETECTION] Time slots: 48
+index-B4-lBkPr.js:838 🔍 [CONFLICT DETECTION] Sample games: (3) [{…}, {…}, {…}]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Fields with games assigned: (5) [31, 32, null, 33, 34]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 31 (12) has 5 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 32 (13) has 7 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 33 (14) has 2 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 34 (15) has 1 games
+index-B4-lBkPr.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 17, …}
+index-B4-lBkPr.js:838 🎬 [ENHANCED DRAG DROP] Drag started for game 8930
+index-B4-lBkPr.js:838 📋 Dragging: ALBION SC Riverside G12 DPL vs Cal Elite SC G2012 (U14 Girls)
+index-B4-lBkPr.js:838 📍 Current position: Field 13 at 2025-08-16T08:00:00
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Fields with games assigned: (5) [31, 32, null, 33, 34]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 31 (12) has 5 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 32 (13) has 7 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 33 (14) has 2 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 34 (15) has 1 games
+index-B4-lBkPr.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 17, …}
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Fields with games assigned: (5) [31, 32, null, 33, 34]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 31 (12) has 5 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 32 (13) has 7 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 33 (14) has 2 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 34 (15) has 1 games
+index-B4-lBkPr.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 17, …}
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Fields with games assigned: (5) [31, 32, null, 33, 34]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 31 (12) has 5 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 32 (13) has 7 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 33 (14) has 2 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 34 (15) has 1 games
+index-B4-lBkPr.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 17, …}
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Fields with games assigned: (5) [31, 32, null, 33, 34]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 31 (12) has 5 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 32 (13) has 7 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 33 (14) has 2 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 34 (15) has 1 games
+index-B4-lBkPr.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 17, …}
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Fields with games assigned: (5) [31, 32, null, 33, 34]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 31 (12) has 5 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 32 (13) has 7 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 33 (14) has 2 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 34 (15) has 1 games
+index-B4-lBkPr.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 17, …}
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Fields with games assigned: (5) [31, 32, null, 33, 34]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 31 (12) has 5 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 32 (13) has 7 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 33 (14) has 2 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 34 (15) has 1 games
+index-B4-lBkPr.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 17, …}
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Fields with games assigned: (5) [31, 32, null, 33, 34]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 31 (12) has 5 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 32 (13) has 7 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 33 (14) has 2 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 34 (15) has 1 games
+index-B4-lBkPr.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 17, …}
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Fields with games assigned: (5) [31, 32, null, 33, 34]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 31 (12) has 5 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 32 (13) has 7 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 33 (14) has 2 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 34 (15) has 1 games
+index-B4-lBkPr.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 17, …}
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Fields with games assigned: (5) [31, 32, null, 33, 34]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 31 (12) has 5 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 32 (13) has 7 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 33 (14) has 2 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 34 (15) has 1 games
+index-B4-lBkPr.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 17, …}
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Fields with games assigned: (5) [31, 32, null, 33, 34]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 31 (12) has 5 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 32 (13) has 7 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 33 (14) has 2 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 34 (15) has 1 games
+index-B4-lBkPr.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 17, …}
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Fields with games assigned: (5) [31, 32, null, 33, 34]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 31 (12) has 5 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 32 (13) has 7 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 33 (14) has 2 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 34 (15) has 1 games
+index-B4-lBkPr.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 17, …}
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Fields with games assigned: (5) [31, 32, null, 33, 34]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 31 (12) has 5 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 32 (13) has 7 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 33 (14) has 2 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 34 (15) has 1 games
+index-B4-lBkPr.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 17, …}
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Fields with games assigned: (5) [31, 32, null, 33, 34]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 31 (12) has 5 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 32 (13) has 7 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 33 (14) has 2 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 34 (15) has 1 games
+index-B4-lBkPr.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 17, …}
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Fields with games assigned: (5) [31, 32, null, 33, 34]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 31 (12) has 5 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 32 (13) has 7 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 33 (14) has 2 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 34 (15) has 1 games
+index-B4-lBkPr.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 17, …}
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Fields with games assigned: (5) [31, 32, null, 33, 34]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 31 (12) has 5 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 32 (13) has 7 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 33 (14) has 2 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 34 (15) has 1 games
+index-B4-lBkPr.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 17, …}
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Fields with games assigned: (5) [31, 32, null, 33, 34]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 31 (12) has 5 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 32 (13) has 7 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 33 (14) has 2 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 34 (15) has 1 games
+index-B4-lBkPr.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 17, …}
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Fields with games assigned: (5) [31, 32, null, 33, 34]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 31 (12) has 5 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 32 (13) has 7 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 33 (14) has 2 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 34 (15) has 1 games
+index-B4-lBkPr.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 17, …}
+index-B4-lBkPr.js:838 🔥 [ENHANCED DRAG DROP] DROP EVENT TRIGGERED!
+index-B4-lBkPr.js:838 
+🎯 [ENHANCED DRAG DROP] Drop Operation Started
+index-B4-lBkPr.js:839 📋 Game Details:
+index-B4-lBkPr.js:839    • Game ID: 8930
+index-B4-lBkPr.js:839    • Match: ALBION SC Riverside G12 DPL vs Cal Elite SC G2012
+index-B4-lBkPr.js:839    • Age Group: U14 Girls
+index-B4-lBkPr.js:839    • Current Field: 13 (ID: 32)
+index-B4-lBkPr.js:839    • Current Time: 2025-08-16T08:00:00
+index-B4-lBkPr.js:839 📍 New Destination:
+index-B4-lBkPr.js:839    • Target Field: 12 (ID: 31)
+index-B4-lBkPr.js:839    • Target Time Slot: 08:45
+index-B4-lBkPr.js:839    • Target Full Time: 2025-08-16T08:45:00.000Z
+index-B4-lBkPr.js:839    • Target Date: 2025-08-16
+index-B4-lBkPr.js:839 🚀 Starting optimistic update and backend mutation...
+index-B4-lBkPr.js:839 🚀 [ENHANCED DRAG DROP] About to call updateGameMutation.mutate...
+index-B4-lBkPr.js:839 ✅ [ENHANCED DRAG DROP] updateGameMutation.mutate called successfully
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Fields with games assigned: (5) [31, 32, null, 33, 34]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 31 (12) has 5 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 32 (13) has 7 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 33 (14) has 2 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 34 (15) has 1 games
+index-B4-lBkPr.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 17, …}
+index-B4-lBkPr.js:838 🔍 [CONFLICT DETECTION] Starting conflict detection for 17 games
+index-B4-lBkPr.js:838 🔍 [CONFLICT DETECTION] Time slots: 48
+index-B4-lBkPr.js:838 🔍 [CONFLICT DETECTION] Sample games: (3) [{…}, {…}, {…}]
+index-B4-lBkPr.js:838 🚀 [ENHANCED MUTATION] Sending reschedule request to backend...
+index-B4-lBkPr.js:838 📤 Request details: gameId=8930, fieldId=31, startTime=2025-08-16T08:45:00.000Z, eventId=1844329078
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Fields with games assigned: (5) [31, 32, null, 33, 34]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 31 (12) has 5 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 32 (13) has 7 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 33 (14) has 2 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 34 (15) has 1 games
+index-B4-lBkPr.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 17, …}
+index-B4-lBkPr.js:838 ✅ [ENHANCED MUTATION] Request successful
+index-B4-lBkPr.js:838 📥 Response data: {success: true, message: 'Game rescheduled successfully', game: {…}, timeSlot: {…}}
+index-B4-lBkPr.js:838 🎉 [ENHANCED MUTATION SUCCESS] Game reschedule completed successfully
+index-B4-lBkPr.js:838 Fetch finished loading: PUT "https://app.matchpro.ai/api/admin/games/8930/reschedule".
+mutationFn @ index-B4-lBkPr.js:838
+fn @ index-B4-lBkPr.js:41
+f @ index-B4-lBkPr.js:41
+start @ index-B4-lBkPr.js:41
+execute @ index-B4-lBkPr.js:41
+await in execute
+mutate @ index-B4-lBkPr.js:41
+(anonymous) @ index-B4-lBkPr.js:41
+I @ index-B4-lBkPr.js:839
+onDrop @ index-B4-lBkPr.js:846
+_ue @ index-B4-lBkPr.js:38
+Due @ index-B4-lBkPr.js:38
+Iue @ index-B4-lBkPr.js:38
+pM @ index-B4-lBkPr.js:38
+Xq @ index-B4-lBkPr.js:38
+(anonymous) @ index-B4-lBkPr.js:38
+NO @ index-B4-lBkPr.js:41
+bq @ index-B4-lBkPr.js:38
+k2 @ index-B4-lBkPr.js:38
+X4 @ index-B4-lBkPr.js:38
+Xue @ index-B4-lBkPr.js:38
+index-B4-lBkPr.js:838 📊 Server response: {success: true, message: 'Game rescheduled successfully', game: {…}, timeSlot: {…}}
+index-B4-lBkPr.js:838 🔄 Clearing optimistic update and refreshing data...
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Fields with games assigned: (5) [31, 32, null, 33, 34]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 31 (12) has 5 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 32 (13) has 7 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 33 (14) has 2 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 34 (15) has 1 games
+index-B4-lBkPr.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 17, …}
+index-B4-lBkPr.js:838 🎯 [ENHANCED DRAG DROP] Transformed games for calendar: (17) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-B4-lBkPr.js:838 🎯 [ENHANCED DRAG DROP] Fields data: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-B4-lBkPr.js:838 🎯 [GAME-FIELD DEBUG] Game 8920: fieldId=31, fieldName="12", startTime="2025-08-16T10:00:00"
+index-B4-lBkPr.js:838 🎯 [GAME-FIELD DEBUG] Game 8917: fieldId=32, fieldName="13", startTime="2025-08-16T10:00:00"
+index-B4-lBkPr.js:838 🎯 [GAME-FIELD DEBUG] Game 8919: fieldId=31, fieldName="12", startTime="2025-08-16T12:00:00"
+index-B4-lBkPr.js:838 🎯 [GAME-FIELD DEBUG] Game 8916: fieldId=32, fieldName="13", startTime="2025-08-16T12:00:00"
+index-B4-lBkPr.js:838 🎯 [GAME-FIELD DEBUG] Game 8918: fieldId=31, fieldName="12", startTime="2025-08-16T14:00:00"
+index-B4-lBkPr.js:838 🎯 [GAME-FIELD DEBUG] Game 8915: fieldId=32, fieldName="13", startTime="2025-08-16T14:00:00"
+index-B4-lBkPr.js:838 🎯 [GAME-FIELD DEBUG] Game 8924: fieldId=null, fieldName="Field Unknown", startTime="null"
+index-B4-lBkPr.js:838 🎯 [GAME-FIELD DEBUG] Game 8923: fieldId=32, fieldName="13", startTime="2025-08-16T08:00:00"
+index-B4-lBkPr.js:838 🎯 [GAME-FIELD DEBUG] Game 8922: fieldId=33, fieldName="14", startTime="2025-08-16T08:00:00"
+index-B4-lBkPr.js:838 🎯 [GAME-FIELD DEBUG] Game 8921: fieldId=34, fieldName="15", startTime="2025-08-16T08:00:00"
+index-B4-lBkPr.js:838 🎯 [GAME-FIELD DEBUG] Game 8931: fieldId=null, fieldName="Field Unknown", startTime="null"
+index-B4-lBkPr.js:838 🎯 [GAME-FIELD DEBUG] Game 8925: fieldId=33, fieldName="14", startTime="2025-08-16T08:00:00"
+index-B4-lBkPr.js:838 🎯 [GAME-FIELD DEBUG] Game 8929: fieldId=31, fieldName="12", startTime="2025-08-16T10:00:00"
+index-B4-lBkPr.js:838 🎯 [GAME-FIELD DEBUG] Game 8926: fieldId=32, fieldName="13", startTime="2025-08-16T10:00:00"
+index-B4-lBkPr.js:838 🎯 [GAME-FIELD DEBUG] Game 8928: fieldId=31, fieldName="12", startTime="2025-08-16T12:00:00"
+index-B4-lBkPr.js:838 🎯 [GAME-FIELD DEBUG] Game 8927: fieldId=32, fieldName="13", startTime="2025-08-16T12:00:00"
+index-B4-lBkPr.js:838 🎯 [GAME-FIELD DEBUG] Game 8930: fieldId=31, fieldName="12", startTime="2025-08-16T08:45:00"
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Fields with games assigned: (5) [31, 32, null, 33, 34]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 31 (12) has 6 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 32 (13) has 6 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 33 (14) has 2 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 34 (15) has 1 games
+index-B4-lBkPr.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 17, …}
+index-B4-lBkPr.js:838 🔍 [CONFLICT DETECTION] Starting conflict detection for 17 games
+index-B4-lBkPr.js:838 🔍 [CONFLICT DETECTION] Time slots: 48
+index-B4-lBkPr.js:838 🔍 [CONFLICT DETECTION] Sample games: (3) [{…}, {…}, {…}]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Fields with games assigned: (5) [31, 32, null, 33, 34]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 31 (12) has 6 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 32 (13) has 6 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 33 (14) has 2 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 34 (15) has 1 games
+index-B4-lBkPr.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 17, …}
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Fields with games assigned: (5) [31, 32, null, 33, 34]
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 31 (12) has 6 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 32 (13) has 6 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 33 (14) has 2 games
+index-B4-lBkPr.js:839 🎯 [FIELD DEBUG] Field 34 (15) has 1 games
+index-B4-lBkPr.js:839 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 17, …}
