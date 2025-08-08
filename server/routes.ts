@@ -1225,6 +1225,7 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/clubs', isAdmin, adminClubsRouter); // Admin club management router
     app.use('/api/admin/event-clubs', isAdmin, eventClubsRouter); // Event clubs management router
     app.use('/api/admin/email-config', isAdmin, emailConfigRouter); // Email configuration router
+    app.use('/api/admin', isAdmin, publishedSchedulesRouter); // Published schedules management router
     app.use('/api/admin', isAdmin, tournamentDirectorRoutes); // Tournament Director management router
     
     // Game management and safety functions

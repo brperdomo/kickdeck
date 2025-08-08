@@ -1,0 +1,25 @@
+orchestration: Initializing config store with state Object
+chunk-FLCULYKI.js:31 orchestration: Initializing feature flag store with state Object
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state Object
+chunk-FLCULYKI.js:31 orchestration: Updating combined state Object
+index-B7VMRx8u.js:848 Google Maps API key length: 0 characters
+index-B7VMRx8u.js:848 Mapbox API key length: 93 characters
+index-B7VMRx8u.js:848 Google Maps API already loaded
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+index-B7VMRx8u.js:657 Current route location (Wouter): /admin/events/1844329078/master-schedule
+index-B7VMRx8u.js:657 Current URL: https://app.matchpro.ai/admin/events/1844329078/master-schedule
+index-B7VMRx8u.js:657 Current pathname: /admin/events/1844329078/master-schedule
+index-B7VMRx8u.js:657 Current search: 
+index-B7VMRx8u.js:657 Fetching user with emulation token: not present
+index-B7VMRx8u.js:657 User data fetched: Object
+UnifiedTournamentControlCenter-BnaYLGL7.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentControlCenter-BnaYLGL7.js:1 Configured flights: 6 of 76
+util.js:33 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+$Aa @ util.js:33Understand this warning
+/api/admin/events/1844329078/publish-schedules:1  Failed to load resource: the server responded with a status of 500 ()Understand this error
+index-B7VMRx8u.js:41 Unhandled Promise Rejection: Error: Failed to publish schedules
+    at Object.mutationFn (MasterSchedulePage-BrcbQDfq.js:253:135871)
+(anonymous) @ index-B7VMRx8u.js:41Understand this warning
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning

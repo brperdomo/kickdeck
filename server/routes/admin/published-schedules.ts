@@ -87,6 +87,7 @@ router.post('/events/:eventId/publish-schedules', isAdmin, async (req: Request, 
     const [newSchedule] = await db
       .insert(publishedSchedules)
       .values({
+        eventId: parseInt(eventId),
         publishedBy: userId,
         isActive: true,
         scheduleData: scheduleData
