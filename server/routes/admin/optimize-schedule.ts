@@ -35,7 +35,7 @@ router.post('/events/:eventId/optimize-schedule', isAdmin, async (req, res) => {
       .where(eq(games.eventId, eventId.toString()));
 
     console.log(`📊 ALL GAMES IN EVENT ${eventId}:`, allGamesInEvent.length);
-    console.log(`📊 GAME DATES:`, [...new Set(allGamesInEvent.map(g => g.scheduledDate))]);
+    console.log(`📊 GAME DATES:`, Array.from(new Set(allGamesInEvent.map(g => g.scheduledDate))));
 
     // Get games for target date
     const gamesForOptimization = allGamesInEvent.filter(g => g.scheduledDate === targetDate);
@@ -147,11 +147,13 @@ router.post('/events/:eventId/optimize-schedule', isAdmin, async (req, res) => {
       optimizationsApplied,
       fieldUtilizationImproved: optimizationsApplied * 5, // Rough improvement percentage
       message: `Successfully consolidated ${optimizationsApplied} games to priority fields`,
-      fieldUtilization: Array.from(fieldUsage.entries()).map(([fieldId, count]) => {
+      fieldUtilization: Array.from(fieldUsage).map(([fieldId, count]) => {
         const field = availableFields.find(f => f.id === fieldId);
         return { fieldName: field?.name, fieldId, gamesScheduled: count };
       }),
-      optimizations: [] // Add empty array to prevent frontend errors
+      optimizations: [],
+      conflictsResolved: 0,
+      newGamePlacements: [] // Add missing properties to prevent frontend errors
     });
 
   } catch (error) {

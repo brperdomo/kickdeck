@@ -68,7 +68,18 @@ export function GapFillingOptimizer({ eventId, selectedDate }: GapFillingOptimiz
       return response.json();
     },
     onSuccess: (result) => {
-      setOptimizationResult(result);
+      console.log('🎯 [OPTIMIZATION SUCCESS] Response received:', result);
+      
+      // Ensure we have the expected properties
+      const safeResult = {
+        optimizationsApplied: result.optimizationsApplied || 0,
+        fieldUtilizationImproved: result.fieldUtilizationImproved || 0,
+        optimizations: result.optimizations || [],
+        fieldUtilization: result.fieldUtilization || [],
+        ...result
+      };
+      
+      setOptimizationResult(safeResult);
       setIsOptimizing(false);
       
       // Refresh all schedule-related queries
@@ -77,8 +88,8 @@ export function GapFillingOptimizer({ eventId, selectedDate }: GapFillingOptimiz
       queryClient.invalidateQueries({ queryKey: ['gap-analysis'] });
       
       toast({
-        title: 'Schedule Optimized! 🚀',
-        description: `Applied ${result.optimizationsApplied} optimizations, improved utilization by ${result.fieldUtilizationImproved}%`
+        title: 'Schedule Optimized!',
+        description: `Applied ${safeResult.optimizationsApplied} optimizations, improved utilization by ${safeResult.fieldUtilizationImproved}%`
       });
     },
     onError: (error) => {
@@ -216,8 +227,8 @@ export function GapFillingOptimizer({ eventId, selectedDate }: GapFillingOptimiz
                   <div className="space-y-1 text-xs">
                     <div>✅ {optimizationResult.optimizationsApplied} optimizations applied</div>
                     <div>📈 Field utilization improved by {optimizationResult.fieldUtilizationImproved}%</div>
-                    <div>🎯 {optimizationResult.conflictsResolved} conflicts resolved</div>
-                    <div>🔄 {optimizationResult.newGamePlacements.length} games repositioned</div>
+                    <div>🎯 {optimizationResult.conflictsResolved || 0} conflicts resolved</div>
+                    <div>🔄 {optimizationResult.newGamePlacements?.length || optimizationResult.optimizationsApplied || 0} games repositioned</div>
                   </div>
                 </AlertDescription>
               </Alert>
