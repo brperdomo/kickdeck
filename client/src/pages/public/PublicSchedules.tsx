@@ -18,6 +18,9 @@ interface PublicScheduleData {
   };
   ageGroups: Array<{
     ageGroup: string;
+    divisionCode: string;
+    gender: string;
+    displayName: string;
     flights: Array<{
       flightName: string;
       teamCount: number;
@@ -152,7 +155,7 @@ export default function PublicSchedules() {
             <Card key={index} className="bg-slate-800 border-slate-700">
               <CardHeader>
                 <CardTitle className="text-white text-xl">
-                  {ageGroup.ageGroup}
+                  {ageGroup.displayName || ageGroup.ageGroup}
                 </CardTitle>
               </CardHeader>
               <CardContent>
