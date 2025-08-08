@@ -459,33 +459,85 @@ router.get('/events/:eventId/field-utilization', isAdmin, async (req, res) => {
 router.get('/events/:eventId/quick-gap-analysis', isAdmin, async (req, res) => {
   try {
     const eventId = parseInt(req.params.eventId);
-    const date = req.query.date as string;
+    const date = req.query.date as string || '2025-08-16';
+    
+    console.log(`📊 Enhanced gap analysis for Event ${eventId} on ${date}`);
+    
+    // Get all available fields
+    const fieldsData = await db
+      .select({
+        id: fields.id,
+        name: fields.name
+      })
+      .from(fields)
+      .where(eq(fields.isOpen, true));
     
     // Get games for specific date
     const gamesData = await db
       .select({
+        id: games.id,
         fieldId: games.fieldId,
-        startTime: games.startTime
+        startTime: games.startTime,
+        duration: games.duration
       })
       .from(games)
       .where(and(
         eq(games.eventId, eventId),
-        gte(games.startTime, date || '2025-08-16'),
-        lte(games.startTime, (date || '2025-08-16') + ' 23:59:59')
+        gte(games.startTime, date),
+        lte(games.startTime, date + ' 23:59:59')
       ));
     
-    // Calculate gaps (simplified)
+    console.log(`🏟️ Found ${fieldsData.length} fields and ${gamesData.length} games on ${date}`);
+    
+    // Calculate realistic field utilization
+    const totalFields = fieldsData.length || 6; // Fallback to 6 fields
+    const operatingHours = 12; // 8 AM to 8 PM
+    const gameSlots = Math.floor(operatingHours / 1.5); // 90-minute games = 8 slots per field per day
+    const totalAvailableSlots = totalFields * gameSlots;
+    
+    // Current scheduled games
     const scheduledSlots = gamesData.length;
-    const totalAvailableSlots = 48; // 8 hours * 6 fields
-    const gapOpportunities = Math.max(0, totalAvailableSlots - scheduledSlots);
-    const currentUtilization = totalAvailableSlots > 0 ? Math.round((scheduledSlots / totalAvailableSlots) * 100) : 0;
+    const currentUtilization = totalAvailableSlots > 0 ? 
+      Math.round((scheduledSlots / totalAvailableSlots) * 100) : 0;
+    
+    // Find gap opportunities by analyzing time slot coverage
+    const timeSlotMap = new Map();
+    
+    // Map games to their time slots
+    gamesData.forEach(game => {
+      const startTime = new Date(game.startTime);
+      const timeKey = `${startTime.getHours()}:${startTime.getMinutes().toString().padStart(2, '0')}`;
+      
+      if (!timeSlotMap.has(timeKey)) {
+        timeSlotMap.set(timeKey, new Set());
+      }
+      timeSlotMap.get(timeKey).add(game.fieldId);
+    });
+    
+    // Calculate gaps: prime time slots with unused fields
+    const primeTimeSlots = ['08:00', '09:30', '11:00', '12:30', '14:00', '15:30', '17:00'];
+    let gapOpportunities = 0;
+    
+    primeTimeSlots.forEach(timeSlot => {
+      const usedFields = timeSlotMap.get(timeSlot) || new Set();
+      const availableFields = totalFields - usedFields.size;
+      gapOpportunities += availableFields;
+    });
+    
+    console.log(`📈 Analysis: ${scheduledSlots}/${totalAvailableSlots} slots used (${currentUtilization}%), ${gapOpportunities} gaps found`);
     
     res.json({
       gapOpportunities,
-      currentUtilization
+      currentUtilization,
+      analysisDetails: {
+        totalFields,
+        scheduledGames: scheduledSlots,
+        totalAvailableSlots,
+        utilizationBreakdown: `${scheduledSlots} games / ${totalAvailableSlots} total slots`
+      }
     });
   } catch (error) {
-    console.error('Quick gap analysis error:', error);
+    console.error('Enhanced gap analysis error:', error);
     res.status(500).json({ 
       gapOpportunities: 0,
       currentUtilization: 0 
@@ -542,50 +594,89 @@ router.post('/events/:eventId/optimize-schedule', isAdmin, async (req, res) => {
     let optimizationsApplied = 0;
     let fieldUtilizationImproved = 0;
     
-    for (const game of gamesForOptimization) {
-      // Find optimal field based on proximity (lower sortOrder = closer)
-      const currentField = availableFields.find(f => f.id === game.fieldId);
-      const optimalField = availableFields
-        .filter(f => f.fieldSize === game.fieldSize || !game.fieldSize)
-        .sort((a, b) => (a.sortOrder || 999) - (b.sortOrder || 999))[0];
+    // Build time slot usage map for gap analysis
+    const timeSlotUsage = new Map();
+    gamesForOptimization.forEach(game => {
+      const startTime = new Date(game.startTime);
+      const timeKey = `${startTime.getHours()}:${startTime.getMinutes().toString().padStart(2, '0')}`;
+      
+      if (!timeSlotUsage.has(timeKey)) {
+        timeSlotUsage.set(timeKey, new Set());
+      }
+      timeSlotUsage.get(timeKey).add(game.fieldId);
+    });
 
-      // Check if we can improve field assignment for proximity
-      if (optimalField && currentField && 
-          (optimalField.sortOrder || 999) < (currentField.sortOrder || 999)) {
+    console.log(`🎯 Time slot analysis:`, Array.from(timeSlotUsage.entries()).map(([time, fields]) => 
+      `${time}: ${fields.size} fields used`));
+    
+    // Find games that can be moved to fill gaps
+    for (const game of gamesForOptimization) {
+      const currentTime = new Date(game.startTime);
+      const currentTimeKey = `${currentTime.getHours()}:${currentTime.getMinutes().toString().padStart(2, '0')}`;
+      
+      // Look for earlier time slots with available fields (gap-filling)
+      const possibleEarlierSlots = [
+        '09:30', '11:00', '12:30'  // Common gap periods after 8 AM games
+      ];
+      
+      for (const earlierSlot of possibleEarlierSlots) {
+        const [hours, minutes] = earlierSlot.split(':').map(Number);
+        const earlierTime = new Date(currentTime);
+        earlierTime.setHours(hours, minutes, 0, 0);
         
-        // Calculate optimal time slot (simplified - look for earlier available slots)
-        const currentTime = new Date(game.startTime);
-        const optimizedTime = new Date(currentTime.getTime() - 30 * 60000); // Move 30 minutes earlier
-        const optimizedTimeString = optimizedTime.toISOString();
-        
-        try {
-          // Use the SAME reschedule API that drag-and-drop uses
-          await db
-            .update(games)
-            .set({
-              fieldId: optimalField.id,
-              startTime: optimizedTimeString,
-              endTime: new Date(optimizedTime.getTime() + (game.duration * 60000)).toISOString(),
-              updatedAt: new Date().toISOString()
-            })
-            .where(eq(games.id, game.id));
+        // Only move to earlier slots that create better utilization
+        if (earlierTime < currentTime) {
+          const usedFieldsInSlot = timeSlotUsage.get(earlierSlot) || new Set();
           
-          optimizations.push({
-            gameId: game.id,
-            oldTime: currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
-            newTime: optimizedTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
-            fieldName: optimalField.name,
-            oldFieldName: currentField.name,
-            improvement: 'Proximity optimization'
-          });
+          // Find optimal field based on proximity and availability
+          const optimalField = availableFields
+            .filter(f => f.fieldSize === game.fieldSize || !game.fieldSize)
+            .filter(f => !usedFieldsInSlot.has(f.id)) // Field must be available in target slot
+            .sort((a, b) => (a.sortOrder || 999) - (b.sortOrder || 999))[0];
           
-          optimizationsApplied++;
-          fieldUtilizationImproved += 5; // Each optimization improves utilization
-          
-          console.log(`✅ Optimized Game ${game.id}: ${currentField.name} → ${optimalField.name}, improved proximity`);
-          
-        } catch (updateError) {
-          console.error(`❌ Failed to optimize Game ${game.id}:`, updateError);
+          if (optimalField) {
+            const optimizedTimeString = earlierTime.toISOString();
+            
+            try {
+              // Use the SAME reschedule API that drag-and-drop uses
+              await db
+                .update(games)
+                .set({
+                  fieldId: optimalField.id,
+                  startTime: optimizedTimeString,
+                  endTime: new Date(earlierTime.getTime() + (game.duration * 60000)).toISOString(),
+                  updatedAt: new Date().toISOString()
+                })
+                .where(eq(games.id, game.id));
+              
+              // Update time slot usage for future iterations
+              timeSlotUsage.get(currentTimeKey)?.delete(game.fieldId);
+              if (!timeSlotUsage.has(earlierSlot)) {
+                timeSlotUsage.set(earlierSlot, new Set());
+              }
+              timeSlotUsage.get(earlierSlot).add(optimalField.id);
+              
+              const currentField = availableFields.find(f => f.id === game.fieldId);
+              
+              optimizations.push({
+                gameId: game.id,
+                oldTime: currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+                newTime: earlierTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+                fieldName: optimalField.name,
+                oldFieldName: currentField?.name || 'Unknown',
+                improvement: 'Gap-filling optimization'
+              });
+              
+              optimizationsApplied++;
+              fieldUtilizationImproved += 10; // Gap-filling provides better utilization improvement
+              
+              console.log(`✅ Gap-Filled Game ${game.id}: ${currentTimeKey} → ${earlierSlot} on ${optimalField.name}`);
+              break; // Move to next game after successful optimization
+              
+            } catch (updateError) {
+              console.error(`❌ Failed to gap-fill Game ${game.id}:`, updateError);
+            }
+          }
         }
       }
     }

@@ -1,0 +1,638 @@
+6Fetch finished loading: GET "<URL>".
+chunk-CVIZYB43.js:3 [Violation] 'setTimeout' handler took 72ms
+UnifiedTournamentControlCenter-BqNZwlCH.js:1 Fetch finished loading: POST "https://app.matchpro.ai/api/admin/events/1844329078/generate-selective-schedule".
+mutationFn @ UnifiedTournamentControlCenter-BqNZwlCH.js:1
+fn @ index-CAAFxwEO.js:41
+f @ index-CAAFxwEO.js:41
+start @ index-CAAFxwEO.js:41
+execute @ index-CAAFxwEO.js:41
+await in execute
+mutate @ index-CAAFxwEO.js:41
+(anonymous) @ index-CAAFxwEO.js:41
+Q @ UnifiedTournamentControlCenter-BqNZwlCH.js:1
+wue @ index-CAAFxwEO.js:38
+Sue @ index-CAAFxwEO.js:38
+Cue @ index-CAAFxwEO.js:38
+dM @ index-CAAFxwEO.js:38
+V7 @ index-CAAFxwEO.js:38
+(anonymous) @ index-CAAFxwEO.js:38
+yO @ index-CAAFxwEO.js:41
+f7 @ index-CAAFxwEO.js:38
+N2 @ index-CAAFxwEO.js:38
+H4 @ index-CAAFxwEO.js:38
+zue @ index-CAAFxwEO.js:38
+UnifiedTournamentControlCenter-BqNZwlCH.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentControlCenter-BqNZwlCH.js:1 Configured flights: 8 of 76
+ScheduleViewerFixed-CoZLvaGo.js:6 Schedule API Response: {games: Array(14), fields: Array(28), ageGroups: Array(2), dates: Array(2), totalGames: 14, …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 1 transformation debug: {raw: {…}, homeTeamStructure: 'ALBION SC Riverside G12 DPL', awayTeamStructure: 'Cal Elite SC G2012', fieldStructure: '15', rawFieldName: '15', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 1 API data: {
+  "id": 9922,
+  "homeTeam": "ALBION SC Riverside G12 DPL",
+  "awayTeam": "Cal Elite SC G2012",
+  "ageGroup": "U14 Girls",
+  "field": "15",
+  "fieldId": 34,
+  "fieldName": "15",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "ALBION SC Riverside G12 DPL",
+  "awayTeamName": "Cal Elite SC G2012"
+}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 1 transformed: {id: 9922, homeTeam: 'ALBION SC Riverside G12 DPL', awayTeam: 'Cal Elite SC G2012', ageGroup: 'U14 Girls', field: '15', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 2 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf North G2012 Academy', awayTeamStructure: 'Future FC G12', fieldStructure: '20', rawFieldName: '20', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 2 API data: {
+  "id": 9917,
+  "homeTeam": "Empire Surf North G2012 Academy",
+  "awayTeam": "Future FC G12",
+  "ageGroup": "U14 Girls",
+  "field": "20",
+  "fieldId": 35,
+  "fieldName": "20",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf North G2012 Academy",
+  "awayTeamName": "Future FC G12"
+}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 2 transformed: {id: 9917, homeTeam: 'Empire Surf North G2012 Academy', awayTeam: 'Future FC G12', ageGroup: 'U14 Girls', field: '20', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 3 transformation debug: {raw: {…}, homeTeamStructure: 'Future FC G12', awayTeamStructure: 'Cal Elite SC G2012', fieldStructure: '14', rawFieldName: '14', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 3 API data: {
+  "id": 9921,
+  "homeTeam": "Future FC G12",
+  "awayTeam": "Cal Elite SC G2012",
+  "ageGroup": "U14 Girls",
+  "field": "14",
+  "fieldId": 33,
+  "fieldName": "14",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Future FC G12",
+  "awayTeamName": "Cal Elite SC G2012"
+}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 3 transformed: {id: 9921, homeTeam: 'Future FC G12', awayTeam: 'Cal Elite SC G2012', ageGroup: 'U14 Girls', field: '14', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 4 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf North G2012 Academy', awayTeamStructure: 'ALBION SC Riverside G12 DPL', fieldStructure: '15', rawFieldName: '15', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 4 API data: {
+  "id": 9918,
+  "homeTeam": "Empire Surf North G2012 Academy",
+  "awayTeam": "ALBION SC Riverside G12 DPL",
+  "ageGroup": "U14 Girls",
+  "field": "15",
+  "fieldId": 34,
+  "fieldName": "15",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf North G2012 Academy",
+  "awayTeamName": "ALBION SC Riverside G12 DPL"
+}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 4 transformed: {id: 9918, homeTeam: 'Empire Surf North G2012 Academy', awayTeam: 'ALBION SC Riverside G12 DPL', ageGroup: 'U14 Girls', field: '15', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 5 transformation debug: {raw: {…}, homeTeamStructure: 'Future FC G12', awayTeamStructure: 'ALBION SC Riverside G12 DPL', fieldStructure: '14', rawFieldName: '14', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 5 API data: {
+  "id": 9920,
+  "homeTeam": "Future FC G12",
+  "awayTeam": "ALBION SC Riverside G12 DPL",
+  "ageGroup": "U14 Girls",
+  "field": "14",
+  "fieldId": 33,
+  "fieldName": "14",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Future FC G12",
+  "awayTeamName": "ALBION SC Riverside G12 DPL"
+}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 5 transformed: {id: 9920, homeTeam: 'Future FC G12', awayTeam: 'ALBION SC Riverside G12 DPL', ageGroup: 'U14 Girls', field: '14', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 6 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf North G2012 Academy', awayTeamStructure: 'Cal Elite SC G2012', fieldStructure: '15', rawFieldName: '15', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 6 API data: {
+  "id": 9919,
+  "homeTeam": "Empire Surf North G2012 Academy",
+  "awayTeam": "Cal Elite SC G2012",
+  "ageGroup": "U14 Girls",
+  "field": "15",
+  "fieldId": 34,
+  "fieldName": "15",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf North G2012 Academy",
+  "awayTeamName": "Cal Elite SC G2012"
+}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 6 transformed: {id: 9919, homeTeam: 'Empire Surf North G2012 Academy', awayTeam: 'Cal Elite SC G2012', ageGroup: 'U14 Girls', field: '15', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 7 transformation debug: {raw: {…}, homeTeamStructure: 'TBD', awayTeamStructure: 'TBD', fieldStructure: '12', rawFieldName: '12', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 7 API data: {
+  "id": 9923,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "ageGroup": "U14 Girls",
+  "field": "12",
+  "fieldId": 31,
+  "fieldName": "12",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "pending",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD"
+}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 7 transformed: {id: 9923, homeTeam: 'TBD', awayTeam: 'TBD', ageGroup: 'U14 Girls', field: '12', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 8 transformation debug: {raw: {…}, homeTeamStructure: "Tiffiny's B07- Jose ", awayTeamStructure: 'Pro Alliance B07 Academy', fieldStructure: '13', rawFieldName: '13', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 8 API data: {
+  "id": 9915,
+  "homeTeam": "Tiffiny's B07- Jose ",
+  "awayTeam": "Pro Alliance B07 Academy",
+  "ageGroup": "U19 Boys",
+  "field": "13",
+  "fieldId": 32,
+  "fieldName": "13",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Tiffiny's B07- Jose ",
+  "awayTeamName": "Pro Alliance B07 Academy"
+}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 8 transformed: {id: 9915, homeTeam: "Tiffiny's B07- Jose ", awayTeam: 'Pro Alliance B07 Academy', ageGroup: 'U19 Boys', field: '13', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 9 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest B07/08', awayTeamStructure: 'Cal Elite SC B2007', fieldStructure: '14', rawFieldName: '14', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 9 API data: {
+  "id": 9910,
+  "homeTeam": "City SC Southwest B07/08",
+  "awayTeam": "Cal Elite SC B2007",
+  "ageGroup": "U19 Boys",
+  "field": "14",
+  "fieldId": 33,
+  "fieldName": "14",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B07/08",
+  "awayTeamName": "Cal Elite SC B2007"
+}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 9 transformed: {id: 9910, homeTeam: 'City SC Southwest B07/08', awayTeam: 'Cal Elite SC B2007', ageGroup: 'U19 Boys', field: '14', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 10 transformation debug: {raw: {…}, homeTeamStructure: 'Cal Elite SC B2007', awayTeamStructure: 'Pro Alliance B07 Academy', fieldStructure: '12', rawFieldName: '12', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 10 API data: {
+  "id": 9914,
+  "homeTeam": "Cal Elite SC B2007",
+  "awayTeam": "Pro Alliance B07 Academy",
+  "ageGroup": "U19 Boys",
+  "field": "12",
+  "fieldId": 31,
+  "fieldName": "12",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Cal Elite SC B2007",
+  "awayTeamName": "Pro Alliance B07 Academy"
+}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 10 transformed: {id: 9914, homeTeam: 'Cal Elite SC B2007', awayTeam: 'Pro Alliance B07 Academy', ageGroup: 'U19 Boys', field: '12', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 11 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest B07/08', awayTeamStructure: "Tiffiny's B07- Jose ", fieldStructure: '13', rawFieldName: '13', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 11 API data: {
+  "id": 9911,
+  "homeTeam": "City SC Southwest B07/08",
+  "awayTeam": "Tiffiny's B07- Jose ",
+  "ageGroup": "U19 Boys",
+  "field": "13",
+  "fieldId": 32,
+  "fieldName": "13",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B07/08",
+  "awayTeamName": "Tiffiny's B07- Jose "
+}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 11 transformed: {id: 9911, homeTeam: 'City SC Southwest B07/08', awayTeam: "Tiffiny's B07- Jose ", ageGroup: 'U19 Boys', field: '13', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 12 transformation debug: {raw: {…}, homeTeamStructure: 'Cal Elite SC B2007', awayTeamStructure: "Tiffiny's B07- Jose ", fieldStructure: '12', rawFieldName: '12', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 12 API data: {
+  "id": 9913,
+  "homeTeam": "Cal Elite SC B2007",
+  "awayTeam": "Tiffiny's B07- Jose ",
+  "ageGroup": "U19 Boys",
+  "field": "12",
+  "fieldId": 31,
+  "fieldName": "12",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Cal Elite SC B2007",
+  "awayTeamName": "Tiffiny's B07- Jose "
+}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 12 transformed: {id: 9913, homeTeam: 'Cal Elite SC B2007', awayTeam: "Tiffiny's B07- Jose ", ageGroup: 'U19 Boys', field: '12', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 13 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest B07/08', awayTeamStructure: 'Pro Alliance B07 Academy', fieldStructure: '13', rawFieldName: '13', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 13 API data: {
+  "id": 9912,
+  "homeTeam": "City SC Southwest B07/08",
+  "awayTeam": "Pro Alliance B07 Academy",
+  "ageGroup": "U19 Boys",
+  "field": "13",
+  "fieldId": 32,
+  "fieldName": "13",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B07/08",
+  "awayTeamName": "Pro Alliance B07 Academy"
+}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 13 transformed: {id: 9912, homeTeam: 'City SC Southwest B07/08', awayTeam: 'Pro Alliance B07 Academy', ageGroup: 'U19 Boys', field: '13', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 14 transformation debug: {raw: {…}, homeTeamStructure: 'TBD', awayTeamStructure: 'TBD', fieldStructure: '13', rawFieldName: '13', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 14 API data: {
+  "id": 9916,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "ageGroup": "U19 Boys",
+  "field": "13",
+  "fieldId": 32,
+  "fieldName": "13",
+  "date": "2025-08-17",
+  "time": "10:30",
+  "startTime": "2025-08-17T10:30:00",
+  "duration": 90,
+  "status": "pending",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD"
+}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 14 transformed: {id: 9916, homeTeam: 'TBD', awayTeam: 'TBD', ageGroup: 'U19 Boys', field: '13', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Schedule API Response: {games: Array(14), fields: Array(28), ageGroups: Array(2), dates: Array(2), totalGames: 14, …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 1 transformation debug: {raw: {…}, homeTeamStructure: 'ALBION SC Riverside G12 DPL', awayTeamStructure: 'Cal Elite SC G2012', fieldStructure: '15', rawFieldName: '15', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 1 API data: {
+  "id": 9922,
+  "homeTeam": "ALBION SC Riverside G12 DPL",
+  "awayTeam": "Cal Elite SC G2012",
+  "ageGroup": "U14 Girls",
+  "field": "15",
+  "fieldId": 34,
+  "fieldName": "15",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "ALBION SC Riverside G12 DPL",
+  "awayTeamName": "Cal Elite SC G2012"
+}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 1 transformed: {id: 9922, homeTeam: 'ALBION SC Riverside G12 DPL', awayTeam: 'Cal Elite SC G2012', ageGroup: 'U14 Girls', field: '15', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 2 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf North G2012 Academy', awayTeamStructure: 'Future FC G12', fieldStructure: '20', rawFieldName: '20', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 2 API data: {
+  "id": 9917,
+  "homeTeam": "Empire Surf North G2012 Academy",
+  "awayTeam": "Future FC G12",
+  "ageGroup": "U14 Girls",
+  "field": "20",
+  "fieldId": 35,
+  "fieldName": "20",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf North G2012 Academy",
+  "awayTeamName": "Future FC G12"
+}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 2 transformed: {id: 9917, homeTeam: 'Empire Surf North G2012 Academy', awayTeam: 'Future FC G12', ageGroup: 'U14 Girls', field: '20', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 3 transformation debug: {raw: {…}, homeTeamStructure: 'Future FC G12', awayTeamStructure: 'Cal Elite SC G2012', fieldStructure: '14', rawFieldName: '14', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 3 API data: {
+  "id": 9921,
+  "homeTeam": "Future FC G12",
+  "awayTeam": "Cal Elite SC G2012",
+  "ageGroup": "U14 Girls",
+  "field": "14",
+  "fieldId": 33,
+  "fieldName": "14",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Future FC G12",
+  "awayTeamName": "Cal Elite SC G2012"
+}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 3 transformed: {id: 9921, homeTeam: 'Future FC G12', awayTeam: 'Cal Elite SC G2012', ageGroup: 'U14 Girls', field: '14', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 4 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf North G2012 Academy', awayTeamStructure: 'ALBION SC Riverside G12 DPL', fieldStructure: '15', rawFieldName: '15', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 4 API data: {
+  "id": 9918,
+  "homeTeam": "Empire Surf North G2012 Academy",
+  "awayTeam": "ALBION SC Riverside G12 DPL",
+  "ageGroup": "U14 Girls",
+  "field": "15",
+  "fieldId": 34,
+  "fieldName": "15",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf North G2012 Academy",
+  "awayTeamName": "ALBION SC Riverside G12 DPL"
+}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 4 transformed: {id: 9918, homeTeam: 'Empire Surf North G2012 Academy', awayTeam: 'ALBION SC Riverside G12 DPL', ageGroup: 'U14 Girls', field: '15', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 5 transformation debug: {raw: {…}, homeTeamStructure: 'Future FC G12', awayTeamStructure: 'ALBION SC Riverside G12 DPL', fieldStructure: '14', rawFieldName: '14', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 5 API data: {
+  "id": 9920,
+  "homeTeam": "Future FC G12",
+  "awayTeam": "ALBION SC Riverside G12 DPL",
+  "ageGroup": "U14 Girls",
+  "field": "14",
+  "fieldId": 33,
+  "fieldName": "14",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Future FC G12",
+  "awayTeamName": "ALBION SC Riverside G12 DPL"
+}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 5 transformed: {id: 9920, homeTeam: 'Future FC G12', awayTeam: 'ALBION SC Riverside G12 DPL', ageGroup: 'U14 Girls', field: '14', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 6 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf North G2012 Academy', awayTeamStructure: 'Cal Elite SC G2012', fieldStructure: '15', rawFieldName: '15', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 6 API data: {
+  "id": 9919,
+  "homeTeam": "Empire Surf North G2012 Academy",
+  "awayTeam": "Cal Elite SC G2012",
+  "ageGroup": "U14 Girls",
+  "field": "15",
+  "fieldId": 34,
+  "fieldName": "15",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf North G2012 Academy",
+  "awayTeamName": "Cal Elite SC G2012"
+}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 6 transformed: {id: 9919, homeTeam: 'Empire Surf North G2012 Academy', awayTeam: 'Cal Elite SC G2012', ageGroup: 'U14 Girls', field: '15', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 7 transformation debug: {raw: {…}, homeTeamStructure: 'TBD', awayTeamStructure: 'TBD', fieldStructure: '12', rawFieldName: '12', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 7 API data: {
+  "id": 9923,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "ageGroup": "U14 Girls",
+  "field": "12",
+  "fieldId": 31,
+  "fieldName": "12",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "pending",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD"
+}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 7 transformed: {id: 9923, homeTeam: 'TBD', awayTeam: 'TBD', ageGroup: 'U14 Girls', field: '12', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 8 transformation debug: {raw: {…}, homeTeamStructure: "Tiffiny's B07- Jose ", awayTeamStructure: 'Pro Alliance B07 Academy', fieldStructure: '13', rawFieldName: '13', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 8 API data: {
+  "id": 9915,
+  "homeTeam": "Tiffiny's B07- Jose ",
+  "awayTeam": "Pro Alliance B07 Academy",
+  "ageGroup": "U19 Boys",
+  "field": "13",
+  "fieldId": 32,
+  "fieldName": "13",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Tiffiny's B07- Jose ",
+  "awayTeamName": "Pro Alliance B07 Academy"
+}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 8 transformed: {id: 9915, homeTeam: "Tiffiny's B07- Jose ", awayTeam: 'Pro Alliance B07 Academy', ageGroup: 'U19 Boys', field: '13', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 9 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest B07/08', awayTeamStructure: 'Cal Elite SC B2007', fieldStructure: '14', rawFieldName: '14', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 9 API data: {
+  "id": 9910,
+  "homeTeam": "City SC Southwest B07/08",
+  "awayTeam": "Cal Elite SC B2007",
+  "ageGroup": "U19 Boys",
+  "field": "14",
+  "fieldId": 33,
+  "fieldName": "14",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B07/08",
+  "awayTeamName": "Cal Elite SC B2007"
+}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 9 transformed: {id: 9910, homeTeam: 'City SC Southwest B07/08', awayTeam: 'Cal Elite SC B2007', ageGroup: 'U19 Boys', field: '14', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 10 transformation debug: {raw: {…}, homeTeamStructure: 'Cal Elite SC B2007', awayTeamStructure: 'Pro Alliance B07 Academy', fieldStructure: '12', rawFieldName: '12', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 10 API data: {
+  "id": 9914,
+  "homeTeam": "Cal Elite SC B2007",
+  "awayTeam": "Pro Alliance B07 Academy",
+  "ageGroup": "U19 Boys",
+  "field": "12",
+  "fieldId": 31,
+  "fieldName": "12",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Cal Elite SC B2007",
+  "awayTeamName": "Pro Alliance B07 Academy"
+}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 10 transformed: {id: 9914, homeTeam: 'Cal Elite SC B2007', awayTeam: 'Pro Alliance B07 Academy', ageGroup: 'U19 Boys', field: '12', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 11 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest B07/08', awayTeamStructure: "Tiffiny's B07- Jose ", fieldStructure: '13', rawFieldName: '13', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 11 API data: {
+  "id": 9911,
+  "homeTeam": "City SC Southwest B07/08",
+  "awayTeam": "Tiffiny's B07- Jose ",
+  "ageGroup": "U19 Boys",
+  "field": "13",
+  "fieldId": 32,
+  "fieldName": "13",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B07/08",
+  "awayTeamName": "Tiffiny's B07- Jose "
+}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 11 transformed: {id: 9911, homeTeam: 'City SC Southwest B07/08', awayTeam: "Tiffiny's B07- Jose ", ageGroup: 'U19 Boys', field: '13', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 12 transformation debug: {raw: {…}, homeTeamStructure: 'Cal Elite SC B2007', awayTeamStructure: "Tiffiny's B07- Jose ", fieldStructure: '12', rawFieldName: '12', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 12 API data: {
+  "id": 9913,
+  "homeTeam": "Cal Elite SC B2007",
+  "awayTeam": "Tiffiny's B07- Jose ",
+  "ageGroup": "U19 Boys",
+  "field": "12",
+  "fieldId": 31,
+  "fieldName": "12",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Cal Elite SC B2007",
+  "awayTeamName": "Tiffiny's B07- Jose "
+}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 12 transformed: {id: 9913, homeTeam: 'Cal Elite SC B2007', awayTeam: "Tiffiny's B07- Jose ", ageGroup: 'U19 Boys', field: '12', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 13 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest B07/08', awayTeamStructure: 'Pro Alliance B07 Academy', fieldStructure: '13', rawFieldName: '13', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 13 API data: {
+  "id": 9912,
+  "homeTeam": "City SC Southwest B07/08",
+  "awayTeam": "Pro Alliance B07 Academy",
+  "ageGroup": "U19 Boys",
+  "field": "13",
+  "fieldId": 32,
+  "fieldName": "13",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B07/08",
+  "awayTeamName": "Pro Alliance B07 Academy"
+}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 13 transformed: {id: 9912, homeTeam: 'City SC Southwest B07/08', awayTeam: 'Pro Alliance B07 Academy', ageGroup: 'U19 Boys', field: '13', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 14 transformation debug: {raw: {…}, homeTeamStructure: 'TBD', awayTeamStructure: 'TBD', fieldStructure: '13', rawFieldName: '13', …}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 14 API data: {
+  "id": 9916,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "ageGroup": "U19 Boys",
+  "field": "13",
+  "fieldId": 32,
+  "fieldName": "13",
+  "date": "2025-08-17",
+  "time": "10:30",
+  "startTime": "2025-08-17T10:30:00",
+  "duration": 90,
+  "status": "pending",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD"
+}
+ScheduleViewerFixed-CoZLvaGo.js:6 Game 14 transformed: {id: 9916, homeTeam: 'TBD', awayTeam: 'TBD', ageGroup: 'U19 Boys', field: '13', …}
+index-CAAFxwEO.js:824 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-CAAFxwEO.js:824 🎯 [FIELD DEBUG] Fields with games assigned: (3) [32, 33, 31]
+index-CAAFxwEO.js:824 🎯 [FIELD DEBUG] Field 31 (12) has 2 games
+index-CAAFxwEO.js:824 🎯 [FIELD DEBUG] Field 32 (13) has 4 games
+index-CAAFxwEO.js:824 🎯 [FIELD DEBUG] Field 33 (14) has 1 games
+index-CAAFxwEO.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 7, …}
+index-CAAFxwEO.js:823 🔍 [CONFLICT DETECTION] Starting conflict detection for 7 games
+index-CAAFxwEO.js:823 🔍 [CONFLICT DETECTION] Time slots: 48
+index-CAAFxwEO.js:823 🔍 [CONFLICT DETECTION] Sample games: (3) [{…}, {…}, {…}]
+index-CAAFxwEO.js:824 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-CAAFxwEO.js:824 🎯 [FIELD DEBUG] Fields with games assigned: (3) [32, 33, 31]
+index-CAAFxwEO.js:824 🎯 [FIELD DEBUG] Field 31 (12) has 2 games
+index-CAAFxwEO.js:824 🎯 [FIELD DEBUG] Field 32 (13) has 4 games
+index-CAAFxwEO.js:824 🎯 [FIELD DEBUG] Field 33 (14) has 1 games
+index-CAAFxwEO.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 7, …}
+index-CAAFxwEO.js:823 🎯 [ENHANCED DRAG DROP] Transformed games for calendar: (14) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-CAAFxwEO.js:823 🎯 [ENHANCED DRAG DROP] Fields data: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-CAAFxwEO.js:823 🎯 [GAME-FIELD DEBUG] Game 9922: fieldId=34, fieldName="15", startTime="2025-08-16T08:00:00"
+index-CAAFxwEO.js:823 🎯 [GAME-FIELD DEBUG] Game 9917: fieldId=35, fieldName="20", startTime="2025-08-16T08:00:00"
+index-CAAFxwEO.js:823 🎯 [GAME-FIELD DEBUG] Game 9921: fieldId=33, fieldName="14", startTime="2025-08-16T14:00:00"
+index-CAAFxwEO.js:823 🎯 [GAME-FIELD DEBUG] Game 9918: fieldId=34, fieldName="15", startTime="2025-08-16T14:00:00"
+index-CAAFxwEO.js:823 🎯 [GAME-FIELD DEBUG] Game 9920: fieldId=33, fieldName="14", startTime="2025-08-17T08:00:00"
+index-CAAFxwEO.js:823 🎯 [GAME-FIELD DEBUG] Game 9919: fieldId=34, fieldName="15", startTime="2025-08-17T08:00:00"
+index-CAAFxwEO.js:823 🎯 [GAME-FIELD DEBUG] Game 9923: fieldId=31, fieldName="12", startTime="2025-08-16T08:00:00"
+index-CAAFxwEO.js:823 🎯 [GAME-FIELD DEBUG] Game 9915: fieldId=32, fieldName="13", startTime="2025-08-16T08:00:00"
+index-CAAFxwEO.js:823 🎯 [GAME-FIELD DEBUG] Game 9910: fieldId=33, fieldName="14", startTime="2025-08-16T08:00:00"
+index-CAAFxwEO.js:823 🎯 [GAME-FIELD DEBUG] Game 9914: fieldId=31, fieldName="12", startTime="2025-08-16T14:00:00"
+index-CAAFxwEO.js:823 🎯 [GAME-FIELD DEBUG] Game 9911: fieldId=32, fieldName="13", startTime="2025-08-16T14:00:00"
+index-CAAFxwEO.js:823 🎯 [GAME-FIELD DEBUG] Game 9913: fieldId=31, fieldName="12", startTime="2025-08-17T08:00:00"
+index-CAAFxwEO.js:823 🎯 [GAME-FIELD DEBUG] Game 9912: fieldId=32, fieldName="13", startTime="2025-08-17T08:00:00"
+index-CAAFxwEO.js:823 🎯 [GAME-FIELD DEBUG] Game 9916: fieldId=32, fieldName="13", startTime="2025-08-17T10:30:00"
+index-CAAFxwEO.js:824 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-CAAFxwEO.js:824 🎯 [FIELD DEBUG] Fields with games assigned: (5) [34, 35, 33, 31, 32]
+index-CAAFxwEO.js:824 🎯 [FIELD DEBUG] Field 31 (12) has 3 games
+index-CAAFxwEO.js:824 🎯 [FIELD DEBUG] Field 32 (13) has 4 games
+index-CAAFxwEO.js:824 🎯 [FIELD DEBUG] Field 33 (14) has 3 games
+index-CAAFxwEO.js:824 🎯 [FIELD DEBUG] Field 34 (15) has 3 games
+index-CAAFxwEO.js:824 🎯 [FIELD DEBUG] Field 35 (20) has 1 games
+index-CAAFxwEO.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 14, …}
+index-CAAFxwEO.js:823 🔍 [CONFLICT DETECTION] Starting conflict detection for 14 games
+index-CAAFxwEO.js:823 🔍 [CONFLICT DETECTION] Time slots: 48
+index-CAAFxwEO.js:823 🔍 [CONFLICT DETECTION] Sample games: (3) [{…}, {…}, {…}]
+index-CAAFxwEO.js:823 🚨 [TEAM CONFLICT] TBD has 2 games at 8 AM: (2) [{…}, {…}]
+index-CAAFxwEO.js:824 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-CAAFxwEO.js:824 🎯 [FIELD DEBUG] Fields with games assigned: (5) [34, 35, 33, 31, 32]
+index-CAAFxwEO.js:824 🎯 [FIELD DEBUG] Field 31 (12) has 3 games
+index-CAAFxwEO.js:824 🎯 [FIELD DEBUG] Field 32 (13) has 4 games
+index-CAAFxwEO.js:824 🎯 [FIELD DEBUG] Field 33 (14) has 3 games
+index-CAAFxwEO.js:824 🎯 [FIELD DEBUG] Field 34 (15) has 3 games
+index-CAAFxwEO.js:824 🎯 [FIELD DEBUG] Field 35 (20) has 1 games
+index-CAAFxwEO.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 14, …}
