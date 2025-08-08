@@ -17,9 +17,8 @@ router.get('/:eventId/csv', isAdmin, async (req, res) => {
     const teamsData = await db
       .select({
         teamName: teams.name,
-        coachName: teams.coach,
-        coachEmail: teams.submitterEmail,
-        coachPhone: teams.managerPhone, // Using manager_phone as coach phone
+        coachData: teams.coach, // Full JSON object with coach info
+        submitterEmail: teams.submitterEmail,
         managerName: teams.managerName,
         managerEmail: teams.managerEmail,
         managerPhone: teams.managerPhone,
@@ -38,6 +37,23 @@ router.get('/:eventId/csv', isAdmin, async (req, res) => {
 
     console.log(`[Manager Reports] Found ${teamsData.length} approved teams for export`);
 
+    // Helper function to parse coach data
+    const parseCoachData = (coachData: string | null) => {
+      if (!coachData) return { name: '', email: '', phone: '' };
+      
+      try {
+        const coach = JSON.parse(coachData);
+        return {
+          name: coach.headCoachName || '',
+          email: coach.headCoachEmail || '',
+          phone: coach.headCoachPhone || ''
+        };
+      } catch (e) {
+        console.error('[Manager Reports] Error parsing coach data:', e);
+        return { name: '', email: '', phone: '' };
+      }
+    };
+
     // Create CSV headers
     const headers = [
       'Team Name',
@@ -50,17 +66,21 @@ router.get('/:eventId/csv', isAdmin, async (req, res) => {
       'Level of Play Desired (Flight)'
     ];
 
-    // Create CSV rows
-    const csvRows = teamsData.map(team => [
-      team.teamName || '',
-      team.coachName || '',
-      team.coachEmail || '',
-      team.coachPhone || '',
-      team.managerName || '',
-      team.managerEmail || '',
-      team.managerPhone || '',
-      team.flightName || team.flightLevel || ''
-    ]);
+    // Create CSV rows with proper field mapping
+    const csvRows = teamsData.map(team => {
+      const coach = parseCoachData(team.coachData);
+      
+      return [
+        team.teamName || '',
+        coach.name,
+        coach.email,
+        coach.phone,
+        team.managerName || '',
+        team.managerEmail || '',
+        team.managerPhone || '',
+        team.flightName || team.flightLevel || ''
+      ];
+    });
 
     // Combine headers and data
     const csvContent = [
