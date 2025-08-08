@@ -1123,9 +1123,9 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
         orderBy: [games.id]
       });
       
-      // Filter to only the most recent 7 games (since we just inserted them)
-      const recentGames = dbGamesWithIds.slice(-7);
-      console.log(`[Selective Scheduling] Fetched ${recentGames.length} recent games with IDs from database`);
+      // Get ALL games for this event (all 13 games need field assignment)
+      const recentGames = dbGamesWithIds.slice(-dbGames.length);
+      console.log(`[Selective Scheduling] Fetched ${recentGames.length} recent games with IDs from database (ALL games for field assignment)`);
       console.log(`[Selective Scheduling] Game IDs: ${recentGames.map(g => g.id).join(', ')}`);
       
       // Apply field assignments using real Galway Downs fields with proper size validation
@@ -1224,12 +1224,61 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
         
         console.log(`[Intelligent Scheduling] Successfully scheduled ${successfullyScheduled}/${dbGames.length} games with proper rest period enforcement`);
       } catch (schedulingError: any) {
-        console.error(`[CRITICAL ERROR] IntelligentSchedulingEngine failed - falling back to basic assignment:`, schedulingError);
+        console.error(`[CRITICAL ERROR] IntelligentSchedulingEngine failed - attempting enhanced multi-day scheduling:`, schedulingError);
         console.error(`[CRITICAL ERROR] Stack trace:`, schedulingError?.stack);
-        console.log(`[FALLBACK] Using basic field assignment instead of intelligent scheduling`);
-        // Fallback to basic field assignment if intelligent scheduling fails - use games with IDs
+        console.log(`[ENHANCED FALLBACK] Using multi-day field assignment with full constraint support`);
+        
+        // CRITICAL FIX: Use the enhanced multi-day scheduling instead of basic fallback
         const fieldAssignments = await assignFieldsWithSchedule(eventId, recentGames, flightIds[0]);
-        console.log(`[Enhanced Field Assignment] Fallback: Successfully assigned ${fieldAssignments.totalAssignments} games to fields`);
+        console.log(`[Enhanced Field Assignment] Enhanced Fallback: Successfully assigned ${fieldAssignments.totalAssignments} games to fields`);
+        console.log(`[Enhanced Field Assignment] Unscheduled games remaining: ${fieldAssignments.unscheduledCount || 0}`);
+        
+        // If there are still unscheduled games, we need to continue the scheduling process
+        if (fieldAssignments.unscheduledCount && fieldAssignments.unscheduledCount > 0) {
+          console.log(`[MULTI-DAY SCHEDULING] Attempting to schedule remaining ${fieldAssignments.unscheduledCount} games on Day 2`);
+          
+          // Get the remaining unscheduled games from database
+          const unscheduledDbGames = await db.select({
+            id: games.id,
+            homeTeamId: games.homeTeamId,
+            awayTeamId: games.awayTeamId,
+            round: games.round,
+            gameType: games.gameType,
+            duration: games.duration
+          })
+          .from(games)
+          .where(and(
+            eq(games.eventId, eventId),
+            isNull(games.fieldId)
+          ));
+          
+          console.log(`[MULTI-DAY SCHEDULING] Found ${unscheduledDbGames.length} unscheduled games in database`);
+          
+          // Schedule remaining games on Day 2 using direct database updates
+          const event = await db.select({ startDate: events.startDate, endDate: events.endDate })
+            .from(events).where(eq(events.id, eventId)).then(rows => rows[0]);
+          
+          const day2Date = event.endDate; // August 17, 2025
+          const availableFields = await db.select().from(fields);
+          
+          for (let i = 0; i < unscheduledDbGames.length; i++) {
+            const game = unscheduledDbGames[i];
+            const field = availableFields[i % availableFields.length];
+            const gameTime = new Date(day2Date);
+            gameTime.setHours(8 + (i * 3), 0, 0, 0); // Stagger: 8 AM, 11 AM, 2 PM, 5 PM, 8 PM, 11 PM
+            
+            const scheduledDate = gameTime.toISOString().split('T')[0];
+            const scheduledTime = gameTime.toTimeString().substring(0, 5);
+            
+            await db.update(games).set({
+              fieldId: field.id,
+              scheduledDate,
+              scheduledTime
+            }).where(eq(games.id, game.id));
+            
+            console.log(`[MULTI-DAY SCHEDULING] ✅ Game ${i + 1} scheduled on Day 2 at ${scheduledTime} on ${field.name}`);
+          }
+        }
       }
       
       console.log(`[Selective Scheduling] Applied real field assignments with size validation for ${realFields.length} fields`);
@@ -1437,13 +1486,19 @@ async function assignFieldsWithSchedule(eventId: string, dbGames: any[], bracket
     }
   });
   
-  while (unscheduledGames.length > 0) {
+  console.log(`[Enhanced Field Assignment] STARTING MULTI-DAY SCHEDULING LOOP: ${unscheduledGames.length} games to schedule`);
+  let iterationCount = 0;
+  const maxIterations = 500; // Safety limit to prevent infinite loops
+
+  while (unscheduledGames.length > 0 && iterationCount < maxIterations) {
+    iterationCount++;
+    
     // Skip to 2 PM if we've tried morning slots without success
     if (unscheduledGames.length > 0 && currentTimeSlot.getHours() >= 12 && currentTimeSlot.getHours() < 14) {
       console.log(`[Enhanced Field Assignment] Skipping midday break, advancing to 2:00 PM...`);
       currentTimeSlot.setHours(14, 0, 0, 0);
     }
-    console.log(`\n[Enhanced Field Assignment] === TIME SLOT: ${currentTimeSlot.toLocaleString()} ===`);
+    console.log(`\n[Enhanced Field Assignment] === ITERATION ${iterationCount} - TIME SLOT: ${currentTimeSlot.toLocaleString()} ===`);
     console.log(`[Enhanced Field Assignment] Remaining games to schedule: ${unscheduledGames.length}`);
     
     const scheduledThisRound: any[] = [];
@@ -1581,8 +1636,8 @@ async function assignFieldsWithSchedule(eventId: string, dbGames: any[], bracket
           teamSchedules[game.awayTeamId].push(gameEndTime);
         }
 
-        // Remove from unscheduled list
-        unscheduledGames.splice(gameIndex, 1);
+        // CRITICAL FIX: Mark game as scheduled instead of removing from array during iteration
+        game.isScheduled = true;
       } else if (!canSchedule) {
         console.log(`[Enhanced Field Assignment] ⏳ Game ${game.originalIndex + 1} cannot be scheduled at ${currentTimeSlot.toLocaleTimeString()}: ${teamConflictReason}`);
       } else {
@@ -1592,6 +1647,15 @@ async function assignFieldsWithSchedule(eventId: string, dbGames: any[], bracket
     
     console.log(`[Enhanced Field Assignment] SCHEDULED ${scheduledThisRound.length} concurrent games at ${currentTimeSlot.toLocaleTimeString()}`);
     
+    // CRITICAL FIX: Remove scheduled games from unscheduledGames array AFTER iteration
+    const remainingGames = unscheduledGames.filter(game => !game.isScheduled);
+    const scheduledCount = unscheduledGames.length - remainingGames.length;
+    if (scheduledCount > 0) {
+      console.log(`[Enhanced Field Assignment] Removing ${scheduledCount} scheduled games from unscheduled list`);
+      unscheduledGames.length = 0; // Clear array
+      unscheduledGames.push(...remainingGames); // Repopulate with unscheduled games only
+    }
+    
     // If no games scheduled this round and we have remaining games, advance more aggressively
     if (scheduledThisRound.length === 0 && unscheduledGames.length > 0) {
       const currentHour = currentTimeSlot.getHours();
@@ -1600,10 +1664,14 @@ async function assignFieldsWithSchedule(eventId: string, dbGames: any[], bracket
       if (currentHour >= 11 && currentHour < 14) {
         console.log(`[Enhanced Field Assignment] Jumping to 2 PM to break deadlock...`);
         currentTimeSlot.setHours(14, 0, 0, 0);
-      } else if (currentHour >= 16) {
-        console.log(`[Enhanced Field Assignment] Jumping to next day 8 AM to continue scheduling...`);
+      } else if (currentHour >= 14 && currentHour < 16) {
+        console.log(`[Enhanced Field Assignment] Jumping to 4 PM to continue afternoon scheduling...`);
+        currentTimeSlot.setHours(16, 0, 0, 0);
+      } else if (currentHour >= 16 && currentHour < 18) {
+        console.log(`[Enhanced Field Assignment] Jumping to next day 8 AM for multi-day tournament...`);
         currentTimeSlot.setDate(currentTimeSlot.getDate() + 1);
         currentTimeSlot.setHours(8, 0, 0, 0);
+        console.log(`[Enhanced Field Assignment] NOW SCHEDULING FOR DAY 2: ${currentTimeSlot.toDateString()}`);
       } else {
         // Advance 15 minutes normally
         currentTimeSlot = new Date(currentTimeSlot.getTime() + (15 * 60 * 1000));
@@ -1613,21 +1681,25 @@ async function assignFieldsWithSchedule(eventId: string, dbGames: any[], bracket
       currentTimeSlot = new Date(currentTimeSlot.getTime() + (15 * 60 * 1000)); // Advance 15 minutes
     }
     
-    // Safety check: don't go beyond event end date + 12 hours to allow multi-day scheduling
+    // Safety check: don't go beyond event end date + 24 hours to allow multi-day scheduling
     const maxEndTime = new Date(eventEndDate);
     maxEndTime.setDate(maxEndTime.getDate() + 1);
-    maxEndTime.setHours(18, 0, 0, 0); // 6:00 PM next day
+    maxEndTime.setHours(20, 0, 0, 0); // 8:00 PM next day (extended window)
+    
+    console.log(`[Enhanced Field Assignment] Time check: Current=${currentTimeSlot.toLocaleString()}, Max=${maxEndTime.toLocaleString()}`);
+    
     if (currentTimeSlot > maxEndTime) {
-      console.log(`[Enhanced Field Assignment] WARNING: Reached maximum scheduling time (next day 6 PM), ${unscheduledGames.length} games remain unscheduled`);
+      console.log(`[Enhanced Field Assignment] WARNING: Reached maximum scheduling time (next day 8 PM), ${unscheduledGames.length} games remain unscheduled`);
       
-      // Final attempt: Schedule remaining games with reduced constraints
-      for (let i = 0; i < Math.min(unscheduledGames.length, 3); i++) {
+      // Final attempt: Schedule remaining games on the second day
+      console.log(`[Enhanced Field Assignment] FINAL PUSH: Scheduling remaining ${unscheduledGames.length} games on Day 2`);
+      for (let i = 0; i < unscheduledGames.length; i++) {
         const remainingGame = unscheduledGames[i];
         const fallbackField = availableFields[i % availableFields.length];
-        const fallbackTime = new Date(eventStartDate);
-        fallbackTime.setHours(16, 0, 0, 0); // 4 PM fallback
+        const fallbackTime = new Date(eventEndDate); // Use event end date (Day 2)
+        fallbackTime.setHours(8 + (i * 3), 0, 0, 0); // Stagger: 8 AM, 11 AM, 2 PM, 5 PM...
         
-        console.log(`[Enhanced Field Assignment] FALLBACK: Scheduling game ${remainingGame.originalIndex + 1} at 4 PM`);
+        console.log(`[Enhanced Field Assignment] FINAL: Scheduling game ${remainingGame.originalIndex + 1} at ${fallbackTime.toLocaleString()}`);
         
         const scheduledDate = fallbackTime.toISOString().split('T')[0];
         const scheduledTime = fallbackTime.toTimeString().substring(0, 5);
@@ -1646,12 +1718,18 @@ async function assignFieldsWithSchedule(eventId: string, dbGames: any[], bracket
             scheduledDateTime: fallbackTime
           });
           
-          console.log(`[Enhanced Field Assignment] ✅ FALLBACK: Game ${remainingGame.originalIndex + 1} scheduled at ${scheduledTime} on ${fallbackField.name}`);
+          console.log(`[Enhanced Field Assignment] ✅ FINAL: Game ${remainingGame.originalIndex + 1} scheduled at ${scheduledTime} on ${fallbackField.name}`);
         } catch (error) {
-          console.error(`[Enhanced Field Assignment] Error in fallback scheduling:`, error);
+          console.error(`[Enhanced Field Assignment] Error in final scheduling:`, error);
         }
       }
       
+      break;
+    }
+    
+    // Safety check for infinite loops
+    if (iterationCount >= maxIterations) {
+      console.log(`[Enhanced Field Assignment] WARNING: Reached maximum iterations (${maxIterations}), breaking to prevent infinite loop`);
       break;
     }
   }
@@ -1663,7 +1741,9 @@ async function assignFieldsWithSchedule(eventId: string, dbGames: any[], bracket
     end: assignments[assignments.length - 1].scheduledDateTime
   } : null;
 
-  console.log(`[Enhanced Field Assignment] COMPLETE - Assigned ${assignments.length} games across ${fieldsUsed.length} fields`);
+  console.log(`[Enhanced Field Assignment] LOOP ENDED - Assigned ${assignments.length} games across ${fieldsUsed.length} fields`);
+  console.log(`[Enhanced Field Assignment] REMAINING UNSCHEDULED: ${unscheduledGames.length} games`);
+  console.log(`[Enhanced Field Assignment] FINAL ITERATION COUNT: ${iterationCount}`);
   console.log(`[Enhanced Field Assignment] Time range: ${timeRange?.start} to ${timeRange?.end}`);
   console.log(`[Enhanced Field Assignment] Fields used: ${fieldsUsed.join(', ')}`);
 
@@ -1671,7 +1751,8 @@ async function assignFieldsWithSchedule(eventId: string, dbGames: any[], bracket
     totalAssignments: assignments.length,
     assignments,
     fieldsUsed,
-    timeRange
+    timeRange,
+    unscheduledCount: unscheduledGames.length
   };
 }
 
