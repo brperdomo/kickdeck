@@ -73,43 +73,73 @@ export class IntelligentSchedulingEngine {
    * Initialize the scheduling engine with real tournament data
    */
   async initialize(): Promise<void> {
-    console.log(`Initializing scheduling engine for event ${this.eventId}`);
+    console.log(`[Scheduling Engine] Initializing scheduling engine for event ${this.eventId}`);
 
-    // Load event details
-    const event = await db.select()
-      .from(events)
-      .where(eq(events.id, this.eventId))
-      .then(results => results[0]);
+    try {
+      // Load event details
+      console.log(`[Scheduling Engine] Loading event details...`);
+      const event = await db.select()
+        .from(events)
+        .where(eq(events.id, this.eventId))
+        .then(results => results[0]);
 
-    if (!event) {
-      throw new Error(`Event ${this.eventId} not found`);
+      if (!event) {
+        throw new Error(`Event ${this.eventId} not found`);
+      }
+
+      console.log(`[Scheduling Engine] Event: ${event.name}, Dates: ${event.startDate} to ${event.endDate}`);
+
+      // Validate dates before proceeding
+      if (!event.startDate || !event.endDate) {
+        throw new Error(`Event ${event.name} has invalid dates: start=${event.startDate}, end=${event.endDate}`);
+      }
+
+      // Generate tournament dates
+      console.log(`[Scheduling Engine] Generating tournament dates...`);
+      this.generateTournamentDates(event.startDate, event.endDate);
+      console.log(`[Scheduling Engine] Tournament dates generated successfully`);
+    } catch (error) {
+      console.error(`[Scheduling Engine] Error during event loading:`, error);
+      throw error;
     }
 
-    console.log(`Event: ${event.name}, Dates: ${event.startDate} to ${event.endDate}`);
+    try {
+      // Load teams with coach information
+      console.log(`[Scheduling Engine] Loading teams...`);
+      await this.loadTeams();
+      console.log(`[Scheduling Engine] Teams loaded successfully`);
 
-    // Generate tournament dates
-    this.generateTournamentDates(event.startDate, event.endDate);
+      // Load game formats
+      console.log(`[Scheduling Engine] Loading game formats...`);
+      await this.loadGameFormats();
+      console.log(`[Scheduling Engine] Game formats loaded successfully`);
 
-    // Load teams with coach information
-    await this.loadTeams();
+      // Load scheduling constraints
+      console.log(`[Scheduling Engine] Loading constraints...`);
+      await this.loadConstraints();
+      console.log(`[Scheduling Engine] Constraints loaded successfully`);
 
-    // Load game formats
-    await this.loadGameFormats();
+      // Load available fields
+      console.log(`[Scheduling Engine] Loading fields...`);
+      await this.loadFields();
+      console.log(`[Scheduling Engine] Fields loaded successfully`);
 
-    // Load scheduling constraints
-    await this.loadConstraints();
+      // Load bracket-specific rest periods
+      console.log(`[Scheduling Engine] Loading team rest periods...`);
+      await this.loadTeamRestPeriods();
+      console.log(`[Scheduling Engine] Team rest periods loaded successfully`);
 
-    // Load available fields
-    await this.loadFields();
+      // Analyze coach conflicts
+      console.log(`[Scheduling Engine] Analyzing coach conflicts...`);
+      this.analyzeCoachConflicts();
+      console.log(`[Scheduling Engine] Coach conflicts analyzed successfully`);
 
-    // Load bracket-specific rest periods
-    await this.loadTeamRestPeriods();
-
-    // Analyze coach conflicts
-    this.analyzeCoachConflicts();
-
-    console.log('Scheduling engine initialized successfully');
-    console.log(`Teams: ${this.teams.length}, Game Formats: ${this.gameFormats.size}, Fields: ${this.availableFields.length}`);
+      console.log('[Scheduling Engine] Scheduling engine initialized successfully');
+      console.log(`[Scheduling Engine] Teams: ${this.teams.length}, Game Formats: ${this.gameFormats.size}, Fields: ${this.availableFields.length}`);
+    } catch (error) {
+      console.error(`[Scheduling Engine] Error during initialization:`, error);
+      throw error;
+    }
   }
 
   /**
@@ -207,9 +237,9 @@ export class IntelligentSchedulingEngine {
       this.constraints = {
         operatingStartTime: "08:00",
         operatingEndTime: "18:00",
-        restPeriodMinutes: 30,
-        maxGamesPerTeamPerDay: 3,
-        minTimeBetweenGames: 120
+        restPeriodMinutes: 90, // Default to 90 minutes as specified
+        maxGamesPerTeamPerDay: 2, // User specified max 2 games per day
+        minTimeBetweenGames: 90 // 90 minutes rest period
       };
     }
 
@@ -836,15 +866,26 @@ export class IntelligentSchedulingEngine {
    * Generate tournament date range
    */
   private generateTournamentDates(startDate: string, endDate: string): void {
+    console.log(`[Scheduling Engine] Generating dates from ${startDate} to ${endDate}`);
+    
     const start = new Date(startDate);
     const end = new Date(endDate);
+    
+    // Validate dates
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+      throw new Error(`Invalid tournament dates: start=${startDate}, end=${endDate}`);
+    }
+    
+    if (start > end) {
+      throw new Error(`Tournament start date (${startDate}) is after end date (${endDate})`);
+    }
     
     this.tournamentDates = [];
     for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
       this.tournamentDates.push(new Date(d));
     }
     
-    console.log(`Tournament spans ${this.tournamentDates.length} days`);
+    console.log(`[Scheduling Engine] Tournament spans ${this.tournamentDates.length} days: ${this.tournamentDates.map(d => d.toDateString()).join(', ')}`);
   }
 
   /**

@@ -1108,13 +1108,29 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
       console.log(`[Selective Scheduling] Found ${realFields.length} real fields available for event ${eventId}`);
       
       // CRITICAL: Use the improved IntelligentSchedulingEngine for proper rest period enforcement
-      console.log(`[Selective Scheduling] Using IntelligentSchedulingEngine for proper rest period enforcement`);
+      console.log(`[Selective Scheduling] STARTING - Using IntelligentSchedulingEngine for proper rest period enforcement`);
       
       try {
         // Initialize the improved scheduling engine
-        const { IntelligentSchedulingEngine } = await import('../../utils/schedulingEngine');
-        const schedulingEngine = new IntelligentSchedulingEngine(parseInt(eventId));
+        console.log(`[Selective Scheduling] STEP 1: Importing IntelligentSchedulingEngine...`);
+        const schedulingModule = await import('../../utils/schedulingEngine');
+        console.log(`[Selective Scheduling] STEP 2: Module imported successfully`);
+        
+        const { IntelligentSchedulingEngine } = schedulingModule;
+        if (!IntelligentSchedulingEngine) {
+          throw new Error('IntelligentSchedulingEngine class not found in module');
+        }
+        console.log(`[Selective Scheduling] STEP 3: Creating new IntelligentSchedulingEngine instance for event ${eventId}...`);
+        
+        const eventIdNumber = parseInt(eventId);
+        console.log(`[Selective Scheduling] STEP 4: Event ID converted to number: ${eventIdNumber}`);
+        
+        const schedulingEngine = new IntelligentSchedulingEngine(eventIdNumber);
+        console.log(`[Selective Scheduling] STEP 5: Engine instance created successfully`);
+        
+        console.log(`[Selective Scheduling] STEP 6: Initializing scheduling engine...`);
         await schedulingEngine.initialize();
+        console.log(`[Selective Scheduling] STEP 7: Engine initialized successfully!`);
         
         // Convert dbGames to format expected by scheduling engine
         const gamesForScheduling = dbGames.map(game => ({
@@ -1179,8 +1195,10 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
         }
         
         console.log(`[Intelligent Scheduling] Successfully scheduled ${successfullyScheduled}/${dbGames.length} games with proper rest period enforcement`);
-      } catch (schedulingError) {
-        console.error(`[Intelligent Scheduling] Error using scheduling engine, falling back to basic assignment:`, schedulingError);
+      } catch (schedulingError: any) {
+        console.error(`[CRITICAL ERROR] IntelligentSchedulingEngine failed - falling back to basic assignment:`, schedulingError);
+        console.error(`[CRITICAL ERROR] Stack trace:`, schedulingError?.stack);
+        console.log(`[FALLBACK] Using basic field assignment instead of intelligent scheduling`);
         // Fallback to basic field assignment if intelligent scheduling fails
         const fieldAssignments = await assignFieldsWithSchedule(eventId, dbGames, flightIds[0]);
         console.log(`[Enhanced Field Assignment] Fallback: Successfully assigned ${fieldAssignments.totalAssignments} games to fields`);
@@ -1214,9 +1232,9 @@ async function saveAutomatedWorkflowData(eventId: number, workflowData: any) {
   return true;
 }
 
-// Enhanced Field Assignment with Time Scheduling
+// Enhanced Field Assignment with 90-Minute Rest Period Enforcement
 async function assignFieldsWithSchedule(eventId: string, dbGames: any[], bracketId: string) {
-  console.log(`[Enhanced Field Assignment] Starting assignment for ${dbGames.length} games`);
+  console.log(`[Enhanced Field Assignment] Starting assignment for ${dbGames.length} games with 90-minute rest period enforcement`);
 
   // Get bracket information to determine field size requirement
   const bracketQuery = await db.select({
@@ -1290,11 +1308,15 @@ async function assignFieldsWithSchedule(eventId: string, dbGames: any[], bracket
   const eventEndDate = new Date(eventDates.endDate);
   console.log(`[Enhanced Field Assignment] Event dates: ${eventStartDate.toDateString()} to ${eventEndDate.toDateString()}`);
 
-  // Field assignment with real date/time scheduling
+  // CRITICAL: Enhanced scheduling with 90-minute rest period and max 2 games per day constraint
   const assignments: any[] = [];
-  const fieldSchedules: { [fieldId: number]: Date } = {};
+  const fieldSchedules: { [fieldId: number]: Date } = {}; // Next available time for each field
+  const teamSchedules: { [teamId: number]: Date[] } = {}; // All game times for each team
   const gameDurationMs = 90 * 60 * 1000; // 90 minutes
-  const breakTimeMs = 15 * 60 * 1000; // 15 minutes break
+  const restPeriodMs = 90 * 60 * 1000; // 90 minutes rest (AFTER game ends)
+  const bufferMs = 15 * 60 * 1000; // 15 minutes between games on same field
+
+  console.log(`[Enhanced Field Assignment] CONSTRAINTS: 90-minute rest period, max 2 games per team per day`);
 
   // Initialize field schedules from event start date and field open times
   availableFields.forEach(field => {
@@ -1306,38 +1328,106 @@ async function assignFieldsWithSchedule(eventId: string, dbGames: any[], bracket
     console.log(`[Enhanced Field Assignment] Field ${field.name} available from ${startTime.toLocaleString()}`);
   });
 
-  // Assign each game to the field with earliest available time
+  // Initialize team schedules
+  dbGames.forEach(game => {
+    if (game.homeTeamId && !teamSchedules[game.homeTeamId]) {
+      teamSchedules[game.homeTeamId] = [];
+    }
+    if (game.awayTeamId && !teamSchedules[game.awayTeamId]) {
+      teamSchedules[game.awayTeamId] = [];
+    }
+  });
+
+  // CRITICAL: Schedule games with 90-minute rest period enforcement
   for (let i = 0; i < dbGames.length; i++) {
     const game = dbGames[i];
+    console.log(`[Enhanced Field Assignment] Scheduling game ${i + 1}: Team ${game.homeTeamId} vs Team ${game.awayTeamId}`);
     
-    // Find field with earliest available slot
-    let bestField = availableFields[0];
-    let earliestTime = fieldSchedules[bestField.id];
-
-    for (const field of availableFields) {
-      if (fieldSchedules[field.id] < earliestTime) {
-        bestField = field;
-        earliestTime = fieldSchedules[field.id];
-      }
-    }
-
-    // Schedule the game (ensure it's within event dates)
-    const scheduledDateTime = new Date(earliestTime);
+    let bestField = null;
+    let bestTime = null;
+    let currentFieldIndex = 0;
     
-    // If scheduled time goes beyond event end date, move to next day within event period
-    if (scheduledDateTime > eventEndDate) {
-      console.log(`[Enhanced Field Assignment] Game ${i + 1} scheduled beyond event end date, adjusting...`);
-      // Reset to event start date + 1 day if we've exceeded the event period
-      const nextDayStart = new Date(eventStartDate);
-      nextDayStart.setDate(nextDayStart.getDate() + 1);
-      const [hours, minutes] = (bestField.openTime || '08:00').split(':');
-      nextDayStart.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+    // Try to find a field/time that respects rest periods
+    while (!bestField && currentFieldIndex < availableFields.length * 10) { // Max 10 cycles through fields
+      const field = availableFields[currentFieldIndex % availableFields.length];
+      const proposedTime = new Date(fieldSchedules[field.id]);
       
-      if (nextDayStart <= eventEndDate) {
-        scheduledDateTime.setTime(nextDayStart.getTime());
-        fieldSchedules[bestField.id] = new Date(scheduledDateTime.getTime());
+      // Check if this time violates team rest periods
+      let violatesRestPeriod = false;
+      
+      // Check home team rest period
+      if (game.homeTeamId && teamSchedules[game.homeTeamId]) {
+        const homeTeamGames = teamSchedules[game.homeTeamId];
+        for (const gameEndTime of homeTeamGames) {
+          const timeSinceLastGame = proposedTime.getTime() - gameEndTime.getTime();
+          if (timeSinceLastGame < restPeriodMs && timeSinceLastGame >= 0) {
+            violatesRestPeriod = true;
+            console.log(`[Enhanced Field Assignment] Game ${i + 1} violates home team rest period: ${timeSinceLastGame / 60000} minutes since last game`);
+            break;
+          }
+        }
+      }
+      
+      // Check away team rest period
+      if (!violatesRestPeriod && game.awayTeamId && teamSchedules[game.awayTeamId]) {
+        const awayTeamGames = teamSchedules[game.awayTeamId];
+        for (const gameEndTime of awayTeamGames) {
+          const timeSinceLastGame = proposedTime.getTime() - gameEndTime.getTime();
+          if (timeSinceLastGame < restPeriodMs && timeSinceLastGame >= 0) {
+            violatesRestPeriod = true;
+            console.log(`[Enhanced Field Assignment] Game ${i + 1} violates away team rest period: ${timeSinceLastGame / 60000} minutes since last game`);
+            break;
+          }
+        }
+      }
+      
+      // Check max 2 games per team per day constraint
+      if (!violatesRestPeriod) {
+        const proposedDate = proposedTime.toDateString();
+        const homeTeamGamesOnDay = game.homeTeamId ? teamSchedules[game.homeTeamId]?.filter(gameTime => 
+          gameTime.toDateString() === proposedDate
+        ).length || 0 : 0;
+        const awayTeamGamesOnDay = game.awayTeamId ? teamSchedules[game.awayTeamId]?.filter(gameTime => 
+          gameTime.toDateString() === proposedDate
+        ).length || 0 : 0;
+        
+        if (homeTeamGamesOnDay >= 2 || awayTeamGamesOnDay >= 2) {
+          violatesRestPeriod = true;
+          console.log(`[Enhanced Field Assignment] Game ${i + 1} violates max games per day: Home team has ${homeTeamGamesOnDay}, Away team has ${awayTeamGamesOnDay} games on ${proposedDate}`);
+        }
+      }
+      
+      if (!violatesRestPeriod && proposedTime <= eventEndDate) {
+        bestField = field;
+        bestTime = proposedTime;
+        break;
+      } else {
+        // Move this field's next available slot forward
+        fieldSchedules[field.id] = new Date(fieldSchedules[field.id].getTime() + bufferMs);
+      }
+      
+      currentFieldIndex++;
+    }
+
+    // If we couldn't find a valid slot, use the earliest available field anyway
+    if (!bestField) {
+      console.log(`[Enhanced Field Assignment] WARNING: Could not find ideal slot for game ${i + 1}, using earliest available field`);
+      bestField = availableFields[0];
+      bestTime = fieldSchedules[bestField.id];
+      
+      // Ensure it's within event dates
+      if (bestTime > eventEndDate) {
+        const nextDayStart = new Date(eventStartDate);
+        nextDayStart.setDate(nextDayStart.getDate() + 1);
+        const [hours, minutes] = (bestField.openTime || '08:00').split(':');
+        nextDayStart.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+        if (nextDayStart <= eventEndDate) {
+          bestTime = nextDayStart;
+        }
       }
     }
+
+    const scheduledDateTime = new Date(bestTime);
     
     const scheduledDate = scheduledDateTime.toISOString().split('T')[0];
     const scheduledTime = scheduledDateTime.toTimeString().substring(0, 5);
@@ -1385,10 +1475,19 @@ async function assignFieldsWithSchedule(eventId: string, dbGames: any[], bracket
       }
     }
 
-    // Update field's next available time
-    fieldSchedules[bestField.id] = new Date(scheduledDateTime.getTime() + gameDurationMs + breakTimeMs);
+    // Update field's next available time and team schedules
+    fieldSchedules[bestField.id] = new Date(scheduledDateTime.getTime() + gameDurationMs + bufferMs);
+    
+    // Record game end times for team rest period tracking
+    const gameEndTime = new Date(scheduledDateTime.getTime() + gameDurationMs);
+    if (game.homeTeamId) {
+      teamSchedules[game.homeTeamId].push(gameEndTime);
+    }
+    if (game.awayTeamId) {
+      teamSchedules[game.awayTeamId].push(gameEndTime);
+    }
 
-    console.log(`[Enhanced Field Assignment] Game ${i + 1}: Field ${bestField.name} at ${scheduledDate} ${scheduledTime}`);
+    console.log(`[Enhanced Field Assignment] Game ${i + 1}: Field ${bestField.name} at ${scheduledDate} ${scheduledTime} (90-min rest enforced)`);
   }
 
   // Summary
