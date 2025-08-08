@@ -1,0 +1,309 @@
+7Fetch finished loading: GET "<URL>".
+UnifiedTournamentControlCenter-DaK27tu8.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentControlCenter-DaK27tu8.js:1 Configured flights: 3 of 76
+UnifiedTournamentControlCenter-DaK27tu8.js:1 Fetch finished loading: POST "https://app.matchpro.ai/api/admin/events/1844329078/generate-selective-schedule".
+mutationFn @ UnifiedTournamentControlCenter-DaK27tu8.js:1
+fn @ index-B4-lBkPr.js:41
+f @ index-B4-lBkPr.js:41
+start @ index-B4-lBkPr.js:41
+execute @ index-B4-lBkPr.js:41
+await in execute
+mutate @ index-B4-lBkPr.js:41
+(anonymous) @ index-B4-lBkPr.js:41
+Q @ UnifiedTournamentControlCenter-DaK27tu8.js:1
+_ue @ index-B4-lBkPr.js:38
+Due @ index-B4-lBkPr.js:38
+Iue @ index-B4-lBkPr.js:38
+pM @ index-B4-lBkPr.js:38
+Xq @ index-B4-lBkPr.js:38
+(anonymous) @ index-B4-lBkPr.js:38
+NO @ index-B4-lBkPr.js:41
+bq @ index-B4-lBkPr.js:38
+k2 @ index-B4-lBkPr.js:38
+X4 @ index-B4-lBkPr.js:38
+Xue @ index-B4-lBkPr.js:38
+UnifiedTournamentControlCenter-DaK27tu8.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentControlCenter-DaK27tu8.js:1 Configured flights: 3 of 76
+chunk-CVIZYB43.js:3 [Violation] 'setTimeout' handler took 67ms
+ScheduleViewerFixed-C4Xm7eC1.js:6 Schedule API Response: {games: Array(7), fields: Array(28), ageGroups: Array(1), dates: Array(2), totalGames: 7, …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 1 transformation debug: {raw: {…}, homeTeamStructure: 'TBD', awayTeamStructure: 'TBD', fieldStructure: 'Field Unknown', rawFieldName: 'Field Unknown', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 1 API data: {
+  "id": 8800,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "ageGroup": "U14 Girls",
+  "field": "Field Unknown",
+  "fieldId": null,
+  "fieldName": "Field Unknown",
+  "date": "TBD",
+  "time": "TBD",
+  "startTime": null,
+  "duration": 90,
+  "status": "pending",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 1 transformed: {id: 8800, homeTeam: 'TBD', awayTeam: 'TBD', ageGroup: 'U14 Girls', field: 'Field Unknown', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 2 transformation debug: {raw: {…}, homeTeamStructure: 'ALBION SC Riverside G12 DPL', awayTeamStructure: 'Cal Elite SC G2012', fieldStructure: 'f1', rawFieldName: 'f1', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 2 API data: {
+  "id": 8799,
+  "homeTeam": "ALBION SC Riverside G12 DPL",
+  "awayTeam": "Cal Elite SC G2012",
+  "ageGroup": "U14 Girls",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "ALBION SC Riverside G12 DPL",
+  "awayTeamName": "Cal Elite SC G2012"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 2 transformed: {id: 8799, homeTeam: 'ALBION SC Riverside G12 DPL', awayTeam: 'Cal Elite SC G2012', ageGroup: 'U14 Girls', field: 'f1', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 3 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf North G2012 Academy', awayTeamStructure: 'Future FC G12', fieldStructure: '12', rawFieldName: '12', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 3 API data: {
+  "id": 8794,
+  "homeTeam": "Empire Surf North G2012 Academy",
+  "awayTeam": "Future FC G12",
+  "ageGroup": "U14 Girls",
+  "field": "12",
+  "fieldId": 31,
+  "fieldName": "12",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf North G2012 Academy",
+  "awayTeamName": "Future FC G12"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 3 transformed: {id: 8794, homeTeam: 'Empire Surf North G2012 Academy', awayTeam: 'Future FC G12', ageGroup: 'U14 Girls', field: '12', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 4 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf North G2012 Academy', awayTeamStructure: 'ALBION SC Riverside G12 DPL', fieldStructure: '13', rawFieldName: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 4 API data: {
+  "id": 8795,
+  "homeTeam": "Empire Surf North G2012 Academy",
+  "awayTeam": "ALBION SC Riverside G12 DPL",
+  "ageGroup": "U14 Girls",
+  "field": "13",
+  "fieldId": 32,
+  "fieldName": "13",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf North G2012 Academy",
+  "awayTeamName": "ALBION SC Riverside G12 DPL"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 4 transformed: {id: 8795, homeTeam: 'Empire Surf North G2012 Academy', awayTeam: 'ALBION SC Riverside G12 DPL', ageGroup: 'U14 Girls', field: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 5 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf North G2012 Academy', awayTeamStructure: 'Cal Elite SC G2012', fieldStructure: '14', rawFieldName: '14', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 5 API data: {
+  "id": 8796,
+  "homeTeam": "Empire Surf North G2012 Academy",
+  "awayTeam": "Cal Elite SC G2012",
+  "ageGroup": "U14 Girls",
+  "field": "14",
+  "fieldId": 33,
+  "fieldName": "14",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf North G2012 Academy",
+  "awayTeamName": "Cal Elite SC G2012"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 5 transformed: {id: 8796, homeTeam: 'Empire Surf North G2012 Academy', awayTeam: 'Cal Elite SC G2012', ageGroup: 'U14 Girls', field: '14', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 6 transformation debug: {raw: {…}, homeTeamStructure: 'Future FC G12', awayTeamStructure: 'ALBION SC Riverside G12 DPL', fieldStructure: '15', rawFieldName: '15', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 6 API data: {
+  "id": 8797,
+  "homeTeam": "Future FC G12",
+  "awayTeam": "ALBION SC Riverside G12 DPL",
+  "ageGroup": "U14 Girls",
+  "field": "15",
+  "fieldId": 34,
+  "fieldName": "15",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Future FC G12",
+  "awayTeamName": "ALBION SC Riverside G12 DPL"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 6 transformed: {id: 8797, homeTeam: 'Future FC G12', awayTeam: 'ALBION SC Riverside G12 DPL', ageGroup: 'U14 Girls', field: '15', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 7 transformation debug: {raw: {…}, homeTeamStructure: 'Future FC G12', awayTeamStructure: 'Cal Elite SC G2012', fieldStructure: '20', rawFieldName: '20', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 7 API data: {
+  "id": 8798,
+  "homeTeam": "Future FC G12",
+  "awayTeam": "Cal Elite SC G2012",
+  "ageGroup": "U14 Girls",
+  "field": "20",
+  "fieldId": 35,
+  "fieldName": "20",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Future FC G12",
+  "awayTeamName": "Cal Elite SC G2012"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 7 transformed: {id: 8798, homeTeam: 'Future FC G12', awayTeam: 'Cal Elite SC G2012', ageGroup: 'U14 Girls', field: '20', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Schedule API Response: {games: Array(7), fields: Array(28), ageGroups: Array(1), dates: Array(2), totalGames: 7, …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 1 transformation debug: {raw: {…}, homeTeamStructure: 'TBD', awayTeamStructure: 'TBD', fieldStructure: 'Field Unknown', rawFieldName: 'Field Unknown', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 1 API data: {
+  "id": 8800,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "ageGroup": "U14 Girls",
+  "field": "Field Unknown",
+  "fieldId": null,
+  "fieldName": "Field Unknown",
+  "date": "TBD",
+  "time": "TBD",
+  "startTime": null,
+  "duration": 90,
+  "status": "pending",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 1 transformed: {id: 8800, homeTeam: 'TBD', awayTeam: 'TBD', ageGroup: 'U14 Girls', field: 'Field Unknown', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 2 transformation debug: {raw: {…}, homeTeamStructure: 'ALBION SC Riverside G12 DPL', awayTeamStructure: 'Cal Elite SC G2012', fieldStructure: 'f1', rawFieldName: 'f1', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 2 API data: {
+  "id": 8799,
+  "homeTeam": "ALBION SC Riverside G12 DPL",
+  "awayTeam": "Cal Elite SC G2012",
+  "ageGroup": "U14 Girls",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "ALBION SC Riverside G12 DPL",
+  "awayTeamName": "Cal Elite SC G2012"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 2 transformed: {id: 8799, homeTeam: 'ALBION SC Riverside G12 DPL', awayTeam: 'Cal Elite SC G2012', ageGroup: 'U14 Girls', field: 'f1', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 3 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf North G2012 Academy', awayTeamStructure: 'Future FC G12', fieldStructure: '12', rawFieldName: '12', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 3 API data: {
+  "id": 8794,
+  "homeTeam": "Empire Surf North G2012 Academy",
+  "awayTeam": "Future FC G12",
+  "ageGroup": "U14 Girls",
+  "field": "12",
+  "fieldId": 31,
+  "fieldName": "12",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf North G2012 Academy",
+  "awayTeamName": "Future FC G12"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 3 transformed: {id: 8794, homeTeam: 'Empire Surf North G2012 Academy', awayTeam: 'Future FC G12', ageGroup: 'U14 Girls', field: '12', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 4 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf North G2012 Academy', awayTeamStructure: 'ALBION SC Riverside G12 DPL', fieldStructure: '13', rawFieldName: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 4 API data: {
+  "id": 8795,
+  "homeTeam": "Empire Surf North G2012 Academy",
+  "awayTeam": "ALBION SC Riverside G12 DPL",
+  "ageGroup": "U14 Girls",
+  "field": "13",
+  "fieldId": 32,
+  "fieldName": "13",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf North G2012 Academy",
+  "awayTeamName": "ALBION SC Riverside G12 DPL"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 4 transformed: {id: 8795, homeTeam: 'Empire Surf North G2012 Academy', awayTeam: 'ALBION SC Riverside G12 DPL', ageGroup: 'U14 Girls', field: '13', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 5 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf North G2012 Academy', awayTeamStructure: 'Cal Elite SC G2012', fieldStructure: '14', rawFieldName: '14', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 5 API data: {
+  "id": 8796,
+  "homeTeam": "Empire Surf North G2012 Academy",
+  "awayTeam": "Cal Elite SC G2012",
+  "ageGroup": "U14 Girls",
+  "field": "14",
+  "fieldId": 33,
+  "fieldName": "14",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf North G2012 Academy",
+  "awayTeamName": "Cal Elite SC G2012"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 5 transformed: {id: 8796, homeTeam: 'Empire Surf North G2012 Academy', awayTeam: 'Cal Elite SC G2012', ageGroup: 'U14 Girls', field: '14', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 6 transformation debug: {raw: {…}, homeTeamStructure: 'Future FC G12', awayTeamStructure: 'ALBION SC Riverside G12 DPL', fieldStructure: '15', rawFieldName: '15', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 6 API data: {
+  "id": 8797,
+  "homeTeam": "Future FC G12",
+  "awayTeam": "ALBION SC Riverside G12 DPL",
+  "ageGroup": "U14 Girls",
+  "field": "15",
+  "fieldId": 34,
+  "fieldName": "15",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Future FC G12",
+  "awayTeamName": "ALBION SC Riverside G12 DPL"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 6 transformed: {id: 8797, homeTeam: 'Future FC G12', awayTeam: 'ALBION SC Riverside G12 DPL', ageGroup: 'U14 Girls', field: '15', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 7 transformation debug: {raw: {…}, homeTeamStructure: 'Future FC G12', awayTeamStructure: 'Cal Elite SC G2012', fieldStructure: '20', rawFieldName: '20', …}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 7 API data: {
+  "id": 8798,
+  "homeTeam": "Future FC G12",
+  "awayTeam": "Cal Elite SC G2012",
+  "ageGroup": "U14 Girls",
+  "field": "20",
+  "fieldId": 35,
+  "fieldName": "20",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Future FC G12",
+  "awayTeamName": "Cal Elite SC G2012"
+}
+ScheduleViewerFixed-C4Xm7eC1.js:6 Game 7 transformed: {id: 8798, homeTeam: 'Future FC G12', awayTeam: 'Cal Elite SC G2012', ageGroup: 'U14 Girls', field: '20', …}

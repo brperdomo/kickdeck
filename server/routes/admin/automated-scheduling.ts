@@ -1359,35 +1359,47 @@ async function assignFieldsWithSchedule(eventId: string, dbGames: any[], bracket
     // Try to find a field/time that respects rest periods
     while (!bestField && currentFieldIndex < availableFields.length * 10) { // Max 10 cycles through fields
       const field = availableFields[currentFieldIndex % availableFields.length];
-      const proposedTime = new Date(fieldSchedules[field.id]);
+      let proposedTime = new Date(fieldSchedules[field.id]);
       
       // Check if this time violates team rest periods
       let violatesRestPeriod = false;
       
-      // Check home team rest period
+      // Check home team rest period and calculate required time
+      let earliestValidTime = proposedTime;
       if (game.homeTeamId && teamSchedules[game.homeTeamId]) {
         const homeTeamGames = teamSchedules[game.homeTeamId];
         for (const gameEndTime of homeTeamGames) {
-          const timeSinceLastGame = proposedTime.getTime() - gameEndTime.getTime();
-          if (timeSinceLastGame < restPeriodMs && timeSinceLastGame >= 0) {
-            violatesRestPeriod = true;
-            console.log(`[Enhanced Field Assignment] Game ${i + 1} violates home team rest period: ${timeSinceLastGame / 60000} minutes since last game`);
-            break;
+          const requiredStartTime = new Date(gameEndTime.getTime() + restPeriodMs);
+          if (requiredStartTime > earliestValidTime) {
+            earliestValidTime = requiredStartTime;
+            console.log(`[Enhanced Field Assignment] Game ${i + 1} home team needs ${restPeriodMinutes}min rest, earliest valid time: ${earliestValidTime.toLocaleTimeString()}`);
           }
         }
       }
       
-      // Check away team rest period
-      if (!violatesRestPeriod && game.awayTeamId && teamSchedules[game.awayTeamId]) {
+      // Check away team rest period and update earliest valid time
+      if (game.awayTeamId && teamSchedules[game.awayTeamId]) {
         const awayTeamGames = teamSchedules[game.awayTeamId];
         for (const gameEndTime of awayTeamGames) {
-          const timeSinceLastGame = proposedTime.getTime() - gameEndTime.getTime();
-          if (timeSinceLastGame < restPeriodMs && timeSinceLastGame >= 0) {
-            violatesRestPeriod = true;
-            console.log(`[Enhanced Field Assignment] Game ${i + 1} violates away team rest period: ${timeSinceLastGame / 60000} minutes since last game`);
-            break;
+          const requiredStartTime = new Date(gameEndTime.getTime() + restPeriodMs);
+          if (requiredStartTime > earliestValidTime) {
+            earliestValidTime = requiredStartTime;
+            console.log(`[Enhanced Field Assignment] Game ${i + 1} away team needs ${restPeriodMinutes}min rest, earliest valid time: ${earliestValidTime.toLocaleTimeString()}`);
           }
         }
+      }
+      
+      // Update proposed time if rest period requires it
+      if (earliestValidTime > proposedTime) {
+        // Update the field's available time to the earliest valid time
+        fieldSchedules[field.id] = new Date(earliestValidTime);
+        proposedTime = new Date(earliestValidTime);
+        console.log(`[Enhanced Field Assignment] Advanced Field ${field.name} to ${earliestValidTime.toLocaleTimeString()} for rest period`);
+      }
+      
+      // Check if proposed time still violates rest periods after adjustment
+      if (earliestValidTime.getTime() !== fieldSchedules[field.id].getTime()) {
+        violatesRestPeriod = true;
       }
       
       // Check max 2 games per team per day constraint
@@ -1406,13 +1418,17 @@ async function assignFieldsWithSchedule(eventId: string, dbGames: any[], bracket
         }
       }
       
+      // Also check that the calculated time doesn't exceed event end date
       if (!violatesRestPeriod && proposedTime <= eventEndDate) {
         bestField = field;
         bestTime = proposedTime;
+        // Update field schedule to after this game ends
+        fieldSchedules[field.id] = new Date(proposedTime.getTime() + gameDurationMs + bufferMs);
         break;
       } else {
-        // Move this field's next available slot forward
-        fieldSchedules[field.id] = new Date(fieldSchedules[field.id].getTime() + bufferMs);
+        // Move this field's next available slot forward by the rest period or buffer time
+        const advanceTime = violatesRestPeriod ? restPeriodMs : bufferMs;
+        fieldSchedules[field.id] = new Date(fieldSchedules[field.id].getTime() + advanceTime);
       }
       
       currentFieldIndex++;
@@ -1436,7 +1452,7 @@ async function assignFieldsWithSchedule(eventId: string, dbGames: any[], bracket
       }
     }
 
-    const scheduledDateTime = new Date(bestTime);
+    const scheduledDateTime = new Date(bestTime || fieldSchedules[bestField.id]);
     
     const scheduledDate = scheduledDateTime.toISOString().split('T')[0];
     const scheduledTime = scheduledDateTime.toTimeString().substring(0, 5);
@@ -1484,8 +1500,7 @@ async function assignFieldsWithSchedule(eventId: string, dbGames: any[], bracket
       }
     }
 
-    // Update field's next available time and team schedules
-    fieldSchedules[bestField.id] = new Date(scheduledDateTime.getTime() + gameDurationMs + bufferMs);
+    // Field schedule was already updated when we found the bestTime
     
     // Record game end times for team rest period tracking
     const gameEndTime = new Date(scheduledDateTime.getTime() + gameDurationMs);
