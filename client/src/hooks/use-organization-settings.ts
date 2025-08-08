@@ -6,6 +6,15 @@ export function useOrganizationSettings() {
 
   const { data: settings, isLoading } = useQuery<SelectOrganizationSettings>({
     queryKey: ['/api/admin/organization-settings'],
+    queryFn: async () => {
+      const response = await fetch('/api/admin/organization-settings', {
+        credentials: 'include' // Include cookies for authentication
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.json();
+    },
     staleTime: 5 * 60 * 1000, // 5 minutes - match server cache time
     gcTime: 10 * 60 * 1000,   // 10 minutes garbage collection
   });

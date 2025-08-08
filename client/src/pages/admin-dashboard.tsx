@@ -551,7 +551,9 @@ function AdministratorsView() {
   const administratorsQuery = useQuery({
     queryKey: ['/api/admin/administrators'],
     queryFn: async () => {
-      const response = await fetch('/api/admin/administrators');
+      const response = await fetch('/api/admin/administrators', {
+        credentials: 'include' // Include cookies for authentication
+      });
       if (!response.ok) throw new Error('Failed to fetch administrators');
       return response.json();
     }
@@ -957,7 +959,9 @@ function ReportsView() {
   const eventsQuery = useQuery({
     queryKey: ['admin', 'events'],
     queryFn: async () => {
-      const response = await fetch('/api/admin/events');
+      const response = await fetch('/api/admin/events', {
+        credentials: 'include' // Include cookies for authentication
+      });
       if (!response.ok) throw new Error('Failed to fetch events');
       return response.json();
     }
@@ -966,7 +970,9 @@ function ReportsView() {
   const accountingCodesQuery = useQuery({
     queryKey: ['/api/admin/accounting-codes'],
     queryFn: async () => {
-      const response = await fetch('/api/admin/accounting-codes');
+      const response = await fetch('/api/admin/accounting-codes', {
+        credentials: 'include' // Include cookies for authentication
+      });
       if (!response.ok) throw new Error('Failed to fetch accounting codes');
       return response.json();
     }
@@ -976,6 +982,7 @@ function ReportsView() {
     mutationFn: async (id: number) => {
       const response = await fetch(`/api/admin/accounting-codes/${id}`, {
         method: 'DELETE',
+        credentials: 'include' // Include cookies for authentication
       });
       if (!response.ok) throw new Error('Failed to delete accounting code');
       return response.json();
@@ -1773,7 +1780,9 @@ function ComplexesView() {
   const complexesQuery = useQuery({
     queryKey: ['/api/admin/complexes'],
     queryFn: async () => {
-      const response = await fetch('/api/admin/complexes');
+      const response = await fetch('/api/admin/complexes', {
+        credentials: 'include' // Include cookies for authentication
+      });
       if (!response.ok) throw new Error('Failed to fetch complexes');
       return response.json();
     }
@@ -2140,7 +2149,9 @@ function SchedulingView() {
   const eventsQuery = useQuery({
     queryKey: ['admin', 'import-eligible-events', 'scheduling'],
     queryFn: async () => {
-      const response = await fetch('/api/admin/import-eligible-events');
+      const response = await fetch('/api/admin/import-eligible-events', {
+        credentials: 'include' // Include cookies for authentication
+      });
       if (!response.ok) throw new Error('Failed to fetch eligible events');
       const data = await response.json();
       
@@ -3476,6 +3487,7 @@ function TeamsView() {
       const response = await fetch('/api/admin/teams/bulk-approve', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include', // Include cookies for authentication
         body: JSON.stringify({ teamIds, notes })
       });
       
@@ -3530,6 +3542,7 @@ function TeamsView() {
       const response = await fetch('/api/admin/teams/bulk-reject', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include', // Include cookies for authentication
         body: JSON.stringify({ teamIds, notes })
       });
       
