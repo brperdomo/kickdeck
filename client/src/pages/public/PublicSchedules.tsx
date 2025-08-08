@@ -79,7 +79,7 @@ export default function PublicSchedules() {
     );
   }
 
-  if (error || !scheduleData) {
+  if (error || !scheduleData || !scheduleData.eventInfo) {
     return (
       <div className="min-h-screen bg-slate-900 flex items-center justify-center">
         <Card className="bg-slate-800 border-slate-700 max-w-md">
@@ -87,16 +87,21 @@ export default function PublicSchedules() {
             <AlertTriangle className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
             <h2 className="text-white text-xl font-semibold mb-2">Schedules Not Available</h2>
             <p className="text-slate-400 mb-4">
-              Tournament schedules are not currently published or the event was not found.
+              Tournament schedules are not currently published. The tournament organizer needs to publish them first.
             </p>
-            <Button
-              variant="outline" 
-              onClick={() => window.location.reload()}
-              className="border-slate-600 text-slate-200 hover:bg-slate-700"
-            >
-              <RefreshCw className="h-4 w-4 mr-2" />
-              Retry
-            </Button>
+            <div className="space-y-3">
+              <Button
+                variant="outline" 
+                onClick={() => window.location.reload()}
+                className="border-slate-600 text-slate-200 hover:bg-slate-700 w-full"
+              >
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Check Again
+              </Button>
+              <p className="text-xs text-slate-500">
+                Event ID: {eventId}
+              </p>
+            </div>
           </CardContent>
         </Card>
       </div>
