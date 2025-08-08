@@ -1558,9 +1558,28 @@ async function assignFieldsWithSchedule(eventId: string, dbGames: any[], bracket
         }
       }
       
-      // Check max games per day constraint
+      // NEW REQUIREMENT: Every third game a team plays must be scheduled on the next day
       if (canSchedule) {
         const currentDate = currentTimeSlot.toDateString();
+        
+        // Count total games for each team (across all days)
+        const homeTeamTotalGames = game.homeTeamId ? teamSchedules[game.homeTeamId]?.length || 0 : 0;
+        const awayTeamTotalGames = game.awayTeamId ? teamSchedules[game.awayTeamId]?.length || 0 : 0;
+        
+        // If either team has played 2 games, their third game MUST be on the next day
+        const homeTeamNeedsNextDay = homeTeamTotalGames === 2;
+        const awayTeamNeedsNextDay = awayTeamTotalGames === 2;
+        
+        // Check if current time slot is on the tournament start date (Aug 16)
+        const tournamentStartDate = new Date('2025-08-16').toDateString();
+        const isFirstDay = currentDate === tournamentStartDate;
+        
+        if ((homeTeamNeedsNextDay || awayTeamNeedsNextDay) && isFirstDay) {
+          canSchedule = false;
+          teamConflictReason = `Team's 3rd game must be scheduled on next day (Aug 17)`;
+        }
+        
+        // Count games on current day for max games per day constraint
         const homeTeamGamesOnDay = game.homeTeamId ? teamSchedules[game.homeTeamId]?.filter(gameTime => 
           gameTime.toDateString() === currentDate
         ).length || 0 : 0;
@@ -1671,16 +1690,32 @@ async function assignFieldsWithSchedule(eventId: string, dbGames: any[], bracket
     // If no games scheduled this round and we have remaining games, advance more aggressively
     if (scheduledThisRound.length === 0 && unscheduledGames.length > 0) {
       const currentHour = currentTimeSlot.getHours();
+      const currentDate = currentTimeSlot.toDateString();
+      const tournamentStartDate = new Date('2025-08-16').toDateString();
+      const isFirstDay = currentDate === tournamentStartDate;
+      
       console.log(`[Enhanced Field Assignment] No games scheduled this round. Current hour: ${currentHour}, remaining games: ${unscheduledGames.length}`);
       
-      if (currentHour >= 11 && currentHour < 14) {
+      // Check if we need to move to Day 2 due to multi-day constraint
+      const gamesNeedingDay2 = unscheduledGames.filter(game => {
+        const homeTeamTotalGames = game.homeTeamId ? teamSchedules[game.homeTeamId]?.length || 0 : 0;
+        const awayTeamTotalGames = game.awayTeamId ? teamSchedules[game.awayTeamId]?.length || 0 : 0;
+        return homeTeamTotalGames === 2 || awayTeamTotalGames === 2;
+      });
+      
+      if (gamesNeedingDay2.length > 0 && isFirstDay) {
+        console.log(`[Enhanced Field Assignment] 🗓️ MULTI-DAY CONSTRAINT: ${gamesNeedingDay2.length} games need Day 2 scheduling, advancing to August 17th`);
+        currentTimeSlot.setDate(currentTimeSlot.getDate() + 1);
+        currentTimeSlot.setHours(8, 0, 0, 0);
+        console.log(`[Enhanced Field Assignment] NOW SCHEDULING FOR DAY 2: ${currentTimeSlot.toDateString()}`);
+      } else if (currentHour >= 11 && currentHour < 14) {
         console.log(`[Enhanced Field Assignment] Jumping to 2 PM to break deadlock...`);
         currentTimeSlot.setHours(14, 0, 0, 0);
       } else if (currentHour >= 14 && currentHour < 16) {
         console.log(`[Enhanced Field Assignment] Jumping to 4 PM to continue afternoon scheduling...`);
         currentTimeSlot.setHours(16, 0, 0, 0);
-      } else if (currentHour >= 16 && currentHour < 18) {
-        console.log(`[Enhanced Field Assignment] Jumping to next day 8 AM for multi-day tournament...`);
+      } else if (currentHour >= 16) {
+        console.log(`[Enhanced Field Assignment] End of Day 1, advancing to Day 2 for remaining games...`);
         currentTimeSlot.setDate(currentTimeSlot.getDate() + 1);
         currentTimeSlot.setHours(8, 0, 0, 0);
         console.log(`[Enhanced Field Assignment] NOW SCHEDULING FOR DAY 2: ${currentTimeSlot.toDateString()}`);
