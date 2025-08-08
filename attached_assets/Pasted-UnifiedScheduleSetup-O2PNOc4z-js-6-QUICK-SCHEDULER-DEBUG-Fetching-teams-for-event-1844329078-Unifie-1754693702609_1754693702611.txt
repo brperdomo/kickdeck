@@ -1,0 +1,508 @@
+UnifiedScheduleSetup-O2PNOc4z.js:6 QUICK SCHEDULER DEBUG: Fetching teams for event 1844329078
+UnifiedScheduleSetup-O2PNOc4z.js:6 QUICK SCHEDULER DEBUG: API URL: /api/admin/teams?eventId=1844329078
+9Fetch finished loading: GET "<URL>".
+UnifiedScheduleSetup-O2PNOc4z.js:6 QUICK SCHEDULER DEBUG: Response status: 200
+UnifiedScheduleSetup-O2PNOc4z.js:6 QUICK SCHEDULER DEBUG: Response ok: true
+UnifiedScheduleSetup-O2PNOc4z.js:6 QUICK SCHEDULER DEBUG: Teams Data for event 1844329078 : (325) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+UnifiedScheduleSetup-O2PNOc4z.js:6 QUICK SCHEDULER DEBUG: Total teams received: 325
+UnifiedScheduleSetup-O2PNOc4z.js:6 QUICK SCHEDULER DEBUG: Status breakdown: {registered: 11, approved: 274, waitlisted: 15, placeholder: 4, rejected: 18, …}
+UnifiedScheduleSetup-O2PNOc4z.js:6 QUICK SCHEDULER DEBUG: Approved teams count: 274
+UnifiedScheduleSetup-O2PNOc4z.js:6 Age Groups Data: (24) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+ScheduleViewerFixed-bv4__IZy.js:6 Schedule API Response: {games: Array(14), fields: Array(28), ageGroups: Array(2), dates: Array(2), totalGames: 14, …}
+ScheduleViewerFixed-bv4__IZy.js:6 Game 1 transformation debug: {raw: {…}, homeTeamStructure: 'ALBION SC Riverside G12 DPL', awayTeamStructure: 'Cal Elite SC G2012', fieldStructure: '15', rawFieldName: '15', …}
+ScheduleViewerFixed-bv4__IZy.js:6 Game 1 API data: {
+  "id": 9922,
+  "homeTeam": "ALBION SC Riverside G12 DPL",
+  "awayTeam": "Cal Elite SC G2012",
+  "ageGroup": "U14 Girls",
+  "field": "15",
+  "fieldId": 34,
+  "fieldName": "15",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "ALBION SC Riverside G12 DPL",
+  "awayTeamName": "Cal Elite SC G2012"
+}
+ScheduleViewerFixed-bv4__IZy.js:6 Game 1 transformed: {id: 9922, homeTeam: 'ALBION SC Riverside G12 DPL', awayTeam: 'Cal Elite SC G2012', ageGroup: 'U14 Girls', field: '15', …}
+ScheduleViewerFixed-bv4__IZy.js:6 Game 2 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf North G2012 Academy', awayTeamStructure: 'Future FC G12', fieldStructure: '20', rawFieldName: '20', …}
+ScheduleViewerFixed-bv4__IZy.js:6 Game 2 API data: {
+  "id": 9917,
+  "homeTeam": "Empire Surf North G2012 Academy",
+  "awayTeam": "Future FC G12",
+  "ageGroup": "U14 Girls",
+  "field": "20",
+  "fieldId": 35,
+  "fieldName": "20",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf North G2012 Academy",
+  "awayTeamName": "Future FC G12"
+}
+ScheduleViewerFixed-bv4__IZy.js:6 Game 2 transformed: {id: 9917, homeTeam: 'Empire Surf North G2012 Academy', awayTeam: 'Future FC G12', ageGroup: 'U14 Girls', field: '20', …}
+ScheduleViewerFixed-bv4__IZy.js:6 Game 3 transformation debug: {raw: {…}, homeTeamStructure: 'Future FC G12', awayTeamStructure: 'Cal Elite SC G2012', fieldStructure: '14', rawFieldName: '14', …}
+ScheduleViewerFixed-bv4__IZy.js:6 Game 3 API data: {
+  "id": 9921,
+  "homeTeam": "Future FC G12",
+  "awayTeam": "Cal Elite SC G2012",
+  "ageGroup": "U14 Girls",
+  "field": "14",
+  "fieldId": 33,
+  "fieldName": "14",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Future FC G12",
+  "awayTeamName": "Cal Elite SC G2012"
+}
+ScheduleViewerFixed-bv4__IZy.js:6 Game 3 transformed: {id: 9921, homeTeam: 'Future FC G12', awayTeam: 'Cal Elite SC G2012', ageGroup: 'U14 Girls', field: '14', …}
+ScheduleViewerFixed-bv4__IZy.js:6 Game 4 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf North G2012 Academy', awayTeamStructure: 'ALBION SC Riverside G12 DPL', fieldStructure: '15', rawFieldName: '15', …}
+ScheduleViewerFixed-bv4__IZy.js:6 Game 4 API data: {
+  "id": 9918,
+  "homeTeam": "Empire Surf North G2012 Academy",
+  "awayTeam": "ALBION SC Riverside G12 DPL",
+  "ageGroup": "U14 Girls",
+  "field": "15",
+  "fieldId": 34,
+  "fieldName": "15",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf North G2012 Academy",
+  "awayTeamName": "ALBION SC Riverside G12 DPL"
+}
+ScheduleViewerFixed-bv4__IZy.js:6 Game 4 transformed: {id: 9918, homeTeam: 'Empire Surf North G2012 Academy', awayTeam: 'ALBION SC Riverside G12 DPL', ageGroup: 'U14 Girls', field: '15', …}
+ScheduleViewerFixed-bv4__IZy.js:6 Game 5 transformation debug: {raw: {…}, homeTeamStructure: 'Future FC G12', awayTeamStructure: 'ALBION SC Riverside G12 DPL', fieldStructure: '14', rawFieldName: '14', …}
+ScheduleViewerFixed-bv4__IZy.js:6 Game 5 API data: {
+  "id": 9920,
+  "homeTeam": "Future FC G12",
+  "awayTeam": "ALBION SC Riverside G12 DPL",
+  "ageGroup": "U14 Girls",
+  "field": "14",
+  "fieldId": 33,
+  "fieldName": "14",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Future FC G12",
+  "awayTeamName": "ALBION SC Riverside G12 DPL"
+}
+ScheduleViewerFixed-bv4__IZy.js:6 Game 5 transformed: {id: 9920, homeTeam: 'Future FC G12', awayTeam: 'ALBION SC Riverside G12 DPL', ageGroup: 'U14 Girls', field: '14', …}
+ScheduleViewerFixed-bv4__IZy.js:6 Game 6 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf North G2012 Academy', awayTeamStructure: 'Cal Elite SC G2012', fieldStructure: '15', rawFieldName: '15', …}
+ScheduleViewerFixed-bv4__IZy.js:6 Game 6 API data: {
+  "id": 9919,
+  "homeTeam": "Empire Surf North G2012 Academy",
+  "awayTeam": "Cal Elite SC G2012",
+  "ageGroup": "U14 Girls",
+  "field": "15",
+  "fieldId": 34,
+  "fieldName": "15",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf North G2012 Academy",
+  "awayTeamName": "Cal Elite SC G2012"
+}
+ScheduleViewerFixed-bv4__IZy.js:6 Game 6 transformed: {id: 9919, homeTeam: 'Empire Surf North G2012 Academy', awayTeam: 'Cal Elite SC G2012', ageGroup: 'U14 Girls', field: '15', …}
+ScheduleViewerFixed-bv4__IZy.js:6 Game 7 transformation debug: {raw: {…}, homeTeamStructure: 'TBD', awayTeamStructure: 'TBD', fieldStructure: '12', rawFieldName: '12', …}
+ScheduleViewerFixed-bv4__IZy.js:6 Game 7 API data: {
+  "id": 9923,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "ageGroup": "U14 Girls",
+  "field": "12",
+  "fieldId": 31,
+  "fieldName": "12",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "pending",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD"
+}
+ScheduleViewerFixed-bv4__IZy.js:6 Game 7 transformed: {id: 9923, homeTeam: 'TBD', awayTeam: 'TBD', ageGroup: 'U14 Girls', field: '12', …}
+ScheduleViewerFixed-bv4__IZy.js:6 Game 8 transformation debug: {raw: {…}, homeTeamStructure: "Tiffiny's B07- Jose ", awayTeamStructure: 'Pro Alliance B07 Academy', fieldStructure: '13', rawFieldName: '13', …}
+ScheduleViewerFixed-bv4__IZy.js:6 Game 8 API data: {
+  "id": 9915,
+  "homeTeam": "Tiffiny's B07- Jose ",
+  "awayTeam": "Pro Alliance B07 Academy",
+  "ageGroup": "U19 Boys",
+  "field": "13",
+  "fieldId": 32,
+  "fieldName": "13",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Tiffiny's B07- Jose ",
+  "awayTeamName": "Pro Alliance B07 Academy"
+}
+ScheduleViewerFixed-bv4__IZy.js:6 Game 8 transformed: {id: 9915, homeTeam: "Tiffiny's B07- Jose ", awayTeam: 'Pro Alliance B07 Academy', ageGroup: 'U19 Boys', field: '13', …}
+ScheduleViewerFixed-bv4__IZy.js:6 Game 9 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest B07/08', awayTeamStructure: 'Cal Elite SC B2007', fieldStructure: '14', rawFieldName: '14', …}
+ScheduleViewerFixed-bv4__IZy.js:6 Game 9 API data: {
+  "id": 9910,
+  "homeTeam": "City SC Southwest B07/08",
+  "awayTeam": "Cal Elite SC B2007",
+  "ageGroup": "U19 Boys",
+  "field": "14",
+  "fieldId": 33,
+  "fieldName": "14",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B07/08",
+  "awayTeamName": "Cal Elite SC B2007"
+}
+ScheduleViewerFixed-bv4__IZy.js:6 Game 9 transformed: {id: 9910, homeTeam: 'City SC Southwest B07/08', awayTeam: 'Cal Elite SC B2007', ageGroup: 'U19 Boys', field: '14', …}
+ScheduleViewerFixed-bv4__IZy.js:6 Game 10 transformation debug: {raw: {…}, homeTeamStructure: 'Cal Elite SC B2007', awayTeamStructure: 'Pro Alliance B07 Academy', fieldStructure: '12', rawFieldName: '12', …}
+ScheduleViewerFixed-bv4__IZy.js:6 Game 10 API data: {
+  "id": 9914,
+  "homeTeam": "Cal Elite SC B2007",
+  "awayTeam": "Pro Alliance B07 Academy",
+  "ageGroup": "U19 Boys",
+  "field": "12",
+  "fieldId": 31,
+  "fieldName": "12",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Cal Elite SC B2007",
+  "awayTeamName": "Pro Alliance B07 Academy"
+}
+ScheduleViewerFixed-bv4__IZy.js:6 Game 10 transformed: {id: 9914, homeTeam: 'Cal Elite SC B2007', awayTeam: 'Pro Alliance B07 Academy', ageGroup: 'U19 Boys', field: '12', …}
+ScheduleViewerFixed-bv4__IZy.js:6 Game 11 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest B07/08', awayTeamStructure: "Tiffiny's B07- Jose ", fieldStructure: '13', rawFieldName: '13', …}
+ScheduleViewerFixed-bv4__IZy.js:6 Game 11 API data: {
+  "id": 9911,
+  "homeTeam": "City SC Southwest B07/08",
+  "awayTeam": "Tiffiny's B07- Jose ",
+  "ageGroup": "U19 Boys",
+  "field": "13",
+  "fieldId": 32,
+  "fieldName": "13",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B07/08",
+  "awayTeamName": "Tiffiny's B07- Jose "
+}
+ScheduleViewerFixed-bv4__IZy.js:6 Game 11 transformed: {id: 9911, homeTeam: 'City SC Southwest B07/08', awayTeam: "Tiffiny's B07- Jose ", ageGroup: 'U19 Boys', field: '13', …}
+ScheduleViewerFixed-bv4__IZy.js:6 Game 12 transformation debug: {raw: {…}, homeTeamStructure: 'Cal Elite SC B2007', awayTeamStructure: "Tiffiny's B07- Jose ", fieldStructure: '12', rawFieldName: '12', …}
+ScheduleViewerFixed-bv4__IZy.js:6 Game 12 API data: {
+  "id": 9913,
+  "homeTeam": "Cal Elite SC B2007",
+  "awayTeam": "Tiffiny's B07- Jose ",
+  "ageGroup": "U19 Boys",
+  "field": "12",
+  "fieldId": 31,
+  "fieldName": "12",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Cal Elite SC B2007",
+  "awayTeamName": "Tiffiny's B07- Jose "
+}
+ScheduleViewerFixed-bv4__IZy.js:6 Game 12 transformed: {id: 9913, homeTeam: 'Cal Elite SC B2007', awayTeam: "Tiffiny's B07- Jose ", ageGroup: 'U19 Boys', field: '12', …}
+ScheduleViewerFixed-bv4__IZy.js:6 Game 13 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest B07/08', awayTeamStructure: 'Pro Alliance B07 Academy', fieldStructure: '13', rawFieldName: '13', …}
+ScheduleViewerFixed-bv4__IZy.js:6 Game 13 API data: {
+  "id": 9912,
+  "homeTeam": "City SC Southwest B07/08",
+  "awayTeam": "Pro Alliance B07 Academy",
+  "ageGroup": "U19 Boys",
+  "field": "13",
+  "fieldId": 32,
+  "fieldName": "13",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B07/08",
+  "awayTeamName": "Pro Alliance B07 Academy"
+}
+ScheduleViewerFixed-bv4__IZy.js:6 Game 13 transformed: {id: 9912, homeTeam: 'City SC Southwest B07/08', awayTeam: 'Pro Alliance B07 Academy', ageGroup: 'U19 Boys', field: '13', …}
+ScheduleViewerFixed-bv4__IZy.js:6 Game 14 transformation debug: {raw: {…}, homeTeamStructure: 'TBD', awayTeamStructure: 'TBD', fieldStructure: '13', rawFieldName: '13', …}
+ScheduleViewerFixed-bv4__IZy.js:6 Game 14 API data: {
+  "id": 9916,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "ageGroup": "U19 Boys",
+  "field": "13",
+  "fieldId": 32,
+  "fieldName": "13",
+  "date": "2025-08-17",
+  "time": "10:30",
+  "startTime": "2025-08-17T10:30:00",
+  "duration": 90,
+  "status": "pending",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD"
+}
+ScheduleViewerFixed-bv4__IZy.js:6 Game 14 transformed: {id: 9916, homeTeam: 'TBD', awayTeam: 'TBD', ageGroup: 'U19 Boys', field: '13', …}
+UnifiedScheduleSetup-O2PNOc4z.js:6  GET https://app.matchpro.ai/api/admin/events/1844329078/field-utilization 500 (Internal Server Error)
+queryFn @ UnifiedScheduleSetup-O2PNOc4z.js:6
+i @ index-mh1iSiA3.js:41
+f @ index-mh1iSiA3.js:41
+start @ index-mh1iSiA3.js:41
+fetch @ index-mh1iSiA3.js:41
+ng @ index-mh1iSiA3.js:41
+setOptions @ index-mh1iSiA3.js:41
+(anonymous) @ index-mh1iSiA3.js:41
+SS @ index-mh1iSiA3.js:41
+Jh @ index-mh1iSiA3.js:41
+rhe @ index-mh1iSiA3.js:41
+ku @ index-mh1iSiA3.js:41
+BM @ index-mh1iSiA3.js:41
+iu @ index-mh1iSiA3.js:39
+(anonymous) @ index-mh1iSiA3.js:41
+setTimeout
+whe @ index-mh1iSiA3.js:41
+o @ index-mh1iSiA3.js:41
+batch @ index-mh1iSiA3.js:41
+ac @ index-mh1iSiA3.js:41
+setData @ index-mh1iSiA3.js:41
+onSuccess @ index-mh1iSiA3.js:41
+m @ index-mh1iSiA3.js:41
+Promise.then
+f @ index-mh1iSiA3.js:41
+start @ index-mh1iSiA3.js:41
+fetch @ index-mh1iSiA3.js:41
+ng @ index-mh1iSiA3.js:41
+onSubscribe @ index-mh1iSiA3.js:41
+subscribe @ index-mh1iSiA3.js:41
+(anonymous) @ index-mh1iSiA3.js:41
+iW @ index-mh1iSiA3.js:39
+SS @ index-mh1iSiA3.js:41
+Jh @ index-mh1iSiA3.js:41
+rhe @ index-mh1iSiA3.js:41
+ku @ index-mh1iSiA3.js:41
+BM @ index-mh1iSiA3.js:41
+iu @ index-mh1iSiA3.js:39
+(anonymous) @ index-mh1iSiA3.js:41
+setTimeout
+whe @ index-mh1iSiA3.js:41
+o @ index-mh1iSiA3.js:41
+batch @ index-mh1iSiA3.js:41
+ac @ index-mh1iSiA3.js:41
+setData @ index-mh1iSiA3.js:41
+onSuccess @ index-mh1iSiA3.js:41
+m @ index-mh1iSiA3.js:41
+Promise.then
+f @ index-mh1iSiA3.js:41
+start @ index-mh1iSiA3.js:41
+fetch @ index-mh1iSiA3.js:41
+ng @ index-mh1iSiA3.js:41
+onSubscribe @ index-mh1iSiA3.js:41
+subscribe @ index-mh1iSiA3.js:41
+(anonymous) @ index-mh1iSiA3.js:41
+iW @ index-mh1iSiA3.js:39
+SS @ index-mh1iSiA3.js:41
+Jh @ index-mh1iSiA3.js:41
+rhe @ index-mh1iSiA3.js:41
+ku @ index-mh1iSiA3.js:41
+BM @ index-mh1iSiA3.js:41
+iu @ index-mh1iSiA3.js:39
+(anonymous) @ index-mh1iSiA3.js:41Understand this error
+UnifiedScheduleSetup-O2PNOc4z.js:6 Fetch failed loading: GET "https://app.matchpro.ai/api/admin/events/1844329078/field-utilization".
+queryFn @ UnifiedScheduleSetup-O2PNOc4z.js:6
+i @ index-mh1iSiA3.js:41
+f @ index-mh1iSiA3.js:41
+start @ index-mh1iSiA3.js:41
+fetch @ index-mh1iSiA3.js:41
+ng @ index-mh1iSiA3.js:41
+setOptions @ index-mh1iSiA3.js:41
+(anonymous) @ index-mh1iSiA3.js:41
+SS @ index-mh1iSiA3.js:41
+Jh @ index-mh1iSiA3.js:41
+rhe @ index-mh1iSiA3.js:41
+ku @ index-mh1iSiA3.js:41
+BM @ index-mh1iSiA3.js:41
+iu @ index-mh1iSiA3.js:39
+(anonymous) @ index-mh1iSiA3.js:41
+setTimeout
+whe @ index-mh1iSiA3.js:41
+o @ index-mh1iSiA3.js:41
+batch @ index-mh1iSiA3.js:41
+ac @ index-mh1iSiA3.js:41
+setData @ index-mh1iSiA3.js:41
+onSuccess @ index-mh1iSiA3.js:41
+m @ index-mh1iSiA3.js:41
+Promise.then
+f @ index-mh1iSiA3.js:41
+start @ index-mh1iSiA3.js:41
+fetch @ index-mh1iSiA3.js:41
+ng @ index-mh1iSiA3.js:41
+onSubscribe @ index-mh1iSiA3.js:41
+subscribe @ index-mh1iSiA3.js:41
+(anonymous) @ index-mh1iSiA3.js:41
+iW @ index-mh1iSiA3.js:39
+SS @ index-mh1iSiA3.js:41
+Jh @ index-mh1iSiA3.js:41
+rhe @ index-mh1iSiA3.js:41
+ku @ index-mh1iSiA3.js:41
+BM @ index-mh1iSiA3.js:41
+iu @ index-mh1iSiA3.js:39
+(anonymous) @ index-mh1iSiA3.js:41
+setTimeout
+whe @ index-mh1iSiA3.js:41
+o @ index-mh1iSiA3.js:41
+batch @ index-mh1iSiA3.js:41
+ac @ index-mh1iSiA3.js:41
+setData @ index-mh1iSiA3.js:41
+onSuccess @ index-mh1iSiA3.js:41
+m @ index-mh1iSiA3.js:41
+Promise.then
+f @ index-mh1iSiA3.js:41
+start @ index-mh1iSiA3.js:41
+fetch @ index-mh1iSiA3.js:41
+ng @ index-mh1iSiA3.js:41
+onSubscribe @ index-mh1iSiA3.js:41
+subscribe @ index-mh1iSiA3.js:41
+(anonymous) @ index-mh1iSiA3.js:41
+iW @ index-mh1iSiA3.js:39
+SS @ index-mh1iSiA3.js:41
+Jh @ index-mh1iSiA3.js:41
+rhe @ index-mh1iSiA3.js:41
+ku @ index-mh1iSiA3.js:41
+BM @ index-mh1iSiA3.js:41
+iu @ index-mh1iSiA3.js:39
+(anonymous) @ index-mh1iSiA3.js:41
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] All available fields: []
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Fields with games assigned: []
+index-mh1iSiA3.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: true, error: null, scheduleData: undefined, fieldsCount: 0, gamesCount: 0, …}
+index-mh1iSiA3.js:823 🎯 [ENHANCED DRAG DROP] Transformed games for calendar: (14) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-mh1iSiA3.js:823 🎯 [ENHANCED DRAG DROP] Fields data: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9922: fieldId=34, fieldName="15", startTime="2025-08-16T08:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9917: fieldId=35, fieldName="20", startTime="2025-08-16T08:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9921: fieldId=33, fieldName="14", startTime="2025-08-16T14:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9918: fieldId=34, fieldName="15", startTime="2025-08-16T14:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9920: fieldId=33, fieldName="14", startTime="2025-08-17T08:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9919: fieldId=34, fieldName="15", startTime="2025-08-17T08:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9923: fieldId=31, fieldName="12", startTime="2025-08-16T08:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9915: fieldId=32, fieldName="13", startTime="2025-08-16T08:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9910: fieldId=33, fieldName="14", startTime="2025-08-16T08:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9914: fieldId=31, fieldName="12", startTime="2025-08-16T14:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9911: fieldId=32, fieldName="13", startTime="2025-08-16T14:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9913: fieldId=31, fieldName="12", startTime="2025-08-17T08:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9912: fieldId=32, fieldName="13", startTime="2025-08-17T08:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9916: fieldId=32, fieldName="13", startTime="2025-08-17T10:30:00"
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Fields with games assigned: (5) [34, 35, 33, 31, 32]
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 31 (12) has 3 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 32 (13) has 4 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 33 (14) has 3 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 34 (15) has 3 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 35 (20) has 1 games
+index-mh1iSiA3.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 14, …}
+index-mh1iSiA3.js:823 🔍 [CONFLICT DETECTION] Starting conflict detection for 14 games
+index-mh1iSiA3.js:823 🔍 [CONFLICT DETECTION] Time slots: 48
+index-mh1iSiA3.js:823 🔍 [CONFLICT DETECTION] Sample games: (3) [{…}, {…}, {…}]
+index-mh1iSiA3.js:823 🚨 [TEAM CONFLICT] TBD has 2 games at 8 AM: (2) [{…}, {…}]
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Fields with games assigned: (5) [34, 35, 33, 31, 32]
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 31 (12) has 3 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 32 (13) has 4 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 33 (14) has 3 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 34 (15) has 3 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 35 (20) has 1 games
+index-mh1iSiA3.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 14, …}
+index-mh1iSiA3.js:823  POST https://app.matchpro.ai/api/admin/events/1844329078/optimize-schedule 500 (Internal Server Error)
+mutationFn @ index-mh1iSiA3.js:823
+fn @ index-mh1iSiA3.js:41
+f @ index-mh1iSiA3.js:41
+start @ index-mh1iSiA3.js:41
+execute @ index-mh1iSiA3.js:41
+await in execute
+mutate @ index-mh1iSiA3.js:41
+(anonymous) @ index-mh1iSiA3.js:41
+h @ index-mh1iSiA3.js:823
+wue @ index-mh1iSiA3.js:38
+Sue @ index-mh1iSiA3.js:38
+Cue @ index-mh1iSiA3.js:38
+dM @ index-mh1iSiA3.js:38
+V7 @ index-mh1iSiA3.js:38
+(anonymous) @ index-mh1iSiA3.js:38
+yO @ index-mh1iSiA3.js:41
+f7 @ index-mh1iSiA3.js:38
+N2 @ index-mh1iSiA3.js:38
+H4 @ index-mh1iSiA3.js:38
+zue @ index-mh1iSiA3.js:38Understand this error
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Fields with games assigned: (5) [34, 35, 33, 31, 32]
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 31 (12) has 3 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 32 (13) has 4 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 33 (14) has 3 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 34 (15) has 3 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 35 (20) has 1 games
+index-mh1iSiA3.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 14, …}
+index-mh1iSiA3.js:823 Fetch failed loading: POST "https://app.matchpro.ai/api/admin/events/1844329078/optimize-schedule".
+mutationFn @ index-mh1iSiA3.js:823
+fn @ index-mh1iSiA3.js:41
+f @ index-mh1iSiA3.js:41
+start @ index-mh1iSiA3.js:41
+execute @ index-mh1iSiA3.js:41
+await in execute
+mutate @ index-mh1iSiA3.js:41
+(anonymous) @ index-mh1iSiA3.js:41
+h @ index-mh1iSiA3.js:823
+wue @ index-mh1iSiA3.js:38
+Sue @ index-mh1iSiA3.js:38
+Cue @ index-mh1iSiA3.js:38
+dM @ index-mh1iSiA3.js:38
+V7 @ index-mh1iSiA3.js:38
+(anonymous) @ index-mh1iSiA3.js:38
+yO @ index-mh1iSiA3.js:41
+f7 @ index-mh1iSiA3.js:38
+N2 @ index-mh1iSiA3.js:38
+H4 @ index-mh1iSiA3.js:38
+zue @ index-mh1iSiA3.js:38

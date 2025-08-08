@@ -32,18 +32,17 @@ router.post('/events/:eventId/multi-flight-schedule', isAdmin, async (req, res) 
         homeTeamId: games.homeTeamId,
         awayTeamId: games.awayTeamId,
         fieldId: games.fieldId,
-        startTime: games.startTime,
-        endTime: games.endTime,
+        scheduledTime: games.scheduledTime,
+        scheduledDate: games.scheduledDate,
         duration: games.duration,
-        bracketId: games.bracketId,
+        ageGroupId: games.ageGroupId,
       })
       .from(games)
       .where(
         and(
-          eq(games.eventId, eventId),
-          eq(games.bracketId, existingFlightId),
-          gte(games.startTime, schedulingDate),
-          lte(games.startTime, schedulingDate + ' 23:59:59')
+          eq(games.eventId, eventId.toString()),
+          eq(games.ageGroupId, existingFlightId),
+          eq(games.scheduledDate, schedulingDate)
         )
       );
     
@@ -56,14 +55,13 @@ router.post('/events/:eventId/multi-flight-schedule', isAdmin, async (req, res) 
         homeTeamId: games.homeTeamId,
         awayTeamId: games.awayTeamId,
         duration: games.duration,
-        bracketId: games.bracketId,
-        fieldSize: games.fieldSize,
+        ageGroupId: games.ageGroupId,
       })
       .from(games)
       .where(
         and(
-          eq(games.eventId, eventId),
-          eq(games.bracketId, newFlightId),
+          eq(games.eventId, eventId.toString()),
+          eq(games.ageGroupId, newFlightId),
           eq(games.status, 'scheduled') // Only unscheduled games
         )
       );
