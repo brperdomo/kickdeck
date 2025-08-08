@@ -21,9 +21,10 @@ router.post('/events/:eventId/optimize-schedule', isAdmin, async (req, res) => {
   }
     
     console.log(`🚀 Starting field consolidation for Event ${eventId} on ${targetDate}`);
+    console.log(`🎯 REQUEST BODY:`, JSON.stringify(req.body, null, 2));
     
-    // Get games to optimize (from fields 14, 15, 20 to priority fields 12, 13)
-    const gamesForOptimization = await db
+    // Get games to optimize - get all games to see what we're working with
+    const allGamesInEvent = await db
       .select({
         id: games.id,
         fieldId: games.fieldId,
@@ -31,12 +32,14 @@ router.post('/events/:eventId/optimize-schedule', isAdmin, async (req, res) => {
         scheduledTime: games.scheduledTime,
       })
       .from(games)
-      .where(and(
-        eq(games.eventId, eventId.toString()),
-        eq(games.scheduledDate, targetDate)
-      ));
+      .where(eq(games.eventId, eventId.toString()));
 
-    console.log(`📋 Found ${gamesForOptimization.length} games for optimization`);
+    console.log(`📊 ALL GAMES IN EVENT ${eventId}:`, allGamesInEvent.length);
+    console.log(`📊 GAME DATES:`, [...new Set(allGamesInEvent.map(g => g.scheduledDate))]);
+
+    // Get games for target date
+    const gamesForOptimization = allGamesInEvent.filter(g => g.scheduledDate === targetDate);
+    console.log(`📋 Found ${gamesForOptimization.length} games for optimization on ${targetDate}`);
 
     // Get available fields
     const availableFields = await db
