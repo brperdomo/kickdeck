@@ -113,6 +113,7 @@ import flightFormatsRouter from "./routes/admin/flight-formats";
 import flightConfigurationsRouter from "./routes/admin/flight-configurations";
 import tournamentControlRouter from "./routes/admin/tournament-control";
 import scheduleConflictsRouter from "./routes/admin/schedule-conflicts";
+import managerReportsRouter from "./routes/admin/manager-reports";
 
 import gamesRouter from "./routes/admin/games";
 import fieldsRouter from "./routes/admin/fields";
@@ -2781,6 +2782,7 @@ export function registerRoutes(app: Express): Server {
 
     // Use events router for all admin event operations
     app.use('/api/admin/events', isAdmin, eventsRouter);
+    app.use('/api/admin/manager-reports', isAdmin, managerReportsRouter);
 
     // Endpoint to clone an event
     app.post('/api/admin/events/:id/clone', isAdmin, async (req, res) => {
