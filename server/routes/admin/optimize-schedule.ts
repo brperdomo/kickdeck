@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { db } from '@db';
 import { games, fields } from '@db/schema';
 import { eq, and } from 'drizzle-orm';
-import { isAdmin } from '../../middleware/auth';
+import { isAdmin, hasEventAccess } from '../../middleware/auth';
 
 const router = Router();
 
@@ -10,7 +10,7 @@ const router = Router();
  * POST /api/admin/events/:eventId/optimize-schedule
  * Field consolidation optimization - moves games from outer fields to priority fields
  */
-router.post('/events/:id/consolidate-fields', isAdmin, async (req, res) => {
+router.post('/events/:id/consolidate-fields', isAdmin, hasEventAccess, async (req, res) => {
   try {
     console.log(`🚀🚀🚀 FIELD CONSOLIDATION ENDPOINT HIT! Event: ${req.params.id}`);
     const eventId = parseInt(req.params.id);
