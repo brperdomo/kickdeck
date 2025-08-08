@@ -7,7 +7,7 @@
 
 import { db } from "../../db";
 import { eq, and, or, gte, lte, inArray } from "drizzle-orm";
-import { gameTimeSlots, games, fields, complexes } from "../../db/schema";
+import { gameTimeSlots, games, fields, complexes, eventBrackets } from "../../db/schema";
 import { FieldAvailabilityService } from "./field-availability-service";
 
 export interface TimeConflict {
@@ -424,7 +424,9 @@ export class EnhancedConflictDetection {
     });
 
     const utilizationRate = windowDuration > 0 ? scheduledMinutes / windowDuration : 0;
-    const avgGameDuration = 105; // 90 min game + 15 min buffer
+    
+    // Get actual game duration from flight configuration instead of hardcoded 105 minutes
+    const avgGameDuration = await this.getFlightConfiguredDuration(eventId) || 90; // Use flight configuration or fallback to 90
     const maxPossibleSlots = Math.floor(windowDuration / avgGameDuration);
 
     return {
@@ -434,6 +436,34 @@ export class EnhancedConflictDetection {
       scheduledSlots: scheduledGames.length,
       maxPossibleSlots
     };
+  }
+
+  /**
+   * Get configured game duration from flight configuration
+   */
+  private static async getFlightConfiguredDuration(eventId: string): Promise<number> {
+    try {
+      // Get flight configuration from event_brackets to get actual configured durations
+      const flightConfig = await db
+        .select({ 
+          gameDuration: eventBrackets.gameDuration,
+          bufferTime: eventBrackets.bufferTime 
+        })
+        .from(eventBrackets)
+        .where(eq(eventBrackets.eventId, eventId))
+        .limit(1);
+
+      if (flightConfig.length > 0 && flightConfig[0].gameDuration) {
+        // Use actual configured duration (game + buffer)
+        const gameTime = flightConfig[0].gameDuration || 90;
+        const bufferTime = flightConfig[0].bufferTime || 15;
+        return gameTime + bufferTime;
+      }
+    } catch (error) {
+      console.error('Error fetching flight configuration duration:', error);
+    }
+    
+    return 90; // Fallback to 90 minutes if no configuration found
   }
 
   /**
