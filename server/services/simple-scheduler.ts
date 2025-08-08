@@ -39,15 +39,22 @@ export class SimpleScheduler {
     const teamCoaches = await SimpleScheduler.getTeamCoachInfo(eventId);
     console.log(`👨‍🏫 Loaded coach information for ${Object.keys(teamCoaches).length} teams`);
 
-    const allGames: any[] = [];
+    const poolGames: any[] = [];
+    const knockoutGames: any[] = [];
     let gameCounter = 1;
 
-    // Process each bracket's games
+    // Separate pool games from knockout/TBD games during processing
     for (const bracketData of workflowGames) {
       console.log(`📋 Processing bracket: ${bracketData.bracketName}`);
       
       for (const workflowGame of bracketData.games) {
         console.log(`🏐 Processing game: ${workflowGame.homeTeamName} vs ${workflowGame.awayTeamName} (IDs: ${workflowGame.homeTeamId} vs ${workflowGame.awayTeamId})`);
+        
+        // Determine if this is a TBD/knockout game
+        const hasTBDTeams = workflowGame.homeTeamName?.includes('TBD') || workflowGame.awayTeamName?.includes('TBD');
+        const isKnockout = workflowGame.gameType === 'knockout' || workflowGame.gameType === 'final' || 
+                          workflowGame.round?.includes('Final') || workflowGame.round?.includes('Semifinal') || 
+                          workflowGame.round?.includes('Quarterfinal');
         
         // Convert workflow game to database format with team names for frontend
         const game = {
@@ -80,9 +87,25 @@ export class SimpleScheduler {
           updatedAt: new Date().toISOString()
         };
 
-        allGames.push(game);
+        // Sort games: Pool games first, TBD/knockout games last
+        if (hasTBDTeams || isKnockout) {
+          knockoutGames.push(game);
+          console.log(`🏆 Added to knockout games: ${game.homeTeamName} vs ${game.awayTeamName} (${game.round})`);
+        } else {
+          poolGames.push(game);
+          console.log(`🏊 Added to pool games: ${game.homeTeamName} vs ${game.awayTeamName} (${game.round})`);
+        }
       }
     }
+
+    // Combine games: ALL pool games first, then ALL knockout/TBD games
+    const allGames = [...poolGames, ...knockoutGames];
+    console.log(`📊 Game ordering: ${poolGames.length} pool games first, then ${knockoutGames.length} knockout/TBD games`);
+    
+    // Renumber games to maintain proper sequence
+    allGames.forEach((game, index) => {
+      game.gameNumber = index + 1;
+    });
 
     // Now generate proper game times for all games using systematic approach
     console.log(`⏰ Generating game times with ${restTime}-minute rest periods from actual field operating hours...`);

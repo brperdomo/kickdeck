@@ -764,10 +764,40 @@ export class TournamentScheduler {
     // Get event ID from first game (assuming all games are from same event)
     const eventId = games[0]?.bracketId?.split('_')[0] || '1656618593'; // fallback to test event
     
-    // Sort games by priority (pool play first, then knockout)
+    // Sort games by priority: pool play FIRST, then TBD/knockout games LAST
     const sortedGames = [...games].sort((a, b) => {
+      // Priority 1: Pool play games (should be scheduled first)
       if (a.gameType === 'pool_play' && b.gameType !== 'pool_play') return -1;
       if (a.gameType !== 'pool_play' && b.gameType === 'pool_play') return 1;
+      
+      // Priority 2: Known vs TBD teams (games with real teams before TBD games)
+      const aHasTBD = a.homeTeamName?.includes('TBD') || a.awayTeamName?.includes('TBD');
+      const bHasTBD = b.homeTeamName?.includes('TBD') || b.awayTeamName?.includes('TBD');
+      
+      if (!aHasTBD && bHasTBD) return -1; // Real teams before TBD
+      if (aHasTBD && !bHasTBD) return 1;  // TBD games after real teams
+      
+      // Priority 3: Round-based ordering within same game type
+      const roundPriority: Record<string, number> = {
+        'Pool Play': 1,
+        'Group Stage': 1,
+        'Round 1': 1,
+        'Quarterfinal': 2,
+        'Quarterfinals': 2,
+        'Semifinal': 3,
+        'Semifinals': 3,
+        'Final': 4,
+        'Championship': 4
+      };
+      
+      const aRoundPriority = roundPriority[a.round || ''] || 99;
+      const bRoundPriority = roundPriority[b.round || ''] || 99;
+      
+      if (aRoundPriority !== bRoundPriority) {
+        return aRoundPriority - bRoundPriority;
+      }
+      
+      // Priority 4: Game number as final tiebreaker
       return a.gameNumber - b.gameNumber;
     });
     
