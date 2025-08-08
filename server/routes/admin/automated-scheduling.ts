@@ -1438,6 +1438,11 @@ async function assignFieldsWithSchedule(eventId: string, dbGames: any[], bracket
   });
   
   while (unscheduledGames.length > 0) {
+    // Skip to 2 PM if we've tried morning slots without success
+    if (unscheduledGames.length > 0 && currentTimeSlot.getHours() >= 12 && currentTimeSlot.getHours() < 14) {
+      console.log(`[Enhanced Field Assignment] Skipping midday break, advancing to 2:00 PM...`);
+      currentTimeSlot.setHours(14, 0, 0, 0);
+    }
     console.log(`\n[Enhanced Field Assignment] === TIME SLOT: ${currentTimeSlot.toLocaleString()} ===`);
     console.log(`[Enhanced Field Assignment] Remaining games to schedule: ${unscheduledGames.length}`);
     
@@ -1587,14 +1592,66 @@ async function assignFieldsWithSchedule(eventId: string, dbGames: any[], bracket
     
     console.log(`[Enhanced Field Assignment] SCHEDULED ${scheduledThisRound.length} concurrent games at ${currentTimeSlot.toLocaleTimeString()}`);
     
-    // Advance to next time slot (15-minute intervals for better scheduling flexibility)
-    currentTimeSlot = new Date(currentTimeSlot.getTime() + (15 * 60 * 1000)); // Advance 15 minutes
+    // If no games scheduled this round and we have remaining games, advance more aggressively
+    if (scheduledThisRound.length === 0 && unscheduledGames.length > 0) {
+      const currentHour = currentTimeSlot.getHours();
+      console.log(`[Enhanced Field Assignment] No games scheduled this round. Current hour: ${currentHour}, remaining games: ${unscheduledGames.length}`);
+      
+      if (currentHour >= 11 && currentHour < 14) {
+        console.log(`[Enhanced Field Assignment] Jumping to 2 PM to break deadlock...`);
+        currentTimeSlot.setHours(14, 0, 0, 0);
+      } else if (currentHour >= 16) {
+        console.log(`[Enhanced Field Assignment] Jumping to next day 8 AM to continue scheduling...`);
+        currentTimeSlot.setDate(currentTimeSlot.getDate() + 1);
+        currentTimeSlot.setHours(8, 0, 0, 0);
+      } else {
+        // Advance 15 minutes normally
+        currentTimeSlot = new Date(currentTimeSlot.getTime() + (15 * 60 * 1000));
+      }
+    } else {
+      // Advance to next time slot (15-minute intervals for better scheduling flexibility)
+      currentTimeSlot = new Date(currentTimeSlot.getTime() + (15 * 60 * 1000)); // Advance 15 minutes
+    }
     
-    // Safety check: don't go beyond event end date + 1 day
+    // Safety check: don't go beyond event end date + 12 hours to allow multi-day scheduling
     const maxEndTime = new Date(eventEndDate);
     maxEndTime.setDate(maxEndTime.getDate() + 1);
+    maxEndTime.setHours(18, 0, 0, 0); // 6:00 PM next day
     if (currentTimeSlot > maxEndTime) {
-      console.log(`[Enhanced Field Assignment] WARNING: Reached maximum scheduling time, ${unscheduledGames.length} games remain unscheduled`);
+      console.log(`[Enhanced Field Assignment] WARNING: Reached maximum scheduling time (next day 6 PM), ${unscheduledGames.length} games remain unscheduled`);
+      
+      // Final attempt: Schedule remaining games with reduced constraints
+      for (let i = 0; i < Math.min(unscheduledGames.length, 3); i++) {
+        const remainingGame = unscheduledGames[i];
+        const fallbackField = availableFields[i % availableFields.length];
+        const fallbackTime = new Date(eventStartDate);
+        fallbackTime.setHours(16, 0, 0, 0); // 4 PM fallback
+        
+        console.log(`[Enhanced Field Assignment] FALLBACK: Scheduling game ${remainingGame.originalIndex + 1} at 4 PM`);
+        
+        const scheduledDate = fallbackTime.toISOString().split('T')[0];
+        const scheduledTime = fallbackTime.toTimeString().substring(0, 5);
+        
+        try {
+          await db.update(games).set({
+            fieldId: fallbackField.id,
+            scheduledDate,
+            scheduledTime
+          }).where(eq(games.id, remainingGame.id));
+          
+          assignments.push({
+            gameId: remainingGame.id,
+            fieldId: fallbackField.id,
+            fieldName: fallbackField.name,
+            scheduledDateTime: fallbackTime
+          });
+          
+          console.log(`[Enhanced Field Assignment] ✅ FALLBACK: Game ${remainingGame.originalIndex + 1} scheduled at ${scheduledTime} on ${fallbackField.name}`);
+        } catch (error) {
+          console.error(`[Enhanced Field Assignment] Error in fallback scheduling:`, error);
+        }
+      }
+      
       break;
     }
   }
