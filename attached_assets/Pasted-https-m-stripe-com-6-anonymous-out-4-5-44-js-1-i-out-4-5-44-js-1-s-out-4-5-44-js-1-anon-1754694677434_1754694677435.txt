@@ -1,0 +1,198 @@
+https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+Promise.then
+S @ out-4.5.44.js:1
+y @ out-4.5.44.js:1
+E @ out-4.5.44.js:1
+e.onload @ inner.html:1
+script
+(anonymous) @ inner.html:1
+(anonymous) @ inner.html:1
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+h @ out-4.5.44.js:1
+e @ inner.html:1
+shared-df7789195bf09b6f338558bdd92c931a.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+e @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+c @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+setTimeout
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+log @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+log @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+value @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+value @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+index-mh1iSiA3.js:823 Fetch finished loading: POST "https://app.matchpro.ai/api/admin/events/1844329078/optimize-schedule".
+mutationFn @ index-mh1iSiA3.js:823
+fn @ index-mh1iSiA3.js:41
+f @ index-mh1iSiA3.js:41
+start @ index-mh1iSiA3.js:41
+execute @ index-mh1iSiA3.js:41
+await in execute
+mutate @ index-mh1iSiA3.js:41
+(anonymous) @ index-mh1iSiA3.js:41
+h @ index-mh1iSiA3.js:823
+wue @ index-mh1iSiA3.js:38
+Sue @ index-mh1iSiA3.js:38
+Cue @ index-mh1iSiA3.js:38
+dM @ index-mh1iSiA3.js:38
+V7 @ index-mh1iSiA3.js:38
+(anonymous) @ index-mh1iSiA3.js:38
+yO @ index-mh1iSiA3.js:41
+f7 @ index-mh1iSiA3.js:38
+N2 @ index-mh1iSiA3.js:38
+H4 @ index-mh1iSiA3.js:38
+zue @ index-mh1iSiA3.js:38
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Fields with games assigned: (5) [34, 35, 33, 31, 32]
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 31 (12) has 3 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 32 (13) has 4 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 33 (14) has 3 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 34 (15) has 3 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 35 (20) has 1 games
+index-mh1iSiA3.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 14, …}
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Fields with games assigned: (5) [34, 35, 33, 31, 32]
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 31 (12) has 3 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 32 (13) has 4 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 33 (14) has 3 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 34 (15) has 3 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 35 (20) has 1 games
+index-mh1iSiA3.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 14, …}
+index-mh1iSiA3.js:41 TypeError: Cannot read properties of undefined (reading 'length')
+    at NFe (index-mh1iSiA3.js:823:67759)
+    at uO (index-mh1iSiA3.js:39:17031)
+    at rP (index-mh1iSiA3.js:41:3143)
+    at VW (index-mh1iSiA3.js:41:44880)
+    at zW (index-mh1iSiA3.js:41:39822)
+    at the (index-mh1iSiA3.js:41:39748)
+    at nw (index-mh1iSiA3.js:41:39598)
+    at fP (index-mh1iSiA3.js:41:35960)
+    at $W (index-mh1iSiA3.js:41:34907)
+    at w (index-mh1iSiA3.js:26:1556)
+nP @ index-mh1iSiA3.js:41
+r.callback @ index-mh1iSiA3.js:41
+bM @ index-mh1iSiA3.js:39
+MM @ index-mh1iSiA3.js:41
+MW @ index-mh1iSiA3.js:41
+Jme @ index-mh1iSiA3.js:41
+rhe @ index-mh1iSiA3.js:41
+ku @ index-mh1iSiA3.js:41
+$W @ index-mh1iSiA3.js:41
+w @ index-mh1iSiA3.js:26
+T @ index-mh1iSiA3.js:26Understand this error
+index-mh1iSiA3.js:823 Uncaught TypeError: Cannot read properties of undefined (reading 'length')
+    at NFe (index-mh1iSiA3.js:823:67759)
+    at uO (index-mh1iSiA3.js:39:17031)
+    at rP (index-mh1iSiA3.js:41:3143)
+    at VW (index-mh1iSiA3.js:41:44880)
+    at zW (index-mh1iSiA3.js:41:39822)
+    at the (index-mh1iSiA3.js:41:39748)
+    at nw (index-mh1iSiA3.js:41:39598)
+    at fP (index-mh1iSiA3.js:41:35960)
+    at $W (index-mh1iSiA3.js:41:34907)
+    at w (index-mh1iSiA3.js:26:1556)
+NFe @ index-mh1iSiA3.js:823
+uO @ index-mh1iSiA3.js:39
+rP @ index-mh1iSiA3.js:41
+VW @ index-mh1iSiA3.js:41
+zW @ index-mh1iSiA3.js:41
+the @ index-mh1iSiA3.js:41
+nw @ index-mh1iSiA3.js:41
+fP @ index-mh1iSiA3.js:41
+$W @ index-mh1iSiA3.js:41
+w @ index-mh1iSiA3.js:26
+T @ index-mh1iSiA3.js:26Understand this error
+index-mh1iSiA3.js:823 Fetch finished loading: GET "https://app.matchpro.ai/api/admin/events/1844329078/quick-gap-analysis?date=2025-08-16".
+queryFn @ index-mh1iSiA3.js:823
+i @ index-mh1iSiA3.js:41
+f @ index-mh1iSiA3.js:41
+start @ index-mh1iSiA3.js:41
+fetch @ index-mh1iSiA3.js:41
+(anonymous) @ index-mh1iSiA3.js:41
+(anonymous) @ index-mh1iSiA3.js:41
+batch @ index-mh1iSiA3.js:41
+refetchQueries @ index-mh1iSiA3.js:41
+(anonymous) @ index-mh1iSiA3.js:41
+batch @ index-mh1iSiA3.js:41
+invalidateQueries @ index-mh1iSiA3.js:41
+onSuccess @ index-mh1iSiA3.js:823
+execute @ index-mh1iSiA3.js:41
+await in execute
+mutate @ index-mh1iSiA3.js:41
+(anonymous) @ index-mh1iSiA3.js:41
+h @ index-mh1iSiA3.js:823
+wue @ index-mh1iSiA3.js:38
+Sue @ index-mh1iSiA3.js:38
+Cue @ index-mh1iSiA3.js:38
+dM @ index-mh1iSiA3.js:38
+V7 @ index-mh1iSiA3.js:38
+(anonymous) @ index-mh1iSiA3.js:38
+yO @ index-mh1iSiA3.js:41
+f7 @ index-mh1iSiA3.js:38
+N2 @ index-mh1iSiA3.js:38
+H4 @ index-mh1iSiA3.js:38
+zue @ index-mh1iSiA3.js:38
+index-mh1iSiA3.js:823 Fetch finished loading: GET "https://app.matchpro.ai/api/admin/events/1844329078/schedule-calendar".
+queryFn @ index-mh1iSiA3.js:823
+i @ index-mh1iSiA3.js:41
+f @ index-mh1iSiA3.js:41
+start @ index-mh1iSiA3.js:41
+fetch @ index-mh1iSiA3.js:41
+(anonymous) @ index-mh1iSiA3.js:41
+(anonymous) @ index-mh1iSiA3.js:41
+batch @ index-mh1iSiA3.js:41
+refetchQueries @ index-mh1iSiA3.js:41
+(anonymous) @ index-mh1iSiA3.js:41
+batch @ index-mh1iSiA3.js:41
+invalidateQueries @ index-mh1iSiA3.js:41
+onSuccess @ index-mh1iSiA3.js:823
+execute @ index-mh1iSiA3.js:41
+await in execute
+mutate @ index-mh1iSiA3.js:41
+(anonymous) @ index-mh1iSiA3.js:41
+h @ index-mh1iSiA3.js:823
+wue @ index-mh1iSiA3.js:38
+Sue @ index-mh1iSiA3.js:38
+Cue @ index-mh1iSiA3.js:38
+dM @ index-mh1iSiA3.js:38
+V7 @ index-mh1iSiA3.js:38
+(anonymous) @ index-mh1iSiA3.js:38
+yO @ index-mh1iSiA3.js:41
+f7 @ index-mh1iSiA3.js:38
+N2 @ index-mh1iSiA3.js:38
+H4 @ index-mh1iSiA3.js:38
+zue @ index-mh1iSiA3.js:38
+index-mh1iSiA3.js:823 🎯 [ENHANCED DRAG DROP] Transformed games for calendar: (14) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-mh1iSiA3.js:823 🎯 [ENHANCED DRAG DROP] Fields data: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9922: fieldId=34, fieldName="15", startTime="2025-08-16T08:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9917: fieldId=35, fieldName="20", startTime="2025-08-16T08:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9921: fieldId=33, fieldName="14", startTime="2025-08-16T14:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9918: fieldId=34, fieldName="15", startTime="2025-08-16T14:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9920: fieldId=33, fieldName="14", startTime="2025-08-17T08:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9919: fieldId=34, fieldName="15", startTime="2025-08-17T08:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9923: fieldId=31, fieldName="12", startTime="2025-08-16T08:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9915: fieldId=32, fieldName="13", startTime="2025-08-16T08:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9910: fieldId=33, fieldName="14", startTime="2025-08-16T08:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9914: fieldId=31, fieldName="12", startTime="2025-08-16T14:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9911: fieldId=32, fieldName="13", startTime="2025-08-16T14:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9913: fieldId=31, fieldName="12", startTime="2025-08-17T08:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9912: fieldId=32, fieldName="13", startTime="2025-08-17T08:00:00"
+index-mh1iSiA3.js:823 🎯 [GAME-FIELD DEBUG] Game 9916: fieldId=32, fieldName="13", startTime="2025-08-17T10:30:00"
