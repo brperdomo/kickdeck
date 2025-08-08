@@ -107,15 +107,67 @@ export class SimpleScheduler {
       game.gameNumber = index + 1;
     });
 
-    // Now generate proper game times for all games using systematic approach
+    // Generate game times: Pool games first, then TBD games after rest period on second day
     console.log(`⏰ Generating game times with ${restTime}-minute rest periods from actual field operating hours...`);
-    for (let i = 0; i < allGames.length; i++) {
+    
+    // Schedule all pool games first
+    for (let i = 0; i < poolGames.length; i++) {
       const startTime = SimpleScheduler.generateGameTimeSync(i, 0, gameDuration, restTime, realComplexes, eventData);
       const endTime = SimpleScheduler.generateGameTimeSync(i, gameDuration, gameDuration, restTime, realComplexes, eventData);
       
-      allGames[i].startTime = startTime;
-      allGames[i].endTime = endTime;
+      poolGames[i].startTime = startTime;
+      poolGames[i].endTime = endTime;
+      console.log(`🏊 Pool Game ${i + 1}: ${poolGames[i].homeTeamName} vs ${poolGames[i].awayTeamName} at ${startTime}`);
     }
+    
+    // Schedule TBD/knockout games AFTER all pool games complete + rest period
+    if (knockoutGames.length > 0) {
+      console.log(`🏆 CRITICAL TBD FIX: Scheduling ${knockoutGames.length} TBD/knockout games AFTER pool play completion...`);
+      
+      // Find the latest pool game end time to determine when TBD games can start
+      let latestPoolEndTime = '';
+      if (poolGames.length > 0) {
+        latestPoolEndTime = poolGames.reduce((latest, game) => {
+          return game.endTime > latest ? game.endTime : latest;
+        }, poolGames[0].endTime);
+      }
+      
+      // Calculate when TBD games can start (latest pool game end + rest period)
+      const latestPoolEndDate = new Date(latestPoolEndTime);
+      const tbdStartTime = new Date(latestPoolEndDate.getTime() + (restTime * 60 * 1000)); // Add rest period
+      
+      // Force TBD games to start on Day 2 at 8:00 AM minimum
+      const eventStartDate = new Date(eventData?.startDate || '2025-08-16');
+      const day2Start = new Date(eventStartDate);
+      day2Start.setDate(day2Start.getDate() + 1); // Next day
+      day2Start.setHours(8, 0, 0, 0); // 8:00 AM
+      
+      // Use the later of: (latest pool game + rest) OR (Day 2 at 8:00 AM)
+      const tbdStartDate = tbdStartTime > day2Start ? tbdStartTime : day2Start;
+      const tbdStartTimeStr = tbdStartDate.toISOString().replace('Z', '').substring(0, 19);
+      
+      console.log(`🏆 CRITICAL TBD FIX: Latest pool game ends at ${latestPoolEndTime}`);
+      console.log(`🏆 CRITICAL TBD FIX: TBD games start at ${tbdStartTimeStr} (after ${restTime}-min rest)`);
+      
+      // Schedule each TBD game starting from the calculated time
+      for (let i = 0; i < knockoutGames.length; i++) {
+        const gameStartTime = new Date(tbdStartDate.getTime() + (i * (gameDuration + restTime) * 60 * 1000));
+        const gameEndTime = new Date(gameStartTime.getTime() + (gameDuration * 60 * 1000));
+        
+        knockoutGames[i].startTime = gameStartTime.toISOString().replace('Z', '').substring(0, 19);
+        knockoutGames[i].endTime = gameEndTime.toISOString().replace('Z', '').substring(0, 19);
+        console.log(`🏆 TBD Game ${i + 1}: ${knockoutGames[i].homeTeamName} vs ${knockoutGames[i].awayTeamName} at ${knockoutGames[i].startTime}`);
+      }
+    }
+    
+    // Update the combined array with proper scheduling
+    allGames.forEach((game, index) => {
+      if (index < poolGames.length) {
+        allGames[index] = poolGames[index];
+      } else {
+        allGames[index] = knockoutGames[index - poolGames.length];
+      }
+    });
 
     // Create time slots for all games with proper database associations
     await SimpleScheduler.createTimeSlots(eventId, allGames, eventData, gameDuration, restTime);

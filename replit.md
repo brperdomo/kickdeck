@@ -7,6 +7,11 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 Preferred communication style: Simple, everyday language.
 
 ## Recent Critical Fixes (August 2025)
+- **COMPLETELY FIXED: TBD Game Scheduling Priority (Aug 8, 2025)**: Successfully resolved critical issue where TBD placeholder games were being treated as priority teams instead of championship/elimination games that should be scheduled LAST. Enhanced scheduling logic now properly separates pool games from TBD/knockout games, scheduling all pool games first, then TBD games after rest period of last pool game on second day minimum. TBD games now correctly scheduled on Day 2 at 8:00 AM or later with proper rest period enforcement.
+  - **VERIFIED SEQUENCING**: Pool games scheduled on Day 1, TBD games scheduled on Day 2 after rest period
+  - **Enhanced TBD Detection**: System correctly identifies TBD teams and knockout game types for proper scheduling priority
+  - **Intelligent Rest Period**: TBD games start at later of (latest pool game end + rest period) OR (Day 2 at 8:00 AM)
+  - **Tournament Flow**: Championship brackets now follow proper tournament progression with pool play completing before elimination rounds
 - **COMPLETELY IMPLEMENTED: Public Schedule Publishing System Backend (Aug 8, 2025)**: Successfully fixed all server-side issues preventing schedule publishing. Resolved database schema mismatch by adding missing eventId field, properly registered publishedSchedulesRouter in main server routes, and eliminated 500 server errors. Publishing functionality now fully operational with proper authentication and error handling. **USER ACTION REQUIRED**: Admin must be logged in through browser interface to publish schedules - authentication middleware requires proper admin session for security.
 - **COMPLETELY IMPLEMENTED: Public Schedule Publishing System (Aug 8, 2025)**: Successfully created comprehensive public tournament schedule publishing functionality with admin interface and public viewing components.
   - **Admin Interface**: Added "Post Schedules" tab in Master Schedule interface with publish/unpublish controls, schedule preview, and public URL generation
