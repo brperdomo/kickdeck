@@ -42,6 +42,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { PaymentStatusBadge, TeamStatusBadge } from "@/components/ui/payment-status-badge";
 import { PaymentMethodDisplay, PaymentStatusLegend } from "@/components/ui/payment-method-display";
 import { Textarea } from "@/components/ui/textarea";
@@ -123,6 +125,7 @@ import {
   Moon,
   Sun,
   Trash2,
+  FileText,
   FileText,
   Trash,
   CalendarIcon,
@@ -938,6 +941,7 @@ function AdministratorsView() {
 function ReportsView() {
   const [selectedReport, setSelectedReport] = useState<ReportType>('financial');
   const [selectedFinancialReport, setSelectedFinancialReport] = useState<string>('accounting-codes');
+  const [selectedEvent, setSelectedEvent] = useState<string>('all');
   const { isExporting, startExport } = useExportProcess();
   const navigate = useLocation()[1];
   const [isAccountingCodeModalOpen, setIsAccountingCodeModalOpen] = useState(false);
@@ -948,6 +952,16 @@ function ReportsView() {
     description?: string;
   } | null>(null);
   const queryClient = useQueryClient();
+
+  // Fetch events for the event selector
+  const eventsQuery = useQuery({
+    queryKey: ['admin', 'events'],
+    queryFn: async () => {
+      const response = await fetch('/api/admin/events');
+      if (!response.ok) throw new Error('Failed to fetch events');
+      return response.json();
+    }
+  });
 
   const accountingCodesQuery = useQuery({
     queryKey: ['/api/admin/accounting-codes'],
@@ -1269,8 +1283,8 @@ function ReportsView() {
             <div className="flex justify-between items-center">
               <h3 className="text-lg font-semibold">Manager Reports</h3>
               <Button
-                onClick={() => startExport('manager')}
-                disabled={isExporting !== 'manager'}
+                onClick={() => selectedEvent !== 'all' ? startExport('manager', selectedEvent) : null}
+                disabled={isExporting === 'manager' || selectedEvent === 'all'}
               >
                 {isExporting === 'manager' ? (
                   <>
@@ -1280,14 +1294,56 @@ function ReportsView() {
                 ) : (
                   <>
                     <FileText className="mr-2 h-4 w-4" />
-                    Export Report
+                    Export CSV
                   </>
                 )}
               </Button>
             </div>
             <Card>
               <CardContent className="p-6">
-                <p className="text-muted-foreground">Manager report content will be implemented here</p>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="text-sm font-medium">Team and Coaching Staff Export</h4>
+                      <p className="text-sm text-muted-foreground">Export team information including coach and manager contact details</p>
+                    </div>
+                    <Select value={selectedEvent} onValueChange={setSelectedEvent}>
+                      <SelectTrigger className="w-[250px]">
+                        <SelectValue placeholder="Select Event" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Events</SelectItem>
+                        {eventsQuery.data?.map((event: any) => (
+                          <SelectItem key={event.id} value={event.id.toString()}>
+                            {event.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  {selectedEvent === 'all' ? (
+                    <Alert>
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertTitle>Select an Event</AlertTitle>
+                      <AlertDescription>
+                        Please select a specific event to export manager reports.
+                      </AlertDescription>
+                    </Alert>
+                  ) : (
+                    <div className="rounded-lg border p-4 bg-muted/5">
+                      <h5 className="font-medium mb-2">CSV Export Includes:</h5>
+                      <ul className="text-sm text-muted-foreground space-y-1">
+                        <li>• Team Name</li>
+                        <li>• Coach Name, Email & Phone</li>
+                        <li>• Manager Name, Email & Phone</li>
+                        <li>• Level of Play Desired (Flight)</li>
+                      </ul>
+                      <p className="text-xs text-muted-foreground mt-3">
+                        Only approved teams will be included in the export.
+                      </p>
+                    </div>
+                  )}
+                </div>
               </CardContent>
             </Card>
           </div>
