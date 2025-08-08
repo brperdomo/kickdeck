@@ -115,12 +115,15 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
 
   // Calculate total game duration including halves, rest, and transition padding
   const calculateTotalGameDuration = useCallback((game: Game) => {
-    // Default game structure: 2 halves + rest + transition padding
-    const gameLength = game.duration || 70; // Default 70 minutes (2 x 35 min halves)
-    const restPeriod = 5; // 5 minute halftime
-    const transitionPadding = 10; // 10 minutes for team movement to/from field
+    // TODO: Get flight configuration data to match Flight Configuration Overview calculation
+    // Flight Configuration uses: (halfTimeLength × 2) + breakTime + paddingTime
+    // For now, use actual game duration from database to match scheduled times
+    const gameLength = game.duration || 90; // Use actual database duration (90 min)
     
-    return gameLength + restPeriod + transitionPadding;
+    // Keep minimal padding for scheduling conflicts only
+    const schedulingBuffer = 15; // 15 minutes buffer for field transitions
+    
+    return gameLength + schedulingBuffer; // 90 + 15 = 105 minutes
   }, []);
 
   // Calculate how many time slot intervals a game should span
