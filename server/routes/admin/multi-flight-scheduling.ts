@@ -643,11 +643,17 @@ router.post('/events/:eventId/optimize-schedule', isAdmin, async (req, res) => {
     for (const game of gamesForOptimization) {
       if (!game.scheduledTime || !game.fieldId) continue;
       
-      const currentFieldName = availableFields.find(f => f.id === game.fieldId)?.name;
+      const currentField = availableFields.find(f => f.id === game.fieldId);
+      if (!currentField) continue;
+      
+      const currentFieldName = currentField.name;
       const currentFieldNum = parseInt(currentFieldName || '999');
       
       // Only move games from lower-priority fields (14, 15, 20) to higher-priority fields (12, 13)
-      if (!fieldPriorityOrder.includes(currentFieldNum) || currentFieldNum <= 13) continue;
+      if (isNaN(currentFieldNum) || !fieldPriorityOrder.includes(currentFieldNum) || currentFieldNum <= 13) {
+        console.log(`🎯 Skipping Game ${game.id}: Field ${currentFieldName} (${currentFieldNum}) not eligible for consolidation`);
+        continue;
+      }
       
       const currentTimeKey = game.scheduledTime;
       
@@ -737,7 +743,12 @@ router.post('/events/:eventId/optimize-schedule', isAdmin, async (req, res) => {
     res.json(optimizationResult);
   } catch (error) {
     console.error('Schedule optimization error:', error);
-    res.status(500).json({ error: 'Failed to optimize schedule' });
+    console.error('Error stack:', error.stack);
+    res.status(500).json({ 
+      error: 'Failed to optimize schedule', 
+      details: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 });
 
