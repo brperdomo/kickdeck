@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { requirePermission } from '../../middleware/auth.js';
 import { db } from '../../../db/index.js';
 import { teams, events, eventGameFormats, complexes, fields, games, eventBrackets, matchupTemplates } from '../../../db/schema.js';
-import { eq, and, inArray, sql } from 'drizzle-orm';
+import { eq, and, inArray, sql, isNotNull } from 'drizzle-orm';
 import { validateSchedulingSafety, validateFieldCapacity, validateNoDuplicateGames } from '../../middleware/scheduling-safety.js';
 import { TournamentScheduler } from '../../services/tournament-scheduler.js';
 
@@ -639,6 +639,22 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
   console.log(`[Selective Scheduling] Generating schedule for flights: ${flightIds.join(', ')}`);
   
   try {
+    // CRITICAL FIX: Clear existing games for selected flights to prevent overlaps
+    console.log(`[Selective Scheduling] Clearing existing games for flights: ${flightIds.join(', ')}`);
+    for (const flightId of flightIds) {
+      const deletedGames = await db.delete(games).where(
+        and(
+          eq(games.eventId, eventId),
+          sql`EXISTS (
+            SELECT 1 FROM teams t 
+            WHERE t.id = ${games.homeTeamId} 
+              AND t.bracket_id = ${parseInt(flightId)}
+          )`
+        )
+      );
+      console.log(`[Selective Scheduling] Deleted existing games for flight ${flightId}`);
+    }
+
     // Get event data - convert eventId to number for database query
     const event = await db.query.events.findFirst({
       where: eq(events.id, parseInt(eventId))
@@ -1377,6 +1393,48 @@ async function assignFieldsWithSchedule(eventId: string, dbGames: any[], bracket
   // Initialize field occupancy tracking
   availableFields.forEach(field => {
     fieldOccupancy[field.id] = {};
+  });
+
+  // CRITICAL FIX: Load existing games from database to prevent overlaps
+  console.log(`[Enhanced Field Assignment] Loading existing games from database for event ${eventId}...`);
+  const existingGames = await db.select({
+    id: games.id,
+    fieldId: games.fieldId,
+    scheduledDate: games.scheduledDate,
+    scheduledTime: games.scheduledTime,
+    duration: games.duration
+  })
+  .from(games)
+  .where(
+    and(
+      eq(games.eventId, eventId),
+      isNotNull(games.fieldId),
+      isNotNull(games.scheduledDate),
+      isNotNull(games.scheduledTime)
+    )
+  );
+
+  console.log(`[Enhanced Field Assignment] Found ${existingGames.length} existing games, marking field occupancy...`);
+  
+  // Mark existing games as occupying fields
+  existingGames.forEach(existingGame => {
+    if (existingGame.fieldId && existingGame.scheduledDate && existingGame.scheduledTime) {
+      const gameStartTime = new Date(`${existingGame.scheduledDate}T${existingGame.scheduledTime}`);
+      const duration = existingGame.duration || 90; // Default 90 minutes
+      const gameEndTime = new Date(gameStartTime.getTime() + (duration * 60 * 1000));
+      
+      // Mark field as occupied for the entire game duration + buffer
+      let occupancyTime = new Date(gameStartTime);
+      while (occupancyTime < gameEndTime) {
+        const occupancyKey = occupancyTime.toISOString();
+        if (fieldOccupancy[existingGame.fieldId]) {
+          fieldOccupancy[existingGame.fieldId][occupancyKey] = true;
+        }
+        occupancyTime = new Date(occupancyTime.getTime() + (15 * 60 * 1000)); // Mark every 15 minutes
+      }
+      
+      console.log(`[Enhanced Field Assignment] 🔒 EXISTING GAME: Field ${existingGame.fieldId} occupied ${existingGame.scheduledTime} to ${gameEndTime.toTimeString().substring(0, 5)}`);
+    }
   });
   
   while (unscheduledGames.length > 0) {
