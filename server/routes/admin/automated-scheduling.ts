@@ -1069,7 +1069,7 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
         return {
           eventId: eventId, // Keep as string (references text field)
           ageGroupId: ageGroupId, // Integer field - required
-          groupId: null, // Set to null since bracket 570 doesn't exist in tournament_groups
+          groupId: null, // Set to null to avoid foreign key constraint violation with tournament_groups
           homeTeamId: game.homeTeamId, // Allow null for championship games (will be set later)
           awayTeamId: game.awayTeamId, // Allow null for championship games (will be set later)
           fieldId: null, // Will be assigned during field scheduling
@@ -1099,6 +1099,18 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
       // Insert games into database
       await db.insert(games).values(dbGames);
       console.log(`[Selective Scheduling] Successfully saved ${dbGames.length} games to database`);
+      
+      // Fetch the games back from database to get their actual IDs
+      // Since groupId is null, we'll fetch games by eventId and homeTeamId/awayTeamId pattern
+      const dbGamesWithIds = await db.query.games.findMany({
+        where: eq(games.eventId, parseInt(eventId)),
+        orderBy: [games.id]
+      });
+      
+      // Filter to only the most recent 7 games (since we just inserted them)
+      const recentGames = dbGamesWithIds.slice(-7);
+      console.log(`[Selective Scheduling] Fetched ${recentGames.length} recent games with IDs from database`);
+      console.log(`[Selective Scheduling] Game IDs: ${recentGames.map(g => g.id).join(', ')}`);
       
       // Apply field assignments using real Galway Downs fields with proper size validation
       const { FieldAvailabilityService } = await import('../../services/field-availability-service');
@@ -1199,8 +1211,8 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
         console.error(`[CRITICAL ERROR] IntelligentSchedulingEngine failed - falling back to basic assignment:`, schedulingError);
         console.error(`[CRITICAL ERROR] Stack trace:`, schedulingError?.stack);
         console.log(`[FALLBACK] Using basic field assignment instead of intelligent scheduling`);
-        // Fallback to basic field assignment if intelligent scheduling fails
-        const fieldAssignments = await assignFieldsWithSchedule(eventId, dbGames, flightIds[0]);
+        // Fallback to basic field assignment if intelligent scheduling fails - use games with IDs
+        const fieldAssignments = await assignFieldsWithSchedule(eventId, recentGames, flightIds[0]);
         console.log(`[Enhanced Field Assignment] Fallback: Successfully assigned ${fieldAssignments.totalAssignments} games to fields`);
       }
       
@@ -1351,7 +1363,11 @@ async function assignFieldsWithSchedule(eventId: string, dbGames: any[], bracket
   console.log(`[Enhanced Field Assignment] CONCURRENT SCHEDULING: Processing ${dbGames.length} games with dynamic rest period enforcement`);
   
   // Create unscheduled games list for concurrent processing
-  const unscheduledGames = dbGames.map((game, index) => ({ ...game, originalIndex: index }));
+  const unscheduledGames = dbGames.map((game, index) => ({ 
+    ...game, 
+    originalIndex: index,
+    id: game.id // Ensure game ID is preserved for database updates
+  }));
   let currentTimeSlot = new Date(eventStartDate);
   currentTimeSlot.setHours(8, 0, 0, 0); // Start at 8:00 AM
   
@@ -1481,13 +1497,11 @@ async function assignFieldsWithSchedule(eventId: string, dbGames: any[], bracket
 
         // Update database with field and schedule assignment - Use specific game ID to prevent duplicates
         try {
-          await db.execute(sql`
-            UPDATE games 
-            SET field_id = ${assignedField.id},
-                scheduled_date = ${scheduledDate},
-                scheduled_time = ${scheduledTime}
-            WHERE id = ${game.id}
-          `);
+          await db.update(games).set({
+            fieldId: assignedField.id,
+            scheduledDate,
+            scheduledTime
+          }).where(eq(games.id, game.id));
           console.log(`[Enhanced Field Assignment] ✅ CONCURRENT: Game ${game.originalIndex + 1} (ID: ${game.id}) scheduled at ${scheduledTime} on ${assignedField.name}`);
         } catch (updateError) {
           console.error(`[Enhanced Field Assignment] Error updating game ${game.originalIndex + 1}:`, updateError);
