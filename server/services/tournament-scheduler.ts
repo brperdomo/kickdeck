@@ -970,8 +970,9 @@ export class TournamentScheduler {
       gamesPerBracket[game.bracketName] = (gamesPerBracket[game.bracketName] || 0) + 1;
     });
     
-    // Estimate total duration (assuming 90min games + 15min breaks)
-    const totalMinutes = games.length * 105; // 90 + 15
+    // Estimate total duration using actual game durations from flights
+    const avgGameDuration = games.length > 0 ? games[0].duration || 90 : 90;
+    const totalMinutes = games.length * avgGameDuration;
     const hours = Math.floor(totalMinutes / 60);
     const minutes = totalMinutes % 60;
     const estimatedDuration = `${hours}h ${minutes}m`;
