@@ -1234,18 +1234,27 @@ async function saveAutomatedWorkflowData(eventId: number, workflowData: any) {
 
 // Enhanced Field Assignment with 90-Minute Rest Period Enforcement
 async function assignFieldsWithSchedule(eventId: string, dbGames: any[], bracketId: string) {
-  console.log(`[Enhanced Field Assignment] Starting assignment for ${dbGames.length} games with 90-minute rest period enforcement`);
+  console.log(`[Enhanced Field Assignment] Starting assignment for ${dbGames.length} games`);
 
-  // Get bracket information to determine field size requirement
+  // Get bracket information including tournament settings for rest period
   const bracketQuery = await db.select({
-    name: eventBrackets.name
+    name: eventBrackets.name,
+    tournamentSettings: eventBrackets.tournamentSettings
   })
   .from(eventBrackets)
   .where(eq(eventBrackets.id, parseInt(bracketId)))
   .limit(1);
 
-  const bracketName = bracketQuery[0]?.name || '';
+  const bracket = bracketQuery[0];
+  const bracketName = bracket?.name || '';
+  
+  // Extract rest period from tournament settings
+  const tournamentSettings = bracket?.tournamentSettings as any || {};
+  const restPeriodMinutes = tournamentSettings.restPeriodMinutes || 90; // Default to 90 if not set
+  const maxGamesPerDay = tournamentSettings.maxGamesPerTeam || 2; // Default to 2 if not set
+  
   console.log(`[Enhanced Field Assignment] Bracket: ${bracketName}`);
+  console.log(`[Enhanced Field Assignment] CONSTRAINTS: ${restPeriodMinutes}-minute rest period, max ${maxGamesPerDay} games per team per day`);
 
   // Determine required field size (U14 Girls = 11v11)
   let requiredFieldSize = '11v11'; // Default for U14 Girls
@@ -1308,15 +1317,15 @@ async function assignFieldsWithSchedule(eventId: string, dbGames: any[], bracket
   const eventEndDate = new Date(eventDates.endDate);
   console.log(`[Enhanced Field Assignment] Event dates: ${eventStartDate.toDateString()} to ${eventEndDate.toDateString()}`);
 
-  // CRITICAL: Enhanced scheduling with 90-minute rest period and max 2 games per day constraint
+  // CRITICAL: Enhanced scheduling with dynamic rest period and max games per day constraint
   const assignments: any[] = [];
   const fieldSchedules: { [fieldId: number]: Date } = {}; // Next available time for each field
   const teamSchedules: { [teamId: number]: Date[] } = {}; // All game times for each team
   const gameDurationMs = 90 * 60 * 1000; // 90 minutes
-  const restPeriodMs = 90 * 60 * 1000; // 90 minutes rest (AFTER game ends)
+  const restPeriodMs = restPeriodMinutes * 60 * 1000; // Dynamic rest period (AFTER game ends)
   const bufferMs = 15 * 60 * 1000; // 15 minutes between games on same field
 
-  console.log(`[Enhanced Field Assignment] CONSTRAINTS: 90-minute rest period, max 2 games per team per day`);
+  console.log(`[Enhanced Field Assignment] Using dynamic rest period: ${restPeriodMinutes} minutes from flight configuration`);
 
   // Initialize field schedules from event start date and field open times
   availableFields.forEach(field => {
@@ -1391,9 +1400,9 @@ async function assignFieldsWithSchedule(eventId: string, dbGames: any[], bracket
           gameTime.toDateString() === proposedDate
         ).length || 0 : 0;
         
-        if (homeTeamGamesOnDay >= 2 || awayTeamGamesOnDay >= 2) {
+        if (homeTeamGamesOnDay >= maxGamesPerDay || awayTeamGamesOnDay >= maxGamesPerDay) {
           violatesRestPeriod = true;
-          console.log(`[Enhanced Field Assignment] Game ${i + 1} violates max games per day: Home team has ${homeTeamGamesOnDay}, Away team has ${awayTeamGamesOnDay} games on ${proposedDate}`);
+          console.log(`[Enhanced Field Assignment] Game ${i + 1} violates max games per day: Home team has ${homeTeamGamesOnDay}, Away team has ${awayTeamGamesOnDay} games on ${proposedDate} (max: ${maxGamesPerDay})`);
         }
       }
       
