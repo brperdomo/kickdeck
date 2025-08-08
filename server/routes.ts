@@ -73,6 +73,7 @@ import fieldsRouter from "./routes/admin/fields";
 import fieldManagementRouter from "./routes/admin/field-management";
 import enhancedConflictDetectionRouter from "./routes/admin/enhanced-conflict-detection";
 import enhancedFieldManagementRouter from "./routes/admin/enhanced-field-management";
+import optimizeScheduleRouter from "./routes/admin/optimize-schedule";
 import multiFlightSchedulingRouter from "./routes/admin/multi-flight-scheduling";
 import constraintValidationRouter from "./routes/admin/constraint-validation";
 import swissTournamentRouter from "./routes/admin/swiss-tournaments";
@@ -1147,6 +1148,7 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin', isAdmin, unifiedScheduleRouter); // Unified single-screen schedule generator
     app.use('/api/admin/events', isAdmin, scheduleCalendarRouter); // Schedule calendar with drag-and-drop reschedule
     // app.use('/api/admin', isAdmin, multiFlightSchedulingRouter); // Multi-flight intelligent scheduling with gap-filling - TEMPORARILY DISABLED
+    app.use('/api/admin', isAdmin, optimizeScheduleRouter); // Field consolidation optimization
     
     // Register schedule management router
     app.use('/api/admin', isAdmin, scheduleManagementRouter); // Schedule management (delete games)

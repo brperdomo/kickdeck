@@ -1,0 +1,95 @@
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Fields with games assigned: (5) [34, 35, 33, 31, 32]
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 31 (12) has 3 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 32 (13) has 4 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 33 (14) has 3 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 34 (15) has 3 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 35 (20) has 1 games
+index-mh1iSiA3.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 14, …}
+index-mh1iSiA3.js:823 Fetch failed loading: POST "https://app.matchpro.ai/api/admin/events/1844329078/optimize-schedule".
+mutationFn @ index-mh1iSiA3.js:823
+fn @ index-mh1iSiA3.js:41
+f @ index-mh1iSiA3.js:41
+start @ index-mh1iSiA3.js:41
+execute @ index-mh1iSiA3.js:41
+await in execute
+mutate @ index-mh1iSiA3.js:41
+(anonymous) @ index-mh1iSiA3.js:41
+h @ index-mh1iSiA3.js:823
+wue @ index-mh1iSiA3.js:38
+Sue @ index-mh1iSiA3.js:38
+Cue @ index-mh1iSiA3.js:38
+dM @ index-mh1iSiA3.js:38
+V7 @ index-mh1iSiA3.js:38
+(anonymous) @ index-mh1iSiA3.js:38
+yO @ index-mh1iSiA3.js:41
+f7 @ index-mh1iSiA3.js:38
+N2 @ index-mh1iSiA3.js:38
+H4 @ index-mh1iSiA3.js:38
+zue @ index-mh1iSiA3.js:38
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Fields with games assigned: (5) [34, 35, 33, 31, 32]
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 31 (12) has 3 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 32 (13) has 4 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 33 (14) has 3 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 34 (15) has 3 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 35 (20) has 1 games
+index-mh1iSiA3.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 14, …}
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Fields with games assigned: (5) [34, 35, 33, 31, 32]
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 31 (12) has 3 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 32 (13) has 4 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 33 (14) has 3 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 34 (15) has 3 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 35 (20) has 1 games
+index-mh1iSiA3.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 14, …}
+index-mh1iSiA3.js:823  POST https://app.matchpro.ai/api/admin/events/1844329078/optimize-schedule 500 (Internal Server Error)
+mutationFn @ index-mh1iSiA3.js:823
+fn @ index-mh1iSiA3.js:41
+f @ index-mh1iSiA3.js:41
+start @ index-mh1iSiA3.js:41
+execute @ index-mh1iSiA3.js:41
+await in execute
+mutate @ index-mh1iSiA3.js:41
+(anonymous) @ index-mh1iSiA3.js:41
+h @ index-mh1iSiA3.js:823
+wue @ index-mh1iSiA3.js:38
+Sue @ index-mh1iSiA3.js:38
+Cue @ index-mh1iSiA3.js:38
+dM @ index-mh1iSiA3.js:38
+V7 @ index-mh1iSiA3.js:38
+(anonymous) @ index-mh1iSiA3.js:38
+yO @ index-mh1iSiA3.js:41
+f7 @ index-mh1iSiA3.js:38
+N2 @ index-mh1iSiA3.js:38
+H4 @ index-mh1iSiA3.js:38
+zue @ index-mh1iSiA3.js:38Understand this error
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Fields with games assigned: (5) [34, 35, 33, 31, 32]
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 31 (12) has 3 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 32 (13) has 4 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 33 (14) has 3 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 34 (15) has 3 games
+index-mh1iSiA3.js:824 🎯 [FIELD DEBUG] Field 35 (20) has 1 games
+index-mh1iSiA3.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 14, …}
+index-mh1iSiA3.js:823 Fetch failed loading: POST "https://app.matchpro.ai/api/admin/events/1844329078/optimize-schedule".
+mutationFn @ index-mh1iSiA3.js:823
+fn @ index-mh1iSiA3.js:41
+f @ index-mh1iSiA3.js:41
+start @ index-mh1iSiA3.js:41
+execute @ index-mh1iSiA3.js:41
+await in execute
+mutate @ index-mh1iSiA3.js:41
+(anonymous) @ index-mh1iSiA3.js:41
+h @ index-mh1iSiA3.js:823
+wue @ index-mh1iSiA3.js:38
+Sue @ index-mh1iSiA3.js:38
+Cue @ index-mh1iSiA3.js:38
+dM @ index-mh1iSiA3.js:38
+V7 @ index-mh1iSiA3.js:38
+(anonymous) @ index-mh1iSiA3.js:38
+yO @ index-mh1iSiA3.js:41
+f7 @ index-mh1iSiA3.js:38
+N2 @ index-mh1iSiA3.js:38
+H4 @ index-mh1iSiA3.js:38
+zue @ index-mh1iSiA3.js:38
