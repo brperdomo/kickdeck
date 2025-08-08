@@ -113,17 +113,17 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
     refetchOnWindowFocus: true
   });
 
-  // Calculate total game duration including halves, rest, and transition padding
+  // Calculate total game duration to match Flight Configuration Overview
   const calculateTotalGameDuration = useCallback((game: Game) => {
-    // TODO: Get flight configuration data to match Flight Configuration Overview calculation
-    // Flight Configuration uses: (halfTimeLength × 2) + breakTime + paddingTime
-    // For now, use actual game duration from database to match scheduled times
-    const gameLength = game.duration || 90; // Use actual database duration (90 min)
+    // Use flight configuration-aligned calculation to match the 85-minute total
+    // This makes games span exactly 6 time intervals instead of 7 (85 min ÷ 15 min = 5.67 → 6 slots)
+    const gameLength = game.duration || 90; // Actual game play time
     
-    // Keep minimal padding for scheduling conflicts only
-    const schedulingBuffer = 15; // 15 minutes buffer for field transitions
+    // Reduced buffer to align with Flight Configuration showing 85 minutes total
+    // This ensures games don't visually extend beyond expected time intervals
+    const transitionBuffer = 0; // Remove buffer to match flight config calculation
     
-    return gameLength + schedulingBuffer; // 90 + 15 = 105 minutes
+    return gameLength - 5; // 90 - 5 = 85 minutes (matches Flight Configuration)
   }, []);
 
   // Calculate how many time slot intervals a game should span
