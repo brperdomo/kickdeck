@@ -26,11 +26,76 @@ router.get('/events/:eventId/schedule-preview', isAdmin, async (req: Request, re
       return res.status(404).json({ error: 'Event not found' });
     }
 
-    // Simple response with basic data structure
+    // Get games data for this event
+    const gamesData = await db
+      .select({
+        id: games.id,
+        homeTeamId: games.homeTeamId,
+        awayTeamId: games.awayTeamId,
+        scheduledDate: games.scheduledDate,
+        scheduledTime: games.scheduledTime,
+        fieldId: games.fieldId,
+        status: games.status
+      })
+      .from(games)
+      .where(eq(games.eventId, parseInt(eventId)));
+
+    // Get age groups and brackets data
+    const ageGroupsData = await db
+      .select({
+        ageGroup: eventAgeGroups.ageGroupName,
+        flightName: eventBrackets.flightName,
+        bracketId: eventBrackets.id
+      })
+      .from(eventBrackets)
+      .innerJoin(eventAgeGroups, eq(eventBrackets.ageGroupId, eventAgeGroups.id))
+      .where(eq(eventAgeGroups.eventId, parseInt(eventId)));
+
+    // Organize age groups and flights
+    const ageGroupsMap = new Map();
+    ageGroupsData.forEach(item => {
+      const key = item.ageGroup;
+      if (!ageGroupsMap.has(key)) {
+        ageGroupsMap.set(key, {
+          ageGroup: item.ageGroup,
+          flights: new Map()
+        });
+      }
+      
+      const ageGroupData = ageGroupsMap.get(key);
+      const flightKey = item.flightName;
+      
+      if (!ageGroupData.flights.has(flightKey)) {
+        ageGroupData.flights.set(flightKey, {
+          flightName: item.flightName,
+          teamCount: 0,
+          gameCount: gamesData.length
+        });
+      }
+    });
+
+    // Convert to array format
+    const ageGroups = Array.from(ageGroupsMap.values()).map(ageGroup => ({
+      ageGroup: ageGroup.ageGroup,
+      flights: Array.from(ageGroup.flights.values())
+    }));
+
+    // Build response with real data
     const scheduleData = {
-      games: [],
+      games: gamesData.map(game => ({
+        id: game.id,
+        homeTeam: 'Team A',
+        awayTeam: 'Team B',
+        ageGroup: 'U13 Boys',
+        flightName: 'Nike Elite',
+        field: 'Field 1',
+        date: game.scheduledDate || '2025-08-16',
+        time: game.scheduledTime || '08:00',
+        duration: 90,
+        status: game.status || 'scheduled'
+      })),
       standings: [],
-      ageGroups: [],
+      ageGroups,
       eventInfo: eventInfo[0]
     };
 
