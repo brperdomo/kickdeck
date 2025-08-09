@@ -5538,7 +5538,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       }
     });
 
-    // Add field listing endpoint
+    // Add field listing endpoint with sorting support
     app.get('/api/admin/complexes/:id/fields', isAdmin, async (req, res) => {
       try {
         const complexId = parseInt(req.params.id);
@@ -5546,14 +5546,38 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           .select()
           .from(fields)
           .where(eq(fields.complexId, complexId))
-          .orderBy(fields.name);
+          .orderBy(fields.sortOrder, fields.name); // Sort by sortOrder first, then name
 
         res.json(complexFields);
       } catch (error) {
         console.error('Error fetching fields:', error);
-        // Added basic error logging for white screen debugging.
         console.error("Error details:", error);
         res.status(500).send("Failed to fetch fields");
+      }
+    });
+
+    // Add bulk field sort order update endpoint
+    app.patch('/api/admin/fields/sort-order', isAdmin, async (req, res) => {
+      try {
+        const { fieldUpdates } = req.body; // Expected: [{ id: 1, sortOrder: 0 }, { id: 2, sortOrder: 1 }, ...]
+        
+        if (!Array.isArray(fieldUpdates)) {
+          return res.status(400).send("fieldUpdates must be an array");
+        }
+
+        // Update each field's sort order
+        const promises = fieldUpdates.map(({ id, sortOrder }) => 
+          db.update(fields)
+            .set({ sortOrder, updatedAt: new Date().toISOString() })
+            .where(eq(fields.id, id))
+        );
+
+        await Promise.all(promises);
+
+        res.json({ success: true, updated: fieldUpdates.length });
+      } catch (error) {
+        console.error('Error updating field sort order:', error);
+        res.status(500).send("Failed to update field sort order");
       }
     });
 
@@ -5595,6 +5619,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
             closeTime,
             specialInstructions: specialInstructions || null,
             fieldSize: fieldSize || '11v11',
+            sortOrder: req.body.sortOrder || 0, // Add sortOrder support
             updatedAt: new Date().toISOString(),
           })
           .where(eq(fields.id, fieldId))

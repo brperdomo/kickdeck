@@ -1,7 +1,7 @@
 import express from 'express';
 import { db } from '@db';
 import { fields, complexes } from '@db/schema';
-import { eq } from 'drizzle-orm';
+import { eq, asc } from 'drizzle-orm';
 
 const router = express.Router();
 
@@ -19,11 +19,13 @@ router.get('/fields', async (req, res) => {
         isOpen: fields.isOpen,
         hasLights: fields.hasLights,
         openTime: fields.openTime,
-        closeTime: fields.closeTime
+        closeTime: fields.closeTime,
+        sortOrder: fields.sortOrder
       })
       .from(fields)
       .leftJoin(complexes, eq(fields.complexId, complexes.id))
-      .where(eq(fields.isOpen, true));
+      .where(eq(fields.isOpen, true))
+      .orderBy(asc(fields.sortOrder), asc(fields.name));
 
     console.log(`[Fields API] Found ${availableFields.length} available fields`);
 
@@ -39,6 +41,31 @@ router.get('/fields', async (req, res) => {
       error: 'Failed to fetch fields',
       details: error instanceof Error ? error.message : 'Unknown error'
     });
+  }
+});
+
+// Add bulk field sort order update endpoint
+router.patch('/sort-order', async (req, res) => {
+  try {
+    const { fieldUpdates } = req.body; // Expected: [{ id: 1, sortOrder: 0 }, { id: 2, sortOrder: 1 }, ...]
+    
+    if (!Array.isArray(fieldUpdates)) {
+      return res.status(400).send("fieldUpdates must be an array");
+    }
+
+    // Update each field's sort order
+    const promises = fieldUpdates.map(({ id, sortOrder }) => 
+      db.update(fields)
+        .set({ sortOrder, updatedAt: new Date().toISOString() })
+        .where(eq(fields.id, id))
+    );
+
+    await Promise.all(promises);
+
+    res.json({ success: true, updated: fieldUpdates.length });
+  } catch (error) {
+    console.error('Error updating field sort order:', error);
+    res.status(500).send("Failed to update field sort order");
   }
 });
 
