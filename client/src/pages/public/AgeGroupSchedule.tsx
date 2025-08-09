@@ -153,7 +153,7 @@ export default function AgeGroupSchedule() {
                   {scheduleData.ageGroupInfo?.displayName} Schedule
                 </p>
                 <p className="text-sm text-gray-500">
-                  {scheduleData.flights?.length || 0} flights • {scheduleData.flights?.reduce((sum, f) => sum + f.teamCount, 0) || 0} teams
+                  {scheduleData.flights?.length || 0} flights • {scheduleData.flights?.reduce((sum: number, f: any) => sum + f.teamCount, 0) || 0} teams
                 </p>
               </div>
             </div>
