@@ -251,6 +251,32 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
     return 60;
   };
 
+  // Helper function to check if a team name is a winner placeholder
+  const isWinnerPlaceholder = (teamName: string): boolean => {
+    if (!teamName) return false;
+    
+    const placeholders = [
+      'TBD',
+      '1st in Points',
+      '2nd in Points', 
+      '1st Place Bracket A',
+      '1st Place Bracket B',
+      '2nd Place Bracket A',
+      '2nd Place Bracket B',
+      'Winner Semifinal 1',
+      'Winner Semifinal 2',
+      '1st Place',
+      '2nd Place'
+    ];
+    
+    return placeholders.includes(teamName);
+  };
+
+  // Helper function to check if a game has winner placeholders
+  const hasWinnerPlaceholder = (game: any): boolean => {
+    return isWinnerPlaceholder(game.homeTeamName) || isWinnerPlaceholder(game.awayTeamName);
+  };
+
   // Detect scheduling conflicts with enhanced overlap detection
   const detectConflicts = useCallback((games: Game[]): ConflictInfo[] => {
     const conflicts: ConflictInfo[] = [];
@@ -287,17 +313,17 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
         
         if (hasTimeOverlap) {
           // Check for team conflicts (same team playing at overlapping times)
-          const teams1 = [game1.homeTeamName, game1.awayTeamName].filter(t => t && t !== 'TBD');
-          const teams2 = [game2.homeTeamName, game2.awayTeamName].filter(t => t && t !== 'TBD');
+          // Filter out winner placeholders (they're not actual teams yet)
+          const teams1 = [game1.homeTeamName, game1.awayTeamName].filter(t => t && !isWinnerPlaceholder(t));
+          const teams2 = [game2.homeTeamName, game2.awayTeamName].filter(t => t && !isWinnerPlaceholder(t));
           
           const teamOverlap = teams1.some(team => teams2.includes(team));
-          const bothTBD = (game1.homeTeamName === 'TBD' || game1.awayTeamName === 'TBD') && 
-                          (game2.homeTeamName === 'TBD' || game2.awayTeamName === 'TBD');
+          const bothHavePlaceholders = hasWinnerPlaceholder(game1) && hasWinnerPlaceholder(game2);
           
-          if (teamOverlap || bothTBD) {
+          if (teamOverlap || bothHavePlaceholders) {
             const overlappingTeams = teamOverlap ? 
               teams1.filter(team => teams2.includes(team)) :
-              ['TBD'];
+              ['Championship Games'];
               
             console.log(`🚨 [OVERLAP DETECTED] Team conflict between games ${game1.id} and ${game2.id}:`, overlappingTeams);
             conflicts.push({
@@ -310,8 +336,9 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
         }
         
         // Check for rest period violations (even if games don't overlap)
-        const teams1 = [game1.homeTeamName, game1.awayTeamName].filter(t => t && t !== 'TBD');
-        const teams2 = [game2.homeTeamName, game2.awayTeamName].filter(t => t && t !== 'TBD');
+        // Only check rest periods for actual teams, not winner placeholders
+        const teams1 = [game1.homeTeamName, game1.awayTeamName].filter(t => t && !isWinnerPlaceholder(t));
+        const teams2 = [game2.homeTeamName, game2.awayTeamName].filter(t => t && !isWinnerPlaceholder(t));
         
         const teamRestViolation = teams1.some(team => teams2.includes(team));
         
