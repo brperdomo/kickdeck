@@ -18,12 +18,14 @@ router.get('/test-router', (req, res) => {
 });
 
 router.post('/events/:id/consolidate-fields', isAdmin, hasEventAccess, async (req, res) => {
+  console.log(`\n${'='.repeat(80)}`);
+  console.log(`🔥 FIELD CONSOLIDATION ENDPOINT HIT - TIMESTAMP: ${new Date().toISOString()}`);
+  console.log(`🔥 Event ID: ${req.params.id}`);
+  console.log(`🔥 Method: ${req.method} | URL: ${req.url}`);
+  console.log(`🔥 Request Body:`, JSON.stringify(req.body, null, 2));
+  console.log(`${'='.repeat(80)}\n`);
+  
   try {
-    console.log(`=================== FIELD CONSOLIDATION API HIT ===================`);
-    console.log(`🚀 Event ID: ${req.params.id}`);
-    console.log(`🚀 Method: ${req.method}`);
-    console.log(`🚀 URL: ${req.url}`);
-    console.log(`🚀 Body:`, JSON.stringify(req.body, null, 2));
     const eventId = parseInt(req.params.id);
     let { targetDate = '2025-08-16' } = req.body;
   
@@ -109,13 +111,22 @@ router.post('/events/:id/consolidate-fields', isAdmin, hasEventAccess, async (re
       }
     });
 
-    console.log(`📊 Current field usage:`, Array.from(fieldUsage.entries()).map(([id, count]) => {
+    const fieldUsageReport = Array.from(fieldUsage.entries()).map(([id, count]) => {
       const field = availableFields.find(f => f.id === id);
       return `Field ${field?.name} (ID: ${id}): ${count} games`;
-    }));
+    });
+    console.log(`📊 Current field usage:`, fieldUsageReport);
+    console.log(`📊 PRIORITY FIELDS STATUS:`);
+    console.log(`   Field 12 (ID: ${priorityFields.get('12')}): ${fieldUsage.get(priorityFields.get('12')) || 0} games`);
+    console.log(`   Field 13 (ID: ${priorityFields.get('13')}): ${fieldUsage.get(priorityFields.get('13')) || 0} games`);
 
     let optimizationsApplied = 0;
     const maxGamesPerField = 8; // Capacity limit per field
+
+    console.log(`🎯 STARTING CONSOLIDATION ANALYSIS...`);
+    console.log(`🎯 Games to analyze: ${gamesForOptimization.length}`);
+    console.log(`🎯 Target fields to consolidate FROM: ${Array.from(targetFields.values()).join(', ')}`);
+    console.log(`🎯 Priority fields to consolidate TO: 12, 13`);
 
     // Consolidation logic: Move games from target fields to priority fields
     for (const game of gamesForOptimization) {

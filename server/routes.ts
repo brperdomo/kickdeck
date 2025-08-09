@@ -1150,6 +1150,19 @@ export function registerRoutes(app: Express): Server {
     // app.use('/api/admin', isAdmin, multiFlightSchedulingRouter); // Multi-flight intelligent scheduling with gap-filling - TEMPORARILY DISABLED
     app.use('/api/admin', isAdmin, optimizeScheduleRouter); // Field consolidation optimization
     
+    // DIRECT INLINE TEST ROUTE FOR DEBUGGING
+    app.post('/api/admin/events/:id/consolidate-fields-debug', isAdmin, hasEventAccess, async (req, res) => {
+      console.log(`🔥🔥🔥 DIRECT INLINE ROUTE HIT! Event: ${req.params.id}`);
+      console.log(`🔥 Method: ${req.method}, URL: ${req.originalUrl}`);
+      console.log(`🔥 Body:`, JSON.stringify(req.body, null, 2));
+      res.json({
+        success: true,
+        optimizationsApplied: 999,
+        message: 'DIRECT INLINE ROUTE WORKING!',
+        debug: true
+      });
+    });
+    
     // Register schedule management router
     app.use('/api/admin', isAdmin, scheduleManagementRouter); // Schedule management (delete games)
     app.use('/api/admin/game-reports', gameReportsRouter); // Game reporting (score/card reporting)
