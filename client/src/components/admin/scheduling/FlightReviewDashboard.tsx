@@ -6,7 +6,8 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { AlertCircle, Users, Check, X, ArrowRight, Edit3 } from 'lucide-react';
+import { AlertCircle, Users, Check, X, ArrowRight, Edit3, Download, FileText } from 'lucide-react';
+import jsPDF from 'jspdf';
 
 interface Team {
   id: number;
@@ -132,6 +133,177 @@ export function FlightReviewDashboard({ eventId }: FlightReviewDashboardProps) {
     assignTeamsMutation.mutate({ assignments });
   };
 
+  // Export to CSV
+  const exportToCSV = () => {
+    if (!flightData) return;
+
+    const csvHeaders = ['Age Group', 'Gender', 'Birth Year', 'Flight Name', 'Flight Level', 'Team Name', 'Status'];
+    const csvRows = [csvHeaders.join(',')];
+
+    flightData.forEach(group => {
+      // Teams with flight assignments
+      group.teamsWithSelection.forEach(team => {
+        const row = [
+          `"${group.ageGroup}"`,
+          `"${group.gender}"`,
+          group.birthYear || '',
+          `"${team.selectedBracketName || 'N/A'}"`,
+          `"${getFlightLevel(team.selectedBracketName || '')}"`,
+          `"${team.name}"`,
+          'Assigned'
+        ].join(',');
+        csvRows.push(row);
+      });
+
+      // Teams without flight assignments
+      group.teamsWithoutSelection.forEach(team => {
+        const row = [
+          `"${group.ageGroup}"`,
+          `"${group.gender}"`,
+          group.birthYear || '',
+          'Not Assigned',
+          'N/A',
+          `"${team.name}"`,
+          'Needs Assignment'
+        ].join(',');
+        csvRows.push(row);
+      });
+    });
+
+    const csvContent = csvRows.join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `flight-assignments-${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    toast({
+      title: "Export Successful",
+      description: "Flight assignments exported to CSV file",
+    });
+  };
+
+  // Export to PDF
+  const exportToPDF = () => {
+    if (!flightData) return;
+
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 20;
+    let y = margin;
+
+    // Title
+    doc.setFontSize(20);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Flight Assignments Summary', margin, y);
+    y += 15;
+
+    // Date
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, margin, y);
+    y += 20;
+
+    // Statistics
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Summary Statistics:', margin, y);
+    y += 10;
+    
+    doc.setFont('helvetica', 'normal');
+    const totalAssigned = flightData.reduce((sum, group) => sum + group.teamsWithSelection.length, 0);
+    const totalUnassigned = flightData.reduce((sum, group) => sum + group.teamsWithoutSelection.length, 0);
+    const totalTeams = totalAssigned + totalUnassigned;
+    
+    doc.text(`Total Teams: ${totalTeams}`, margin + 10, y);
+    y += 8;
+    doc.text(`Teams with Flight Assignment: ${totalAssigned}`, margin + 10, y);
+    y += 8;
+    doc.text(`Teams Needing Assignment: ${totalUnassigned}`, margin + 10, y);
+    y += 20;
+
+    // Flight assignments by age group
+    flightData.forEach((group, groupIndex) => {
+      // Check if we need a new page
+      if (y > doc.internal.pageSize.getHeight() - 60) {
+        doc.addPage();
+        y = margin;
+      }
+
+      // Age Group Header
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'bold');
+      const ageGroupTitle = `${group.ageGroup} ${group.gender}${group.birthYear ? ` - [${group.birthYear}]` : ''}`;
+      doc.text(ageGroupTitle, margin, y);
+      y += 15;
+
+      // Available Flights
+      if (group.availableFlights.length > 0) {
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Available Flights:', margin + 10, y);
+        y += 8;
+        
+        doc.setFont('helvetica', 'normal');
+        group.availableFlights.forEach(flight => {
+          doc.text(`• ${formatFlightName(flight.name)} (${flight.level})`, margin + 20, y);
+          y += 6;
+        });
+        y += 5;
+      }
+
+      // Teams with assignments
+      if (group.teamsWithSelection.length > 0) {
+        doc.setFont('helvetica', 'bold');
+        doc.text(`Teams with Flight Assignments (${group.teamsWithSelection.length}):`, margin + 10, y);
+        y += 8;
+        
+        doc.setFont('helvetica', 'normal');
+        group.teamsWithSelection.forEach(team => {
+          doc.text(`• ${team.name} → ${team.selectedBracketName}`, margin + 20, y);
+          y += 6;
+        });
+        y += 5;
+      }
+
+      // Teams without assignments
+      if (group.teamsWithoutSelection.length > 0) {
+        doc.setFont('helvetica', 'bold');
+        doc.text(`Teams Needing Assignment (${group.teamsWithoutSelection.length}):`, margin + 10, y);
+        y += 8;
+        
+        doc.setFont('helvetica', 'normal');
+        group.teamsWithoutSelection.forEach(team => {
+          doc.text(`• ${team.name}`, margin + 20, y);
+          y += 6;
+        });
+        y += 10;
+      }
+    });
+
+    // Save the PDF
+    doc.save(`flight-assignments-${new Date().toISOString().split('T')[0]}.pdf`);
+
+    toast({
+      title: "Export Successful",
+      description: "Flight assignments exported to PDF file",
+    });
+  };
+
+  // Helper function to get flight level from name
+  const getFlightLevel = (flightName: string): string => {
+    if (flightName.toLowerCase().includes('elite')) return 'Elite';
+    if (flightName.toLowerCase().includes('premier')) return 'Premier';  
+    if (flightName.toLowerCase().includes('classic')) return 'Classic';
+    return 'Standard';
+  };
+
   const getFlightLevelBadge = (level: string) => {
     const colors = {
       elite: 'bg-amber-500 text-white border-amber-400',
@@ -200,7 +372,7 @@ export function FlightReviewDashboard({ eventId }: FlightReviewDashboardProps) {
       </div>
 
       {/* Action Buttons */}
-      <div className="flex gap-4">
+      <div className="flex gap-4 flex-wrap">
         <Button 
           onClick={handleBulkAssign}
           disabled={Object.keys(selectedFlight).length === 0 || assignTeamsMutation.isPending}
@@ -211,6 +383,7 @@ export function FlightReviewDashboard({ eventId }: FlightReviewDashboardProps) {
             `Assign Selected Teams (${Object.keys(selectedFlight).length})`
           }
         </Button>
+        
         <Button 
           variant="outline"
           onClick={() => lockFlightsMutation.mutate()}
@@ -219,6 +392,7 @@ export function FlightReviewDashboard({ eventId }: FlightReviewDashboardProps) {
         >
           Lock Flights & Proceed to Scheduling
         </Button>
+
         {editingTeamId && (
           <Button 
             variant="secondary"
@@ -230,6 +404,28 @@ export function FlightReviewDashboard({ eventId }: FlightReviewDashboardProps) {
             Cancel Reassignment
           </Button>
         )}
+
+        {/* Export Buttons */}
+        <div className="flex gap-2 ml-auto">
+          <Button 
+            variant="outline"
+            onClick={exportToCSV}
+            disabled={!flightData || flightData.length === 0}
+            className="border-slate-600 text-slate-200 hover:bg-slate-700 hover:border-slate-500"
+          >
+            <Download className="h-4 w-4 mr-2" />
+            Export CSV
+          </Button>
+          <Button 
+            variant="outline"
+            onClick={exportToPDF}
+            disabled={!flightData || flightData.length === 0}
+            className="border-slate-600 text-slate-200 hover:bg-slate-700 hover:border-slate-500"
+          >
+            <FileText className="h-4 w-4 mr-2" />
+            Export PDF
+          </Button>
+        </div>
       </div>
 
       {/* Flight Review by Age Group */}
