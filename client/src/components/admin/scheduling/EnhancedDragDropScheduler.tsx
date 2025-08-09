@@ -42,7 +42,7 @@ interface TimeSlot {
 }
 
 interface ConflictInfo {
-  type: 'coach' | 'team_rest' | 'field_size' | 'capacity' | 'games_per_day';
+  type: 'coach' | 'team_rest' | 'field_size' | 'capacity' | 'games_per_day' | 'team_conflict';
   severity: 'warning' | 'error';
   message: string;
   gameIds: number[];
@@ -182,6 +182,11 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
     for (let i = 0; i < currentSlotIndex; i++) {
       const previousSlot = timeSlots[i];
       const gamesInPreviousSlot = scheduleData.games.filter((game: Game) => {
+        // CRITICAL: Exclude the currently dragged game from extension calculations
+        if (draggedGame && game.id === draggedGame.id) {
+          return false;
+        }
+
         const position = gamePositions.get(game.id);
         const effectiveFieldId = position?.fieldId ?? game.fieldId;
         const effectiveStartTime = position?.startTime ?? game.startTime;
@@ -206,13 +211,18 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
     }
 
     return false;
-  }, [scheduleData?.games, selectedDate, gamePositions, generateTimeSlots, calculateGameSpanSlots]);
+  }, [scheduleData?.games, selectedDate, gamePositions, generateTimeSlots, calculateGameSpanSlots, draggedGame]);
 
   // Get games for a specific field and time slot (only games that START in this slot)
   const getGamesForSlot = useCallback((fieldId: number, timeSlot: TimeSlot): Game[] => {
     if (!scheduleData?.games) return [];
 
     return scheduleData.games.filter((game: Game) => {
+      // CRITICAL: Exclude the currently dragged game from collision detection
+      if (draggedGame && game.id === draggedGame.id) {
+        return false;
+      }
+
       // Check if game has been moved optimistically
       const position = gamePositions.get(game.id);
       const effectiveFieldId = position?.fieldId ?? game.fieldId;
@@ -227,7 +237,7 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
 
       return gameDate === selectedDate && gameTime === timeSlot.startTime;
     });
-  }, [scheduleData?.games, selectedDate, gamePositions]);
+  }, [scheduleData?.games, selectedDate, gamePositions, draggedGame]);
 
   // Detect scheduling conflicts
   const detectConflicts = useCallback((games: Game[]): ConflictInfo[] => {
@@ -323,15 +333,15 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
         coaches.forEach(coach => {
           const coachKey = coach.email;
           if (!coachGames.has(coachKey)) coachGames.set(coachKey, []);
-          coachGames.get(coachKey)!.push({ ...game, coachInfo: coach });
+          coachGames.get(coachKey)!.push(game);
         });
       });
 
       coachGames.forEach((games, coachEmail) => {
         if (games.length > 1) {
-          const coachName = (games[0] as any).coachInfo?.name || coachEmail;
-          const teams = games.map(g => (g as any).coachInfo?.team).filter(Boolean);
-          const uniqueTeams = [...new Set(teams)];
+          const coachName = coachEmail;
+          const teams = games.map(g => g.homeTeamName).concat(games.map(g => g.awayTeamName)).filter(Boolean);
+          const uniqueTeams = Array.from(new Set(teams));
           
           conflicts.push({
             type: 'coach',
@@ -554,7 +564,21 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
   const handleDragOver = (e: React.DragEvent, fieldId: number, timeSlot: string) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
-    setDragOverSlot({ fieldId, timeSlot });
+    
+    // Only allow dropping if the slot is actually available
+    const timeSlots = generateTimeSlots();
+    const timeSlotObj = timeSlots.find(slot => slot.startTime === timeSlot);
+    if (!timeSlotObj) return;
+    
+    const gamesInSlot = getGamesForSlot(fieldId, timeSlotObj);
+    const isOccupied = isSlotOccupiedByExtendingGame(fieldId, timeSlotObj);
+    
+    // Allow drop if slot is empty or only occupied by dragged game
+    if (gamesInSlot.length === 0 && !isOccupied) {
+      setDragOverSlot({ fieldId, timeSlot });
+    } else {
+      setDragOverSlot(null);
+    }
   };
 
   // Handle drop
@@ -728,7 +752,7 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
             {/* Time Interval Selection */}
             <div className="flex items-center gap-2">
               <label className="text-slate-200 text-sm">Time Intervals:</label>
-              <Select value={timeInterval.toString()} onValueChange={(value) => setTimeInterval(parseInt(value))}>
+              <Select value={timeInterval.toString()} onValueChange={(value) => setTimeInterval(Number(value))}>
                 <SelectTrigger className="w-32">
                   <SelectValue />
                 </SelectTrigger>
@@ -842,12 +866,12 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
                       <div
                         key={`${field.id}-${slot.id}`}
                         className={`
-                          min-w-[80px] h-[60px] p-1 border border-slate-600 transition-colors relative
+                          min-w-[80px] h-[60px] p-1 border border-slate-600 transition-all duration-200 relative cursor-pointer
                           ${games.length > 0 ? 'bg-blue-900/30' : isOccupiedByExtendingGame ? 'bg-blue-900/20' : 'bg-slate-800'}
                           ${hasTeamConflict ? 'bg-red-900/40 border-red-500 border-2' : hasWarningConflict ? 'bg-yellow-900/30 border-yellow-500' : ''}
-                          ${isDragOver ? 'bg-green-900/30 border-green-500 border-2' : ''}
+                          ${isDragOver ? 'bg-green-900/50 border-green-400 border-2 shadow-lg shadow-green-500/25 scale-105' : ''}
                           ${isOccupiedByExtendingGame ? 'border-blue-400/50' : ''}
-                          hover:bg-slate-700/50
+                          ${draggedGame && games.length === 0 && !isOccupiedByExtendingGame ? 'hover:bg-green-900/20 hover:border-green-600' : 'hover:bg-slate-700/50'}
                         `}
                         onDragOver={(e) => handleDragOver(e, field.id, slot.startTime)}
                         onDrop={(e) => handleDrop(e, field.id, slot.startTime)}
