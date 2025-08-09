@@ -9,12 +9,16 @@ const router = Router();
 router.get('/events/:eventId/flight-review', async (req, res) => {
   try {
     const { eventId } = req.params;
+    
+    console.log(`FLIGHT REVIEW DEBUG: Fetching data for event ${eventId}`);
 
     // Get all age groups for this event with their flight options
     const ageGroups = await db
       .select()
       .from(eventAgeGroups)
       .where(eq(eventAgeGroups.eventId, eventId));
+
+    console.log(`FLIGHT REVIEW DEBUG: Found ${ageGroups.length} age groups:`, ageGroups.map(ag => `${ag.ageGroup} ${ag.gender} (ID: ${ag.id})`));
 
     // Sort age groups from oldest to youngest (lowest birth year to highest)
     const sortedAgeGroups = ageGroups.sort((a, b) => a.birthYear - b.birthYear);
@@ -62,6 +66,24 @@ router.get('/events/:eventId/flight-review', async (req, res) => {
               isNull(teams.bracketId)
             )
           );
+
+        console.log(`FLIGHT REVIEW DEBUG: Age group ${ageGroup.ageGroup} ${ageGroup.gender} (ID: ${ageGroup.id}):
+          - Teams with selection: ${teamsWithSelection.length} (${teamsWithSelection.map(t => t.name).join(', ')})
+          - Teams without selection: ${teamsWithoutSelection.length} (${teamsWithoutSelection.map(t => t.name).join(', ')})`);
+
+        // Debug: Get ALL teams for this age group regardless of status to see what's happening
+        const allTeamsInAgeGroup = await db
+          .select({
+            id: teams.id,
+            name: teams.name,
+            status: teams.status,
+            bracketId: teams.bracketId
+          })
+          .from(teams)
+          .where(eq(teams.ageGroupId, ageGroup.id));
+
+        console.log(`FLIGHT REVIEW DEBUG: ALL teams in age group ${ageGroup.ageGroup} ${ageGroup.gender}:`, 
+          allTeamsInAgeGroup.map(t => `${t.name} (status: ${t.status}, bracketId: ${t.bracketId})`));
 
         return {
           ageGroup: ageGroup.ageGroup,

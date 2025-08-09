@@ -122,6 +122,54 @@ router.get('/:teamId/fees', extractEventIdFromTeam, hasEventAccess, async (req, 
   }
 });
 
+// Update team details (general update)
+router.patch('/:teamId', extractEventIdFromTeam, hasEventAccess, async (req, res) => {
+  try {
+    const { teamId } = req.params;
+    const updateData = req.body;
+    
+    console.log(`Updating team ${teamId} with data:`, updateData);
+    
+    // Build the update object dynamically
+    const updateObject: any = {};
+    
+    if (updateData.name !== undefined) updateObject.name = updateData.name;
+    if (updateData.managerName !== undefined) updateObject.managerName = updateData.managerName;
+    if (updateData.managerPhone !== undefined) updateObject.managerPhone = updateData.managerPhone;
+    if (updateData.managerEmail !== undefined) updateObject.managerEmail = updateData.managerEmail;
+    if (updateData.clubName !== undefined) updateObject.clubName = updateData.clubName;
+    if (updateData.ageGroupId !== undefined) updateObject.ageGroupId = updateData.ageGroupId;
+    if (updateData.bracketId !== undefined) updateObject.bracketId = updateData.bracketId;
+    
+    // Handle coach information
+    if (updateData.coach !== undefined) {
+      updateObject.headCoachName = updateData.coach.headCoachName;
+      updateObject.headCoachEmail = updateData.coach.headCoachEmail;
+      updateObject.headCoachPhone = updateData.coach.headCoachPhone;
+      updateObject.assistantCoachName = updateData.coach.assistantCoachName;
+      updateObject.assistantCoachEmail = updateData.coach.assistantCoachEmail;
+      updateObject.assistantCoachPhone = updateData.coach.assistantCoachPhone;
+    }
+    
+    console.log(`Final update object for team ${teamId}:`, updateObject);
+    
+    const result = await db.update(teams)
+      .set(updateObject)
+      .where(eq(teams.id, parseInt(teamId, 10)))
+      .returning();
+    
+    if (result.length === 0) {
+      return res.status(404).json({ error: 'Team not found' });
+    }
+    
+    console.log(`Team ${teamId} updated successfully:`, result[0]);
+    res.json({ success: true, team: result[0] });
+  } catch (error) {
+    console.error('Error updating team:', error);
+    res.status(500).json({ error: 'Failed to update team', details: error instanceof Error ? error.message : 'Unknown error' });
+  }
+});
+
 // Update team status (approve/reject)
 router.put('/:teamId/status', extractEventIdFromTeam, hasEventAccess, updateTeamStatus);
 // Keep backward compatibility with PATCH as well

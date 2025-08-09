@@ -258,6 +258,14 @@ export function TeamModal({ isOpen, onClose, team }: TeamModalProps) {
       if (team?.id) {
         queryClient.invalidateQueries({ queryKey: [`/api/admin/teams/${team.id}`] });
       }
+      // Invalidate flight-review data to sync with Master Schedule
+      if (team?.eventId) {
+        queryClient.invalidateQueries({ queryKey: ['flight-review', team.eventId.toString()] });
+      }
+      // Invalidate any age group or bracket related queries that might be affected
+      queryClient.invalidateQueries({ queryKey: ['age-groups'] });
+      queryClient.invalidateQueries({ queryKey: ['brackets'] });
+      
       toast({
         title: "Success",
         description: "Team updated successfully",
