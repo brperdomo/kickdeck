@@ -217,7 +217,7 @@ export default function PublicSchedules() {
         {/* Games Display Section */}
         {scheduleData.games && scheduleData.games.length > 0 && (
           <div className="mt-8">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Games</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Upcoming Games</h3>
             <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
               <table className="w-full">
                 <thead className="bg-gray-50">

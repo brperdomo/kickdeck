@@ -52,9 +52,7 @@ router.get('/:eventId', async (req: Request, res: Response) => {
       .from(games)
       .leftJoin(fields, eq(games.fieldId, fields.id))
       .where(and(
-        eq(games.eventId, eventId),
-        isNotNull(games.homeTeamId),
-        isNotNull(games.awayTeamId)
+        eq(games.eventId, eventIdNum)
       ));
 
     console.log(`[Public Schedules] Found ${gamesData.length} games`);
@@ -68,10 +66,7 @@ router.get('/:eventId', async (req: Request, res: Response) => {
         bracketId: teams.bracketId
       })
       .from(teams)
-      .where(and(
-        eq(teams.eventId, eventId),
-        eq(teams.status, 'approved')
-      ));
+      .where(eq(teams.eventId, eventIdNum));
 
     console.log(`[Public Schedules] Found ${teamsData.length} teams`);
 
@@ -84,7 +79,7 @@ router.get('/:eventId', async (req: Request, res: Response) => {
         divisionCode: eventAgeGroups.divisionCode
       })
       .from(eventAgeGroups)
-      .where(eq(eventAgeGroups.eventId, eventId));
+      .where(eq(eventAgeGroups.eventId, eventIdNum));
 
     // Get flights separately to avoid join issues
     const flightsData = await db
@@ -94,7 +89,7 @@ router.get('/:eventId', async (req: Request, res: Response) => {
         ageGroupId: eventBrackets.ageGroupId
       })
       .from(eventBrackets)
-      .where(eq(eventBrackets.eventId, eventId));
+      .where(eq(eventBrackets.eventId, eventIdNum));
 
     console.log(`[Public Schedules] Found ${ageGroupsData.length} age groups`);
     console.log(`[Public Schedules] Found ${flightsData.length} flights`);
@@ -164,6 +159,8 @@ router.get('/:eventId', async (req: Request, res: Response) => {
       const homeTeam = teamsMap.get(game.homeTeamId);
       const awayTeam = teamsMap.get(game.awayTeamId);
       
+
+      
       // Find flight info for this game
       let ageGroupName = 'Unknown';
       let flightName = 'Unknown';
@@ -181,8 +178,8 @@ router.get('/:eventId', async (req: Request, res: Response) => {
       
       return {
         id: game.id,
-        homeTeam: homeTeam?.name || `Team ${game.homeTeamId}`,
-        awayTeam: awayTeam?.name || `Team ${game.awayTeamId}`,
+        homeTeam: homeTeam?.name || (game.homeTeamId ? `Team ${game.homeTeamId}` : 'TBD'),
+        awayTeam: awayTeam?.name || (game.awayTeamId ? `Team ${game.awayTeamId}` : 'TBD'),
         ageGroup: ageGroupName,
         flightName: flightName,
         field: game.fieldName || `Field ${game.fieldId}`,
