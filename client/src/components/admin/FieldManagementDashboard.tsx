@@ -23,17 +23,32 @@ export default function FieldManagementDashboard({ eventId }: FieldManagementDas
     queryKey: ['event-fields', eventId],
     queryFn: async () => {
       console.log(`[DEBUG] Fetching fields for event: ${eventId}`);
-      const response = await fetch(`/api/admin/events/${eventId}/fields`);
+      console.log(`[DEBUG] Making authenticated request with credentials`);
+      
+      const response = await fetch(`/api/admin/events/${eventId}/fields`, {
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+      
       console.log(`[DEBUG] Response status: ${response.status}`);
+      console.log(`[DEBUG] Response headers:`, Object.fromEntries(response.headers.entries()));
       
       if (!response.ok) {
         const errorText = await response.text();
-        console.error(`[DEBUG] API error:`, errorText);
-        throw new Error(`Failed to fetch fields: ${response.status}`);
+        console.error(`[DEBUG] API error (${response.status}):`, errorText);
+        
+        if (response.status === 401) {
+          console.error(`[DEBUG] Authentication failed - user may not be logged in or session expired`);
+        }
+        
+        throw new Error(`Failed to fetch fields: ${response.status} - ${errorText}`);
       }
       
       const data = await response.json();
       console.log(`[DEBUG] Fields response:`, data);
+      console.log(`[DEBUG] Fields array length:`, data?.fields?.length || 0);
       return data;
     }
   });
@@ -72,6 +87,19 @@ export default function FieldManagementDashboard({ eventId }: FieldManagementDas
         </AlertDescription>
       </Alert>
 
+      {/* Debug information */}
+      {process.env.NODE_ENV === 'development' && (
+        <Alert className="border-blue-600 bg-blue-900/20">
+          <AlertDescription className="text-blue-200 text-xs">
+            <strong>Debug Info:</strong> Event ID: {eventId} | 
+            Fields Data: {JSON.stringify(fieldsData?.fields?.length || 0)} | 
+            Loading: {isLoading.toString()} | 
+            Error: {error ? 'Yes' : 'No'}
+            {error && <div>Error Details: {error.message}</div>}
+          </AlertDescription>
+        </Alert>
+      )}
+
       {fields.length > 0 ? (
         <FieldSortingManager
           fields={fields}
@@ -83,6 +111,7 @@ export default function FieldManagementDashboard({ eventId }: FieldManagementDas
           <Settings className="h-4 w-4 text-yellow-400" />
           <AlertDescription className="text-yellow-200">
             No fields found for this event. Please ensure fields are configured in the event setup.
+            {error && <div className="mt-2 text-xs">Error: {error.message}</div>}
           </AlertDescription>
         </Alert>
       )}

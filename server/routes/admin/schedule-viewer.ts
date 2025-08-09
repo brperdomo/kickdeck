@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { db } from '@db';
-import { games, teams, eventAgeGroups, fields, complexes, events, gameTimeSlots } from '@db/schema';
+import { games, teams, eventAgeGroups, fields, complexes, events, gameTimeSlots, eventFieldConfigurations } from '@db/schema';
 import { eq, count } from 'drizzle-orm';
 
 const router = Router();
@@ -245,19 +245,86 @@ router.get('/:eventId/fields', async (req, res) => {
   try {
     const eventId = parseInt(req.params.eventId);
     
+    console.log(`[Field Order API] Fetching fields for event: ${eventId}`);
+    
     if (isNaN(eventId)) {
       return res.status(400).json({ error: 'Invalid event ID' });
     }
 
-    // Return basic field structure
-    const fields = [
-      { id: 1, name: 'Field 1', surface: 'Grass', size: '11v11' },
-      { id: 2, name: 'Field 2', surface: 'Grass', size: '11v11' },
-      { id: 3, name: 'Field 3', surface: 'Grass', size: '9v9' },
-      { id: 4, name: 'Field 4', surface: 'Turf', size: '7v7' }
-    ];
+    // Get event field configurations (tournament-specific field sizes)
+    const eventFieldConfigs = await db
+      .select({
+        fieldId: eventFieldConfigurations.fieldId,
+        fieldSize: eventFieldConfigurations.fieldSize,
+        isActive: eventFieldConfigurations.isActive,
+        sortOrder: eventFieldConfigurations.sortOrder
+      })
+      .from(eventFieldConfigurations)
+      .where(eq(eventFieldConfigurations.eventId, eventId));
 
-    res.json(fields);
+    console.log(`[Field Order API] Found ${eventFieldConfigs.length} event field configurations`);
+
+    // Get all fields with complex information
+    const allFields = await db
+      .select({
+        id: fields.id,
+        name: fields.name,
+        fieldSize: fields.fieldSize,
+        hasLights: fields.hasLights,
+        openTime: fields.openTime,
+        closeTime: fields.closeTime,
+        isOpen: fields.isOpen,
+        complexId: fields.complexId,
+        complexName: complexes.name,
+        complexAddress: complexes.address
+      })
+      .from(fields)
+      .leftJoin(complexes, eq(fields.complexId, complexes.id))
+      .where(eq(fields.isOpen, true));
+
+    console.log(`[Field Order API] Found ${allFields.length} total fields`);
+
+    // Create field config lookup
+    const fieldConfigMap = new Map();
+    eventFieldConfigs.forEach(config => {
+      fieldConfigMap.set(config.fieldId, config);
+    });
+
+    // Build response with tournament-specific field sizes and sorting
+    const fieldsWithConfigs = allFields.map(field => {
+      const eventConfig = fieldConfigMap.get(field.id);
+      
+      return {
+        id: field.id,
+        name: field.name,
+        fieldSize: eventConfig?.fieldSize || field.fieldSize || '11v11',
+        surface: 'Grass', // Default since not in schema
+        complexName: field.complexName || 'Unknown Complex',
+        complexAddress: field.complexAddress || '',
+        openTime: field.openTime || '08:00',
+        closeTime: field.closeTime || '22:00',
+        hasLights: field.hasLights || false,
+        isActive: eventConfig?.isActive !== false,
+        sortOrder: eventConfig?.sortOrder || 999
+      };
+    });
+
+    // Sort by sort order, then by field name
+    fieldsWithConfigs.sort((a, b) => {
+      if (a.sortOrder !== b.sortOrder) {
+        return a.sortOrder - b.sortOrder;
+      }
+      return a.name.localeCompare(b.name);
+    });
+
+    console.log(`[Field Order API] Returning ${fieldsWithConfigs.length} fields with configurations`);
+    console.log(`[Field Order API] Field names: ${fieldsWithConfigs.map(f => f.name).join(', ')}`);
+
+    // Return in format expected by FieldManagementDashboard
+    res.json({
+      fields: fieldsWithConfigs,
+      success: true
+    });
 
   } catch (error) {
     console.error('Error fetching fields:', error);

@@ -1,0 +1,212 @@
+Submitting login with email: bperdomo@zoho.com
+ Login mutation called with: bperdomo@zoho.com
+ Sending login request with data: {email: 'bperdomo@zoho.com', passwordLength: 8}
+ Login response status: 200
+ Login successful, received user data: Yes
+ Fetching current user after login
+ Fetch finished loading: POST "https://app.matchpro.ai/api/login?t=1754774203192".
+mutationFn @ index-CyKYrMkM.js:649
+fn @ index-CyKYrMkM.js:41
+f @ index-CyKYrMkM.js:41
+start @ index-CyKYrMkM.js:41
+execute @ index-CyKYrMkM.js:41
+await in execute
+mutate @ index-CyKYrMkM.js:41
+o @ index-CyKYrMkM.js:657
+(anonymous) @ index-CyKYrMkM.js:649
+await in (anonymous)
+wue @ index-CyKYrMkM.js:38
+Sue @ index-CyKYrMkM.js:38
+Cue @ index-CyKYrMkM.js:38
+dM @ index-CyKYrMkM.js:38
+V7 @ index-CyKYrMkM.js:38
+(anonymous) @ index-CyKYrMkM.js:38
+yO @ index-CyKYrMkM.js:41
+f7 @ index-CyKYrMkM.js:38
+N2 @ index-CyKYrMkM.js:38
+H4 @ index-CyKYrMkM.js:38
+zue @ index-CyKYrMkM.js:38
+submit @ injected.js:5
+is @ injected.js:5
+uD @ injected.js:5
+await in uD
+Ox @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+n @ injected.js:5
+ Fetch finished loading: GET "https://app.matchpro.ai/api/user".
+mutationFn @ index-CyKYrMkM.js:649
+await in mutationFn
+fn @ index-CyKYrMkM.js:41
+f @ index-CyKYrMkM.js:41
+start @ index-CyKYrMkM.js:41
+execute @ index-CyKYrMkM.js:41
+await in execute
+mutate @ index-CyKYrMkM.js:41
+o @ index-CyKYrMkM.js:657
+(anonymous) @ index-CyKYrMkM.js:649
+await in (anonymous)
+wue @ index-CyKYrMkM.js:38
+Sue @ index-CyKYrMkM.js:38
+Cue @ index-CyKYrMkM.js:38
+dM @ index-CyKYrMkM.js:38
+V7 @ index-CyKYrMkM.js:38
+(anonymous) @ index-CyKYrMkM.js:38
+yO @ index-CyKYrMkM.js:41
+f7 @ index-CyKYrMkM.js:38
+N2 @ index-CyKYrMkM.js:38
+H4 @ index-CyKYrMkM.js:38
+zue @ index-CyKYrMkM.js:38
+submit @ injected.js:5
+is @ injected.js:5
+uD @ injected.js:5
+await in uD
+Ox @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+n @ injected.js:5
+ User data fetched after login: success
+ Login mutation completed successfully
+ Performing explicit user data fetch after login
+ AUTH REDIRECT: User logged in, handling redirect
+ Fetch finished loading: GET "https://app.matchpro.ai/api/user".
+queryFn @ index-CyKYrMkM.js:649
+i @ index-CyKYrMkM.js:41
+f @ index-CyKYrMkM.js:41
+start @ index-CyKYrMkM.js:41
+fetch @ index-CyKYrMkM.js:41
+(anonymous) @ index-CyKYrMkM.js:41
+(anonymous) @ index-CyKYrMkM.js:41
+batch @ index-CyKYrMkM.js:41
+refetchQueries @ index-CyKYrMkM.js:41
+(anonymous) @ index-CyKYrMkM.js:41
+batch @ index-CyKYrMkM.js:41
+invalidateQueries @ index-CyKYrMkM.js:41
+onSuccess @ index-CyKYrMkM.js:649
+execute @ index-CyKYrMkM.js:41
+await in execute
+mutate @ index-CyKYrMkM.js:41
+o @ index-CyKYrMkM.js:657
+(anonymous) @ index-CyKYrMkM.js:649
+await in (anonymous)
+wue @ index-CyKYrMkM.js:38
+Sue @ index-CyKYrMkM.js:38
+Cue @ index-CyKYrMkM.js:38
+dM @ index-CyKYrMkM.js:38
+V7 @ index-CyKYrMkM.js:38
+(anonymous) @ index-CyKYrMkM.js:38
+yO @ index-CyKYrMkM.js:41
+f7 @ index-CyKYrMkM.js:38
+N2 @ index-CyKYrMkM.js:38
+H4 @ index-CyKYrMkM.js:38
+zue @ index-CyKYrMkM.js:38
+submit @ injected.js:5
+is @ injected.js:5
+uD @ injected.js:5
+await in uD
+Ox @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+n @ injected.js:5
+ User data retrieved after login: success
+ Fetch finished loading: GET "https://app.matchpro.ai/api/user".
+o @ index-CyKYrMkM.js:657
+await in o
+(anonymous) @ index-CyKYrMkM.js:649
+await in (anonymous)
+wue @ index-CyKYrMkM.js:38
+Sue @ index-CyKYrMkM.js:38
+Cue @ index-CyKYrMkM.js:38
+dM @ index-CyKYrMkM.js:38
+V7 @ index-CyKYrMkM.js:38
+(anonymous) @ index-CyKYrMkM.js:38
+yO @ index-CyKYrMkM.js:41
+f7 @ index-CyKYrMkM.js:38
+N2 @ index-CyKYrMkM.js:38
+H4 @ index-CyKYrMkM.js:38
+zue @ index-CyKYrMkM.js:38
+submit @ injected.js:5
+is @ injected.js:5
+uD @ injected.js:5
+await in uD
+Ox @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+n @ injected.js:5
+ Found redirect path: /admin/events/1844329078/master-schedule
+ Redirecting to: /admin/events/1844329078/master-schedule
+Navigated to https://app.matchpro.ai/admin/events/1844329078/master-schedule
+js?libraries=places&v=beta&callback=Function.prototype:1382 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+Tda @ js?libraries=places&v=beta&callback=Function.prototype:1382
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641Understand this warning
+js?libraries=places&v=beta&callback=Function.prototype:1414 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+_.B.send @ js?libraries=places&v=beta&callback=Function.prototype:1414
+Qda @ js?libraries=places&v=beta&callback=Function.prototype:1391
+Tda @ js?libraries=places&v=beta&callback=Function.prototype:1383
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+chunk-FLCULYKI.js:31 orchestration: Initializing config store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing feature flag store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state {pill-player: {…}}
+chunk-FLCULYKI.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+index-CyKYrMkM.js:848 Google Maps API key length: 0 characters
+index-CyKYrMkM.js:848 Mapbox API key length: 93 characters
+index-CyKYrMkM.js:848 Google Maps API already loaded
+index-CyKYrMkM.js:657 Current route location (Wouter): /admin/events/1844329078/master-schedule
+index-CyKYrMkM.js:657 Current URL: https://app.matchpro.ai/admin/events/1844329078/master-schedule
+index-CyKYrMkM.js:657 Current pathname: /admin/events/1844329078/master-schedule
+index-CyKYrMkM.js:657 Current search: 
+index-CyKYrMkM.js:657 Fetching user with emulation token: not present
+index-CyKYrMkM.js:657 User data fetched: {id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: '$2b$12$d6n1CBWgsWFm0fh77F1OX.YxDZy7/O3aLSuJOuq4QkvOtFmSit7BC', firstName: 'Bryan', …}
+8Fetch finished loading: GET "<URL>".
+index-CyKYrMkM.js:649 Fetch failed loading: GET "https://app.matchpro.ai/api/user".
+queryFn @ index-CyKYrMkM.js:649
+i @ index-CyKYrMkM.js:41
+f @ index-CyKYrMkM.js:41
+start @ index-CyKYrMkM.js:41
+fetch @ index-CyKYrMkM.js:41
+tg @ index-CyKYrMkM.js:41
+onSubscribe @ index-CyKYrMkM.js:41
+subscribe @ index-CyKYrMkM.js:41
+(anonymous) @ index-CyKYrMkM.js:41
+iW @ index-CyKYrMkM.js:39
+SS @ index-CyKYrMkM.js:41
+Jh @ index-CyKYrMkM.js:41
+BM @ index-CyKYrMkM.js:41
+iu @ index-CyKYrMkM.js:39
+rhe @ index-CyKYrMkM.js:41
+ku @ index-CyKYrMkM.js:41
+$W @ index-CyKYrMkM.js:41
+w @ index-CyKYrMkM.js:26
+T @ index-CyKYrMkM.js:26
+UnifiedTournamentControlCenter-DHKKrozz.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentControlCenter-DHKKrozz.js:1 Configured flights: 1 of 76
+chunk-CVIZYB43.js:3 [Violation] 'setTimeout' handler took 61ms
+util.js:33 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+$Aa @ util.js:33
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1384
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1384
+setTimeout
+Tda @ js?libraries=places&v=beta&callback=Function.prototype:1384
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641Understand this warning
+UnifiedTournamentControlCenter-DHKKrozz.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentControlCenter-DHKKrozz.js:1 Configured flights: 1 of 76
+chunk-CVIZYB43.js:3 [Violation] 'setTimeout' handler took 64ms
+MasterSchedulePage-BP8xJV68.js:264 [DEBUG] Fetching fields for event: 1844329078
+MasterSchedulePage-BP8xJV68.js:264 [DEBUG] Response status: 200
+MasterSchedulePage-BP8xJV68.js:264 [DEBUG] Fields response: (29) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]0: {id: 31, name: '12', fieldSize: '11v11', complexName: 'Galway Downs Soccer Complex', openTime: '08:00', …}1: {id: 32, name: '13', fieldSize: '11v11', complexName: 'Galway Downs Soccer Complex', openTime: '08:00', …}2: {id: 33, name: '14', fieldSize: '11v11', complexName: 'Galway Downs Soccer Complex', openTime: '08:00', …}3: {id: 34, name: '15', fieldSize: '11v11', complexName: 'Galway Downs Soccer Complex', openTime: '08:00', …}4: {id: 35, name: '20', fieldSize: '11v11', complexName: 'Galway Downs Soccer Complex', openTime: '08:00', …}5: {id: 36, name: 'Field 2', fieldSize: '11v11', complexName: 'Patricia H. Birdsall Sports Park', openTime: '08:00', …}6: {id: 8, name: 'f1', fieldSize: '11v11', complexName: 'Galway Downs Soccer Complex', openTime: '08:00', …}7: {id: 9, name: 'f2', fieldSize: '11v11', complexName: 'Galway Downs Soccer Complex', openTime: '08:00', …}8: {id: 10, name: 'A1', fieldSize: '9v9', complexName: 'Galway Downs Soccer Complex', openTime: '08:00', …}9: {id: 11, name: 'A2', fieldSize: '9v9', complexName: 'Galway Downs Soccer Complex', openTime: '08:00', …}10: {id: 12, name: 'B1', fieldSize: '7v7', complexName: 'Galway Downs Soccer Complex', openTime: '08:00', …}11: {id: 13, name: 'B2', fieldSize: '7v7', complexName: 'Galway Downs Soccer Complex', openTime: '08:00', …}12: {id: 14, name: 'f3', fieldSize: '11v11', complexName: 'Galway Downs Soccer Complex', openTime: '08:00', …}13: {id: 15, name: 'f4', fieldSize: '11v11', complexName: 'Galway Downs Soccer Complex', openTime: '08:00', …}14: {id: 16, name: 'f5', fieldSize: '11v11', complexName: 'Galway Downs Soccer Complex', openTime: '08:00', …}15: {id: 17, name: 'f6', fieldSize: '11v11', complexName: 'Galway Downs Soccer Complex', openTime: '08:00', …}16: {id: 18, name: 'Small1', fieldSize: '4v4', complexName: 'Galway Downs Soccer Complex', openTime: '08:00', …}17: {id: 19, name: 'Small2', fieldSize: '4v4', complexName: 'Galway Downs Soccer Complex', openTime: '08:00', …}18: {id: 20, name: '1', fieldSize: '11v11', complexName: 'Galway Downs Soccer Complex', openTime: '08:00', …}19: {id: 21, name: '2', fieldSize: '11v11', complexName: 'Galway Downs Soccer Complex', openTime: '08:00', …}20: {id: 22, name: '3', fieldSize: '11v11', complexName: 'Galway Downs Soccer Complex', openTime: '08:00', …}21: {id: 23, name: '4', fieldSize: '11v11', complexName: 'Galway Downs Soccer Complex', openTime: '08:00', …}22: {id: 24, name: '5', fieldSize: '11v11', complexName: 'Galway Downs Soccer Complex', openTime: '08:00', …}23: {id: 25, name: '6', fieldSize: '11v11', complexName: 'Galway Downs Soccer Complex', openTime: '08:00', …}24: {id: 26, name: '7', fieldSize: '11v11', complexName: 'Galway Downs Soccer Complex', openTime: '08:00', …}25: {id: 27, name: '8', fieldSize: '11v11', complexName: 'Galway Downs Soccer Complex', openTime: '08:00', …}26: {id: 28, name: '9', fieldSize: '11v11', complexName: 'Galway Downs Soccer Complex', openTime: '08:00', …}27: {id: 29, name: '10', fieldSize: '11v11', complexName: 'Galway Downs Soccer Complex', openTime: '08:00', …}28: {id: 30, name: '11', fieldSize: '11v11', complexName: 'Galway Downs Soccer Complex', openTime: '08:00', …}length: 29[[Prototype]]: Array(0)
+MasterSchedulePage-BP8xJV68.js:264 [DEBUG] Fields data: (29) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+MasterSchedulePage-BP8xJV68.js:264 [DEBUG] Fields array: []
+MasterSchedulePage-BP8xJV68.js:264 [DEBUG] Fields length: 0
