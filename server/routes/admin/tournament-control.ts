@@ -538,28 +538,45 @@ async function generateGamesForFlight(eventId: string, flight: any) {
   let gameNumber = 1;
 
   // PHASE 1: Generate pool play games within each bracket (round-robin within bracket)
-  for (const [bracketId, bracketTeams] of Array.from(teamsByBracket.entries())) {
-    console.log(`[Generate Games] Creating pool play for bracket ${bracketId} (${bracketTeams.length} teams)`);
-    
-    // Round-robin within this bracket only
-    for (let i = 0; i < bracketTeams.length; i++) {
-      for (let j = i + 1; j < bracketTeams.length; j++) {
-        const homeTeam = bracketTeams[i];
-        const awayTeam = bracketTeams[j];
+  // NOTE: For crossplay brackets, skip intra-pool games - only generate crossplay games
+  
+  // Check if this is a crossplay format first
+  let isCrossplayFormat = false;
+  if (teamsByBracket.size >= 2) {
+    const firstBracket = await db.query.tournamentGroups.findFirst({
+      where: eq(tournamentGroups.id, Array.from(teamsByBracket.keys())[0]),
+      columns: { type: true }
+    });
+    isCrossplayFormat = firstBracket?.type === 'crossplay';
+  }
+  
+  if (!isCrossplayFormat) {
+    // Standard brackets: generate round-robin within each bracket
+    for (const [bracketId, bracketTeams] of Array.from(teamsByBracket.entries())) {
+      console.log(`[Generate Games] Creating pool play for bracket ${bracketId} (${bracketTeams.length} teams)`);
+      
+      // Round-robin within this bracket only
+      for (let i = 0; i < bracketTeams.length; i++) {
+        for (let j = i + 1; j < bracketTeams.length; j++) {
+          const homeTeam = bracketTeams[i];
+          const awayTeam = bracketTeams[j];
 
-        gamesToCreate.push({
-          eventId: eventId,
-          ageGroupId: flight.ageGroupId,
-          groupId: bracketId, // Store which bracket this game belongs to
-          homeTeamId: homeTeam.id,
-          awayTeamId: awayTeam.id,
-          matchNumber: gameNumber++,
-          duration: flight.matchTime,
-          status: 'scheduled',
-          round: 1 // Pool play round
-        });
+          gamesToCreate.push({
+            eventId: eventId,
+            ageGroupId: flight.ageGroupId,
+            groupId: bracketId, // Store which bracket this game belongs to
+            homeTeamId: homeTeam.id,
+            awayTeamId: awayTeam.id,
+            matchNumber: gameNumber++,
+            duration: flight.matchTime,
+            status: 'scheduled',
+            round: 1 // Pool play round
+          });
+        }
       }
     }
+  } else {
+    console.log(`[Generate Games] Skipping intra-pool games for crossplay format - will generate crossplay games only`);
   }
 
   // PHASE 2: Generate crossplay/championship games based on bracket type
@@ -575,13 +592,13 @@ async function generateGamesForFlight(eventId: string, flight: any) {
     const bracketType = firstBracket?.type || 'round_robin';
     
     if (bracketType === 'crossplay') {
-      // 6-team format: crossplay between brackets (each team plays some from other bracket)
-      console.log(`[Generate Games] Creating crossplay games for 6-team format`);
+      // 6-team format: Only crossplay games between pools (no intra-pool games)
+      console.log(`[Generate Games] Creating crossplay-only games for 6-team format`);
       
-      // Add crossplay round-robin games between brackets
+      // Only crossplay games between brackets (teams from Pool A vs teams from Pool B)
       const [bracket1Teams, bracket2Teams] = [bracketsWithTeams[0][1], bracketsWithTeams[1][1]];
       
-      // Each team in bracket 1 plays each team in bracket 2
+      // Each team in bracket 1 plays each team in bracket 2 (6 total games for 3v3 crossplay)
       for (const team1 of bracket1Teams) {
         for (const team2 of bracket2Teams) {
           gamesToCreate.push({
@@ -593,7 +610,7 @@ async function generateGamesForFlight(eventId: string, flight: any) {
             matchNumber: gameNumber++,
             duration: flight.matchTime,
             status: 'scheduled',
-            round: 2 // Crossplay round
+            round: 1 // All crossplay games are in round 1 (no separate pool play)
           });
         }
       }
@@ -608,7 +625,7 @@ async function generateGamesForFlight(eventId: string, flight: any) {
         matchNumber: gameNumber++,
         duration: flight.matchTime,
         status: 'scheduled',
-        round: 3 // Championship round (after pool play + crossplay)
+        round: 2 // Championship round (after crossplay round)
       });
       
     } else {
