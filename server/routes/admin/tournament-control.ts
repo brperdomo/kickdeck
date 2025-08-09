@@ -598,7 +598,7 @@ async function generateGamesForFlight(eventId: string, flight: any) {
       // Only crossplay games between brackets (teams from Pool A vs teams from Pool B)
       const [bracket1Teams, bracket2Teams] = [bracketsWithTeams[0][1], bracketsWithTeams[1][1]];
       
-      // Each team in bracket 1 plays each team in bracket 2 (6 total games for 3v3 crossplay)
+      // Each team in bracket 1 plays each team in bracket 2 (9 total games for 3v3 crossplay)
       for (const team1 of bracket1Teams) {
         for (const team2 of bracket2Teams) {
           gamesToCreate.push({
@@ -644,6 +644,21 @@ async function generateGamesForFlight(eventId: string, flight: any) {
         round: 2 // Championship round
       });
     }
+  } else if (bracketsWithTeams.length === 1) {
+    // 4-team single bracket format: championship between 1st and 2nd in points
+    console.log(`[Generate Games] Creating championship game for single bracket (1st vs 2nd in points)`);
+    
+    gamesToCreate.push({
+      eventId: eventId,
+      ageGroupId: flight.ageGroupId,
+      groupId: null, // Championship game doesn't belong to a specific bracket
+      homeTeamId: null, // Will be determined by points standings (1st place)
+      awayTeamId: null, // Will be determined by points standings (2nd place)
+      matchNumber: gameNumber++,
+      duration: flight.matchTime,
+      status: 'scheduled',
+      round: 2 // Championship round (after pool play)
+    });
   }
 
   // Insert games into database
