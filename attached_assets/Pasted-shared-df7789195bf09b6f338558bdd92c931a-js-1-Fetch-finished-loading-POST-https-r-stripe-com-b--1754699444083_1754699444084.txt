@@ -1,0 +1,165 @@
+shared-df7789195bf09b6f338558bdd92c931a.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+e @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+c @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+setTimeout
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+log @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+log @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+value @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+value @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+index-CAtQhEPV.js:823 🎯 [OPTIMIZATION SUCCESS] Response received: {success: true, optimizationsApplied: 0, fieldUtilizationImproved: 0, message: 'Successfully consolidated 0 games to priority fields', fieldUtilization: Array(9), …}
+index-CAtQhEPV.js:823 Fetch finished loading: POST "https://app.matchpro.ai/api/test-consolidate-fields/1844329078".
+mutationFn @ index-CAtQhEPV.js:823
+fn @ index-CAtQhEPV.js:41
+f @ index-CAtQhEPV.js:41
+start @ index-CAtQhEPV.js:41
+execute @ index-CAtQhEPV.js:41
+await in execute
+mutate @ index-CAtQhEPV.js:41
+(anonymous) @ index-CAtQhEPV.js:41
+h @ index-CAtQhEPV.js:823
+wue @ index-CAtQhEPV.js:38
+Sue @ index-CAtQhEPV.js:38
+Cue @ index-CAtQhEPV.js:38
+dM @ index-CAtQhEPV.js:38
+V7 @ index-CAtQhEPV.js:38
+(anonymous) @ index-CAtQhEPV.js:38
+yO @ index-CAtQhEPV.js:41
+f7 @ index-CAtQhEPV.js:38
+N2 @ index-CAtQhEPV.js:38
+H4 @ index-CAtQhEPV.js:38
+zue @ index-CAtQhEPV.js:38
+index-CAtQhEPV.js:824 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-CAtQhEPV.js:824 🎯 [FIELD DEBUG] Fields with games assigned: (9) [34, 35, 33, 31, 8, 9, 14, 15, 32]
+index-CAtQhEPV.js:824 🎯 [FIELD DEBUG] Field 31 (12) has 5 games
+index-CAtQhEPV.js:824 🎯 [FIELD DEBUG] Field 32 (13) has 5 games
+index-CAtQhEPV.js:824 🎯 [FIELD DEBUG] Field 33 (14) has 4 games
+index-CAtQhEPV.js:824 🎯 [FIELD DEBUG] Field 34 (15) has 3 games
+index-CAtQhEPV.js:824 🎯 [FIELD DEBUG] Field 35 (20) has 2 games
+index-CAtQhEPV.js:824 🎯 [FIELD DEBUG] Field 8 (f1) has 2 games
+index-CAtQhEPV.js:824 🎯 [FIELD DEBUG] Field 9 (f2) has 1 games
+index-CAtQhEPV.js:824 🎯 [FIELD DEBUG] Field 14 (f3) has 1 games
+index-CAtQhEPV.js:824 🎯 [FIELD DEBUG] Field 15 (f4) has 1 games
+index-CAtQhEPV.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 24, …}
+index-CAtQhEPV.js:823 Fetch finished loading: GET "https://app.matchpro.ai/api/admin/events/1844329078/quick-gap-analysis?date=2025-08-16".
+queryFn @ index-CAtQhEPV.js:823
+i @ index-CAtQhEPV.js:41
+f @ index-CAtQhEPV.js:41
+start @ index-CAtQhEPV.js:41
+fetch @ index-CAtQhEPV.js:41
+(anonymous) @ index-CAtQhEPV.js:41
+(anonymous) @ index-CAtQhEPV.js:41
+batch @ index-CAtQhEPV.js:41
+refetchQueries @ index-CAtQhEPV.js:41
+(anonymous) @ index-CAtQhEPV.js:41
+batch @ index-CAtQhEPV.js:41
+invalidateQueries @ index-CAtQhEPV.js:41
+onSuccess @ index-CAtQhEPV.js:823
+execute @ index-CAtQhEPV.js:41
+await in execute
+mutate @ index-CAtQhEPV.js:41
+(anonymous) @ index-CAtQhEPV.js:41
+h @ index-CAtQhEPV.js:823
+wue @ index-CAtQhEPV.js:38
+Sue @ index-CAtQhEPV.js:38
+Cue @ index-CAtQhEPV.js:38
+dM @ index-CAtQhEPV.js:38
+V7 @ index-CAtQhEPV.js:38
+(anonymous) @ index-CAtQhEPV.js:38
+yO @ index-CAtQhEPV.js:41
+f7 @ index-CAtQhEPV.js:38
+N2 @ index-CAtQhEPV.js:38
+H4 @ index-CAtQhEPV.js:38
+zue @ index-CAtQhEPV.js:38
+index-CAtQhEPV.js:823 Fetch finished loading: GET "https://app.matchpro.ai/api/admin/events/1844329078/schedule-calendar".
+queryFn @ index-CAtQhEPV.js:823
+i @ index-CAtQhEPV.js:41
+f @ index-CAtQhEPV.js:41
+start @ index-CAtQhEPV.js:41
+fetch @ index-CAtQhEPV.js:41
+(anonymous) @ index-CAtQhEPV.js:41
+(anonymous) @ index-CAtQhEPV.js:41
+batch @ index-CAtQhEPV.js:41
+refetchQueries @ index-CAtQhEPV.js:41
+(anonymous) @ index-CAtQhEPV.js:41
+batch @ index-CAtQhEPV.js:41
+invalidateQueries @ index-CAtQhEPV.js:41
+onSuccess @ index-CAtQhEPV.js:823
+execute @ index-CAtQhEPV.js:41
+await in execute
+mutate @ index-CAtQhEPV.js:41
+(anonymous) @ index-CAtQhEPV.js:41
+h @ index-CAtQhEPV.js:823
+wue @ index-CAtQhEPV.js:38
+Sue @ index-CAtQhEPV.js:38
+Cue @ index-CAtQhEPV.js:38
+dM @ index-CAtQhEPV.js:38
+V7 @ index-CAtQhEPV.js:38
+(anonymous) @ index-CAtQhEPV.js:38
+yO @ index-CAtQhEPV.js:41
+f7 @ index-CAtQhEPV.js:38
+N2 @ index-CAtQhEPV.js:38
+H4 @ index-CAtQhEPV.js:38
+zue @ index-CAtQhEPV.js:38
+index-CAtQhEPV.js:823 🎯 [ENHANCED DRAG DROP] Transformed games for calendar: (24) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-CAtQhEPV.js:823 🎯 [ENHANCED DRAG DROP] Fields data: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-CAtQhEPV.js:823 🎯 [GAME-FIELD DEBUG] Game 9922: fieldId=34, fieldName="15", startTime="2025-08-16T08:00:00"
+index-CAtQhEPV.js:823 🎯 [GAME-FIELD DEBUG] Game 9917: fieldId=35, fieldName="20", startTime="2025-08-16T08:00:00"
+index-CAtQhEPV.js:823 🎯 [GAME-FIELD DEBUG] Game 9921: fieldId=33, fieldName="14", startTime="2025-08-16T14:00:00"
+index-CAtQhEPV.js:823 🎯 [GAME-FIELD DEBUG] Game 9918: fieldId=34, fieldName="15", startTime="2025-08-16T14:00:00"
+index-CAtQhEPV.js:823 🎯 [GAME-FIELD DEBUG] Game 9920: fieldId=33, fieldName="14", startTime="2025-08-17T08:00:00"
+index-CAtQhEPV.js:823 🎯 [GAME-FIELD DEBUG] Game 9919: fieldId=34, fieldName="15", startTime="2025-08-17T08:00:00"
+index-CAtQhEPV.js:823 🎯 [GAME-FIELD DEBUG] Game 9923: fieldId=31, fieldName="12", startTime="2025-08-16T08:00:00"
+index-CAtQhEPV.js:823 🎯 [GAME-FIELD DEBUG] Game 9933: fieldId=8, fieldName="f1", startTime="2025-08-16T08:00:00"
+index-CAtQhEPV.js:823 🎯 [GAME-FIELD DEBUG] Game 9932: fieldId=9, fieldName="f2", startTime="2025-08-16T08:00:00"
+index-CAtQhEPV.js:823 🎯 [GAME-FIELD DEBUG] Game 9931: fieldId=14, fieldName="f3", startTime="2025-08-16T08:00:00"
+index-CAtQhEPV.js:823 🎯 [GAME-FIELD DEBUG] Game 9930: fieldId=15, fieldName="f4", startTime="2025-08-16T08:00:00"
+index-CAtQhEPV.js:823 🎯 [GAME-FIELD DEBUG] Game 9929: fieldId=31, fieldName="12", startTime="2025-08-16T10:30:00"
+index-CAtQhEPV.js:823 🎯 [GAME-FIELD DEBUG] Game 9926: fieldId=32, fieldName="13", startTime="2025-08-16T10:30:00"
+index-CAtQhEPV.js:823 🎯 [GAME-FIELD DEBUG] Game 9928: fieldId=35, fieldName="20", startTime="2025-08-17T08:00:00"
+index-CAtQhEPV.js:823 🎯 [GAME-FIELD DEBUG] Game 9925: fieldId=8, fieldName="f1", startTime="2025-08-17T08:00:00"
+index-CAtQhEPV.js:823 🎯 [GAME-FIELD DEBUG] Game 9927: fieldId=31, fieldName="12", startTime="2025-08-17T10:30:00"
+index-CAtQhEPV.js:823 🎯 [GAME-FIELD DEBUG] Game 9924: fieldId=33, fieldName="14", startTime="2025-08-17T10:30:00"
+index-CAtQhEPV.js:823 🎯 [GAME-FIELD DEBUG] Game 9915: fieldId=32, fieldName="13", startTime="2025-08-16T08:00:00"
+index-CAtQhEPV.js:823 🎯 [GAME-FIELD DEBUG] Game 9910: fieldId=33, fieldName="14", startTime="2025-08-16T08:00:00"
+index-CAtQhEPV.js:823 🎯 [GAME-FIELD DEBUG] Game 9914: fieldId=31, fieldName="12", startTime="2025-08-16T14:00:00"
+index-CAtQhEPV.js:823 🎯 [GAME-FIELD DEBUG] Game 9911: fieldId=32, fieldName="13", startTime="2025-08-16T14:00:00"
+index-CAtQhEPV.js:823 🎯 [GAME-FIELD DEBUG] Game 9913: fieldId=31, fieldName="12", startTime="2025-08-17T08:00:00"
+index-CAtQhEPV.js:823 🎯 [GAME-FIELD DEBUG] Game 9912: fieldId=32, fieldName="13", startTime="2025-08-17T08:00:00"
+index-CAtQhEPV.js:823 🎯 [GAME-FIELD DEBUG] Game 9916: fieldId=32, fieldName="13", startTime="2025-08-17T10:30:00"
+index-CAtQhEPV.js:824 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-CAtQhEPV.js:824 🎯 [FIELD DEBUG] Fields with games assigned: (9) [34, 35, 33, 31, 8, 9, 14, 15, 32]
+index-CAtQhEPV.js:824 🎯 [FIELD DEBUG] Field 31 (12) has 5 games
+index-CAtQhEPV.js:824 🎯 [FIELD DEBUG] Field 32 (13) has 5 games
+index-CAtQhEPV.js:824 🎯 [FIELD DEBUG] Field 33 (14) has 4 games
+index-CAtQhEPV.js:824 🎯 [FIELD DEBUG] Field 34 (15) has 3 games
+index-CAtQhEPV.js:824 🎯 [FIELD DEBUG] Field 35 (20) has 2 games
+index-CAtQhEPV.js:824 🎯 [FIELD DEBUG] Field 8 (f1) has 2 games
+index-CAtQhEPV.js:824 🎯 [FIELD DEBUG] Field 9 (f2) has 1 games
+index-CAtQhEPV.js:824 🎯 [FIELD DEBUG] Field 14 (f3) has 1 games
+index-CAtQhEPV.js:824 🎯 [FIELD DEBUG] Field 15 (f4) has 1 games
+index-CAtQhEPV.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 24, …}
+index-CAtQhEPV.js:824 🎯 [FIELD DEBUG] All available fields: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-CAtQhEPV.js:824 🎯 [FIELD DEBUG] Fields with games assigned: (9) [34, 35, 33, 31, 8, 9, 14, 15, 32]
+index-CAtQhEPV.js:824 🎯 [FIELD DEBUG] Field 31 (12) has 5 games
+index-CAtQhEPV.js:824 🎯 [FIELD DEBUG] Field 32 (13) has 5 games
+index-CAtQhEPV.js:824 🎯 [FIELD DEBUG] Field 33 (14) has 4 games
+index-CAtQhEPV.js:824 🎯 [FIELD DEBUG] Field 34 (15) has 3 games
+index-CAtQhEPV.js:824 🎯 [FIELD DEBUG] Field 35 (20) has 2 games
+index-CAtQhEPV.js:824 🎯 [FIELD DEBUG] Field 8 (f1) has 2 games
+index-CAtQhEPV.js:824 🎯 [FIELD DEBUG] Field 9 (f2) has 1 games
+index-CAtQhEPV.js:824 🎯 [FIELD DEBUG] Field 14 (f3) has 1 games
+index-CAtQhEPV.js:824 🎯 [FIELD DEBUG] Field 15 (f4) has 1 games
+index-CAtQhEPV.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 28, gamesCount: 24, …}
