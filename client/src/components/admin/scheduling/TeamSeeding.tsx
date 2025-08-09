@@ -10,7 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { 
   Target, ArrowUpDown, Shuffle, CheckCircle, AlertTriangle, 
-  GripVertical, Trophy, Users, Info
+  GripVertical, Trophy, Users, Info, RotateCcw, Trash2
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -341,6 +341,38 @@ export function TeamSeeding({ eventId, workflowData, onComplete, onError }: Team
     onComplete(seedingData);
   };
 
+  const clearAllTeamAssignments = async () => {
+    try {
+      const response = await fetch(`/api/admin/events/${eventId}/clear-all-team-assignments`, {
+        method: 'POST',
+        credentials: 'include'
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to clear team assignments');
+      }
+
+      // Reset local state
+      setBracketSeedings(prev => prev.map(seeding => ({
+        ...seeding,
+        teams: []
+      })));
+
+      toast({
+        title: "Success",
+        description: "All team bracket assignments have been cleared successfully.",
+      });
+
+    } catch (error) {
+      console.error('Error clearing team assignments:', error);
+      toast({
+        title: "Error",
+        description: "Failed to clear team assignments. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const selectedSeeding = bracketSeedings.find(s => s.bracketId === selectedBracket);
 
   if (brackets.length === 0) {
@@ -411,6 +443,14 @@ export function TeamSeeding({ eventId, workflowData, onComplete, onError }: Team
                   >
                     <Shuffle className="h-4 w-4 mr-2" />
                     Auto-Seed Teams
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    onClick={clearAllTeamAssignments}
+                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                  >
+                    <RotateCcw className="h-4 w-4 mr-2" />
+                    Clear All Assignments
                   </Button>
                   {selectedSeeding.pools.length > 0 && (
                     <Button 

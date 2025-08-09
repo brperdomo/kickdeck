@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { Users, ArrowRight, Shuffle, BarChart3, Move, Plus, AlertCircle } from 'lucide-react';
+import { Users, ArrowRight, Shuffle, BarChart3, Move, Plus, AlertCircle, RotateCcw } from 'lucide-react';
 
 interface Team {
   id: number;
@@ -154,6 +154,34 @@ export function BracketAssignmentInterface({ eventId }: BracketAssignmentInterfa
     assignTeamsMutation.mutate({ assignments });
   };
 
+  // Clear all team assignments mutation
+  const clearAllAssignmentsMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch(`/api/admin/events/${eventId}/clear-all-team-assignments`, {
+        method: 'POST',
+        credentials: 'include'
+      });
+      if (!response.ok) throw new Error('Failed to clear team assignments');
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Assignments Cleared",
+        description: "All team bracket assignments have been cleared successfully"
+      });
+      queryClient.invalidateQueries({ queryKey: ['bracket-assignments', eventId] });
+      queryClient.invalidateQueries({ queryKey: ['bracket-creation', eventId] });
+      setTeamAssignments({});
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to clear team assignments. Please try again.",
+        variant: "destructive"
+      });
+    }
+  });
+
   const getFlightLevelBadge = (level: string) => {
     const colors = {
       elite: 'bg-amber-500 text-white',
@@ -184,6 +212,15 @@ export function BracketAssignmentInterface({ eventId }: BracketAssignmentInterfa
             Assign teams to specific brackets within flights for optimal competition balance
           </p>
         </div>
+        <Button 
+          variant="outline"
+          onClick={() => clearAllAssignmentsMutation.mutate()}
+          disabled={clearAllAssignmentsMutation.isPending}
+          className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-300"
+        >
+          <RotateCcw className="h-4 w-4 mr-2" />
+          Clear All Assignments
+        </Button>
       </div>
 
       {/* Flight Selection */}

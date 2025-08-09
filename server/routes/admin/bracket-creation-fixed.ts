@@ -465,6 +465,36 @@ router.post('/:eventId/teams/:teamId/remove-flight', isAdmin, async (req, res) =
   }
 });
 
+// POST /api/admin/events/:eventId/clear-all-team-assignments
+router.post('/:eventId/clear-all-team-assignments', isAdmin, async (req, res) => {
+  try {
+    const { eventId } = req.params;
+
+    console.log(`[Clear Teams] Clearing all team bracket assignments for event ${eventId}`);
+
+    // Clear all bracket assignments for teams in this event
+    await db
+      .update(teams)
+      .set({ 
+        bracketId: null,
+        groupId: null,
+        seedRanking: null 
+      })
+      .where(eq(teams.eventId, eventId));
+
+    console.log(`[Clear Teams] Successfully cleared all team bracket assignments for event ${eventId}`);
+
+    res.json({
+      success: true,
+      message: 'All team bracket assignments cleared successfully'
+    });
+
+  } catch (error) {
+    console.error('[Clear Teams] Error clearing team bracket assignments:', error);
+    res.status(500).json({ error: 'Failed to clear team bracket assignments' });
+  }
+});
+
 // POST /api/admin/events/:eventId/teams/:teamId/seed
 router.post('/:eventId/teams/:teamId/seed', isAdmin, async (req, res) => {
   try {
