@@ -8,7 +8,8 @@ import {
   eventAgeGroups,
   events,
   games,
-  teamStandings
+  teamStandings,
+  tournamentGroups
 } from '@db/schema';
 
 const router = Router();
@@ -905,6 +906,289 @@ router.post('/:eventId/swap-teams', isAdmin, async (req, res) => {
   } catch (error) {
     console.error('[Team Swap] Execution error:', error);
     res.status(500).json({ error: 'Failed to execute team swap' });
+  }
+});
+
+// GET /api/admin/events/:eventId/bracket-assignments
+router.get('/:eventId/bracket-assignments', isAdmin, async (req, res) => {
+  try {
+    const eventId = req.params.eventId;
+    
+    console.log(`[Bracket Assignment] GET /${eventId}/bracket-assignments`);
+
+    // Get all flights (event_brackets) for this event
+    const flights = await db
+      .select({
+        flightId: eventBrackets.id,
+        flightName: eventBrackets.name,
+        flightLevel: eventBrackets.level,
+        ageGroup: eventAgeGroups.ageGroup,
+        gender: eventAgeGroups.gender,
+        ageGroupId: eventBrackets.ageGroupId
+      })
+      .from(eventBrackets)
+      .innerJoin(eventAgeGroups, eq(eventBrackets.ageGroupId, eventAgeGroups.id))
+      .where(eq(eventAgeGroups.eventId, eventId));
+
+    const flightBracketData = [];
+
+    for (const flight of flights) {
+      // Get all teams assigned to this flight
+      const assignedTeams = await db.query.teams.findMany({
+        where: and(
+          eq(teams.eventId, eventId),
+          eq(teams.bracketId, flight.flightId),
+          eq(teams.status, 'approved')
+        ),
+        columns: {
+          id: true,
+          name: true,
+          status: true,
+          groupId: true,
+          seedRanking: true
+        }
+      });
+
+      // Get all unassigned teams for this age group/gender
+      const unassignedTeams = await db.query.teams.findMany({
+        where: and(
+          eq(teams.eventId, eventId),
+          eq(teams.ageGroupId, flight.ageGroupId),
+          eq(teams.status, 'approved'),
+          sql`${teams.bracketId} IS NULL`
+        ),
+        columns: {
+          id: true,
+          name: true,
+          status: true,
+          groupId: true,
+          seedRanking: true
+        }
+      });
+
+      // Get brackets (tournament groups) for this flight
+      const brackets = await db.query.tournamentGroups.findMany({
+        where: and(
+          eq(tournamentGroups.eventId, eventId),
+          eq(tournamentGroups.ageGroupId, flight.ageGroupId)
+        )
+      });
+
+      // Group assigned teams by their groupId (bracket assignment)
+      const bracketGroups = brackets.map(bracket => ({
+        id: bracket.id,
+        name: bracket.name,
+        type: bracket.type || 'pool',
+        stage: bracket.stage || 'group',
+        teamCount: assignedTeams.filter(team => team.groupId === bracket.id).length,
+        teams: assignedTeams.filter(team => team.groupId === bracket.id)
+      }));
+
+      flightBracketData.push({
+        flightId: flight.flightId,
+        flightName: flight.flightName,
+        flightLevel: flight.flightLevel || 'classic',
+        ageGroup: flight.ageGroup,
+        gender: flight.gender,
+        totalTeams: assignedTeams.length + unassignedTeams.length,
+        brackets: bracketGroups,
+        unassignedTeams: unassignedTeams
+      });
+    }
+
+    res.json(flightBracketData);
+
+  } catch (error) {
+    console.error('[Bracket Assignment] Error fetching bracket assignments:', error);
+    res.status(500).json({ error: 'Failed to fetch bracket assignment data' });
+  }
+});
+
+// POST /api/admin/events/:eventId/teams/bulk-bracket-assign
+router.post('/:eventId/teams/bulk-bracket-assign', isAdmin, async (req, res) => {
+  try {
+    const eventId = req.params.eventId;
+    const { assignments } = req.body; // Array of { teamId, groupId }
+
+    console.log(`[Bracket Assignment] POST /${eventId}/teams/bulk-bracket-assign with ${assignments?.length || 0} assignments`);
+
+    if (!Array.isArray(assignments)) {
+      return res.status(400).json({ error: 'Assignments must be an array' });
+    }
+
+    // Process bracket assignments
+    for (const { teamId, groupId } of assignments) {
+      await db
+        .update(teams)
+        .set({ groupId: groupId ? parseInt(groupId) : null })
+        .where(and(
+          eq(teams.id, parseInt(teamId)),
+          eq(teams.eventId, eventId)
+        ));
+    }
+
+    console.log(`[Bracket Assignment] Successfully updated ${assignments.length} team bracket assignments`);
+
+    res.json({ 
+      success: true, 
+      message: `Updated ${assignments.length} team bracket assignments`,
+      assignmentsProcessed: assignments.length
+    });
+
+  } catch (error) {
+    console.error('[Bracket Assignment] Error assigning teams to brackets:', error);
+    res.status(500).json({ error: 'Failed to assign teams to brackets' });
+  }
+});
+
+// POST /api/admin/events/:eventId/flights/:flightId/create-brackets
+router.post('/:eventId/flights/:flightId/create-brackets', isAdmin, async (req, res) => {
+  try {
+    const { eventId, flightId } = req.params;
+    
+    console.log(`[Bracket Assignment] POST /${eventId}/flights/${flightId}/create-brackets`);
+
+    // Get teams assigned to this flight
+    const assignedTeams = await db.query.teams.findMany({
+      where: and(
+        eq(teams.eventId, eventId),
+        eq(teams.bracketId, parseInt(flightId)),
+        eq(teams.status, 'approved')
+      )
+    });
+
+    if (assignedTeams.length === 0) {
+      return res.status(400).json({ error: 'No teams assigned to this flight' });
+    }
+
+    // Get the flight details to find ageGroupId
+    const flight = await db.query.eventBrackets.findFirst({
+      where: eq(eventBrackets.id, parseInt(flightId))
+    });
+
+    if (!flight) {
+      return res.status(404).json({ error: 'Flight not found' });
+    }
+
+    // Check if brackets already exist
+    const existingBrackets = await db.query.tournamentGroups.findMany({
+      where: and(
+        eq(tournamentGroups.eventId, eventId),
+        eq(tournamentGroups.ageGroupId, flight.ageGroupId)
+      )
+    });
+
+    if (existingBrackets.length > 0) {
+      return res.status(400).json({ error: 'Brackets already exist for this flight' });
+    }
+
+    // Create brackets based on team count
+    const teamCount = assignedTeams.length;
+    let bracketsToCreate = [];
+
+    if (teamCount <= 8) {
+      bracketsToCreate = [{ name: 'Bracket A', size: teamCount }];
+    } else if (teamCount <= 16) {
+      bracketsToCreate = [
+        { name: 'Bracket A', size: Math.ceil(teamCount / 2) },
+        { name: 'Bracket B', size: Math.floor(teamCount / 2) }
+      ];
+    } else {
+      // For larger tournaments, create multiple brackets
+      const bracketsNeeded = Math.ceil(teamCount / 8);
+      for (let i = 0; i < bracketsNeeded; i++) {
+        bracketsToCreate.push({ 
+          name: `Bracket ${String.fromCharCode(65 + i)}`, 
+          size: Math.ceil(teamCount / bracketsNeeded) 
+        });
+      }
+    }
+
+    // Create tournament groups (brackets)
+    for (const bracket of bracketsToCreate) {
+      await db.insert(tournamentGroups).values({
+        eventId: eventId,
+        ageGroupId: flight.ageGroupId,
+        name: bracket.name,
+        type: 'pool',
+        stage: 'group'
+      });
+    }
+
+    res.json({
+      success: true,
+      message: `Created ${bracketsToCreate.length} brackets for this flight`,
+      brackets: bracketsToCreate
+    });
+
+  } catch (error) {
+    console.error('[Bracket Assignment] Error creating brackets:', error);
+    res.status(500).json({ error: 'Failed to create brackets' });
+  }
+});
+
+// POST /api/admin/events/:eventId/flights/:flightId/auto-balance
+router.post('/:eventId/flights/:flightId/auto-balance', isAdmin, async (req, res) => {
+  try {
+    const { eventId, flightId } = req.params;
+    
+    console.log(`[Bracket Assignment] POST /${eventId}/flights/${flightId}/auto-balance`);
+
+    // Get all teams assigned to this flight
+    const assignedTeams = await db.query.teams.findMany({
+      where: and(
+        eq(teams.eventId, eventId),
+        eq(teams.bracketId, parseInt(flightId)),
+        eq(teams.status, 'approved')
+      ),
+      orderBy: [sql`COALESCE(seed_ranking, 999)`, teams.id]
+    });
+
+    // Get the flight details to find ageGroupId
+    const flight = await db.query.eventBrackets.findFirst({
+      where: eq(eventBrackets.id, parseInt(flightId))
+    });
+
+    if (!flight) {
+      return res.status(404).json({ error: 'Flight not found' });
+    }
+
+    // Get all brackets for this flight
+    const brackets = await db.query.tournamentGroups.findMany({
+      where: and(
+        eq(tournamentGroups.eventId, eventId),
+        eq(tournamentGroups.ageGroupId, flight.ageGroupId)
+      ),
+      orderBy: tournamentGroups.name
+    });
+
+    if (brackets.length === 0) {
+      return res.status(400).json({ error: 'No brackets found for this flight' });
+    }
+
+    // Auto-balance teams across brackets
+    let currentBracketIndex = 0;
+    
+    for (const team of assignedTeams) {
+      const targetBracket = brackets[currentBracketIndex];
+      
+      await db
+        .update(teams)
+        .set({ groupId: targetBracket.id })
+        .where(eq(teams.id, team.id));
+      
+      // Move to next bracket, cycling back to first if needed
+      currentBracketIndex = (currentBracketIndex + 1) % brackets.length;
+    }
+
+    res.json({
+      success: true,
+      message: `Auto-balanced ${assignedTeams.length} teams across ${brackets.length} brackets`
+    });
+
+  } catch (error) {
+    console.error('[Bracket Assignment] Error auto-balancing brackets:', error);
+    res.status(500).json({ error: 'Failed to auto-balance brackets' });
   }
 });
 
