@@ -26,7 +26,7 @@ import { PublishSchedules } from '@/components/admin/scheduling/PublishSchedules
 export default function MasterSchedulePage() {
   const { eventId } = useParams<{ eventId: string }>();
   const [, setLocation] = useLocation();
-  const [currentView, setCurrentView] = useState<'quick' | 'view' | 'calendar' | 'cards' | 'manage' | 'flights' | 'formats' | 'brackets' | 'overview' | 'workflow' | 'publish'>('overview');
+  const [currentView, setCurrentView] = useState<'view' | 'calendar' | 'cards' | 'manage' | 'flights' | 'formats' | 'brackets' | 'overview' | 'workflow' | 'publish'>('overview');
 
   if (!eventId) {
     return <div>Event ID not found</div>;
@@ -129,21 +129,7 @@ export default function MasterSchedulePage() {
             3. Create Brackets
           </Button>
           
-          {/* Phase 4: Automated Scheduling */}
-          <Button
-            variant={currentView === 'quick' ? 'default' : 'outline'}
-            onClick={() => setCurrentView('quick')}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 whitespace-nowrap ${
-              currentView === 'quick' 
-                ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25 hover:bg-blue-500' 
-                : 'bg-slate-700 text-slate-200 hover:bg-slate-600 border border-slate-600 hover:border-slate-500'
-            }`}
-          >
-            <Zap className="h-4 w-4" />
-            4. Auto Schedule
-          </Button>
-          
-          {/* Phase 4+: Schedule Management */}
+          {/* Schedule Management */}
           <Button
             variant={currentView === 'view' ? 'default' : 'outline'}
             onClick={() => setCurrentView('view')}
@@ -270,17 +256,6 @@ export default function MasterSchedulePage() {
               </AlertDescription>
             </Alert>
             <FlightReviewDashboard eventId={eventId} />
-          </div>
-        ) : currentView === 'quick' ? (
-          <div className="space-y-6">
-            <Alert className="border-slate-600 bg-slate-800">
-              <Zap className="h-4 w-4 text-blue-400" />
-              <AlertDescription className="text-slate-200">
-                <strong>Phase 4 - Tournament-Aware Auto Scheduling:</strong> Generate complete tournament schedules that respect your flight configurations, game formats, and bracket structures. 
-                The system validates existing tournament data and creates games for each configured flight with intelligent field distribution and conflict avoidance.
-              </AlertDescription>
-            </Alert>
-            <UnifiedScheduleSetup eventId={eventId} />
           </div>
         ) : currentView === 'view' ? (
           <div className="space-y-6">
