@@ -161,6 +161,103 @@ router.post('/events/:eventId/teams/bulk-bracket-assign', async (req, res) => {
   }
 });
 
+// Create appropriate brackets for a flight based on team count
+router.post('/events/:eventId/flights/:flightId/create-brackets', async (req, res) => {
+  try {
+    const { eventId, flightId } = req.params;
+    
+    console.log(`BRACKET CREATION DEBUG: Creating brackets for flight ${flightId} in event ${eventId}`);
+
+    // Get flight details and team count
+    const flight = await db
+      .select({
+        ageGroupId: eventBrackets.ageGroupId,
+        name: eventBrackets.name
+      })
+      .from(eventBrackets)
+      .where(eq(eventBrackets.id, parseInt(flightId)))
+      .limit(1);
+
+    if (flight.length === 0) {
+      return res.status(404).json({ error: 'Flight not found' });
+    }
+
+    // Count teams in this flight
+    const teamCount = await db
+      .select()
+      .from(teams)
+      .where(and(
+        eq(teams.bracketId, parseInt(flightId)),
+        eq(teams.status, 'approved')
+      ));
+
+    console.log(`BRACKET CREATION DEBUG: Flight has ${teamCount.length} teams`);
+
+    // Determine bracket structure based on team count
+    let bracketsToCreate = [];
+    
+    if (teamCount.length <= 4) {
+      // Single bracket for 4 or fewer teams
+      bracketsToCreate = [
+        { name: 'Single Pool', type: 'round_robin', stage: 'group_stage' }
+      ];
+    } else if (teamCount.length <= 6) {
+      // Two crossplay brackets for 5-6 teams
+      bracketsToCreate = [
+        { name: 'Pool A', type: 'crossplay', stage: 'group_stage' },
+        { name: 'Pool B', type: 'crossplay', stage: 'group_stage' }
+      ];
+    } else if (teamCount.length <= 8) {
+      // Two standard brackets for 7-8 teams
+      bracketsToCreate = [
+        { name: 'Bracket A', type: 'round_robin', stage: 'group_stage' },
+        { name: 'Bracket B', type: 'round_robin', stage: 'group_stage' }
+      ];
+    } else {
+      // Multiple brackets for larger flights
+      const bracketCount = Math.ceil(teamCount.length / 8);
+      for (let i = 0; i < bracketCount; i++) {
+        const letter = String.fromCharCode(65 + i); // A, B, C, etc.
+        bracketsToCreate.push({
+          name: `Bracket ${letter}`,
+          type: 'round_robin',
+          stage: 'group_stage'
+        });
+      }
+    }
+
+    console.log(`BRACKET CREATION DEBUG: Creating ${bracketsToCreate.length} brackets:`, bracketsToCreate.map(b => b.name));
+
+    // Create the brackets
+    const createdBrackets = [];
+    for (const bracket of bracketsToCreate) {
+      const [newBracket] = await db
+        .insert(tournamentGroups)
+        .values({
+          eventId: eventId,
+          ageGroupId: flight[0].ageGroupId,
+          name: bracket.name,
+          type: bracket.type,
+          stage: bracket.stage,
+          createdAt: new Date().toISOString()
+        })
+        .returning();
+      
+      createdBrackets.push(newBracket);
+    }
+
+    console.log(`BRACKET CREATION DEBUG: Created ${createdBrackets.length} brackets successfully`);
+    res.json({ 
+      success: true, 
+      message: `Created ${createdBrackets.length} brackets for ${teamCount.length} teams`,
+      brackets: createdBrackets 
+    });
+  } catch (error) {
+    console.error('Error creating brackets:', error);
+    res.status(500).json({ error: 'Failed to create brackets' });
+  }
+});
+
 // Auto-balance teams across brackets within a flight
 router.post('/events/:eventId/flights/:flightId/auto-balance', async (req, res) => {
   try {

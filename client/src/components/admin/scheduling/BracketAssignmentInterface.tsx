@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { Users, ArrowRight, Shuffle, BarChart3, Move } from 'lucide-react';
+import { Users, ArrowRight, Shuffle, BarChart3, Move, Plus, AlertCircle } from 'lucide-react';
 
 interface Team {
   id: number;
@@ -84,6 +84,25 @@ export function BracketAssignmentInterface({ eventId }: BracketAssignmentInterfa
         description: error.message,
         variant: "destructive"
       });
+    }
+  });
+
+  // Create brackets mutation
+  const createBracketsMutation = useMutation({
+    mutationFn: async (flightId: number) => {
+      const response = await fetch(`/api/admin/events/${eventId}/flights/${flightId}/create-brackets`, {
+        method: 'POST',
+        credentials: 'include'
+      });
+      if (!response.ok) throw new Error('Failed to create brackets');
+      return response.json();
+    },
+    onSuccess: (data) => {
+      toast({
+        title: "Brackets Created",
+        description: data.message
+      });
+      queryClient.invalidateQueries({ queryKey: ['bracket-assignments', eventId] });
     }
   });
 
@@ -208,23 +227,36 @@ export function BracketAssignmentInterface({ eventId }: BracketAssignmentInterfa
                   {getFlightLevelBadge(selectedFlightData.flightLevel)}
                 </div>
                 <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    onClick={() => autoBalanceMutation.mutate(selectedFlightData.flightId)}
-                    disabled={autoBalanceMutation.isPending}
-                    className="border-slate-600 text-slate-200 hover:bg-slate-700"
-                  >
-                    <Shuffle className="h-4 w-4 mr-2" />
-                    Auto-Balance
-                  </Button>
-                  <Button 
-                    onClick={handleBulkAssign}
-                    disabled={Object.keys(teamAssignments).length === 0 || assignTeamsMutation.isPending}
-                    className="bg-blue-600 hover:bg-blue-500 text-white"
-                  >
-                    <Move className="h-4 w-4 mr-2" />
-                    Assign Teams ({Object.keys(teamAssignments).length})
-                  </Button>
+                  {selectedFlightData.brackets.length === 0 ? (
+                    <Button
+                      onClick={() => createBracketsMutation.mutate(selectedFlightData.flightId)}
+                      disabled={createBracketsMutation.isPending}
+                      className="bg-green-600 hover:bg-green-500 text-white"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Create Brackets
+                    </Button>
+                  ) : (
+                    <>
+                      <Button
+                        variant="outline"
+                        onClick={() => autoBalanceMutation.mutate(selectedFlightData.flightId)}
+                        disabled={autoBalanceMutation.isPending}
+                        className="border-slate-600 text-slate-200 hover:bg-slate-700"
+                      >
+                        <Shuffle className="h-4 w-4 mr-2" />
+                        Auto-Balance
+                      </Button>
+                      <Button 
+                        onClick={handleBulkAssign}
+                        disabled={Object.keys(teamAssignments).length === 0 || assignTeamsMutation.isPending}
+                        className="bg-blue-600 hover:bg-blue-500 text-white"
+                      >
+                        <Move className="h-4 w-4 mr-2" />
+                        Assign Teams ({Object.keys(teamAssignments).length})
+                      </Button>
+                    </>
+                  )}
                 </div>
               </div>
               <CardDescription className="text-slate-300">
@@ -234,6 +266,24 @@ export function BracketAssignmentInterface({ eventId }: BracketAssignmentInterfa
               </CardDescription>
             </CardHeader>
           </Card>
+
+          {/* Show message when no brackets exist */}
+          {selectedFlightData.brackets.length === 0 && (
+            <Card className="bg-slate-800 border-amber-500 border-2">
+              <CardContent className="pt-6">
+                <div className="flex items-center gap-3 text-amber-400">
+                  <AlertCircle className="h-6 w-6" />
+                  <div>
+                    <h3 className="font-semibold">No Brackets Created</h3>
+                    <p className="text-sm text-slate-300 mt-1">
+                      This flight has {selectedFlightData.totalTeams} teams but no brackets yet. 
+                      Click "Create Brackets" to automatically generate the appropriate bracket structure.
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Bracket Assignment Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

@@ -1,41 +1,37 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { AlertCircle, Users, Check, X, ArrowRight, Edit3, Download, FileText } from 'lucide-react';
 import jsPDF from 'jspdf';
+import { Download, FileDown, RefreshCw, Users } from 'lucide-react';
 
 interface Team {
   id: number;
   name: string;
   status: string;
-  bracketId: number | null;
   selectedBracketName: string | null;
-  ageGroup: string;
-  gender: string;
+  bracketId: number | null;
 }
 
-interface FlightOption {
+interface Flight {
   id: number;
   name: string;
-  description: string;
   level: string;
-  ageGroupId: number;
 }
 
-interface FlightReviewData {
+interface FlightGroup {
   ageGroup: string;
-  birthYear?: number;
   gender: string;
+  birthYear?: string;
   displayName?: string;
+  totalTeams: number;
   teamsWithSelection: Team[];
   teamsWithoutSelection: Team[];
-  availableFlights: FlightOption[];
-  totalTeams: number;
+  availableFlights: Flight[];
 }
 
 interface FlightReviewDashboardProps {
@@ -51,126 +47,104 @@ export function FlightReviewDashboard({ eventId }: FlightReviewDashboardProps) {
   // Fetch flight review data
   const { data: flightData, isLoading } = useQuery({
     queryKey: ['flight-review', eventId],
-    queryFn: async (): Promise<FlightReviewData[]> => {
+    queryFn: async () => {
       const response = await fetch(`/api/admin/events/${eventId}/flight-review`, {
         credentials: 'include'
       });
       if (!response.ok) throw new Error('Failed to fetch flight data');
-      return response.json();
+      return response.json() as FlightGroup[];
     }
   });
 
-  // Bulk assign teams to flights
+  // Bulk assign teams mutation
   const assignTeamsMutation = useMutation({
-    mutationFn: async ({ assignments }: { assignments: { teamId: number; bracketId: number }[] }) => {
-      const response = await fetch(`/api/admin/events/${eventId}/teams/bulk-flight-assign`, {
+    mutationFn: async (assignments: { teamId: number; flightId: number }[]) => {
+      const response = await fetch(`/api/admin/events/${eventId}/teams/bulk-assign`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({ assignments })
       });
-      if (!response.ok) throw new Error('Failed to assign teams to flights');
+      if (!response.ok) throw new Error('Failed to assign teams');
       return response.json();
     },
     onSuccess: () => {
       toast({
-        title: "Teams Assigned",
+        title: "Flight Assignments Updated",
         description: "Teams have been successfully assigned to flights"
       });
-      queryClient.invalidateQueries({ queryKey: ['flight-review', eventId] });
       setSelectedFlight({});
-    },
-    onError: (error) => {
-      toast({
-        title: "Assignment Failed", 
-        description: error.message,
-        variant: "destructive"
-      });
-    }
-  });
-
-  // Lock flights for scheduling
-  const lockFlightsMutation = useMutation({
-    mutationFn: async () => {
-      const response = await fetch(`/api/admin/events/${eventId}/flights/lock`, {
-        method: 'POST',
-        credentials: 'include'
-      });
-      if (!response.ok) throw new Error('Failed to lock flights');
-      return response.json();
-    },
-    onSuccess: () => {
-      toast({
-        title: "Flights Locked",
-        description: "Flight assignments are now locked and ready for scheduling"
-      });
+      setEditingTeamId(null);
       queryClient.invalidateQueries({ queryKey: ['flight-review', eventId] });
     }
   });
 
-  const handleFlightSelection = (teamId: number, bracketId: number) => {
+  // Handle bulk assignment
+  const handleBulkAssign = () => {
+    const assignments = Object.entries(selectedFlight).map(([teamId, flightId]) => ({
+      teamId: parseInt(teamId),
+      flightId
+    }));
+    assignTeamsMutation.mutate(assignments);
+  };
+
+  // Handle individual team flight selection
+  const handleTeamFlightChange = (teamId: number, flightId: string) => {
     setSelectedFlight(prev => ({
       ...prev,
-      [teamId]: bracketId
+      [teamId]: parseInt(flightId)
     }));
   };
 
-  const handleBulkAssign = () => {
-    const assignments = Object.entries(selectedFlight).map(([teamId, bracketId]) => ({
-      teamId: parseInt(teamId),
-      bracketId
-    }));
-    
-    if (assignments.length === 0) {
-      toast({
-        title: "No Assignments",
-        description: "Please select flights for teams before assigning",
-        variant: "destructive"
-      });
-      return;
+  // Start editing a team
+  const handleEditTeam = (teamId: number, currentFlightId: number | null) => {
+    setEditingTeamId(teamId);
+    if (currentFlightId) {
+      setSelectedFlight({ [teamId]: currentFlightId });
     }
+  };
 
-    assignTeamsMutation.mutate({ assignments });
+  // Cancel editing
+  const handleCancelEdit = () => {
+    setEditingTeamId(null);
+    setSelectedFlight({});
   };
 
   // Export to CSV
   const exportToCSV = () => {
     if (!flightData) return;
 
-    const csvHeaders = ['Age Group', 'Gender', 'Birth Year', 'Flight Name', 'Flight Level', 'Team Name', 'Status'];
-    const csvRows = [csvHeaders.join(',')];
+    const csvData = [];
+    csvData.push(['Age Group', 'Gender', 'Team Name', 'Flight Assignment', 'Status']);
 
     flightData.forEach(group => {
       // Teams with flight assignments
       group.teamsWithSelection.forEach(team => {
-        const row = [
-          `"${group.ageGroup}"`,
-          `"${group.gender}"`,
-          group.birthYear || '',
-          `"${team.selectedBracketName || 'N/A'}"`,
-          `"${getFlightLevel(team.selectedBracketName || '')}"`,
-          `"${team.name}"`,
+        csvData.push([
+          group.ageGroup,
+          group.gender,
+          team.name,
+          team.selectedBracketName || 'Unknown',
           'Assigned'
-        ].join(',');
-        csvRows.push(row);
+        ]);
       });
 
       // Teams without flight assignments
       group.teamsWithoutSelection.forEach(team => {
-        const row = [
-          `"${group.ageGroup}"`,
-          `"${group.gender}"`,
-          group.birthYear || '',
-          'Not Assigned',
-          'N/A',
-          `"${team.name}"`,
+        csvData.push([
+          group.ageGroup,
+          group.gender,
+          team.name,
+          'Unassigned',
           'Needs Assignment'
-        ].join(',');
-        csvRows.push(row);
+        ]);
       });
     });
 
-    const csvContent = csvRows.join('\n');
+    const csvContent = csvData.map(row => 
+      row.map(field => `"${field}"`).join(',')
+    ).join('\n');
+
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     if (link.download !== undefined) {
@@ -189,7 +163,7 @@ export function FlightReviewDashboard({ eventId }: FlightReviewDashboardProps) {
     });
   };
 
-  // Export to PDF
+  // Export to PDF with improved structure and formatting
   const exportToPDF = () => {
     if (!flightData) return;
 
@@ -198,93 +172,114 @@ export function FlightReviewDashboard({ eventId }: FlightReviewDashboardProps) {
     const margin = 20;
     let y = margin;
 
-    // Title
-    doc.setFontSize(20);
+    // Title with better font
+    doc.setFontSize(22);
     doc.setFont('helvetica', 'bold');
-    doc.text('Flight Assignments Summary', margin, y);
-    y += 15;
+    doc.text('Tournament Flight Assignments', margin, y);
+    y += 12;
 
-    // Date
-    doc.setFontSize(10);
+    // Subtitle
+    doc.setFontSize(12);
     doc.setFont('helvetica', 'normal');
-    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, margin, y);
+    doc.text(`Generated on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}`, margin, y);
     y += 20;
 
-    // Statistics
-    doc.setFontSize(12);
+    // Summary Statistics with better formatting
+    doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
-    doc.text('Summary Statistics:', margin, y);
-    y += 10;
+    doc.text('Tournament Summary', margin, y);
+    y += 12;
     
-    doc.setFont('helvetica', 'normal');
     const totalAssigned = flightData.reduce((sum, group) => sum + group.teamsWithSelection.length, 0);
     const totalUnassigned = flightData.reduce((sum, group) => sum + group.teamsWithoutSelection.length, 0);
     const totalTeams = totalAssigned + totalUnassigned;
     
-    doc.text(`Total Teams: ${totalTeams}`, margin + 10, y);
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Total Teams Registered: ${totalTeams}`, margin + 5, y);
     y += 8;
-    doc.text(`Teams with Flight Assignment: ${totalAssigned}`, margin + 10, y);
+    doc.text(`Teams Assigned to Flights: ${totalAssigned}`, margin + 5, y);
     y += 8;
-    doc.text(`Teams Needing Assignment: ${totalUnassigned}`, margin + 10, y);
-    y += 20;
+    doc.text(`Teams Pending Assignment: ${totalUnassigned}`, margin + 5, y);
+    y += 25;
 
-    // Flight assignments by age group
-    flightData.forEach((group, groupIndex) => {
+    // Age Group > Flights > Teams structure
+    flightData.forEach((group) => {
       // Check if we need a new page
-      if (y > doc.internal.pageSize.getHeight() - 60) {
+      if (y > doc.internal.pageSize.getHeight() - 80) {
         doc.addPage();
         y = margin;
       }
 
-      // Age Group Header
-      doc.setFontSize(14);
+      // Age Group Header with better formatting
+      doc.setFontSize(16);
       doc.setFont('helvetica', 'bold');
-      const ageGroupTitle = `${group.ageGroup} ${group.gender}${group.birthYear ? ` - [${group.birthYear}]` : ''}`;
+      const ageGroupTitle = `${group.ageGroup} ${group.gender}`;
       doc.text(ageGroupTitle, margin, y);
       y += 15;
 
-      // Available Flights
-      if (group.availableFlights.length > 0) {
-        doc.setFontSize(10);
-        doc.setFont('helvetica', 'bold');
-        doc.text('Available Flights:', margin + 10, y);
-        y += 8;
-        
-        doc.setFont('helvetica', 'normal');
-        group.availableFlights.forEach(flight => {
-          doc.text(`• ${formatFlightName(flight.name)} (${flight.level})`, margin + 20, y);
-          y += 6;
-        });
-        y += 5;
-      }
+      // Group teams by flight for proper structure
+      const teamsByFlight = new Map<string, string[]>();
+      
+      // Add teams with flight assignments
+      group.teamsWithSelection.forEach(team => {
+        const flightName = team.selectedBracketName || 'Unknown Flight';
+        if (!teamsByFlight.has(flightName)) {
+          teamsByFlight.set(flightName, []);
+        }
+        teamsByFlight.get(flightName)!.push(team.name);
+      });
 
-      // Teams with assignments
-      if (group.teamsWithSelection.length > 0) {
-        doc.setFont('helvetica', 'bold');
-        doc.text(`Teams with Flight Assignments (${group.teamsWithSelection.length}):`, margin + 10, y);
-        y += 8;
-        
-        doc.setFont('helvetica', 'normal');
-        group.teamsWithSelection.forEach(team => {
-          doc.text(`• ${team.name} → ${team.selectedBracketName}`, margin + 20, y);
-          y += 6;
-        });
-        y += 5;
-      }
-
-      // Teams without assignments
+      // Add unassigned teams
       if (group.teamsWithoutSelection.length > 0) {
-        doc.setFont('helvetica', 'bold');
-        doc.text(`Teams Needing Assignment (${group.teamsWithoutSelection.length}):`, margin + 10, y);
-        y += 8;
-        
-        doc.setFont('helvetica', 'normal');
-        group.teamsWithoutSelection.forEach(team => {
-          doc.text(`• ${team.name}`, margin + 20, y);
-          y += 6;
+        teamsByFlight.set('⚠ Unassigned Teams', group.teamsWithoutSelection.map(t => t.name));
+      }
+
+      // Display flights and their teams
+      if (teamsByFlight.size > 0) {
+        Array.from(teamsByFlight.entries()).forEach(([flightName, teams]) => {
+          // Flight name
+          doc.setFontSize(12);
+          doc.setFont('helvetica', 'bold');
+          const isUnassigned = flightName.includes('Unassigned');
+          if (isUnassigned) {
+            doc.setTextColor(200, 50, 50); // Red color for unassigned
+          } else {
+            doc.setTextColor(0, 0, 0); // Black for assigned
+          }
+          doc.text(`├─ ${flightName} (${teams.length} teams)`, margin + 10, y);
+          y += 10;
+
+          // Teams in this flight
+          doc.setFontSize(10);
+          doc.setFont('helvetica', 'normal');
+          doc.setTextColor(0, 0, 0); // Reset to black
+          
+          teams.forEach((teamName, index) => {
+            const isLast = index === teams.length - 1;
+            const prefix = isLast ? '└─' : '├─';
+            
+            // Wrap long team names
+            if (teamName.length > 60) {
+              const wrapped = teamName.substring(0, 57) + '...';
+              doc.text(`│  ${prefix} ${wrapped}`, margin + 15, y);
+            } else {
+              doc.text(`│  ${prefix} ${teamName}`, margin + 15, y);
+            }
+            y += 7;
+          });
+          
+          y += 5; // Space between flights
         });
+      } else {
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'italic');
+        doc.setTextColor(120, 120, 120); // Gray text
+        doc.text('No teams registered for this age group', margin + 10, y);
         y += 10;
       }
+      
+      y += 15; // Space between age groups
     });
 
     // Save the PDF
@@ -384,68 +379,59 @@ export function FlightReviewDashboard({ eventId }: FlightReviewDashboardProps) {
           }
         </Button>
         
-        <Button 
-          variant="outline"
-          onClick={() => lockFlightsMutation.mutate()}
-          disabled={totalTeamsWithoutSelection > 0 || lockFlightsMutation.isPending}
-          className="border-slate-600 text-slate-200 hover:bg-slate-700 hover:border-slate-500"
-        >
-          Lock Flights & Proceed to Scheduling
-        </Button>
-
         {editingTeamId && (
           <Button 
-            variant="secondary"
-            onClick={() => {
-              setEditingTeamId(null);
-              setSelectedFlight({});
-            }}
+            onClick={handleCancelEdit}
+            variant="outline"
+            className="border-slate-600 text-slate-200 hover:bg-slate-700"
           >
-            Cancel Reassignment
+            Cancel Edit
           </Button>
         )}
-
-        {/* Export Buttons */}
-        <div className="flex gap-2 ml-auto">
-          <Button 
-            variant="outline"
-            onClick={exportToCSV}
-            disabled={!flightData || flightData.length === 0}
-            className="border-slate-600 text-slate-200 hover:bg-slate-700 hover:border-slate-500"
-          >
-            <Download className="h-4 w-4 mr-2" />
-            Export CSV
-          </Button>
-          <Button 
-            variant="outline"
-            onClick={exportToPDF}
-            disabled={!flightData || flightData.length === 0}
-            className="border-slate-600 text-slate-200 hover:bg-slate-700 hover:border-slate-500"
-          >
-            <FileText className="h-4 w-4 mr-2" />
-            Export PDF
-          </Button>
-        </div>
+        
+        <Button 
+          onClick={exportToCSV}
+          variant="outline"
+          className="border-slate-600 text-slate-200 hover:bg-slate-700"
+        >
+          <Download className="h-4 w-4 mr-2" />
+          Export CSV
+        </Button>
+        
+        <Button 
+          onClick={exportToPDF}
+          variant="outline"
+          className="border-slate-600 text-slate-200 hover:bg-slate-700"
+        >
+          <FileDown className="h-4 w-4 mr-2" />
+          Export PDF
+        </Button>
+        
+        <Button 
+          onClick={() => queryClient.invalidateQueries({ queryKey: ['flight-review', eventId] })}
+          variant="outline"
+          className="border-slate-600 text-slate-200 hover:bg-slate-700"
+        >
+          <RefreshCw className="h-4 w-4 mr-2" />
+          Refresh
+        </Button>
       </div>
 
-      {/* Flight Review by Age Group */}
-      <Tabs defaultValue="needs-assignment" className="w-full">
-        <TabsList className="bg-slate-800 border-slate-700">
-          <TabsTrigger value="needs-assignment" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white text-slate-300">
-            <AlertCircle className="h-4 w-4 mr-2" />
-            Needs Assignment ({totalTeamsWithoutSelection})
+      {/* Flight Review Content */}
+      <Tabs defaultValue="need-assignment" className="w-full">
+        <TabsList className="grid w-full grid-cols-3 bg-slate-800 border-slate-700">
+          <TabsTrigger value="need-assignment" className="data-[state=active]:bg-slate-700">
+            Teams Needing Assignment ({totalTeamsWithoutSelection})
           </TabsTrigger>
-          <TabsTrigger value="assigned" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white text-slate-300">
-            <Edit3 className="h-4 w-4 mr-2" />
-            Flight Reassignment ({totalTeamsWithSelection})
+          <TabsTrigger value="assigned" className="data-[state=active]:bg-slate-700">
+            Assigned Teams ({totalTeamsWithSelection})
           </TabsTrigger>
-          <TabsTrigger value="all-groups" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white text-slate-300">
-            <Users className="h-4 w-4 mr-2" />
+          <TabsTrigger value="all-groups" className="data-[state=active]:bg-slate-700">
             All Age Groups
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="needs-assignment" className="space-y-4">
+        <TabsContent value="need-assignment" className="space-y-4">
           {flightData?.filter(group => group.teamsWithoutSelection.length > 0).map((group) => (
             <Card key={`${group.ageGroup}-${group.gender}`} className="bg-slate-800 border-slate-700">
               <CardHeader>
@@ -457,46 +443,35 @@ export function FlightReviewDashboard({ eventId }: FlightReviewDashboardProps) {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  {/* Available Flights */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                    <h4 className="col-span-full font-medium text-white">Available Flights:</h4>
-                    {group.availableFlights.map((flight) => (
-                      <div key={flight.id} className="flex items-center gap-2 p-2 border border-slate-600 rounded bg-slate-700">
-                        {getFlightLevelBadge(flight.level)}
-                        <span className="font-medium text-slate-200">{formatFlightName(flight.name)}</span>
+                <div className="space-y-3">
+                  {group.teamsWithoutSelection.map((team) => (
+                    <div key={team.id} className="flex items-center justify-between p-3 bg-slate-700 rounded">
+                      <div className="flex items-center gap-3">
+                        <Users className="h-4 w-4 text-slate-400" />
+                        <span className="text-slate-200">{team.name}</span>
                       </div>
-                    ))}
-                  </div>
-
-                  {/* Teams Needing Assignment */}
-                  <div className="grid gap-2">
-                    {group.teamsWithoutSelection.map((team) => (
-                      <div key={team.id} className="flex items-center justify-between p-3 border border-slate-600 rounded bg-slate-700">
-                        <div>
-                          <span className="font-medium text-slate-200">{team.name}</span>
-                          <Badge variant="outline" className="ml-2 border-slate-500 text-slate-300">{team.status}</Badge>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Select
-                            value={selectedFlight[team.id]?.toString() || ""}
-                            onValueChange={(value) => handleFlightSelection(team.id, parseInt(value))}
-                          >
-                            <SelectTrigger className="w-40">
-                              <SelectValue placeholder="Select flight" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {group.availableFlights.map((flight) => (
-                                <SelectItem key={flight.id} value={flight.id.toString()}>
-                                  {formatFlightName(flight.name)}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
+                      <div className="flex items-center gap-3">
+                        <Select 
+                          value={selectedFlight[team.id]?.toString() || ""} 
+                          onValueChange={(value) => handleTeamFlightChange(team.id, value)}
+                        >
+                          <SelectTrigger className="w-48 bg-slate-600 border-slate-500 text-white">
+                            <SelectValue placeholder="Select flight..." />
+                          </SelectTrigger>
+                          <SelectContent className="bg-slate-700 border-slate-600">
+                            {group.availableFlights.map((flight) => (
+                              <SelectItem key={flight.id} value={flight.id.toString()}>
+                                <div className="flex items-center gap-2">
+                                  {getFlightLevelBadge(flight.level)}
+                                  <span>{formatFlightName(flight.name)}</span>
+                                </div>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
-                    ))}
-                  </div>
+                    </div>
+                  ))}
                 </div>
               </CardContent>
             </Card>
@@ -511,96 +486,54 @@ export function FlightReviewDashboard({ eventId }: FlightReviewDashboardProps) {
                   {group.displayName || `${group.ageGroup} ${group.gender}${group.birthYear ? ` - [${group.birthYear}]` : ''}`}
                 </CardTitle>
                 <CardDescription className="text-slate-300">
-                  {group.teamsWithSelection.length} teams with flight assignments • Click edit icon to reassign
+                  {group.teamsWithSelection.length} teams assigned to flights
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  {/* Available Flights for Reassignment */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                    <h4 className="col-span-full font-medium text-white">Available Flights for Reassignment:</h4>
-                    {group.availableFlights.map((flight) => (
-                      <div key={flight.id} className="flex items-center gap-2 p-2 border border-slate-600 rounded bg-slate-700">
-                        {getFlightLevelBadge(flight.level)}
-                        <span className="font-medium text-slate-200">{formatFlightName(flight.name)}</span>
+                <div className="space-y-3">
+                  {group.teamsWithSelection.map((team) => (
+                    <div key={team.id} className="flex items-center justify-between p-3 bg-slate-700 rounded">
+                      <div className="flex items-center gap-3">
+                        <Users className="h-4 w-4 text-slate-400" />
+                        <span className="text-slate-200">{team.name}</span>
                       </div>
-                    ))}
-                  </div>
-
-                  {/* Teams with Current Assignments */}
-                  <div className="grid gap-2">
-                    {group.teamsWithSelection.map((team) => (
-                      <div key={team.id} className="flex items-center justify-between p-3 border border-slate-600 rounded bg-slate-700">
-                        <div>
-                          <span className="font-medium text-slate-200">{team.name}</span>
-                          <Badge variant="outline" className="ml-2 border-slate-500 text-slate-300">{team.status}</Badge>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          {editingTeamId === team.id ? (
-                            // Reassignment Mode
-                            <div className="flex items-center gap-2">
-                              <Select
-                                value={selectedFlight[team.id]?.toString() || team.bracketId?.toString() || ""}
-                                onValueChange={(value) => handleFlightSelection(team.id, parseInt(value))}
-                              >
-                                <SelectTrigger className="w-40">
-                                  <SelectValue placeholder="Select new flight" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {group.availableFlights.map((flight) => (
-                                    <SelectItem key={flight.id} value={flight.id.toString()}>
-                                      {formatFlightName(flight.name)}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                              <Button
-                                size="sm"
-                                onClick={() => {
-                                  if (selectedFlight[team.id]) {
-                                    handleBulkAssign();
-                                  }
-                                  setEditingTeamId(null);
-                                }}
-                                disabled={!selectedFlight[team.id]}
-                              >
-                                <Check className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => {
-                                  setEditingTeamId(null);
-                                  setSelectedFlight(prev => {
-                                    const updated = { ...prev };
-                                    delete updated[team.id];
-                                    return updated;
-                                  });
-                                }}
-                              >
-                                <X className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          ) : (
-                            // Display Mode
-                            <div className="flex items-center gap-2">
-                              <Badge className="bg-emerald-600 text-white">
-                                {team.selectedBracketName ? formatFlightName(team.selectedBracketName) : 'Assigned'}
-                              </Badge>
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                onClick={() => setEditingTeamId(team.id)}
-                                className="h-8 w-8 p-0"
-                              >
-                                <Edit3 className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          )}
-                        </div>
+                      <div className="flex items-center gap-3">
+                        {editingTeamId === team.id ? (
+                          <Select 
+                            value={selectedFlight[team.id]?.toString() || team.bracketId?.toString() || ""} 
+                            onValueChange={(value) => handleTeamFlightChange(team.id, value)}
+                          >
+                            <SelectTrigger className="w-48 bg-slate-600 border-slate-500 text-white">
+                              <SelectValue placeholder="Select flight..." />
+                            </SelectTrigger>
+                            <SelectContent className="bg-slate-700 border-slate-600">
+                              {group.availableFlights.map((flight) => (
+                                <SelectItem key={flight.id} value={flight.id.toString()}>
+                                  <div className="flex items-center gap-2">
+                                    {getFlightLevelBadge(flight.level)}
+                                    <span>{formatFlightName(flight.name)}</span>
+                                  </div>
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        ) : (
+                          <>
+                            {getFlightLevelBadge(getFlightLevel(team.selectedBracketName || ''))}
+                            <span className="text-slate-300">{team.selectedBracketName}</span>
+                            <Button
+                              onClick={() => handleEditTeam(team.id, team.bracketId)}
+                              variant="outline"
+                              size="sm"
+                              className="border-slate-600 text-slate-200 hover:bg-slate-600"
+                            >
+                              Edit
+                            </Button>
+                          </>
+                        )}
                       </div>
-                    ))}
-                  </div>
+                    </div>
+                  ))}
                 </div>
               </CardContent>
             </Card>
