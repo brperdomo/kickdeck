@@ -244,6 +244,36 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
     return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
   };
 
+  // Helper function to get flight-specific rest period
+  const getFlightRestPeriod = (bracketOrAgeGroup: string): number => {
+    const flightName = getFlightName(bracketOrAgeGroup);
+    
+    // Flight-specific rest periods from Flight Configuration
+    switch (flightName) {
+      case 'Nike Elite':
+        return 90;
+      case 'Nike Premier':
+        return 60;
+      case 'Nike Classic':
+        return 30;
+      default:
+        return 60; // Default for unrecognized flights
+    }
+  };
+
+  // Helper function to extract flight name from bracket name or age group
+  const getFlightName = (bracketOrAgeGroup: string): string => {
+    if (!bracketOrAgeGroup) return 'Unknown';
+    
+    // Extract flight name from bracket names like "U14 Girls Nike Elite" or "Nike Classic U16 Boys"
+    if (bracketOrAgeGroup.includes('Nike Elite')) return 'Nike Elite';
+    if (bracketOrAgeGroup.includes('Nike Premier')) return 'Nike Premier';
+    if (bracketOrAgeGroup.includes('Nike Classic')) return 'Nike Classic';
+    
+    // Default classification based on age group or other patterns
+    return 'Nike Premier'; // Default flight
+  };
+
   // Detect scheduling conflicts with enhanced overlap detection
   const detectConflicts = useCallback((games: Game[]): ConflictInfo[] => {
     const conflicts: ConflictInfo[] = [];
@@ -303,26 +333,34 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
         }
         
         // Check for rest period violations (even if games don't overlap)
-        const MIN_REST_PERIOD_MINUTES = 90; // Default, will be overridden by database settings
         const teams1 = [game1.homeTeamName, game1.awayTeamName].filter(t => t && t !== 'TBD');
         const teams2 = [game2.homeTeamName, game2.awayTeamName].filter(t => t && t !== 'TBD');
         
         const teamRestViolation = teams1.some(team => teams2.includes(team));
         
         if (teamRestViolation && !hasTimeOverlap) {
+          // Get flight-specific rest periods for both games
+          const flight1RestPeriod = getFlightRestPeriod(game1.bracketName || game1.ageGroup);
+          const flight2RestPeriod = getFlightRestPeriod(game2.bracketName || game2.ageGroup);
+          
+          // Use the maximum rest period required between the two games
+          const requiredRestPeriod = Math.max(flight1RestPeriod, flight2RestPeriod);
+          
           // Calculate time between games
           const timeBetween = Math.abs(gameEndMinutes1 - gameStartMinutes2);
           const timeBetweenReverse = Math.abs(gameEndMinutes2 - gameStartMinutes1);
           const shortestGap = Math.min(timeBetween, timeBetweenReverse);
           
-          if (shortestGap < MIN_REST_PERIOD_MINUTES) {
+          if (shortestGap < requiredRestPeriod) {
             const violatingTeams = teams1.filter(team => teams2.includes(team));
+            const flight1Name = getFlightName(game1.bracketName || game1.ageGroup);
+            const flight2Name = getFlightName(game2.bracketName || game2.ageGroup);
             
-            console.log(`⚠️ [REST PERIOD] Rest period violation between games ${game1.id} and ${game2.id}:`, violatingTeams, `Gap: ${shortestGap}min`);
+            console.log(`⚠️ [REST PERIOD] Flight-specific rest period violation between games ${game1.id} and ${game2.id}:`, violatingTeams, `Gap: ${shortestGap}min, Required: ${requiredRestPeriod}min`);
             conflicts.push({
               type: 'rest_period',
               severity: 'warning',
-              message: `${violatingTeams.join(', ')} has insufficient rest period: ${shortestGap}min between games (minimum: ${MIN_REST_PERIOD_MINUTES}min)`,
+              message: `${violatingTeams.join(', ')} has insufficient rest period: ${shortestGap}min between ${flight1Name} and ${flight2Name} games (minimum: ${requiredRestPeriod}min)`,
               gameIds: [game1.id, game2.id]
             });
           }
