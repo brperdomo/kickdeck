@@ -19,11 +19,11 @@ router.get('/test-router', (req, res) => {
 
 router.post('/events/:id/consolidate-fields', isAdmin, hasEventAccess, async (req, res) => {
   try {
-    console.log(`🚀🚀🚀 FIELD CONSOLIDATION ENDPOINT HIT! Event: ${req.params.id}`);
-    console.log(`🚀🚀🚀 REQUEST METHOD: ${req.method}`);
-    console.log(`🚀🚀🚀 REQUEST URL: ${req.url}`);
-    console.log(`🚀🚀🚀 REQUEST BODY:`, JSON.stringify(req.body, null, 2));
-    
+    console.log(`=================== FIELD CONSOLIDATION API HIT ===================`);
+    console.log(`🚀 Event ID: ${req.params.id}`);
+    console.log(`🚀 Method: ${req.method}`);
+    console.log(`🚀 URL: ${req.url}`);
+    console.log(`🚀 Body:`, JSON.stringify(req.body, null, 2));
     const eventId = parseInt(req.params.id);
     let { targetDate = '2025-08-16' } = req.body;
   
@@ -33,7 +33,6 @@ router.post('/events/:id/consolidate-fields', isAdmin, hasEventAccess, async (re
     }
     
     console.log(`🚀 Starting field consolidation for Event ${eventId} on ${targetDate}`);
-    console.log(`🎯 REQUEST BODY:`, JSON.stringify(req.body, null, 2));
     
     // Get games to optimize - get all games to see what we're working with
     const allGamesInEvent = await db
