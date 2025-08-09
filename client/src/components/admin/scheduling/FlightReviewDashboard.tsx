@@ -52,7 +52,7 @@ export function FlightReviewDashboard({ eventId }: FlightReviewDashboardProps) {
         credentials: 'include'
       });
       if (!response.ok) throw new Error('Failed to fetch flight data');
-      return response.json() as FlightGroup[];
+      return await response.json() as FlightGroup[];
     }
   });
 
@@ -164,23 +164,59 @@ export function FlightReviewDashboard({ eventId }: FlightReviewDashboardProps) {
   };
 
   // Export to PDF with improved structure and formatting
-  const exportToPDF = () => {
+  const exportToPDF = async () => {
     if (!flightData) return;
+
+    // Fetch event details for proper tournament identification
+    let eventDetails = null;
+    try {
+      const response = await fetch(`/api/admin/events/${eventId}`, {
+        credentials: 'include'
+      });
+      if (response.ok) {
+        eventDetails = await response.json();
+      }
+    } catch (error) {
+      console.log('Could not fetch event details for PDF');
+    }
 
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
     const margin = 20;
     let y = margin;
 
-    // Title with better font
-    doc.setFontSize(22);
+    // Tournament Header with proper identification
+    doc.setFontSize(24);
     doc.setFont('helvetica', 'bold');
-    doc.text('Tournament Flight Assignments', margin, y);
-    y += 12;
+    const tournamentTitle = eventDetails?.name || 'Tournament Flight Assignments';
+    doc.text(tournamentTitle, margin, y);
+    y += 15;
 
-    // Subtitle
-    doc.setFontSize(12);
-    doc.setFont('helvetica', 'normal');
+    // Event details
+    if (eventDetails) {
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'normal');
+      
+      if (eventDetails.start_date) {
+        const startDate = new Date(eventDetails.start_date).toLocaleDateString();
+        const endDate = eventDetails.end_date ? new Date(eventDetails.end_date).toLocaleDateString() : null;
+        const dateRange = endDate && startDate !== endDate ? `${startDate} - ${endDate}` : startDate;
+        doc.text(`Dates: ${dateRange}`, margin, y);
+        y += 8;
+      }
+      
+      // Extract venue from details if available
+      if (eventDetails.details && eventDetails.details.includes('Galway Downs')) {
+        doc.text(`Venue: Galway Downs Soccer Complex`, margin, y);
+        y += 8;
+      }
+      
+      y += 5;
+    }
+
+    // Generation timestamp
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'italic');
     doc.text(`Generated on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}`, margin, y);
     y += 20;
 
@@ -232,7 +268,7 @@ export function FlightReviewDashboard({ eventId }: FlightReviewDashboardProps) {
 
       // Add unassigned teams
       if (group.teamsWithoutSelection.length > 0) {
-        teamsByFlight.set('⚠ Unassigned Teams', group.teamsWithoutSelection.map(t => t.name));
+        teamsByFlight.set('! Unassigned Teams', group.teamsWithoutSelection.map(t => t.name));
       }
 
       // Display flights and their teams
@@ -247,7 +283,7 @@ export function FlightReviewDashboard({ eventId }: FlightReviewDashboardProps) {
           } else {
             doc.setTextColor(0, 0, 0); // Black for assigned
           }
-          doc.text(`├─ ${flightName} (${teams.length} teams)`, margin + 10, y);
+          doc.text(`• ${flightName} (${teams.length} teams)`, margin + 10, y);
           y += 10;
 
           // Teams in this flight
@@ -256,15 +292,15 @@ export function FlightReviewDashboard({ eventId }: FlightReviewDashboardProps) {
           doc.setTextColor(0, 0, 0); // Reset to black
           
           teams.forEach((teamName, index) => {
-            const isLast = index === teams.length - 1;
-            const prefix = isLast ? '└─' : '├─';
+            // Use simple bullet points instead of tree characters for better PDF compatibility
+            const prefix = '  - ';
             
             // Wrap long team names
             if (teamName.length > 60) {
               const wrapped = teamName.substring(0, 57) + '...';
-              doc.text(`│  ${prefix} ${wrapped}`, margin + 15, y);
+              doc.text(`${prefix}${wrapped}`, margin + 15, y);
             } else {
-              doc.text(`│  ${prefix} ${teamName}`, margin + 15, y);
+              doc.text(`${prefix}${teamName}`, margin + 15, y);
             }
             y += 7;
           });

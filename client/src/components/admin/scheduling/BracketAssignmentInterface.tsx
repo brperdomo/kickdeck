@@ -75,6 +75,7 @@ export function BracketAssignmentInterface({ eventId }: BracketAssignmentInterfa
         description: "Teams have been successfully assigned to brackets"
       });
       queryClient.invalidateQueries({ queryKey: ['bracket-assignments', eventId] });
+      queryClient.invalidateQueries({ queryKey: ['bracket-creation', eventId] });
       queryClient.invalidateQueries({ queryKey: ['flight-review', eventId] });
       setTeamAssignments({});
     },
@@ -103,6 +104,8 @@ export function BracketAssignmentInterface({ eventId }: BracketAssignmentInterfa
         description: data.message
       });
       queryClient.invalidateQueries({ queryKey: ['bracket-assignments', eventId] });
+      queryClient.invalidateQueries({ queryKey: ['bracket-creation', eventId] });
+      queryClient.invalidateQueries({ queryKey: ['flight-review', eventId] });
     }
   });
 
@@ -122,6 +125,7 @@ export function BracketAssignmentInterface({ eventId }: BracketAssignmentInterfa
         description: "Teams have been automatically balanced across brackets"
       });
       queryClient.invalidateQueries({ queryKey: ['bracket-assignments', eventId] });
+      queryClient.invalidateQueries({ queryKey: ['bracket-creation', eventId] });
     }
   });
 
