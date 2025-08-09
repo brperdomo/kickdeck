@@ -1165,7 +1165,7 @@ export function registerRoutes(app: Express): Server {
         
         console.log(`🚀 Starting field consolidation for Event ${eventId} on ${targetDate}`);
         
-        // Get games to optimize
+        // Get games to optimize with enhanced data selection
         const allGamesInEvent = await db
           .select({
             id: games.id,
@@ -1178,6 +1178,12 @@ export function registerRoutes(app: Express): Server {
 
         console.log(`📊 ALL GAMES IN EVENT ${eventId}:`, allGamesInEvent.length);
         console.log(`📊 GAME DATES:`, Array.from(new Set(allGamesInEvent.map(g => g.scheduledDate))));
+        
+        // DEBUG: Check sample game data structure
+        if (allGamesInEvent.length > 0) {
+          console.log(`📊 SAMPLE GAME DATA:`, JSON.stringify(allGamesInEvent[0], null, 2));
+          console.log(`📊 SAMPLE SCHEDULED_TIME:`, allGamesInEvent[0].scheduledTime, typeof allGamesInEvent[0].scheduledTime);
+        }
 
         // Get games for target date - try both date formats
         let gamesForOptimization = allGamesInEvent.filter(g => g.scheduledDate === targetDate);
@@ -1252,53 +1258,155 @@ export function registerRoutes(app: Express): Server {
         let optimizationsApplied = 0;
         const maxGamesPerField = 8; // Capacity limit per field
 
-        console.log(`🎯 STARTING CONSOLIDATION ANALYSIS...`);
+        console.log(`🎯 STARTING GAP-FILLING CONSOLIDATION ANALYSIS...`);
         console.log(`🎯 Games to analyze: ${gamesForOptimization.length}`);
         console.log(`🎯 Target fields to consolidate FROM: ${Array.from(targetFields.values()).join(', ')}`);
         console.log(`🎯 Priority fields to consolidate TO: 12, 13`);
+        
+        // DEBUG: Check the time formats in the games
+        console.log(`🕐 DEBUGGING TIME FORMATS:`);
+        gamesForOptimization.slice(0, 5).forEach((game, i) => {
+          console.log(`Game ${i + 1}: scheduledTime="${game.scheduledTime}" (type: ${typeof game.scheduledTime})`);
+        });
 
-        // Consolidation logic: Move games from target fields to priority fields
-        for (const game of gamesForOptimization) {
-          if (!game.fieldId || !game.scheduledTime) continue;
-          
-          // Only move games that are on target fields (14, 15, 20)
-          if (!targetFields.has(game.fieldId)) continue;
-          
-          const currentFieldName = targetFields.get(game.fieldId);
-          const timeKey = game.scheduledTime;
-          const usedFieldsInSlot = timeSlotUsage.get(timeKey) || new Set();
-
-          console.log(`🔄 Analyzing Game ${game.id} on Field ${currentFieldName} at ${timeKey}`);
-
-          // Try to move to priority fields (12 first, then 13)
-          for (const [priorityFieldName, priorityFieldId] of priorityFields.entries()) {
-            const currentUsage = fieldUsage.get(priorityFieldId) || 0;
-            const fieldAvailable = !usedFieldsInSlot.has(priorityFieldId);
-            const fieldHasCapacity = currentUsage < maxGamesPerField;
-
-            if (fieldAvailable && fieldHasCapacity) {
-              console.log(`✅ Moving Game ${game.id}: Field ${currentFieldName} → Field ${priorityFieldName}`);
-              
-              // Update the game
-              await db
-                .update(games)
-                .set({ 
-                  fieldId: priorityFieldId,
-                  updatedAt: new Date().toISOString()
-                })
-                .where(eq(games.id, game.id));
-
-              // Update tracking
-              fieldUsage.set(game.fieldId, (fieldUsage.get(game.fieldId) || 1) - 1);
-              fieldUsage.set(priorityFieldId, (fieldUsage.get(priorityFieldId) || 0) + 1);
-              timeSlotUsage.get(timeKey)?.delete(game.fieldId);
-              timeSlotUsage.get(timeKey)?.add(priorityFieldId);
-              
-              optimizationsApplied++;
-              break; // Move to next game
-            } else {
-              console.log(`❌ Field ${priorityFieldName} unavailable: available=${fieldAvailable}, capacity=${fieldHasCapacity} (${currentUsage}/${maxGamesPerField})`);
+        // Generate all possible time slots in 15-minute intervals
+        const generateTimeSlots = (startHour = 8, endHour = 18) => {
+          const slots = [];
+          for (let hour = startHour; hour < endHour; hour++) {
+            for (let minutes = 0; minutes < 60; minutes += 15) {
+              const time = `${hour.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:00`;
+              slots.push(`2025-08-16T${time}`);
             }
+          }
+          return slots;
+        };
+
+        const allTimeSlots = generateTimeSlots(8, 18);
+        console.log(`🕐 Generated ${allTimeSlots.length} possible time slots`);
+
+        // Find gaps on priority fields by checking which time slots are available
+        const findAvailableSlots = (fieldId) => {
+          const occupiedSlots = new Set();
+          
+          console.log(`🔍 Finding available slots for field ${fieldId}`);
+          
+          gamesForOptimization.forEach(game => {
+            if (game.fieldId === fieldId && game.scheduledTime) {
+              console.log(`🎮 Game ${game.id} on field ${fieldId} at ${game.scheduledTime}`);
+              occupiedSlots.add(game.scheduledTime);
+              
+              // Also mark next slots as occupied (assuming 85min game duration)
+              try {
+                // Handle time-only format (e.g., "08:00:00")
+                let gameStart;
+                if (typeof game.scheduledTime === 'string') {
+                  // Combine with target date to create full timestamp
+                  const fullDateTime = `${targetDate}T${game.scheduledTime}`;
+                  gameStart = new Date(fullDateTime);
+                } else if (game.scheduledTime instanceof Date) {
+                  gameStart = game.scheduledTime;
+                } else {
+                  console.log(`⚠️ Unknown time format for game ${game.id}: ${game.scheduledTime} (type: ${typeof game.scheduledTime})`);
+                  return;
+                }
+                
+                if (isNaN(gameStart.getTime())) {
+                  console.log(`⚠️ Invalid date for game ${game.id}: ${game.scheduledTime}`);
+                  return;
+                }
+                
+                // Mark multiple slots as occupied for 85-minute duration
+                for (let i = 0; i < 6; i++) { // 6 * 15min = 90min buffer
+                  const slotTime = new Date(gameStart.getTime() + i * 15 * 60000);
+                  const slotString = slotTime.toISOString().substring(0, 19);
+                  occupiedSlots.add(slotString);
+                }
+              } catch (error) {
+                console.log(`⚠️ Date parsing error for game ${game.id}:`, error.message);
+              }
+            }
+          });
+          
+          console.log(`🔍 Field ${fieldId} has ${occupiedSlots.size} occupied slots`);
+          const availableSlots = allTimeSlots.filter(slot => !occupiedSlots.has(slot));
+          console.log(`🔍 Field ${fieldId} has ${availableSlots.length} available slots`);
+          
+          return availableSlots;
+        };
+
+        // Get available slots for priority fields
+        const field12AvailableSlots = findAvailableSlots(priorityFields.get('12'));
+        const field13AvailableSlots = findAvailableSlots(priorityFields.get('13'));
+        
+        console.log(`📅 Field 12 available slots: ${field12AvailableSlots.length}`);
+        console.log(`📅 Field 13 available slots: ${field13AvailableSlots.length}`);
+        if (field12AvailableSlots.length > 0) {
+          console.log(`📅 Field 12 first few slots:`, field12AvailableSlots.slice(0, 5));
+        }
+        if (field13AvailableSlots.length > 0) {
+          console.log(`📅 Field 13 first few slots:`, field13AvailableSlots.slice(0, 5));
+        }
+
+        // INTELLIGENT GAP-FILLING: Move games from outer fields to fill gaps in priority fields
+        const gamesToMove = gamesForOptimization.filter(game => 
+          game.fieldId && game.scheduledTime && targetFields.has(game.fieldId)
+        );
+
+        console.log(`🎯 Found ${gamesToMove.length} games on target fields that can be moved`);
+
+        for (const game of gamesToMove) {
+          const currentFieldName = targetFields.get(game.fieldId);
+          console.log(`🔄 Analyzing Game ${game.id} on Field ${currentFieldName} at ${game.scheduledTime}`);
+
+          // Try field 12 first, then field 13
+          let moved = false;
+          
+          if (field12AvailableSlots.length > 0) {
+            const newTimeSlot = field12AvailableSlots.shift(); // Take first available slot
+            // Extract just the time portion for database storage - must be HH:MM:SS format
+            const timeOnly = newTimeSlot.substring(11); // Extract time after "2025-08-16T"
+            console.log(`✅ MOVING Game ${game.id}: Field ${currentFieldName} → Field 12`);
+            console.log(`🔧 Time change: ${game.scheduledTime} → ${timeOnly}`);
+            console.log(`🔧 DEBUG: newTimeSlot="${newTimeSlot}", timeOnly="${timeOnly}"`);
+            
+            await db
+              .update(games)
+              .set({ 
+                fieldId: priorityFields.get('12'),
+                scheduledTime: timeOnly,
+                updatedAt: new Date().toISOString()
+              })
+              .where(eq(games.id, game.id));
+            
+            optimizationsApplied++;
+            moved = true;
+            
+            // Remove this slot from field 13 as well (in case of overlap)
+            const slotIndex = field13AvailableSlots.indexOf(newTimeSlot);
+            if (slotIndex > -1) field13AvailableSlots.splice(slotIndex, 1);
+            
+          } else if (field13AvailableSlots.length > 0) {
+            const newTimeSlot = field13AvailableSlots.shift(); // Take first available slot
+            // Extract just the time portion for database storage - must be HH:MM:SS format
+            const timeOnly = newTimeSlot.substring(11); // Extract time after "2025-08-16T"
+            console.log(`✅ MOVING Game ${game.id}: Field ${currentFieldName} → Field 13`);
+            console.log(`🔧 Time change: ${game.scheduledTime} → ${timeOnly}`);
+            
+            await db
+              .update(games)
+              .set({ 
+                fieldId: priorityFields.get('13'),
+                scheduledTime: timeOnly,
+                updatedAt: new Date().toISOString()
+              })
+              .where(eq(games.id, game.id));
+            
+            optimizationsApplied++;
+            moved = true;
+          }
+          
+          if (!moved) {
+            console.log(`❌ No available slots on priority fields for Game ${game.id}`);
           }
         }
 
