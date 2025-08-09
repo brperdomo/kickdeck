@@ -111,6 +111,7 @@ import tournamentParametersRouter from "./routes/admin/tournament-parameters";
 import flightsRouter from "./routes/admin/flights";
 import bracketsRouter from "./routes/admin/brackets";
 import flightReviewRouter from "./routes/admin/flight-review";
+import bracketAssignmentsRouter from "./routes/admin/bracket-assignments";
 import flightFormatsRouter from "./routes/admin/flight-formats";
 import flightConfigurationsRouter from "./routes/admin/flight-configurations";
 import tournamentControlRouter from "./routes/admin/tournament-control";
@@ -1659,6 +1660,7 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/games', isAdmin, gamesAllTournamentsRouter); // Games across all tournaments
     app.use('/api/admin/events', isAdmin, flightsRouter); // Flight creation and management
     app.use('/api/admin', isAdmin, flightReviewRouter); // Flight review and team assignment
+    app.use('/api/admin', isAdmin, bracketAssignmentsRouter); // Bracket assignment within flights
     app.use('/api/admin', isAdmin, flightFormatsRouter); // Game format engine and configuration
     app.use('/api/admin', isAdmin, flightConfigurationsRouter); // Flight configuration table management
     app.use('/api/admin/events', isAdmin, bracketCreationSqlRouter); // Bracket creation engine
