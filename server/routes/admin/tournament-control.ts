@@ -494,9 +494,14 @@ async function getBracketConfigurations(eventId: string) {
 async function generateGamesForFlight(eventId: string, flight: any) {
   console.log(`[Generate Games] Creating games for flight ${flight.divisionName}`);
   
-  // Get teams for this flight
+  // Get teams for this flight grouped by bracket
   const flightTeams = await db
-    .select()
+    .select({
+      id: teams.id,
+      name: teams.name,
+      groupId: teams.groupId,
+      ageGroupId: teams.ageGroupId
+    })
     .from(teams)
     .where(and(
       eq(teams.eventId, eventId),
@@ -508,34 +513,79 @@ async function generateGamesForFlight(eventId: string, flight: any) {
     return { gamesCreated: 0 };
   }
 
-  // Generate round-robin games for this flight
+  console.log(`[Generate Games] Found ${flightTeams.length} teams for flight ${flight.divisionName}`);
+
+  // Group teams by bracket (groupId)
+  const teamsByBracket = new Map();
+  flightTeams.forEach(team => {
+    const bracketId = team.groupId;
+    if (!bracketId) {
+      console.warn(`[Generate Games] Team ${team.name} has no bracket assignment - skipping`);
+      return;
+    }
+    
+    if (!teamsByBracket.has(bracketId)) {
+      teamsByBracket.set(bracketId, []);
+    }
+    teamsByBracket.get(bracketId).push(team);
+  });
+
+  console.log(`[Generate Games] Teams distributed across ${teamsByBracket.size} brackets:`, 
+    Array.from(teamsByBracket.entries()).map(([bracketId, teams]) => 
+      `Bracket ${bracketId}: ${teams.length} teams`));
+
   const gamesToCreate = [];
   let gameNumber = 1;
 
-  for (let i = 0; i < flightTeams.length; i++) {
-    for (let j = i + 1; j < flightTeams.length; j++) {
-      const homeTeam = flightTeams[i];
-      const awayTeam = flightTeams[j];
+  // PHASE 1: Generate pool play games within each bracket (round-robin within bracket)
+  for (const [bracketId, bracketTeams] of Array.from(teamsByBracket.entries())) {
+    console.log(`[Generate Games] Creating pool play for bracket ${bracketId} (${bracketTeams.length} teams)`);
+    
+    // Round-robin within this bracket only
+    for (let i = 0; i < bracketTeams.length; i++) {
+      for (let j = i + 1; j < bracketTeams.length; j++) {
+        const homeTeam = bracketTeams[i];
+        const awayTeam = bracketTeams[j];
 
-      gamesToCreate.push({
-        eventId: eventId,
-        ageGroupId: flight.ageGroupId,
-        homeTeamId: homeTeam.id,
-        awayTeamId: awayTeam.id,
-        homeTeamName: homeTeam.name,
-        awayTeamName: awayTeam.name,
-        matchNumber: gameNumber++,
-        duration: flight.matchTime,
-        status: 'scheduled',
-        round: 1
-      });
+        gamesToCreate.push({
+          eventId: eventId,
+          ageGroupId: flight.ageGroupId,
+          groupId: bracketId, // Store which bracket this game belongs to
+          homeTeamId: homeTeam.id,
+          awayTeamId: awayTeam.id,
+          matchNumber: gameNumber++,
+          duration: flight.matchTime,
+          status: 'scheduled',
+          round: 1 // Pool play round
+        });
+      }
     }
+  }
+
+  // PHASE 2: Generate championship game if we have 2+ brackets with teams
+  const bracketsWithTeams = Array.from(teamsByBracket.entries()).filter(([_, teams]) => teams.length > 0);
+  
+  if (bracketsWithTeams.length >= 2) {
+    console.log(`[Generate Games] Creating championship game between ${bracketsWithTeams.length} brackets`);
+    
+    // Championship game between bracket winners (placeholder teams for now)
+    gamesToCreate.push({
+      eventId: eventId,
+      ageGroupId: flight.ageGroupId,
+      groupId: null, // Championship game doesn't belong to a specific bracket
+      homeTeamId: null, // Will be determined by bracket winners
+      awayTeamId: null, // Will be determined by bracket winners
+      matchNumber: gameNumber++,
+      duration: flight.matchTime,
+      status: 'scheduled',
+      round: 2 // Championship round
+    });
   }
 
   // Insert games into database
   if (gamesToCreate.length > 0) {
     await db.insert(games).values(gamesToCreate);
-    console.log(`[Generate Games] Created ${gamesToCreate.length} games for flight ${flight.divisionName}`);
+    console.log(`[Generate Games] Created ${gamesToCreate.length} games for flight ${flight.divisionName} (${gamesToCreate.length - (bracketsWithTeams.length >= 2 ? 1 : 0)} pool play + ${bracketsWithTeams.length >= 2 ? 1 : 0} championship)`);
   }
 
   return { gamesCreated: gamesToCreate.length };
