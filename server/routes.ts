@@ -5586,48 +5586,31 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       try {
         const fieldId = parseInt(req.params.id);
         
-        // Check if field has scheduled games
-        const gamesUsingField = await db
-          .select({ count: sql`count(*)` })
-          .from(games)
-          .where(eq(games.fieldId, fieldId));
-          
-        if (gamesUsingField[0]?.count > 0) {
-          return res.status(400).json({ 
-            error: "Cannot delete field", 
-            message: `Field has ${gamesUsingField[0].count} scheduled games. Remove all games from this field before deleting.`
-          });
-        }
-        
-        // Check if field has other references
-        const fieldSizeReferences = await db
-          .select({ count: sql`count(*)` })
-          .from(eventFieldSizes)
-          .where(eq(eventFieldSizes.fieldId, fieldId));
-          
-        if (fieldSizeReferences[0]?.count > 0) {
-          // Remove event field size references first
-          await db
-            .delete(eventFieldSizes)
-            .where(eq(eventFieldSizes.fieldId, fieldId));
-        }
-
+        // Simple field deletion with proper error handling
         const [deletedField] = await db
           .delete(fields)
           .where(eq(fields.id, fieldId))
           .returning();
 
         if (!deletedField) {
-          return res.status(404).send("Field not found");
+          return res.status(404).json({ error: "Field not found" });
         }
 
         res.json(deletedField);
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error deleting field:', error);
-        console.error('Error details:', error);
+        
+        // Check for constraint violations
+        if (error?.code === '23503') { // Foreign key constraint violation
+          return res.status(400).json({ 
+            error: "Cannot delete field", 
+            message: "Field is referenced by scheduled games or other data. Remove all references before deleting."
+          });
+        }
+        
         res.status(500).json({ 
           error: "Failed to delete field", 
-          message: error.message || "Database constraint violation"
+          message: error?.message || "Database error"
         });
       }
     });
