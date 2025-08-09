@@ -5678,6 +5678,8 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
             sortOrder: sql`COALESCE(${eventFieldConfigurations.sortOrder}, ${fields.sortOrder})`.as('sortOrder'),
             hasLights: fields.hasLights,
             isOpen: fields.isOpen,
+            isActive: sql`COALESCE(${eventFieldConfigurations.isActive}, true)`.as('isActive'),
+            firstGameTime: eventFieldConfigurations.firstGameTime,
             complexName: complexes.name
           })
           .from(fields)
