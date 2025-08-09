@@ -598,17 +598,17 @@ async function generateGamesForFlight(eventId: string, flight: any) {
         }
       }
       
-      // Championship game (1st vs 2nd in overall standings)
+      // Championship game (1st in points vs 2nd in points across all teams)
       gamesToCreate.push({
         eventId: eventId,
         ageGroupId: flight.ageGroupId,
-        groupId: null,
-        homeTeamId: null, // Will be determined by standings
-        awayTeamId: null, // Will be determined by standings
+        groupId: null, // Championship game doesn't belong to a specific bracket
+        homeTeamId: null, // Will be determined by overall points standings
+        awayTeamId: null, // Will be determined by overall points standings  
         matchNumber: gameNumber++,
         duration: flight.matchTime,
         status: 'scheduled',
-        round: 3 // Championship round
+        round: 3 // Championship round (after pool play + crossplay)
       });
       
     } else {
