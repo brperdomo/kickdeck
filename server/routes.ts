@@ -5,8 +5,8 @@ import { setupWebSocketServer } from "./websocket";
 import { log } from "./vite";
 import { crypto } from "./crypto";
 import { db } from "@db";
-import { emailTemplates, insertPlayerSchema, fields, complexes, games, eventFieldSizes } from "@db/schema";
-import { sql, eq } from "drizzle-orm";
+import { emailTemplates, insertPlayerSchema, fields, complexes, games, eventFieldSizes, eventFieldConfigurations } from "@db/schema";
+import { sql, eq, and, inArray, asc } from "drizzle-orm";
 import Stripe from 'stripe';
 import { isAdmin, hasEventAccess } from "./middleware";
 import { authenticateTournamentDirector } from "./middleware/tournament-director-auth";
@@ -5660,26 +5660,130 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         
         const complexIds = selectedComplexes.map(ec => ec.complexId);
         
-        // Get all fields from those complexes
+        // Get all fields from those complexes with event-specific configurations
         const eventFields = await db
           .select({
             id: fields.id,
             name: fields.name,
-            fieldSize: fields.fieldSize,
-            sortOrder: fields.sortOrder,
+            fieldSize: sql`COALESCE(${eventFieldConfigurations.fieldSize}, ${fields.fieldSize})`.as('fieldSize'),
+            sortOrder: sql`COALESCE(${eventFieldConfigurations.sortOrder}, ${fields.sortOrder})`.as('sortOrder'),
             hasLights: fields.hasLights,
             isOpen: fields.isOpen,
             complexName: complexes.name
           })
           .from(fields)
           .leftJoin(complexes, eq(fields.complexId, complexes.id))
+          .leftJoin(eventFieldConfigurations, and(
+            eq(eventFieldConfigurations.fieldId, fields.id),
+            eq(eventFieldConfigurations.eventId, eventId)
+          ))
           .where(inArray(fields.complexId, complexIds))
-          .orderBy(asc(fields.sortOrder), asc(fields.name));
+          .orderBy(asc(sql`COALESCE(${eventFieldConfigurations.sortOrder}, ${fields.sortOrder})`), asc(fields.name));
         
         res.json({ fields: eventFields });
       } catch (error) {
         console.error('Error fetching event fields:', error);
         res.status(500).json({ error: 'Failed to fetch fields for event' });
+      }
+    });
+
+    // Event-specific field configuration endpoints
+    app.patch('/api/admin/events/:eventId/field-configurations', isAdmin, async (req, res) => {
+      try {
+        const { eventId } = req.params;
+        const { fieldId, fieldSize } = req.body;
+
+        // First, try to update existing configuration
+        const existingConfig = await db
+          .select()
+          .from(eventFieldConfigurations)
+          .where(and(
+            eq(eventFieldConfigurations.eventId, eventId),
+            eq(eventFieldConfigurations.fieldId, fieldId)
+          ))
+          .limit(1);
+
+        if (existingConfig.length > 0) {
+          // Update existing configuration
+          await db
+            .update(eventFieldConfigurations)
+            .set({ 
+              fieldSize,
+              updatedAt: new Date().toISOString()
+            })
+            .where(and(
+              eq(eventFieldConfigurations.eventId, eventId),
+              eq(eventFieldConfigurations.fieldId, fieldId)
+            ));
+        } else {
+          // Create new configuration
+          await db
+            .insert(eventFieldConfigurations)
+            .values({
+              eventId,
+              fieldId,
+              fieldSize,
+              sortOrder: 0,
+              isActive: true
+            });
+        }
+
+        res.json({ success: true });
+      } catch (error) {
+        console.error('Error updating field configuration:', error);
+        res.status(500).json({ error: 'Failed to update field configuration' });
+      }
+    });
+
+    app.patch('/api/admin/events/:eventId/field-configurations/bulk', isAdmin, async (req, res) => {
+      try {
+        const { eventId } = req.params;
+        const { fieldUpdates } = req.body;
+
+        for (const update of fieldUpdates) {
+          const { id: fieldId, sortOrder, fieldSize } = update;
+
+          // Check if configuration exists
+          const existingConfig = await db
+            .select()
+            .from(eventFieldConfigurations)
+            .where(and(
+              eq(eventFieldConfigurations.eventId, eventId),
+              eq(eventFieldConfigurations.fieldId, fieldId)
+            ))
+            .limit(1);
+
+          if (existingConfig.length > 0) {
+            // Update existing
+            await db
+              .update(eventFieldConfigurations)
+              .set({ 
+                fieldSize,
+                sortOrder,
+                updatedAt: new Date().toISOString()
+              })
+              .where(and(
+                eq(eventFieldConfigurations.eventId, eventId),
+                eq(eventFieldConfigurations.fieldId, fieldId)
+              ));
+          } else {
+            // Create new
+            await db
+              .insert(eventFieldConfigurations)
+              .values({
+                eventId,
+                fieldId,
+                fieldSize,
+                sortOrder,
+                isActive: true
+              });
+          }
+        }
+
+        res.json({ success: true });
+      } catch (error) {
+        console.error('Error bulk updating field configurations:', error);
+        res.status(500).json({ error: 'Failed to update field configurations' });
       }
     });
 

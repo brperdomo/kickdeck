@@ -48,9 +48,9 @@ export default function FieldManagementDashboard({ eventId }: FieldManagementDas
       <Alert className="border-slate-600 bg-slate-800">
         <Settings className="h-4 w-4 text-purple-400" />
         <AlertDescription className="text-slate-200">
-          <strong>Field Display Order Management:</strong> Arrange fields in the order you want them to appear 
-          in the Master Scheduler's Calendar Grid. Priority fields (typically 12, 13) should be at the top 
-          for optimal scheduling distribution.
+          <strong>Tournament Field Configuration:</strong> Arrange fields in the order you want them to appear 
+          in the Master Scheduler's Calendar Grid and configure field sizes specific to this tournament. 
+          Priority fields (typically 12, 13) should be at the top for optimal scheduling distribution.
         </AlertDescription>
       </Alert>
 
@@ -58,6 +58,7 @@ export default function FieldManagementDashboard({ eventId }: FieldManagementDas
         <FieldSortingManager
           fields={fields}
           onFieldsReordered={handleFieldsReordered}
+          eventId={eventId}
         />
       ) : (
         <Alert className="border-yellow-600 bg-yellow-900/20">

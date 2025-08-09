@@ -175,6 +175,31 @@ export const insertFieldSchema = createInsertSchema(fields, {
 
 export const selectFieldSchema = createSelectSchema(fields);
 
+// Tournament-specific field configurations
+export const eventFieldConfigurations = pgTable("event_field_configurations", {
+  id: serial("id").primaryKey(),
+  eventId: text("event_id").notNull().references(() => events.id),
+  fieldId: integer("field_id").notNull().references(() => fields.id),
+  fieldSize: text("field_size").notNull().default("11v11"), // Tournament-specific field size
+  sortOrder: integer("sort_order").default(0).notNull(), // Tournament-specific display order
+  isActive: boolean("is_active").default(true).notNull(), // Can disable fields for specific tournaments
+  createdAt: text("created_at").notNull().default(new Date().toISOString()),
+  updatedAt: text("updated_at").notNull().default(new Date().toISOString()),
+});
+
+export const insertEventFieldConfigurationSchema = createInsertSchema(eventFieldConfigurations, {
+  eventId: z.string().min(1, "Event ID is required"),
+  fieldId: z.number().min(1, "Field ID is required"),
+  fieldSize: z.enum(["3v3", "4v4", "5v5", "6v6", "7v7", "8v8", "9v9", "10v10", "11v11", "N/A"]).default("11v11"),
+  sortOrder: z.number().min(0).default(0),
+  isActive: z.boolean().default(true),
+});
+
+export const selectEventFieldConfigurationSchema = createSelectSchema(eventFieldConfigurations);
+
+export type InsertEventFieldConfiguration = typeof eventFieldConfigurations.$inferInsert;
+export type SelectEventFieldConfiguration = typeof eventFieldConfigurations.$inferSelect;
+
 // Referee Management Tables
 export const referees = pgTable("referees", {
   id: serial("id").primaryKey(),
