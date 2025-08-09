@@ -1347,32 +1347,103 @@ export function registerRoutes(app: Express): Server {
           console.log(`📅 Field 13 first few slots:`, field13AvailableSlots.slice(0, 5));
         }
 
-        // Get team data for rest period validation
-        const teamGameData = await db
-          .select({
-            gameId: games.id,
-            homeTeamId: games.homeTeamId,
-            awayTeamId: games.awayTeamId,
-            homeTeamName: games.homeTeam,
-            awayTeamName: games.awayTeam,
-            scheduledTime: games.scheduledTime,
-            scheduledDate: games.scheduledDate,
-            fieldId: games.fieldId
-          })
-          .from(games)
-          .where(eq(games.eventId, eventId.toString()));
+        // Get team data for rest period validation using raw SQL to avoid ORM issues
+        const teamGameDataResult = await db.execute(sql`
+          SELECT 
+            id as game_id,
+            home_team_id,
+            away_team_id,
+            home_team as home_team_name,
+            away_team as away_team_name,
+            scheduled_time,
+            scheduled_date,
+            field_id
+          FROM games 
+          WHERE event_id = ${eventId.toString()}
+        `);
+        
+        const teamGameData = teamGameDataResult.rows.map(row => ({
+          gameId: row.game_id,
+          homeTeamId: row.home_team_id,
+          awayTeamId: row.away_team_id,
+          homeTeamName: row.home_team_name,
+          awayTeamName: row.away_team_name,
+          scheduledTime: row.scheduled_time,
+          scheduledDate: row.scheduled_date,
+          fieldId: row.field_id
+        }));
 
         console.log(`📊 Loaded ${teamGameData.length} total games for rest period validation`);
 
+        // Load dynamic rest periods from flight configuration
+        const teamRestPeriods = new Map(); // teamId -> restPeriodMinutes
+        
+        try {
+          // Use raw SQL query to avoid Drizzle ORM issues
+          const teamsWithBrackets = await db.execute(sql`
+            SELECT 
+              t.id as team_id,
+              t.name as team_name,
+              t.bracket_id,
+              eb.name as bracket_name,
+              eb.tournament_settings
+            FROM teams t
+            LEFT JOIN event_brackets eb ON t.bracket_id = eb.id
+            WHERE t.event_id = ${eventId.toString()}
+          `);
+          
+          console.log(`📊 Loaded ${teamsWithBrackets.rows.length} teams with bracket configurations`);
+          
+          // Build team rest period lookup
+          teamsWithBrackets.rows.forEach(row => {
+            const teamId = row.team_id as number;
+            const teamName = row.team_name as string;
+            const bracketName = row.bracket_name as string || 'No Bracket';
+            
+            let restPeriod = 90; // Default rest period
+            
+            if (row.tournament_settings && typeof row.tournament_settings === 'object') {
+              const settings = row.tournament_settings as any;
+              if (settings.restPeriodMinutes && typeof settings.restPeriodMinutes === 'number') {
+                restPeriod = settings.restPeriodMinutes;
+                console.log(`🎯 Dynamic rest period found: ${teamName} → ${restPeriod}min (${bracketName})`);
+              }
+            }
+            
+            teamRestPeriods.set(teamId, restPeriod);
+            console.log(`🔧 Team ${teamName} (${bracketName}): ${restPeriod}min rest period`);
+          });
+        } catch (error) {
+          console.error('Error loading team brackets, using default 90min rest period for all teams:', error);
+          // Fall back to hardcoded rest period for all teams - set 90min for all teams
+          for (const game of teamGameData) {
+            if (game.homeTeamId) teamRestPeriods.set(game.homeTeamId, 90);
+            if (game.awayTeamId) teamRestPeriods.set(game.awayTeamId, 90);
+          }
+          console.log('🔧 Using fallback 90min rest period for all teams');
+        }
+        
+        // Ensure we have rest periods set for all teams that appear in games
+        for (const game of teamGameData) {
+          if (game.homeTeamId && !teamRestPeriods.has(game.homeTeamId)) {
+            teamRestPeriods.set(game.homeTeamId, 90);
+            console.log(`🔧 Setting default 90min rest period for home team ${game.homeTeamId}`);
+          }
+          if (game.awayTeamId && !teamRestPeriods.has(game.awayTeamId)) {
+            teamRestPeriods.set(game.awayTeamId, 90);
+            console.log(`🔧 Setting default 90min rest period for away team ${game.awayTeamId}`);
+          }
+        }
+
         // Helper function to validate rest periods between games for a team
         const validateRestPeriod = (gameToMove, newTimeSlot, teamId, teamName) => {
-          const minRestMinutes = 90; // 90-minute rest period requirement
+          const minRestMinutes = teamRestPeriods.get(teamId) || 90; // Get team-specific or default rest period
           const gameLength = 85; // 85-minute game duration
           
           const newGameStart = new Date(`${targetDate}T${newTimeSlot.substring(11)}`);
           const newGameEnd = new Date(newGameStart.getTime() + gameLength * 60000);
           
-          console.log(`🔍 Checking rest period for ${teamName} (ID: ${teamId})`);
+          console.log(`🔍 Checking rest period for ${teamName} (ID: ${teamId}) - Required: ${minRestMinutes}min`);
           console.log(`🔍 Proposed new game: ${newGameStart.toLocaleTimeString()} - ${newGameEnd.toLocaleTimeString()}`);
 
           const teamGames = teamGameData.filter(g => 
@@ -1380,6 +1451,8 @@ export function registerRoutes(app: Express): Server {
             g.scheduledDate === targetDate &&
             g.gameId !== gameToMove.id // Exclude the game we're trying to move
           );
+
+          console.log(`🔍 Team ${teamName} has ${teamGames.length} existing games to check against`);
 
           for (const existingGame of teamGames) {
             const existingStart = new Date(`${targetDate}T${existingGame.scheduledTime}`);
