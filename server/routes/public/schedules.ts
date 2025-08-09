@@ -71,12 +71,13 @@ router.get('/:eventId', async (req: Request, res: Response) => {
 
     console.log(`[Public Schedules] Found ${teamsData.length} teams`);
 
-    // Get age groups
+    // Get age groups with birth year
     const ageGroupsData = await db
       .select({
         ageGroupId: eventAgeGroups.id,
         ageGroup: eventAgeGroups.ageGroup,
         gender: eventAgeGroups.gender,
+        birthYear: eventAgeGroups.birthYear,
         divisionCode: eventAgeGroups.divisionCode
       })
       .from(eventAgeGroups)
@@ -105,24 +106,32 @@ router.get('/:eventId', async (req: Request, res: Response) => {
       flightsMap.set(flight.ageGroupId, flight);
     });
 
-    // Create age groups and flights structure
-    const ageGroupsMap = new Map();
+    // Create age groups and flights structure, separated by gender
+    const ageGroupsByGender = new Map(); // Boys and Girls separate
     ageGroupsData.forEach(ageGroup => {
+      const genderKey = ageGroup.gender; // 'Boys' or 'Girls'
       const ageGroupKey = `${ageGroup.ageGroup}-${ageGroup.gender}`;
       const flight = flightsMap.get(ageGroup.ageGroupId);
       
-      if (!ageGroupsMap.has(ageGroupKey)) {
-        ageGroupsMap.set(ageGroupKey, {
+      if (!ageGroupsByGender.has(genderKey)) {
+        ageGroupsByGender.set(genderKey, new Map());
+      }
+      
+      const genderMap = ageGroupsByGender.get(genderKey);
+      
+      if (!genderMap.has(ageGroupKey)) {
+        genderMap.set(ageGroupKey, {
           ageGroup: ageGroup.ageGroup,
           gender: ageGroup.gender,
+          birthYear: ageGroup.birthYear,
           divisionCode: ageGroup.divisionCode,
-          displayName: `${ageGroup.ageGroup} ${ageGroup.gender}`,
+          displayName: `${ageGroup.gender} ${ageGroup.birthYear}`, // Changed to "[Gender] [Birth Year]"
           flights: new Map()
         });
       }
       
       if (flight) {
-        const ageGroupData = ageGroupsMap.get(ageGroupKey);
+        const ageGroupData = genderMap.get(ageGroupKey);
         
         if (!ageGroupData.flights.has(flight.flightName)) {
           // Count teams in this flight
@@ -130,30 +139,64 @@ router.get('/:eventId', async (req: Request, res: Response) => {
             t.ageGroupId === ageGroup.ageGroupId && t.bracketId === flight.flightId
           ).length;
           
-          // Count games in this flight
-          const gamesInFlight = gamesData.filter(g => {
-            const homeTeam = teamsMap.get(g.homeTeamId);
-            const awayTeam = teamsMap.get(g.awayTeamId);
-            return homeTeam?.bracketId === flight.flightId || awayTeam?.bracketId === flight.flightId;
-          }).length;
-          
-          ageGroupData.flights.set(flight.flightName, {
-            flightName: flight.flightName,
-            teamCount: teamsInFlight,
-            gameCount: gamesInFlight
-          });
+          // Only include flights that have teams
+          if (teamsInFlight > 0) {
+            // Count games in this flight
+            const gamesInFlight = gamesData.filter(g => {
+              const homeTeam = teamsMap.get(g.homeTeamId);
+              const awayTeam = teamsMap.get(g.awayTeamId);
+              return homeTeam?.bracketId === flight.flightId || awayTeam?.bracketId === flight.flightId;
+            }).length;
+            
+            ageGroupData.flights.set(flight.flightName, {
+              flightName: flight.flightName,
+              teamCount: teamsInFlight,
+              gameCount: gamesInFlight
+            });
+          }
         }
       }
     });
 
-    // Convert to array format
-    const ageGroups = Array.from(ageGroupsMap.values()).map(ageGroup => ({
-      ageGroup: ageGroup.ageGroup,
-      gender: ageGroup.gender,
-      divisionCode: ageGroup.divisionCode,
-      displayName: ageGroup.displayName,
-      flights: Array.from(ageGroup.flights.values())
-    }));
+    // Convert to array format, separated by gender
+    const ageGroupsStructure = {
+      boys: [],
+      girls: []
+    };
+    
+    // Process Boys
+    if (ageGroupsByGender.has('Boys')) {
+      ageGroupsStructure.boys = Array.from(ageGroupsByGender.get('Boys').values())
+        .filter(ageGroup => ageGroup.flights.size > 0) // Only include age groups with flights that have teams
+        .map(ageGroup => ({
+          ageGroup: ageGroup.ageGroup,
+          gender: ageGroup.gender,
+          birthYear: ageGroup.birthYear,
+          divisionCode: ageGroup.divisionCode,
+          displayName: ageGroup.displayName,
+          flights: Array.from(ageGroup.flights.values()),
+          totalFlights: ageGroup.flights.size,
+          totalTeams: Array.from(ageGroup.flights.values()).reduce((sum, flight) => sum + flight.teamCount, 0)
+        }))
+        .sort((a, b) => b.birthYear - a.birthYear); // Sort by birth year descending (older first)
+    }
+    
+    // Process Girls  
+    if (ageGroupsByGender.has('Girls')) {
+      ageGroupsStructure.girls = Array.from(ageGroupsByGender.get('Girls').values())
+        .filter(ageGroup => ageGroup.flights.size > 0) // Only include age groups with flights that have teams
+        .map(ageGroup => ({
+          ageGroup: ageGroup.ageGroup,
+          gender: ageGroup.gender,
+          birthYear: ageGroup.birthYear,
+          divisionCode: ageGroup.divisionCode,
+          displayName: ageGroup.displayName,
+          flights: Array.from(ageGroup.flights.values()),
+          totalFlights: ageGroup.flights.size,
+          totalTeams: Array.from(ageGroup.flights.values()).reduce((sum, flight) => sum + flight.teamCount, 0)
+        }))
+        .sort((a, b) => b.birthYear - a.birthYear); // Sort by birth year descending (older first)
+    }
 
     // Process games data with team names and flight info
     const processedGames = gamesData.map(game => {
@@ -166,11 +209,12 @@ router.get('/:eventId', async (req: Request, res: Response) => {
       let ageGroupName = 'Unknown';
       let flightName = 'Unknown';
       
-      if (homeTeam && awayTeam) {
-        const ageGroupData = ageGroupsData.find(ag => ag.ageGroupId === homeTeam.ageGroupId);
+      if (homeTeam || awayTeam) {
+        const teamForAgeGroup = homeTeam || awayTeam;
+        const ageGroupData = ageGroupsData.find(ag => ag.ageGroupId === teamForAgeGroup.ageGroupId);
         if (ageGroupData) {
-          ageGroupName = `${ageGroupData.ageGroup} ${ageGroupData.gender}`;
-          const flightData = flightsData.find(f => f.flightId === homeTeam.bracketId);
+          ageGroupName = `${ageGroupData.gender} ${ageGroupData.birthYear}`;
+          const flightData = flightsData.find(f => f.flightId === teamForAgeGroup.bracketId);
           if (flightData) {
             flightName = flightData.flightName;
           }
@@ -189,15 +233,25 @@ router.get('/:eventId', async (req: Request, res: Response) => {
         duration: game.duration || 90,
         status: game.status || 'scheduled'
       };
+    }).sort((a, b) => {
+      // Sort by date first (Saturday before Sunday), then by time
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      if (dateA.getTime() !== dateB.getTime()) {
+        return dateA.getTime() - dateB.getTime();
+      }
+      // If same date, sort by time
+      return a.time.localeCompare(b.time);
     });
 
     console.log(`[Public Schedules] Processed ${processedGames.length} games`);
-    console.log(`[Public Schedules] Age groups: ${ageGroups.length}`);
+    console.log(`[Public Schedules] Boys age groups: ${ageGroupsStructure.boys.length}`);
+    console.log(`[Public Schedules] Girls age groups: ${ageGroupsStructure.girls.length}`);
 
-    // Build response with live data
+    // Build response with separated gender data
     const scheduleData = {
       eventInfo: eventInfo[0],
-      ageGroups: ageGroups,
+      ageGroupsByGender: ageGroupsStructure,
       games: processedGames,
       standings: [] // TODO: Add standings data if needed
     };

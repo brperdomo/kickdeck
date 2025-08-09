@@ -17,17 +17,36 @@ interface PublicScheduleData {
     endDate: string;
     logoUrl?: string;
   };
-  ageGroups: Array<{
-    ageGroup: string;
-    divisionCode: string;
-    gender: string;
-    displayName: string;
-    flights: Array<{
-      flightName: string;
-      teamCount: number;
-      gameCount: number;
+  ageGroupsByGender: {
+    boys: Array<{
+      ageGroup: string;
+      gender: string;
+      birthYear: number;
+      divisionCode: string;
+      displayName: string;
+      totalFlights: number;
+      totalTeams: number;
+      flights: Array<{
+        flightName: string;
+        teamCount: number;
+        gameCount: number;
+      }>;
     }>;
-  }>;
+    girls: Array<{
+      ageGroup: string;
+      gender: string;
+      birthYear: number;
+      divisionCode: string;
+      displayName: string;
+      totalFlights: number;
+      totalTeams: number;
+      flights: Array<{
+        flightName: string;
+        teamCount: number;
+        gameCount: number;
+      }>;
+    }>;
+  };
   games: Array<{
     id: number;
     homeTeam: string;
@@ -185,24 +204,31 @@ export default function PublicSchedules() {
       <div className="max-w-6xl mx-auto px-4 py-8">
         <h2 className="text-xl font-semibold text-gray-900 mb-6">Schedules</h2>
         
-        {/* Age Groups Table - Matching TotalGlobalSports Layout */}
-        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-          <table className="w-full">
-            <tbody className="divide-y divide-gray-200">
-              {scheduleData.ageGroups?.map((ageGroup, index) => (
-                <React.Fragment key={index}>
-                  {ageGroup.flights?.map((flight, flightIndex) => (
-                    <tr key={`${index}-${flightIndex}`} className="hover:bg-gray-50">
+        {/* Boys Age Groups Table */}
+        {scheduleData.ageGroupsByGender?.boys && scheduleData.ageGroupsByGender.boys.length > 0 && (
+          <div className="mb-8">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Boys</h3>
+            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+              <table className="w-full">
+                <tbody className="divide-y divide-gray-200">
+                  {scheduleData.ageGroupsByGender.boys.map((ageGroup, index) => (
+                    <tr key={index} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-gray-900">
-                          {ageGroup.displayName || `${ageGroup.ageGroup} ${ageGroup.gender}`}
+                          {ageGroup.displayName}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">Flights</div>
+                        <div className="text-sm text-gray-900">
+                          Flights
+                          <div className="text-xs text-gray-500">{ageGroup.totalFlights}</div>
+                        </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">Teams</div>
+                        <div className="text-sm text-gray-900">
+                          Teams
+                          <div className="text-xs text-gray-500">{ageGroup.totalTeams}</div>
+                        </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center gap-4">
@@ -215,21 +241,58 @@ export default function PublicSchedules() {
                           </button>
                         </div>
                       </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* Girls Age Groups Table */}
+        {scheduleData.ageGroupsByGender?.girls && scheduleData.ageGroupsByGender.girls.length > 0 && (
+          <div className="mb-8">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Girls</h3>
+            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+              <table className="w-full">
+                <tbody className="divide-y divide-gray-200">
+                  {scheduleData.ageGroupsByGender.girls.map((ageGroup, index) => (
+                    <tr key={index} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{flight.flightName}</div>
+                        <div className="text-sm font-medium text-gray-900">
+                          {ageGroup.displayName}
+                        </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <button className="text-blue-600 hover:text-blue-800 text-sm font-medium underline">
-                          {flight.teamCount}
-                        </button>
+                        <div className="text-sm text-gray-900">
+                          Flights
+                          <div className="text-xs text-gray-500">{ageGroup.totalFlights}</div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900">
+                          Teams
+                          <div className="text-xs text-gray-500">{ageGroup.totalTeams}</div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center gap-4">
+                          <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                            Schedules
+                          </button>
+                          <span className="text-gray-400">|</span>
+                          <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                            Standings
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
-                </React.Fragment>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
 
         {/* Games Display Section */}
         {scheduleData.games && scheduleData.games.length > 0 && (
@@ -243,7 +306,6 @@ export default function PublicSchedules() {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Home Team</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Away Team</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Age Group</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Flight</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Field</th>
                   </tr>
                 </thead>
@@ -257,8 +319,7 @@ export default function PublicSchedules() {
                       <td className="px-6 py-4 text-sm text-gray-900">{game.homeTeam}</td>
                       <td className="px-6 py-4 text-sm text-gray-900">{game.awayTeam}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{game.ageGroup}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{game.flightName}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Field {game.field}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{game.field}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -272,7 +333,8 @@ export default function PublicSchedules() {
           <div className="mt-8 p-4 bg-gray-100 rounded-lg">
             <h4 className="font-semibold text-gray-900 mb-2">Debug Info:</h4>
             <p className="text-sm text-gray-600">Event: {scheduleData.eventInfo?.name}</p>
-            <p className="text-sm text-gray-600">Age Groups: {scheduleData.ageGroups?.length || 0}</p>
+            <p className="text-sm text-gray-600">Boys Age Groups: {scheduleData.ageGroupsByGender?.boys?.length || 0}</p>
+            <p className="text-sm text-gray-600">Girls Age Groups: {scheduleData.ageGroupsByGender?.girls?.length || 0}</p>
             <p className="text-sm text-gray-600">Games: {scheduleData.games?.length || 0}</p>
             <p className="text-sm text-gray-600">API Response Structure: {JSON.stringify(Object.keys(scheduleData))}</p>
           </div>
