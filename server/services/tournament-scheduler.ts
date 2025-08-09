@@ -251,10 +251,12 @@ export class TournamentScheduler {
     
     console.log(`🎯 Smart bracket generation: ${teamCount} teams, template: ${templateName}`);
     
-    // Match template names to specific tournament scenarios
+    // Match template names to specific tournament scenarios (replacing snake_case with proper names)
     switch (templateName) {
       case 'group_of_4':
-        console.log(`📋 Using group_of_4 template for ${teamCount} teams - generating 6 pool + 1 championship = 7 games`);
+      case 'single_bracket_4_teams':
+      case '4 Team Single Bracket':
+        console.log(`📋 Using 4 Team Single Bracket template for ${teamCount} teams - generating 6 pool + 1 championship = 7 games`);
         // Generate 6 pool games (round robin) + 1 championship final
         const games = [];
         let gameCounter = startingGameNumber;
@@ -264,25 +266,30 @@ export class TournamentScheduler {
         games.push(...poolPlayGames);
         gameCounter += poolPlayGames.length;
         
-        // Add championship final with placeholders
+        // Add championship final with proper winner descriptions
         const championshipGame = this.generateChampionshipGame(bracket, gameCounter);
         games.push(championshipGame);
         
-        console.log(`🏆 group_of_4: Generated ${poolPlayGames.length} pool + 1 championship = ${games.length} total games`);
+        console.log(`🏆 4 Team Single Bracket: Generated ${poolPlayGames.length} pool + 1 championship = ${games.length} total games`);
         return games;
       
       case 'group_of_6':
-        console.log(`📋 Using group_of_6 template for ${teamCount} teams`);
+      case 'crossover_bracket_6_teams':
+      case '6 Team Crossover':
+        console.log(`📋 Using 6 Team Crossover template for ${teamCount} teams`);
         return this.generate6TeamCrossover(bracket, teams, startingGameNumber);
       
       case 'group_of_8':
-        console.log(`📋 Using group_of_8 template for ${teamCount} teams`);
+      case 'group_of_9':
+      case 'dual_bracket_8_teams':
+      case '8 Team Dual Bracket':
+        console.log(`📋 Using 8 Team Dual Bracket template for ${teamCount} teams`);
         return this.generate8TeamDualBracket(bracket, teams, startingGameNumber);
       
       default:
-        // Fallback based on team count for legacy support - but check for group_of_4 first
+        // Fallback based on team count for legacy support
         if (teamCount === 4) {
-          console.log(`🎯 4-team bracket detected - using group_of_4 logic (6 pool + 1 championship)`);
+          console.log(`🎯 4-team bracket detected - using 4 Team Single Bracket logic (6 pool + 1 championship)`);
           // Use the corrected logic for 4-team brackets
           const games = [];
           let gameCounter = startingGameNumber;
@@ -292,15 +299,15 @@ export class TournamentScheduler {
           games.push(...poolPlayGames);
           gameCounter += poolPlayGames.length;
           
-          // Add championship final
+          // Add championship final with proper winner descriptions
           const championshipGame = this.generateChampionshipGame(bracket, gameCounter);
           games.push(championshipGame);
           
-          console.log(`🏆 4-team bracket: Generated ${poolPlayGames.length} pool + 1 championship = ${games.length} total games`);
+          console.log(`🏆 4 Team Single Bracket: Generated ${poolPlayGames.length} pool + 1 championship = ${games.length} total games`);
           return games;
         } else if (teamCount === 6) {
           return this.generate6TeamCrossover(bracket, teams, startingGameNumber);
-        } else if (teamCount === 8) {
+        } else if (teamCount === 8 || teamCount === 9) {
           return this.generate8TeamDualBracket(bracket, teams, startingGameNumber);
         } else {
           // Fallback to standard round robin
@@ -347,10 +354,10 @@ export class TournamentScheduler {
       });
     });
     
-    // Add final: 1st vs 2nd (TBD vs TBD)
+    // Add final: 1st vs 2nd with proper winner descriptions
     games.push(this.generateChampionshipGame(bracket, gameCounter));
     
-    console.log(`🏆 4-team bracket: 6 pool + 1 final for ${bracket.bracketName}`);
+    console.log(`🏆 4 Team Single Bracket: 6 pool + 1 final for ${bracket.bracketName}`);
     return games;
   }
 
@@ -398,10 +405,10 @@ export class TournamentScheduler {
       });
     });
     
-    // Add final: 1st vs 2nd (TBD vs TBD)
+    // Add final: 1st vs 2nd with proper winner descriptions
     games.push(this.generateChampionshipGame(bracket, gameCounter));
     
-    console.log(`🏆 6-team crossover: 9 pool + 1 final for ${bracket.bracketName}`);
+    console.log(`🏆 6 Team Crossover: 9 pool + 1 final for ${bracket.bracketName}`);
     return games;
   }
 
@@ -444,22 +451,10 @@ export class TournamentScheduler {
       }
     });
     
-    // Add final: 1st from A vs 1st from B
-    games.push({
-      id: `${bracket.bracketId}_final_${gameCounter}`,
-      homeTeamId: 0, // Placeholder
-      homeTeamName: '1st Place Bracket A',
-      awayTeamId: 0, // Placeholder
-      awayTeamName: '1st Place Bracket B',
-      bracketId: bracket.bracketId,
-      bracketName: bracket.bracketName,
-      round: 'Championship',
-      gameType: 'final',
-      gameNumber: gameCounter,
-      duration: 90
-    });
+    // Add final: 1st from A vs 1st from B using unified championship game generation
+    games.push(this.generateChampionshipGame(bracket, gameCounter));
     
-    console.log(`🏆 8-team dual bracket: 12 pool + 1 final = 13 total games for ${bracket.bracketName}`);
+    console.log(`🏆 8 Team Dual Bracket: 12 pool + 1 final = 13 total games for ${bracket.bracketName}`);
     console.log(`📊 Generated games breakdown: ${games.length} total (6 Pool A + 6 Pool B + 1 Championship)`);
     return games;
   }
@@ -471,12 +466,15 @@ export class TournamentScheduler {
     bracket: any,
     gameNumber: number
   ): Game {
+    // Generate proper winner format descriptions based on bracket format
+    const { homeTeamName, awayTeamName } = this.getWinnerFormats(bracket);
+    
     return {
       id: `${bracket.bracketId}_final_${gameNumber}`,
-      homeTeamId: 0, // Placeholder for 1st place team
-      homeTeamName: '1st Place',
-      awayTeamId: 0, // Placeholder for 2nd place team  
-      awayTeamName: '2nd Place',
+      homeTeamId: 0, // Placeholder for winner
+      homeTeamName: homeTeamName,
+      awayTeamId: 0, // Placeholder for winner  
+      awayTeamName: awayTeamName,
       bracketId: bracket.bracketId,
       bracketName: bracket.bracketName,
       round: 'Championship',
@@ -484,6 +482,59 @@ export class TournamentScheduler {
       gameNumber: gameNumber,
       duration: 90
     };
+  }
+
+  /**
+   * Generate proper winner format descriptions for championship games
+   */
+  private static getWinnerFormats(bracket: any): { homeTeamName: string, awayTeamName: string } {
+    const format = bracket.tournamentFormat || bracket.format || bracket.templateName;
+    
+    // Clean up format name by removing snake_case
+    const cleanFormat = format.replace(/_/g, ' ');
+    
+    switch (format) {
+      case 'group_of_4':
+      case 'single_bracket_4_teams':
+        return {
+          homeTeamName: '1st in Points',
+          awayTeamName: '2nd in Points'
+        };
+        
+      case 'group_of_6':
+      case 'crossover_bracket_6_teams':
+        return {
+          homeTeamName: '1st in Points',
+          awayTeamName: '2nd in Points'
+        };
+        
+      case 'group_of_8':
+      case 'group_of_9':
+      case 'dual_bracket_8_teams':
+        return {
+          homeTeamName: '1st Place Bracket A',
+          awayTeamName: '1st Place Bracket B'
+        };
+        
+      case 'round_robin':
+        return {
+          homeTeamName: '1st in Points',
+          awayTeamName: '2nd in Points'
+        };
+        
+      case 'single_elimination':
+      case 'double_elimination':
+        return {
+          homeTeamName: 'Winner Semifinal 1',
+          awayTeamName: 'Winner Semifinal 2'
+        };
+        
+      default:
+        return {
+          homeTeamName: '1st in Points',
+          awayTeamName: '2nd in Points'
+        };
+    }
   }
 
   /**
