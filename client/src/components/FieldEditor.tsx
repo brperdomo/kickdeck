@@ -38,7 +38,6 @@ const fieldSchema = z.object({
   openTime: z.string().optional(),
   closeTime: z.string().optional(),
   specialInstructions: z.string().optional(),
-  fieldSize: z.enum(["4v4", "7v7", "9v9", "11v11"]).default("11v11"),
 });
 
 type FieldFormValues = z.infer<typeof fieldSchema>;
@@ -52,7 +51,6 @@ interface Field {
   openTime?: string;
   closeTime?: string;
   specialInstructions?: string;
-  fieldSize?: string;
   complexId: number;
 }
 
@@ -77,7 +75,6 @@ export function FieldEditor({ open, onOpenChange, onSubmit, field, complexId }: 
       openTime: '08:00',
       closeTime: '22:00',
       specialInstructions: '',
-      fieldSize: '11v11',
     },
   });
 
@@ -91,7 +88,6 @@ export function FieldEditor({ open, onOpenChange, onSubmit, field, complexId }: 
         openTime: field.openTime || '08:00',
         closeTime: field.closeTime || '22:00',
         specialInstructions: field.specialInstructions || '',
-        fieldSize: field.fieldSize || '11v11',
       });
     } else {
       form.reset({
@@ -102,7 +98,6 @@ export function FieldEditor({ open, onOpenChange, onSubmit, field, complexId }: 
         openTime: '08:00',
         closeTime: '22:00',
         specialInstructions: '',
-        fieldSize: '11v11',
       });
     }
   }, [field, form]);
@@ -259,33 +254,6 @@ export function FieldEditor({ open, onOpenChange, onSubmit, field, complexId }: 
                       {...formField}
                     />
                   </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="fieldSize"
-              render={({ field: formField }) => (
-                <FormItem>
-                  <FormLabel>Field Size</FormLabel>
-                  <Select
-                    value={formField.value}
-                    onValueChange={formField.onChange}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select field size" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="4v4">4v4</SelectItem>
-                      <SelectItem value="7v7">7v7</SelectItem>
-                      <SelectItem value="9v9">9v9</SelectItem>
-                      <SelectItem value="11v11">11v11</SelectItem>
-                    </SelectContent>
-                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
