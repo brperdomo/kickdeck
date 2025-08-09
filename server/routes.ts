@@ -5803,7 +5803,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
     app.put('/api/admin/fields/:id', isAdmin, async (req, res) => {
       try {
         const fieldId = parseInt(req.params.id);
-        const { name, hasLights, hasParking, isOpen, openTime, closeTime, specialInstructions, fieldSize } = req.body;
+        const { name, hasLights, hasParking, isOpen, openTime, closeTime, specialInstructions } = req.body;
         
         // Update the field
         const [updatedField] = await db
@@ -5816,7 +5816,6 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
             openTime,
             closeTime,
             specialInstructions: specialInstructions || null,
-            fieldSize: fieldSize || '11v11',
             sortOrder: req.body.sortOrder || 0, // Add sortOrder support
             updatedAt: new Date().toISOString(),
           })
