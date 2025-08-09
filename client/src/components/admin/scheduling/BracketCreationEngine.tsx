@@ -1110,8 +1110,8 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
                                 <div>
                                   <span className="text-slate-400">Total Games:</span>
                                   <p className="font-medium text-white">
-                                    {flight.bracketType?.includes('Single Bracket') ? '6' : 
-                                     flight.bracketType?.includes('Crossover') ? '7' : 
+                                    {flight.bracketType?.includes('Single Bracket') ? '7' : 
+                                     flight.bracketType?.includes('Crossover') ? '10' : 
                                      flight.bracketType?.includes('Dual') ? '13' : 'TBD'}
                                   </p>
                                 </div>
@@ -1119,14 +1119,16 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
                                   <span className="text-slate-400">Pool Games:</span>
                                   <p className="font-medium text-white">
                                     {flight.bracketType?.includes('Single Bracket') ? '6 round-robin' : 
-                                     flight.bracketType?.includes('Crossover') ? '6 crossplay only' : 
+                                     flight.bracketType?.includes('Crossover') ? '9 crossplay only' : 
                                      flight.bracketType?.includes('Dual') ? '12 (6 per bracket)' : 'TBD'}
                                   </p>
                                 </div>
                                 <div>
                                   <span className="text-slate-400">Championship:</span>
                                   <p className="font-medium text-white">
-                                    {flight.bracketType?.includes('Single Bracket') ? 'None (by standings)' : '1st vs 2nd in points'}
+                                    {flight.bracketType?.includes('Single Bracket') ? '1st vs 2nd in points' : 
+                                     flight.bracketType?.includes('Crossover') ? '1st vs 2nd in points' :
+                                     '1st bracket vs 2nd bracket'}
                                   </p>
                                 </div>
                               </div>
