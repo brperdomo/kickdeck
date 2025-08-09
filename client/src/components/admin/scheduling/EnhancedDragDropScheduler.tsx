@@ -182,11 +182,6 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
     for (let i = 0; i < currentSlotIndex; i++) {
       const previousSlot = timeSlots[i];
       const gamesInPreviousSlot = scheduleData.games.filter((game: Game) => {
-        // CRITICAL: Exclude the currently dragged game from extension calculations
-        if (draggedGame && game.id === draggedGame.id) {
-          return false;
-        }
-
         const position = gamePositions.get(game.id);
         const effectiveFieldId = position?.fieldId ?? game.fieldId;
         const effectiveStartTime = position?.startTime ?? game.startTime;
@@ -218,11 +213,6 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
     if (!scheduleData?.games) return [];
 
     return scheduleData.games.filter((game: Game) => {
-      // CRITICAL: Exclude the currently dragged game from collision detection
-      if (draggedGame && game.id === draggedGame.id) {
-        return false;
-      }
-
       // Check if game has been moved optimistically
       const position = gamePositions.get(game.id);
       const effectiveFieldId = position?.fieldId ?? game.fieldId;
@@ -565,7 +555,7 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
     
-    // Only allow dropping if the slot is actually available
+    // Only allow dropping if the slot is actually available (excluding dragged game from collision)
     const timeSlots = generateTimeSlots();
     const timeSlotObj = timeSlots.find(slot => slot.startTime === timeSlot);
     if (!timeSlotObj) return;
@@ -573,8 +563,11 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
     const gamesInSlot = getGamesForSlot(fieldId, timeSlotObj);
     const isOccupied = isSlotOccupiedByExtendingGame(fieldId, timeSlotObj);
     
-    // Allow drop if slot is empty or only occupied by dragged game
-    if (gamesInSlot.length === 0 && !isOccupied) {
+    // Filter out the currently dragged game from collision check
+    const nonDraggedGames = gamesInSlot.filter(game => !draggedGame || game.id !== draggedGame.id);
+    
+    // Allow drop if slot is empty (excluding dragged game)
+    if (nonDraggedGames.length === 0 && !isOccupied) {
       setDragOverSlot({ fieldId, timeSlot });
     } else {
       setDragOverSlot(null);
@@ -627,14 +620,18 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
       console.error(`❌ [ENHANCED DRAG DROP] Error calling updateGameMutation:`, error);
     }
 
+    // Clear drag state after mutation starts
     setDraggedGame(null);
   };
 
   // Handle drag end
   const handleDragEnd = () => {
     console.log(`🏁 [ENHANCED DRAG DROP] Drag ended, cleaning up state`);
-    setDraggedGame(null);
-    setDragOverSlot(null);
+    // Don't immediately clear draggedGame - let the drop handler or timeout clear it
+    setTimeout(() => {
+      setDraggedGame(null);
+      setDragOverSlot(null);
+    }, 100);
   };
 
   // Update conflicts when games or positions change
@@ -650,15 +647,15 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
   const games = scheduleData?.games || [];
   
   // Debug field data visibility
-  console.log('🎯 [FIELD DEBUG] All available fields:', fields.map(f => ({ id: f.id, name: f.name, fieldSize: f.fieldSize })));
+  console.log('🎯 [FIELD DEBUG] All available fields:', fields.map((f: Field) => ({ id: f.id, name: f.name, fieldSize: f.fieldSize })));
   
   // Debug which fields have games assigned
-  const fieldsWithGames = new Set(games.map((g: any) => g.fieldId));
+  const fieldsWithGames = new Set(games.map((g: Game) => g.fieldId));
   console.log('🎯 [FIELD DEBUG] Fields with games assigned:', Array.from(fieldsWithGames));
   
   // Debug field name mapping
-  fields.forEach(field => {
-    const gamesOnField = games.filter((g: any) => g.fieldId === field.id);
+  fields.forEach((field: Field) => {
+    const gamesOnField = games.filter((g: Game) => g.fieldId === field.id);
     if (gamesOnField.length > 0) {
       console.log(`🎯 [FIELD DEBUG] Field ${field.id} (${field.name}) has ${gamesOnField.length} games`);
     }
@@ -752,7 +749,7 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
             {/* Time Interval Selection */}
             <div className="flex items-center gap-2">
               <label className="text-slate-200 text-sm">Time Intervals:</label>
-              <Select value={timeInterval.toString()} onValueChange={(value) => setTimeInterval(Number(value))}>
+              <Select value={timeInterval.toString()} onValueChange={(value: string) => setTimeInterval(Number(value))}>
                 <SelectTrigger className="w-32">
                   <SelectValue />
                 </SelectTrigger>
