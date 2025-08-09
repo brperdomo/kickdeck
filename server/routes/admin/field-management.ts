@@ -9,6 +9,9 @@ import { Router } from 'express';
 import { requireAuth } from '../../middleware/auth';
 import { isAdmin } from '../../middleware';
 import { FieldAvailabilityService } from '../../services/field-availability-service';
+import { db } from '@db';
+import { eventFieldConfigurations } from '@db/schema';
+import { eq, and } from 'drizzle-orm';
 
 const router = Router();
 
@@ -216,6 +219,143 @@ router.get('/events/:eventId/field-utilization', requireAuth, isAdmin, async (re
     });
   } catch (error: any) {
     console.error('Error getting field utilization:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+/**
+ * Update event field configuration (field size, availability, first game time)
+ */
+router.patch('/events/:eventId/field-configurations', requireAuth, isAdmin, async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const { fieldId, fieldSize, isActive, firstGameTime } = req.body;
+
+    console.log(`🔧 API: Updating field configuration for event ${eventId}, field ${fieldId}`);
+    console.log('Update data:', { fieldSize, isActive, firstGameTime });
+
+    // Check if configuration exists
+    const existingConfig = await db
+      .select()
+      .from(eventFieldConfigurations)
+      .where(and(
+        eq(eventFieldConfigurations.eventId, parseInt(eventId)),
+        eq(eventFieldConfigurations.fieldId, fieldId)
+      ))
+      .limit(1);
+
+    // Prepare update data
+    const updateData: any = {};
+    if (fieldSize !== undefined) updateData.fieldSize = fieldSize;
+    if (isActive !== undefined) updateData.isActive = isActive;
+    if (firstGameTime !== undefined) updateData.firstGameTime = firstGameTime;
+    updateData.updatedAt = new Date().toISOString();
+
+    if (existingConfig.length > 0) {
+      // Update existing configuration
+      await db
+        .update(eventFieldConfigurations)
+        .set(updateData)
+        .where(and(
+          eq(eventFieldConfigurations.eventId, parseInt(eventId)),
+          eq(eventFieldConfigurations.fieldId, fieldId)
+        ));
+    } else {
+      // Create new configuration if it doesn't exist
+      await db.insert(eventFieldConfigurations).values({
+        eventId: parseInt(eventId),
+        fieldId,
+        fieldSize: fieldSize || '11v11',
+        isActive: isActive !== undefined ? isActive : true,
+        firstGameTime,
+        sortOrder: 0,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'Field configuration updated successfully',
+      fieldId,
+      updates: updateData
+    });
+  } catch (error: any) {
+    console.error('Error updating field configuration:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+/**
+ * Bulk update field configurations for an event
+ */
+router.patch('/events/:eventId/field-configurations/bulk', requireAuth, isAdmin, async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const { fieldUpdates } = req.body;
+
+    console.log(`🔧 API: Bulk updating field configurations for event ${eventId}`);
+    console.log('Field updates:', fieldUpdates);
+
+    const results = [];
+    
+    for (const update of fieldUpdates) {
+      const { id: fieldId, sortOrder, fieldSize } = update;
+      
+      // Check if configuration exists
+      const existingConfig = await db
+        .select()
+        .from(eventFieldConfigurations)
+        .where(and(
+          eq(eventFieldConfigurations.eventId, parseInt(eventId)),
+          eq(eventFieldConfigurations.fieldId, fieldId)
+        ))
+        .limit(1);
+
+      const updateData = {
+        sortOrder,
+        fieldSize,
+        updatedAt: new Date().toISOString()
+      };
+
+      if (existingConfig.length > 0) {
+        // Update existing configuration
+        await db
+          .update(eventFieldConfigurations)
+          .set(updateData)
+          .where(and(
+            eq(eventFieldConfigurations.eventId, parseInt(eventId)),
+            eq(eventFieldConfigurations.fieldId, fieldId)
+          ));
+      } else {
+        // Create new configuration if it doesn't exist
+        await db.insert(eventFieldConfigurations).values({
+          eventId: parseInt(eventId),
+          fieldId,
+          fieldSize,
+          sortOrder,
+          isActive: true,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        });
+      }
+
+      results.push({ fieldId, updated: true });
+    }
+
+    res.json({
+      success: true,
+      message: `Updated ${results.length} field configurations`,
+      results
+    });
+  } catch (error: any) {
+    console.error('Error bulk updating field configurations:', error);
     res.status(500).json({
       success: false,
       error: error.message

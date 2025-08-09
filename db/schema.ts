@@ -183,6 +183,7 @@ export const eventFieldConfigurations = pgTable("event_field_configurations", {
   fieldSize: text("field_size").notNull().default("11v11"), // Tournament-specific field size
   sortOrder: integer("sort_order").default(0).notNull(), // Tournament-specific display order
   isActive: boolean("is_active").default(true).notNull(), // Can disable fields for specific tournaments
+  firstGameTime: text("first_game_time"), // When first games should start on this field (e.g., "08:00")
   createdAt: text("created_at").notNull().default(new Date().toISOString()),
   updatedAt: text("updated_at").notNull().default(new Date().toISOString()),
 });
