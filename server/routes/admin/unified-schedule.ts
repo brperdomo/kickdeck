@@ -342,12 +342,17 @@ router.post('/events/:eventId/unified-schedule', requireAuth, async (req, res) =
       
       console.log(`[Database Save] Created time slot ID ${timeSlot[0].id} for field ${game.fieldId} at ${game.startTime}`);
 
+      // Randomize Home/Away team assignments for game card generation
+      const randomizeHomeAway = Math.random() < 0.5;
+      const homeTeamId = randomizeHomeAway ? game.team1Id : game.team2Id;
+      const awayTeamId = randomizeHomeAway ? game.team2Id : game.team1Id;
+
       // Now save the game with proper field_id and time_slot_id linkage
       const savedGame = await db.insert(games).values({
         eventId: eventId, // Keep as string to match schema
         ageGroupId: game.ageGroupId,
-        homeTeamId: game.team1Id,
-        awayTeamId: game.team2Id,
+        homeTeamId: homeTeamId, // Randomized
+        awayTeamId: awayTeamId, // Randomized
         fieldId: game.fieldId, // CRITICAL: Use the distributed field ID, not a fallback
         timeSlotId: timeSlot[0].id, // Link to the created time slot
         status: 'scheduled',
