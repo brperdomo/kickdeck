@@ -309,15 +309,24 @@ function getOptimalBracketType(teamCount: number): string {
 function generateGamesForBracketType(bracketType: string, teams: any[], bracketId: string) {
   const games = [];
   
+  // Helper function to randomize Home/Away assignments
+  function randomizeHomeAway(team1: any, team2: any) {
+    const random = Math.random() < 0.5;
+    return random 
+      ? { homeTeamId: team1.id, awayTeamId: team2.id }
+      : { homeTeamId: team2.id, awayTeamId: team1.id };
+  }
+  
   switch (bracketType) {
     case 'round_robin':
-      // Generate round robin games
+      // Generate round robin games with randomized Home/Away
       for (let i = 0; i < teams.length; i++) {
         for (let j = i + 1; j < teams.length; j++) {
+          const { homeTeamId, awayTeamId } = randomizeHomeAway(teams[i], teams[j]);
           games.push({
             bracketId,
-            homeTeamId: teams[i].id,
-            awayTeamId: teams[j].id,
+            homeTeamId,
+            awayTeamId,
             gameNumber: games.length + 1,
             round: 1,
             status: 'scheduled'
@@ -332,13 +341,14 @@ function generateGamesForBracketType(bracketType: string, teams: any[], bracketI
       let currentRound = 1;
       let gameNumber = 1;
       
-      // First round
+      // First round with randomized Home/Away
       for (let i = 0; i < teams.length; i += 2) {
         if (i + 1 < teams.length) {
+          const { homeTeamId, awayTeamId } = randomizeHomeAway(teams[i], teams[i + 1]);
           games.push({
             bracketId,
-            homeTeamId: teams[i].id,
-            awayTeamId: teams[i + 1].id,
+            homeTeamId,
+            awayTeamId,
             gameNumber: gameNumber++,
             round: currentRound,
             status: 'scheduled'
@@ -363,13 +373,14 @@ function generateGamesForBracketType(bracketType: string, teams: any[], bracketI
       break;
       
     default:
-      // Default to round robin for small groups
+      // Default to round robin for small groups with randomized Home/Away
       for (let i = 0; i < teams.length && i < 6; i++) {
         for (let j = i + 1; j < teams.length && j < 6; j++) {
+          const { homeTeamId, awayTeamId } = randomizeHomeAway(teams[i], teams[j]);
           games.push({
             bracketId,
-            homeTeamId: teams[i].id,
-            awayTeamId: teams[j].id,
+            homeTeamId,
+            awayTeamId,
             gameNumber: games.length + 1,
             round: 1,
             status: 'scheduled'

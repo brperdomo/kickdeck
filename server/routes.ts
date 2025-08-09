@@ -167,6 +167,7 @@ import {
   adminRoles,
   eventComplexes,
   eventFieldSizes,
+  eventFieldConfigurations,
   files,
   eventFormTemplates,
   formFields,

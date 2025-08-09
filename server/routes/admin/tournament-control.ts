@@ -558,8 +558,13 @@ async function generateGamesForFlight(eventId: string, flight: any) {
       // Round-robin within this bracket only
       for (let i = 0; i < bracketTeams.length; i++) {
         for (let j = i + 1; j < bracketTeams.length; j++) {
-          const homeTeam = bracketTeams[i];
-          const awayTeam = bracketTeams[j];
+          const team1 = bracketTeams[i];
+          const team2 = bracketTeams[j];
+          
+          // Randomize Home/Away team assignments for game card generation
+          const randomizeHomeAway = Math.random() < 0.5;
+          const homeTeam = randomizeHomeAway ? team1 : team2;
+          const awayTeam = randomizeHomeAway ? team2 : team1;
 
           gamesToCreate.push({
             eventId: eventId,
@@ -601,12 +606,17 @@ async function generateGamesForFlight(eventId: string, flight: any) {
       // Each team in bracket 1 plays each team in bracket 2 (9 total games for 3v3 crossplay)
       for (const team1 of bracket1Teams) {
         for (const team2 of bracket2Teams) {
+          // Randomize Home/Away team assignments for game card generation
+          const randomizeHomeAway = Math.random() < 0.5;
+          const homeTeamId = randomizeHomeAway ? team1.id : team2.id;
+          const awayTeamId = randomizeHomeAway ? team2.id : team1.id;
+          
           gamesToCreate.push({
             eventId: eventId,
             ageGroupId: flight.ageGroupId,
             groupId: null, // Crossplay games don't belong to a specific bracket
-            homeTeamId: team1.id,
-            awayTeamId: team2.id,
+            homeTeamId: homeTeamId,
+            awayTeamId: awayTeamId,
             matchNumber: gameNumber++,
             duration: flight.matchTime,
             status: 'scheduled',
