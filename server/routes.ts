@@ -5,7 +5,7 @@ import { setupWebSocketServer } from "./websocket";
 import { log } from "./vite";
 import { crypto } from "./crypto";
 import { db } from "@db";
-import { emailTemplates, insertPlayerSchema, fields, complexes } from "@db/schema";
+import { emailTemplates, insertPlayerSchema, fields, complexes, games, eventFieldSizes } from "@db/schema";
 import { sql, eq } from "drizzle-orm";
 import Stripe from 'stripe';
 import { isAdmin, hasEventAccess } from "./middleware";
@@ -5581,10 +5581,37 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       }
     });
 
-    // Delete field endpoint (fixed syntax error)
+    // Delete field endpoint with constraint checking
     app.delete('/api/admin/fields/:id', isAdmin, async (req, res) => {
       try {
         const fieldId = parseInt(req.params.id);
+        
+        // Check if field has scheduled games
+        const gamesUsingField = await db
+          .select({ count: sql`count(*)` })
+          .from(games)
+          .where(eq(games.fieldId, fieldId));
+          
+        if (gamesUsingField[0]?.count > 0) {
+          return res.status(400).json({ 
+            error: "Cannot delete field", 
+            message: `Field has ${gamesUsingField[0].count} scheduled games. Remove all games from this field before deleting.`
+          });
+        }
+        
+        // Check if field has other references
+        const fieldSizeReferences = await db
+          .select({ count: sql`count(*)` })
+          .from(eventFieldSizes)
+          .where(eq(eventFieldSizes.fieldId, fieldId));
+          
+        if (fieldSizeReferences[0]?.count > 0) {
+          // Remove event field size references first
+          await db
+            .delete(eventFieldSizes)
+            .where(eq(eventFieldSizes.fieldId, fieldId));
+        }
+
         const [deletedField] = await db
           .delete(fields)
           .where(eq(fields.id, fieldId))
@@ -5597,7 +5624,11 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         res.json(deletedField);
       } catch (error) {
         console.error('Error deleting field:', error);
-        res.status(500).send("Failed to delete field");
+        console.error('Error details:', error);
+        res.status(500).json({ 
+          error: "Failed to delete field", 
+          message: error.message || "Database constraint violation"
+        });
       }
     });
 
