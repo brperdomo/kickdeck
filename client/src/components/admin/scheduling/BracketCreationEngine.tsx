@@ -1110,8 +1110,8 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
                                 <div>
                                   <span className="text-slate-400">Total Games:</span>
                                   <p className="font-medium text-white">
-                                    {flight.bracketType?.includes('Single Bracket') ? '7' : 
-                                     flight.bracketType?.includes('Crossover') ? '10' : 
+                                    {flight.bracketType?.includes('Single Bracket') ? '6' : 
+                                     flight.bracketType?.includes('Crossover') ? '16' : 
                                      flight.bracketType?.includes('Dual') ? '13' : 'TBD'}
                                   </p>
                                 </div>
@@ -1119,13 +1119,15 @@ export default function BracketCreationEngine({ eventId }: BracketCreationEngine
                                   <span className="text-slate-400">Pool Games:</span>
                                   <p className="font-medium text-white">
                                     {flight.bracketType?.includes('Single Bracket') ? '6' : 
-                                     flight.bracketType?.includes('Crossover') ? '9' : 
+                                     flight.bracketType?.includes('Crossover') ? '6 pool + 9 crossplay' : 
                                      flight.bracketType?.includes('Dual') ? '12' : 'TBD'}
                                   </p>
                                 </div>
                                 <div>
-                                  <span className="text-slate-400">Finals:</span>
-                                  <p className="font-medium text-white">1 game</p>
+                                  <span className="text-slate-400">Championship:</span>
+                                  <p className="font-medium text-white">
+                                    {flight.bracketType?.includes('Single Bracket') ? 'None (by standings)' : '1st vs 2nd in points'}
+                                  </p>
                                 </div>
                               </div>
                             </div>
