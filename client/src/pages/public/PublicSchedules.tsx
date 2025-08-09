@@ -15,6 +15,7 @@ interface PublicScheduleData {
     name: string;
     startDate: string;
     endDate: string;
+    logoUrl?: string;
   };
   ageGroups: Array<{
     ageGroup: string;
@@ -121,9 +122,25 @@ export default function PublicSchedules() {
           {/* Tournament Logo and Title */}
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                <Trophy className="h-8 w-8 text-white" />
-              </div>
+              {/* Tournament Logo */}
+              {scheduleData.eventInfo?.logoUrl ? (
+                <div className="w-16 h-16 rounded-lg overflow-hidden bg-white border border-gray-200 flex items-center justify-center">
+                  <img 
+                    src={scheduleData.eventInfo.logoUrl} 
+                    alt={`${scheduleData.eventInfo.name} Logo`}
+                    className="w-full h-full object-contain"
+                    onError={(e) => {
+                      // Fallback to trophy icon if logo fails to load
+                      e.currentTarget.style.display = 'none';
+                      e.currentTarget.parentElement!.innerHTML = '<div class="w-16 h-16 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center"><svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg></div>';
+                    }}
+                  />
+                </div>
+              ) : (
+                <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+                  <Trophy className="h-8 w-8 text-white" />
+                </div>
+              )}
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">
                   {scheduleData.eventInfo?.name || 'Tournament Schedules'}
@@ -261,17 +278,24 @@ export default function PublicSchedules() {
           </div>
         )}
 
-        {/* Footer */}
+        {/* Footer - "Powered by MatchPro" */}
         <div className="mt-16 py-8 border-t border-gray-200">
-          <div className="flex items-center justify-between">
-            <p className="text-sm text-gray-500">
-              © 2025 MatchPro AI Tournament Management
-            </p>
-            <div className="flex items-center gap-4">
-              <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center">
-                <Trophy className="h-4 w-4 text-white" />
+          <div className="flex items-center justify-center">
+            <div className="flex items-center gap-2 text-gray-500">
+              <span className="text-sm">Powered by</span>
+              <div className="flex items-center gap-1 font-semibold text-blue-600">
+                <div className="w-5 h-5 bg-blue-600 rounded flex items-center justify-center">
+                  <Trophy className="h-3 w-3 text-white" />
+                </div>
+                <span className="text-sm">MatchPro</span>
               </div>
+              <span className="text-sm">Tournament Management</span>
             </div>
+          </div>
+          <div className="text-center mt-2">
+            <p className="text-xs text-gray-400">
+              Professional tournament management and scheduling solutions
+            </p>
           </div>
         </div>
       </div>

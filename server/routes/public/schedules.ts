@@ -18,7 +18,8 @@ router.get('/:eventId', async (req: Request, res: Response) => {
       .select({
         name: events.name,
         startDate: events.startDate,
-        endDate: events.endDate
+        endDate: events.endDate,
+        logoUrl: events.logoUrl
       })
       .from(events)
       .where(eq(events.id, eventIdNum))

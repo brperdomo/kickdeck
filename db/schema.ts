@@ -266,6 +266,7 @@ export const events = pgTable("events", {
   details: text("details"),
   agreement: text("agreement"),
   refundPolicy: text("refund_policy"),
+  logoUrl: text("logo_url"), // Tournament/event logo for branding
   isArchived: boolean("is_archived").default(false).notNull(),
   // Stripe Connect fields for per-tournament bank accounts
   stripeConnectAccountId: text("stripe_connect_account_id"), // Stripe Connect account ID
@@ -323,6 +324,7 @@ export const insertEventSchema = createInsertSchema(events, {
   details: z.string().optional(),
   agreement: z.string().optional(),
   refundPolicy: z.string().optional(),
+  logoUrl: z.string().url("Invalid logo URL format").optional(),
   stripeConnectAccountId: z.string().optional(),
   connectAccountStatus: z.enum(["not_connected", "pending", "active", "rejected", "restricted"]).default("not_connected"),
   connectOnboardingUrl: z.string().optional(),
