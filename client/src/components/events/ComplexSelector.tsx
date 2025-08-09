@@ -90,27 +90,7 @@ export function ComplexSelector({
                     {complex.fields.length} fields available
                   </p>
                 </div>
-                {Array.isArray(selectedComplexIds) && selectedComplexIds.includes(complex.id) && (
-                  <Select
-                    value={complexFieldSizes[complex.id] || '11v11'}
-                    onValueChange={(size) =>
-                      onFieldSizeChange(complex.id, size as FieldSize)
-                    }
-                  >
-                    <SelectTrigger className="w-[120px]">
-                      <SelectValue>
-                        {complexFieldSizes[complex.id] || "11v11"}
-                      </SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      {['3v3', '4v4', '5v5', '6v6', '7v7', '8v8', '9v9', '10v10', '11v11', 'N/A'].map((size) => (
-                        <SelectItem key={size} value={size}>
-                          {size}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
+
               </div>
             </CardContent>
           </Card>
