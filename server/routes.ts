@@ -5640,6 +5640,48 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         });
       }
     });
+    
+    // Get fields for a specific event (from selected complexes)
+    app.get('/api/admin/events/:eventId/fields', isAdmin, async (req, res) => {
+      try {
+        const eventId = req.params.eventId;
+        
+        // First get the complexes selected for this event
+        const selectedComplexes = await db
+          .select({
+            complexId: eventComplexes.complexId
+          })
+          .from(eventComplexes)
+          .where(eq(eventComplexes.eventId, eventId));
+        
+        if (selectedComplexes.length === 0) {
+          return res.json({ fields: [] });
+        }
+        
+        const complexIds = selectedComplexes.map(ec => ec.complexId);
+        
+        // Get all fields from those complexes
+        const eventFields = await db
+          .select({
+            id: fields.id,
+            name: fields.name,
+            fieldSize: fields.fieldSize,
+            sortOrder: fields.sortOrder,
+            hasLights: fields.hasLights,
+            isOpen: fields.isOpen,
+            complexName: complexes.name
+          })
+          .from(fields)
+          .leftJoin(complexes, eq(fields.complexId, complexes.id))
+          .where(inArray(fields.complexId, complexIds))
+          .orderBy(asc(fields.sortOrder), asc(fields.name));
+        
+        res.json({ fields: eventFields });
+      } catch (error) {
+        console.error('Error fetching event fields:', error);
+        res.status(500).json({ error: 'Failed to fetch fields for event' });
+      }
+    });
 
     // Field update endpoint for all field properties
     app.put('/api/admin/fields/:id', isAdmin, async (req, res) => {
