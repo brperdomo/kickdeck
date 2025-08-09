@@ -7,12 +7,23 @@ import { isAdmin, hasEventAccess } from '../../middleware';
 const router = Router();
 
 /**
- * POST /api/admin/events/:eventId/optimize-schedule
+ * POST /api/admin/events/:id/consolidate-fields
  * Field consolidation optimization - moves games from outer fields to priority fields
  */
+ 
+// Test endpoint to verify router registration
+router.get('/test-router', (req, res) => {
+  console.log('🔧 TEST ROUTER ENDPOINT HIT!');
+  res.json({ message: 'Optimize Schedule Router is working!', timestamp: new Date().toISOString() });
+});
+
 router.post('/events/:id/consolidate-fields', isAdmin, hasEventAccess, async (req, res) => {
   try {
     console.log(`🚀🚀🚀 FIELD CONSOLIDATION ENDPOINT HIT! Event: ${req.params.id}`);
+    console.log(`🚀🚀🚀 REQUEST METHOD: ${req.method}`);
+    console.log(`🚀🚀🚀 REQUEST URL: ${req.url}`);
+    console.log(`🚀🚀🚀 REQUEST BODY:`, JSON.stringify(req.body, null, 2));
+    
     const eventId = parseInt(req.params.id);
     let { targetDate = '2025-08-16' } = req.body;
   
@@ -38,9 +49,20 @@ router.post('/events/:id/consolidate-fields', isAdmin, hasEventAccess, async (re
     console.log(`📊 ALL GAMES IN EVENT ${eventId}:`, allGamesInEvent.length);
     console.log(`📊 GAME DATES:`, Array.from(new Set(allGamesInEvent.map(g => g.scheduledDate))));
 
-    // Get games for target date
-    const gamesForOptimization = allGamesInEvent.filter(g => g.scheduledDate === targetDate);
+    // Get games for target date - try both date formats
+    let gamesForOptimization = allGamesInEvent.filter(g => g.scheduledDate === targetDate);
     console.log(`📋 Found ${gamesForOptimization.length} games for optimization on ${targetDate}`);
+    
+    // If no games found, try alternative date formats
+    if (gamesForOptimization.length === 0) {
+      console.log(`🔍 No games found for ${targetDate}, trying alternative date formats...`);
+      const altDate1 = targetDate.split('T')[0]; // Just date part
+      const altDate2 = new Date(targetDate).toISOString().split('T')[0]; // ISO date
+      gamesForOptimization = allGamesInEvent.filter(g => 
+        g.scheduledDate?.startsWith(altDate1) || g.scheduledDate?.startsWith(altDate2)
+      );
+      console.log(`📋 Found ${gamesForOptimization.length} games with alternative date matching`);
+    }
 
     // Get available fields
     const availableFields = await db
