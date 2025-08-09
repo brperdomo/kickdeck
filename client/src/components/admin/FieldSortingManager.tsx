@@ -525,10 +525,4 @@ export default function FieldSortingManager({ fields, onFieldsReordered, eventId
     </Card>
   </div>
   );
-            </p>
-          </div>
-        )}
-      </CardContent>
-    </Card>
-  );
 }
