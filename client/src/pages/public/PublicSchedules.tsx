@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Calendar, Users, Trophy, Clock, MapPin, 
-  ArrowLeft, ExternalLink, RefreshCw, AlertTriangle 
+  ArrowLeft, ExternalLink, RefreshCw, AlertTriangle, ChevronRight 
 } from 'lucide-react';
 
 interface PublicScheduleData {
@@ -64,44 +64,46 @@ export default function PublicSchedules() {
     queryFn: async () => {
       const response = await fetch(`/api/public/schedules/${eventId}`);
       if (!response.ok) {
-        throw new Error('Failed to fetch published schedules');
+        throw new Error('Failed to fetch tournament schedules');
       }
-      return response.json() as PublicScheduleData;
+      return response.json();
     },
     enabled: !!eventId
   });
 
+  console.log('Frontend Debug - Schedule Data:', scheduleData);
+
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="flex items-center gap-3">
-          <RefreshCw className="h-8 w-8 animate-spin text-blue-500" />
-          <span className="text-white text-lg">Loading tournament schedules...</span>
+          <RefreshCw className="h-8 w-8 animate-spin text-blue-600" />
+          <span className="text-gray-900 text-lg">Loading tournament schedules...</span>
         </div>
       </div>
     );
   }
 
-  if (error || !scheduleData || !scheduleData.eventInfo) {
+  if (error || !scheduleData) {
     return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-        <Card className="bg-slate-800 border-slate-700 max-w-md">
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <Card className="border border-gray-300 max-w-md">
           <CardContent className="p-6 text-center">
             <AlertTriangle className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
-            <h2 className="text-white text-xl font-semibold mb-2">Schedules Not Available</h2>
-            <p className="text-slate-400 mb-4">
-              Tournament schedules are not currently published. The tournament organizer needs to publish them first.
+            <h2 className="text-gray-900 text-xl font-semibold mb-2">Error Loading Schedules</h2>
+            <p className="text-gray-600 mb-4">
+              Error: {error?.message || 'Unknown error occurred'}
             </p>
             <div className="space-y-3">
               <Button
                 variant="outline" 
                 onClick={() => window.location.reload()}
-                className="border-slate-600 text-slate-200 hover:bg-slate-700 w-full"
+                className="w-full"
               >
                 <RefreshCw className="h-4 w-4 mr-2" />
-                Check Again
+                Try Again
               </Button>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-gray-500">
                 Event ID: {eventId}
               </p>
             </div>
@@ -111,256 +113,167 @@ export default function PublicSchedules() {
     );
   }
 
-  // Filter games and standings based on selection
-  const filteredGames = scheduleData.games.filter(game => 
-    (!selectedAgeGroup || game.ageGroup === selectedAgeGroup) &&
-    (!selectedFlight || game.flightName === selectedFlight)
-  );
-
-  const filteredStandings = scheduleData.standings.filter(standing =>
-    (!selectedAgeGroup || standing.ageGroup === selectedAgeGroup) &&
-    (!selectedFlight || standing.flightName === selectedFlight)
-  ).sort((a, b) => b.points - a.points);
-
   return (
-    <div className="min-h-screen bg-slate-900">
-      {/* Header */}
-      <div className="bg-slate-800/95 backdrop-blur-sm border-b border-slate-700 shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="text-center">
-            <h1 className="text-3xl font-bold text-white mb-2">
-              {scheduleData.eventInfo.name}
-            </h1>
-            <div className="flex items-center justify-center gap-4 text-slate-300">
-              <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4" />
-                <span>
-                  {new Date(scheduleData.eventInfo.startDate).toLocaleDateString()} - {' '}
-                  {new Date(scheduleData.eventInfo.endDate).toLocaleDateString()}
-                </span>
+    <div className="min-h-screen bg-white">
+      {/* Header - Professional Tournament Style */}
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-6xl mx-auto px-4 py-6">
+          {/* Tournament Logo and Title */}
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+                <Trophy className="h-8 w-8 text-white" />
               </div>
-              <Badge className="bg-green-600 text-white">
-                <Trophy className="h-3 w-3 mr-1" />
-                Public Schedules
-              </Badge>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">
+                  {scheduleData.eventInfo?.name || 'Tournament Schedules'}
+                </h1>
+                <p className="text-gray-600">
+                  {scheduleData.eventInfo?.startDate && scheduleData.eventInfo?.endDate ? (
+                    `${new Date(scheduleData.eventInfo.startDate).toLocaleDateString()} - ${new Date(scheduleData.eventInfo.endDate).toLocaleDateString()}`
+                  ) : (
+                    'Schedule and standings'
+                  )}
+                </p>
+              </div>
             </div>
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm">
+                Home
+              </Button>
+              <Button variant="outline" size="sm">
+                Venues
+              </Button>
+              <Button variant="outline" size="sm">
+                Rules
+              </Button>
+              <Button variant="default" size="sm" className="bg-blue-600">
+                Team Registration
+              </Button>
+            </div>
+          </div>
+
+          {/* Navigation Tabs */}
+          <div className="border-b border-gray-200">
+            <nav className="flex space-x-8">
+              <button className="border-b-2 border-blue-600 text-blue-600 py-2 px-1 text-sm font-medium">
+                Schedules/Standings
+              </button>
+            </nav>
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        {/* Age Groups Overview - Like your screenshot */}
-        <div className="grid gap-6 mb-8">
-          {scheduleData.ageGroups.map((ageGroup, index) => (
-            <Card key={index} className="bg-slate-800 border-slate-700">
-              <CardHeader>
-                <CardTitle className="text-white text-xl">
-                  {ageGroup.displayName || ageGroup.ageGroup}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid gap-4">
-                  {ageGroup.flights.map((flight, flightIndex) => (
-                    <div key={flightIndex} className="flex items-center justify-between p-4 bg-slate-700 rounded-lg">
-                      <div className="grid grid-cols-3 gap-8 flex-1">
-                        <div>
-                          <span className="text-white font-medium">FLIGHTS</span>
-                          <p className="text-slate-300 mt-1">{flight.flightName}</p>
+      {/* Main Content */}
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        <h2 className="text-xl font-semibold text-gray-900 mb-6">Schedules</h2>
+        
+        {/* Age Groups Table - Matching TotalGlobalSports Layout */}
+        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+          <table className="w-full">
+            <tbody className="divide-y divide-gray-200">
+              {scheduleData.ageGroups?.map((ageGroup, index) => (
+                <React.Fragment key={index}>
+                  {ageGroup.flights?.map((flight, flightIndex) => (
+                    <tr key={`${index}-${flightIndex}`} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-medium text-gray-900">
+                          {ageGroup.displayName || `${ageGroup.ageGroup} ${ageGroup.gender}`}
                         </div>
-                        <div>
-                          <span className="text-white font-medium">TEAMS</span>
-                          <p className="text-blue-400 text-2xl font-bold mt-1">{flight.teamCount}</p>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900">Flights</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900">Teams</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center gap-4">
+                          <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                            Schedules
+                          </button>
+                          <span className="text-gray-400">|</span>
+                          <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                            Standings
+                          </button>
                         </div>
-                        <div>
-                          <span className="text-white font-medium">GAMES</span>
-                          <p className="text-green-400 text-2xl font-bold mt-1">{flight.gameCount}</p>
-                        </div>
-                      </div>
-                      <div className="flex gap-2">
-                        <Button
-                          size="sm"
-                          onClick={() => {
-                            setSelectedAgeGroup(ageGroup.ageGroup);
-                            setSelectedFlight(flight.flightName);
-                            setActiveTab('schedules');
-                          }}
-                          className="bg-blue-600 hover:bg-blue-500 text-white"
-                        >
-                          Schedules
-                        </Button>
-                        <span className="text-slate-400">|</span>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => {
-                            setSelectedAgeGroup(ageGroup.ageGroup);
-                            setSelectedFlight(flight.flightName);
-                            setActiveTab('standings');
-                          }}
-                          className="border-slate-600 text-slate-200 hover:bg-slate-600"
-                        >
-                          Standings
-                        </Button>
-                      </div>
-                    </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900">{flight.flightName}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <button className="text-blue-600 hover:text-blue-800 text-sm font-medium underline">
+                          {flight.teamCount}
+                        </button>
+                      </td>
+                    </tr>
                   ))}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                </React.Fragment>
+              ))}
+            </tbody>
+          </table>
         </div>
 
-        {/* Detailed View */}
-        {selectedAgeGroup && selectedFlight && (
-          <Card className="bg-slate-800 border-slate-700">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-white text-xl">
-                  {selectedAgeGroup} - {selectedFlight}
-                </CardTitle>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => {
-                    setSelectedAgeGroup('');
-                    setSelectedFlight('');
-                  }}
-                  className="border-slate-600 text-slate-200 hover:bg-slate-600"
-                >
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back to Overview
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'schedules' | 'standings')}>
-                <TabsList className="grid w-full grid-cols-2 bg-slate-700">
-                  <TabsTrigger 
-                    value="schedules" 
-                    className="data-[state=active]:bg-blue-600 data-[state=active]:text-white"
-                  >
-                    <Calendar className="h-4 w-4 mr-2" />
-                    Schedules ({filteredGames.length})
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="standings" 
-                    className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
-                  >
-                    <Trophy className="h-4 w-4 mr-2" />
-                    Standings ({filteredStandings.length})
-                  </TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="schedules" className="mt-6">
-                  <div className="space-y-4">
-                    {filteredGames.length === 0 ? (
-                      <div className="text-center py-8">
-                        <Calendar className="h-12 w-12 text-slate-400 mx-auto mb-4" />
-                        <p className="text-slate-400">No games scheduled for this flight yet.</p>
-                      </div>
-                    ) : (
-                      filteredGames.map((game, index) => (
-                        <div key={index} className="bg-slate-700 p-4 rounded-lg">
-                          <div className="grid md:grid-cols-4 gap-4 items-center">
-                            <div className="md:col-span-2">
-                              <div className="flex items-center gap-3">
-                                <div className="text-center">
-                                  <p className="text-white font-medium">{game.homeTeam}</p>
-                                  <p className="text-slate-400 text-sm">vs</p>
-                                  <p className="text-white font-medium">{game.awayTeam}</p>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="space-y-2">
-                              <div className="flex items-center gap-2 text-slate-300">
-                                <Calendar className="h-4 w-4" />
-                                <span>{new Date(game.date).toLocaleDateString()}</span>
-                              </div>
-                              <div className="flex items-center gap-2 text-slate-300">
-                                <Clock className="h-4 w-4" />
-                                <span>{game.time}</span>
-                              </div>
-                            </div>
-                            <div className="space-y-2">
-                              <div className="flex items-center gap-2 text-slate-300">
-                                <MapPin className="h-4 w-4" />
-                                <span>{game.field}</span>
-                              </div>
-                              <Badge 
-                                className={`${
-                                  game.status === 'completed' ? 'bg-green-600' :
-                                  game.status === 'in_progress' ? 'bg-yellow-600' :
-                                  'bg-blue-600'
-                                } text-white`}
-                              >
-                                {game.status.replace('_', ' ').toUpperCase()}
-                              </Badge>
-                            </div>
-                          </div>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </TabsContent>
-
-                <TabsContent value="standings" className="mt-6">
-                  <div className="overflow-x-auto">
-                    {filteredStandings.length === 0 ? (
-                      <div className="text-center py-8">
-                        <Trophy className="h-12 w-12 text-slate-400 mx-auto mb-4" />
-                        <p className="text-slate-400">No standings available for this flight yet.</p>
-                      </div>
-                    ) : (
-                      <table className="w-full">
-                        <thead>
-                          <tr className="border-b border-slate-600">
-                            <th className="text-left p-3 text-white font-medium">Pos</th>
-                            <th className="text-left p-3 text-white font-medium">Team</th>
-                            <th className="text-center p-3 text-white font-medium">GP</th>
-                            <th className="text-center p-3 text-white font-medium">W</th>
-                            <th className="text-center p-3 text-white font-medium">L</th>
-                            <th className="text-center p-3 text-white font-medium">T</th>
-                            <th className="text-center p-3 text-white font-medium">GF</th>
-                            <th className="text-center p-3 text-white font-medium">GA</th>
-                            <th className="text-center p-3 text-white font-medium">GD</th>
-                            <th className="text-center p-3 text-white font-medium">Pts</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {filteredStandings.map((team, index) => (
-                            <tr key={index} className="border-b border-slate-700 hover:bg-slate-600/50">
-                              <td className="p-3">
-                                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                                  index === 0 ? 'bg-yellow-500 text-black' :
-                                  index === 1 ? 'bg-slate-400 text-black' :
-                                  index === 2 ? 'bg-amber-600 text-black' :
-                                  'bg-slate-600 text-white'
-                                }`}>
-                                  {index + 1}
-                                </div>
-                              </td>
-                              <td className="p-3 text-white font-medium">{team.teamName}</td>
-                              <td className="p-3 text-center text-slate-300">{team.gamesPlayed}</td>
-                              <td className="p-3 text-center text-green-400">{team.wins}</td>
-                              <td className="p-3 text-center text-red-400">{team.losses}</td>
-                              <td className="p-3 text-center text-yellow-400">{team.ties}</td>
-                              <td className="p-3 text-center text-slate-300">{team.goalsFor}</td>
-                              <td className="p-3 text-center text-slate-300">{team.goalsAgainst}</td>
-                              <td className="p-3 text-center text-slate-300">
-                                {team.goalsFor - team.goalsAgainst > 0 ? '+' : ''}{team.goalsFor - team.goalsAgainst}
-                              </td>
-                              <td className="p-3 text-center text-blue-400 font-bold">{team.points}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    )}
-                  </div>
-                </TabsContent>
-              </Tabs>
-            </CardContent>
-          </Card>
+        {/* Games Display Section */}
+        {scheduleData.games && scheduleData.games.length > 0 && (
+          <div className="mt-8">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Games</h3>
+            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+              <table className="w-full">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date/Time</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Home Team</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Away Team</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Age Group</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Flight</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Field</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {scheduleData.games.slice(0, 10).map((game) => (
+                    <tr key={game.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {new Date(`${game.date}T${game.time}`).toLocaleDateString()}<br />
+                        <span className="text-gray-500">{game.time}</span>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-900">{game.homeTeam}</td>
+                      <td className="px-6 py-4 text-sm text-gray-900">{game.awayTeam}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{game.ageGroup}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{game.flightName}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Field {game.field}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
         )}
+
+        {/* Debug Info (temporary) */}
+        {scheduleData && (
+          <div className="mt-8 p-4 bg-gray-100 rounded-lg">
+            <h4 className="font-semibold text-gray-900 mb-2">Debug Info:</h4>
+            <p className="text-sm text-gray-600">Event: {scheduleData.eventInfo?.name}</p>
+            <p className="text-sm text-gray-600">Age Groups: {scheduleData.ageGroups?.length || 0}</p>
+            <p className="text-sm text-gray-600">Games: {scheduleData.games?.length || 0}</p>
+            <p className="text-sm text-gray-600">API Response Structure: {JSON.stringify(Object.keys(scheduleData))}</p>
+          </div>
+        )}
+
+        {/* Footer */}
+        <div className="mt-16 py-8 border-t border-gray-200">
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-gray-500">
+              © 2025 MatchPro AI Tournament Management
+            </p>
+            <div className="flex items-center gap-4">
+              <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center">
+                <Trophy className="h-4 w-4 text-white" />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
