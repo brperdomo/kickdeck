@@ -6,7 +6,7 @@
 import { Router } from 'express';
 import { db } from '@db';
 import { isAdmin } from '../../middleware';
-import { events, teams, games, eventAgeGroups, eventBrackets, fields, gameFormats, eventGameFormats, eventScheduleConstraints, gameTimeSlots } from '@db/schema';
+import { events, teams, games, eventAgeGroups, eventBrackets, fields, gameFormats, eventGameFormats, eventScheduleConstraints, gameTimeSlots, tournamentGroups } from '@db/schema';
 import { TimeSlotManager } from '../../utils/timeSlotManager';
 import { eq, and, count, isNull } from 'drizzle-orm';
 
@@ -562,24 +562,71 @@ async function generateGamesForFlight(eventId: string, flight: any) {
     }
   }
 
-  // PHASE 2: Generate championship game if we have 2+ brackets with teams
+  // PHASE 2: Generate crossplay/championship games based on bracket type
   const bracketsWithTeams = Array.from(teamsByBracket.entries()).filter(([_, teams]) => teams.length > 0);
   
   if (bracketsWithTeams.length >= 2) {
-    console.log(`[Generate Games] Creating championship game between ${bracketsWithTeams.length} brackets`);
-    
-    // Championship game between bracket winners (placeholder teams for now)
-    gamesToCreate.push({
-      eventId: eventId,
-      ageGroupId: flight.ageGroupId,
-      groupId: null, // Championship game doesn't belong to a specific bracket
-      homeTeamId: null, // Will be determined by bracket winners
-      awayTeamId: null, // Will be determined by bracket winners
-      matchNumber: gameNumber++,
-      duration: flight.matchTime,
-      status: 'scheduled',
-      round: 2 // Championship round
+    // Check bracket type to determine crossplay behavior
+    const firstBracket = await db.query.tournamentGroups.findFirst({
+      where: eq(tournamentGroups.id, bracketsWithTeams[0][0]),
+      columns: { type: true }
     });
+    
+    const bracketType = firstBracket?.type || 'round_robin';
+    
+    if (bracketType === 'crossplay') {
+      // 6-team format: crossplay between brackets (each team plays some from other bracket)
+      console.log(`[Generate Games] Creating crossplay games for 6-team format`);
+      
+      // Add crossplay round-robin games between brackets
+      const [bracket1Teams, bracket2Teams] = [bracketsWithTeams[0][1], bracketsWithTeams[1][1]];
+      
+      // Each team in bracket 1 plays each team in bracket 2
+      for (const team1 of bracket1Teams) {
+        for (const team2 of bracket2Teams) {
+          gamesToCreate.push({
+            eventId: eventId,
+            ageGroupId: flight.ageGroupId,
+            groupId: null, // Crossplay games don't belong to a specific bracket
+            homeTeamId: team1.id,
+            awayTeamId: team2.id,
+            matchNumber: gameNumber++,
+            duration: flight.matchTime,
+            status: 'scheduled',
+            round: 2 // Crossplay round
+          });
+        }
+      }
+      
+      // Championship game (1st vs 2nd in overall standings)
+      gamesToCreate.push({
+        eventId: eventId,
+        ageGroupId: flight.ageGroupId,
+        groupId: null,
+        homeTeamId: null, // Will be determined by standings
+        awayTeamId: null, // Will be determined by standings
+        matchNumber: gameNumber++,
+        duration: flight.matchTime,
+        status: 'scheduled',
+        round: 3 // Championship round
+      });
+      
+    } else {
+      // 8-team format: championship between bracket winners only
+      console.log(`[Generate Games] Creating championship game between bracket winners`);
+      
+      gamesToCreate.push({
+        eventId: eventId,
+        ageGroupId: flight.ageGroupId,
+        groupId: null, // Championship game doesn't belong to a specific bracket
+        homeTeamId: null, // Will be determined by bracket winners
+        awayTeamId: null, // Will be determined by bracket winners
+        matchNumber: gameNumber++,
+        duration: flight.matchTime,
+        status: 'scheduled',
+        round: 2 // Championship round
+      });
+    }
   }
 
   // Insert games into database
