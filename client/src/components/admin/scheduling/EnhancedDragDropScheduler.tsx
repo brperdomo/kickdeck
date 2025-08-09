@@ -229,12 +229,84 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
     });
   }, [scheduleData?.games, selectedDate, gamePositions, draggedGame]);
 
-  // Detect scheduling conflicts
+  // Helper function to convert time string to minutes since midnight
+  const getTimeInMinutes = (timeString: string): number => {
+    const timeStr = timeString?.split('T')[1]?.split(':').slice(0, 2).join(':') || 
+                   timeString?.split(' ')[1]?.split(':').slice(0, 2).join(':') || timeString;
+    const [hours, minutes] = timeStr.split(':').map(Number);
+    return hours * 60 + minutes;
+  };
+
+  // Helper function to format minutes back to time string
+  const formatTime = (minutes: number): string => {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
+  };
+
+  // Detect scheduling conflicts with enhanced overlap detection
   const detectConflicts = useCallback((games: Game[]): ConflictInfo[] => {
     const conflicts: ConflictInfo[] = [];
+    
+    console.log(`🔍 [CONFLICT DETECTION] Starting enhanced overlap detection for ${games.length} games`);
+    
+    // Enhanced overlap detection - check each game against all other games
+    games.forEach((game1, i) => {
+      const position1 = gamePositions.get(game1.id);
+      const effectiveStartTime1 = position1?.startTime ?? game1.startTime;
+      const gameDate1 = effectiveStartTime1?.split('T')[0] || effectiveStartTime1?.split(' ')[0];
+      
+      // Only check conflicts for games on the selected date
+      if (gameDate1 !== selectedDate) return;
+      
+      const gameStartMinutes1 = getTimeInMinutes(effectiveStartTime1);
+      const gameEndMinutes1 = gameStartMinutes1 + calculateTotalGameDuration(game1);
+      
+      games.forEach((game2, j) => {
+        if (i >= j) return; // Avoid duplicate checks
+        
+        const position2 = gamePositions.get(game2.id);
+        const effectiveStartTime2 = position2?.startTime ?? game2.startTime;
+        const gameDate2 = effectiveStartTime2?.split('T')[0] || effectiveStartTime2?.split(' ')[0];
+        
+        // Only check conflicts for games on the same date
+        if (gameDate2 !== selectedDate) return;
+        
+        const gameStartMinutes2 = getTimeInMinutes(effectiveStartTime2);
+        const gameEndMinutes2 = gameStartMinutes2 + calculateTotalGameDuration(game2);
+        
+        // Check for time overlap
+        const hasTimeOverlap = gameStartMinutes1 < gameEndMinutes2 && gameStartMinutes2 < gameEndMinutes1;
+        
+        if (hasTimeOverlap) {
+          // Check for team conflicts (same team playing at overlapping times)
+          const teams1 = [game1.homeTeamName, game1.awayTeamName].filter(t => t && t !== 'TBD');
+          const teams2 = [game2.homeTeamName, game2.awayTeamName].filter(t => t && t !== 'TBD');
+          
+          const teamOverlap = teams1.some(team => teams2.includes(team));
+          const bothTBD = (game1.homeTeamName === 'TBD' || game1.awayTeamName === 'TBD') && 
+                          (game2.homeTeamName === 'TBD' || game2.awayTeamName === 'TBD');
+          
+          if (teamOverlap || bothTBD) {
+            const overlappingTeams = teamOverlap ? 
+              teams1.filter(team => teams2.includes(team)) :
+              ['TBD'];
+              
+            console.log(`🚨 [OVERLAP DETECTED] Team conflict between games ${game1.id} and ${game2.id}:`, overlappingTeams);
+            conflicts.push({
+              type: 'team_conflict',
+              severity: 'error',
+              message: `${overlappingTeams.join(', ')} has overlapping games: ${formatTime(gameStartMinutes1)}-${formatTime(gameEndMinutes1)} and ${formatTime(gameStartMinutes2)}-${formatTime(gameEndMinutes2)}`,
+              gameIds: [game1.id, game2.id]
+            });
+          }
+        }
+      });
+    });
+
     const timeSlots = generateTimeSlots();
     
-    console.log(`🔍 [CONFLICT DETECTION] Starting conflict detection for ${games.length} games`);
+    console.log(`🔍 [CONFLICT DETECTION] Starting legacy slot-based detection for ${games.length} games`);
     console.log(`🔍 [CONFLICT DETECTION] Time slots: ${timeSlots.length}`);
     console.log(`🔍 [CONFLICT DETECTION] Sample games:`, games.slice(0, 3).map(g => ({
       id: g.id,
@@ -627,11 +699,8 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
   // Handle drag end
   const handleDragEnd = () => {
     console.log(`🏁 [ENHANCED DRAG DROP] Drag ended, cleaning up state`);
-    // Don't immediately clear draggedGame - let the drop handler or timeout clear it
-    setTimeout(() => {
-      setDraggedGame(null);
-      setDragOverSlot(null);
-    }, 100);
+    setDraggedGame(null);
+    setDragOverSlot(null);
   };
 
   // Update conflicts when games or positions change
