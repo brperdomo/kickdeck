@@ -244,34 +244,11 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
     return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
   };
 
-  // Helper function to get flight-specific rest period
-  const getFlightRestPeriod = (bracketOrAgeGroup: string): number => {
-    const flightName = getFlightName(bracketOrAgeGroup);
-    
-    // Flight-specific rest periods from Flight Configuration
-    switch (flightName) {
-      case 'Nike Elite':
-        return 90;
-      case 'Nike Premier':
-        return 60;
-      case 'Nike Classic':
-        return 30;
-      default:
-        return 60; // Default for unrecognized flights
-    }
-  };
-
-  // Helper function to extract flight name from bracket name or age group
-  const getFlightName = (bracketOrAgeGroup: string): string => {
-    if (!bracketOrAgeGroup) return 'Unknown';
-    
-    // Extract flight name from bracket names like "U14 Girls Nike Elite" or "Nike Classic U16 Boys"
-    if (bracketOrAgeGroup.includes('Nike Elite')) return 'Nike Elite';
-    if (bracketOrAgeGroup.includes('Nike Premier')) return 'Nike Premier';
-    if (bracketOrAgeGroup.includes('Nike Classic')) return 'Nike Classic';
-    
-    // Default classification based on age group or other patterns
-    return 'Nike Premier'; // Default flight
+  // Helper function to get rest period (60min default, configurable by admins)
+  const getRestPeriod = (): number => {
+    // TODO: Load from admin configuration/database settings
+    // For now, use universal 60-minute default
+    return 60;
   };
 
   // Detect scheduling conflicts with enhanced overlap detection
@@ -339,12 +316,8 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
         const teamRestViolation = teams1.some(team => teams2.includes(team));
         
         if (teamRestViolation && !hasTimeOverlap) {
-          // Get flight-specific rest periods for both games
-          const flight1RestPeriod = getFlightRestPeriod(game1.bracketName || game1.ageGroup);
-          const flight2RestPeriod = getFlightRestPeriod(game2.bracketName || game2.ageGroup);
-          
-          // Use the maximum rest period required between the two games
-          const requiredRestPeriod = Math.max(flight1RestPeriod, flight2RestPeriod);
+          // Use universal 60-minute rest period (configurable by admins)
+          const requiredRestPeriod = getRestPeriod();
           
           // Calculate time between games
           const timeBetween = Math.abs(gameEndMinutes1 - gameStartMinutes2);
@@ -353,14 +326,12 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
           
           if (shortestGap < requiredRestPeriod) {
             const violatingTeams = teams1.filter(team => teams2.includes(team));
-            const flight1Name = getFlightName(game1.bracketName || game1.ageGroup);
-            const flight2Name = getFlightName(game2.bracketName || game2.ageGroup);
             
-            console.log(`⚠️ [REST PERIOD] Flight-specific rest period violation between games ${game1.id} and ${game2.id}:`, violatingTeams, `Gap: ${shortestGap}min, Required: ${requiredRestPeriod}min`);
+            console.log(`⚠️ [REST PERIOD] Rest period violation between games ${game1.id} and ${game2.id}:`, violatingTeams, `Gap: ${shortestGap}min, Required: ${requiredRestPeriod}min`);
             conflicts.push({
               type: 'rest_period',
               severity: 'warning',
-              message: `${violatingTeams.join(', ')} has insufficient rest period: ${shortestGap}min between ${flight1Name} and ${flight2Name} games (minimum: ${requiredRestPeriod}min)`,
+              message: `${violatingTeams.join(', ')} has insufficient rest period: ${shortestGap}min between games (minimum: ${requiredRestPeriod}min)`,
               gameIds: [game1.id, game2.id]
             });
           }
