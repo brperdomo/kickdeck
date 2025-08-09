@@ -345,24 +345,44 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
       // CRITICAL: Same team conflict detection - same team cannot play multiple games at same time
       const teamGames = new Map<string, Game[]>();
       slotGames.forEach(game => {
-        // Check both home and away teams
+        // Check both home and away teams, but handle TBD specially
         [game.homeTeamName, game.awayTeamName].forEach(teamName => {
-          if (!teamGames.has(teamName)) teamGames.set(teamName, []);
-          teamGames.get(teamName)!.push(game);
+          // Only track actual team names, not placeholders like "TBD"
+          if (teamName && teamName.trim() !== '' && teamName !== 'TBD') {
+            if (!teamGames.has(teamName)) teamGames.set(teamName, []);
+            teamGames.get(teamName)!.push(game);
+          }
         });
       });
 
+      // Check for simultaneous scheduling of same team on different fields
       teamGames.forEach((games, teamName) => {
         if (games.length > 1) {
-          console.log(`🚨 [TEAM CONFLICT] ${teamName} has ${games.length} games at ${slot.displayTime}:`, games.map(g => ({ id: g.id, vs: `${g.homeTeamName} vs ${g.awayTeamName}` })));
+          console.log(`🚨 [TEAM CONFLICT] ${teamName} has ${games.length} games at ${slot.displayTime}:`, games.map(g => ({ id: g.id, vs: `${g.homeTeamName} vs ${g.awayTeamName}`, fieldId: g.fieldId })));
           conflicts.push({
             type: 'team_conflict',
             severity: 'error',
-            message: `${teamName} is scheduled for ${games.length} games at the same time (${slot.displayTime})`,
+            message: `${teamName} is scheduled for ${games.length} games at the same time (${slot.displayTime}) on different fields`,
             gameIds: games.map(g => g.id)
           });
         }
       });
+
+      // SPECIAL: Handle TBD vs TBD conflicts - these should also be flagged as simultaneous scheduling conflicts  
+      const tbdGames = slotGames.filter(game => 
+        (game.homeTeamName === 'TBD' && game.awayTeamName === 'TBD') ||
+        (game.homeTeamName === 'TBD' || game.awayTeamName === 'TBD')
+      );
+      
+      if (tbdGames.length > 1) {
+        console.log(`🚨 [TBD CONFLICT] ${tbdGames.length} TBD games at ${slot.displayTime}:`, tbdGames.map(g => ({ id: g.id, vs: `${g.homeTeamName} vs ${g.awayTeamName}`, fieldId: g.fieldId })));
+        conflicts.push({
+          type: 'team_conflict', 
+          severity: 'error',
+          message: `TBD is scheduled for ${tbdGames.length} games at the same time (${slot.displayTime})`,
+          gameIds: tbdGames.map(g => g.id)
+        });
+      }
 
       // ENHANCED: Team rest period conflicts (from database settings)
       // Will be dynamically loaded from event schedule constraints
@@ -808,6 +828,14 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
                     const hasConflict = conflicts.some(c => 
                       games.some(game => c.gameIds.includes(game.id))
                     );
+                    const hasTeamConflict = conflicts.some(c => 
+                      c.type === 'team_conflict' && c.severity === 'error' &&
+                      games.some(game => c.gameIds.includes(game.id))
+                    );
+                    const hasWarningConflict = conflicts.some(c => 
+                      c.severity === 'warning' && 
+                      games.some(game => c.gameIds.includes(game.id))
+                    );
                     const isDragOver = dragOverSlot?.fieldId === field.id && dragOverSlot?.timeSlot === slot.startTime;
 
                     return (
@@ -816,7 +844,7 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
                         className={`
                           min-w-[80px] h-[60px] p-1 border border-slate-600 transition-colors relative
                           ${games.length > 0 ? 'bg-blue-900/30' : isOccupiedByExtendingGame ? 'bg-blue-900/20' : 'bg-slate-800'}
-                          ${hasConflict ? 'bg-red-900/30 border-red-500' : ''}
+                          ${hasTeamConflict ? 'bg-red-900/40 border-red-500 border-2' : hasWarningConflict ? 'bg-yellow-900/30 border-yellow-500' : ''}
                           ${isDragOver ? 'bg-green-900/30 border-green-500 border-2' : ''}
                           ${isOccupiedByExtendingGame ? 'border-blue-400/50' : ''}
                           hover:bg-slate-700/50
