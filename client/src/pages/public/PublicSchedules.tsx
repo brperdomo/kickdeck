@@ -9,6 +9,7 @@ import {
   Calendar, Users, Trophy, Clock, MapPin, 
   ArrowLeft, ExternalLink, RefreshCw, AlertTriangle, ChevronRight 
 } from 'lucide-react';
+import { AnimatedBackground } from '@/components/ui/AnimatedBackground';
 
 interface PublicScheduleData {
   eventInfo: {
@@ -134,9 +135,17 @@ export default function PublicSchedules() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white relative overflow-hidden">
+      {/* Subtle Background Animation */}
+      <AnimatedBackground 
+        type="particles" 
+        speed="slow" 
+        primaryColor="#e5e7eb" 
+        secondaryColor="#f3f4f6"
+        className="opacity-20"
+      />
       {/* Header - Professional Tournament Style */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-white/95 backdrop-blur-sm border-b border-gray-200 relative z-10">
         <div className="max-w-6xl mx-auto px-4 py-6">
           {/* Tournament Logo and Title */}
           <div className="flex items-center justify-between mb-6">
@@ -201,14 +210,14 @@ export default function PublicSchedules() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className="max-w-6xl mx-auto px-4 py-8 relative z-10">
         <h2 className="text-xl font-semibold text-gray-900 mb-6">Schedules</h2>
         
         {/* Boys Age Groups Table */}
         {scheduleData.ageGroupsByGender?.boys && scheduleData.ageGroupsByGender.boys.length > 0 && (
           <div className="mb-8">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Boys</h3>
-            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+            <div className="bg-white/95 backdrop-blur-sm rounded-lg border border-gray-200 overflow-hidden shadow-sm">
               <table className="w-full">
                 <tbody className="divide-y divide-gray-200">
                   {scheduleData.ageGroupsByGender.boys.map((ageGroup, index) => (
@@ -253,7 +262,7 @@ export default function PublicSchedules() {
         {scheduleData.ageGroupsByGender?.girls && scheduleData.ageGroupsByGender.girls.length > 0 && (
           <div className="mb-8">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Girls</h3>
-            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+            <div className="bg-white/95 backdrop-blur-sm rounded-lg border border-gray-200 overflow-hidden shadow-sm">
               <table className="w-full">
                 <tbody className="divide-y divide-gray-200">
                   {scheduleData.ageGroupsByGender.girls.map((ageGroup, index) => (
@@ -298,7 +307,7 @@ export default function PublicSchedules() {
         {scheduleData.games && scheduleData.games.length > 0 && (
           <div className="mt-8">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Upcoming Games</h3>
-            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+            <div className="bg-white/95 backdrop-blur-sm rounded-lg border border-gray-200 overflow-hidden shadow-sm">
               <table className="w-full">
                 <thead className="bg-gray-50">
                   <tr>
@@ -330,7 +339,7 @@ export default function PublicSchedules() {
 
         {/* Debug Info (temporary) */}
         {scheduleData && (
-          <div className="mt-8 p-4 bg-gray-100 rounded-lg">
+          <div className="mt-8 p-4 bg-gray-100/90 backdrop-blur-sm rounded-lg">
             <h4 className="font-semibold text-gray-900 mb-2">Debug Info:</h4>
             <p className="text-sm text-gray-600">Event: {scheduleData.eventInfo?.name}</p>
             <p className="text-sm text-gray-600">Boys Age Groups: {scheduleData.ageGroupsByGender?.boys?.length || 0}</p>
@@ -341,7 +350,7 @@ export default function PublicSchedules() {
         )}
 
         {/* Footer - "Powered by MatchPro" */}
-        <div className="mt-16 py-8 border-t border-gray-200">
+        <div className="mt-16 py-8 border-t border-gray-200/50">
           <div className="flex items-center justify-center">
             <div className="flex items-center gap-2 text-gray-500">
               <span className="text-sm">Powered by</span>
