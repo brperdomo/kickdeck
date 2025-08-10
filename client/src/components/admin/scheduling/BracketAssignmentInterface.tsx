@@ -53,16 +53,28 @@ export function BracketAssignmentInterface({ eventId }: BracketAssignmentInterfa
   const [placeholderName, setPlaceholderName] = useState<string>('');
 
   // Fetch bracket assignment data
-  const { data: bracketData, isLoading } = useQuery({
+  const { data: bracketData, isLoading, error } = useQuery({
     queryKey: ['bracket-assignments', eventId],
     queryFn: async (): Promise<FlightBracketData[]> => {
+      console.log('FRONTEND DEBUG: Fetching bracket assignments for event', eventId);
       const response = await fetch(`/api/admin/events/${eventId}/bracket-assignments`, {
         credentials: 'include'
       });
-      if (!response.ok) throw new Error('Failed to fetch bracket assignment data');
-      return response.json();
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('FRONTEND DEBUG: API Error:', response.status, errorText);
+        throw new Error('Failed to fetch bracket assignment data');
+      }
+      const data = await response.json();
+      console.log('FRONTEND DEBUG: Received bracket data:', data);
+      return data;
     }
   });
+
+  // Add error logging
+  if (error) {
+    console.error('FRONTEND DEBUG: Query error:', error);
+  }
 
   // Assign teams to brackets mutation
   const assignTeamsMutation = useMutation({
