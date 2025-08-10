@@ -29,6 +29,7 @@ const teamSchema = z.object({
   ageGroupId: z.string().optional(),
   bracketId: z.number().nullable().optional(),
   gender: z.enum(["Boys", "Girls"]).optional(),
+  status: z.enum(["registered", "approved", "rejected", "paid", "withdrawn", "refunded", "waitlisted"]).optional(),
 });
 
 type TeamFormValues = z.infer<typeof teamSchema>;
@@ -56,6 +57,7 @@ interface TeamModalProps {
     ageGroupId?: number;
     ageGroup?: string;
     bracketId?: number | null;
+    status?: string;
   };
 }
 
@@ -140,6 +142,7 @@ export function TeamModal({ isOpen, onClose, team }: TeamModalProps) {
       ageGroupId: team?.ageGroupId ? String(team.ageGroupId) : "",
       bracketId: team?.bracketId || null,
       gender: "",
+      status: team?.status || "registered",
     },
   });
 
@@ -167,6 +170,7 @@ export function TeamModal({ isOpen, onClose, team }: TeamModalProps) {
         ageGroupId: team.ageGroupId ? String(team.ageGroupId) : "",
         bracketId: team.bracketId || null,
         gender: currentGender,
+        status: team.status || "registered",
       });
       
       // Initialize the age group ID and gender for bracket fetching
@@ -219,6 +223,8 @@ export function TeamModal({ isOpen, onClose, team }: TeamModalProps) {
         clubName: data.clubName,
         ageGroupId: data.ageGroupId ? parseInt(data.ageGroupId) : undefined,
         bracketId: data.bracketId || null,
+        status: data.status,
+        skipEmail: true, // Silent status change - no emails sent
       };
       
       console.log("Sending PATCH request to /api/admin/teams/" + team?.id, payload);
@@ -595,6 +601,42 @@ export function TeamModal({ isOpen, onClose, team }: TeamModalProps) {
                   )}
                 />
               </div>
+            </div>
+            
+            {/* Team Status Section */}
+            <div className="border-t pt-4">
+              <h3 className="text-lg font-medium mb-4">Team Status Management</h3>
+              <div className="bg-amber-50 border border-amber-200 rounded-md p-4 mb-4">
+                <p className="text-sm text-amber-800">
+                  <strong>Silent Status Change:</strong> Changing the team status here will not send emails or trigger payment processing. Use this for administrative adjustments only.
+                </p>
+              </div>
+              <FormField
+                control={form.control}
+                name="status"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Team Status</FormLabel>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select team status" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="registered">Registered (Pending Review)</SelectItem>
+                        <SelectItem value="approved">Approved</SelectItem>
+                        <SelectItem value="rejected">Rejected</SelectItem>
+                        <SelectItem value="paid">Paid</SelectItem>
+                        <SelectItem value="withdrawn">Withdrawn</SelectItem>
+                        <SelectItem value="refunded">Refunded</SelectItem>
+                        <SelectItem value="waitlisted">Waitlisted</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
             
             <div className="flex justify-end gap-2 pt-4">

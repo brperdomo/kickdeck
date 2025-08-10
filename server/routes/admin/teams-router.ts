@@ -141,6 +141,12 @@ router.patch('/:teamId', extractEventIdFromTeam, hasEventAccess, async (req, res
     if (updateData.ageGroupId !== undefined) updateObject.ageGroupId = updateData.ageGroupId;
     if (updateData.bracketId !== undefined) updateObject.bracketId = updateData.bracketId;
     
+    // Handle silent status changes (no email notifications or payment processing)
+    if (updateData.status !== undefined && updateData.skipEmail) {
+      updateObject.status = updateData.status;
+      console.log(`Silent status change for team ${teamId}: ${updateData.status} (skipEmail: ${updateData.skipEmail})`);
+    }
+    
     // Handle coach information
     if (updateData.coach !== undefined) {
       updateObject.headCoachName = updateData.coach.headCoachName;
