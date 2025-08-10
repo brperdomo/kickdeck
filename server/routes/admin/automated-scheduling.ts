@@ -829,9 +829,56 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
         });
         
         console.log(`[Selective Scheduling] SUCCESS: Generated 6 pool + 1 championship = ${bracketGames.length} games for group_of_4 (used ${selectedTeams.length} of ${flightTeams.length} teams)`);
+      } else if (flightTeams.length === 6 && (bracket.tournamentFormat?.toLowerCase().includes('crossplay') || bracket.tournamentFormat?.toLowerCase().includes('crossover'))) {
+        // CRITICAL FIX: Handle 6-team CROSSPLAY formats correctly
+        console.log(`🚨 CROSSPLAY FIX: ${bracket.tournamentFormat} detected - generating FULL CROSSPLAY games for 6 teams`);
+        
+        let gameNumber = 1;
+        const selectedTeams = flightTeams.slice(0, 6);
+        
+        // Split into Pool A (first 3) and Pool B (last 3)
+        const poolA = selectedTeams.slice(0, 3);
+        const poolB = selectedTeams.slice(3, 6);
+        
+        console.log(`🔄 CROSSPLAY: Pool A teams:`, poolA.map(t => t.name));
+        console.log(`🔄 CROSSPLAY: Pool B teams:`, poolB.map(t => t.name));
+        
+        // Generate ONLY crossplay games (Pool A vs Pool B) - 9 games total
+        // Pattern: A1-B1, A2-B2, A3-B3, A1-B2, A2-B3, A3-B1, A1-B3, A2-B1, A3-B2
+        const crossplayPairs = [
+          [0, 0], // A1 vs B1
+          [1, 1], // A2 vs B2
+          [2, 2], // A3 vs B3
+          [0, 1], // A1 vs B2
+          [1, 2], // A2 vs B3
+          [2, 0], // A3 vs B1
+          [0, 2], // A1 vs B3
+          [1, 0], // A2 vs B1
+          [2, 1]  // A3 vs B2
+        ];
+        
+        crossplayPairs.forEach(([aIdx, bIdx]) => {
+          bracketGames.push({
+            id: `${flightId}-${gameNumber}`,
+            homeTeamId: poolA[aIdx].id,
+            homeTeamName: poolA[aIdx].name,
+            awayTeamId: poolB[bIdx].id,
+            awayTeamName: poolB[bIdx].name,
+            bracketId: parseInt(flightId),
+            bracketName: bracket.name,
+            round: 1,
+            gameType: 'pool_play',
+            duration: 90,
+            gameNumber: gameNumber++
+          });
+          
+          console.log(`✅ CROSSPLAY GAME ${gameNumber - 1}: ${poolA[aIdx].name} vs ${poolB[bIdx].name}`);
+        });
+        
+        console.log(`🎯 CROSSPLAY FIX: Generated ${bracketGames.length} crossplay games (Pool A vs Pool B only)`);
       } else if (flightTeams.length === 6) {
-        // Smart fallback: Use group_of_6 (9 pool games + 1 championship = 10 games)
-        console.log(`[Selective Scheduling] SMART FALLBACK: ${bracket.tournamentFormat} not handled, using group_of_6 for ${flightTeams.length} teams`);
+        // Standard group_of_6 (non-crossplay): dual pools with internal round-robin + cross-pool games
+        console.log(`[Selective Scheduling] STANDARD GROUP_OF_6: ${bracket.tournamentFormat} - generating dual pool format`);
         
         let gameNumber = 1;
         const selectedTeams = flightTeams.slice(0, 6);
@@ -878,7 +925,7 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
           }
         }
         
-        // Cross-pool games (3 games: each Pool A team plays each Pool B team)
+        // Cross-pool games (3 games: each Pool A team plays corresponding Pool B team)
         for (let i = 0; i < poolA.length; i++) {
           bracketGames.push({
             id: `${flightId}-${gameNumber}`,

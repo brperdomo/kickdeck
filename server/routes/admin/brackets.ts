@@ -372,20 +372,74 @@ function generateGamesForBracketType(bracketType: string, teams: any[], bracketI
       }
       break;
       
+    case 'crossplay':
+    case 'group_of_6_crossplay':
+    case 'crossover_bracket_6_teams':
+    case 'full_crossplay':
+      // CRITICAL FIX: Handle crossplay formats properly
+      console.log(`🚨 CROSSPLAY FIX: Generating crossplay games for ${teams.length} teams`);
+      
+      if (teams.length !== 6) {
+        console.error(`❌ CROSSPLAY ERROR: Expected 6 teams for crossplay, got ${teams.length}`);
+        throw new Error(`Crossplay format requires exactly 6 teams, got ${teams.length}`);
+      }
+      
+      // Split into Pool A (first 3 teams) and Pool B (last 3 teams)
+      const poolA = teams.slice(0, 3);
+      const poolB = teams.slice(3, 6);
+      
+      console.log(`🔄 CROSSPLAY: Pool A teams:`, poolA.map(t => t.name));
+      console.log(`🔄 CROSSPLAY: Pool B teams:`, poolB.map(t => t.name));
+      
+      // Generate ONLY crossplay games (Pool A vs Pool B)
+      const crossplayPairs = [
+        [0, 0], // A1 vs B1
+        [1, 1], // A2 vs B2
+        [2, 2], // A3 vs B3
+        [0, 1], // A1 vs B2
+        [1, 2], // A2 vs B3
+        [2, 0], // A3 vs B1
+        [0, 2], // A1 vs B3
+        [1, 0], // A2 vs B1
+        [2, 1]  // A3 vs B2
+      ];
+      
+      crossplayPairs.forEach(([aIdx, bIdx], gameIndex) => {
+        const { homeTeamId, awayTeamId } = randomizeHomeAway(poolA[aIdx], poolB[bIdx]);
+        games.push({
+          bracketId,
+          homeTeamId,
+          awayTeamId,
+          gameNumber: gameIndex + 1,
+          round: 1,
+          status: 'scheduled'
+        });
+        
+        console.log(`✅ CROSSPLAY GAME ${gameIndex + 1}: ${poolA[aIdx].name} vs ${poolB[bIdx].name}`);
+      });
+      
+      console.log(`🎯 CROSSPLAY FIX: Generated ${games.length} crossplay games (Pool A vs Pool B only)`);
+      break;
+      
     default:
-      // Default to round robin for small groups with randomized Home/Away
-      for (let i = 0; i < teams.length && i < 6; i++) {
-        for (let j = i + 1; j < teams.length && j < 6; j++) {
-          const { homeTeamId, awayTeamId } = randomizeHomeAway(teams[i], teams[j]);
-          games.push({
-            bracketId,
-            homeTeamId,
-            awayTeamId,
-            gameNumber: games.length + 1,
-            round: 1,
-            status: 'scheduled'
-          });
-        }
+      // CRITICAL FIX: Prevent unintended round-robin games in unknown formats
+      console.log(`⚠️  UNKNOWN FORMAT WARNING: Format '${bracketType}' not recognized. Creating minimal games to prevent errors.`);
+      
+      // For unknown formats, create a single placeholder game to prevent the system from breaking
+      // This prevents the catastrophic bug where all teams play each other in crossplay
+      if (teams.length >= 2) {
+        const { homeTeamId, awayTeamId } = randomizeHomeAway(teams[0], teams[1]);
+        games.push({
+          bracketId,
+          homeTeamId,
+          awayTeamId,
+          gameNumber: 1,
+          round: 1,
+          status: 'pending' // Mark as pending so admin can review
+        });
+        
+        console.log(`⚠️  DEFAULT: Created single placeholder game for unknown format '${bracketType}'`);
+        console.log(`⚠️  ADMIN ACTION REQUIRED: Review and configure proper tournament format`);
       }
   }
   

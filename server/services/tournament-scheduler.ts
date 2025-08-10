@@ -184,8 +184,21 @@ export class TournamentScheduler {
         games.push(...this.generateRoundRobinGames(bracket, teams, gameCounter));
         break;
         
+      case 'crossplay':
+      case 'full_crossplay':
+      case 'crossover_bracket_6_teams':
+      case 'group_of_6_crossplay':
+        // CRITICAL FIX: Handle crossplay formats with proper pool separation
+        console.log(`🚨 CROSSPLAY DETECTED: Generating crossplay games for format '${format}'`);
+        if (teams.length === 6) {
+          games.push(...this.generate6TeamCrossover(bracket, teams, gameCounter));
+        } else {
+          console.error(`❌ CROSSPLAY ERROR: Crossplay requires 6 teams, got ${teams.length}`);
+          throw new Error(`Crossplay format requires exactly 6 teams, got ${teams.length}`);
+        }
+        break;
+        
       case 'single_bracket_4_teams':
-      case 'crossover_bracket_6_teams': 
       case 'dual_bracket_8_teams':
       case 'group_of_4':
       case 'group_of_6':
