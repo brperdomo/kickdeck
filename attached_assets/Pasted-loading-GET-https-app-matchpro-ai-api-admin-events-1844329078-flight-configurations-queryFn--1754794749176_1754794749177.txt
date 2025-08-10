@@ -1,0 +1,165 @@
+loading: GET "https://app.matchpro.ai/api/admin/events/1844329078/flight-configurations".
+queryFn @ UnifiedTournamentControlCenter-BSFJGdFw.js:1
+i @ index-1DOfxyZc.js:41
+f @ index-1DOfxyZc.js:41
+start @ index-1DOfxyZc.js:41
+fetch @ index-1DOfxyZc.js:41
+ng @ index-1DOfxyZc.js:41
+(anonymous) @ index-1DOfxyZc.js:41
+setInterval
+wP @ index-1DOfxyZc.js:41
+NP @ index-1DOfxyZc.js:41
+onQueryUpdate @ index-1DOfxyZc.js:41
+(anonymous) @ index-1DOfxyZc.js:41
+(anonymous) @ index-1DOfxyZc.js:41
+batch @ index-1DOfxyZc.js:41
+ac @ index-1DOfxyZc.js:41
+setData @ index-1DOfxyZc.js:41
+onSuccess @ index-1DOfxyZc.js:41
+m @ index-1DOfxyZc.js:41
+Promise.then
+f @ index-1DOfxyZc.js:41
+start @ index-1DOfxyZc.js:41
+fetch @ index-1DOfxyZc.js:41
+ng @ index-1DOfxyZc.js:41
+onSubscribe @ index-1DOfxyZc.js:41
+subscribe @ index-1DOfxyZc.js:41
+(anonymous) @ index-1DOfxyZc.js:41
+iW @ index-1DOfxyZc.js:39
+SS @ index-1DOfxyZc.js:41
+Zh @ index-1DOfxyZc.js:41
+(anonymous) @ index-1DOfxyZc.js:41
+w @ index-1DOfxyZc.js:26
+A @ index-1DOfxyZc.js:26
+UnifiedTournamentControlCenter-BSFJGdFw.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentControlCenter-BSFJGdFw.js:1 Configured flights: 1 of 76
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+Promise.then
+S @ out-4.5.44.js:1
+y @ out-4.5.44.js:1
+E @ out-4.5.44.js:1
+e.onload @ inner.html:1
+script
+(anonymous) @ inner.html:1
+(anonymous) @ inner.html:1
+UnifiedTournamentControlCenter-BSFJGdFw.js:1 Fetch finished loading: GET "https://app.matchpro.ai/api/admin/tournaments/1844329078/status".
+queryFn @ UnifiedTournamentControlCenter-BSFJGdFw.js:1
+i @ index-1DOfxyZc.js:41
+f @ index-1DOfxyZc.js:41
+start @ index-1DOfxyZc.js:41
+fetch @ index-1DOfxyZc.js:41
+ng @ index-1DOfxyZc.js:41
+(anonymous) @ index-1DOfxyZc.js:41
+setInterval
+wP @ index-1DOfxyZc.js:41
+NP @ index-1DOfxyZc.js:41
+onQueryUpdate @ index-1DOfxyZc.js:41
+(anonymous) @ index-1DOfxyZc.js:41
+(anonymous) @ index-1DOfxyZc.js:41
+batch @ index-1DOfxyZc.js:41
+ac @ index-1DOfxyZc.js:41
+setData @ index-1DOfxyZc.js:41
+onSuccess @ index-1DOfxyZc.js:41
+m @ index-1DOfxyZc.js:41
+Promise.then
+f @ index-1DOfxyZc.js:41
+start @ index-1DOfxyZc.js:41
+fetch @ index-1DOfxyZc.js:41
+ng @ index-1DOfxyZc.js:41
+onSubscribe @ index-1DOfxyZc.js:41
+subscribe @ index-1DOfxyZc.js:41
+(anonymous) @ index-1DOfxyZc.js:41
+iW @ index-1DOfxyZc.js:39
+SS @ index-1DOfxyZc.js:41
+Zh @ index-1DOfxyZc.js:41
+(anonymous) @ index-1DOfxyZc.js:41
+w @ index-1DOfxyZc.js:26
+A @ index-1DOfxyZc.js:26
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+h @ out-4.5.44.js:1
+e @ inner.html:1
+index-1DOfxyZc.js:41 TypeError: D.birthYear.toLowerCase is not a function
+    at MasterSchedulePage-Ck-Alao0.js:274:41992
+    at Array.filter (<anonymous>)
+    at MasterSchedulePage-Ck-Alao0.js:274:41812
+    at Object.pW [as useMemo] (index-1DOfxyZc.js:39:21416)
+    at On.useMemo (index-1DOfxyZc.js:10:6253)
+    at wf (MasterSchedulePage-Ck-Alao0.js:274:41736)
+    at uO (index-1DOfxyZc.js:39:17031)
+    at rP (index-1DOfxyZc.js:41:3143)
+    at VW (index-1DOfxyZc.js:41:44880)
+    at zW (index-1DOfxyZc.js:41:39822)
+nP @ index-1DOfxyZc.js:41
+r.callback @ index-1DOfxyZc.js:41
+bM @ index-1DOfxyZc.js:39
+MM @ index-1DOfxyZc.js:41
+MW @ index-1DOfxyZc.js:41
+Jme @ index-1DOfxyZc.js:41
+rhe @ index-1DOfxyZc.js:41
+Pu @ index-1DOfxyZc.js:41
+BM @ index-1DOfxyZc.js:41
+ou @ index-1DOfxyZc.js:39
+vm @ index-1DOfxyZc.js:41
+f7 @ index-1DOfxyZc.js:38
+N2 @ index-1DOfxyZc.js:38
+H4 @ index-1DOfxyZc.js:38
+zue @ index-1DOfxyZc.js:38Understand this error
+index-1DOfxyZc.js:39 Uncaught TypeError: D.birthYear.toLowerCase is not a function
+    at MasterSchedulePage-Ck-Alao0.js:274:41992
+    at Array.filter (<anonymous>)
+    at MasterSchedulePage-Ck-Alao0.js:274:41812
+    at Object.pW [as useMemo] (index-1DOfxyZc.js:39:21416)
+    at On.useMemo (index-1DOfxyZc.js:10:6253)
+    at wf (MasterSchedulePage-Ck-Alao0.js:274:41736)
+    at uO (index-1DOfxyZc.js:39:17031)
+    at rP (index-1DOfxyZc.js:41:3143)
+    at VW (index-1DOfxyZc.js:41:44880)
+    at zW (index-1DOfxyZc.js:41:39822)
+(anonymous) @ MasterSchedulePage-Ck-Alao0.js:274
+(anonymous) @ MasterSchedulePage-Ck-Alao0.js:274
+pW @ index-1DOfxyZc.js:39
+On.useMemo @ index-1DOfxyZc.js:10
+wf @ MasterSchedulePage-Ck-Alao0.js:274
+uO @ index-1DOfxyZc.js:39
+rP @ index-1DOfxyZc.js:41
+VW @ index-1DOfxyZc.js:41
+zW @ index-1DOfxyZc.js:41
+the @ index-1DOfxyZc.js:41
+nw @ index-1DOfxyZc.js:41
+fP @ index-1DOfxyZc.js:41
+BM @ index-1DOfxyZc.js:41
+ou @ index-1DOfxyZc.js:39
+vm @ index-1DOfxyZc.js:41
+f7 @ index-1DOfxyZc.js:38
+N2 @ index-1DOfxyZc.js:38
+H4 @ index-1DOfxyZc.js:38
+zue @ index-1DOfxyZc.js:38Understand this error
+shared-df7789195bf09b6f338558bdd92c931a.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+e @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+c @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+setTimeout
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+log @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+log @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+value @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+value @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1

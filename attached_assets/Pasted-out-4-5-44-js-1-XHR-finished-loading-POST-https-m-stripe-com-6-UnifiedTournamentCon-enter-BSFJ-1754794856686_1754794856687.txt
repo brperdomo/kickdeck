@@ -1,0 +1,42 @@
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+UnifiedTournamentCon…enter-BSFJGdFw.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentCon…enter-BSFJGdFw.js:1 Configured flights: 1 of 76
+shared-df7789195bf09…8558bdd92c931a.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+UnifiedTournamentCon…enter-BSFJGdFw.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentCon…enter-BSFJGdFw.js:1 Configured flights: 1 of 76
+UnifiedTournamentCon…enter-BSFJGdFw.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentCon…enter-BSFJGdFw.js:1 Configured flights: 1 of 76
+UnifiedTournamentCon…enter-BSFJGdFw.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentCon…enter-BSFJGdFw.js:1 Configured flights: 1 of 76
+UnifiedTournamentCon…enter-BSFJGdFw.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentCon…enter-BSFJGdFw.js:1 Configured flights: 1 of 76
+UnifiedTournamentCon…enter-BSFJGdFw.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentCon…enter-BSFJGdFw.js:1 Configured flights: 1 of 76
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+MasterSchedulePage-Ck-Alao0.js:274 [Frontend] Fetching flight formats for event 1844329078
+MasterSchedulePage-Ck-Alao0.js:274 [Frontend] Received 72 flights, configured: 1, unconfigured: 71
+index-1DOfxyZc.js:41 [Violation] 'setTimeout' handler took 181ms
+[Violation] 'click' handler took 1166ms
+MasterSchedulePage-Ck-Alao0.js:274 🔄 RESET FORMAT: Attempting to reset format for flight 645
+MasterSchedulePage-Ck-Alao0.js:274 🔄 RESET FORMAT: Response status: 200
+MasterSchedulePage-Ck-Alao0.js:274 🔄 RESET FORMAT SUCCESS: 
+{success: true, message: 'No formats to reset for flight 645', flightInfo: {…}}
+MasterSchedulePage-Ck-Alao0.js:274 [Frontend] Fetching flight formats for event 1844329078
+MasterSchedulePage-Ck-Alao0.js:274 Fetch finished loading: DELETE "https://app.matchpro.ai/api/admin/events/1844329078/flights/645/format".
+MasterSchedulePage-Ck-Alao0.js:274 [Frontend] Received 72 flights, configured: 1, unconfigured: 71
+MasterSchedulePage-Ck-Alao0.js:274 [DEBUG] Fetching fields for event: 1844329078
+MasterSchedulePage-Ck-Alao0.js:274 [DEBUG] Making authenticated request with credentials
+MasterSchedulePage-Ck-Alao0.js:274 [DEBUG] Response status: 200
+MasterSchedulePage-Ck-Alao0.js:274 [DEBUG] Response headers: 
+{alt-svc: 'h3=":443"; ma=2592000,h3-29=":443"; ma=2592000', cache-control: 'private', content-length: '5158', content-type: 'application/json; charset=utf-8', date: 'Sun, 10 Aug 2025 03:00:31 GMT', …}
+MasterSchedulePage-Ck-Alao0.js:274 [DEBUG] Fields response: 
+(33) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+MasterSchedulePage-Ck-Alao0.js:274 [DEBUG] Fields array length: 0
+MasterSchedulePage-Ck-Alao0.js:274 [DEBUG] Fields data: 
+(33) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+MasterSchedulePage-Ck-Alao0.js:274 [DEBUG] Fields array: 
+[]
+MasterSchedulePage-Ck-Alao0.js:274 [DEBUG] Fields length: 0
+master-schedule:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received
+﻿
+

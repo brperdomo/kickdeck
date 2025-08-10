@@ -85,7 +85,7 @@ export function FlightConfigurationTable({ eventId }: { eventId: string }) {
         flight.divisionName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         flight.ageGroup.toLowerCase().includes(searchTerm.toLowerCase()) ||
         flight.gender.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        flight.birthYear.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        String(flight.birthYear || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
         flight.formatName.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
