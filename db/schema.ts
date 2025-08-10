@@ -183,6 +183,7 @@ export const eventFieldConfigurations = pgTable("event_field_configurations", {
   fieldSize: text("field_size").notNull().default("11v11"), // Tournament-specific field size
   sortOrder: integer("sort_order").default(0).notNull(), // Tournament-specific display order
   isActive: boolean("is_active").default(true).notNull(), // Can disable fields for specific tournaments
+  isExcluded: boolean("is_excluded").default(false).notNull(), // Completely exclude field from tournament usage
   firstGameTime: text("first_game_time"), // When first games should start on this field (e.g., "08:00")
   createdAt: text("created_at").notNull().default(new Date().toISOString()),
   updatedAt: text("updated_at").notNull().default(new Date().toISOString()),
@@ -194,6 +195,7 @@ export const insertEventFieldConfigurationSchema = createInsertSchema(eventField
   fieldSize: z.enum(["3v3", "4v4", "5v5", "6v6", "7v7", "8v8", "9v9", "10v10", "11v11", "N/A"]).default("11v11"),
   sortOrder: z.number().min(0).default(0),
   isActive: z.boolean().default(true),
+  isExcluded: z.boolean().default(false),
 });
 
 export const selectEventFieldConfigurationSchema = createSelectSchema(eventFieldConfigurations);

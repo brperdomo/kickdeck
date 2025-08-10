@@ -25,11 +25,12 @@ import { PublishSchedules } from '@/components/admin/scheduling/PublishSchedules
 import { BracketAssignmentInterface } from '@/components/admin/scheduling/BracketAssignmentInterface';
 import FieldSortingManager from '@/components/admin/FieldSortingManager';
 import FieldManagementDashboard from '@/components/admin/FieldManagementDashboard';
+import { FieldExclusionManager } from '@/components/admin/FieldExclusionManager';
 
 export default function MasterSchedulePage() {
   const { eventId } = useParams<{ eventId: string }>();
   const [, setLocation] = useLocation();
-  const [currentView, setCurrentView] = useState<'view' | 'calendar' | 'cards' | 'manage' | 'flights' | 'formats' | 'brackets' | 'bracket-assignment' | 'overview' | 'workflow' | 'publish' | 'field-sorting'>('overview');
+  const [currentView, setCurrentView] = useState<'view' | 'calendar' | 'cards' | 'manage' | 'flights' | 'formats' | 'brackets' | 'bracket-assignment' | 'overview' | 'workflow' | 'publish' | 'field-sorting' | 'field-removal'>('overview');
 
   if (!eventId) {
     return <div>Event ID not found</div>;
@@ -203,6 +204,19 @@ export default function MasterSchedulePage() {
           </Button>
 
           <Button
+            variant={currentView === 'field-removal' ? 'default' : 'outline'}
+            onClick={() => setCurrentView('field-removal')}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 whitespace-nowrap ${
+              currentView === 'field-removal' 
+                ? 'bg-red-600 text-white shadow-lg shadow-red-600/25 hover:bg-red-500' 
+                : 'bg-slate-700 text-slate-200 hover:bg-slate-600 border border-slate-600 hover:border-slate-500'
+            }`}
+          >
+            <Settings className="h-4 w-4" />
+            Field Removal
+          </Button>
+
+          <Button
             variant={currentView === 'publish' ? 'default' : 'outline'}
             onClick={() => setCurrentView('publish')}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 whitespace-nowrap ${
@@ -364,6 +378,10 @@ export default function MasterSchedulePage() {
         ) : currentView === 'field-sorting' ? (
           <div className="space-y-6">
             <FieldManagementDashboard eventId={eventId} />
+          </div>
+        ) : currentView === 'field-removal' ? (
+          <div className="space-y-6">
+            <FieldExclusionManager eventId={eventId} />
           </div>
         ) : (
           <div className="space-y-6">
