@@ -30,9 +30,11 @@ interface FlightBracketData {
   flightLevel: string;
   ageGroup: string;
   gender: string;
+  birthYear: string;
   totalTeams: number;
   brackets: TournamentGroup[];
   unassignedTeams: Team[];
+  isCompleted: boolean;
 }
 
 interface BracketAssignmentInterfaceProps {
@@ -234,21 +236,48 @@ export function BracketAssignmentInterface({ eventId }: BracketAssignmentInterfa
             Choose a flight to assign teams to its brackets
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-6">
           <Select value={selectedFlight?.toString() || ""} onValueChange={(value) => setSelectedFlight(parseInt(value))}>
             <SelectTrigger className="bg-slate-700 border-slate-600 text-white">
               <SelectValue placeholder="Select a flight..." />
             </SelectTrigger>
-            <SelectContent className="bg-slate-700 border-slate-600">
-              {bracketData?.map((flight) => (
-                <SelectItem key={flight.flightId} value={flight.flightId.toString()}>
-                  <div className="flex items-center gap-2">
-                    {getFlightLevelBadge(flight.flightLevel)}
-                    <span>{flight.ageGroup} {flight.gender} - {flight.flightName}</span>
-                    <span className="text-slate-400">({flight.totalTeams} teams)</span>
+            <SelectContent className="bg-slate-700 border-slate-600 max-h-96 overflow-y-auto">
+              {/* Active Flights */}
+              {bracketData && bracketData.filter(flight => !flight.isCompleted).length > 0 && (
+                <>
+                  <div className="px-2 py-1.5 text-xs font-medium text-slate-300 bg-slate-600 sticky top-0">
+                    Active Flights
                   </div>
-                </SelectItem>
-              ))}
+                  {bracketData.filter(flight => !flight.isCompleted).map((flight) => (
+                    <SelectItem key={flight.flightId} value={flight.flightId.toString()}>
+                      <div className="flex items-center gap-2">
+                        {getFlightLevelBadge(flight.flightLevel)}
+                        <span>{flight.gender} {flight.birthYear} - {flight.flightName}</span>
+                        <span className="text-slate-400">({flight.totalTeams} teams)</span>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </>
+              )}
+
+              {/* Completed Flights */}
+              {bracketData && bracketData.filter(flight => flight.isCompleted).length > 0 && (
+                <>
+                  <div className="px-2 py-1.5 text-xs font-medium text-slate-300 bg-slate-600 sticky top-0">
+                    Completed
+                  </div>
+                  {bracketData.filter(flight => flight.isCompleted).map((flight) => (
+                    <SelectItem key={flight.flightId} value={flight.flightId.toString()}>
+                      <div className="flex items-center gap-2">
+                        {getFlightLevelBadge(flight.flightLevel)}
+                        <span>{flight.gender} {flight.birthYear} - {flight.flightName}</span>
+                        <span className="text-slate-400">({flight.totalTeams} teams)</span>
+                        <Badge variant="secondary" className="text-xs">Completed</Badge>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </>
+              )}
             </SelectContent>
           </Select>
         </CardContent>
@@ -263,9 +292,12 @@ export function BracketAssignmentInterface({ eventId }: BracketAssignmentInterfa
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <CardTitle className="text-white">
-                    {selectedFlightData.ageGroup} {selectedFlightData.gender} - {selectedFlightData.flightName}
+                    {selectedFlightData.gender} {selectedFlightData.birthYear} - {selectedFlightData.flightName}
                   </CardTitle>
                   {getFlightLevelBadge(selectedFlightData.flightLevel)}
+                  {selectedFlightData.isCompleted && (
+                    <Badge variant="secondary" className="text-xs">Completed</Badge>
+                  )}
                 </div>
                 <div className="flex gap-2">
                   {selectedFlightData.brackets.length === 0 ? (
