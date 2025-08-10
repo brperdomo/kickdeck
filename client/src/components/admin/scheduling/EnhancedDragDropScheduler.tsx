@@ -896,7 +896,7 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
   return (
     <div className="space-y-6">
       {/* Scheduling Constraints Manager */}
-      <SchedulingConstraintsManager eventId={eventId} />
+      <SchedulingConstraintsManager eventId={Number(eventId)} />
 
       {/* Header Controls */}
       <Card className="border-slate-600 bg-slate-800">
@@ -998,7 +998,7 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
         </CardHeader>
         <CardContent>
           <div ref={gridRef} className="overflow-auto max-h-[800px]">
-            <div className="grid gap-1" style={{ gridTemplateRows: `60px repeat(${fields.length}, 60px)`, gridTemplateColumns: `150px repeat(${timeSlots.length}, 1fr)` }}>
+            <div className="grid gap-1" style={{ gridTemplateRows: `60px repeat(${fields.length}, 60px)`, gridTemplateColumns: `150px repeat(${timeSlots.length}, 120px)` }}>
               {/* Header Row */}
               <div className="sticky left-0 bg-slate-700 p-3 border border-slate-600 font-medium text-slate-200">
                 Field
@@ -1042,7 +1042,7 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
                       <div
                         key={`${field.id}-${slot.id}`}
                         className={`
-                          min-w-[80px] h-[60px] p-1 border border-slate-600 transition-all duration-200 relative cursor-pointer
+                          min-w-[120px] h-[60px] p-1 border border-slate-600 transition-all duration-200 relative cursor-pointer
                           ${games.length > 0 ? 'bg-blue-900/30' : isOccupiedByExtendingGame ? 'bg-blue-900/20' : 'bg-slate-800'}
                           ${hasTeamConflict ? 'bg-red-900/40 border-red-500 border-2' : hasWarningConflict ? 'bg-yellow-900/30 border-yellow-500' : ''}
                           ${isDragOver ? 'bg-green-900/50 border-green-400 border-2 shadow-lg shadow-green-500/25 scale-105' : ''}
@@ -1060,7 +1060,7 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
                           const totalDuration = calculateTotalGameDuration(game);
                           
                           // Calculate the width to span multiple time slots horizontally
-                          const slotWidth = 80; // Base width of each time slot in pixels
+                          const slotWidth = 120; // Base width of each time slot in pixels (increased for better text fit)
                           const gameWidth = (gameSpanSlots * slotWidth) - 4; // Subtract 4px for gap
                           
                           return (
@@ -1087,57 +1087,83 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
                                 left: '2px'
                               }}
                               onMouseEnter={(e) => {
-                                // Create instant tooltip
-                                const tooltip = document.createElement('div');
-                                tooltip.className = 'fixed z-50 bg-slate-900 text-white text-sm p-2 rounded shadow-lg border border-slate-600 max-w-sm';
-                                tooltip.innerHTML = `
-                                  <div class="font-medium">${game.homeTeamName} vs ${game.awayTeamName}</div>
-                                  <div class="text-slate-300 text-xs mt-1">
-                                    Field: ${field.name}<br/>
-                                    Age Group: ${game.ageGroup}<br/>
-                                    Flight: ${game.bracketName || 'Standard'}<br/>
-                                    Duration: ${totalDuration} minutes
-                                  </div>
-                                `;
-                                tooltip.style.left = e.pageX + 10 + 'px';
-                                tooltip.style.top = e.pageY - 10 + 'px';
-                                tooltip.id = `tooltip-${game.id}`;
-                                document.body.appendChild(tooltip);
+                                // Enhanced popup with club, coaches, round info after 0.5s
+                                let timeoutId: NodeJS.Timeout;
+                                timeoutId = setTimeout(() => {
+                                  const tooltip = document.createElement('div');
+                                  tooltip.className = 'fixed z-50 bg-slate-800/95 backdrop-blur-sm text-white text-sm p-4 rounded-lg shadow-xl border border-slate-600 max-w-md';
+                                  tooltip.innerHTML = `
+                                    <div class="font-bold text-blue-300 mb-2">${game.homeTeamName} vs ${game.awayTeamName}</div>
+                                    <div class="grid grid-cols-2 gap-2 text-xs text-slate-200">
+                                      <div><span class="text-slate-400">Field:</span> ${field.name}</div>
+                                      <div><span class="text-slate-400">Complex:</span> ${field.complexName || 'Standard'}</div>
+                                      <div><span class="text-slate-400">Age Group:</span> ${game.ageGroup}</div>
+                                      <div><span class="text-slate-400">Flight:</span> ${game.bracketName || 'Standard'}</div>
+                                      <div><span class="text-slate-400">Round:</span> ${(game as any).round || 1}</div>
+                                      <div><span class="text-slate-400">Duration:</span> ${totalDuration} min</div>
+                                    </div>
+                                    ${game.homeTeamCoach || game.awayTeamCoach ? `
+                                      <div class="mt-2 pt-2 border-t border-slate-600 text-xs">
+                                        ${game.homeTeamCoach ? `<div><span class="text-slate-400">Home Coach:</span> ${game.homeTeamCoach}</div>` : ''}
+                                        ${game.awayTeamCoach ? `<div><span class="text-slate-400">Away Coach:</span> ${game.awayTeamCoach}</div>` : ''}
+                                      </div>
+                                    ` : ''}
+                                    <div class="mt-2 pt-2 border-t border-slate-600 text-xs text-slate-400">
+                                      💡 Drag to reschedule • Right-click for options
+                                    </div>
+                                  `;
+                                  tooltip.style.left = Math.min(e.pageX + 15, window.innerWidth - 320) + 'px';
+                                  tooltip.style.top = Math.max(e.pageY - 10, 10) + 'px';
+                                  tooltip.id = `tooltip-${game.id}`;
+                                  document.body.appendChild(tooltip);
+                                }, 500); // 0.5 second delay
+                                
+                                // Store timeout to clear on leave
+                                (e.target as any).__tooltipTimeout = timeoutId;
                               }}
-                              onMouseLeave={() => {
+                              onMouseLeave={(e) => {
+                                // Clear timeout and remove tooltip
+                                if ((e.target as any).__tooltipTimeout) {
+                                  clearTimeout((e.target as any).__tooltipTimeout);
+                                }
                                 const tooltip = document.getElementById(`tooltip-${game.id}`);
                                 if (tooltip) tooltip.remove();
                               }}
                               onMouseMove={(e) => {
                                 const tooltip = document.getElementById(`tooltip-${game.id}`);
                                 if (tooltip) {
-                                  tooltip.style.left = e.pageX + 10 + 'px';
-                                  tooltip.style.top = e.pageY - 10 + 'px';
+                                  tooltip.style.left = Math.min(e.pageX + 15, window.innerWidth - 320) + 'px';
+                                  tooltip.style.top = Math.max(e.pageY - 10, 10) + 'px';
                                 }
                               }}
                             >
-                              <div className="flex justify-between items-start">
-                                <div className="flex-1">
+                              <div className="flex flex-col justify-between h-full">
+                                <div className="flex-1 overflow-hidden">
                                   <div className="font-medium text-xs leading-tight">
-                                    {/* Full team names with line wrapping */}
-                                    <div className="truncate">{game.homeTeamName || 'TBD'}</div>
-                                    <div className="text-slate-300 text-center my-0.5">vs</div>
-                                    <div className="truncate">{game.awayTeamName || 'TBD'}</div>
+                                    {/* Compressed team names that fit properly */}
+                                    <div className="truncate text-blue-100">{(game.homeTeamName || 'TBD').slice(0, 20)}</div>
+                                    <div className="text-slate-300 text-center my-0.5 text-xs">vs</div>
+                                    <div className="truncate text-blue-100">{(game.awayTeamName || 'TBD').slice(0, 20)}</div>
                                   </div>
-                                  <div className="text-xs opacity-80">
-                                    {game.ageGroup?.replace(/[^\dUB]/g, '') || 'U?'}
-                                  </div>
-                                  {gameConflicts.length > 0 && (
-                                    <div className="flex items-center gap-1">
-                                      <AlertTriangle className="h-3 w-3" />
-                                      <span className="text-xs">{gameConflicts.length}</span>
-                                    </div>
-                                  )}
                                 </div>
                                 
-                                {/* Status indicator */}
-                                <div className="text-xs opacity-70 text-right">
-                                  {hasWinnerPlaceholder(game) ? '🏆' : '⚽'}
+                                <div className="flex justify-between items-center mt-1">
+                                  <div className="text-xs opacity-80 font-bold">
+                                    {game.ageGroup?.replace(/[^\dUB]/g, '') || 'U?'}
+                                  </div>
+                                  
+                                  {/* Status and conflict indicators */}
+                                  <div className="flex items-center gap-1">
+                                    {gameConflicts.length > 0 && (
+                                      <div className="flex items-center gap-1">
+                                        <AlertTriangle className="h-3 w-3" />
+                                        <span className="text-xs">{gameConflicts.length}</span>
+                                      </div>
+                                    )}
+                                    <div className="text-xs">
+                                      {hasWinnerPlaceholder(game) ? '🏆' : '⚽'}
+                                    </div>
+                                  </div>
                                 </div>
                               </div>
                             </div>

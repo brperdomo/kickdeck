@@ -107,6 +107,9 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
   const [swappingTeam, setSwappingTeam] = useState<{ gameId: number; teamId: number; teamName: string; position: 'home' | 'away' } | null>(null);
   const [availableTeams, setAvailableTeams] = useState<Array<{id: number, name: string, flightName: string}>>([]);
   
+  // Date/Time editing state
+  const [editingDateTime, setEditingDateTime] = useState<{ gameId: number; currentDate: string; currentTime: string } | null>(null);
+  
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -442,6 +445,32 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
     onError: (error) => {
       console.error('SWAP ERROR:', error);
       toast({ title: 'Failed to swap teams', description: error.message, variant: 'destructive' });
+    }
+  });
+
+  // Date/Time editing mutation
+  const updateGameDateTimeMutation = useMutation({
+    mutationFn: async ({ gameId, date, time }: { gameId: number; date: string; time: string }) => {
+      const startTime = `${date}T${time}:00`;
+      const response = await fetch(`/api/admin/games/${gameId}/reschedule`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ 
+          startTime,
+          eventId: eventId
+        })
+      });
+      if (!response.ok) throw new Error('Failed to update game date/time');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['schedule-data', eventId] });
+      setEditingDateTime(null);
+      toast({ title: 'Game date and time updated successfully', variant: 'default' });
+    },
+    onError: (error) => {
+      toast({ title: 'Failed to update date/time', description: error.message, variant: 'destructive' });
     }
   });
 
@@ -1001,20 +1030,95 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                                 <AlertTriangle className="h-4 w-4 text-yellow-600" />
                               )}
                             </div>
-                            <div className="flex items-center space-x-4 text-sm text-gray-600">
-                              <span className={`flex items-center ${game.date === 'TBD' ? 'text-yellow-600 font-medium' : ''}`}>
-                                <Calendar className="h-3 w-3 mr-1" />
-                                {game.date}
-                              </span>
-                              <span className={`flex items-center ${game.time === 'TBD' ? 'text-yellow-600 font-medium' : ''}`}>
-                                <Clock className="h-3 w-3 mr-1" />
-                                {game.time}
-                              </span>
-                              <span className={`flex items-center ${(game.field === 'Unassigned' || game.field === 'TBD') ? 'text-yellow-600 font-medium' : ''}`}>
-                                <MapPin className="h-3 w-3 mr-1" />
-                                {game.field}
-                              </span>
-                            </div>
+                            {editingDateTime?.gameId === game.id ? (
+                              // Date/Time Editing Interface
+                              <div className="space-y-2">
+                                <div className="text-xs font-medium text-gray-700">Edit Date & Time</div>
+                                <div className="grid grid-cols-2 gap-2">
+                                  <div>
+                                    <Label className="text-xs text-gray-600">Date</Label>
+                                    <Input
+                                      type="date"
+                                      defaultValue={editingDateTime.currentDate !== 'TBD' ? editingDateTime.currentDate : new Date().toISOString().split('T')[0]}
+                                      className="h-8 text-xs"
+                                      onChange={(e) => {
+                                        setEditingDateTime(prev => prev ? { ...prev, currentDate: e.target.value } : null);
+                                      }}
+                                    />
+                                  </div>
+                                  <div>
+                                    <Label className="text-xs text-gray-600">Time</Label>
+                                    <Input
+                                      type="time"
+                                      defaultValue={editingDateTime.currentTime !== 'TBD' ? editingDateTime.currentTime : '09:00'}
+                                      className="h-8 text-xs"
+                                      onChange={(e) => {
+                                        setEditingDateTime(prev => prev ? { ...prev, currentTime: e.target.value } : null);
+                                      }}
+                                    />
+                                  </div>
+                                </div>
+                                <div className="flex gap-2">
+                                  <Button
+                                    size="sm"
+                                    onClick={() => {
+                                      if (editingDateTime) {
+                                        updateGameDateTimeMutation.mutate({
+                                          gameId: editingDateTime.gameId,
+                                          date: editingDateTime.currentDate,
+                                          time: editingDateTime.currentTime
+                                        });
+                                      }
+                                    }}
+                                    className="h-7 text-xs"
+                                    disabled={updateGameDateTimeMutation.isPending}
+                                  >
+                                    {updateGameDateTimeMutation.isPending ? (
+                                      <Loader2 className="h-3 w-3 animate-spin mr-1" />
+                                    ) : null}
+                                    Save
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => setEditingDateTime(null)}
+                                    className="h-7 text-xs"
+                                  >
+                                    Cancel
+                                  </Button>
+                                </div>
+                              </div>
+                            ) : (
+                              // Normal Date/Time Display (clickable to edit)
+                              <div className="flex items-center space-x-4 text-sm text-gray-600">
+                                <span 
+                                  className={`flex items-center cursor-pointer hover:bg-blue-100 px-1 rounded ${game.date === 'TBD' ? 'text-yellow-600 font-medium' : ''}`}
+                                  onClick={() => setEditingDateTime({
+                                    gameId: game.id,
+                                    currentDate: game.date !== 'TBD' ? game.date : new Date().toISOString().split('T')[0],
+                                    currentTime: game.time !== 'TBD' ? game.time : '09:00'
+                                  })}
+                                >
+                                  <Calendar className="h-3 w-3 mr-1" />
+                                  {game.date}
+                                </span>
+                                <span 
+                                  className={`flex items-center cursor-pointer hover:bg-blue-100 px-1 rounded ${game.time === 'TBD' ? 'text-yellow-600 font-medium' : ''}`}
+                                  onClick={() => setEditingDateTime({
+                                    gameId: game.id,
+                                    currentDate: game.date !== 'TBD' ? game.date : new Date().toISOString().split('T')[0],
+                                    currentTime: game.time !== 'TBD' ? game.time : '09:00'
+                                  })}
+                                >
+                                  <Clock className="h-3 w-3 mr-1" />
+                                  {game.time}
+                                </span>
+                                <span className={`flex items-center ${(game.field === 'Unassigned' || game.field === 'TBD') ? 'text-yellow-600 font-medium' : ''}`}>
+                                  <MapPin className="h-3 w-3 mr-1" />
+                                  {game.field}
+                                </span>
+                              </div>
+                            )}
                             <div className="flex items-center space-x-2">
                               <Badge variant="outline" className="text-xs">
                                 {game.ageGroup}
