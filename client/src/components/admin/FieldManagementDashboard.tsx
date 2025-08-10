@@ -51,7 +51,7 @@ export default function FieldManagementDashboard({ eventId }: FieldManagementDas
       
       const data = await response.json();
       console.log(`[DEBUG] Fields response:`, data);
-      console.log(`[DEBUG] Fields array length:`, data?.fields?.length || 0);
+      console.log(`[DEBUG] Fields array length:`, Array.isArray(data) ? data.length : (data?.fields?.length || 0));
       return data;
     }
   });
@@ -100,7 +100,8 @@ export default function FieldManagementDashboard({ eventId }: FieldManagementDas
         <Alert className="border-blue-600 bg-blue-900/20">
           <AlertDescription className="text-blue-200 text-xs">
             <strong>Debug Info:</strong> Event ID: {eventId} | 
-            Fields Data: {JSON.stringify(fieldsData?.fields?.length || 0)} | 
+            Fields Count: {fields.length} | 
+            Data Type: {Array.isArray(fieldsData) ? 'Array' : 'Object'} | 
             Loading: {isLoading.toString()} | 
             Error: {error ? 'Yes' : 'No'}
             {error && <div>Error Details: {error.message}</div>}

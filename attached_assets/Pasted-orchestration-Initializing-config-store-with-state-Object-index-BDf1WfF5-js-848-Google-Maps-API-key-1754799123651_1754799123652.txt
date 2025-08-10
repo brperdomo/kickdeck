@@ -1,0 +1,138 @@
+orchestration: Initializing config store with state Object
+index-BDf1WfF5.js:848 Google Maps API key length: 0 characters
+index-BDf1WfF5.js:848 Mapbox API key length: 93 characters
+index-BDf1WfF5.js:848 Google Maps API already loaded
+chunk-FLCULYKI.js:31 orchestration: Initializing feature flag store with state Object
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state Object
+chunk-FLCULYKI.js:31 orchestration: Updating combined state Object
+index-BDf1WfF5.js:657 Current route location (Wouter): /admin/events/1844329078/master-schedule
+index-BDf1WfF5.js:657 Current URL: https://app.matchpro.ai/admin/events/1844329078/master-schedule
+index-BDf1WfF5.js:657 Current pathname: /admin/events/1844329078/master-schedule
+index-BDf1WfF5.js:657 Current search: 
+index-BDf1WfF5.js:657 Fetching user with emulation token: not present
+index-BDf1WfF5.js:657 User data fetched: Object
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+UnifiedTournamentControlCenter-CX7MLCMa.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentControlCenter-CX7MLCMa.js:1 Configured flights: 1 of 76
+MasterSchedulePage-DBiI5GPt.js:274 [DEBUG] Fetching fields for event: 1844329078
+MasterSchedulePage-DBiI5GPt.js:274 [DEBUG] Making authenticated request with credentials
+MasterSchedulePage-DBiI5GPt.js:274 [DEBUG] Response status: 200
+MasterSchedulePage-DBiI5GPt.js:274 [DEBUG] Response headers: Object
+MasterSchedulePage-DBiI5GPt.js:274 [DEBUG] Fields response: Array(33)
+MasterSchedulePage-DBiI5GPt.js:274 [DEBUG] Fields array length: 0
+MasterSchedulePage-DBiI5GPt.js:274 [DEBUG] Fields data: Array(33)
+MasterSchedulePage-DBiI5GPt.js:274 [DEBUG] Fields array: Array(33)
+MasterSchedulePage-DBiI5GPt.js:274 [DEBUG] Fields length: 33
+MasterSchedulePage-DBiI5GPt.js:274 [DEBUG] Is fieldsData an array?: true
+MasterSchedulePage-DBiI5GPt.js:274 [DEBUG] fieldsData.fields exists?: false
+util.js:33 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+$Aa @ util.js:33Understand this warning
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+5Fetch finished loading: PATCH "<URL>".
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+MasterSchedulePage-DBiI5GPt.js:274 🔄 FIELD REFRESH: Parent component received field update notification
+MasterSchedulePage-DBiI5GPt.js:274 🔄 FIELD REFRESH: Triggering data refetch to ensure persistence...
+MasterSchedulePage-DBiI5GPt.js:274 [DEBUG] Fetching fields for event: 1844329078
+MasterSchedulePage-DBiI5GPt.js:274 [DEBUG] Making authenticated request with credentials
+MasterSchedulePage-DBiI5GPt.js:274 [DEBUG] Response status: 200
+MasterSchedulePage-DBiI5GPt.js:274 [DEBUG] Response headers: {alt-svc: 'h3=":443"; ma=2592000,h3-29=":443"; ma=2592000', cache-control: 'private', content-length: '5158', content-type: 'application/json; charset=utf-8', date: 'Sun, 10 Aug 2025 04:11:40 GMT', …}
+MasterSchedulePage-DBiI5GPt.js:274 Fetch finished loading: GET "https://app.matchpro.ai/api/admin/events/1844329078/fields".
+queryFn @ MasterSchedulePage-DBiI5GPt.js:274
+i @ index-BDf1WfF5.js:41
+f @ index-BDf1WfF5.js:41
+start @ index-BDf1WfF5.js:41
+fetch @ index-BDf1WfF5.js:41
+ng @ index-BDf1WfF5.js:41
+fetch @ index-BDf1WfF5.js:41
+refetch @ index-BDf1WfF5.js:41
+i @ MasterSchedulePage-DBiI5GPt.js:274
+_ @ MasterSchedulePage-DBiI5GPt.js:274
+await in _
+onCheckedChange @ MasterSchedulePage-DBiI5GPt.js:274
+(anonymous) @ index-BDf1WfF5.js:49
+(anonymous) @ index-BDf1WfF5.js:707
+(anonymous) @ index-BDf1WfF5.js:49
+wue @ index-BDf1WfF5.js:38
+Sue @ index-BDf1WfF5.js:38
+Cue @ index-BDf1WfF5.js:38
+dM @ index-BDf1WfF5.js:38
+V7 @ index-BDf1WfF5.js:38
+(anonymous) @ index-BDf1WfF5.js:38
+yO @ index-BDf1WfF5.js:41
+f7 @ index-BDf1WfF5.js:38
+N2 @ index-BDf1WfF5.js:38
+H4 @ index-BDf1WfF5.js:38
+zue @ index-BDf1WfF5.js:38
+MasterSchedulePage-DBiI5GPt.js:274 [DEBUG] Fields response: (33) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+MasterSchedulePage-DBiI5GPt.js:274 [DEBUG] Fields array length: 0
+MasterSchedulePage-DBiI5GPt.js:274 🔄 FIELD REFRESH: Parent component received field update notification
+MasterSchedulePage-DBiI5GPt.js:274 🔄 FIELD REFRESH: Triggering data refetch to ensure persistence...
+MasterSchedulePage-DBiI5GPt.js:274 [DEBUG] Fetching fields for event: 1844329078
+MasterSchedulePage-DBiI5GPt.js:274 [DEBUG] Making authenticated request with credentials
+MasterSchedulePage-DBiI5GPt.js:274 [DEBUG] Response status: 200
+MasterSchedulePage-DBiI5GPt.js:274 [DEBUG] Response headers: {alt-svc: 'h3=":443"; ma=2592000,h3-29=":443"; ma=2592000', cache-control: 'private', content-length: '5158', content-type: 'application/json; charset=utf-8', date: 'Sun, 10 Aug 2025 04:11:41 GMT', …}
+MasterSchedulePage-DBiI5GPt.js:274 Fetch finished loading: GET "https://app.matchpro.ai/api/admin/events/1844329078/fields".
+queryFn @ MasterSchedulePage-DBiI5GPt.js:274
+i @ index-BDf1WfF5.js:41
+f @ index-BDf1WfF5.js:41
+start @ index-BDf1WfF5.js:41
+fetch @ index-BDf1WfF5.js:41
+ng @ index-BDf1WfF5.js:41
+fetch @ index-BDf1WfF5.js:41
+refetch @ index-BDf1WfF5.js:41
+i @ MasterSchedulePage-DBiI5GPt.js:274
+_ @ MasterSchedulePage-DBiI5GPt.js:274
+await in _
+onCheckedChange @ MasterSchedulePage-DBiI5GPt.js:274
+(anonymous) @ index-BDf1WfF5.js:49
+(anonymous) @ index-BDf1WfF5.js:707
+(anonymous) @ index-BDf1WfF5.js:49
+wue @ index-BDf1WfF5.js:38
+Sue @ index-BDf1WfF5.js:38
+Cue @ index-BDf1WfF5.js:38
+dM @ index-BDf1WfF5.js:38
+V7 @ index-BDf1WfF5.js:38
+(anonymous) @ index-BDf1WfF5.js:38
+yO @ index-BDf1WfF5.js:41
+f7 @ index-BDf1WfF5.js:38
+N2 @ index-BDf1WfF5.js:38
+H4 @ index-BDf1WfF5.js:38
+zue @ index-BDf1WfF5.js:38
+MasterSchedulePage-DBiI5GPt.js:274 [DEBUG] Fields response: (33) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+MasterSchedulePage-DBiI5GPt.js:274 [DEBUG] Fields array length: 0
+MasterSchedulePage-DBiI5GPt.js:274 🔄 FIELD REFRESH: Parent component received field update notification
+MasterSchedulePage-DBiI5GPt.js:274 🔄 FIELD REFRESH: Triggering data refetch to ensure persistence...
+MasterSchedulePage-DBiI5GPt.js:274 [DEBUG] Fetching fields for event: 1844329078
+MasterSchedulePage-DBiI5GPt.js:274 [DEBUG] Making authenticated request with credentials
+MasterSchedulePage-DBiI5GPt.js:274 [DEBUG] Response status: 200
+MasterSchedulePage-DBiI5GPt.js:274 [DEBUG] Response headers: {alt-svc: 'h3=":443"; ma=2592000,h3-29=":443"; ma=2592000', cache-control: 'private', content-length: '5158', content-type: 'application/json; charset=utf-8', date: 'Sun, 10 Aug 2025 04:11:46 GMT', …}
+MasterSchedulePage-DBiI5GPt.js:274 [DEBUG] Fields response: (33) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+MasterSchedulePage-DBiI5GPt.js:274 [DEBUG] Fields array length: 0
+MasterSchedulePage-DBiI5GPt.js:274 Fetch finished loading: GET "https://app.matchpro.ai/api/admin/events/1844329078/fields".
+queryFn @ MasterSchedulePage-DBiI5GPt.js:274
+i @ index-BDf1WfF5.js:41
+f @ index-BDf1WfF5.js:41
+start @ index-BDf1WfF5.js:41
+fetch @ index-BDf1WfF5.js:41
+ng @ index-BDf1WfF5.js:41
+fetch @ index-BDf1WfF5.js:41
+refetch @ index-BDf1WfF5.js:41
+i @ MasterSchedulePage-DBiI5GPt.js:274
+x @ MasterSchedulePage-DBiI5GPt.js:274
+await in x
+wue @ index-BDf1WfF5.js:38
+Sue @ index-BDf1WfF5.js:38
+Cue @ index-BDf1WfF5.js:38
+dM @ index-BDf1WfF5.js:38
+V7 @ index-BDf1WfF5.js:38
+(anonymous) @ index-BDf1WfF5.js:38
+yO @ index-BDf1WfF5.js:41
+f7 @ index-BDf1WfF5.js:38
+N2 @ index-BDf1WfF5.js:38
+H4 @ index-BDf1WfF5.js:38
+zue @ index-BDf1WfF5.js:38
