@@ -12,49 +12,6 @@ import { eq, and, count, isNull } from 'drizzle-orm';
 
 const router = Router();
 
-// Helper function to get tournament status
-async function getTournamentStatus(eventId: string) {
-  const event = await db.query.events.findFirst({
-    where: eq(events.id, parseInt(eventId))
-  });
-
-  const teamsCount = await db.select({ count: count() }).from(teams).where(eq(teams.eventId, parseInt(eventId)));
-  const gamesCount = await db.select({ count: count() }).from(games).where(eq(games.eventId, parseInt(eventId)));
-  const ageGroupsCount = await db.select({ count: count() }).from(eventAgeGroups).where(eq(eventAgeGroups.eventId, parseInt(eventId)));
-
-  return {
-    event,
-    teams: teamsCount[0]?.count || 0,
-    games: gamesCount[0]?.count || 0,
-    ageGroups: ageGroupsCount[0]?.count || 0,
-    status: 'active'
-  };
-}
-
-// Helper function to get components status
-async function getComponentsStatus(eventId: string) {
-  const teamsCount = await db.select({ count: count() }).from(teams).where(eq(teams.eventId, parseInt(eventId)));
-  const gamesCount = await db.select({ count: count() }).from(games).where(eq(games.eventId, parseInt(eventId)));
-  const fieldsCount = await db.select({ count: count() }).from(fields);
-
-  return {
-    teams: teamsCount[0]?.count || 0,
-    games: gamesCount[0]?.count || 0,
-    fields: fieldsCount[0]?.count || 0,
-    ready: true
-  };
-}
-
-// Helper function for auto-scheduling execution
-async function executeAutoScheduling(eventId: string, options: { includeReferees: boolean; includeFacilities: boolean }) {
-  // Basic implementation for now
-  return {
-    success: true,
-    gamesScheduled: 0,
-    message: 'Auto-scheduling feature available'
-  };
-}
-
 // Get tournament status and progress
 router.get('/tournaments/:eventId/status', isAdmin, async (req, res) => {
   try {
@@ -159,7 +116,81 @@ router.post('/tournaments/:eventId/execute-step', isAdmin, async (req, res) => {
   }
 });
 
-// Helper functions are now defined above the routes
+// Helper functions
+
+async function getTournamentStatus(eventId: string) {
+  // Get tournament data and analyze current state
+  const eventData = await db.select().from(events).where(eq(events.id, parseInt(eventId))).limit(1);
+  
+  if (eventData.length === 0) {
+    throw new Error('Tournament not found');
+  }
+  
+  // Analyze completion status
+  const teamsData = await db.select().from(teams).where(eq(teams.eventId, eventId));
+  const gamesData = await db.select().from(games).where(eq(games.eventId, eventId));
+  
+  // Determine current phase and progress with flexible validation
+  let phase: 'setup' | 'configuration' | 'scheduling' | 'optimization' | 'finalized' = 'setup';
+  let progress = 0;
+  let nextAction = 'Configure game formats and flights as needed';
+  let canProceed = true; // Allow flexible progression - users can configure partially
+  
+  const issues = [];
+  
+  if (teamsData.length === 0) {
+    issues.push({
+      type: 'info' as const,
+      message: 'Teams will be needed eventually, but you can configure formats first.',
+      action: 'register-teams'
+    });
+    progress = 10;
+    nextAction = 'Configure game formats and register teams when ready';
+  } else if (gamesData.length === 0) {
+    phase = 'configuration';
+    progress = 40;
+    nextAction = 'Continue configuring formats or create brackets when ready';
+  } else {
+    phase = 'scheduling';
+    progress = 75;
+    nextAction = 'Optimize schedule and assign referees';
+    
+    // Check if schedule is finalized
+    const scheduledGames = gamesData.filter(g => g.timeSlotId !== null);
+    if (scheduledGames.length === gamesData.length) {
+      phase = 'finalized';
+      progress = 100;
+      nextAction = 'Tournament schedule is complete';
+    }
+  }
+  
+  return {
+    phase,
+    progress,
+    nextAction,
+    canProceed,
+    issues
+  };
+}
+
+async function getComponentsStatus(eventId: string) {
+  const teamsData = await db.select().from(teams).where(eq(teams.eventId, eventId));
+  const gamesData = await db.select().from(games).where(eq(games.eventId, eventId));
+  
+  // Check if event has game formats configured through eventGameFormats table
+  const eventGameFormatsData = await db.select().from(eventGameFormats).where(eq(eventGameFormats.eventId, parseInt(eventId)));
+  const hasFormatsConfigured = eventGameFormatsData.length > 0;
+  
+  // Check status of each component with flexible validation
+  return {
+    gameFormats: hasFormatsConfigured || gamesData.length > 0, // Formats configured OR games exist
+    flightAssignment: teamsData.length > 0, // Teams exist means flights can be assigned
+    bracketCreation: (hasFormatsConfigured && teamsData.length > 0) || gamesData.length > 0, // Can create when both formats and teams exist OR games already exist
+    facilityConstraints: true, // Always available
+    refereeAssignment: true, // Always available
+    scheduleOptimization: gamesData.length > 0 // Available when games exist
+  };
+}
 
 async function validateTournamentStructure(eventId: string) {
   const errors = [];
@@ -219,16 +250,8 @@ async function validateTournamentStructure(eventId: string) {
   };
 }
 
-// Stub functions to prevent duplicate declarations  
-async function getFlightConfigurations(eventId: string) { return []; }
-async function getBracketConfigurations(eventId: string) { return []; }
-async function assignFlightToField(eventId: string, flight: any) { return { success: true }; }
-async function createGameTimeSlots(eventId: string) { return { success: true }; }
-async function validateFacilities(eventId: string) { return { success: true }; }
-async function assignReferees(eventId: string) { return { success: true }; }
-async function optimizeSchedule(eventId: string) { return { success: true }; }
-
-async function validateTournamentStructure(eventId: string) {
+// Tournament-Aware Auto-scheduling that respects flight configurations, game formats, and bracket structures
+async function executeAutoScheduling(eventId: string, options: { includeReferees: boolean; includeFacilities: boolean }) {
   console.log(`[Tournament Auto Schedule] Starting tournament-aware auto-scheduling for event ${eventId}`);
   
   try {
@@ -812,8 +835,8 @@ router.post('/tournaments/:eventId/fix-crossplay-games', isAdmin, async (req, re
     
     console.log(`[CROSSPLAY FIX] DELETED ${deletedGames.length} corrupted games`);
     
-    // Regenerate games using the fixed logic - stub for now
-    const result = { gamesCreated: 0 }; // await generateFlightGames(eventId, flight);
+    // Regenerate games using the fixed logic
+    const result = await generateFlightGames(eventId, flight);
     
     console.log(`[CROSSPLAY FIX] REGENERATED ${result.gamesCreated} correct crossplay games`);
     

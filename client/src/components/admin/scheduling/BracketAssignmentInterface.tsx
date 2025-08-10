@@ -244,7 +244,28 @@ export function BracketAssignmentInterface({ eventId }: BracketAssignmentInterfa
     }
   });
 
-
+  // Add placeholder team mutation
+  const addPlaceholderMutation = useMutation({
+    mutationFn: async ({ bracketId, placeholderName }: { bracketId: number; placeholderName: string }) => {
+      const response = await fetch(`/api/admin/events/${eventId}/brackets/${bracketId}/add-placeholder`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ placeholderName })
+      });
+      if (!response.ok) throw new Error('Failed to add placeholder team');
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Placeholder Added",
+        description: "Placeholder team added to bracket"
+      });
+      queryClient.invalidateQueries({ queryKey: ['bracket-assignments', eventId] });
+      setPlaceholderName('');
+      setEditingBracket(null);
+    }
+  });
 
   // Remove team from bracket mutation
   const removeTeamMutation = useMutation({
