@@ -120,7 +120,7 @@ router.post('/tournaments/:eventId/execute-step', isAdmin, async (req, res) => {
 
 async function getTournamentStatus(eventId: string) {
   // Get tournament data and analyze current state
-  const eventData = await db.select().from(events).where(eq(events.id, parseInt(eventId))).limit(1);
+  const eventData = await db.select().from(events).where(eq(events.id, Number(eventId))).limit(1);
   
   if (eventData.length === 0) {
     throw new Error('Tournament not found');
@@ -178,7 +178,7 @@ async function getComponentsStatus(eventId: string) {
   const gamesData = await db.select().from(games).where(eq(games.eventId, eventId));
   
   // Check if event has game formats configured through eventGameFormats table
-  const eventGameFormatsData = await db.select().from(eventGameFormats).where(eq(eventGameFormats.eventId, parseInt(eventId)));
+  const eventGameFormatsData = await db.select().from(eventGameFormats).where(eq(eventGameFormats.eventId, Number(eventId)));
   const hasFormatsConfigured = eventGameFormatsData.length > 0;
   
   // Check status of each component with flexible validation
@@ -197,7 +197,7 @@ async function validateTournamentStructure(eventId: string) {
   
   // Check if event exists and has valid dates
   const event = await db.query.events.findFirst({
-    where: eq(events.id, parseInt(eventId))
+    where: eq(events.id, Number(eventId))
   });
   
   if (!event) {

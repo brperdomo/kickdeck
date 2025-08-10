@@ -61,7 +61,7 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
 
     // Get event details first to get proper dates  
     const event = await db.query.events.findFirst({
-      where: eq(events.id, parseInt(eventId))
+      where: eq(events.id, Number(eventId))
     });
 
     if (!event) {
