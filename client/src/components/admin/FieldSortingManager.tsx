@@ -146,6 +146,11 @@ export default function FieldSortingManager({ fields, onFieldsReordered, eventId
       setSortableFields(updatedFields);
       setHasChanges(true);
 
+      // Notify parent component to refresh data
+      if (onFieldsReordered) {
+        onFieldsReordered(updatedFields);
+      }
+
       toast({
         title: isActive ? "Field Enabled" : "Field Disabled",
         description: `Field ${isActive ? 'enabled for' : 'disabled from'} tournament use`,
@@ -185,6 +190,11 @@ export default function FieldSortingManager({ fields, onFieldsReordered, eventId
       );
       setSortableFields(updatedFields);
       setHasChanges(true);
+
+      // Notify parent component to refresh data
+      if (onFieldsReordered) {
+        onFieldsReordered(updatedFields);
+      }
 
       toast({
         title: "First Game Time Updated",
@@ -443,43 +453,45 @@ export default function FieldSortingManager({ fields, onFieldsReordered, eventId
                       <div
                         ref={provided.innerRef}
                         {...provided.draggableProps}
-                        className={`flex items-center gap-3 p-3 border rounded-lg bg-card ${
-                          snapshot.isDragging ? 'shadow-lg rotate-2' : ''
-                        } ${hasChanges ? 'border-orange-200 bg-orange-50/50' : ''}`}
+                        className={`flex items-center gap-4 p-4 border rounded-lg transition-all duration-200 ${
+                          snapshot.isDragging 
+                            ? 'shadow-xl rotate-1 bg-slate-700 border-blue-400' 
+                            : 'bg-slate-800 border-slate-600 hover:border-slate-500 hover:bg-slate-750'
+                        } ${hasChanges ? 'border-orange-400 bg-orange-900/20' : ''}`}
                       >
                         <div
                           {...provided.dragHandleProps}
-                          className="text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing"
+                          className="text-slate-400 hover:text-blue-400 cursor-grab active:cursor-grabbing transition-colors p-2 rounded hover:bg-slate-700"
                         >
                           <GripVertical className="h-5 w-5" />
                         </div>
                         
                         <div className="flex-1">
                           <div className="flex items-center justify-between">
-                            <div className="flex flex-col">
-                              <div className="font-medium text-slate-200">
+                            <div className="flex flex-col min-w-0 flex-1">
+                              <div className="font-semibold text-slate-100 text-base">
                                 #{index + 1} {field.name}
                               </div>
                               {field.complexName && (
-                                <div className="text-xs text-slate-400">{field.complexName}</div>
+                                <div className="text-sm text-slate-400 truncate">{field.complexName}</div>
                               )}
                             </div>
                             
-                            <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-6 bg-slate-750 p-3 rounded-lg border border-slate-600">
                               {/* Field Size Selection */}
                               {eventId && (
-                                <div className="flex flex-col gap-1">
-                                  <Label className="text-xs text-slate-400">Size</Label>
+                                <div className="flex flex-col gap-2">
+                                  <Label className="text-sm font-medium text-slate-300">Size</Label>
                                   <Select
                                     value={field.fieldSize}
                                     onValueChange={(value) => handleFieldSizeChange(field.id, value)}
                                   >
-                                    <SelectTrigger className="w-20 h-7 text-xs bg-slate-700 border-slate-600">
+                                    <SelectTrigger className="w-24 h-9 text-sm bg-slate-700 border-slate-500 text-slate-100 hover:bg-slate-600">
                                       <SelectValue />
                                     </SelectTrigger>
-                                    <SelectContent>
+                                    <SelectContent className="bg-slate-700 border-slate-500">
                                       {['3v3', '4v4', '5v5', '6v6', '7v7', '8v8', '9v9', '10v10', '11v11', 'N/A'].map((size) => (
-                                        <SelectItem key={size} value={size} className="text-xs">
+                                        <SelectItem key={size} value={size} className="text-sm text-slate-200 hover:bg-slate-600">
                                           {size}
                                         </SelectItem>
                                       ))}
@@ -490,61 +502,71 @@ export default function FieldSortingManager({ fields, onFieldsReordered, eventId
 
                               {/* First Game Time */}
                               {eventId && (
-                                <div className="flex flex-col gap-1">
-                                  <Label className="text-xs text-slate-400">First Game</Label>
+                                <div className="flex flex-col gap-2">
+                                  <Label className="text-sm font-medium text-slate-300">First Game</Label>
                                   <Input
                                     type="time"
                                     value={field.firstGameTime || ''}
                                     onChange={(e) => handleFirstGameTimeChange(field.id, e.target.value)}
-                                    className="w-24 h-7 text-xs bg-slate-700 border-slate-600 text-slate-200"
+                                    className="w-32 h-9 text-sm bg-slate-700 border-slate-500 text-slate-100 hover:bg-slate-600 focus:border-blue-400"
+                                    placeholder="08:00"
                                   />
                                 </div>
                               )}
 
                               {/* Field Availability Toggle */}
                               {eventId && (
-                                <div className="flex flex-col gap-1 items-center">
-                                  <Label className="text-xs text-slate-400">Available</Label>
-                                  <div className="flex items-center gap-2">
+                                <div className="flex flex-col gap-2 items-center">
+                                  <Label className="text-sm font-medium text-slate-300">Available</Label>
+                                  <div className="flex items-center gap-3 bg-slate-700 p-2 rounded border">
                                     <Switch
                                       checked={field.isActive !== false}
                                       onCheckedChange={(checked) => handleFieldActiveChange(field.id, checked)}
-                                      className="data-[state=checked]:bg-green-600"
+                                      className="data-[state=checked]:bg-green-600 data-[state=unchecked]:bg-red-600"
                                     />
                                     {field.isActive !== false ? (
-                                      <Power className="h-3 w-3 text-green-400" />
+                                      <div className="flex items-center gap-1">
+                                        <Power className="h-4 w-4 text-green-400" />
+                                        <span className="text-xs text-green-400 font-medium">ON</span>
+                                      </div>
                                     ) : (
-                                      <PowerOff className="h-3 w-3 text-red-400" />
+                                      <div className="flex items-center gap-1">
+                                        <PowerOff className="h-4 w-4 text-red-400" />
+                                        <span className="text-xs text-red-400 font-medium">OFF</span>
+                                      </div>
                                     )}
                                   </div>
                                 </div>
                               )}
 
-                              {/* Badges */}
-                              <div className="flex flex-col gap-1">
-                                <div className="flex items-center gap-1">
-                                  {!eventId && (
-                                    <Badge variant="outline" className="text-xs">
-                                      {field.fieldSize}
+                              {/* Status Badges */}
+                              <div className="flex flex-col gap-2">
+                                <Label className="text-sm font-medium text-slate-300">Status</Label>
+                                <div className="flex flex-col gap-1">
+                                  {field.hasLights && (
+                                    <Badge className="text-xs px-2 py-1 bg-amber-600 text-amber-100 border-amber-500">
+                                      ⚡ Lights
                                     </Badge>
                                   )}
-                                  {field.hasLights && (
-                                    <Badge variant="secondary" className="text-xs">
-                                      Lights
+                                  {field.isOpen ? (
+                                    <Badge className="text-xs px-2 py-1 bg-emerald-600 text-emerald-100 border-emerald-500">
+                                      🟢 Complex Open
+                                    </Badge>
+                                  ) : (
+                                    <Badge className="text-xs px-2 py-1 bg-red-600 text-red-100 border-red-500">
+                                      🔴 Complex Closed
                                     </Badge>
                                   )}
                                 </div>
-                                <Badge variant={field.isOpen ? "default" : "secondary"} className="text-xs">
-                                  {field.isOpen ? "Complex Open" : "Complex Closed"}
-                                </Badge>
+                                <div className="text-sm text-slate-400 font-medium bg-slate-700 px-2 py-1 rounded">
+                                  Sort: {index + 1}
+                                </div>
                               </div>
                             </div>
                           </div>
                         </div>
                         
-                        <div className="text-sm text-muted-foreground">
-                          Sort: {field.sortOrder}
-                        </div>
+
                       </div>
                     )}
                   </Draggable>
@@ -556,8 +578,8 @@ export default function FieldSortingManager({ fields, onFieldsReordered, eventId
         </DragDropContext>
         
         {hasChanges && (
-          <div className="mt-4 p-3 bg-orange-50 border border-orange-200 rounded-lg">
-            <p className="text-sm text-orange-800">
+          <div className="mt-4 p-3 bg-orange-900/30 border border-orange-500 rounded-lg">
+            <p className="text-sm text-orange-200">
               <strong>Unsaved Changes:</strong> Field order has been modified. Click "Save Order" to apply changes to the Calendar Grid.
             </p>
           </div>
