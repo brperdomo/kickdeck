@@ -711,8 +711,21 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
         where: eq(matchupTemplates.name, bracket.tournamentFormat)
       });
       
-      console.log(`[Selective Scheduling] Processing ${bracket.tournamentFormat} format for ${flightTeams.length} teams`);
-      console.log(`[Selective Scheduling] CRITICAL DEBUG: bracket.tournamentFormat="${bracket.tournamentFormat}", teams=${flightTeams.length}, will use group_of_4 logic: ${bracket.tournamentFormat === 'group_of_4' && flightTeams.length === 4}`);
+      // CRITICAL ENFORCEMENT: Override format based on team count to ensure consistent logic
+      let enforcedFormat = bracket.tournamentFormat;
+      if (flightTeams.length === 4) {
+        enforcedFormat = 'group_of_4';
+        console.log(`🚨 ENFORCING group_of_4 format for ${flightTeams.length} teams (was: ${bracket.tournamentFormat})`);
+      } else if (flightTeams.length === 8) {
+        enforcedFormat = 'group_of_8';
+        console.log(`🚨 ENFORCING group_of_8 format for ${flightTeams.length} teams (was: ${bracket.tournamentFormat})`);
+      } else if (flightTeams.length === 6) {
+        enforcedFormat = 'group_of_6';
+        console.log(`🚨 ENFORCING group_of_6 crossplay format for ${flightTeams.length} teams (was: ${bracket.tournamentFormat})`);
+      }
+      
+      console.log(`[Selective Scheduling] Processing ${enforcedFormat} format for ${flightTeams.length} teams`);
+      console.log(`[Selective Scheduling] CRITICAL DEBUG: enforcedFormat="${enforcedFormat}", teams=${flightTeams.length}`);
       
       let bracketGames = [];
       
@@ -787,7 +800,7 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
         }
         
         console.log(`[Selective Scheduling] Generated ${bracketGames.length} games using ${formatTemplate.name} template`);
-      } else if (bracket.tournamentFormat === 'group_of_4') {
+      } else if (enforcedFormat === 'group_of_4') {
         // Handle group_of_4 format - ALWAYS generate 6 pool games + 1 championship = 7 total (regardless of team count)
         console.log(`[Selective Scheduling] *** HIT GROUP_OF_4 LOGIC! *** USING group_of_4 format - generating 6 pool + 1 championship regardless of actual team count (${flightTeams.length} teams)`);
         let gameNumber = 1;
@@ -833,7 +846,77 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
         });
         
         console.log(`[Selective Scheduling] SUCCESS: Generated 6 pool + 1 championship = ${bracketGames.length} games for group_of_4 (used ${selectedTeams.length} of ${flightTeams.length} teams)`);
-      } else if (flightTeams.length === 6 && (bracket.tournamentFormat?.toLowerCase().includes('crossplay') || bracket.tournamentFormat?.toLowerCase().includes('crossover'))) {
+      } else if (enforcedFormat === 'group_of_8') {
+        // ENFORCED: Use group_of_8 format (12 pool games + 1 championship = 13 games)
+        console.log(`[Selective Scheduling] *** ENFORCED GROUP_OF_8 LOGIC! *** Using group_of_8 format for ${flightTeams.length} teams`);
+        
+        let gameNumber = 1;
+        const selectedTeams = flightTeams.slice(0, 8);
+        
+        // Generate 12 pool games (2 groups of 4: Pool A vs Pool B)
+        const poolA = selectedTeams.slice(0, 4);
+        const poolB = selectedTeams.slice(4, 8);
+        
+        console.log(`[Selective Scheduling] Pool A teams: ${poolA.map(t => t.name).join(', ')}`);
+        console.log(`[Selective Scheduling] Pool B teams: ${poolB.map(t => t.name).join(', ')}`);
+        
+        // Pool A round-robin (6 games)
+        for (let i = 0; i < poolA.length; i++) {
+          for (let j = i + 1; j < poolA.length; j++) {
+            bracketGames.push({
+              id: `${flightId}-${gameNumber}`,
+              homeTeamId: poolA[i].id,
+              homeTeamName: poolA[i].name,
+              awayTeamId: poolA[j].id,
+              awayTeamName: poolA[j].name,
+              bracketId: parseInt(flightId),
+              bracketName: bracket.name,
+              round: 1,
+              gameType: 'pool_play',
+              duration: 90,
+              gameNumber: gameNumber++
+            });
+          }
+        }
+        
+        // Pool B round-robin (6 games)
+        for (let i = 0; i < poolB.length; i++) {
+          for (let j = i + 1; j < poolB.length; j++) {
+            bracketGames.push({
+              id: `${flightId}-${gameNumber}`,
+              homeTeamId: poolB[i].id,
+              homeTeamName: poolB[i].name,
+              awayTeamId: poolB[j].id,
+              awayTeamName: poolB[j].name,
+              bracketId: parseInt(flightId),
+              bracketName: bracket.name,
+              round: 1,
+              gameType: 'pool_play',
+              duration: 90,
+              gameNumber: gameNumber++
+            });
+          }
+        }
+        
+        // Championship final (13th game)
+        bracketGames.push({
+          id: `${flightId}-${gameNumber}`,
+          homeTeamId: null,
+          homeTeamName: 'Pool A Winner',
+          awayTeamId: null,
+          awayTeamName: 'Pool B Winner',
+          bracketId: parseInt(flightId),
+          bracketName: bracket.name,
+          round: 2,
+          gameType: 'championship',
+          duration: 90,
+          gameNumber: gameNumber++,
+          notes: 'Championship Final - Pool A Winner vs Pool B Winner',
+          isPending: true
+        });
+        
+        console.log(`[Selective Scheduling] SUCCESS: Generated 12 pool + 1 championship = ${bracketGames.length} games for group_of_8 (Pool A: ${poolA.length}, Pool B: ${poolB.length})`);
+      } else if (enforcedFormat === 'group_of_6' || (flightTeams.length === 6 && (bracket.tournamentFormat?.toLowerCase().includes('crossplay') || bracket.tournamentFormat?.toLowerCase().includes('crossover')))) {
         // CRITICAL FIX: Handle 6-team CROSSPLAY formats correctly
         console.log(`🚨 CROSSPLAY FIX: ${bracket.tournamentFormat} detected - generating FULL CROSSPLAY games for 6 teams`);
         
@@ -944,8 +1027,8 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
         });
         
         console.log(`🎯 CROSSPLAY FIX COMPLETE: Generated ${bracketGames.length} games (9 crossplay + 1 championship)`);
-      } else if (flightTeams.length >= 7 && flightTeams.length <= 8) {
-        // Smart fallback: Use group_of_8 (12 pool games + 1 championship = 13 games)
+      } else if (flightTeams.length >= 7) {
+        // Smart fallback: Use group_of_8 for 7+ teams (but 8 teams should use enforced logic above)
         console.log(`[Selective Scheduling] SMART FALLBACK: ${bracket.tournamentFormat} not handled, using group_of_8 for ${flightTeams.length} teams`);
         
         let gameNumber = 1;
