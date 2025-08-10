@@ -3,6 +3,12 @@ import { db } from '../../../db';
 import { eventBrackets, eventAgeGroups, teams, games } from '@db/schema';
 import { eq, and, sql } from 'drizzle-orm';
 import { isAdmin } from '../../middleware/auth';
+import { 
+  validateTournamentFormat, 
+  getRecommendedFormat, 
+  autoFixDeprecatedFormat,
+  isCrossplayFormat 
+} from '../../utils/tournament-format-validator';
 
 const router = Router();
 
@@ -269,12 +275,21 @@ router.post('/:eventId/brackets/auto-generate-all', isAdmin, async (req, res) =>
             )
           );
 
-        // Determine optimal bracket type
+        // Determine optimal bracket type with validation
         const bracketType = getOptimalBracketType(totalTeams);
+        
+        // Validate the format before proceeding
+        const validation = validateTournamentFormat(bracketType, totalTeams);
+        if (!validation.isValid) {
+          console.error(`❌ VALIDATION ERROR: ${validation.reason}`);
+          console.log(`🔧 VALIDATION: Auto-fixing to recommended format: ${validation.recommendedFormat}`);
+        }
+        
+        const finalFormat = validation.recommendedFormat || bracketType;
         
         // Generate games
         const generatedGames = generateGamesForBracketType(
-          bracketType,
+          finalFormat,
           flightTeams,
           flight.id.toString()
         );
@@ -298,12 +313,15 @@ router.post('/:eventId/brackets/auto-generate-all', isAdmin, async (req, res) =>
   }
 });
 
-// Helper functions
+// Helper functions - UPDATED to prevent round_robin usage
 function getOptimalBracketType(teamCount: number): string {
-  if (teamCount <= 4) return 'round_robin';
-  if (teamCount <= 8) return 'round_robin';
-  if (teamCount <= 16) return 'single_elimination';
-  return 'pool_play';
+  console.log(`🎯 VALIDATION: Getting optimal bracket type for ${teamCount} teams`);
+  
+  // CRITICAL: Never return round_robin - use proper group formats
+  const recommendedFormat = getRecommendedFormat(teamCount);
+  
+  console.log(`✅ VALIDATION: Recommended format for ${teamCount} teams: ${recommendedFormat}`);
+  return recommendedFormat;
 }
 
 function generateGamesForBracketType(bracketType: string, teams: any[], bracketId: string) {
@@ -317,12 +335,25 @@ function generateGamesForBracketType(bracketType: string, teams: any[], bracketI
       : { homeTeamId: team2.id, awayTeamId: team1.id };
   }
   
+  // Auto-fix deprecated formats before processing
+  const validatedFormat = autoFixDeprecatedFormat(bracketType, teams.length);
+  if (validatedFormat !== bracketType) {
+    console.log(`🔧 AUTO-FIX: Changed format from '${bracketType}' to '${validatedFormat}' for ${teams.length} teams`);
+    bracketType = validatedFormat;
+  }
+
   switch (bracketType) {
-    case 'round_robin':
-      // Generate round robin games with randomized Home/Away
-      for (let i = 0; i < teams.length; i++) {
-        for (let j = i + 1; j < teams.length; j++) {
-          const { homeTeamId, awayTeamId } = randomizeHomeAway(teams[i], teams[j]);
+    case 'group_of_4':
+      // Generate 4-team group format: round-robin + championship
+      console.log(`🎯 GROUP_OF_4: Generating games for ${teams.length} teams`);
+      
+      // Take first 4 teams if more are provided
+      const selectedTeams = teams.slice(0, Math.min(4, teams.length));
+      
+      // Generate round-robin among selected teams
+      for (let i = 0; i < selectedTeams.length; i++) {
+        for (let j = i + 1; j < selectedTeams.length; j++) {
+          const { homeTeamId, awayTeamId } = randomizeHomeAway(selectedTeams[i], selectedTeams[j]);
           games.push({
             bracketId,
             homeTeamId,
@@ -332,6 +363,129 @@ function generateGamesForBracketType(bracketType: string, teams: any[], bracketI
             status: 'scheduled'
           });
         }
+      }
+      
+      // Add championship final (placeholder)
+      games.push({
+        bracketId,
+        homeTeamId: null,
+        awayTeamId: null,
+        gameNumber: games.length + 1,
+        round: 2,
+        status: 'pending'
+      });
+      break;
+      
+    case 'group_of_6':
+      // Generate 6-team dual pool format (3v3 pools + cross-pool + championship)
+      console.log(`🎯 GROUP_OF_6: Generating games for ${teams.length} teams`);
+      
+      if (teams.length >= 6) {
+        const poolA = teams.slice(0, 3);
+        const poolB = teams.slice(3, 6);
+        
+        // Pool A round-robin
+        for (let i = 0; i < poolA.length; i++) {
+          for (let j = i + 1; j < poolA.length; j++) {
+            const { homeTeamId, awayTeamId } = randomizeHomeAway(poolA[i], poolA[j]);
+            games.push({
+              bracketId,
+              homeTeamId,
+              awayTeamId,
+              gameNumber: games.length + 1,
+              round: 1,
+              status: 'scheduled'
+            });
+          }
+        }
+        
+        // Pool B round-robin
+        for (let i = 0; i < poolB.length; i++) {
+          for (let j = i + 1; j < poolB.length; j++) {
+            const { homeTeamId, awayTeamId } = randomizeHomeAway(poolB[i], poolB[j]);
+            games.push({
+              bracketId,
+              homeTeamId,
+              awayTeamId,
+              gameNumber: games.length + 1,
+              round: 1,
+              status: 'scheduled'
+            });
+          }
+        }
+        
+        // Cross-pool games
+        for (let i = 0; i < 3; i++) {
+          const { homeTeamId, awayTeamId } = randomizeHomeAway(poolA[i], poolB[i]);
+          games.push({
+            bracketId,
+            homeTeamId,
+            awayTeamId,
+            gameNumber: games.length + 1,
+            round: 1,
+            status: 'scheduled'
+          });
+        }
+        
+        // Championship final
+        games.push({
+          bracketId,
+          homeTeamId: null,
+          awayTeamId: null,
+          gameNumber: games.length + 1,
+          round: 2,
+          status: 'pending'
+        });
+      }
+      break;
+
+    case 'group_of_8':
+      // Generate 8-team dual bracket format (4v4 pools + cross-pool + championship)
+      console.log(`🎯 GROUP_OF_8: Generating games for ${teams.length} teams`);
+      
+      if (teams.length >= 8) {
+        const poolA = teams.slice(0, 4);
+        const poolB = teams.slice(4, 8);
+        
+        // Pool A round-robin
+        for (let i = 0; i < poolA.length; i++) {
+          for (let j = i + 1; j < poolA.length; j++) {
+            const { homeTeamId, awayTeamId } = randomizeHomeAway(poolA[i], poolA[j]);
+            games.push({
+              bracketId,
+              homeTeamId,
+              awayTeamId,
+              gameNumber: games.length + 1,
+              round: 1,
+              status: 'scheduled'
+            });
+          }
+        }
+        
+        // Pool B round-robin
+        for (let i = 0; i < poolB.length; i++) {
+          for (let j = i + 1; j < poolB.length; j++) {
+            const { homeTeamId, awayTeamId } = randomizeHomeAway(poolB[i], poolB[j]);
+            games.push({
+              bracketId,
+              homeTeamId,
+              awayTeamId,
+              gameNumber: games.length + 1,
+              round: 1,
+              status: 'scheduled'
+            });
+          }
+        }
+        
+        // Championship final
+        games.push({
+          bracketId,
+          homeTeamId: null,
+          awayTeamId: null,
+          gameNumber: games.length + 1,
+          round: 2,
+          status: 'pending'
+        });
       }
       break;
       

@@ -3,6 +3,12 @@
 ## Overview
 MatchPro AI is a comprehensive sports event management platform for tournament organizers and sports clubs. Its primary purpose is to streamline and automate workflows such as team registrations, payment processing, scoring, standings, and administrative tasks. The system aims to provide a professional, low-maintenance, and intelligent solution for managing tournaments from initial setup and scheduling to real-time updates and financial oversight, aspiring to offer predictive insights and eliminate manual configuration.
 
+## Recent Changes (August 2025)
+- **CRITICAL FIX**: Eliminated all inappropriate `round_robin` format usage system-wide to prevent crossplay format integrity issues
+- **Tournament Format Validation**: Implemented comprehensive validation preventing deprecated format assignment
+- **Bulk Format Correction**: Fixed 60+ brackets using improper round_robin formats to appropriate group formats (group_of_4, group_of_6, group_of_8)
+- **Auto-Fix System**: Added automatic format correction during bracket creation and game generation
+
 ## User Preferences
 Preferred communication style: Simple, everyday language.
 

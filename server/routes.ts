@@ -43,6 +43,7 @@ import bracketCreationSqlRouter from "./routes/admin/bracket-creation";
 import bracketSubdivisionRouter from "./routes/admin/bracket-subdivision";
 import conflictDetectionRouter from "./routes/admin/conflict-detection";
 import adminBracketsRouter from "./routes/admin/brackets";
+// Tournament format validation will be handled directly in brackets router
 import fieldCapacityRouter from "./routes/admin/field-capacity";
 import intelligentSchedulingRouter from "./routes/admin/intelligent-scheduling";
 import adminGamesRouter from "./routes/admin/games-router";
@@ -999,6 +1000,7 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/folders', isAdmin, foldersRouter); // Folder management router
     app.use('/api/admin/teams', isAdmin, playersRouter); // Player management router
     app.use('/api/admin', isAdmin, bracketsRouter); // Bracket management router
+    // Tournament format validation is now built into brackets router
     app.use('/api/admin', isAdmin, fieldCapacityRouter); // Field capacity analysis router
     app.use('/api/admin', isAdmin, intelligentSchedulingRouter); // Intelligent scheduling system router
     app.use('/api/admin/events', isAdmin, gameMetadataRouter); // Game metadata and scheduling rules router
