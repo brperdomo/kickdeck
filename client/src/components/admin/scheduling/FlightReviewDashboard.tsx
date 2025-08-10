@@ -516,110 +516,150 @@ export function FlightReviewDashboard({ eventId }: FlightReviewDashboardProps) {
 
         <TabsContent value="assigned" className="space-y-4">
           {(() => {
-            // Group all assigned teams by flight type/level
-            const teamsByFlightType = new Map<string, Array<{
+            // Group assigned teams by age group first, then by flights within each age group
+            const teamsByAgeGroup = new Map<string, Map<string, Array<{
               team: Team;
               group: FlightGroup;
               flightLevel: string;
-            }>>();
+            }>>>();
 
-            // Collect all teams from all groups and organize by flight type
+            // Collect all teams from all groups and organize by age group, then by flight
             flightData?.forEach(group => {
-              group.teamsWithSelection.forEach(team => {
-                const flightLevel = getFlightLevel(team.selectedBracketName || '');
-                if (!teamsByFlightType.has(flightLevel)) {
-                  teamsByFlightType.set(flightLevel, []);
+              if (group.teamsWithSelection.length > 0) {
+                const ageGroupKey = `${group.ageGroup}-${group.gender}`;
+                
+                if (!teamsByAgeGroup.has(ageGroupKey)) {
+                  teamsByAgeGroup.set(ageGroupKey, new Map());
                 }
-                teamsByFlightType.get(flightLevel)!.push({
-                  team,
-                  group,
-                  flightLevel
+                
+                const ageGroupFlights = teamsByAgeGroup.get(ageGroupKey)!;
+                
+                group.teamsWithSelection.forEach(team => {
+                  const flightLevel = getFlightLevel(team.selectedBracketName || '');
+                  
+                  if (!ageGroupFlights.has(flightLevel)) {
+                    ageGroupFlights.set(flightLevel, []);
+                  }
+                  
+                  ageGroupFlights.get(flightLevel)!.push({
+                    team,
+                    group,
+                    flightLevel
+                  });
                 });
-              });
+              }
             });
 
-            // Sort flight types by priority: Elite -> Premier -> Classic -> Others
-            const flightTypePriority = { 'Elite': 1, 'Premier': 2, 'Classic': 3 };
-            const sortedFlightTypes = Array.from(teamsByFlightType.keys()).sort((a, b) => {
-              const priorityA = flightTypePriority[a as keyof typeof flightTypePriority] || 999;
-              const priorityB = flightTypePriority[b as keyof typeof flightTypePriority] || 999;
-              return priorityA - priorityB;
-            });
-
-            return sortedFlightTypes.map(flightType => {
-              const teamsInFlight = teamsByFlightType.get(flightType) || [];
+            // Sort age groups by birth year (newest first), then alphabetically
+            const sortedAgeGroups = Array.from(teamsByAgeGroup.keys()).sort((a, b) => {
+              const [ageA] = a.split('-');
+              const [ageB] = b.split('-');
               
+              // Extract birth year from age group (e.g., "U13" -> 2011)
+              const yearA = parseInt(ageA.replace('U', ''));
+              const yearB = parseInt(ageB.replace('U', ''));
+              
+              if (yearA !== yearB) {
+                return yearB - yearA; // Newest first (higher age = newer birth year)
+              }
+              return a.localeCompare(b);
+            });
+
+            return sortedAgeGroups.map(ageGroupKey => {
+              const ageGroupFlights = teamsByAgeGroup.get(ageGroupKey)!;
+              const [ageGroup, gender] = ageGroupKey.split('-');
+              
+              // Sort flight types by priority: Elite -> Premier -> Classic -> Others
+              const flightTypePriority = { 'Elite': 1, 'Premier': 2, 'Classic': 3 };
+              const sortedFlights = Array.from(ageGroupFlights.keys()).sort((a, b) => {
+                const priorityA = flightTypePriority[a as keyof typeof flightTypePriority] || 999;
+                const priorityB = flightTypePriority[b as keyof typeof flightTypePriority] || 999;
+                return priorityA - priorityB;
+              });
+
+              // Get first team's group info for display name and birth year
+              const firstTeam = ageGroupFlights.values().next().value?.[0];
+              const displayName = firstTeam?.group.displayName || 
+                `${ageGroup} ${gender}${firstTeam?.group.birthYear ? ` - [${firstTeam.group.birthYear}]` : ''}`;
+
               return (
-                <Card key={flightType} className="bg-slate-800 border-slate-700">
+                <Card key={ageGroupKey} className="bg-slate-800 border-slate-700">
                   <CardHeader>
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        {getFlightLevelBadge(flightType.toLowerCase())}
-                        <div>
-                          <CardTitle className="text-white">
-                            Nike {flightType} Teams
-                          </CardTitle>
-                          <CardDescription className="text-slate-300">
-                            {teamsInFlight.length} teams assigned to {flightType} flights
-                          </CardDescription>
-                        </div>
+                      <div>
+                        <CardTitle className="text-white text-lg">
+                          {displayName}
+                        </CardTitle>
+                        <CardDescription className="text-slate-300">
+                          {Array.from(ageGroupFlights.values()).flat().length} teams assigned across {ageGroupFlights.size} flight(s)
+                        </CardDescription>
                       </div>
                       <Badge variant="secondary" className="bg-slate-700 text-slate-300">
                         <Users className="h-3 w-3 mr-1" />
-                        {teamsInFlight.length}
+                        {Array.from(ageGroupFlights.values()).flat().length}
                       </Badge>
                     </div>
                   </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      {teamsInFlight.map(({ team, group }) => (
-                        <div key={team.id} className="flex items-center justify-between p-3 bg-slate-700 rounded">
-                          <div className="flex items-center gap-3">
-                            <Users className="h-4 w-4 text-slate-400" />
-                            <div className="flex flex-col">
-                              <span className="text-slate-200">{team.name}</span>
-                              <span className="text-xs text-slate-400">
-                                {group.displayName || `${group.ageGroup} ${group.gender}${group.birthYear ? ` - [${group.birthYear}]` : ''}`}
-                              </span>
+                  <CardContent className="space-y-4">
+                    {sortedFlights.map(flightType => {
+                      const teamsInFlight = ageGroupFlights.get(flightType) || [];
+                      
+                      return (
+                        <div key={flightType} className="bg-slate-700 p-4 rounded-lg">
+                          <div className="flex items-center gap-3 mb-3">
+                            {getFlightLevelBadge(flightType.toLowerCase())}
+                            <div>
+                              <h4 className="text-white font-medium">Nike {flightType}</h4>
+                              <p className="text-slate-400 text-sm">{teamsInFlight.length} teams</p>
                             </div>
                           </div>
-                          <div className="flex items-center gap-3">
-                            {editingTeamId === team.id ? (
-                              <Select 
-                                value={selectedFlight[team.id]?.toString() || team.bracketId?.toString() || ""} 
-                                onValueChange={(value) => handleTeamFlightChange(team.id, value)}
-                              >
-                                <SelectTrigger className="w-48 bg-slate-600 border-slate-500 text-white">
-                                  <SelectValue placeholder="Select flight..." />
-                                </SelectTrigger>
-                                <SelectContent className="bg-slate-700 border-slate-600">
-                                  {group.availableFlights.map((flight) => (
-                                    <SelectItem key={flight.id} value={flight.id.toString()}>
-                                      <div className="flex items-center gap-2">
-                                        {getFlightLevelBadge(flight.level)}
-                                        <span>{formatFlightName(flight.name)}</span>
-                                      </div>
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            ) : (
-                              <>
-                                <span className="text-slate-300 text-sm">{team.selectedBracketName}</span>
-                                <Button
-                                  onClick={() => handleEditTeam(team.id, team.bracketId)}
-                                  variant="outline"
-                                  size="sm"
-                                  className="border-slate-600 text-slate-200 hover:bg-slate-600"
-                                >
-                                  Edit
-                                </Button>
-                              </>
-                            )}
+                          <div className="space-y-2">
+                            {teamsInFlight.map(({ team, group }) => (
+                              <div key={team.id} className="flex items-center justify-between p-3 bg-slate-600 rounded">
+                                <div className="flex items-center gap-3">
+                                  <Users className="h-4 w-4 text-slate-400" />
+                                  <span className="text-slate-200">{team.name}</span>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                  {editingTeamId === team.id ? (
+                                    <Select 
+                                      value={selectedFlight[team.id]?.toString() || team.bracketId?.toString() || ""} 
+                                      onValueChange={(value) => handleTeamFlightChange(team.id, value)}
+                                    >
+                                      <SelectTrigger className="w-48 bg-slate-600 border-slate-500 text-white">
+                                        <SelectValue placeholder="Select flight..." />
+                                      </SelectTrigger>
+                                      <SelectContent className="bg-slate-700 border-slate-600">
+                                        {group.availableFlights.map((flight) => (
+                                          <SelectItem key={flight.id} value={flight.id.toString()}>
+                                            <div className="flex items-center gap-2">
+                                              {getFlightLevelBadge(flight.level)}
+                                              <span>{formatFlightName(flight.name)}</span>
+                                            </div>
+                                          </SelectItem>
+                                        ))}
+                                      </SelectContent>
+                                    </Select>
+                                  ) : (
+                                    <>
+                                      <span className="text-slate-300 text-sm">{team.selectedBracketName}</span>
+                                      <Button
+                                        onClick={() => handleEditTeam(team.id, team.bracketId)}
+                                        variant="outline"
+                                        size="sm"
+                                        className="border-slate-600 text-slate-200 hover:bg-slate-600"
+                                      >
+                                        Edit
+                                      </Button>
+                                    </>
+                                  )}
+                                </div>
+                              </div>
+                            ))}
                           </div>
                         </div>
-                      ))}
-                    </div>
+                      );
+                    })}
                   </CardContent>
                 </Card>
               );

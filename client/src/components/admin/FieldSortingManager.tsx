@@ -216,39 +216,80 @@ export default function FieldSortingManager({ fields, onFieldsReordered, eventId
       return;
     }
 
+    console.log('🔧 BULK TIME ASSIGNMENT: Starting bulk update for', fieldsToUpdate.length, 'fields');
+    console.log('🔧 BULK TIME ASSIGNMENT: Time settings:', bulkTimeSettings);
+
     try {
-      const promises = fieldsToUpdate.map(field => 
-        fetch(`/api/admin/events/${eventId}/field-configurations`, {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ 
-            fieldId: field.id, 
-            firstGameTime: bulkTimeSettings[field.fieldSize as keyof typeof bulkTimeSettings]
-          }),
+      const responses = await Promise.allSettled(
+        fieldsToUpdate.map(async (field) => {
+          const timeToSet = bulkTimeSettings[field.fieldSize as keyof typeof bulkTimeSettings];
+          console.log(`🔧 BULK TIME ASSIGNMENT: Setting field ${field.id} (${field.name}, ${field.fieldSize}) to ${timeToSet}`);
+          
+          const response = await fetch(`/api/admin/events/${eventId}/field-configurations`, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+            body: JSON.stringify({ 
+              fieldId: field.id, 
+              firstGameTime: timeToSet
+            }),
+          });
+          
+          if (!response.ok) {
+            const errorText = await response.text();
+            console.error(`🔧 BULK TIME ASSIGNMENT ERROR: Field ${field.id} failed:`, errorText);
+            throw new Error(`Field ${field.name}: ${errorText}`);
+          }
+          
+          const result = await response.json();
+          console.log(`🔧 BULK TIME ASSIGNMENT SUCCESS: Field ${field.id} updated:`, result);
+          return { field, success: true, result };
         })
       );
 
-      await Promise.all(promises);
+      // Process results and identify failures
+      const successful = responses.filter(r => r.status === 'fulfilled').map(r => (r as any).value);
+      const failed = responses.filter(r => r.status === 'rejected').map(r => (r as any).reason);
 
-      // Update local state
-      const updatedFields = sortableFields.map(field => ({
-        ...field,
-        firstGameTime: bulkTimeSettings[field.fieldSize as keyof typeof bulkTimeSettings] || field.firstGameTime
-      }));
+      if (failed.length > 0) {
+        console.error('🔧 BULK TIME ASSIGNMENT: Some fields failed:', failed);
+        toast({
+          title: "Partial Update",
+          description: `Updated ${successful.length}/${fieldsToUpdate.length} fields. Some failed - check console.`,
+          variant: "destructive",
+        });
+      } else {
+        console.log('🔧 BULK TIME ASSIGNMENT: All fields updated successfully');
+      }
+
+      // Update local state for successful updates only
+      const updatedFields = sortableFields.map(field => {
+        const wasUpdated = successful.some(s => s.field.id === field.id);
+        if (wasUpdated) {
+          const newTime = bulkTimeSettings[field.fieldSize as keyof typeof bulkTimeSettings];
+          console.log(`🔧 BULK TIME ASSIGNMENT: Updating local state for field ${field.id} to ${newTime}`);
+          return { ...field, firstGameTime: newTime };
+        }
+        return field;
+      });
+      
       setSortableFields(updatedFields);
       setHasChanges(true);
 
+      // Trigger parent component refresh to ensure persistence
+      onFieldsReordered(updatedFields);
+
       toast({
         title: "Bulk Time Assignment Complete",
-        description: `Updated ${fieldsToUpdate.length} fields with new start times`,
+        description: `Successfully updated ${successful.length} fields with new start times`,
       });
     } catch (error) {
-      console.error('Error updating bulk times:', error);
+      console.error('🔧 BULK TIME ASSIGNMENT: Critical error:', error);
       toast({
         title: "Error",
-        description: "Failed to update bulk times. Please try again.",
+        description: `Failed to update bulk times: ${error instanceof Error ? error.message : 'Unknown error'}`,
         variant: "destructive",
       });
     }

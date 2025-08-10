@@ -235,7 +235,8 @@ router.patch('/events/:eventId/field-configurations', requireAuth, isAdmin, asyn
     const { fieldId, fieldSize, isActive, firstGameTime } = req.body;
 
     console.log(`🔧 API: Updating field configuration for event ${eventId}, field ${fieldId}`);
-    console.log('Update data:', { fieldSize, isActive, firstGameTime });
+    console.log('🔧 API: Update data:', { fieldSize, isActive, firstGameTime });
+    console.log('🔧 API: Request body full:', req.body);
 
     // Check if configuration exists
     const existingConfig = await db
@@ -254,18 +255,26 @@ router.patch('/events/:eventId/field-configurations', requireAuth, isAdmin, asyn
     if (firstGameTime !== undefined) updateData.firstGameTime = firstGameTime;
     updateData.updatedAt = new Date().toISOString();
 
+    console.log(`🔧 API: Prepared update data:`, updateData);
+    console.log(`🔧 API: Existing config found:`, existingConfig.length > 0);
+
     if (existingConfig.length > 0) {
       // Update existing configuration
-      await db
+      console.log(`🔧 API: Updating existing configuration for event ${eventId}, field ${fieldId}`);
+      const result = await db
         .update(eventFieldConfigurations)
         .set(updateData)
         .where(and(
           eq(eventFieldConfigurations.eventId, parseInt(eventId)),
           eq(eventFieldConfigurations.fieldId, fieldId)
-        ));
+        ))
+        .returning();
+      
+      console.log(`🔧 API: Update result:`, result);
     } else {
       // Create new configuration if it doesn't exist
-      await db.insert(eventFieldConfigurations).values({
+      console.log(`🔧 API: Creating new configuration for event ${eventId}, field ${fieldId}`);
+      const result = await db.insert(eventFieldConfigurations).values({
         eventId: parseInt(eventId),
         fieldId,
         fieldSize: fieldSize || '11v11',
@@ -274,8 +283,22 @@ router.patch('/events/:eventId/field-configurations', requireAuth, isAdmin, asyn
         sortOrder: 0,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
-      });
+      }).returning();
+      
+      console.log(`🔧 API: Insert result:`, result);
     }
+
+    // Verify the save by reading it back
+    const verifyConfig = await db
+      .select()
+      .from(eventFieldConfigurations)
+      .where(and(
+        eq(eventFieldConfigurations.eventId, parseInt(eventId)),
+        eq(eventFieldConfigurations.fieldId, fieldId)
+      ))
+      .limit(1);
+    
+    console.log(`🔧 API: Verification read-back:`, verifyConfig);
 
     res.json({
       success: true,
