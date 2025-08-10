@@ -51,8 +51,8 @@ export function GapFillingOptimizer({ eventId, selectedDate }: GapFillingOptimiz
   // Run intelligent gap-filling optimization
   const optimizeMutation = useMutation({
     mutationFn: async () => {
-      // TEMPORARILY USE BYPASS ROUTE FOR DEBUGGING
-      const response = await fetch(`/api/test-consolidate-fields/${eventId}`, {
+      // Use the field consolidation route which already handles gap filling
+      const response = await fetch(`/api/admin/events/${eventId}/field-consolidation`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -65,7 +65,7 @@ export function GapFillingOptimizer({ eventId, selectedDate }: GapFillingOptimiz
           proximityBasedScheduling: true
         })
       });
-      if (!response.ok) throw new Error('Optimization failed');
+      if (!response.ok) throw new Error('Gap filling optimization failed');
       return response.json();
     },
     onSuccess: (result) => {

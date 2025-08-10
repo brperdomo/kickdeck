@@ -1069,6 +1069,53 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
                               draggable
                               onDragStart={(e) => handleDragStart(e, game)}
                               onDragEnd={handleDragEnd}
+                              onContextMenu={(e) => {
+                                e.preventDefault();
+                                // Create right-click context menu for game operations
+                                const contextMenu = document.createElement('div');
+                                contextMenu.className = 'fixed z-50 bg-slate-800 border border-slate-600 rounded-lg shadow-xl p-2 min-w-48';
+                                contextMenu.innerHTML = `
+                                  <div class="text-sm font-medium text-white mb-2 px-2 py-1">
+                                    ${game.homeTeamName} vs ${game.awayTeamName}
+                                  </div>
+                                  <div class="border-t border-slate-600 mb-2"></div>
+                                  ${availableDays.map(day => `
+                                    <button class="move-to-day w-full text-left px-2 py-1 text-sm text-slate-200 hover:bg-slate-700 rounded" data-date="${day.value}">
+                                      📅 Move to ${day.label}
+                                    </button>
+                                  `).join('')}
+                                  <div class="border-t border-slate-600 my-2"></div>
+                                  <button class="close-menu w-full text-left px-2 py-1 text-sm text-slate-400 hover:bg-slate-700 rounded">
+                                    ✕ Close
+                                  </button>
+                                `;
+                                contextMenu.style.left = Math.min(e.pageX, window.innerWidth - 200) + 'px';
+                                contextMenu.style.top = Math.min(e.pageY, window.innerHeight - 150) + 'px';
+                                contextMenu.id = `context-menu-${game.id}`;
+                                
+                                // Add click handlers
+                                contextMenu.addEventListener('click', (event) => {
+                                  const target = event.target as HTMLElement;
+                                  if (target.classList.contains('move-to-day')) {
+                                    const newDate = target.getAttribute('data-date');
+                                    if (newDate) {
+                                      moveGameToDay(game, newDate);
+                                    }
+                                  }
+                                  contextMenu.remove();
+                                });
+                                
+                                // Remove existing menus
+                                document.querySelectorAll('[id^="context-menu-"]').forEach(menu => menu.remove());
+                                document.body.appendChild(contextMenu);
+                                
+                                // Remove menu when clicking elsewhere
+                                const removeMenu = () => {
+                                  contextMenu.remove();
+                                  document.removeEventListener('click', removeMenu);
+                                };
+                                setTimeout(() => document.addEventListener('click', removeMenu), 100);
+                              }}
                               className={`
                                 p-2 rounded cursor-move text-xs transition-all absolute z-10
                                 ${isBeingDragged ? 'opacity-50 scale-95' : 'opacity-100'}
@@ -1109,7 +1156,7 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
                                       </div>
                                     ` : ''}
                                     <div class="mt-2 pt-2 border-t border-slate-600 text-xs text-slate-400">
-                                      💡 Drag to reschedule • Right-click for options
+                                      💡 Drag to reschedule • Right-click to move between days
                                     </div>
                                   `;
                                   tooltip.style.left = Math.min(e.pageX + 15, window.innerWidth - 320) + 'px';
