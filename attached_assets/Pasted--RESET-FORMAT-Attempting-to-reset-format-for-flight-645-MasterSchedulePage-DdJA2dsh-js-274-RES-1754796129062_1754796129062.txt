@@ -1,0 +1,56 @@
+🔄 RESET FORMAT: Attempting to reset format for flight 645
+MasterSchedulePage-DdJA2dsh.js:274 🔄 RESET FORMAT: Response status: 200
+MasterSchedulePage-DdJA2dsh.js:274 🔄 RESET FORMAT SUCCESS: {success: true, message: 'No formats to reset for flight 645 (Nike Elite B) - either no formats configured or already reset', flightInfo: {…}, wasAlreadyReset: true}flightInfo: {id: 645, name: 'Nike Elite B', ageGroupId: 9961, ageGroup: 'U16', gender: 'Boys'}message: "No formats to reset for flight 645 (Nike Elite B) - either no formats configured or already reset"success: truewasAlreadyReset: true[[Prototype]]: Object
+MasterSchedulePage-DdJA2dsh.js:274 [Frontend] Fetching flight formats for event 1844329078
+MasterSchedulePage-DdJA2dsh.js:274 Fetch finished loading: DELETE "https://app.matchpro.ai/api/admin/events/1844329078/flights/645/format".
+mutationFn @ MasterSchedulePage-DdJA2dsh.js:274
+fn @ index-BiP5AtfO.js:41
+f @ index-BiP5AtfO.js:41
+start @ index-BiP5AtfO.js:41
+execute @ index-BiP5AtfO.js:41
+await in execute
+mutate @ index-BiP5AtfO.js:41
+(anonymous) @ index-BiP5AtfO.js:41
+onClick @ MasterSchedulePage-DdJA2dsh.js:274
+wue @ index-BiP5AtfO.js:38
+Sue @ index-BiP5AtfO.js:38
+Cue @ index-BiP5AtfO.js:38
+dM @ index-BiP5AtfO.js:38
+V7 @ index-BiP5AtfO.js:38
+(anonymous) @ index-BiP5AtfO.js:38
+yO @ index-BiP5AtfO.js:41
+f7 @ index-BiP5AtfO.js:38
+N2 @ index-BiP5AtfO.js:38
+H4 @ index-BiP5AtfO.js:38
+zue @ index-BiP5AtfO.js:38
+MasterSchedulePage-DdJA2dsh.js:274 Fetch finished loading: GET "https://app.matchpro.ai/api/admin/events/1844329078/flight-formats".
+queryFn @ MasterSchedulePage-DdJA2dsh.js:274
+i @ index-BiP5AtfO.js:41
+f @ index-BiP5AtfO.js:41
+start @ index-BiP5AtfO.js:41
+fetch @ index-BiP5AtfO.js:41
+(anonymous) @ index-BiP5AtfO.js:41
+(anonymous) @ index-BiP5AtfO.js:41
+batch @ index-BiP5AtfO.js:41
+refetchQueries @ index-BiP5AtfO.js:41
+(anonymous) @ index-BiP5AtfO.js:41
+batch @ index-BiP5AtfO.js:41
+invalidateQueries @ index-BiP5AtfO.js:41
+onSuccess @ MasterSchedulePage-DdJA2dsh.js:274
+execute @ index-BiP5AtfO.js:41
+await in execute
+mutate @ index-BiP5AtfO.js:41
+(anonymous) @ index-BiP5AtfO.js:41
+onClick @ MasterSchedulePage-DdJA2dsh.js:274
+wue @ index-BiP5AtfO.js:38
+Sue @ index-BiP5AtfO.js:38
+Cue @ index-BiP5AtfO.js:38
+dM @ index-BiP5AtfO.js:38
+V7 @ index-BiP5AtfO.js:38
+(anonymous) @ index-BiP5AtfO.js:38
+yO @ index-BiP5AtfO.js:41
+f7 @ index-BiP5AtfO.js:38
+N2 @ index-BiP5AtfO.js:38
+H4 @ index-BiP5AtfO.js:38
+zue @ index-BiP5AtfO.js:38
+MasterSchedulePage-DdJA2dsh.js:274 [Frontend] Received 72 flights, configured: 1, unconfigured: 71
