@@ -30,6 +30,7 @@ router.get('/events/:eventId/flight-configurations', isAdmin, async (req, res) =
         ageGroupId: eventBrackets.ageGroupId,
         ageGroup: eventAgeGroups.ageGroup,
         gender: eventAgeGroups.gender,
+        birthYear: eventAgeGroups.birthYear,
         level: eventBrackets.level,
         tournamentSettings: eventBrackets.tournamentSettings,
         // Game format data
@@ -104,7 +105,7 @@ router.get('/events/:eventId/flight-configurations', isAdmin, async (req, res) =
 
       return {
         id: flight.flightId.toString(),
-        divisionName: `${flight.ageGroup} ${flight.gender} - ${flight.flightName}`,
+        divisionName: flight.flightName, // Just the flight name, we'll show full details in frontend
         startDate: startDate,
         endDate: endDate,
         matchCount: 2, // Default halves
@@ -119,6 +120,8 @@ router.get('/events/:eventId/flight-configurations', isAdmin, async (req, res) =
         isConfigured: isCompletelyConfigured,
         ageGroup: flight.ageGroup,
         gender: flight.gender,
+        birthYear: flight.birthYear || '2024',
+        fieldSize: flight.fieldSize || '7v7',
         flightName: flight.flightName,
         level: flight.level
       };
@@ -157,6 +160,7 @@ router.patch('/events/:eventId/flight-configurations/:flightId', isAdmin, async 
       if (updates.startDate !== undefined) updateData.startDate = updates.startDate;
       if (updates.endDate !== undefined) updateData.endDate = updates.endDate;
       if (updates.formatName !== undefined) updateData.templateName = updates.formatName;
+      if (updates.fieldSize !== undefined) updateData.fieldSize = updates.fieldSize;
 
       await db.update(gameFormats)
         .set(updateData)
@@ -228,7 +232,7 @@ router.patch('/events/:eventId/flight-configurations/:flightId', isAdmin, async 
         gameLength: (updates.matchTime || 45) * 2, // matchTime is half-time, gameLength is full game
         restPeriod: updates.restPeriod || 90,
         bufferTime: updates.paddingTime || 15,
-        fieldSize: '11v11', // Default
+        fieldSize: updates.fieldSize || '7v7', // Default based on most common youth soccer format
         maxGamesPerDay: 3, // Default
         templateName: updates.formatName || 'Custom'
       };
