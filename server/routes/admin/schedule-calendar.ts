@@ -1,6 +1,6 @@
 import express from 'express';
 import { db } from '@db';
-import { games, teams, eventAgeGroups, fields, complexes, gameTimeSlots, events } from '@db/schema';
+import { games, teams, eventAgeGroups, fields, complexes, gameTimeSlots, events, eventBrackets } from '@db/schema';
 import { eq, and, sql } from 'drizzle-orm';
 
 const router = express.Router();
@@ -71,7 +71,7 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
     const eventStartDate = event.startDate; // Use actual tournament start date (2025-08-16)
     console.log(`[Schedule Calendar] Using event start date: ${eventStartDate}`);
 
-    // Get games with proper age group information using Drizzle ORM
+    // Get games with proper age group and bracket information using Drizzle ORM
     const gamesWithDetails = await db
       .select({
         gameId: games.id,
@@ -86,11 +86,14 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
         duration: games.duration,
         round: games.round,
         matchNumber: games.matchNumber,
+        groupId: games.groupId,
         ageGroupName: eventAgeGroups.ageGroup,
-        ageGroupGender: eventAgeGroups.gender
+        ageGroupGender: eventAgeGroups.gender,
+        bracketName: eventBrackets.name
       })
       .from(games)
       .leftJoin(eventAgeGroups, eq(games.ageGroupId, eventAgeGroups.id))
+      .leftJoin(eventBrackets, eq(games.groupId, eventBrackets.id))
       .where(eq(games.eventId, eventId));
 
     console.log(`[Schedule Calendar] Found ${gamesWithDetails.length} total games with age group data`);
@@ -272,8 +275,9 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
         awayScore: null,
         homeTeamName: homeTeam?.name || 'TBD',
         awayTeamName: awayTeam?.name || 'TBD',
-        bracketId: homeTeam?.bracketId || awayTeam?.bracketId,
-        flightName: homeTeam?.bracketId ? `Flight ${homeTeam.bracketId}` : undefined
+        bracketId: homeTeam?.bracketId || awayTeam?.bracketId || game.groupId,
+        flightName: game.bracketName || (game.round === 10 ? 'Championship' : `Round ${game.round}`),
+        round: game.round
       });
     }
 

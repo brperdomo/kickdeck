@@ -1195,13 +1195,32 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
                               }}
                             >
                               <div className="flex flex-col justify-between h-full">
-                                <div className="flex-1 overflow-hidden">
-                                  <div className="font-medium text-xs leading-tight">
-                                    {/* Smart team name display - show both teams compactly */}
-                                    <div className="text-blue-100 leading-none">
-                                      <div className="truncate text-[10px]">{(game.homeTeamName || 'TBD').replace(/FC|SC|Academy|Elite|Premier|B\d+\/?\d*|U\d+/g, '').trim().slice(0, 12)}</div>
-                                      <div className="text-center text-slate-300 text-[8px] my-0.5">vs</div>
-                                      <div className="truncate text-[10px]">{(game.awayTeamName || 'TBD').replace(/FC|SC|Academy|Elite|Premier|B\d+\/?\d*|U\d+/g, '').trim().slice(0, 12)}</div>
+                                <div className="flex-1 overflow-hidden p-1">
+                                  <div className="text-xs leading-tight space-y-1">
+                                    {/* Flight information at top */}
+                                    <div className="text-[9px] text-blue-200 font-medium text-center bg-blue-800/30 rounded px-1">
+                                      {(game as any).flightName || `Round ${(game as any).round || 1}`}
+                                    </div>
+                                    
+                                    {/* Team names display - shortened intelligently */}
+                                    <div className="text-blue-100 leading-tight text-center">
+                                      <div className="text-[10px] font-medium truncate">
+                                        {(game.homeTeamName || 'TBD')
+                                          .replace(/FC |SC | Academy| Elite| Premier/g, '')
+                                          .replace(/B\d+\/?\d*/g, '')
+                                          .replace(/U\d+/g, '')
+                                          .trim()
+                                          .slice(0, 15)}
+                                      </div>
+                                      <div className="text-[8px] text-slate-300 my-0.5">vs</div>
+                                      <div className="text-[10px] font-medium truncate">
+                                        {(game.awayTeamName || 'TBD')
+                                          .replace(/FC |SC | Academy| Elite| Premier/g, '')
+                                          .replace(/B\d+\/?\d*/g, '')
+                                          .replace(/U\d+/g, '')
+                                          .trim()
+                                          .slice(0, 15)}
+                                      </div>
                                     </div>
                                   </div>
                                 </div>
