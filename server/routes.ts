@@ -1678,7 +1678,7 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/events', isAdmin, fieldsRouter); // Field assignment and management
     app.use('/api/admin', isAdmin, gameTeamsRouter); // Game team editing functionality
     app.use('/api/admin/field-management', isAdmin, fieldManagementRouter); // Real field availability service
-    app.use('/api/admin', fieldExclusionRouter); // Field exclusion service for complete field removal
+    app.use('/api/admin', isAdmin, fieldExclusionRouter); // Field exclusion service for complete field removal
     app.use('/api/admin/enhanced-conflict-detection', isAdmin, enhancedConflictDetectionRouter); // Advanced conflict analysis
     app.use('/api/admin/enhanced-field-management', isAdmin, enhancedFieldManagementRouter); // Flexible time slots and blackouts
     app.use('/api/admin/constraint-validation', isAdmin, constraintValidationRouter); // Comprehensive constraint validation

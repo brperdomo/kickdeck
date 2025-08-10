@@ -6,8 +6,7 @@ import { isAdmin } from '../../middleware/auth.js';
 
 const router = Router();
 
-// Apply admin authentication to all routes
-router.use(isAdmin);
+// Admin authentication applied in main routes.ts
 
 /**
  * COMPLETELY REMOVE a field from tournament usage
