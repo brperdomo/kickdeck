@@ -220,12 +220,34 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
 
       if (effectiveFieldId !== fieldId) return false;
 
-      // Parse the game's effective start time
+      // Parse the game's effective start time - improved for different time intervals
       const gameDate = effectiveStartTime?.split('T')[0] || effectiveStartTime?.split(' ')[0];
       const gameTime = effectiveStartTime?.split('T')[1]?.split(':').slice(0, 2).join(':') || 
                       effectiveStartTime?.split(' ')[1]?.split(':').slice(0, 2).join(':');
 
-      return gameDate === selectedDate && gameTime === timeSlot.startTime;
+      // For time interval compatibility: check if game time matches any time slot that could contain it
+      if (gameDate !== selectedDate) return false;
+      
+      // Convert times to minutes for flexible interval matching
+      const gameMinutes = getTimeInMinutes(gameTime);
+      const slotMinutes = getTimeInMinutes(timeSlot.startTime);
+      
+      // Check if game starts exactly at this time slot OR 
+      // if this time slot is the closest valid interval start time for the game
+      const isExactMatch = gameTime === timeSlot.startTime;
+      
+      // For different intervals, find the slot that would contain this game time
+      const intervalMinutes = timeInterval;
+      const startOfDay = 8 * 60; // 8 AM in minutes
+      const gameOffsetFromStart = gameMinutes - startOfDay;
+      const expectedSlotIndex = Math.floor(gameOffsetFromStart / intervalMinutes);
+      const expectedSlotMinutes = startOfDay + (expectedSlotIndex * intervalMinutes);
+      
+      const isIntervalMatch = slotMinutes === expectedSlotMinutes && 
+                             gameMinutes >= slotMinutes && 
+                             gameMinutes < slotMinutes + intervalMinutes;
+      
+      return isExactMatch || isIntervalMatch;
     });
   }, [scheduleData?.games, selectedDate, gamePositions, draggedGame]);
 
