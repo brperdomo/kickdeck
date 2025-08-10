@@ -530,7 +530,7 @@ function generateGamesForBracketType(bracketType: string, teams: any[], bracketI
     case 'group_of_6_crossplay':
     case 'crossover_bracket_6_teams':
     case 'full_crossplay':
-      // CRITICAL FIX: Handle crossplay formats properly
+      // CRITICAL FIX: Handle crossplay formats properly using group_id to separate pools
       console.log(`🚨 CROSSPLAY FIX: Generating crossplay games for ${teams.length} teams`);
       
       if (teams.length !== 6) {
@@ -538,14 +538,31 @@ function generateGamesForBracketType(bracketType: string, teams: any[], bracketI
         throw new Error(`Crossplay format requires exactly 6 teams, got ${teams.length}`);
       }
       
-      // Split into Pool A (first 3 teams) and Pool B (last 3 teams)
-      const poolA = teams.slice(0, 3);
-      const poolB = teams.slice(3, 6);
+      // Split teams by group_id (Pool A vs Pool B) NOT by array position
+      const poolA = teams.filter(team => team.groupId === teams[0]?.groupId).slice(0, 3);
+      const poolB = teams.filter(team => team.groupId !== teams[0]?.groupId).slice(0, 3);
       
-      console.log(`🔄 CROSSPLAY: Pool A teams:`, poolA.map(t => t.name));
-      console.log(`🔄 CROSSPLAY: Pool B teams:`, poolB.map(t => t.name));
+      // Fallback: if group_id approach fails, use array position (this should not happen)
+      if (poolA.length !== 3 || poolB.length !== 3) {
+        console.warn(`⚠️ CROSSPLAY FALLBACK: group_id separation failed, using array position`);
+        const poolA_fallback = teams.slice(0, 3);
+        const poolB_fallback = teams.slice(3, 6);
+        poolA.length = 0;
+        poolB.length = 0;
+        poolA.push(...poolA_fallback);
+        poolB.push(...poolB_fallback);
+      }
       
-      // Generate ONLY crossplay games (Pool A vs Pool B)
+      console.log(`🔄 CROSSPLAY Pool A (group ${poolA[0]?.groupId}):`, poolA.map(t => `${t.name} (ID:${t.id})`));
+      console.log(`🔄 CROSSPLAY Pool B (group ${poolB[0]?.groupId}):`, poolB.map(t => `${t.name} (ID:${t.id})`));
+      
+      // Validate that we have different groups
+      if (poolA[0]?.groupId === poolB[0]?.groupId) {
+        console.error(`❌ CROSSPLAY CRITICAL: All teams are in same group_id (${poolA[0]?.groupId}). Cannot generate crossplay!`);
+        throw new Error(`Crossplay requires teams in different groups. All teams are in group ${poolA[0]?.groupId}`);
+      }
+      
+      // Generate ONLY crossplay games (Pool A vs Pool B) - comprehensive 9-game matrix
       const crossplayPairs = [
         [0, 0], // A1 vs B1
         [1, 1], // A2 vs B2
@@ -559,7 +576,15 @@ function generateGamesForBracketType(bracketType: string, teams: any[], bracketI
       ];
       
       crossplayPairs.forEach(([aIdx, bIdx], gameIndex) => {
-        const { homeTeamId, awayTeamId } = randomizeHomeAway(poolA[aIdx], poolB[bIdx]);
+        const teamA = poolA[aIdx];
+        const teamB = poolB[bIdx];
+        
+        if (!teamA || !teamB) {
+          console.error(`❌ CROSSPLAY SKIP: Missing team A[${aIdx}] or B[${bIdx}]`);
+          return;
+        }
+        
+        const { homeTeamId, awayTeamId } = randomizeHomeAway(teamA, teamB);
         games.push({
           bracketId,
           homeTeamId,
@@ -569,10 +594,10 @@ function generateGamesForBracketType(bracketType: string, teams: any[], bracketI
           status: 'scheduled'
         });
         
-        console.log(`✅ CROSSPLAY GAME ${gameIndex + 1}: ${poolA[aIdx].name} vs ${poolB[bIdx].name}`);
+        console.log(`✅ CROSSPLAY GAME ${gameIndex + 1}: ${teamA.name} (Group ${teamA.groupId}) vs ${teamB.name} (Group ${teamB.groupId})`);
       });
       
-      console.log(`🎯 CROSSPLAY FIX: Generated ${games.length} crossplay games (Pool A vs Pool B only)`);
+      console.log(`🎯 CROSSPLAY SUCCESS: Generated ${games.length} proper crossplay games (Pool A vs Pool B only)`);
       break;
       
     default:
