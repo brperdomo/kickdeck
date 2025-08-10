@@ -5,9 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Input } from '@/components/ui/input';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import jsPDF from 'jspdf';
-import { Download, FileDown, RefreshCw, Users } from 'lucide-react';
+import { Download, FileDown, RefreshCw, Users, UserPlus, AlertTriangle } from 'lucide-react';
 
 interface Team {
   id: number;
@@ -15,6 +17,7 @@ interface Team {
   status: string;
   selectedBracketName: string | null;
   bracketId: number | null;
+  isPlaceholder?: boolean;
 }
 
 interface Flight {
@@ -43,6 +46,9 @@ export function FlightReviewDashboard({ eventId }: FlightReviewDashboardProps) {
   const queryClient = useQueryClient();
   const [selectedFlight, setSelectedFlight] = useState<{ [teamId: number]: number }>({});
   const [editingTeamId, setEditingTeamId] = useState<number | null>(null);
+  const [placeholderDialogOpen, setPlaceholderDialogOpen] = useState(false);
+  const [placeholderName, setPlaceholderName] = useState('');
+  const [selectedFlightForPlaceholder, setSelectedFlightForPlaceholder] = useState<number | null>(null);
 
   // Fetch flight review data
   const { data: flightData, isLoading } = useQuery({
@@ -75,6 +81,33 @@ export function FlightReviewDashboard({ eventId }: FlightReviewDashboardProps) {
       });
       setSelectedFlight({});
       setEditingTeamId(null);
+      queryClient.invalidateQueries({ queryKey: ['flight-review', eventId] });
+    }
+  });
+
+  // Create placeholder team mutation
+  const createPlaceholderMutation = useMutation({
+    mutationFn: async ({ placeholderName, flightId }: { placeholderName: string; flightId: number }) => {
+      const response = await fetch(`/api/admin/events/${eventId}/placeholders`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ 
+          name: placeholderName,
+          flightId: flightId
+        })
+      });
+      if (!response.ok) throw new Error('Failed to create placeholder team');
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Placeholder Team Created",
+        description: "Placeholder team added to flight successfully"
+      });
+      setPlaceholderDialogOpen(false);
+      setPlaceholderName('');
+      setSelectedFlightForPlaceholder(null);
       queryClient.invalidateQueries({ queryKey: ['flight-review', eventId] });
     }
   });
@@ -375,9 +408,47 @@ export function FlightReviewDashboard({ eventId }: FlightReviewDashboardProps) {
 
   const totalTeamsWithoutSelection = flightData?.reduce((sum, group) => sum + group.teamsWithoutSelection.length, 0) || 0;
   const totalTeamsWithSelection = flightData?.reduce((sum, group) => sum + group.teamsWithSelection.length, 0) || 0;
+  
+  // Count placeholder teams
+  const placeholderTeams = flightData?.reduce((acc, group) => {
+    const placeholders = group.teamsWithSelection.filter(team => team.isPlaceholder);
+    return acc.concat(placeholders);
+  }, [] as Team[]) || [];
+  
+  // Get all available flights for placeholder creation
+  const allAvailableFlights = flightData?.reduce((acc, group) => {
+    return acc.concat(group.availableFlights.map(flight => ({
+      ...flight,
+      ageGroup: group.ageGroup,
+      gender: group.gender,
+      displayName: `${group.ageGroup} ${group.gender} - ${formatFlightName(flight.name)}`
+    })));
+  }, [] as any[]) || [];
 
   return (
     <div className="space-y-6">
+      {/* Placeholder Warning Banner */}
+      {placeholderTeams.length > 0 && (
+        <div className="bg-amber-900/20 border border-amber-600 rounded-lg p-4 mb-6">
+          <div className="flex items-center gap-3">
+            <AlertTriangle className="h-5 w-5 text-amber-500" />
+            <div>
+              <h3 className="text-amber-200 font-medium">Placeholder Teams Need Replacement</h3>
+              <p className="text-amber-300/80 text-sm">
+                {placeholderTeams.length} placeholder team{placeholderTeams.length !== 1 ? 's' : ''} in flights need to be replaced with actual teams before scheduling.
+              </p>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {placeholderTeams.map(team => (
+                  <Badge key={team.id} className="bg-amber-600 text-amber-100">
+                    {team.name}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header with Overview */}
       <div className="flex items-center justify-between">
         <div>
@@ -442,6 +513,88 @@ export function FlightReviewDashboard({ eventId }: FlightReviewDashboardProps) {
           <FileDown className="h-4 w-4 mr-2" />
           Export PDF
         </Button>
+        
+        <Dialog open={placeholderDialogOpen} onOpenChange={setPlaceholderDialogOpen}>
+          <DialogTrigger asChild>
+            <Button 
+              variant="outline"
+              className="border-emerald-600 text-emerald-200 hover:bg-emerald-700"
+            >
+              <UserPlus className="h-4 w-4 mr-2" />
+              Add Placeholder
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="bg-slate-800 border-slate-700">
+            <DialogHeader>
+              <DialogTitle className="text-white">Add Placeholder Team</DialogTitle>
+              <DialogDescription className="text-slate-300">
+                Create a placeholder team to reserve a spot in a flight before the actual team is determined.
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="space-y-4 py-4">
+              <div>
+                <label className="text-sm font-medium text-slate-200 mb-2 block">
+                  Placeholder Team Name
+                </label>
+                <Input
+                  value={placeholderName}
+                  onChange={(e) => setPlaceholderName(e.target.value)}
+                  placeholder="e.g., TBD Team 1, Qualifier Winner, etc."
+                  className="bg-slate-700 border-slate-600 text-white"
+                />
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium text-slate-200 mb-2 block">
+                  Assign to Flight
+                </label>
+                <Select 
+                  value={selectedFlightForPlaceholder?.toString() || ""} 
+                  onValueChange={(value) => setSelectedFlightForPlaceholder(parseInt(value))}
+                >
+                  <SelectTrigger className="bg-slate-700 border-slate-600 text-white">
+                    <SelectValue placeholder="Select flight for placeholder..." />
+                  </SelectTrigger>
+                  <SelectContent className="bg-slate-700 border-slate-600">
+                    {allAvailableFlights.map((flight) => (
+                      <SelectItem key={flight.id} value={flight.id.toString()}>
+                        <div className="flex items-center gap-2">
+                          {getFlightLevelBadge(flight.level)}
+                          <span>{flight.displayName}</span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            
+            <DialogFooter>
+              <Button 
+                variant="outline" 
+                onClick={() => setPlaceholderDialogOpen(false)}
+                className="border-slate-600 text-slate-200 hover:bg-slate-700"
+              >
+                Cancel
+              </Button>
+              <Button 
+                onClick={() => {
+                  if (placeholderName.trim() && selectedFlightForPlaceholder) {
+                    createPlaceholderMutation.mutate({
+                      placeholderName: placeholderName.trim(),
+                      flightId: selectedFlightForPlaceholder
+                    });
+                  }
+                }}
+                disabled={!placeholderName.trim() || !selectedFlightForPlaceholder || createPlaceholderMutation.isPending}
+                className="bg-emerald-600 hover:bg-emerald-500 text-white"
+              >
+                {createPlaceholderMutation.isPending ? "Creating..." : "Create Placeholder"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
         
         <Button 
           onClick={() => queryClient.invalidateQueries({ queryKey: ['flight-review', eventId] })}
@@ -615,10 +768,17 @@ export function FlightReviewDashboard({ eventId }: FlightReviewDashboardProps) {
                           </div>
                           <div className="space-y-2">
                             {teamsInFlight.map(({ team, group }) => (
-                              <div key={team.id} className="flex items-center justify-between p-3 bg-slate-600 rounded">
+                              <div key={team.id} className={`flex items-center justify-between p-3 rounded ${team.isPlaceholder ? 'bg-amber-900/20 border border-amber-600' : 'bg-slate-600'}`}>
                                 <div className="flex items-center gap-3">
                                   <Users className="h-4 w-4 text-slate-400" />
-                                  <span className="text-slate-200">{team.name}</span>
+                                  <span className={`${team.isPlaceholder ? 'text-amber-200 italic' : 'text-slate-200'}`}>
+                                    {team.name}
+                                  </span>
+                                  {team.isPlaceholder && (
+                                    <Badge className="bg-amber-600 text-amber-100 text-xs">
+                                      Placeholder
+                                    </Badge>
+                                  )}
                                 </div>
                                 <div className="flex items-center gap-3">
                                   {editingTeamId === team.id ? (

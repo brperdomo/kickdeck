@@ -38,7 +38,8 @@ router.get('/events/:eventId/flight-review', async (req, res) => {
             name: teams.name,
             status: teams.status,
             bracketId: teams.bracketId,
-            selectedBracketName: eventBrackets.name
+            selectedBracketName: eventBrackets.name,
+            isPlaceholder: teams.isPlaceholder
           })
           .from(teams)
           .innerJoin(eventBrackets, eq(teams.bracketId, eventBrackets.id))
@@ -56,7 +57,8 @@ router.get('/events/:eventId/flight-review', async (req, res) => {
             id: teams.id,
             name: teams.name,
             status: teams.status,
-            bracketId: teams.bracketId
+            bracketId: teams.bracketId,
+            isPlaceholder: teams.isPlaceholder
           })
           .from(teams)
           .where(
@@ -192,6 +194,59 @@ router.post('/events/:eventId/flights/lock', async (req, res) => {
   } catch (error) {
     console.error('Error locking flights:', error);
     res.status(500).json({ error: 'Failed to lock flights' });
+  }
+});
+
+// Create placeholder team for flight
+router.post('/events/:eventId/placeholders', async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const { name, flightId } = req.body;
+
+    if (!name || !flightId) {
+      return res.status(400).json({ error: 'Name and flightId are required' });
+    }
+
+    console.log(`PLACEHOLDER DEBUG: Creating placeholder "${name}" for flight ${flightId} in event ${eventId}`);
+
+    // Get the flight details to find the age group
+    const flight = await db
+      .select({ ageGroupId: eventBrackets.ageGroupId })
+      .from(eventBrackets)
+      .where(eq(eventBrackets.id, flightId))
+      .limit(1);
+
+    if (flight.length === 0) {
+      return res.status(404).json({ error: 'Flight not found' });
+    }
+
+    // Create placeholder team
+    const placeholderTeam = await db
+      .insert(teams)
+      .values({
+        name: name,
+        status: 'approved',
+        ageGroupId: flight[0].ageGroupId,
+        bracketId: flightId, // Assign to the flight
+        isPlaceholder: true,
+        // Set minimal required fields
+        submitterEmail: 'placeholder@system.local',
+        submitterName: 'System Generated',
+        selectedFeeIds: '[]',
+        totalAmount: 0
+      })
+      .returning({ id: teams.id, name: teams.name });
+
+    console.log(`PLACEHOLDER DEBUG: Created placeholder team ${placeholderTeam[0].id}: "${placeholderTeam[0].name}"`);
+
+    res.json({ 
+      success: true, 
+      message: 'Placeholder team created successfully',
+      team: placeholderTeam[0]
+    });
+  } catch (error) {
+    console.error('Error creating placeholder team:', error);
+    res.status(500).json({ error: 'Failed to create placeholder team' });
   }
 });
 
