@@ -436,42 +436,73 @@ router.delete('/events/:eventId/flights/:flightId/format', isAdmin, async (req, 
   try {
     const { eventId, flightId } = req.params;
     
-    console.log(`[Reset Format] Resetting format for flight ${flightId} in event ${eventId}`);
+    console.log(`🔄 [Reset Format] Starting reset for flight ${flightId} in event ${eventId}`);
 
-    // Find all brackets for this flight (when grouped flights share format)
+    // First, check if the flight exists and get detailed info
     const flightBrackets = await db
-      .select({ id: eventBrackets.id })
+      .select({ 
+        id: eventBrackets.id,
+        name: eventBrackets.name,
+        ageGroupId: eventBrackets.ageGroupId,
+        ageGroup: eventAgeGroups.ageGroup,
+        gender: eventAgeGroups.gender
+      })
       .from(eventBrackets)
       .innerJoin(eventAgeGroups, eq(eventBrackets.ageGroupId, eventAgeGroups.id))
       .where(and(
-        eq(eventAgeGroups.eventId, eventId),
+        eq(eventAgeGroups.eventId, parseInt(eventId)),
         eq(eventBrackets.id, parseInt(flightId))
       ));
 
+    console.log(`🔄 [Reset Format] Found ${flightBrackets.length} flight brackets:`, flightBrackets);
+
     if (flightBrackets.length === 0) {
-      return res.status(404).json({ error: 'Flight not found' });
+      console.error(`🔄 [Reset Format] ERROR: Flight ${flightId} not found in event ${eventId}`);
+      return res.status(404).json({ error: `Flight ${flightId} not found in event ${eventId}` });
     }
 
-    // Delete all format configurations for this flight's brackets
-    const bracketIds = flightBrackets.map(b => b.id);
-    
-    await db
-      .delete(gameFormats)
-      .where(
-        eq(gameFormats.bracketId, parseInt(flightId))
-      );
+    // Check if there are existing formats to delete
+    const existingFormats = await db
+      .select({ 
+        id: gameFormats.id,
+        bracketId: gameFormats.bracketId,
+        templateName: gameFormats.templateName 
+      })
+      .from(gameFormats)
+      .where(eq(gameFormats.bracketId, parseInt(flightId)));
 
-    console.log(`[Reset Format] Successfully reset format for flight ${flightId}`);
+    console.log(`🔄 [Reset Format] Found ${existingFormats.length} existing formats:`, existingFormats);
+
+    if (existingFormats.length === 0) {
+      console.log(`🔄 [Reset Format] No formats found to delete for flight ${flightId}`);
+      return res.json({ 
+        success: true, 
+        message: `No formats to reset for flight ${flightId}`,
+        flightInfo: flightBrackets[0]
+      });
+    }
+
+    // Delete all format configurations for this flight
+    const deleteResult = await db
+      .delete(gameFormats)
+      .where(eq(gameFormats.bracketId, parseInt(flightId)));
+
+    console.log(`🔄 [Reset Format] Delete operation completed for flight ${flightId}:`, deleteResult);
+    console.log(`🔄 [Reset Format] Successfully reset format for flight ${flightId} (${flightBrackets[0].name})`);
     
     res.json({ 
       success: true, 
-      message: 'Flight format has been reset successfully',
+      message: `Flight format has been reset successfully for ${flightBrackets[0].name}`,
       flightId: parseInt(flightId),
-      resetBrackets: bracketIds.length
+      flightName: flightBrackets[0].name,
+      resetFormats: existingFormats.length
     });
   } catch (error) {
-    console.error('Error resetting format:', error);
-    res.status(500).json({ error: 'Failed to reset format configuration' });
+    console.error('🔄 [Reset Format] ERROR:', error);
+    res.status(500).json({ 
+      error: 'Failed to reset format configuration', 
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
   }
 });
 

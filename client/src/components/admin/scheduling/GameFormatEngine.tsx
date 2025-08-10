@@ -381,12 +381,24 @@ export function GameFormatEngine({ eventId }: GameFormatEngineProps) {
   // Reset format mutation
   const resetFormatMutation = useMutation({
     mutationFn: async (flightId: number) => {
+      console.log(`🔄 RESET FORMAT: Attempting to reset format for flight ${flightId}`);
+      
       const response = await fetch(`/api/admin/events/${eventId}/flights/${flightId}/format`, {
         method: 'DELETE',
         credentials: 'include'
       });
-      if (!response.ok) throw new Error('Failed to reset flight format');
-      return response.json();
+      
+      console.log(`🔄 RESET FORMAT: Response status: ${response.status}`);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`🔄 RESET FORMAT ERROR: ${response.status} - ${errorText}`);
+        throw new Error(`Reset failed (${response.status}): ${errorText}`);
+      }
+      
+      const result = await response.json();
+      console.log(`🔄 RESET FORMAT SUCCESS:`, result);
+      return result;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['flight-formats', eventId] });
@@ -396,6 +408,7 @@ export function GameFormatEngine({ eventId }: GameFormatEngineProps) {
       });
     },
     onError: (error: Error) => {
+      console.error(`🔄 RESET FORMAT MUTATION ERROR:`, error);
       toast({
         title: "Failed to reset format",
         description: error.message,
