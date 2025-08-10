@@ -138,31 +138,59 @@ router.delete('/:eventId/games/delete-all', async (req, res) => {
  * 
  * DELETE /api/admin/events/:eventId/games/bulk
  */
-router.delete('/:eventId/games/bulk', async (req, res) => {
+router.delete('/:eventId/games/bulk', hasEventAccess, async (req, res) => {
   try {
     const { eventId } = req.params;
     const { gameIds } = req.body;
     
+    console.log(`🗑️ BULK DELETE: Received request for event ${eventId}`, { gameIds });
+    
     if (!eventId) {
+      console.error("❌ BULK DELETE: Missing event ID");
       return res.status(400).json({ message: "Event ID is required" });
     }
     
+    // If no specific game IDs provided, delete ALL games for the event
     if (!gameIds || !Array.isArray(gameIds) || gameIds.length === 0) {
-      return res.status(400).json({ message: "Game IDs array is required" });
+      console.log(`🗑️ BULK DELETE: Deleting ALL games for event ${eventId}`);
+      
+      // Delete all games for this event
+      const result = await db
+        .delete(games)
+        .where(eq(games.eventId, String(eventId)));
+      
+      console.log(`✅ BULK DELETE: Deleted all games for event ${eventId}`, result);
+      
+      return res.json({ 
+        success: true,
+        message: "All games successfully deleted for event",
+        eventId: eventId,
+        deletedAll: true
+      });
     }
     
-    // Parse all game IDs to numbers
+    // Delete specific games
     const parsedGameIds = gameIds.map(id => parseInt(id));
     
     // Validate all IDs are valid numbers
     if (parsedGameIds.some(id => isNaN(id))) {
+      console.error("❌ BULK DELETE: Invalid game ID format", gameIds);
       return res.status(400).json({ message: "Invalid game ID format in the array" });
     }
     
-    // Delete all specified games for this event
+    console.log(`🗑️ BULK DELETE: Deleting specific games:`, parsedGameIds);
+    
+    // Delete specified games for this event with additional safety check
     const result = await db
       .delete(games)
-      .where(inArray(games.id, parsedGameIds));
+      .where(
+        and(
+          inArray(games.id, parsedGameIds),
+          eq(games.eventId, String(eventId))
+        )
+      );
+    
+    console.log(`✅ BULK DELETE: Successfully deleted ${parsedGameIds.length} games`, result);
     
     return res.json({ 
       success: true,
@@ -171,8 +199,12 @@ router.delete('/:eventId/games/bulk', async (req, res) => {
       eventId: eventId
     });
   } catch (error) {
-    console.error("Error bulk deleting games:", error);
-    return res.status(500).json({ message: "Failed to bulk delete games" });
+    console.error("❌ BULK DELETE ERROR:", error);
+    return res.status(500).json({ 
+      message: "Failed to bulk delete games",
+      error: error instanceof Error ? error.message : String(error),
+      eventId: req.params.eventId
+    });
   }
 });
 

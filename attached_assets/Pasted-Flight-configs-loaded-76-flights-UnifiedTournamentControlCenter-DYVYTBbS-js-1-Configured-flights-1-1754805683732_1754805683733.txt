@@ -1,0 +1,675 @@
+Flight configs loaded: 76 flights
+UnifiedTournamentControlCenter-DYVYTBbS.js:1 Configured flights: 1 of 76
+[Violation] 'click' handler took 1052ms
+UnifiedTournamentControlCenter-DYVYTBbS.js:1  DELETE https://app.matchpro.ai/api/admin/events/1844329078/games/bulk 500 (Internal Server Error)
+mutationFn @ UnifiedTournamentControlCenter-DYVYTBbS.js:1
+fn @ index-CyUq4AFX.js:41
+f @ index-CyUq4AFX.js:41
+start @ index-CyUq4AFX.js:41
+execute @ index-CyUq4AFX.js:41
+await in execute
+mutate @ index-CyUq4AFX.js:41
+(anonymous) @ index-CyUq4AFX.js:41
+K @ UnifiedTournamentControlCenter-DYVYTBbS.js:1
+wue @ index-CyUq4AFX.js:38
+Sue @ index-CyUq4AFX.js:38
+Cue @ index-CyUq4AFX.js:38
+dM @ index-CyUq4AFX.js:38
+V7 @ index-CyUq4AFX.js:38
+(anonymous) @ index-CyUq4AFX.js:38
+yO @ index-CyUq4AFX.js:41
+f7 @ index-CyUq4AFX.js:38
+N2 @ index-CyUq4AFX.js:38
+H4 @ index-CyUq4AFX.js:38
+zue @ index-CyUq4AFX.js:38Understand this error
+UnifiedTournamentControlCenter-DYVYTBbS.js:1 Fetch failed loading: DELETE "https://app.matchpro.ai/api/admin/events/1844329078/games/bulk".
+mutationFn @ UnifiedTournamentControlCenter-DYVYTBbS.js:1
+fn @ index-CyUq4AFX.js:41
+f @ index-CyUq4AFX.js:41
+start @ index-CyUq4AFX.js:41
+execute @ index-CyUq4AFX.js:41
+await in execute
+mutate @ index-CyUq4AFX.js:41
+(anonymous) @ index-CyUq4AFX.js:41
+K @ UnifiedTournamentControlCenter-DYVYTBbS.js:1
+wue @ index-CyUq4AFX.js:38
+Sue @ index-CyUq4AFX.js:38
+Cue @ index-CyUq4AFX.js:38
+dM @ index-CyUq4AFX.js:38
+V7 @ index-CyUq4AFX.js:38
+(anonymous) @ index-CyUq4AFX.js:38
+yO @ index-CyUq4AFX.js:41
+f7 @ index-CyUq4AFX.js:38
+N2 @ index-CyUq4AFX.js:38
+H4 @ index-CyUq4AFX.js:38
+zue @ index-CyUq4AFX.js:38
+UnifiedTournamentControlCenter-DYVYTBbS.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentControlCenter-DYVYTBbS.js:1 Configured flights: 1 of 76
+ScheduleViewerFixed-Jb1DAMRR.js:6 Schedule API Response: {games: Array(0), fields: Array(33), ageGroups: Array(0), dates: Array(0), totalGames: 0, …}
+UnifiedTournamentControlCenter-DYVYTBbS.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentControlCenter-DYVYTBbS.js:1 Configured flights: 1 of 76
+Navigated to https://app.matchpro.ai/admin/events/1844329078/master-schedule
+js?libraries=places&v=beta&callback=Function.prototype:1382 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+Tda @ js?libraries=places&v=beta&callback=Function.prototype:1382
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641Understand this warning
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+js?libraries=places&v=beta&callback=Function.prototype:1414 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+_.B.send @ js?libraries=places&v=beta&callback=Function.prototype:1414
+Qda @ js?libraries=places&v=beta&callback=Function.prototype:1391
+Tda @ js?libraries=places&v=beta&callback=Function.prototype:1383
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641
+index-CyUq4AFX.js:848 Google Maps API key length: 0 characters
+index-CyUq4AFX.js:848 Mapbox API key length: 93 characters
+index-CyUq4AFX.js:848 Google Maps API already loaded
+index-CyUq4AFX.js:657 Current route location (Wouter): /admin/events/1844329078/master-schedule
+index-CyUq4AFX.js:657 Current URL: https://app.matchpro.ai/admin/events/1844329078/master-schedule
+index-CyUq4AFX.js:657 Current pathname: /admin/events/1844329078/master-schedule
+index-CyUq4AFX.js:657 Current search: 
+index-CyUq4AFX.js:657 Fetching user with emulation token: not present
+chunk-FLCULYKI.js:31 orchestration: Initializing config store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+14Fetch finished loading: GET "<URL>".
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state {pill-player: {…}}
+chunk-FLCULYKI.js:31 orchestration: Initializing feature flag store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+index-CyUq4AFX.js:657 User data fetched: {id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: '$2b$12$d6n1CBWgsWFm0fh77F1OX.YxDZy7/O3aLSuJOuq4QkvOtFmSit7BC', firstName: 'Bryan', …}
+index-CyUq4AFX.js:649 Fetch failed loading: GET "https://app.matchpro.ai/api/user".
+queryFn @ index-CyUq4AFX.js:649
+i @ index-CyUq4AFX.js:41
+f @ index-CyUq4AFX.js:41
+start @ index-CyUq4AFX.js:41
+fetch @ index-CyUq4AFX.js:41
+ng @ index-CyUq4AFX.js:41
+onSubscribe @ index-CyUq4AFX.js:41
+subscribe @ index-CyUq4AFX.js:41
+(anonymous) @ index-CyUq4AFX.js:41
+iW @ index-CyUq4AFX.js:39
+SS @ index-CyUq4AFX.js:41
+Zh @ index-CyUq4AFX.js:41
+BM @ index-CyUq4AFX.js:41
+ou @ index-CyUq4AFX.js:39
+rhe @ index-CyUq4AFX.js:41
+Pu @ index-CyUq4AFX.js:41
+$W @ index-CyUq4AFX.js:41
+w @ index-CyUq4AFX.js:26
+A @ index-CyUq4AFX.js:26
+shared-df7789195bf09b6f338558bdd92c931a.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+e @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+c @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+g @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+log @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+log @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+16720 @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e.O @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+shared-df7789195bf09b6f338558bdd92c931a.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+e @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+c @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+g @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+value @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+16720 @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e.O @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+UnifiedTournamentControlCenter-DYVYTBbS.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentControlCenter-DYVYTBbS.js:1 Configured flights: 1 of 76
+shared-df7789195bf09b6f338558bdd92c931a.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+e @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+c @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+setTimeout
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+Promise.then
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+value @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+16720 @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e.O @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+shared-df7789195bf09b6f338558bdd92c931a.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+e @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+c @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+setTimeout
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+Promise.then
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+log @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+log @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+16720 @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e.O @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+util.js:33 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+$Aa @ util.js:33
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1384
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1384
+setTimeout
+Tda @ js?libraries=places&v=beta&callback=Function.prototype:1384
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641Understand this warning
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+Promise.then
+S @ out-4.5.44.js:1
+y @ out-4.5.44.js:1
+E @ out-4.5.44.js:1
+e.onload @ inner.html:1
+script
+(anonymous) @ inner.html:1
+(anonymous) @ inner.html:1
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+h @ out-4.5.44.js:1
+e @ inner.html:1
+UnifiedTournamentControlCenter-DYVYTBbS.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentControlCenter-DYVYTBbS.js:1 Configured flights: 1 of 76
+shared-df7789195bf09b6f338558bdd92c931a.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+e @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+c @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+setTimeout
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+log @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+log @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+value @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+value @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+UnifiedTournamentControlCenter-DYVYTBbS.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentControlCenter-DYVYTBbS.js:1 Configured flights: 1 of 76
+UnifiedTournamentControlCenter-DYVYTBbS.js:1 Fetch finished loading: POST "https://app.matchpro.ai/api/admin/events/1844329078/generate-selective-schedule".
+mutationFn @ UnifiedTournamentControlCenter-DYVYTBbS.js:1
+fn @ index-CyUq4AFX.js:41
+f @ index-CyUq4AFX.js:41
+start @ index-CyUq4AFX.js:41
+execute @ index-CyUq4AFX.js:41
+await in execute
+mutate @ index-CyUq4AFX.js:41
+(anonymous) @ index-CyUq4AFX.js:41
+G @ UnifiedTournamentControlCenter-DYVYTBbS.js:1
+wue @ index-CyUq4AFX.js:38
+Sue @ index-CyUq4AFX.js:38
+Cue @ index-CyUq4AFX.js:38
+dM @ index-CyUq4AFX.js:38
+V7 @ index-CyUq4AFX.js:38
+(anonymous) @ index-CyUq4AFX.js:38
+yO @ index-CyUq4AFX.js:41
+f7 @ index-CyUq4AFX.js:38
+N2 @ index-CyUq4AFX.js:38
+H4 @ index-CyUq4AFX.js:38
+zue @ index-CyUq4AFX.js:38
+UnifiedTournamentControlCenter-DYVYTBbS.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentControlCenter-DYVYTBbS.js:1 Configured flights: 1 of 76
+ScheduleViewerFixed-Jb1DAMRR.js:6 Schedule API Response: {games: Array(10), fields: Array(33), ageGroups: Array(1), dates: Array(2), totalGames: 10, …}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 1 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf B2010 E64', awayTeamStructure: 'Cal Elite B2010 - Charlie', fieldStructure: 'f3', rawFieldName: 'f3', …}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 1 API data: {
+  "id": 10331,
+  "homeTeam": "Empire Surf B2010 E64",
+  "awayTeam": "Cal Elite B2010 - Charlie",
+  "ageGroup": "U16 Boys",
+  "field": "f3",
+  "fieldId": 14,
+  "fieldName": "f3",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B2010 E64",
+  "awayTeamName": "Cal Elite B2010 - Charlie"
+}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 1 transformed: {id: 10331, homeTeam: 'Empire Surf B2010 E64', awayTeam: 'Cal Elite B2010 - Charlie', ageGroup: 'U16 Boys', field: 'f3', …}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 2 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf NPL B2010 Academy ', awayTeamStructure: 'City SC Southwest B2010 EA', fieldStructure: 'f4', rawFieldName: 'f4', …}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 2 API data: {
+  "id": 10326,
+  "homeTeam": "Empire Surf NPL B2010 Academy ",
+  "awayTeam": "City SC Southwest B2010 EA",
+  "ageGroup": "U16 Boys",
+  "field": "f4",
+  "fieldId": 15,
+  "fieldName": "f4",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf NPL B2010 Academy ",
+  "awayTeamName": "City SC Southwest B2010 EA"
+}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 2 transformed: {id: 10326, homeTeam: 'Empire Surf NPL B2010 Academy ', awayTeam: 'City SC Southwest B2010 EA', ageGroup: 'U16 Boys', field: 'f4', …}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 3 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest B2010 EA', awayTeamStructure: 'Cal Elite B2010 - Charlie', fieldStructure: 'f2', rawFieldName: 'f2', …}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 3 API data: {
+  "id": 10330,
+  "homeTeam": "City SC Southwest B2010 EA",
+  "awayTeam": "Cal Elite B2010 - Charlie",
+  "ageGroup": "U16 Boys",
+  "field": "f2",
+  "fieldId": 9,
+  "fieldName": "f2",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B2010 EA",
+  "awayTeamName": "Cal Elite B2010 - Charlie"
+}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 3 transformed: {id: 10330, homeTeam: 'City SC Southwest B2010 EA', awayTeam: 'Cal Elite B2010 - Charlie', ageGroup: 'U16 Boys', field: 'f2', …}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 4 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf NPL B2010 Academy ', awayTeamStructure: 'Empire Surf B2010 E64', fieldStructure: 'f3', rawFieldName: 'f3', …}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 4 API data: {
+  "id": 10327,
+  "homeTeam": "Empire Surf NPL B2010 Academy ",
+  "awayTeam": "Empire Surf B2010 E64",
+  "ageGroup": "U16 Boys",
+  "field": "f3",
+  "fieldId": 14,
+  "fieldName": "f3",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf NPL B2010 Academy ",
+  "awayTeamName": "Empire Surf B2010 E64"
+}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 4 transformed: {id: 10327, homeTeam: 'Empire Surf NPL B2010 Academy ', awayTeam: 'Empire Surf B2010 E64', ageGroup: 'U16 Boys', field: 'f3', …}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 5 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest B2010 EA', awayTeamStructure: 'Empire Surf B2010 E64', fieldStructure: 'f2', rawFieldName: 'f2', …}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 5 API data: {
+  "id": 10329,
+  "homeTeam": "City SC Southwest B2010 EA",
+  "awayTeam": "Empire Surf B2010 E64",
+  "ageGroup": "U16 Boys",
+  "field": "f2",
+  "fieldId": 9,
+  "fieldName": "f2",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B2010 EA",
+  "awayTeamName": "Empire Surf B2010 E64"
+}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 5 transformed: {id: 10329, homeTeam: 'City SC Southwest B2010 EA', awayTeam: 'Empire Surf B2010 E64', ageGroup: 'U16 Boys', field: 'f2', …}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 6 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf NPL B2010 Academy ', awayTeamStructure: 'Cal Elite B2010 - Charlie', fieldStructure: 'f3', rawFieldName: 'f3', …}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 6 API data: {
+  "id": 10328,
+  "homeTeam": "Empire Surf NPL B2010 Academy ",
+  "awayTeam": "Cal Elite B2010 - Charlie",
+  "ageGroup": "U16 Boys",
+  "field": "f3",
+  "fieldId": 14,
+  "fieldName": "f3",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf NPL B2010 Academy ",
+  "awayTeamName": "Cal Elite B2010 - Charlie"
+}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 6 transformed: {id: 10328, homeTeam: 'Empire Surf NPL B2010 Academy ', awayTeam: 'Cal Elite B2010 - Charlie', ageGroup: 'U16 Boys', field: 'f3', …}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 7 transformation debug: {raw: {…}, homeTeamStructure: 'TBD', awayTeamStructure: 'TBD', fieldStructure: 'f1', rawFieldName: 'f1', …}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 7 API data: {
+  "id": 10335,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "ageGroup": "U16 Boys",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "pending",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD"
+}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 7 transformed: {id: 10335, homeTeam: 'TBD', awayTeam: 'TBD', ageGroup: 'U16 Boys', field: 'f1', …}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 8 transformation debug: {raw: {…}, homeTeamStructure: 'ALBION Riverside B2010 EA', awayTeamStructure: 'Club Tijuana Xoloitzcuincles B2011', fieldStructure: 'f2', rawFieldName: 'f2', …}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 8 API data: {
+  "id": 10334,
+  "homeTeam": "ALBION Riverside B2010 EA",
+  "awayTeam": "Club Tijuana Xoloitzcuincles B2011",
+  "ageGroup": "U16 Boys",
+  "field": "f2",
+  "fieldId": 9,
+  "fieldName": "f2",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "ALBION Riverside B2010 EA",
+  "awayTeamName": "Club Tijuana Xoloitzcuincles B2011"
+}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 8 transformed: {id: 10334, homeTeam: 'ALBION Riverside B2010 EA', awayTeam: 'Club Tijuana Xoloitzcuincles B2011', ageGroup: 'U16 Boys', field: 'f2', …}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 9 transformation debug: {raw: {…}, homeTeamStructure: 'Rebels SC B2010 ECNL', awayTeamStructure: 'Club Tijuana Xoloitzcuincles B2011', fieldStructure: 'f1', rawFieldName: 'f1', …}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 9 API data: {
+  "id": 10333,
+  "homeTeam": "Rebels SC B2010 ECNL",
+  "awayTeam": "Club Tijuana Xoloitzcuincles B2011",
+  "ageGroup": "U16 Boys",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Rebels SC B2010 ECNL",
+  "awayTeamName": "Club Tijuana Xoloitzcuincles B2011"
+}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 9 transformed: {id: 10333, homeTeam: 'Rebels SC B2010 ECNL', awayTeam: 'Club Tijuana Xoloitzcuincles B2011', ageGroup: 'U16 Boys', field: 'f1', …}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 10 transformation debug: {raw: {…}, homeTeamStructure: 'Rebels SC B2010 ECNL', awayTeamStructure: 'ALBION Riverside B2010 EA', fieldStructure: 'f1', rawFieldName: 'f1', …}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 10 API data: {
+  "id": 10332,
+  "homeTeam": "Rebels SC B2010 ECNL",
+  "awayTeam": "ALBION Riverside B2010 EA",
+  "ageGroup": "U16 Boys",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Rebels SC B2010 ECNL",
+  "awayTeamName": "ALBION Riverside B2010 EA"
+}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 10 transformed: {id: 10332, homeTeam: 'Rebels SC B2010 ECNL', awayTeam: 'ALBION Riverside B2010 EA', ageGroup: 'U16 Boys', field: 'f1', …}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Schedule API Response: {games: Array(10), fields: Array(33), ageGroups: Array(1), dates: Array(2), totalGames: 10, …}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 1 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf B2010 E64', awayTeamStructure: 'Cal Elite B2010 - Charlie', fieldStructure: 'f3', rawFieldName: 'f3', …}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 1 API data: {
+  "id": 10331,
+  "homeTeam": "Empire Surf B2010 E64",
+  "awayTeam": "Cal Elite B2010 - Charlie",
+  "ageGroup": "U16 Boys",
+  "field": "f3",
+  "fieldId": 14,
+  "fieldName": "f3",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B2010 E64",
+  "awayTeamName": "Cal Elite B2010 - Charlie"
+}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 1 transformed: {id: 10331, homeTeam: 'Empire Surf B2010 E64', awayTeam: 'Cal Elite B2010 - Charlie', ageGroup: 'U16 Boys', field: 'f3', …}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 2 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf NPL B2010 Academy ', awayTeamStructure: 'City SC Southwest B2010 EA', fieldStructure: 'f4', rawFieldName: 'f4', …}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 2 API data: {
+  "id": 10326,
+  "homeTeam": "Empire Surf NPL B2010 Academy ",
+  "awayTeam": "City SC Southwest B2010 EA",
+  "ageGroup": "U16 Boys",
+  "field": "f4",
+  "fieldId": 15,
+  "fieldName": "f4",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf NPL B2010 Academy ",
+  "awayTeamName": "City SC Southwest B2010 EA"
+}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 2 transformed: {id: 10326, homeTeam: 'Empire Surf NPL B2010 Academy ', awayTeam: 'City SC Southwest B2010 EA', ageGroup: 'U16 Boys', field: 'f4', …}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 3 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest B2010 EA', awayTeamStructure: 'Cal Elite B2010 - Charlie', fieldStructure: 'f2', rawFieldName: 'f2', …}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 3 API data: {
+  "id": 10330,
+  "homeTeam": "City SC Southwest B2010 EA",
+  "awayTeam": "Cal Elite B2010 - Charlie",
+  "ageGroup": "U16 Boys",
+  "field": "f2",
+  "fieldId": 9,
+  "fieldName": "f2",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B2010 EA",
+  "awayTeamName": "Cal Elite B2010 - Charlie"
+}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 3 transformed: {id: 10330, homeTeam: 'City SC Southwest B2010 EA', awayTeam: 'Cal Elite B2010 - Charlie', ageGroup: 'U16 Boys', field: 'f2', …}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 4 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf NPL B2010 Academy ', awayTeamStructure: 'Empire Surf B2010 E64', fieldStructure: 'f3', rawFieldName: 'f3', …}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 4 API data: {
+  "id": 10327,
+  "homeTeam": "Empire Surf NPL B2010 Academy ",
+  "awayTeam": "Empire Surf B2010 E64",
+  "ageGroup": "U16 Boys",
+  "field": "f3",
+  "fieldId": 14,
+  "fieldName": "f3",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf NPL B2010 Academy ",
+  "awayTeamName": "Empire Surf B2010 E64"
+}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 4 transformed: {id: 10327, homeTeam: 'Empire Surf NPL B2010 Academy ', awayTeam: 'Empire Surf B2010 E64', ageGroup: 'U16 Boys', field: 'f3', …}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 5 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest B2010 EA', awayTeamStructure: 'Empire Surf B2010 E64', fieldStructure: 'f2', rawFieldName: 'f2', …}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 5 API data: {
+  "id": 10329,
+  "homeTeam": "City SC Southwest B2010 EA",
+  "awayTeam": "Empire Surf B2010 E64",
+  "ageGroup": "U16 Boys",
+  "field": "f2",
+  "fieldId": 9,
+  "fieldName": "f2",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B2010 EA",
+  "awayTeamName": "Empire Surf B2010 E64"
+}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 5 transformed: {id: 10329, homeTeam: 'City SC Southwest B2010 EA', awayTeam: 'Empire Surf B2010 E64', ageGroup: 'U16 Boys', field: 'f2', …}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 6 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf NPL B2010 Academy ', awayTeamStructure: 'Cal Elite B2010 - Charlie', fieldStructure: 'f3', rawFieldName: 'f3', …}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 6 API data: {
+  "id": 10328,
+  "homeTeam": "Empire Surf NPL B2010 Academy ",
+  "awayTeam": "Cal Elite B2010 - Charlie",
+  "ageGroup": "U16 Boys",
+  "field": "f3",
+  "fieldId": 14,
+  "fieldName": "f3",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf NPL B2010 Academy ",
+  "awayTeamName": "Cal Elite B2010 - Charlie"
+}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 6 transformed: {id: 10328, homeTeam: 'Empire Surf NPL B2010 Academy ', awayTeam: 'Cal Elite B2010 - Charlie', ageGroup: 'U16 Boys', field: 'f3', …}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 7 transformation debug: {raw: {…}, homeTeamStructure: 'TBD', awayTeamStructure: 'TBD', fieldStructure: 'f1', rawFieldName: 'f1', …}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 7 API data: {
+  "id": 10335,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "ageGroup": "U16 Boys",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "pending",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD"
+}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 7 transformed: {id: 10335, homeTeam: 'TBD', awayTeam: 'TBD', ageGroup: 'U16 Boys', field: 'f1', …}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 8 transformation debug: {raw: {…}, homeTeamStructure: 'ALBION Riverside B2010 EA', awayTeamStructure: 'Club Tijuana Xoloitzcuincles B2011', fieldStructure: 'f2', rawFieldName: 'f2', …}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 8 API data: {
+  "id": 10334,
+  "homeTeam": "ALBION Riverside B2010 EA",
+  "awayTeam": "Club Tijuana Xoloitzcuincles B2011",
+  "ageGroup": "U16 Boys",
+  "field": "f2",
+  "fieldId": 9,
+  "fieldName": "f2",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "ALBION Riverside B2010 EA",
+  "awayTeamName": "Club Tijuana Xoloitzcuincles B2011"
+}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 8 transformed: {id: 10334, homeTeam: 'ALBION Riverside B2010 EA', awayTeam: 'Club Tijuana Xoloitzcuincles B2011', ageGroup: 'U16 Boys', field: 'f2', …}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 9 transformation debug: {raw: {…}, homeTeamStructure: 'Rebels SC B2010 ECNL', awayTeamStructure: 'Club Tijuana Xoloitzcuincles B2011', fieldStructure: 'f1', rawFieldName: 'f1', …}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 9 API data: {
+  "id": 10333,
+  "homeTeam": "Rebels SC B2010 ECNL",
+  "awayTeam": "Club Tijuana Xoloitzcuincles B2011",
+  "ageGroup": "U16 Boys",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Rebels SC B2010 ECNL",
+  "awayTeamName": "Club Tijuana Xoloitzcuincles B2011"
+}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 9 transformed: {id: 10333, homeTeam: 'Rebels SC B2010 ECNL', awayTeam: 'Club Tijuana Xoloitzcuincles B2011', ageGroup: 'U16 Boys', field: 'f1', …}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 10 transformation debug: {raw: {…}, homeTeamStructure: 'Rebels SC B2010 ECNL', awayTeamStructure: 'ALBION Riverside B2010 EA', fieldStructure: 'f1', rawFieldName: 'f1', …}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 10 API data: {
+  "id": 10332,
+  "homeTeam": "Rebels SC B2010 ECNL",
+  "awayTeam": "ALBION Riverside B2010 EA",
+  "ageGroup": "U16 Boys",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Rebels SC B2010 ECNL",
+  "awayTeamName": "ALBION Riverside B2010 EA"
+}
+ScheduleViewerFixed-Jb1DAMRR.js:6 Game 10 transformed: {id: 10332, homeTeam: 'Rebels SC B2010 ECNL', awayTeam: 'ALBION Riverside B2010 EA', ageGroup: 'U16 Boys', field: 'f1', …}
