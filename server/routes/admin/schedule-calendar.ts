@@ -1,12 +1,12 @@
 import express from 'express';
 import { db } from '@db';
 import { games, teams, eventAgeGroups, fields, complexes, gameTimeSlots, events } from '@db/schema';
-import { eq, and, sql } from 'drizzle-orm';
+import { eq, and, sql, inArray } from 'drizzle-orm';
 
 const router = express.Router();
 
 // GET /api/admin/events/:eventId/schedule-calendar - Get calendar schedule data  
-router.get('/:eventId/schedule-calendar', async (req, res) => {
+router.get('/:eventId/schedule-calendar', async (req: any, res: any) => {
   try {
     const { eventId } = req.params;
     
