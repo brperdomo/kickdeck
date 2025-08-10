@@ -39,6 +39,7 @@ import gameMetadataRouter from "./routes/admin/game-metadata";
 import gameFormatsRouter from "./routes/admin/game-formats";
 // import matchupTemplatesRouter from "./routes/admin/matchup-templates.js";
 import bracketCreationSqlRouter from "./routes/admin/bracket-creation";
+import bracketCreationFixedRouter from "./routes/admin/bracket-creation-fixed";
 import bracketSubdivisionRouter from "./routes/admin/bracket-subdivision";
 import conflictDetectionRouter from "./routes/admin/conflict-detection";
 import adminBracketsRouter from "./routes/admin/brackets";
@@ -1184,6 +1185,7 @@ export function registerRoutes(app: Express): Server {
     }
   });
     app.use('/api/admin/events', isAdmin, bracketCreationSqlRouter); // Bracket creation and team assignment router
+    app.use('/api/admin/events', isAdmin, bracketCreationFixedRouter); // Enhanced bracket creation with placeholder support
     app.use('/api/admin/events', isAdmin, bracketSubdivisionRouter); // Multiple brackets per flight support
     app.use('/api/admin/games', isAdmin, gamesRouter); // Game management router
     app.use('/api/admin/schedule', isAdmin, scheduleManagementRouter); // Schedule management with drag-and-drop
