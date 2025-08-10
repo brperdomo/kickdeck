@@ -1,0 +1,512 @@
+{anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+index-vnuSTfVm.js:853 Google Maps API key length: 0 characters
+index-vnuSTfVm.js:853 Mapbox API key length: 93 characters
+index-vnuSTfVm.js:853 Google Maps API already loaded
+index-vnuSTfVm.js:657 Current route location (Wouter): /admin/events/1844329078/master-schedule
+index-vnuSTfVm.js:657 Current URL: https://app.matchpro.ai/admin/events/1844329078/master-schedule
+index-vnuSTfVm.js:657 Current pathname: /admin/events/1844329078/master-schedule
+index-vnuSTfVm.js:657 Current search: 
+index-vnuSTfVm.js:657 Fetching user with emulation token: not present
+shared-df7789195bf09b6f338558bdd92c931a.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+e @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+c @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+g @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+value @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+16720 @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e.O @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+shared-df7789195bf09b6f338558bdd92c931a.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+e @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+c @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+g @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+log @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+log @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+16720 @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e.O @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+7Fetch finished loading: GET "<URL>".
+index-vnuSTfVm.js:657 User data fetched: {id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: '$2b$12$d6n1CBWgsWFm0fh77F1OX.YxDZy7/O3aLSuJOuq4QkvOtFmSit7BC', firstName: 'Bryan', …}
+9Fetch failed loading: GET "<URL>".
+UnifiedTournamentControlCenter-B-L_Q0Id.js:1  GET https://app.matchpro.ai/api/admin/tournaments/1844329078/components-status 500 (Internal Server Error)
+queryFn @ UnifiedTournamentControlCenter-B-L_Q0Id.js:1
+i @ index-vnuSTfVm.js:41
+f @ index-vnuSTfVm.js:41
+start @ index-vnuSTfVm.js:41
+fetch @ index-vnuSTfVm.js:41
+ng @ index-vnuSTfVm.js:41
+onSubscribe @ index-vnuSTfVm.js:41
+subscribe @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+iW @ index-vnuSTfVm.js:39
+SS @ index-vnuSTfVm.js:41
+Jh @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+w @ index-vnuSTfVm.js:26
+A @ index-vnuSTfVm.js:26Understand this error
+UnifiedTournamentControlCenter-B-L_Q0Id.js:1  GET https://app.matchpro.ai/api/admin/tournaments/1844329078/status 500 (Internal Server Error)
+queryFn @ UnifiedTournamentControlCenter-B-L_Q0Id.js:1
+i @ index-vnuSTfVm.js:41
+f @ index-vnuSTfVm.js:41
+start @ index-vnuSTfVm.js:41
+fetch @ index-vnuSTfVm.js:41
+ng @ index-vnuSTfVm.js:41
+onSubscribe @ index-vnuSTfVm.js:41
+subscribe @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+iW @ index-vnuSTfVm.js:39
+SS @ index-vnuSTfVm.js:41
+Jh @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+w @ index-vnuSTfVm.js:26
+A @ index-vnuSTfVm.js:26Understand this error
+UnifiedTournamentControlCenter-B-L_Q0Id.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentControlCenter-B-L_Q0Id.js:1 Configured flights: 1 of 76
+shared-df7789195bf09b6f338558bdd92c931a.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+e @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+c @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+setTimeout
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+Promise.then
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+value @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+16720 @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e.O @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+shared-df7789195bf09b6f338558bdd92c931a.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+e @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+c @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+setTimeout
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+Promise.then
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+log @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+log @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+16720 @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e.O @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+chunk-CVIZYB43.js:3 [Violation] 'setTimeout' handler took 70ms
+util.js:33 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+$Aa @ util.js:33
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1384
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1384
+setTimeout
+Tda @ js?libraries=places&v=beta&callback=Function.prototype:1384
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641Understand this warning
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+Promise.then
+S @ out-4.5.44.js:1
+y @ out-4.5.44.js:1
+E @ out-4.5.44.js:1
+e.onload @ inner.html:1
+script
+(anonymous) @ inner.html:1
+(anonymous) @ inner.html:1
+UnifiedTournamentControlCenter-B-L_Q0Id.js:1  GET https://app.matchpro.ai/api/admin/tournaments/1844329078/status 500 (Internal Server Error)
+queryFn @ UnifiedTournamentControlCenter-B-L_Q0Id.js:1
+i @ index-vnuSTfVm.js:41
+f @ index-vnuSTfVm.js:41
+start @ index-vnuSTfVm.js:41
+fetch @ index-vnuSTfVm.js:41
+ng @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+setInterval
+wP @ index-vnuSTfVm.js:41
+NP @ index-vnuSTfVm.js:41
+onQueryUpdate @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+batch @ index-vnuSTfVm.js:41
+ac @ index-vnuSTfVm.js:41
+c @ index-vnuSTfVm.js:41
+h @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+Promise.catch
+f @ index-vnuSTfVm.js:41
+start @ index-vnuSTfVm.js:41
+fetch @ index-vnuSTfVm.js:41
+ng @ index-vnuSTfVm.js:41
+onSubscribe @ index-vnuSTfVm.js:41
+subscribe @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+iW @ index-vnuSTfVm.js:39
+SS @ index-vnuSTfVm.js:41
+Jh @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+w @ index-vnuSTfVm.js:26
+A @ index-vnuSTfVm.js:26Understand this error
+UnifiedTournamentControlCenter-B-L_Q0Id.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentControlCenter-B-L_Q0Id.js:1 Configured flights: 1 of 76
+chunk-CVIZYB43.js:3 [Violation] 'setTimeout' handler took 68ms
+shared-df7789195bf09b6f338558bdd92c931a.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+e @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+c @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+setTimeout
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+log @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+log @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+value @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+value @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+UnifiedTournamentControlCenter-B-L_Q0Id.js:1  GET https://app.matchpro.ai/api/admin/tournaments/1844329078/components-status 500 (Internal Server Error)
+queryFn @ UnifiedTournamentControlCenter-B-L_Q0Id.js:1
+i @ index-vnuSTfVm.js:41
+f @ index-vnuSTfVm.js:41
+start @ index-vnuSTfVm.js:41
+fetch @ index-vnuSTfVm.js:41
+ng @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+setInterval
+wP @ index-vnuSTfVm.js:41
+NP @ index-vnuSTfVm.js:41
+onQueryUpdate @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+batch @ index-vnuSTfVm.js:41
+ac @ index-vnuSTfVm.js:41
+c @ index-vnuSTfVm.js:41
+h @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+Promise.catch
+f @ index-vnuSTfVm.js:41
+start @ index-vnuSTfVm.js:41
+fetch @ index-vnuSTfVm.js:41
+ng @ index-vnuSTfVm.js:41
+onSubscribe @ index-vnuSTfVm.js:41
+subscribe @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+iW @ index-vnuSTfVm.js:39
+SS @ index-vnuSTfVm.js:41
+Jh @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+w @ index-vnuSTfVm.js:26
+A @ index-vnuSTfVm.js:26Understand this error
+UnifiedTournamentControlCenter-B-L_Q0Id.js:1  GET https://app.matchpro.ai/api/admin/tournaments/1844329078/status 500 (Internal Server Error)
+queryFn @ UnifiedTournamentControlCenter-B-L_Q0Id.js:1
+i @ index-vnuSTfVm.js:41
+f @ index-vnuSTfVm.js:41
+start @ index-vnuSTfVm.js:41
+fetch @ index-vnuSTfVm.js:41
+ng @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+setInterval
+wP @ index-vnuSTfVm.js:41
+NP @ index-vnuSTfVm.js:41
+onQueryUpdate @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+batch @ index-vnuSTfVm.js:41
+ac @ index-vnuSTfVm.js:41
+c @ index-vnuSTfVm.js:41
+h @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+Promise.catch
+f @ index-vnuSTfVm.js:41
+start @ index-vnuSTfVm.js:41
+fetch @ index-vnuSTfVm.js:41
+ng @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+setInterval
+wP @ index-vnuSTfVm.js:41
+NP @ index-vnuSTfVm.js:41
+onQueryUpdate @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+batch @ index-vnuSTfVm.js:41
+ac @ index-vnuSTfVm.js:41
+c @ index-vnuSTfVm.js:41
+h @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+Promise.catch
+f @ index-vnuSTfVm.js:41
+start @ index-vnuSTfVm.js:41
+fetch @ index-vnuSTfVm.js:41
+ng @ index-vnuSTfVm.js:41
+onSubscribe @ index-vnuSTfVm.js:41
+subscribe @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+iW @ index-vnuSTfVm.js:39
+SS @ index-vnuSTfVm.js:41
+Jh @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+w @ index-vnuSTfVm.js:26
+A @ index-vnuSTfVm.js:26Understand this error
+UnifiedTournamentControlCenter-B-L_Q0Id.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentControlCenter-B-L_Q0Id.js:1 Configured flights: 1 of 76
+UnifiedTournamentControlCenter-B-L_Q0Id.js:1  GET https://app.matchpro.ai/api/admin/tournaments/1844329078/status 500 (Internal Server Error)
+queryFn @ UnifiedTournamentControlCenter-B-L_Q0Id.js:1
+i @ index-vnuSTfVm.js:41
+f @ index-vnuSTfVm.js:41
+start @ index-vnuSTfVm.js:41
+fetch @ index-vnuSTfVm.js:41
+ng @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+setInterval
+wP @ index-vnuSTfVm.js:41
+NP @ index-vnuSTfVm.js:41
+onQueryUpdate @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+batch @ index-vnuSTfVm.js:41
+ac @ index-vnuSTfVm.js:41
+c @ index-vnuSTfVm.js:41
+h @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+Promise.catch
+f @ index-vnuSTfVm.js:41
+start @ index-vnuSTfVm.js:41
+fetch @ index-vnuSTfVm.js:41
+ng @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+setInterval
+wP @ index-vnuSTfVm.js:41
+NP @ index-vnuSTfVm.js:41
+onQueryUpdate @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+batch @ index-vnuSTfVm.js:41
+ac @ index-vnuSTfVm.js:41
+c @ index-vnuSTfVm.js:41
+h @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+Promise.catch
+f @ index-vnuSTfVm.js:41
+start @ index-vnuSTfVm.js:41
+fetch @ index-vnuSTfVm.js:41
+ng @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+setInterval
+wP @ index-vnuSTfVm.js:41
+NP @ index-vnuSTfVm.js:41
+onQueryUpdate @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+batch @ index-vnuSTfVm.js:41
+ac @ index-vnuSTfVm.js:41
+c @ index-vnuSTfVm.js:41
+h @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+Promise.catch
+f @ index-vnuSTfVm.js:41
+start @ index-vnuSTfVm.js:41
+fetch @ index-vnuSTfVm.js:41
+ng @ index-vnuSTfVm.js:41
+onSubscribe @ index-vnuSTfVm.js:41
+subscribe @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+iW @ index-vnuSTfVm.js:39
+SS @ index-vnuSTfVm.js:41
+Jh @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+w @ index-vnuSTfVm.js:26
+A @ index-vnuSTfVm.js:26Understand this error
+UnifiedTournamentControlCenter-B-L_Q0Id.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentControlCenter-B-L_Q0Id.js:1 Configured flights: 1 of 76
+UnifiedTournamentControlCenter-B-L_Q0Id.js:1  GET https://app.matchpro.ai/api/admin/tournaments/1844329078/components-status 500 (Internal Server Error)
+queryFn @ UnifiedTournamentControlCenter-B-L_Q0Id.js:1
+i @ index-vnuSTfVm.js:41
+f @ index-vnuSTfVm.js:41
+start @ index-vnuSTfVm.js:41
+fetch @ index-vnuSTfVm.js:41
+ng @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+setInterval
+wP @ index-vnuSTfVm.js:41
+NP @ index-vnuSTfVm.js:41
+onQueryUpdate @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+batch @ index-vnuSTfVm.js:41
+ac @ index-vnuSTfVm.js:41
+c @ index-vnuSTfVm.js:41
+h @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+Promise.catch
+f @ index-vnuSTfVm.js:41
+start @ index-vnuSTfVm.js:41
+fetch @ index-vnuSTfVm.js:41
+ng @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+setInterval
+wP @ index-vnuSTfVm.js:41
+NP @ index-vnuSTfVm.js:41
+onQueryUpdate @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+batch @ index-vnuSTfVm.js:41
+ac @ index-vnuSTfVm.js:41
+c @ index-vnuSTfVm.js:41
+h @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+Promise.catch
+f @ index-vnuSTfVm.js:41
+start @ index-vnuSTfVm.js:41
+fetch @ index-vnuSTfVm.js:41
+ng @ index-vnuSTfVm.js:41
+onSubscribe @ index-vnuSTfVm.js:41
+subscribe @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+iW @ index-vnuSTfVm.js:39
+SS @ index-vnuSTfVm.js:41
+Jh @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+w @ index-vnuSTfVm.js:26
+A @ index-vnuSTfVm.js:26Understand this error
+UnifiedTournamentControlCenter-B-L_Q0Id.js:1  GET https://app.matchpro.ai/api/admin/tournaments/1844329078/status 500 (Internal Server Error)
+queryFn @ UnifiedTournamentControlCenter-B-L_Q0Id.js:1
+i @ index-vnuSTfVm.js:41
+f @ index-vnuSTfVm.js:41
+start @ index-vnuSTfVm.js:41
+fetch @ index-vnuSTfVm.js:41
+ng @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+setInterval
+wP @ index-vnuSTfVm.js:41
+NP @ index-vnuSTfVm.js:41
+onQueryUpdate @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+batch @ index-vnuSTfVm.js:41
+ac @ index-vnuSTfVm.js:41
+c @ index-vnuSTfVm.js:41
+h @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+Promise.catch
+f @ index-vnuSTfVm.js:41
+start @ index-vnuSTfVm.js:41
+fetch @ index-vnuSTfVm.js:41
+ng @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+setInterval
+wP @ index-vnuSTfVm.js:41
+NP @ index-vnuSTfVm.js:41
+onQueryUpdate @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+batch @ index-vnuSTfVm.js:41
+ac @ index-vnuSTfVm.js:41
+c @ index-vnuSTfVm.js:41
+h @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+Promise.catch
+f @ index-vnuSTfVm.js:41
+start @ index-vnuSTfVm.js:41
+fetch @ index-vnuSTfVm.js:41
+ng @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+setInterval
+wP @ index-vnuSTfVm.js:41
+NP @ index-vnuSTfVm.js:41
+onQueryUpdate @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+batch @ index-vnuSTfVm.js:41
+ac @ index-vnuSTfVm.js:41
+c @ index-vnuSTfVm.js:41
+h @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+Promise.catch
+f @ index-vnuSTfVm.js:41
+start @ index-vnuSTfVm.js:41
+fetch @ index-vnuSTfVm.js:41
+ng @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+setInterval
+wP @ index-vnuSTfVm.js:41
+NP @ index-vnuSTfVm.js:41
+onQueryUpdate @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+batch @ index-vnuSTfVm.js:41
+ac @ index-vnuSTfVm.js:41
+c @ index-vnuSTfVm.js:41
+h @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+Promise.catch
+f @ index-vnuSTfVm.js:41
+start @ index-vnuSTfVm.js:41
+fetch @ index-vnuSTfVm.js:41
+ng @ index-vnuSTfVm.js:41
+onSubscribe @ index-vnuSTfVm.js:41
+subscribe @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+iW @ index-vnuSTfVm.js:39
+SS @ index-vnuSTfVm.js:41
+Jh @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+w @ index-vnuSTfVm.js:26
+A @ index-vnuSTfVm.js:26Understand this error
+UnifiedTournamentControlCenter-B-L_Q0Id.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentControlCenter-B-L_Q0Id.js:1 Configured flights: 1 of 76

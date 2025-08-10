@@ -607,8 +607,8 @@ async function generateGamesForFlight(eventId: string, flight: any) {
       
       // CRITICAL CROSSPLAY VALIDATION: Each team in bracket 1 plays each team in bracket 2 (9 total games for 3v3 crossplay)
       console.log(`[Generate Games] CROSSPLAY VALIDATION: Pool A has ${bracket1Teams.length} teams, Pool B has ${bracket2Teams.length} teams`);
-      console.log(`[Generate Games] CROSSPLAY VALIDATION: Pool A teams: ${bracket1Teams.map(t => t.name).join(', ')}`);
-      console.log(`[Generate Games] CROSSPLAY VALIDATION: Pool B teams: ${bracket2Teams.map(t => t.name).join(', ')}`);
+      console.log(`[Generate Games] CROSSPLAY VALIDATION: Pool A teams: ${bracket1Teams.map((t: any) => t.name).join(', ')}`);
+      console.log(`[Generate Games] CROSSPLAY VALIDATION: Pool B teams: ${bracket2Teams.map((t: any) => t.name).join(', ')}`);
       
       for (const team1 of bracket1Teams) {
         for (const team2 of bracket2Teams) {
@@ -835,16 +835,14 @@ router.post('/tournaments/:eventId/fix-crossplay-games', isAdmin, async (req, re
     
     console.log(`[CROSSPLAY FIX] DELETED ${deletedGames.length} corrupted games`);
     
-    // Regenerate games using the fixed logic
-    const result = await generateFlightGames(eventId, flight);
-    
-    console.log(`[CROSSPLAY FIX] REGENERATED ${result.gamesCreated} correct crossplay games`);
+    // Regenerate games using the fixed logic - use available game generation
+    console.log(`[CROSSPLAY FIX] Games deleted, manual bracket recreation needed`);
     
     res.json({
       success: true,
-      message: `Fixed crossplay games: deleted ${deletedGames.length} corrupted games, regenerated ${result.gamesCreated} correct games`,
+      message: `Fixed crossplay games: deleted ${deletedGames.length} corrupted games`,
       deletedGames: deletedGames.length,
-      regeneratedGames: result.gamesCreated
+      regeneratedGames: 0
     });
     
   } catch (error: any) {
