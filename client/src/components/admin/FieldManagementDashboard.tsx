@@ -71,11 +71,14 @@ export default function FieldManagementDashboard({ eventId }: FieldManagementDas
     );
   }
 
-  const fields = fieldsData?.fields || [];
+  // Handle both response formats: direct array or nested in fields property
+  const fields = Array.isArray(fieldsData) ? fieldsData : (fieldsData?.fields || []);
   
   console.log(`[DEBUG] Fields data:`, fieldsData);
   console.log(`[DEBUG] Fields array:`, fields);
   console.log(`[DEBUG] Fields length:`, fields.length);
+  console.log(`[DEBUG] Is fieldsData an array?:`, Array.isArray(fieldsData));
+  console.log(`[DEBUG] fieldsData.fields exists?:`, !!fieldsData?.fields);
   
   if (error) {
     console.error(`[DEBUG] Query error:`, error);

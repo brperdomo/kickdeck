@@ -474,11 +474,13 @@ router.delete('/events/:eventId/flights/:flightId/format', isAdmin, async (req, 
     console.log(`🔄 [Reset Format] Found ${existingFormats.length} existing formats:`, existingFormats);
 
     if (existingFormats.length === 0) {
-      console.log(`🔄 [Reset Format] No formats found to delete for flight ${flightId}`);
+      console.log(`🔄 [Reset Format] No formats found to delete for flight ${flightId} (${flightBrackets[0].name})`);
+      console.log(`🔄 [Reset Format] This flight either has no formats configured or was already reset`);
       return res.json({ 
         success: true, 
-        message: `No formats to reset for flight ${flightId}`,
-        flightInfo: flightBrackets[0]
+        message: `No formats to reset for flight ${flightId} (${flightBrackets[0].name}) - either no formats configured or already reset`,
+        flightInfo: flightBrackets[0],
+        wasAlreadyReset: true
       });
     }
 
