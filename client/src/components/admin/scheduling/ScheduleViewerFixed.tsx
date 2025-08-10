@@ -102,23 +102,6 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Fetch available teams for a specific flight when editing
-  const { data: flightTeams } = useQuery({
-    queryKey: ['flight-teams', eventId, editingGame],
-    queryFn: async () => {
-      if (!editingGame) return [];
-      const game = scheduleData?.games.find(g => g.id === editingGame);
-      if (!game?.bracketId) return [];
-      
-      const response = await fetch(`/api/admin/events/${eventId}/brackets/${game.bracketId}/teams`, {
-        credentials: 'include'
-      });
-      if (!response.ok) throw new Error('Failed to fetch teams');
-      return response.json();
-    },
-    enabled: !!editingGame && !!scheduleData
-  });
-
   const { data: scheduleData, isLoading, error } = useQuery<ScheduleData>({
     queryKey: ['schedule-data', eventId],
     queryFn: async () => {
@@ -256,6 +239,23 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
     refetchOnWindowFocus: true,
     refetchInterval: 5000, // Auto-refresh every 5 seconds for real-time updates
     staleTime: 1000 // Consider data stale after 1 second
+  });
+
+  // Fetch available teams for a specific flight when editing - moved after scheduleData declaration
+  const { data: flightTeams } = useQuery({
+    queryKey: ['flight-teams', eventId, editingGame],
+    queryFn: async () => {
+      if (!editingGame) return [];
+      const game = scheduleData?.games.find(g => g.id === editingGame);
+      if (!game?.bracketId) return [];
+      
+      const response = await fetch(`/api/admin/events/${eventId}/brackets/${game.bracketId}/teams`, {
+        credentials: 'include'
+      });
+      if (!response.ok) throw new Error('Failed to fetch teams');
+      return response.json();
+    },
+    enabled: !!editingGame && !!scheduleData
   });
 
   // Memoize filtered games to prevent unnecessary recalculations
