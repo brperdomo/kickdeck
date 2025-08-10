@@ -7,7 +7,7 @@ import {
   tournamentGroups,
   games 
 } from '@db/schema';
-import { eq, and, isNull, isNotNull, inArray } from 'drizzle-orm';
+import { eq, and, isNull, isNotNull, inArray, or } from 'drizzle-orm';
 
 const router = Router();
 
@@ -18,60 +18,103 @@ router.get('/events/:eventId/bracket-assignments', async (req, res) => {
     
     console.log(`BRACKET ASSIGNMENT DEBUG: Fetching data for event ${eventId}`);
 
-    // Get all age groups for this event first
-    const ageGroups = await db
+    // Get all flights (main eventBrackets that represent flights, not individual groups)
+    // Identify flights by excluding Group A/B specific brackets
+    const allBrackets = await db
       .select({
-        id: eventAgeGroups.id,
+        flightId: eventBrackets.id,
+        flightName: eventBrackets.name,
+        flightLevel: eventBrackets.level,
+        ageGroupId: eventBrackets.ageGroupId,
         ageGroup: eventAgeGroups.ageGroup,
         gender: eventAgeGroups.gender,
         birthYear: eventAgeGroups.birthYear,
-        divisionCode: eventAgeGroups.divisionCode
+        tournamentFormat: eventBrackets.tournamentFormat
       })
-      .from(eventAgeGroups)
+      .from(eventBrackets)
+      .innerJoin(eventAgeGroups, eq(eventBrackets.ageGroupId, eventAgeGroups.id))
       .where(eq(eventAgeGroups.eventId, eventId));
 
-    console.log(`BRACKET ASSIGNMENT DEBUG: Found ${ageGroups.length} age groups`);
+    // Filter to get only main flights (not Group A/B sub-brackets)
+    const flights = allBrackets.filter(bracket => 
+      !bracket.flightName.includes('Group A') && 
+      !bracket.flightName.includes('Group B') &&
+      !bracket.flightName.includes('Group 1A') &&
+      !bracket.flightName.includes('Group 1B') &&
+      !bracket.flightName.includes('Group 2A') &&
+      !bracket.flightName.includes('Group 2B')
+    );
 
-    const bracketAssignmentData = [];
+    console.log(`BRACKET ASSIGNMENT DEBUG: Found ${flights.length} flights:`, 
+      flights.map(f => `${f.ageGroup} ${f.gender} - ${f.flightName}`));
 
-    for (const ageGroup of ageGroups) {
-      // Get all brackets for this age group
-      const brackets = await db
-        .select({
-          id: eventBrackets.id,
-          name: eventBrackets.name,
-          tournamentFormat: eventBrackets.tournamentFormat,
-          level: eventBrackets.level,
-          sortOrder: eventBrackets.sortOrder
-        })
-        .from(eventBrackets)
-        .where(and(
-          eq(eventBrackets.eventId, eventId),
-          eq(eventBrackets.ageGroupId, ageGroup.id)
-        ));
+    const bracketAssignmentData = await Promise.all(
+      flights.map(async (flight) => {
+        // Look for Group A/B brackets that belong to this flight
+        const relatedBrackets = await db
+          .select({
+            id: eventBrackets.id,
+            name: eventBrackets.name,
+            tournamentFormat: eventBrackets.tournamentFormat,
+            level: eventBrackets.level
+          })
+          .from(eventBrackets)
+          .where(and(
+            eq(eventBrackets.eventId, eventId),
+            eq(eventBrackets.ageGroupId, flight.ageGroupId),
+            // Find brackets that match this flight's name pattern
+            or(
+              eq(eventBrackets.name, flight.flightName),
+              eq(eventBrackets.name, `${flight.flightName} Group A`),
+              eq(eventBrackets.name, `${flight.flightName} Group B`),
+              eq(eventBrackets.name, `${flight.flightName} Group 1A`),
+              eq(eventBrackets.name, `${flight.flightName} Group 1B`),
+              eq(eventBrackets.name, `${flight.flightName} Group 2A`),
+              eq(eventBrackets.name, `${flight.flightName} Group 2B`)
+            )
+          ));
 
-      console.log(`BRACKET ASSIGNMENT DEBUG: Age group ${ageGroup.divisionCode} has ${brackets.length} brackets:`, 
-        brackets.map(b => b.name));
+        // If no related brackets found with Group naming, this might be a single bracket flight
+        let finalBrackets = relatedBrackets;
+        if (relatedBrackets.length === 0) {
+          // This is likely a single bracket flight, use tournament groups or the flight itself
+          const tournamentGroupsForFlight = await db
+            .select({
+              id: tournamentGroups.id,
+              name: tournamentGroups.name,
+              type: tournamentGroups.type,
+              stage: tournamentGroups.stage
+            })
+            .from(tournamentGroups)
+            .where(and(
+              eq(tournamentGroups.eventId, eventId),
+              eq(tournamentGroups.ageGroupId, flight.ageGroupId)
+            ));
 
-      // Group brackets by flight level (Elite, Premier, Classic)
-      const flightGroups = new Map();
-      
-      for (const bracket of brackets) {
-        const flightLevel = bracket.name.includes('Elite') ? 'Elite' : 
-                           bracket.name.includes('Premier') ? 'Premier' : 
-                           bracket.name.includes('Classic') ? 'Classic' : 'Other';
-        
-        if (!flightGroups.has(flightLevel)) {
-          flightGroups.set(flightLevel, []);
+          if (tournamentGroupsForFlight.length > 0) {
+            finalBrackets = tournamentGroupsForFlight.map(tg => ({
+              id: tg.id,
+              name: tg.name,
+              tournamentFormat: 'tournament_group',
+              level: flight.flightLevel
+            }));
+          } else {
+            // Single bracket flight - use the flight itself as the bracket
+            finalBrackets = [{
+              id: flight.flightId,
+              name: flight.flightName,
+              tournamentFormat: flight.tournamentFormat,
+              level: flight.flightLevel
+            }];
+          }
         }
-        flightGroups.get(flightLevel).push(bracket);
-      }
 
-      // Create flight data for each group
-      for (const [flightLevel, flightBrackets] of flightGroups) {
-        // Get teams for each bracket in this flight
+        console.log(`BRACKET ASSIGNMENT DEBUG: Flight ${flight.flightName} has ${finalBrackets.length} related brackets:`, 
+          finalBrackets.map(b => b.name));
+
+        // Get teams for each related bracket
         const bracketsWithTeams = await Promise.all(
-          flightBrackets.map(async (bracket) => {
+          finalBrackets.map(async (bracket) => {
             const bracketTeams = await db
               .select({
                 id: teams.id,
@@ -98,7 +141,8 @@ router.get('/events/:eventId/bracket-assignments', async (req, res) => {
           })
         );
 
-        // Get unassigned teams for this flight level (teams that should be in this flight but aren't assigned to any bracket)
+        // Get unassigned teams for this flight
+        const allFlightBracketIds = finalBrackets.map(b => b.id);
         const allTeamsInAgeGroup = await db
           .select({
             id: teams.id,
@@ -111,51 +155,50 @@ router.get('/events/:eventId/bracket-assignments', async (req, res) => {
           })
           .from(teams)
           .where(and(
-            eq(teams.ageGroupId, ageGroup.id),
+            eq(teams.ageGroupId, flight.ageGroupId),
             eq(teams.status, 'approved')
           ));
 
-        // Find unassigned teams (teams not in any bracket from this flight)
+        // Find teams that should be in this flight but aren't assigned to any of its brackets
         const assignedTeamIds = new Set(
           bracketsWithTeams.flatMap(bracket => bracket.teams.map(team => team.id))
         );
-        const unassignedTeams = allTeamsInAgeGroup.filter(team => !assignedTeamIds.has(team.id));
+        const unassignedTeams = allTeamsInAgeGroup.filter(team => 
+          !assignedTeamIds.has(team.id) && 
+          (!team.bracketId || allFlightBracketIds.includes(team.bracketId))
+        );
 
         const totalTeams = bracketsWithTeams.reduce((sum, bracket) => sum + bracket.teamCount, 0);
 
-        console.log(`BRACKET ASSIGNMENT DEBUG: Flight ${ageGroup.divisionCode} ${flightLevel}:
+        console.log(`BRACKET ASSIGNMENT DEBUG: Flight ${flight.flightName}:
           - Total teams: ${totalTeams}
           - Brackets: ${bracketsWithTeams.length}
           - Unassigned teams: ${unassignedTeams.length}`);
 
-        // Check if this flight has completed bracket play (has games generated)
+        // Check if this flight has completed bracket play
         const hasGames = await db.query.games.findFirst({
           where: and(
             eq(games.eventId, eventId),
-            eq(games.ageGroupId, ageGroup.id)
+            eq(games.ageGroupId, flight.ageGroupId)
           )
         });
 
         const isCompleted = !!hasGames && bracketsWithTeams.length > 0;
 
-        // Create a flight entry for this level
-        const flightName = `Nike ${flightLevel}`;
-        const primaryBracket = flightBrackets[0]; // Use first bracket as representative
-
-        bracketAssignmentData.push({
-          flightId: primaryBracket.id,
-          flightName: flightName,
-          flightLevel: flightLevel.toLowerCase(),
-          ageGroup: ageGroup.ageGroup,
-          gender: ageGroup.gender,
-          birthYear: ageGroup.birthYear,
+        return {
+          flightId: flight.flightId,
+          flightName: flight.flightName,
+          flightLevel: flight.flightLevel,
+          ageGroup: flight.ageGroup,
+          gender: flight.gender,
+          birthYear: flight.birthYear,
           totalTeams: totalTeams,
           brackets: bracketsWithTeams,
           unassignedTeams,
           isCompleted
-        });
-      }
-    }
+        };
+      })
+    );
 
     // Sort flights by gender (boys first) then by age descending
     const sortedData = bracketAssignmentData.sort((a, b) => {
