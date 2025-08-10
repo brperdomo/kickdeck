@@ -22,7 +22,8 @@ import {
   Database,
   Trash2,
   X,
-  AlertTriangle
+  AlertTriangle,
+  ArrowLeftRight
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -97,6 +98,7 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
   
   // Team editing state
   const [editingGame, setEditingGame] = useState<number | null>(null);
+  const [swappingTeam, setSwappingTeam] = useState<{ gameId: number; teamId: number; teamName: string; position: 'home' | 'away' } | null>(null);
   const [availableTeams, setAvailableTeams] = useState<Array<{id: number, name: string, flightName: string}>>([]);
   
   const { toast } = useToast();
@@ -383,6 +385,34 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
     },
     onError: (error) => {
       toast({ title: 'Failed to update game teams', variant: 'destructive' });
+    }
+  });
+
+  // Team swapping mutation
+  const swapTeamsMutation = useMutation({
+    mutationFn: async ({ game1Id, team1Id, team1Position, game2Id, team2Id, team2Position }: {
+      game1Id: number; team1Id: number; team1Position: 'home' | 'away';
+      game2Id: number; team2Id: number; team2Position: 'home' | 'away';
+    }) => {
+      const response = await fetch(`/api/admin/events/${eventId}/games/swap-teams`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ 
+          game1Id, team1Id, team1Position,
+          game2Id, team2Id, team2Position
+        })
+      });
+      if (!response.ok) throw new Error('Failed to swap teams');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['schedule-data', eventId] });
+      setSwappingTeam(null);
+      toast({ title: 'Teams swapped successfully', variant: 'default' });
+    },
+    onError: (error) => {
+      toast({ title: 'Failed to swap teams', variant: 'destructive' });
     }
   });
 
@@ -797,10 +827,76 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                         ) : (
                           // Normal Game Display
                           <div className="space-y-1">
-                            <div className="font-medium text-gray-900">
-                              {game.homeTeam} vs {game.awayTeam}
+                            <div className="font-medium text-gray-900 flex items-center gap-2">
+                              <div className="flex items-center gap-2">
+                                <span 
+                                  className={`cursor-pointer hover:bg-blue-100 px-1 rounded ${
+                                    swappingTeam?.teamId === game.homeTeamId ? 'bg-blue-200' : ''
+                                  }`}
+                                  onClick={() => {
+                                    if (swappingTeam) {
+                                      // Complete the swap
+                                      if (swappingTeam.teamId === game.homeTeamId) {
+                                        setSwappingTeam(null); // Cancel if clicking same team
+                                      } else {
+                                        swapTeamsMutation.mutate({
+                                          game1Id: swappingTeam.gameId,
+                                          team1Id: swappingTeam.teamId,
+                                          team1Position: swappingTeam.position,
+                                          game2Id: game.id,
+                                          team2Id: game.homeTeamId!,
+                                          team2Position: 'home'
+                                        });
+                                      }
+                                    } else {
+                                      // Start swapping
+                                      setSwappingTeam({
+                                        gameId: game.id,
+                                        teamId: game.homeTeamId!,
+                                        teamName: game.homeTeam,
+                                        position: 'home'
+                                      });
+                                    }
+                                  }}
+                                >
+                                  {game.homeTeam}
+                                </span>
+                                vs
+                                <span 
+                                  className={`cursor-pointer hover:bg-blue-100 px-1 rounded ${
+                                    swappingTeam?.teamId === game.awayTeamId ? 'bg-blue-200' : ''
+                                  }`}
+                                  onClick={() => {
+                                    if (swappingTeam) {
+                                      // Complete the swap
+                                      if (swappingTeam.teamId === game.awayTeamId) {
+                                        setSwappingTeam(null); // Cancel if clicking same team
+                                      } else {
+                                        swapTeamsMutation.mutate({
+                                          game1Id: swappingTeam.gameId,
+                                          team1Id: swappingTeam.teamId,
+                                          team1Position: swappingTeam.position,
+                                          game2Id: game.id,
+                                          team2Id: game.awayTeamId!,
+                                          team2Position: 'away'
+                                        });
+                                      }
+                                    } else {
+                                      // Start swapping
+                                      setSwappingTeam({
+                                        gameId: game.id,
+                                        teamId: game.awayTeamId!,
+                                        teamName: game.awayTeam,
+                                        position: 'away'
+                                      });
+                                    }
+                                  }}
+                                >
+                                  {game.awayTeam}
+                                </span>
+                              </div>
                               {hasUnassignedFields && (
-                                <AlertTriangle className="h-4 w-4 text-yellow-600 inline ml-2" />
+                                <AlertTriangle className="h-4 w-4 text-yellow-600" />
                               )}
                             </div>
                             <div className="flex items-center space-x-4 text-sm text-gray-600">
@@ -865,6 +961,36 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
           )}
         </CardContent>
       </Card>
+
+      {/* Team Swapping Indicator */}
+      {swappingTeam && (
+        <div className="fixed top-4 right-4 z-40">
+          <Card className="bg-blue-50 border-blue-200">
+            <CardContent className="p-3">
+              <div className="flex items-center gap-2 text-blue-800">
+                <ArrowLeftRight className="h-4 w-4" />
+                <div className="text-sm">
+                  <div className="font-medium">Swapping Mode Active</div>
+                  <div className="text-xs">
+                    Selected: {swappingTeam.teamName} ({swappingTeam.position})
+                  </div>
+                  <div className="text-xs text-blue-600">
+                    Click another team to complete swap
+                  </div>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setSwappingTeam(null)}
+                  className="h-6 w-6 p-0 text-blue-600 hover:bg-blue-100"
+                >
+                  <X className="h-3 w-3" />
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       {/* Delete Confirmation Dialog */}
       {showDeleteConfirm && (

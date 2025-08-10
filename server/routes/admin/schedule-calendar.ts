@@ -387,4 +387,87 @@ router.put('/games/:gameId/reschedule', async (req, res) => {
   }
 });
 
+// POST /api/admin/events/:eventId/games/swap-teams - Swap teams between games
+router.post('/:eventId/games/swap-teams', async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const { game1Id, team1Id, team1Position, game2Id, team2Id, team2Position } = req.body;
+    
+    console.log(`[TEAM SWAP] Starting team swap for event ${eventId}`);
+    console.log(`[TEAM SWAP] Game 1: ${game1Id}, Team 1: ${team1Id} (${team1Position})`);
+    console.log(`[TEAM SWAP] Game 2: ${game2Id}, Team 2: ${team2Id} (${team2Position})`);
+
+    // Validate input
+    if (!game1Id || !team1Id || !team1Position || !game2Id || !team2Id || !team2Position) {
+      return res.status(400).json({ error: 'Missing required fields for team swap' });
+    }
+
+    // Verify both games exist and belong to the event
+    const game1 = await db.query.games.findFirst({
+      where: and(eq(games.id, game1Id), eq(games.eventId, eventId))
+    });
+
+    const game2 = await db.query.games.findFirst({
+      where: and(eq(games.id, game2Id), eq(games.eventId, eventId))
+    });
+
+    if (!game1 || !game2) {
+      return res.status(404).json({ error: 'One or both games not found' });
+    }
+
+    // Verify teams exist and belong to the same flight/bracket
+    const team1 = await db.query.teams.findFirst({
+      where: eq(teams.id, team1Id)
+    });
+
+    const team2 = await db.query.teams.findFirst({
+      where: eq(teams.id, team2Id)
+    });
+
+    if (!team1 || !team2) {
+      return res.status(404).json({ error: 'One or both teams not found' });
+    }
+
+    if (team1.bracketId !== team2.bracketId) {
+      return res.status(400).json({ 
+        error: 'Teams must be from the same flight/bracket to be swapped' 
+      });
+    }
+
+    // Perform the swap
+    if (team1Position === 'home') {
+      await db.update(games)
+        .set({ homeTeamId: team2Id })
+        .where(eq(games.id, game1Id));
+    } else {
+      await db.update(games)
+        .set({ awayTeamId: team2Id })
+        .where(eq(games.id, game1Id));
+    }
+
+    if (team2Position === 'home') {
+      await db.update(games)
+        .set({ homeTeamId: team1Id })
+        .where(eq(games.id, game2Id));
+    } else {
+      await db.update(games)
+        .set({ awayTeamId: team1Id })
+        .where(eq(games.id, game2Id));
+    }
+
+    console.log(`[TEAM SWAP] Successfully swapped teams between games ${game1Id} and ${game2Id}`);
+    
+    res.json({ 
+      success: true, 
+      message: 'Teams swapped successfully' 
+    });
+  } catch (error) {
+    console.error('[TEAM SWAP] Error swapping teams:', error);
+    res.status(500).json({ 
+      error: 'Failed to swap teams',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
 export default router;
