@@ -203,6 +203,8 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
         id: game.gameId,
         homeTeam: homeTeam?.name || 'TBD',
         awayTeam: awayTeam?.name || 'TBD', 
+        homeTeamId: game.homeTeamId,
+        awayTeamId: game.awayTeamId,
         ageGroup: ageGroupDisplay,
         field: assignedField?.name || 'Field Unknown',
         fieldId: game.fieldId || null,
@@ -215,7 +217,9 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
         homeScore: null,
         awayScore: null,
         homeTeamName: homeTeam?.name || 'TBD',
-        awayTeamName: awayTeam?.name || 'TBD'
+        awayTeamName: awayTeam?.name || 'TBD',
+        bracketId: homeTeam?.bracketId || awayTeam?.bracketId,
+        flightName: homeTeam?.bracketId ? `Flight ${homeTeam.bracketId}` : undefined
       });
     }
 

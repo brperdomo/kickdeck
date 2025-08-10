@@ -407,12 +407,14 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
       return response.json();
     },
     onSuccess: () => {
+      console.log('SWAP SUCCESS: Teams swapped successfully');
       queryClient.invalidateQueries({ queryKey: ['schedule-data', eventId] });
       setSwappingTeam(null);
       toast({ title: 'Teams swapped successfully', variant: 'default' });
     },
     onError: (error) => {
-      toast({ title: 'Failed to swap teams', variant: 'destructive' });
+      console.error('SWAP ERROR:', error);
+      toast({ title: 'Failed to swap teams', description: error.message, variant: 'destructive' });
     }
   });
 
@@ -834,25 +836,47 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                                     swappingTeam?.teamId === game.homeTeamId ? 'bg-blue-200' : ''
                                   }`}
                                   onClick={() => {
+                                    console.log('HOME TEAM CLICKED:', {
+                                      gameId: game.id,
+                                      homeTeamId: game.homeTeamId,
+                                      homeTeam: game.homeTeam,
+                                      swappingTeam: swappingTeam
+                                    });
+                                    
+                                    if (!game.homeTeamId) {
+                                      console.warn('Cannot swap: homeTeamId is missing');
+                                      return;
+                                    }
+                                    
                                     if (swappingTeam) {
                                       // Complete the swap
                                       if (swappingTeam.teamId === game.homeTeamId) {
+                                        console.log('Canceling swap - same team clicked');
                                         setSwappingTeam(null); // Cancel if clicking same team
                                       } else {
+                                        console.log('Executing swap:', {
+                                          game1Id: swappingTeam.gameId,
+                                          team1Id: swappingTeam.teamId,
+                                          team1Position: swappingTeam.position,
+                                          game2Id: game.id,
+                                          team2Id: game.homeTeamId,
+                                          team2Position: 'home'
+                                        });
                                         swapTeamsMutation.mutate({
                                           game1Id: swappingTeam.gameId,
                                           team1Id: swappingTeam.teamId,
                                           team1Position: swappingTeam.position,
                                           game2Id: game.id,
-                                          team2Id: game.homeTeamId!,
+                                          team2Id: game.homeTeamId,
                                           team2Position: 'home'
                                         });
                                       }
                                     } else {
                                       // Start swapping
+                                      console.log('Starting swap mode with home team');
                                       setSwappingTeam({
                                         gameId: game.id,
-                                        teamId: game.homeTeamId!,
+                                        teamId: game.homeTeamId,
                                         teamName: game.homeTeam,
                                         position: 'home'
                                       });
@@ -867,25 +891,47 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                                     swappingTeam?.teamId === game.awayTeamId ? 'bg-blue-200' : ''
                                   }`}
                                   onClick={() => {
+                                    console.log('AWAY TEAM CLICKED:', {
+                                      gameId: game.id,
+                                      awayTeamId: game.awayTeamId,
+                                      awayTeam: game.awayTeam,
+                                      swappingTeam: swappingTeam
+                                    });
+                                    
+                                    if (!game.awayTeamId) {
+                                      console.warn('Cannot swap: awayTeamId is missing');
+                                      return;
+                                    }
+                                    
                                     if (swappingTeam) {
                                       // Complete the swap
                                       if (swappingTeam.teamId === game.awayTeamId) {
+                                        console.log('Canceling swap - same team clicked');
                                         setSwappingTeam(null); // Cancel if clicking same team
                                       } else {
+                                        console.log('Executing swap:', {
+                                          game1Id: swappingTeam.gameId,
+                                          team1Id: swappingTeam.teamId,
+                                          team1Position: swappingTeam.position,
+                                          game2Id: game.id,
+                                          team2Id: game.awayTeamId,
+                                          team2Position: 'away'
+                                        });
                                         swapTeamsMutation.mutate({
                                           game1Id: swappingTeam.gameId,
                                           team1Id: swappingTeam.teamId,
                                           team1Position: swappingTeam.position,
                                           game2Id: game.id,
-                                          team2Id: game.awayTeamId!,
+                                          team2Id: game.awayTeamId,
                                           team2Position: 'away'
                                         });
                                       }
                                     } else {
                                       // Start swapping
+                                      console.log('Starting swap mode with away team');
                                       setSwappingTeam({
                                         gameId: game.id,
-                                        teamId: game.awayTeamId!,
+                                        teamId: game.awayTeamId,
                                         teamName: game.awayTeam,
                                         position: 'away'
                                       });
