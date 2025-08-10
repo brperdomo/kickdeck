@@ -278,11 +278,10 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
         awayTeamName: awayTeam?.name || 'TBD',
         bracketId: homeTeam?.bracketId || awayTeam?.bracketId || game.groupId,
         flightName: (() => {
-          // Map specific tournament groups to flight names for U19 Boys
+          // Map specific tournament groups to flight names for U19 Boys (TWO FLIGHTS ONLY)
           if (game.ageGroupId === 9965) { // U19 Boys
-            if (game.groupId === 76) return 'Nike Premier';
-            if (game.groupId === 78) return 'Nike Elite';
-            if (game.groupId === 77) return 'Nike Classic';
+            if (game.groupId === 76) return 'Nike Premier'; // Flight with 2 brackets (10 games)
+            if (game.groupId === 78) return 'Nike Elite';   // Flight with 1 bracket (7 games)
           }
           // Fallback to bracket name or round
           return game.bracketName || (game.round === 10 ? 'Championship' : `Round ${game.round}`);
