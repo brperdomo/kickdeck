@@ -1,12 +1,12 @@
-import Stripe from 'stripe';
+import Stripe from "stripe";
 import { db } from "../../db";
 import { teams, paymentTransactions, events } from "../../db/schema";
-import { eq } from 'drizzle-orm';
-import { log } from '../vite';
-import { sendRegistrationReceiptEmail } from './emailService';
+import { eq } from "drizzle-orm";
+import { log } from "../vite";
+import { sendRegistrationReceiptEmail } from "./emailService";
 
 if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
+  throw new Error("Missing required Stripe secret: STRIPE_SECRET_KEY");
 }
 
 // In production, we can add a version check to ensure our API version stays current
@@ -18,7 +18,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 });
 
 // Check Stripe API version on startup (only in production)
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === "production") {
   checkStripeApiVersion();
 }
 
@@ -31,33 +31,41 @@ async function checkStripeApiVersion() {
     // Current API version might be outdated if a new version is available
     console.log(`Using Stripe API version: ${STRIPE_API_VERSION}`);
   } catch (error) {
-    console.warn('Could not verify Stripe API version:', error);
+    console.warn("Could not verify Stripe API version:", error);
   }
 }
 
 /**
  * Creates a payment intent for a team registration
  */
-export async function createPaymentIntent(amount: number, teamId: number | string, metadata?: Record<string, string>) {
+export async function createPaymentIntent(
+  amount: number,
+  teamId: number | string,
+  metadata?: Record<string, string>,
+) {
   try {
     // Fetch team details to create meaningful description
-    let description = 'Team Registration Payment';
+    let description = "Team Registration Payment";
     let enhancedMetadata = {
       teamId: teamId.toString(),
-      ...metadata
+      ...metadata,
     };
 
     // Only query team details if it's a real team ID (not temp)
-    if (typeof teamId === 'number' || (!teamId.toString().startsWith('temp-') && !isNaN(Number(teamId)))) {
+    if (
+      typeof teamId === "number" ||
+      (!teamId.toString().startsWith("temp-") && !isNaN(Number(teamId)))
+    ) {
       try {
-        const numericTeamId = typeof teamId === 'number' ? teamId : parseInt(teamId.toString());
+        const numericTeamId =
+          typeof teamId === "number" ? teamId : parseInt(teamId.toString());
         const teamResult = await db
           .select({
             teamName: teams.name,
             eventName: events.name,
             ageGroupName: ageGroups.name,
             submitterEmail: teams.submitterEmail,
-            managerEmail: teams.managerEmail
+            managerEmail: teams.managerEmail,
           })
           .from(teams)
           .leftJoin(events, eq(teams.eventId, events.id))
@@ -67,7 +75,7 @@ export async function createPaymentIntent(amount: number, teamId: number | strin
 
         if (teamResult.length > 0) {
           const team = teamResult[0];
-          description = `${team.eventName || 'Tournament'} - ${team.teamName || 'Team Registration'}`;
+          description = `${team.eventName || "Tournament"} - ${team.teamName || "Team Registration"}`;
           if (team.ageGroupName) {
             description += ` (${team.ageGroupName})`;
           }
@@ -75,14 +83,16 @@ export async function createPaymentIntent(amount: number, teamId: number | strin
           // Enhanced metadata for better tracking
           enhancedMetadata = {
             ...enhancedMetadata,
-            teamName: team.teamName || '',
-            eventName: team.eventName || '',
-            ageGroup: team.ageGroupName || '',
-            contactEmail: team.managerEmail || team.submitterEmail || ''
+            teamName: team.teamName || "",
+            eventName: team.eventName || "",
+            ageGroup: team.ageGroupName || "",
+            contactEmail: team.managerEmail || team.submitterEmail || "",
           };
         }
       } catch (dbError) {
-        console.warn(`Could not fetch team details for description: ${dbError.message}`);
+        console.warn(
+          `Could not fetch team details for description: ${dbError.message}`,
+        );
         // Continue with default description
       }
     }
@@ -91,28 +101,32 @@ export async function createPaymentIntent(amount: number, teamId: number | strin
       amount: Math.round(amount * 100), // Convert to cents
       currency: "usd",
       description: description,
-      metadata: enhancedMetadata
+      metadata: enhancedMetadata,
     });
 
     // Only update the team in the database if it's a numeric ID (not a temp ID)
-    if (typeof teamId === 'number' || !teamId.toString().startsWith('temp-')) {
+    if (typeof teamId === "number" || !teamId.toString().startsWith("temp-")) {
       try {
-        const numericTeamId = typeof teamId === 'number' ? teamId : parseInt(teamId.toString());
+        const numericTeamId =
+          typeof teamId === "number" ? teamId : parseInt(teamId.toString());
         // Update the team with the payment intent ID
-        await db.update(teams)
+        await db
+          .update(teams)
           .set({
-            paymentIntentId: paymentIntent.id
+            paymentIntentId: paymentIntent.id,
           })
           .where(eq(teams.id, numericTeamId));
       } catch (dbError) {
         // Log the db error but don't fail the payment intent creation
-        console.warn(`Could not update team record with payment intent ID, likely a temporary team: ${dbError.message}`);
+        console.warn(
+          `Could not update team record with payment intent ID, likely a temporary team: ${dbError.message}`,
+        );
       }
     }
 
-    return { 
+    return {
       clientSecret: paymentIntent.client_secret,
-      paymentIntentId: paymentIntent.id
+      paymentIntentId: paymentIntent.id,
     };
   } catch (error: any) {
     console.error("Error creating payment intent:", error);
@@ -123,7 +137,9 @@ export async function createPaymentIntent(amount: number, teamId: number | strin
 /**
  * Handles a successful payment intent webhook event
  */
-export async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
+export async function handlePaymentSuccess(
+  paymentIntent: Stripe.PaymentIntent,
+) {
   try {
     const teamId = paymentIntent.metadata.teamId;
     if (!teamId) {
@@ -132,15 +148,17 @@ export async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) 
     }
 
     // Check if this is a temporary team ID (for new registrations)
-    if (teamId.toString().startsWith('temp-')) {
-      console.log(`Payment received for temporary team ID: ${teamId}. This will be handled by the frontend registration flow.`);
+    if (teamId.toString().startsWith("temp-")) {
+      console.log(
+        `Payment received for temporary team ID: ${teamId}. This will be handled by the frontend registration flow.`,
+      );
       return;
     }
 
     // Find the team
     const teamIdNumber = parseInt(teamId);
     const existingTeam = await db.query.teams.findFirst({
-      where: eq(teams.id, teamIdNumber)
+      where: eq(teams.id, teamIdNumber),
     });
 
     if (!existingTeam) {
@@ -150,9 +168,9 @@ export async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) 
 
     // Get payment details
     const charges = await stripe.charges.list({
-      payment_intent: paymentIntent.id
+      payment_intent: paymentIntent.id,
     });
-    
+
     const charge = charges.data[0];
     const cardDetails = charge?.payment_method_details?.card;
 
@@ -161,16 +179,17 @@ export async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) 
       teamId: teamIdNumber,
       paymentIntentId: paymentIntent.id,
       amount: paymentIntent.amount,
-      status: 'paid',
+      status: "paid",
       paymentDate: new Date(),
       cardBrand: cardDetails?.brand || null,
       cardLast4: cardDetails?.last4 || null,
     });
 
     // Update team payment status and card details
-    await db.update(teams)
+    await db
+      .update(teams)
       .set({
-        paymentStatus: 'paid',
+        paymentStatus: "paid",
         paymentDate: new Date().toISOString(),
         cardBrand: cardDetails?.brand || null,
         cardLast4: cardDetails?.last4 || null,
@@ -178,7 +197,7 @@ export async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) 
       .where(eq(teams.id, teamIdNumber));
 
     console.log(`Payment recorded successfully for team ${teamId}`);
-    
+
     // Send receipt email with payment details if submitter email is available
     try {
       if (existingTeam.submitterEmail) {
@@ -187,36 +206,38 @@ export async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) 
           .select({ name: events.name })
           .from(events)
           .where(eq(events.id, existingTeam.eventId));
-        
+
         // Create payment data object for receipt email
         const paymentData = {
-          status: 'paid',
+          status: "paid",
           amount: paymentIntent.amount,
           paymentIntentId: paymentIntent.id,
           paymentDate: new Date().toISOString(),
           cardBrand: cardDetails?.brand || null,
           cardLastFour: cardDetails?.last4 || null,
-          paymentMethodType: 'card'
+          paymentMethodType: "card",
         };
-        
-        console.log(`Sending payment receipt email to ${existingTeam.submitterEmail}`);
-        
+
+        console.log(
+          `Sending payment receipt email to ${existingTeam.submitterEmail}`,
+        );
+
         // Send the receipt email asynchronously (don't await to avoid delaying the response)
         sendRegistrationReceiptEmail(
           existingTeam.submitterEmail,
           existingTeam,
           paymentData,
-          eventInfo?.name || 'Tournament Registration'
-        ).catch(emailError => {
+          eventInfo?.name || "Tournament Registration",
+        ).catch((emailError) => {
           // Log email errors but don't fail the payment processing
-          console.error('Error sending payment receipt email:', emailError);
+          console.error("Error sending payment receipt email:", emailError);
         });
       }
     } catch (emailError) {
       // Log email errors but don't fail the payment processing
-      console.error('Error preparing payment receipt email:', emailError);
+      console.error("Error preparing payment receipt email:", emailError);
     }
-    
+
     return true;
   } catch (error: any) {
     console.error("Error handling payment success:", error);
@@ -227,38 +248,43 @@ export async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) 
 /**
  * Handles a payment intent failure webhook event
  */
-export async function handlePaymentFailure(paymentIntent: Stripe.PaymentIntent) {
+export async function handlePaymentFailure(
+  paymentIntent: Stripe.PaymentIntent,
+) {
   try {
     const teamId = paymentIntent.metadata.teamId;
     if (!teamId) {
       console.error("No teamId found in payment intent metadata");
       return;
     }
-    
+
     // Check if this is a temporary team ID (for new registrations)
-    if (teamId.toString().startsWith('temp-')) {
-      console.log(`Payment failure for temporary team ID: ${teamId}. This will be handled by the frontend registration flow.`);
+    if (teamId.toString().startsWith("temp-")) {
+      console.log(
+        `Payment failure for temporary team ID: ${teamId}. This will be handled by the frontend registration flow.`,
+      );
       return;
     }
 
     // Find the team
     const teamIdNumber = parseInt(teamId);
-    
+
     // Record payment transaction
     await db.insert(paymentTransactions).values({
       teamId: teamIdNumber,
       paymentIntentId: paymentIntent.id,
       amount: paymentIntent.amount,
-      status: 'failed',
+      status: "failed",
       paymentDate: new Date(),
       errorCode: paymentIntent.last_payment_error?.code || null,
       errorMessage: paymentIntent.last_payment_error?.message || null,
     });
 
     // Update team payment status
-    await db.update(teams)
+    await db
+      .update(teams)
       .set({
-        paymentStatus: 'failed',
+        paymentStatus: "failed",
         errorCode: paymentIntent.last_payment_error?.code || null,
         errorMessage: paymentIntent.last_payment_error?.message || null,
       })
@@ -275,102 +301,213 @@ export async function handlePaymentFailure(paymentIntent: Stripe.PaymentIntent) 
 /**
  * Creates a test payment intent for development/testing purposes
  */
-export async function createTestPaymentIntent(amount: number, teamId: number, metadata?: Record<string, string>) {
-  if (process.env.NODE_ENV === 'production') {
-    throw new Error('Test payment intents are not allowed in production');
+export async function createTestPaymentIntent(
+  amount: number,
+  teamId: number,
+  metadata?: Record<string, string>,
+) {
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("Test payment intents are not allowed in production");
   }
-  
-  log('Creating test payment intent');
+
+  log("Creating test payment intent");
   return createPaymentIntent(amount, teamId, metadata);
 }
 
 /**
  * Creates a refund for a payment
  */
+// export async function createRefund(paymentIntentId: string, amount?: number) {
+//   try {
+//     log(`Creating refund for payment intent ${paymentIntentId}`);
+
+//     // Find the payment intent
+//     const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+
+//     if (!paymentIntent) {
+//       throw new Error(`Payment intent ${paymentIntentId} not found`);
+//     }
+
+//     // Find the charge associated with this payment intent
+//     const charges = await stripe.charges.list({
+//       payment_intent: paymentIntentId
+//     });
+
+//     if (charges.data.length === 0) {
+//       throw new Error(`No charges found for payment intent ${paymentIntentId}`);
+//     }
+
+//     const chargeId = charges.data[0].id;
+
+//     // Create the refund
+//     const refund = await stripe.refunds.create({
+//       charge: chargeId,
+//       amount: amount, // If not specified, refund the full amount
+//     });
+
+//     // Get the team from the payment intent metadata
+//     const teamId = paymentIntent.metadata.teamId;
+//     if (teamId) {
+//       const teamIdNumber = parseInt(teamId);
+
+//       // Update the team status
+//       await db.update(teams)
+//         .set({
+//           paymentStatus: 'refunded',
+//           refundDate: new Date().toISOString(),
+//         })
+//         .where(eq(teams.id, teamIdNumber));
+
+//       // Record the refund transaction
+//       await db.insert(paymentTransactions).values({
+//         teamId: teamIdNumber,
+//         paymentIntentId: paymentIntentId,
+//         amount: -(amount || paymentIntent.amount), // Negative amount for refund
+//         status: 'refunded',
+//         transactionType: 'refund',
+//         refundedAt: new Date(),
+//       });
+//     }
+
+//     return refund;
+//   } catch (error: any) {
+//     console.error("Error creating refund:", error);
+//     throw new Error(`Error creating refund: ${error.message}`);
+//   }
+// }
 export async function createRefund(paymentIntentId: string, amount?: number) {
   try {
     log(`Creating refund for payment intent ${paymentIntentId}`);
-    
+
     // Find the payment intent
     const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
-    
+
     if (!paymentIntent) {
       throw new Error(`Payment intent ${paymentIntentId} not found`);
     }
-    
+
     // Find the charge associated with this payment intent
     const charges = await stripe.charges.list({
-      payment_intent: paymentIntentId
+      payment_intent: paymentIntentId,
     });
-    
+
     if (charges.data.length === 0) {
       throw new Error(`No charges found for payment intent ${paymentIntentId}`);
     }
-    
+
     const chargeId = charges.data[0].id;
-    
-    // Create the refund
-    const refund = await stripe.refunds.create({
-      charge: chargeId,
-      amount: amount, // If not specified, refund the full amount
-    });
-    
+
+    // CRITICAL FIX: Determine if this was a Connect account payment and get the Connect account ID
+    let connectAccountId: string | null = null;
+
+    // Check if the payment intent has Connect account metadata
+    if (paymentIntent.metadata.connectAccountId) {
+      connectAccountId = paymentIntent.metadata.connectAccountId;
+      log(`Payment was made through Connect account: ${connectAccountId}`);
+    } else {
+      // Check if the charge was made on behalf of a Connect account
+      const charge = await stripe.charges.retrieve(chargeId);
+      if (charge.on_behalf_of) {
+        connectAccountId = charge.on_behalf_of;
+        log(
+          `Payment was made on behalf of Connect account: ${connectAccountId}`,
+        );
+      }
+    }
+
+    // Create the refund in the appropriate account context
+    let refund;
+    if (connectAccountId) {
+      log(`Processing refund from Connect account: ${connectAccountId}`);
+      refund = await stripe.refunds.create(
+        {
+          charge: chargeId,
+          amount: amount, // If not specified, refund the full amount
+        },
+        {
+          stripeAccount: connectAccountId, // This ensures refund comes from Connect account
+        },
+      );
+      log(`Refund processed from Connect account: ${connectAccountId}`);
+    } else {
+      log(`Processing refund from main platform account`);
+      refund = await stripe.refunds.create({
+        charge: chargeId,
+        amount: amount, // If not specified, refund the full amount
+      });
+      log(`Refund processed from main platform account`);
+    }
+
     // Get the team from the payment intent metadata
     const teamId = paymentIntent.metadata.teamId;
     if (teamId) {
       const teamIdNumber = parseInt(teamId);
-      
+
       // Update the team status
-      await db.update(teams)
+      await db
+        .update(teams)
         .set({
-          paymentStatus: 'refunded',
+          paymentStatus: "refunded",
           refundDate: new Date().toISOString(),
         })
         .where(eq(teams.id, teamIdNumber));
-      
-      // Record the refund transaction
+
+      // Record the refund transaction with Connect account context
       await db.insert(paymentTransactions).values({
         teamId: teamIdNumber,
         paymentIntentId: paymentIntentId,
         amount: -(amount || paymentIntent.amount), // Negative amount for refund
-        status: 'refunded',
-        transactionType: 'refund',
+        status: "refunded",
+        transactionType: "refund",
         refundedAt: new Date(),
+        metadata: {
+          refundedFromConnectAccount: connectAccountId || "main_platform",
+          originalPaymentIntent: paymentIntentId,
+          refundAmount: (amount || paymentIntent.amount).toString(),
+          refundTimestamp: new Date().toISOString(),
+        },
       });
+
+      log(
+        `Refund transaction recorded for team ${teamIdNumber} from ${connectAccountId ? "Connect account" : "main platform"}`,
+      );
     }
-    
+
     return refund;
   } catch (error: any) {
     console.error("Error creating refund:", error);
     throw new Error(`Error creating refund: ${error.message}`);
   }
 }
-
 /**
  * Creates a Setup Intent for collecting payment details without charging
  * This allows us to collect card information during registration and only charge upon approval
  */
-export async function createSetupIntent(teamId: number | string, metadata?: Record<string, string>) {
+export async function createSetupIntent(
+  teamId: number | string,
+  metadata?: Record<string, string>,
+) {
   try {
     log(`Creating setup intent for team: ${teamId}`);
-    
+
     // CRITICAL FIX: Create or get customer for charging capability
     let customerId: string | undefined;
-    
+
     // For real teams (not temp), create/get customer based on team info
-    if (typeof teamId === 'number' || !teamId.toString().startsWith('temp-')) {
+    if (typeof teamId === "number" || !teamId.toString().startsWith("temp-")) {
       try {
-        const numericTeamId = typeof teamId === 'number' ? teamId : parseInt(teamId.toString());
+        const numericTeamId =
+          typeof teamId === "number" ? teamId : parseInt(teamId.toString());
         const existingTeam = await db.query.teams.findFirst({
           where: eq(teams.id, numericTeamId),
           columns: {
             stripeCustomerId: true,
             submitterEmail: true,
             submitterName: true,
-            name: true
-          }
+            name: true,
+          },
         });
-        
+
         if (existingTeam?.stripeCustomerId) {
           customerId = existingTeam.stripeCustomerId;
           log(`Using existing customer ID: ${customerId} for team ${teamId}`);
@@ -378,23 +515,26 @@ export async function createSetupIntent(teamId: number | string, metadata?: Reco
           // Create new customer for this team
           const customer = await stripe.customers.create({
             email: existingTeam.submitterEmail,
-            name: existingTeam.submitterName || 'Team Manager',
+            name: existingTeam.submitterName || "Team Manager",
             metadata: {
               teamId: teamId.toString(),
-              teamName: existingTeam.name || 'Unknown Team'
-            }
+              teamName: existingTeam.name || "Unknown Team",
+            },
           });
           customerId = customer.id;
-          
+
           // Store customer ID in database for future use
-          await db.update(teams)
+          await db
+            .update(teams)
             .set({ stripeCustomerId: customerId })
             .where(eq(teams.id, numericTeamId));
-          
+
           log(`Created new customer: ${customerId} for team ${teamId}`);
         }
       } catch (customerError: any) {
-        log(`Could not create/retrieve customer for team ${teamId}: ${customerError.message}`);
+        log(
+          `Could not create/retrieve customer for team ${teamId}: ${customerError.message}`,
+        );
         // Continue without customer - will limit charging ability but still allow Setup Intent creation
       }
     } else {
@@ -403,78 +543,97 @@ export async function createSetupIntent(teamId: number | string, metadata?: Reco
         try {
           const customer = await stripe.customers.create({
             email: metadata.userEmail,
-            name: metadata.userName || 'Team Manager',
+            name: metadata.userName || "Team Manager",
             metadata: {
               teamId: teamId.toString(),
-              teamName: metadata.teamName || 'Unknown Team',
-              createdFor: 'temp_team_registration'
-            }
+              teamName: metadata.teamName || "Unknown Team",
+              createdFor: "temp_team_registration",
+            },
           });
           customerId = customer.id;
-          log(`Created customer ${customerId} for temp team ${teamId} during registration`);
+          log(
+            `Created customer ${customerId} for temp team ${teamId} during registration`,
+          );
         } catch (customerError: any) {
-          log(`Could not create customer for temp team ${teamId}: ${customerError.message}`);
+          log(
+            `Could not create customer for temp team ${teamId}: ${customerError.message}`,
+          );
         }
       } else {
-        log(`WARNING: No user email provided for temp team ${teamId} - cannot create customer`);
+        log(
+          `WARNING: No user email provided for temp team ${teamId} - cannot create customer`,
+        );
       }
     }
-    
+
     const setupIntentData: any = {
       // Use specific payment_method_types to only allow card payments (no Link)
-      payment_method_types: ['card'],
-      usage: 'off_session', // This allows for future use without customer being present
+      payment_method_types: ["card"],
+      usage: "off_session", // This allows for future use without customer being present
       metadata: {
         teamId: teamId.toString(),
-        ...metadata
-      }
+        ...metadata,
+      },
     };
-    
+
     // Add customer if we have one (critical for charging later)
     if (customerId) {
       setupIntentData.customer = customerId;
       log(`Setup Intent will be created with customer: ${customerId}`);
     } else {
-      log(`WARNING: Setup Intent created without customer - charging will be limited`);
+      log(
+        `WARNING: Setup Intent created without customer - charging will be limited`,
+      );
     }
-    
+
     const setupIntent = await stripe.setupIntents.create(setupIntentData);
 
     // Only update the team in the database if it's a numeric ID (not a temp ID)
     // AND only if the team doesn't already have a confirmed Setup Intent
-    if (typeof teamId === 'number' || !teamId.toString().startsWith('temp-')) {
+    if (typeof teamId === "number" || !teamId.toString().startsWith("temp-")) {
       try {
-        const numericTeamId = typeof teamId === 'number' ? teamId : parseInt(teamId.toString());
-        
+        const numericTeamId =
+          typeof teamId === "number" ? teamId : parseInt(teamId.toString());
+
         // Check if team already has a Setup Intent
         const existingTeam = await db.query.teams.findFirst({
           where: eq(teams.id, numericTeamId),
           columns: {
             setupIntentId: true,
-            paymentStatus: true
-          }
+            paymentStatus: true,
+          },
         });
-        
+
         // Only update if no existing Setup Intent or existing one is not completed
-        if (!existingTeam?.setupIntentId || existingTeam?.paymentStatus === 'pending') {
-          log(`Updating team ${numericTeamId} with Setup Intent: ${setupIntent.id}`);
-          await db.update(teams)
+        if (
+          !existingTeam?.setupIntentId ||
+          existingTeam?.paymentStatus === "pending"
+        ) {
+          log(
+            `Updating team ${numericTeamId} with Setup Intent: ${setupIntent.id}`,
+          );
+          await db
+            .update(teams)
             .set({
               setupIntentId: setupIntent.id,
-              paymentStatus: 'payment_info_provided'
+              paymentStatus: "payment_info_provided",
             })
             .where(eq(teams.id, numericTeamId));
         } else {
-          log(`Team ${numericTeamId} already has Setup Intent ${existingTeam.setupIntentId}, skipping database update to preserve confirmed payment info`);
+          log(
+            `Team ${numericTeamId} already has Setup Intent ${existingTeam.setupIntentId}, skipping database update to preserve confirmed payment info`,
+          );
         }
       } catch (dbError: any) {
-        console.warn(`Could not update team record with setup intent ID, likely a temporary team: ${dbError.message}`);
+        console.warn(
+          `Could not update team record with setup intent ID, likely a temporary team: ${dbError.message}`,
+        );
       }
     }
 
-    return { 
+    return {
       clientSecret: setupIntent.client_secret,
-      setupIntentId: setupIntent.id
+      setupIntentId: setupIntent.id,
     };
   } catch (error: any) {
     console.error("Error creating setup intent:", error);
@@ -486,31 +645,38 @@ export async function createSetupIntent(teamId: number | string, metadata?: Reco
  * Processes a payment for a team using a saved payment method
  * This is used when an admin approves a team that provided payment information during registration
  */
-export async function processPaymentForApprovedTeam(teamId: number, amount: number) {
+export async function processPaymentForApprovedTeam(
+  teamId: number,
+  amount: number,
+) {
   try {
     log(`Processing payment for approved team: ${teamId}`);
-    
+
     // Find the team
     const team = await db.query.teams.findFirst({
-      where: eq(teams.id, teamId)
+      where: eq(teams.id, teamId),
     });
-    
+
     if (!team) {
       throw new Error(`Team with ID ${teamId} not found`);
     }
-    
+
     if (!team.paymentMethodId) {
       throw new Error(`Team ${teamId} has no saved payment method`);
     }
-    
+
     // Check if this is a Link payment method first
-    const paymentMethod = await stripe.paymentMethods.retrieve(team.paymentMethodId);
-    
+    const paymentMethod = await stripe.paymentMethods.retrieve(
+      team.paymentMethodId,
+    );
+
     // Handle Link payment methods differently - they cannot be attached to customers
     let customerId = team.stripeCustomerId;
-    
-    if (paymentMethod.type === 'link') {
-      log(`Processing Link payment method for team: ${teamId} - skipping customer attachment`);
+
+    if (paymentMethod.type === "link") {
+      log(
+        `Processing Link payment method for team: ${teamId} - skipping customer attachment`,
+      );
       // For Link payments, we cannot attach to customers and must process differently
       customerId = null;
     } else {
@@ -522,16 +688,17 @@ export async function processPaymentForApprovedTeam(teamId: number, amount: numb
           email: team.submitterEmail || `team-${teamId}@example.com`,
           metadata: {
             teamId: teamId.toString(),
-            eventId: team.eventId?.toString() || '',
-          }
+            eventId: team.eventId?.toString() || "",
+          },
         });
         customerId = customer.id;
-        
+
         // Save the customer ID to the team record
-        await db.update(teams)
+        await db
+          .update(teams)
           .set({ stripeCustomerId: customerId })
           .where(eq(teams.id, teamId));
-        
+
         // Attach the payment method to the customer
         await stripe.paymentMethods.attach(team.paymentMethodId, {
           customer: customerId,
@@ -539,11 +706,13 @@ export async function processPaymentForApprovedTeam(teamId: number, amount: numb
       } else {
         // Verify if payment method is attached to this customer
         log(`Using existing Stripe customer for team: ${teamId}`);
-        
+
         try {
           if (paymentMethod.customer !== customerId) {
             // If not attached, attach it now
-            log(`Attaching payment method ${team.paymentMethodId} to customer ${customerId}`);
+            log(
+              `Attaching payment method ${team.paymentMethodId} to customer ${customerId}`,
+            );
             await stripe.paymentMethods.attach(team.paymentMethodId, {
               customer: customerId,
             });
@@ -552,14 +721,14 @@ export async function processPaymentForApprovedTeam(teamId: number, amount: numb
           // If an error occurred, the payment method might be attached to another customer
           // In this case we need to detach it first and then attach to our customer
           log(`Detaching and re-attaching payment method for team: ${teamId}`);
-          
+
           try {
             await stripe.paymentMethods.detach(team.paymentMethodId);
           } catch (detachError) {
             // If detach fails, let's continue and try to attach anyway
             log(`Failed to detach payment method: ${detachError}`);
           }
-          
+
           // Attach to our customer
           await stripe.paymentMethods.attach(team.paymentMethodId, {
             customer: customerId,
@@ -567,7 +736,7 @@ export async function processPaymentForApprovedTeam(teamId: number, amount: numb
         }
       }
     }
-    
+
     // Create a payment intent with the saved payment method
     // For Link payments, we cannot include customer parameter
     const paymentIntentParams: any = {
@@ -579,32 +748,36 @@ export async function processPaymentForApprovedTeam(teamId: number, amount: numb
       receipt_email: team.submitterEmail, // Enable Stripe's automatic receipt email
       metadata: {
         teamId: teamId.toString(),
-        eventId: team.eventId?.toString() || '',
-        description: `Team registration payment for ${team.name}`
-      }
+        eventId: team.eventId?.toString() || "",
+        description: `Team registration payment for ${team.name}`,
+      },
     };
-    
+
     // Only add customer for non-Link payment methods
     if (customerId) {
       paymentIntentParams.customer = customerId;
     }
-    
-    log(`Creating payment intent for team ${teamId}, payment method type: ${paymentMethod.type}, customer: ${customerId || 'none'}`);
-    const paymentIntent = await stripe.paymentIntents.create(paymentIntentParams);
-    
+
+    log(
+      `Creating payment intent for team ${teamId}, payment method type: ${paymentMethod.type}, customer: ${customerId || "none"}`,
+    );
+    const paymentIntent =
+      await stripe.paymentIntents.create(paymentIntentParams);
+
     // Update the team with the payment intent ID
-    await db.update(teams)
+    await db
+      .update(teams)
       .set({
         paymentIntentId: paymentIntent.id,
         paymentStatus: paymentIntent.status,
-        paymentDate: new Date()  // Use Date object directly for timestamp fields
+        paymentDate: new Date(), // Use Date object directly for timestamp fields
       })
       .where(eq(teams.id, teamId));
-    
+
     // Create a payment transaction record
     await db.insert(paymentTransactions).values({
       status: paymentIntent.status,
-      transactionType: 'registration_payment',
+      transactionType: "registration_payment",
       amount: amount,
       paymentIntentId: paymentIntent.id,
       setupIntentId: team.setupIntentId,
@@ -615,25 +788,26 @@ export async function processPaymentForApprovedTeam(teamId: number, amount: numb
       // Note: paymentDate field was removed as it's not in the schema
       // We have createdAt which is automatically set
     });
-    
+
     return {
       success: true,
       paymentIntentId: paymentIntent.id,
-      status: paymentIntent.status
+      status: paymentIntent.status,
     };
   } catch (error: any) {
     // Handle specific Stripe errors
     console.error("Error processing payment for approved team:", error);
-    
+
     // Update the team with the error information
-    await db.update(teams)
+    await db
+      .update(teams)
       .set({
-        paymentStatus: 'failed',
+        paymentStatus: "failed",
         errorCode: error.code || null,
-        errorMessage: error.message || 'Payment processing failed'
+        errorMessage: error.message || "Payment processing failed",
       })
       .where(eq(teams.id, teamId));
-    
+
     throw new Error(`Error processing payment: ${error.message}`);
   }
 }
@@ -642,37 +816,43 @@ export async function processPaymentForApprovedTeam(teamId: number, amount: numb
  * Updates a payment intent status (for testing purpose only)
  * This function should ONLY be used in development to simulate status changes
  */
-export async function updatePaymentIntentStatus(paymentIntentId: string, status: string) {
+export async function updatePaymentIntentStatus(
+  paymentIntentId: string,
+  status: string,
+) {
   // This function is only for development and testing
-  if (process.env.NODE_ENV === 'production') {
-    throw new Error('This function is only available in development mode');
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("This function is only available in development mode");
   }
 
   try {
     // Note: In a real environment, we can't directly modify a payment intent's status.
     // This is just to update our database to simulate a status change
     const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
-    
+
     // Find the team associated with this payment intent
     const team = await db.query.teams.findFirst({
-      where: eq(teams.paymentIntentId, paymentIntentId)
+      where: eq(teams.paymentIntentId, paymentIntentId),
     });
-    
+
     if (!team) {
-      throw new Error(`No team found with payment intent ID ${paymentIntentId}`);
+      throw new Error(
+        `No team found with payment intent ID ${paymentIntentId}`,
+      );
     }
-    
+
     // Update the team payment status
-    await db.update(teams)
+    await db
+      .update(teams)
       .set({
         paymentStatus: status,
-        paymentDate: new Date(),  // Use Date object directly for timestamp fields
+        paymentDate: new Date(), // Use Date object directly for timestamp fields
       })
       .where(eq(teams.id, team.id));
-      
+
     return {
       success: true,
-      message: `Updated payment intent ${paymentIntentId} status to ${status} in database`
+      message: `Updated payment intent ${paymentIntentId} status to ${status} in database`,
     };
   } catch (error: any) {
     console.error("Error updating payment intent status:", error);
@@ -684,49 +864,56 @@ export async function updatePaymentIntentStatus(paymentIntentId: string, status:
  * Create a test payment method and attach it to a setup intent (testing only)
  * This simulates a customer entering their card details
  */
-export async function attachTestPaymentMethodToSetupIntent(setupIntentId: string) {
-  if (process.env.NODE_ENV === 'production') {
-    throw new Error('This function is only available in development mode');
+export async function attachTestPaymentMethodToSetupIntent(
+  setupIntentId: string,
+) {
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("This function is only available in development mode");
   }
 
   try {
     log(`Attaching test payment method to setup intent: ${setupIntentId}`);
-    
+
     // Use a test token instead of raw card data for testing
     // This avoids the direct card API access restriction in Stripe
     const paymentMethod = await stripe.paymentMethods.create({
-      type: 'card',
+      type: "card",
       card: {
-        token: 'tok_visa', // Standard test token for a Visa card
+        token: "tok_visa", // Standard test token for a Visa card
       },
     });
-    
+
     log(`Created test payment method: ${paymentMethod.id}`);
-    
+
     // Attach the payment method to the setup intent
     const setupIntent = await stripe.setupIntents.update(setupIntentId, {
       payment_method: paymentMethod.id,
     });
-    
+
     // Confirm the setup intent to complete it
     const confirmedIntent = await stripe.setupIntents.confirm(setupIntentId, {
       payment_method: paymentMethod.id,
-      return_url: 'https://example.com/setup-complete', // Dummy URL for testing purposes
+      return_url: "https://example.com/setup-complete", // Dummy URL for testing purposes
     });
-    
-    log(`Confirmed setup intent: ${confirmedIntent.id} with status: ${confirmedIntent.status}`);
-    
+
+    log(
+      `Confirmed setup intent: ${confirmedIntent.id} with status: ${confirmedIntent.status}`,
+    );
+
     // Process the successful setup intent
     await handleSetupIntentSuccess(confirmedIntent);
-    
+
     return {
       success: true,
       setupIntentId: setupIntentId,
       paymentMethodId: paymentMethod.id,
-      status: confirmedIntent.status
+      status: confirmedIntent.status,
     };
   } catch (error: any) {
-    console.error("Error attaching test payment method to setup intent:", error);
+    console.error(
+      "Error attaching test payment method to setup intent:",
+      error,
+    );
     throw new Error(`Error attaching payment method: ${error.message}`);
   }
 }
@@ -734,7 +921,9 @@ export async function attachTestPaymentMethodToSetupIntent(setupIntentId: string
 /**
  * Handle a successful setup intent completion (when payment method is attached)
  */
-export async function handleSetupIntentSuccess(setupIntent: Stripe.SetupIntent) {
+export async function handleSetupIntentSuccess(
+  setupIntent: Stripe.SetupIntent,
+) {
   try {
     const teamId = setupIntent.metadata.teamId;
     if (!teamId) {
@@ -743,8 +932,10 @@ export async function handleSetupIntentSuccess(setupIntent: Stripe.SetupIntent) 
     }
 
     // Check if this is a temporary team ID (for new registrations)
-    if (teamId.toString().startsWith('temp-')) {
-      console.log(`Setup intent completed for temporary team ID: ${teamId}. This will be handled by the frontend registration flow.`);
+    if (teamId.toString().startsWith("temp-")) {
+      console.log(
+        `Setup intent completed for temporary team ID: ${teamId}. This will be handled by the frontend registration flow.`,
+      );
       return;
     }
 
@@ -757,7 +948,7 @@ export async function handleSetupIntentSuccess(setupIntent: Stripe.SetupIntent) 
     // Find the team
     const teamIdNumber = parseInt(teamId);
     const existingTeam = await db.query.teams.findFirst({
-      where: eq(teams.id, teamIdNumber)
+      where: eq(teams.id, teamIdNumber),
     });
 
     if (!existingTeam) {
@@ -768,10 +959,10 @@ export async function handleSetupIntentSuccess(setupIntent: Stripe.SetupIntent) 
     // Get payment method details
     const paymentMethod = await stripe.paymentMethods.retrieve(paymentMethodId);
     const cardDetails = paymentMethod.card;
-    
+
     // Create a Stripe customer and attach the payment method
     let customerId = existingTeam.stripeCustomerId;
-    
+
     if (!customerId) {
       // Create a new customer
       const customer = await stripe.customers.create({
@@ -779,16 +970,16 @@ export async function handleSetupIntentSuccess(setupIntent: Stripe.SetupIntent) 
         email: existingTeam.submitterEmail || `team-${teamId}@example.com`,
         metadata: {
           teamId: teamId.toString(),
-          eventId: existingTeam.eventId?.toString() || '',
-        }
+          eventId: existingTeam.eventId?.toString() || "",
+        },
       });
       customerId = customer.id;
-      
+
       // Attach the payment method to the customer
       await stripe.paymentMethods.attach(paymentMethodId, {
         customer: customerId,
       });
-      
+
       // Set this payment method as the default
       await stripe.customers.update(customerId, {
         invoice_settings: {
@@ -798,10 +989,11 @@ export async function handleSetupIntentSuccess(setupIntent: Stripe.SetupIntent) 
     }
 
     // Update team with payment method details
-    await db.update(teams)
+    await db
+      .update(teams)
       .set({
         paymentMethodId: paymentMethodId,
-        paymentStatus: 'payment_info_provided',
+        paymentStatus: "payment_info_provided",
         cardBrand: cardDetails?.brand || null,
         cardLast4: cardDetails?.last4 || null,
         stripeCustomerId: customerId,
@@ -816,7 +1008,10 @@ export async function handleSetupIntentSuccess(setupIntent: Stripe.SetupIntent) 
   }
 }
 
-export async function handleRefund(charge: Stripe.Charge, refund: Stripe.Refund) {
+export async function handleRefund(
+  charge: Stripe.Charge,
+  refund: Stripe.Refund,
+) {
   try {
     const paymentIntentId = charge.payment_intent as string;
     if (!paymentIntentId) {
@@ -826,7 +1021,7 @@ export async function handleRefund(charge: Stripe.Charge, refund: Stripe.Refund)
 
     // Find the team with this payment intent
     const team = await db.query.teams.findFirst({
-      where: eq(teams.paymentIntentId, paymentIntentId)
+      where: eq(teams.paymentIntentId, paymentIntentId),
     });
 
     if (!team) {
@@ -839,17 +1034,18 @@ export async function handleRefund(charge: Stripe.Charge, refund: Stripe.Refund)
       teamId: team.id,
       paymentIntentId: paymentIntentId,
       amount: -refund.amount, // negative amount for refund
-      status: 'refunded',
-      transactionType: 'refund',
+      status: "refunded",
+      transactionType: "refund",
       cardBrand: team.cardBrand,
       cardLast4: team.cardLast4,
     });
 
     // Update team payment status
-    await db.update(teams)
+    await db
+      .update(teams)
       .set({
-        paymentStatus: 'refunded',
-        refundDate: new Date(),  // Use Date object directly for timestamp fields
+        paymentStatus: "refunded",
+        refundDate: new Date(), // Use Date object directly for timestamp fields
       })
       .where(eq(teams.id, team.id));
 
@@ -866,153 +1062,172 @@ export async function handleRefund(charge: Stripe.Charge, refund: Stripe.Refund)
  * Automatically recovers burned payment methods by creating direct payments
  * without customer association requirements
  */
-export async function intelligentPaymentRecovery(team: any, teamId: number): Promise<{
+export async function intelligentPaymentRecovery(
+  team: any,
+  teamId: number,
+): Promise<{
   success: boolean;
   paymentIntentId?: string;
   error?: string;
   amount?: number;
 }> {
   try {
-    log(`🔧 INTELLIGENT RECOVERY: Starting recovery for team ${teamId} (${team.name})`, 'admin');
-    
+    log(
+      `🔧 INTELLIGENT RECOVERY: Starting recovery for team ${teamId} (${team.name})`,
+      "admin",
+    );
+
     // 1. Verify team has Setup Intent with payment method
     if (!team.setupIntentId) {
       return {
         success: false,
-        error: 'No Setup Intent found for team'
+        error: "No Setup Intent found for team",
       };
     }
-    
-    log(`🔍 RECOVERY: Analyzing Setup Intent ${team.setupIntentId}`, 'admin');
-    
+
+    log(`🔍 RECOVERY: Analyzing Setup Intent ${team.setupIntentId}`, "admin");
+
     // 2. Retrieve Setup Intent to extract payment method
     const setupIntent = await stripe.setupIntents.retrieve(team.setupIntentId);
-    
+
     if (!setupIntent.payment_method) {
       return {
         success: false,
-        error: 'No payment method found in Setup Intent'
+        error: "No payment method found in Setup Intent",
       };
     }
-    
+
     const paymentMethodId = setupIntent.payment_method as string;
-    log(`💳 RECOVERY: Found payment method ${paymentMethodId}`, 'admin');
-    
+    log(`💳 RECOVERY: Found payment method ${paymentMethodId}`, "admin");
+
     // 3. Get team event and calculate amount
     const [eventData] = await db
       .select()
       .from(events)
       .where(eq(events.id, team.eventId))
       .limit(1);
-    
+
     if (!eventData) {
       return {
         success: false,
-        error: 'Event not found for team'
+        error: "Event not found for team",
       };
     }
-    
+
     const totalAmount = team.totalAmount || eventData.registrationFee;
     const platformFeeAmount = Math.round(totalAmount * 0.04 + 30); // 4% + $0.30
     const totalWithFees = totalAmount + platformFeeAmount;
-    
-    log(`💰 RECOVERY: Amount to charge $${(totalWithFees / 100).toFixed(2)} (tournament: $${(totalAmount / 100).toFixed(2)} + fees: $${(platformFeeAmount / 100).toFixed(2)})`, 'admin');
-    
+
+    log(
+      `💰 RECOVERY: Amount to charge $${(totalWithFees / 100).toFixed(2)} (tournament: $${(totalAmount / 100).toFixed(2)} + fees: $${(platformFeeAmount / 100).toFixed(2)})`,
+      "admin",
+    );
+
     // 4. Create direct payment intent without customer association
     const paymentIntent = await stripe.paymentIntents.create({
       amount: totalWithFees,
-      currency: 'usd',
+      currency: "usd",
       payment_method: paymentMethodId,
       confirm: true, // Automatically confirm the payment
-      payment_method_types: ['card'],
+      payment_method_types: ["card"],
       description: `${eventData.name} - ${team.name} (Intelligent Recovery)`,
       metadata: {
         teamId: teamId.toString(),
         teamName: team.name,
         eventName: eventData.name,
-        recoveryType: 'burned_payment_method',
+        recoveryType: "burned_payment_method",
         originalSetupIntent: team.setupIntentId,
         tournamentAmount: totalAmount.toString(),
-        platformFee: platformFeeAmount.toString()
+        platformFee: platformFeeAmount.toString(),
       },
       // Handle Connect account destination if available
       ...(eventData.stripeConnectAccountId && {
         application_fee_amount: platformFeeAmount,
         transfer_data: {
-          destination: eventData.stripeConnectAccountId
-        }
-      })
+          destination: eventData.stripeConnectAccountId,
+        },
+      }),
     });
-    
-    log(`✅ RECOVERY SUCCESS: Payment Intent created ${paymentIntent.id} with status ${paymentIntent.status}`, 'admin');
-    
+
+    log(
+      `✅ RECOVERY SUCCESS: Payment Intent created ${paymentIntent.id} with status ${paymentIntent.status}`,
+      "admin",
+    );
+
     // 5. Record transaction in database
     await db.insert(paymentTransactions).values({
       teamId: teamId,
       paymentIntentId: paymentIntent.id,
       amount: totalWithFees,
       status: paymentIntent.status as any,
-      transactionType: 'team_approval_recovery',
+      transactionType: "team_approval_recovery",
       platformFee: platformFeeAmount,
       tournamentAmount: totalAmount,
-      cardBrand: 'recovered', // Mark as recovered payment
-      cardLast4: 'recovery',
+      cardBrand: "recovered", // Mark as recovered payment
+      cardLast4: "recovery",
       metadata: JSON.stringify({
-        recoveryType: 'intelligent_burned_method',
+        recoveryType: "intelligent_burned_method",
         originalSetupIntent: team.setupIntentId,
-        recoveredPaymentMethod: paymentMethodId
-      })
+        recoveredPaymentMethod: paymentMethodId,
+      }),
     });
-    
+
     // 6. Update team status
-    await db.update(teams)
+    await db
+      .update(teams)
       .set({
-        status: 'approved',
-        paymentStatus: 'paid',
+        status: "approved",
+        paymentStatus: "paid",
         paymentIntentId: paymentIntent.id,
         paymentMethodId: paymentMethodId,
         approvedAt: new Date(),
-        notes: `Payment recovered via intelligent recovery system from Setup Intent ${team.setupIntentId}`
+        notes: `Payment recovered via intelligent recovery system from Setup Intent ${team.setupIntentId}`,
       })
       .where(eq(teams.id, teamId));
-    
-    log(`📊 RECOVERY: Team ${teamId} updated to approved status with payment ${paymentIntent.id}`, 'admin');
-    
+
+    log(
+      `📊 RECOVERY: Team ${teamId} updated to approved status with payment ${paymentIntent.id}`,
+      "admin",
+    );
+
     // 7. Send approval email
     try {
       await sendApprovalEmailWithPaymentDetails(team, paymentIntent, eventData);
-      log(`📧 RECOVERY: Approval email sent to team ${teamId}`, 'admin');
+      log(`📧 RECOVERY: Approval email sent to team ${teamId}`, "admin");
     } catch (emailError) {
-      log(`⚠️  RECOVERY: Email failed but payment succeeded for team ${teamId}: ${emailError}`, 'admin');
+      log(
+        `⚠️  RECOVERY: Email failed but payment succeeded for team ${teamId}: ${emailError}`,
+        "admin",
+      );
     }
-    
+
     return {
       success: true,
       paymentIntentId: paymentIntent.id,
-      amount: totalWithFees
+      amount: totalWithFees,
     };
-    
   } catch (error: any) {
-    log(`❌ RECOVERY ERROR for team ${teamId}: ${error.message}`, 'admin');
-    
+    log(`❌ RECOVERY ERROR for team ${teamId}: ${error.message}`, "admin");
+
     // Check if this is a different type of payment error
-    if (error.message.includes('Your card was declined')) {
+    if (error.message.includes("Your card was declined")) {
       return {
         success: false,
-        error: 'Card declined - customer needs to contact bank or use different payment method'
+        error:
+          "Card declined - customer needs to contact bank or use different payment method",
       };
     }
-    
-    if (error.message.includes('insufficient funds')) {
+
+    if (error.message.includes("insufficient funds")) {
       return {
         success: false,
-        error: 'Insufficient funds - customer needs to add funds to account'
+        error: "Insufficient funds - customer needs to add funds to account",
       };
     }
-    
+
     return {
       success: false,
-      error: `Recovery failed: ${error.message}`
+      error: `Recovery failed: ${error.message}`,
     };
   }
 }
@@ -1020,37 +1235,53 @@ export async function intelligentPaymentRecovery(team: any, teamId: number): Pro
 /**
  * Send approval email with payment details after successful recovery
  */
-async function sendApprovalEmailWithPaymentDetails(team: any, paymentIntent: Stripe.PaymentIntent, eventData: any) {
+async function sendApprovalEmailWithPaymentDetails(
+  team: any,
+  paymentIntent: Stripe.PaymentIntent,
+  eventData: any,
+) {
   try {
     // Get payment method details for receipt
-    const paymentMethod = await stripe.paymentMethods.retrieve(paymentIntent.payment_method as string);
-    
+    const paymentMethod = await stripe.paymentMethods.retrieve(
+      paymentIntent.payment_method as string,
+    );
+
     const emailData = {
       teamName: team.name,
       eventName: eventData.name,
-      managerName: team.managerName || team.submitterName || 'Team Manager',
+      managerName: team.managerName || team.submitterName || "Team Manager",
       approvalDate: new Date().toLocaleDateString(),
       paymentAmount: (paymentIntent.amount / 100).toFixed(2),
-      tournamentCost: ((paymentIntent.amount - (paymentIntent.application_fee_amount || 0)) / 100).toFixed(2),
-      platformFee: ((paymentIntent.application_fee_amount || 0) / 100).toFixed(2),
+      tournamentCost: (
+        (paymentIntent.amount - (paymentIntent.application_fee_amount || 0)) /
+        100
+      ).toFixed(2),
+      platformFee: ((paymentIntent.application_fee_amount || 0) / 100).toFixed(
+        2,
+      ),
       transactionId: paymentIntent.id,
-      cardBrand: paymentMethod.card?.brand || 'Card',
-      cardLast4: paymentMethod.card?.last4 || '****',
+      cardBrand: paymentMethod.card?.brand || "Card",
+      cardLast4: paymentMethod.card?.last4 || "****",
       receiptNumber: `REC-${paymentIntent.id.slice(-8).toUpperCase()}`,
-      recoveryNote: 'Payment was automatically recovered using intelligent payment recovery system'
+      recoveryNote:
+        "Payment was automatically recovered using intelligent payment recovery system",
     };
-    
+
     // Send to both submitter and manager
-    const emailRecipients = [team.submitterEmail, team.managerEmail].filter(Boolean);
-    
+    const emailRecipients = [team.submitterEmail, team.managerEmail].filter(
+      Boolean,
+    );
+
     for (const email of emailRecipients) {
-      await sendTemplatedEmail(email, 'team_approved_with_payment', emailData);
+      await sendTemplatedEmail(email, "team_approved_with_payment", emailData);
     }
-    
-    log(`Approval email sent to ${emailRecipients.join(', ')} for recovered payment`, 'admin');
-    
+
+    log(
+      `Approval email sent to ${emailRecipients.join(", ")} for recovered payment`,
+      "admin",
+    );
   } catch (error) {
-    log(`Error sending approval email: ${error}`, 'admin');
+    log(`Error sending approval email: ${error}`, "admin");
     throw error;
   }
 }
