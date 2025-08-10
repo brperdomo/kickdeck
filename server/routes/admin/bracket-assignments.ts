@@ -7,7 +7,7 @@ import {
   tournamentGroups,
   games 
 } from '@db/schema';
-import { eq, and, isNull, isNotNull, inArray } from 'drizzle-orm';
+import { eq, and, isNull, isNotNull, inArray, sql } from 'drizzle-orm';
 
 const router = Router();
 
@@ -39,7 +39,7 @@ router.get('/events/:eventId/bracket-assignments', async (req, res) => {
     const bracketAssignmentData = await Promise.all(
       flights.map(async (flight) => {
         // Get tournament groups (brackets) for this specific flight
-        // Brackets are named with flight name prefix (e.g., "Nike Elite Bracket A")
+        // Now using proper flight_id tracking instead of name patterns
         const brackets = await db
           .select({
             id: tournamentGroups.id,
@@ -50,9 +50,7 @@ router.get('/events/:eventId/bracket-assignments', async (req, res) => {
           .from(tournamentGroups)
           .where(and(
             eq(tournamentGroups.eventId, eventId),
-            eq(tournamentGroups.ageGroupId, flight.ageGroupId),
-            // Match brackets that belong to this specific flight by name
-            sql`${tournamentGroups.name} LIKE ${flight.flightName + ' %'}`
+            eq(sql`${tournamentGroups}.flight_id`, flight.flightId) // Direct flight ownership tracking
           ));
 
         console.log(`BRACKET ASSIGNMENT DEBUG: Flight ${flight.flightName} (ID: ${flight.flightId}) - Found ${brackets.length} brackets:`, brackets.map(b => `${b.name} (ID: ${b.id})`));
@@ -260,14 +258,15 @@ router.post('/events/:eventId/flights/:flightId/create-brackets', async (req, re
 
     console.log(`BRACKET CREATION DEBUG: Creating ${bracketsToCreate.length} brackets:`, bracketsToCreate.map(b => b.name));
 
-    // Create the brackets
+    // Create the brackets with proper flight ownership tracking
     const createdBrackets = [];
     for (const bracket of bracketsToCreate) {
       const [newBracket] = await db
         .insert(tournamentGroups)
         .values({
-          eventId: eventId,
+          eventId: eventId, // Keep as string to match schema
           ageGroupId: flight[0].ageGroupId,
+          flightId: parseInt(flightId), // Track which flight this bracket belongs to
           name: bracket.name,
           type: bracket.type,
           stage: bracket.stage,

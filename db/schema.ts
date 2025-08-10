@@ -393,6 +393,7 @@ export const tournamentGroups = pgTable("tournament_groups", {
   id: serial("id").primaryKey(),
   eventId: text("event_id").notNull().references(() => events.id, { onDelete: 'cascade' }),
   ageGroupId: integer("age_group_id").notNull().references(() => eventAgeGroups.id),
+  flightId: integer("flight_id").references(() => eventBrackets.id), // Track which flight this bracket belongs to
   name: text("name").notNull(),
   type: text("type").notNull(),
   stage: text("stage").notNull(),
