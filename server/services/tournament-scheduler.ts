@@ -176,8 +176,8 @@ export class TournamentScheduler {
     
     console.log(`🎯 Generating games for ${teams.length} teams in ${bracket.format} format`);
     
-    // Use the bracket's configured tournament format
-    const format = bracket.tournamentFormat || bracket.format || 'round_robin';
+    // Use the bracket's configured tournament format - NO ROUND ROBIN FALLBACK FOR 6-TEAM BRACKETS
+    const format = bracket.tournamentFormat || bracket.format || (teams.length === 6 ? 'group_of_6' : 'round_robin');
     
     switch (format) {
       case 'round_robin':
@@ -244,8 +244,14 @@ export class TournamentScheduler {
         break;
         
       default:
-        console.log(`⚠️  Unknown bracket format: ${bracket.format}, defaulting to round robin`);
-        games.push(...this.generateRoundRobinGames(bracket, teams, gameCounter));
+        // CRITICAL: Check for 6-team brackets and force crossplay
+        if (teams.length === 6) {
+          console.log(`🚨 CRITICAL: Unknown format '${bracket.format}' for 6-team bracket - ENFORCING crossplay instead of round-robin`);
+          games.push(...this.generate6TeamCrossover(bracket, teams, gameCounter));
+        } else {
+          console.log(`⚠️  Unknown bracket format: ${bracket.format}, defaulting to round robin`);
+          games.push(...this.generateRoundRobinGames(bracket, teams, gameCounter));
+        }
     }
     
     return games;
@@ -323,9 +329,14 @@ export class TournamentScheduler {
         } else if (teamCount === 8 || teamCount === 9) {
           return this.generate8TeamDualBracket(bracket, teams, startingGameNumber);
         } else {
-          // Fallback to standard round robin
-          console.log(`⚠️  No specific format for ${teamCount} teams, using standard round robin`);
-          return this.generateRoundRobinGames(bracket, teams, startingGameNumber);
+          // CRITICAL: No round-robin fallback for 6-team brackets
+          if (teamCount === 6) {
+            console.log(`🚨 CRITICAL: 6-team bracket detected - ENFORCING crossplay format instead of round-robin`);
+            return this.generate6TeamCrossover(bracket, teams, startingGameNumber);
+          } else {
+            console.log(`⚠️  No specific format for ${teamCount} teams, using standard round robin`);
+            return this.generateRoundRobinGames(bracket, teams, startingGameNumber);
+          }
         }
     }
   }

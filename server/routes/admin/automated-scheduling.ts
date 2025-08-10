@@ -64,7 +64,7 @@ router.post('/events/:eventId/scheduling/preview', requirePermission('manage_eve
       const teamCount = teams.length;
       const flightsNeeded = Math.ceil(teamCount / 8); // Max 8 teams per flight
       const bracketsPerFlight = teamCount <= 4 ? 1 : Math.ceil(teamCount / 4);
-      const gamesPerTeam = calculateGamesPerTeam(teamCount, 'round_robin');
+      const gamesPerTeam = calculateGamesPerTeam(teamCount, 'crossplay_enforced');
       const totalGames = Math.ceil((teamCount * gamesPerTeam) / 2);
 
       return {
@@ -334,12 +334,16 @@ function calculateGamesPerTeam(teamCount: number, format: string): number {
   switch (format) {
     case 'round_robin':
       return teamCount - 1; // Each team plays every other team once
+    case 'crossplay_enforced':
+      // For 6-team crossplay: each team plays 6 games (3 teams from other pool x 2 rounds)
+      return teamCount === 6 ? 6 : Math.min(teamCount - 1, 4);
     case 'knockout':
       return Math.ceil(Math.log2(teamCount)); // Single elimination
     case 'round_robin_knockout':
       return Math.min(teamCount - 1, 4) + Math.ceil(Math.log2(teamCount)); // Pool play + playoffs
     default:
-      return Math.min(teamCount - 1, 4); // Default to max 4 games per team
+      // CRITICAL: No more round-robin fallbacks for 6-team brackets
+      return teamCount === 6 ? 6 : Math.min(teamCount - 1, 4);
   }
 }
 
@@ -389,8 +393,8 @@ async function createAutomaticBrackets(eventId: number, flights: any[], teams: a
     
     if (teamCount <= 4) {
       // Single bracket for small flights
-      // Get format from database or default to round_robin
-      const format = await getBracketFormat(eventId, flight.name) || 'round_robin';
+      // Get format from database or default to crossplay_enforced for 6-team brackets
+      const format = await getBracketFormat(eventId, flight.name) || 'crossplay_enforced';
       const bracket = {
         id: `bracket_${flight.id}`,
         flightId: flight.id,
@@ -410,8 +414,8 @@ async function createAutomaticBrackets(eventId: number, flights: any[], teams: a
       const bracketsNeeded = Math.ceil(teamCount / 4);
       for (let i = 0; i < bracketsNeeded; i++) {
         const bracketTeams = flight.teams.slice(i * 4, (i + 1) * 4);
-        // Get format from database or default to round_robin
-        const format = await getBracketFormat(eventId, flight.name) || 'round_robin';
+        // Get format from database or default to crossplay_enforced for 6-team brackets  
+        const format = await getBracketFormat(eventId, flight.name) || 'crossplay_enforced';
         const bracket = {
           id: `bracket_${flight.id}_${i + 1}`,
           flightId: flight.id,
