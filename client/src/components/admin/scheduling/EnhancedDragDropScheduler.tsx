@@ -1135,63 +1135,74 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
                                 left: '2px'
                               }}
                               onMouseEnter={(e) => {
-                                // Enhanced popup with club, coaches, round info after 0.5s
-                                let timeoutId: NodeJS.Timeout;
-                                timeoutId = setTimeout(() => {
-                                  const tooltip = document.createElement('div');
-                                  tooltip.className = 'fixed z-50 bg-slate-800/95 backdrop-blur-sm text-white text-sm p-4 rounded-lg shadow-xl border border-slate-600 max-w-md';
-                                  tooltip.innerHTML = `
-                                    <div class="font-bold text-blue-300 mb-2">${game.homeTeamName} vs ${game.awayTeamName}</div>
-                                    <div class="grid grid-cols-2 gap-2 text-xs text-slate-200">
-                                      <div><span class="text-slate-400">Field:</span> ${field.name}</div>
-                                      <div><span class="text-slate-400">Complex:</span> ${field.complexName || 'Standard'}</div>
-                                      <div><span class="text-slate-400">Age Group:</span> ${game.ageGroup}</div>
-                                      <div><span class="text-slate-400">Flight:</span> ${game.bracketName || 'Standard'}</div>
+                                // Create tooltip immediately on hover
+                                const tooltip = document.createElement('div');
+                                tooltip.className = 'fixed z-[9999] bg-slate-900/95 backdrop-blur-sm text-white text-sm p-4 rounded-lg shadow-2xl border border-slate-600 max-w-sm pointer-events-none';
+                                tooltip.style.position = 'fixed';
+                                tooltip.style.zIndex = '9999';
+                                
+                                // Get game date and time info
+                                const gameDate = game.startTime ? game.startTime.split('T')[0] : 'TBD';
+                                const gameTime = game.startTime ? game.startTime.split('T')[1]?.slice(0,5) : 'TBD';
+                                const fieldName = field?.name || 'Unknown Field';
+                                const duration = totalDuration || 90;
+                                
+                                tooltip.innerHTML = `
+                                  <div class="font-bold text-blue-300 mb-3">${game.homeTeamName || 'TBD'} vs ${game.awayTeamName || 'TBD'}</div>
+                                  <div class="space-y-2 text-xs text-slate-200">
+                                    <div class="grid grid-cols-2 gap-2">
+                                      <div><span class="text-slate-400">Date:</span> ${gameDate}</div>
+                                      <div><span class="text-slate-400">Time:</span> ${gameTime}</div>
+                                      <div><span class="text-slate-400">Field:</span> ${fieldName}</div>
+                                      <div><span class="text-slate-400">Duration:</span> ${duration} min</div>
+                                      <div><span class="text-slate-400">Age Group:</span> ${game.ageGroup || 'Unknown'}</div>
                                       <div><span class="text-slate-400">Round:</span> ${(game as any).round || 1}</div>
-                                      <div><span class="text-slate-400">Duration:</span> ${totalDuration} min</div>
                                     </div>
-                                    ${game.homeTeamCoach || game.awayTeamCoach ? `
-                                      <div class="mt-2 pt-2 border-t border-slate-600 text-xs">
-                                        ${game.homeTeamCoach ? `<div><span class="text-slate-400">Home Coach:</span> ${game.homeTeamCoach}</div>` : ''}
-                                        ${game.awayTeamCoach ? `<div><span class="text-slate-400">Away Coach:</span> ${game.awayTeamCoach}</div>` : ''}
+                                    ${(game as any).homeTeamCoach || (game as any).awayTeamCoach ? `
+                                      <div class="mt-3 pt-2 border-t border-slate-600">
+                                        ${(game as any).homeTeamCoach ? `<div><span class="text-slate-400">Home Coach:</span> ${(game as any).homeTeamCoach}</div>` : ''}
+                                        ${(game as any).awayTeamCoach ? `<div><span class="text-slate-400">Away Coach:</span> ${(game as any).awayTeamCoach}</div>` : ''}
                                       </div>
                                     ` : ''}
-                                    <div class="mt-2 pt-2 border-t border-slate-600 text-xs text-slate-400">
-                                      💡 Drag to reschedule • Right-click to move between days
-                                    </div>
-                                  `;
-                                  tooltip.style.left = Math.min(e.pageX + 15, window.innerWidth - 320) + 'px';
-                                  tooltip.style.top = Math.max(e.pageY - 10, 10) + 'px';
-                                  tooltip.id = `tooltip-${game.id}`;
-                                  document.body.appendChild(tooltip);
-                                }, 500); // 0.5 second delay
+                                  </div>
+                                  <div class="mt-3 pt-2 border-t border-slate-600 text-xs text-slate-400">
+                                    💡 Drag to reschedule • Right-click for options
+                                  </div>
+                                `;
                                 
-                                // Store timeout to clear on leave
-                                (e.target as any).__tooltipTimeout = timeoutId;
+                                tooltip.style.left = Math.min(e.clientX + 15, window.innerWidth - 400) + 'px';
+                                tooltip.style.top = Math.max(e.clientY - 10, 10) + 'px';
+                                tooltip.id = `tooltip-${game.id}`;
+                                
+                                // Remove any existing tooltips
+                                document.querySelectorAll('[id^="tooltip-"]').forEach(t => t.remove());
+                                document.body.appendChild(tooltip);
                               }}
                               onMouseLeave={(e) => {
-                                // Clear timeout and remove tooltip
-                                if ((e.target as any).__tooltipTimeout) {
-                                  clearTimeout((e.target as any).__tooltipTimeout);
-                                }
-                                const tooltip = document.getElementById(`tooltip-${game.id}`);
-                                if (tooltip) tooltip.remove();
-                              }}
-                              onMouseMove={(e) => {
+                                // Remove tooltip when mouse leaves
                                 const tooltip = document.getElementById(`tooltip-${game.id}`);
                                 if (tooltip) {
-                                  tooltip.style.left = Math.min(e.pageX + 15, window.innerWidth - 320) + 'px';
-                                  tooltip.style.top = Math.max(e.pageY - 10, 10) + 'px';
+                                  tooltip.remove();
+                                }
+                              }}
+                              onMouseMove={(e) => {
+                                // Update tooltip position as mouse moves
+                                const tooltip = document.getElementById(`tooltip-${game.id}`);
+                                if (tooltip) {
+                                  tooltip.style.left = Math.min(e.clientX + 15, window.innerWidth - 400) + 'px';
+                                  tooltip.style.top = Math.max(e.clientY - 10, 10) + 'px';
                                 }
                               }}
                             >
                               <div className="flex flex-col justify-between h-full">
                                 <div className="flex-1 overflow-hidden">
                                   <div className="font-medium text-xs leading-tight">
-                                    {/* Compressed team names that fit properly */}
-                                    <div className="truncate text-blue-100">{(game.homeTeamName || 'TBD').slice(0, 20)}</div>
-                                    <div className="text-slate-300 text-center my-0.5 text-xs">vs</div>
-                                    <div className="truncate text-blue-100">{(game.awayTeamName || 'TBD').slice(0, 20)}</div>
+                                    {/* Smart team name display - show both teams compactly */}
+                                    <div className="text-blue-100 leading-none">
+                                      <div className="truncate text-[10px]">{(game.homeTeamName || 'TBD').replace(/FC|SC|Academy|Elite|Premier|B\d+\/?\d*|U\d+/g, '').trim().slice(0, 12)}</div>
+                                      <div className="text-center text-slate-300 text-[8px] my-0.5">vs</div>
+                                      <div className="truncate text-[10px]">{(game.awayTeamName || 'TBD').replace(/FC|SC|Academy|Elite|Premier|B\d+\/?\d*|U\d+/g, '').trim().slice(0, 12)}</div>
+                                    </div>
                                   </div>
                                 </div>
                                 
