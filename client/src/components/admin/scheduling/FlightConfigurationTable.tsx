@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Pencil, Check, X, Calendar, Clock, Users, Trophy } from 'lucide-react';
+import { Pencil, Check, X, Calendar, Clock, Users, Trophy, Search, Filter, FileText } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { EditableInput } from './EditableInput';
 
@@ -27,6 +27,8 @@ interface FlightConfig {
   isConfigured: boolean;
   ageGroup: string;
   gender: string;
+  birthYear: string;
+  fieldSize: string;
 }
 
 interface EditingState {
@@ -44,12 +46,23 @@ const formatOptions = [
   { value: 'double_elimination', label: 'Double Elimination' },
 ];
 
+const fieldSizeOptions = [
+  { value: '3v3', label: '3v3' },
+  { value: '4v4', label: '4v4' },
+  { value: '5v5', label: '5v5' },
+  { value: '7v7', label: '7v7' },
+  { value: '9v9', label: '9v9' },
+  { value: '11v11', label: '11v11' },
+];
+
 export function FlightConfigurationTable({ eventId }: { eventId: string }) {
   const [editing, setEditing] = useState<EditingState>({ id: null, field: null, value: '' });
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showReadyOnly, setShowReadyOnly] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: flights, isLoading } = useQuery({
+  const { data: allFlights, isLoading } = useQuery({
     queryKey: ['flight-configurations', eventId],
     queryFn: async () => {
       const response = await fetch(`/api/admin/events/${eventId}/flight-configurations`);
@@ -58,6 +71,36 @@ export function FlightConfigurationTable({ eventId }: { eventId: string }) {
       return data as FlightConfig[];
     },
   });
+
+  // Filter and search functionality
+  const filteredFlights = useMemo(() => {
+    if (!allFlights) return [];
+    
+    // Filter out flights with no teams first
+    let flights = allFlights.filter(flight => flight.teamCount > 0);
+    
+    // Apply search filter
+    if (searchTerm) {
+      flights = flights.filter(flight =>
+        flight.divisionName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        flight.ageGroup.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        flight.gender.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        flight.birthYear.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        flight.formatName.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+    
+    // Apply ready filter
+    if (showReadyOnly) {
+      flights = flights.filter(flight => flight.isConfigured);
+    }
+    
+    return flights;
+  }, [allFlights, searchTerm, showReadyOnly]);
+
+  const readyFlights = useMemo(() => {
+    return allFlights?.filter(flight => flight.isConfigured && flight.teamCount > 0) || [];
+  }, [allFlights]);
 
   const updateFlightMutation = useMutation({
     mutationFn: async ({ flightId, field, value }: { flightId: string; field: string; value: string | number }) => {
@@ -126,13 +169,45 @@ export function FlightConfigurationTable({ eventId }: { eventId: string }) {
   return (
     <Card className="bg-slate-800 border-slate-700">
       <CardHeader className="border-b border-slate-700">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-blue-600 rounded-lg">
-            <Trophy className="h-5 w-5 text-white" />
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-blue-600 rounded-lg">
+              <Trophy className="h-5 w-5 text-white" />
+            </div>
+            <div>
+              <CardTitle className="text-white text-lg">Flight Configuration Overview</CardTitle>
+              <p className="text-slate-400 text-sm">
+                Showing {filteredFlights.length} flights with teams • {readyFlights.length} ready for scheduling
+              </p>
+            </div>
           </div>
-          <div>
-            <CardTitle className="text-white text-lg">Flight Configuration Overview</CardTitle>
-            <p className="text-slate-400 text-sm">Manage divisions, timing, and format settings</p>
+          
+          {/* Search and Filter Controls */}
+          <div className="flex items-center gap-3">
+            {/* Search Input */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <Input
+                placeholder="Search flights..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 w-64 bg-slate-700 border-slate-600 text-white placeholder-slate-400 focus:bg-slate-600 focus:border-blue-400"
+              />
+            </div>
+            
+            {/* Ready Flights Dropdown */}
+            <Select value={showReadyOnly ? "ready" : "all"} onValueChange={(value) => setShowReadyOnly(value === "ready")}>
+              <SelectTrigger className="w-48 bg-slate-700 border-slate-600 text-white">
+                <div className="flex items-center gap-2">
+                  <Filter className="h-4 w-4" />
+                  <SelectValue />
+                </div>
+              </SelectTrigger>
+              <SelectContent className="bg-slate-700 border-slate-600">
+                <SelectItem value="all">All Flights ({filteredFlights.length})</SelectItem>
+                <SelectItem value="ready">Ready Only ({readyFlights.length})</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </CardHeader>
@@ -142,6 +217,7 @@ export function FlightConfigurationTable({ eventId }: { eventId: string }) {
             <TableHeader>
               <TableRow className="border-slate-700 hover:bg-slate-700/50">
                 <TableHead className="text-slate-300 font-medium">DIVISIONS/FLIGHTS</TableHead>
+                <TableHead className="text-slate-300 font-medium text-center">FIELD SIZE</TableHead>
                 <TableHead className="text-slate-300 font-medium">START DATE</TableHead>
                 <TableHead className="text-slate-300 font-medium">END DATE</TableHead>
                 <TableHead className="text-slate-300 font-medium text-center">MATCH</TableHead>
@@ -156,24 +232,78 @@ export function FlightConfigurationTable({ eventId }: { eventId: string }) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {flights?.map((flight) => (
-                <TableRow key={flight.id} className="border-slate-700 hover:bg-slate-700/30">
-                  {/* Division/Flight Name */}
-                  <TableCell className="font-medium">
-                    <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="bg-blue-600/20 text-blue-400 border-blue-600">
-                        {flight.divisionName}
-                      </Badge>
-                      {flight.isConfigured ? (
-                        <Badge variant="outline" className="bg-green-600/20 text-green-400 border-green-600">
-                          ✓ Ready
-                        </Badge>
-                      ) : (
-                        <Badge variant="outline" className="bg-yellow-600/20 text-yellow-400 border-yellow-600">
-                          ⚠ Needs Setup
-                        </Badge>
+              {filteredFlights.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={12} className="text-center py-8 text-slate-400">
+                    <div className="flex flex-col items-center gap-2">
+                      <FileText className="h-8 w-8 text-slate-500" />
+                      <p>No flights found with teams</p>
+                      {searchTerm && (
+                        <p className="text-sm">Try adjusting your search term</p>
                       )}
                     </div>
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredFlights.map((flight) => (
+                <TableRow key={flight.id} className="border-slate-700 hover:bg-slate-700/30">
+                  {/* Division/Flight Name with Birth Year */}
+                  <TableCell className="font-medium">
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center gap-2">
+                        <Badge variant="outline" className="bg-blue-600/20 text-blue-400 border-blue-600">
+                          {flight.gender} {flight.birthYear} - {flight.divisionName}
+                        </Badge>
+                        {flight.isConfigured ? (
+                          <Badge variant="outline" className="bg-green-600/20 text-green-400 border-green-600">
+                            ✓ Ready
+                          </Badge>
+                        ) : (
+                          <Badge variant="outline" className="bg-yellow-600/20 text-yellow-400 border-yellow-600">
+                            ⚠ Needs Setup
+                          </Badge>
+                        )}
+                      </div>
+                      <div className="text-xs text-slate-400">
+                        {flight.ageGroup} • {flight.teamCount} teams
+                      </div>
+                    </div>
+                  </TableCell>
+
+                  {/* Field Size */}
+                  <TableCell className="text-center">
+                    {editing.id === flight.id && editing.field === 'fieldSize' ? (
+                      <div className="flex items-center gap-1 justify-center">
+                        <Select
+                          value={editing.value as string}
+                          onValueChange={(value) => setEditing({ ...editing, value })}
+                        >
+                          <SelectTrigger className="w-20 h-8 bg-slate-800 border-slate-500 text-white focus:bg-slate-700 focus:border-blue-400">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {fieldSizeOptions.map((option) => (
+                              <SelectItem key={option.value} value={option.value}>
+                                {option.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <Button size="sm" variant="ghost" onClick={handleSave} className="h-8 w-8 p-0">
+                          <Check className="h-4 w-4 text-green-400" />
+                        </Button>
+                        <Button size="sm" variant="ghost" onClick={handleCancel} className="h-8 w-8 p-0">
+                          <X className="h-4 w-4 text-red-400" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => handleEdit(flight.id, 'fieldSize', flight.fieldSize || '7v7')}
+                        className="px-2 py-1 bg-slate-700 rounded text-center hover:bg-slate-600 transition-colors text-white font-medium"
+                      >
+                        {flight.fieldSize || '7v7'}
+                      </button>
+                    )}
                   </TableCell>
 
                   {/* Start Date */}
@@ -418,12 +548,12 @@ export function FlightConfigurationTable({ eventId }: { eventId: string }) {
                     )}
                   </TableCell>
 
-                  {/* Team Count */}
+                  {/* Team Count - Removed since it's shown in flight name section */}
                   <TableCell className="text-center">
-                    <div className="flex items-center justify-center gap-1">
-                      <Users className="h-4 w-4 text-slate-400" />
-                      <span className="text-slate-300">{flight.teamCount}</span>
-                    </div>
+                    <Badge variant="secondary" className="bg-slate-700 text-slate-300">
+                      <Users className="h-3 w-3 mr-1" />
+                      {flight.teamCount}
+                    </Badge>
                   </TableCell>
 
                   {/* Edit Button */}
@@ -438,7 +568,8 @@ export function FlightConfigurationTable({ eventId }: { eventId: string }) {
                     </Button>
                   </TableCell>
                 </TableRow>
-              ))}
+                ))
+              )}
             </TableBody>
           </Table>
         </div>
