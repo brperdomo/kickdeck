@@ -1086,21 +1086,43 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
                                 top: '2px',
                                 left: '2px'
                               }}
-                              title={`Teams: ${game.homeTeamName} vs ${game.awayTeamName}
-Field: ${field.name}
-Age Group: ${game.ageGroup}
-Birth Year: ${game.ageGroup ? game.ageGroup.replace(/[^\d]/g, '') || 'N/A' : 'N/A'}
-Flight: ${game.bracketName || 'Standard'}
-Duration: ${totalDuration} minutes (${gameSpanSlots} slots)
-Status: ${game.status || 'scheduled'}
-
-Drag to move to a different time slot or field`}
+                              onMouseEnter={(e) => {
+                                // Create instant tooltip
+                                const tooltip = document.createElement('div');
+                                tooltip.className = 'fixed z-50 bg-slate-900 text-white text-sm p-2 rounded shadow-lg border border-slate-600 max-w-sm';
+                                tooltip.innerHTML = `
+                                  <div class="font-medium">${game.homeTeamName} vs ${game.awayTeamName}</div>
+                                  <div class="text-slate-300 text-xs mt-1">
+                                    Field: ${field.name}<br/>
+                                    Age Group: ${game.ageGroup}<br/>
+                                    Flight: ${game.bracketName || 'Standard'}<br/>
+                                    Duration: ${totalDuration} minutes
+                                  </div>
+                                `;
+                                tooltip.style.left = e.pageX + 10 + 'px';
+                                tooltip.style.top = e.pageY - 10 + 'px';
+                                tooltip.id = `tooltip-${game.id}`;
+                                document.body.appendChild(tooltip);
+                              }}
+                              onMouseLeave={() => {
+                                const tooltip = document.getElementById(`tooltip-${game.id}`);
+                                if (tooltip) tooltip.remove();
+                              }}
+                              onMouseMove={(e) => {
+                                const tooltip = document.getElementById(`tooltip-${game.id}`);
+                                if (tooltip) {
+                                  tooltip.style.left = e.pageX + 10 + 'px';
+                                  tooltip.style.top = e.pageY - 10 + 'px';
+                                }
+                              }}
                             >
                               <div className="flex justify-between items-start">
                                 <div className="flex-1">
-                                  <div className="font-medium text-xs">
-                                    {/* Shortened team names for better display */}
-                                    {game.homeTeamName?.split(' ')[0] || 'TBD'} vs {game.awayTeamName?.split(' ')[0] || 'TBD'}
+                                  <div className="font-medium text-xs leading-tight">
+                                    {/* Full team names with line wrapping */}
+                                    <div className="truncate">{game.homeTeamName || 'TBD'}</div>
+                                    <div className="text-slate-300 text-center my-0.5">vs</div>
+                                    <div className="truncate">{game.awayTeamName || 'TBD'}</div>
                                   </div>
                                   <div className="text-xs opacity-80">
                                     {game.ageGroup?.replace(/[^\dUB]/g, '') || 'U?'}

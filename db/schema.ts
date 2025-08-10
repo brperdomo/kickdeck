@@ -455,7 +455,9 @@ export const teams = pgTable("teams", {
   notes: text("notes"),
   // Approver tracking
   approvedByUserId: integer("approved_by_user_id").references(() => users.id),
-  approvedAt: timestamp("approved_at")
+  approvedAt: timestamp("approved_at"),
+  // Placeholder team flag for pre-scheduling workflows
+  isPlaceholder: boolean("is_placeholder").default(false)
 });
 
 export const games = pgTable("games", {

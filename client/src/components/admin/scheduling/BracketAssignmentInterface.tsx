@@ -160,6 +160,62 @@ export function BracketAssignmentInterface({ eventId }: BracketAssignmentInterfa
     assignTeamsMutation.mutate({ assignments });
   };
 
+  // Add placeholder team mutation
+  const addPlaceholderMutation = useMutation({
+    mutationFn: async ({ bracketId, placeholderName }: { bracketId: number; placeholderName: string }) => {
+      const response = await fetch(`/api/admin/events/${eventId}/brackets/${bracketId}/add-placeholder`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ placeholderName: placeholderName || 'Placeholder Team' })
+      });
+      if (!response.ok) throw new Error('Failed to add placeholder team');
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Placeholder Added",
+        description: "Placeholder team added successfully"
+      });
+      queryClient.invalidateQueries({ queryKey: ['bracket-assignments', eventId] });
+      setPlaceholderName('');
+    },
+    onError: (error) => {
+      toast({
+        title: "Failed to Add Placeholder",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  });
+
+  // Replace placeholder with real team mutation
+  const replacePlaceholderMutation = useMutation({
+    mutationFn: async ({ placeholderTeamId, realTeamId }: { placeholderTeamId: number; realTeamId: number }) => {
+      const response = await fetch(`/api/admin/events/${eventId}/teams/${placeholderTeamId}/replace-with/${realTeamId}`, {
+        method: 'POST',
+        credentials: 'include'
+      });
+      if (!response.ok) throw new Error('Failed to replace placeholder team');
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Placeholder Replaced",
+        description: "Placeholder team replaced successfully. All scheduled games transferred."
+      });
+      queryClient.invalidateQueries({ queryKey: ['bracket-assignments', eventId] });
+      queryClient.invalidateQueries({ queryKey: ['schedule-data', eventId] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Failed to Replace Placeholder",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  });
+
   // Clear all team assignments mutation
   const clearAllAssignmentsMutation = useMutation({
     mutationFn: async () => {
@@ -525,12 +581,35 @@ export function BracketAssignmentInterface({ eventId }: BracketAssignmentInterfa
                   <div className="space-y-2">
                     {bracket.teams.map((team) => (
                       <div key={team.id} className="flex items-center justify-between p-2 bg-slate-700 rounded">
-                        <span className="text-slate-200">{team.name}</span>
+                        <div className="flex items-center gap-2">
+                          <span className={`text-slate-200 ${team.name.includes('Placeholder') ? 'italic text-slate-400' : ''}`}>
+                            {team.name}
+                          </span>
+                          {team.name.includes('Placeholder') && (
+                            <Badge variant="outline" className="text-xs text-amber-400 border-amber-400">
+                              Placeholder
+                            </Badge>
+                          )}
+                        </div>
                         <div className="flex items-center gap-2">
                           {team.seedRanking && (
                             <Badge variant="secondary" className="text-xs">
                               Seed #{team.seedRanking}
                             </Badge>
+                          )}
+                          {team.name.includes('Placeholder') && selectedFlightData.unassignedTeams.length > 0 && (
+                            <Select onValueChange={(value) => replacePlaceholderMutation.mutate({ placeholderTeamId: team.id, realTeamId: parseInt(value) })}>
+                              <SelectTrigger className="w-8 h-6 p-0 border-none bg-blue-600 hover:bg-blue-700">
+                                <ArrowRight className="h-3 w-3 text-white" />
+                              </SelectTrigger>
+                              <SelectContent className="bg-slate-700 border-slate-600">
+                                {selectedFlightData.unassignedTeams.map((unassignedTeam) => (
+                                  <SelectItem key={unassignedTeam.id} value={unassignedTeam.id.toString()}>
+                                    Replace with {unassignedTeam.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
                           )}
                           {editingBracket === bracket.id && (
                             <Button
@@ -547,6 +626,23 @@ export function BracketAssignmentInterface({ eventId }: BracketAssignmentInterfa
                     ))}
                     
                     {/* Add Placeholder Section */}
+                    {bracket.teams.length < bracket.teamCount && (
+                      <div className="border-t border-slate-600 pt-2 mt-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => addPlaceholderMutation.mutate({ 
+                            bracketId: bracket.id, 
+                            placeholderName: `Placeholder ${bracket.name}` 
+                          })}
+                          disabled={addPlaceholderMutation.isPending}
+                          className="w-full text-amber-600 hover:text-amber-700 hover:bg-amber-50 border-amber-300"
+                        >
+                          <UserPlus className="h-4 w-4 mr-2" />
+                          Add Placeholder Team
+                        </Button>
+                      </div>
+                    )}
                     {editingBracket === bracket.id && (
                       <div className="mt-4 p-3 border border-slate-600 rounded bg-slate-800/50">
                         <div className="flex items-center gap-2 mb-2">
