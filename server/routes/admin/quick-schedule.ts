@@ -319,18 +319,55 @@ function generateGamesForTeamsWithConstraints(teams: string[], ageGroup: string,
     teamGamesPerDay[team] = {};
   });
 
-  // Generate matchups based on team count
+  // Generate matchups based on team count with CROSSPLAY FORMAT INTEGRITY
   let matchups = [];
   if (teams.length <= 6) {
-    // Round-robin for small groups
-    for (let i = 0; i < teams.length; i++) {
-      for (let j = i + 1; j < teams.length; j++) {
-        matchups.push({
-          homeTeam: teams[i],
-          awayTeam: teams[j],
-          round: 1,
-          priority: 1 // All games have equal priority in round-robin
-        });
+    // CRITICAL FIX: Use crossplay format for 6 teams (Pool A vs Pool B only)
+    if (teams.length === 6) {
+      // Split into two pools of 3 teams each
+      const poolA = teams.slice(0, 3);
+      const poolB = teams.slice(3, 6);
+      
+      console.log(`🏆 [CROSSPLAY FORMAT] Pool A: [${poolA.join(', ')}]`);
+      console.log(`🏆 [CROSSPLAY FORMAT] Pool B: [${poolB.join(', ')}]`);
+      
+      // Generate Pool A vs Pool B crossplay matchups ONLY
+      for (let i = 0; i < poolA.length; i++) {
+        for (let j = 0; j < poolB.length; j++) {
+          matchups.push({
+            homeTeam: poolA[i],
+            awayTeam: poolB[j],
+            round: 1,
+            priority: 1,
+            matchupType: 'crossplay',
+            poolInfo: `Pool A vs Pool B`
+          });
+        }
+      }
+      
+      // Add championship game placeholder (TBD teams)
+      matchups.push({
+        homeTeam: 'TBD',
+        awayTeam: 'TBD',
+        round: 2,
+        priority: 2,
+        matchupType: 'championship',
+        poolInfo: 'Championship Game'
+      });
+      
+      console.log(`🏆 [CROSSPLAY FORMAT] Generated ${matchups.length} games: 9 pool play + 1 championship`);
+    } else {
+      // For other small group sizes, use round-robin within single pool
+      for (let i = 0; i < teams.length; i++) {
+        for (let j = i + 1; j < teams.length; j++) {
+          matchups.push({
+            homeTeam: teams[i],
+            awayTeam: teams[j],
+            round: 1,
+            priority: 1,
+            matchupType: 'round_robin'
+          });
+        }
       }
     }
   } else {

@@ -38,6 +38,10 @@ interface Game {
   status: string;
   homeScore?: number;
   awayScore?: number;
+  homeTeamId?: number;
+  awayTeamId?: number;
+  bracketId?: number;
+  flightName?: string;
 }
 
 interface ScheduleData {
@@ -91,8 +95,29 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
   const [deleteType, setDeleteType] = useState(initialState.deleteType);
   const [deleteGameId, setDeleteGameId] = useState(initialState.deleteGameId);
   
+  // Team editing state
+  const [editingGame, setEditingGame] = useState<number | null>(null);
+  const [availableTeams, setAvailableTeams] = useState<Array<{id: number, name: string, flightName: string}>>([]);
+  
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Fetch available teams for a specific flight when editing
+  const { data: flightTeams } = useQuery({
+    queryKey: ['flight-teams', eventId, editingGame],
+    queryFn: async () => {
+      if (!editingGame) return [];
+      const game = scheduleData?.games.find(g => g.id === editingGame);
+      if (!game?.bracketId) return [];
+      
+      const response = await fetch(`/api/admin/events/${eventId}/brackets/${game.bracketId}/teams`, {
+        credentials: 'include'
+      });
+      if (!response.ok) throw new Error('Failed to fetch teams');
+      return response.json();
+    },
+    enabled: !!editingGame && !!scheduleData
+  });
 
   const { data: scheduleData, isLoading, error } = useQuery<ScheduleData>({
     queryKey: ['schedule-data', eventId],
@@ -329,6 +354,28 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
       console.error('Delete all games mutation error:', error);
       toast({ title: 'Failed to delete all games', variant: 'destructive' });
       setShowDeleteConfirm(false); // Close dialog even on error
+    }
+  });
+
+  // Team editing mutation
+  const updateGameTeamsMutation = useMutation({
+    mutationFn: async ({ gameId, homeTeamId, awayTeamId }: { gameId: number, homeTeamId: number, awayTeamId: number }) => {
+      const response = await fetch(`/api/admin/events/${eventId}/games/${gameId}/teams`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ homeTeamId, awayTeamId })
+      });
+      if (!response.ok) throw new Error('Failed to update game teams');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['schedule-data', eventId] });
+      setEditingGame(null);
+      toast({ title: 'Game teams updated successfully', variant: 'default' });
+    },
+    onError: (error) => {
+      toast({ title: 'Failed to update game teams', variant: 'destructive' });
     }
   });
 
@@ -669,48 +716,139 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                           checked={selectedGames.includes(game.id)}
                           onCheckedChange={() => toggleGameSelection(game.id)}
                         />
-                        <div className="space-y-1">
-                          <div className="font-medium text-gray-900">
-                            {game.homeTeam} vs {game.awayTeam}
-                            {hasUnassignedFields && (
-                              <AlertTriangle className="h-4 w-4 text-yellow-600 inline ml-2" />
-                            )}
+                        {editingGame === game.id ? (
+                          // Team Editing Interface
+                          <div className="space-y-3 w-full">
+                            <div className="text-sm font-medium text-gray-700">Edit Game Teams</div>
+                            <div className="grid grid-cols-1 gap-2">
+                              <div>
+                                <Label className="text-xs text-gray-600">Home Team</Label>
+                                <Select 
+                                  defaultValue={game.homeTeamId?.toString()}
+                                  onValueChange={(value) => {
+                                    const awayTeamId = game.awayTeamId;
+                                    if (awayTeamId && value !== awayTeamId.toString()) {
+                                      updateGameTeamsMutation.mutate({
+                                        gameId: game.id,
+                                        homeTeamId: parseInt(value),
+                                        awayTeamId: awayTeamId
+                                      });
+                                    }
+                                  }}
+                                >
+                                  <SelectTrigger className="h-8 text-xs">
+                                    <SelectValue placeholder="Select home team" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {flightTeams?.map((team: any) => (
+                                      <SelectItem key={team.id} value={team.id.toString()}>
+                                        {team.name}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                              <div>
+                                <Label className="text-xs text-gray-600">Away Team</Label>
+                                <Select 
+                                  defaultValue={game.awayTeamId?.toString()}
+                                  onValueChange={(value) => {
+                                    const homeTeamId = game.homeTeamId;
+                                    if (homeTeamId && value !== homeTeamId.toString()) {
+                                      updateGameTeamsMutation.mutate({
+                                        gameId: game.id,
+                                        homeTeamId: homeTeamId,
+                                        awayTeamId: parseInt(value)
+                                      });
+                                    }
+                                  }}
+                                >
+                                  <SelectTrigger className="h-8 text-xs">
+                                    <SelectValue placeholder="Select away team" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {flightTeams?.map((team: any) => (
+                                      <SelectItem key={team.id} value={team.id.toString()}>
+                                        {team.name}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                            </div>
+                            <div className="flex gap-2">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => setEditingGame(null)}
+                                className="h-7 text-xs"
+                              >
+                                Cancel
+                              </Button>
+                            </div>
                           </div>
-                          <div className="flex items-center space-x-4 text-sm text-gray-600">
-                            <span className={`flex items-center ${game.date === 'TBD' ? 'text-yellow-600 font-medium' : ''}`}>
-                              <Calendar className="h-3 w-3 mr-1" />
-                              {game.date}
-                            </span>
-                            <span className={`flex items-center ${game.time === 'TBD' ? 'text-yellow-600 font-medium' : ''}`}>
-                              <Clock className="h-3 w-3 mr-1" />
-                              {game.time}
-                            </span>
-                            <span className={`flex items-center ${(game.field === 'Unassigned' || game.field === 'TBD') ? 'text-yellow-600 font-medium' : ''}`}>
-                              <MapPin className="h-3 w-3 mr-1" />
-                              {game.field}
-                            </span>
+                        ) : (
+                          // Normal Game Display
+                          <div className="space-y-1">
+                            <div className="font-medium text-gray-900">
+                              {game.homeTeam} vs {game.awayTeam}
+                              {hasUnassignedFields && (
+                                <AlertTriangle className="h-4 w-4 text-yellow-600 inline ml-2" />
+                              )}
+                            </div>
+                            <div className="flex items-center space-x-4 text-sm text-gray-600">
+                              <span className={`flex items-center ${game.date === 'TBD' ? 'text-yellow-600 font-medium' : ''}`}>
+                                <Calendar className="h-3 w-3 mr-1" />
+                                {game.date}
+                              </span>
+                              <span className={`flex items-center ${game.time === 'TBD' ? 'text-yellow-600 font-medium' : ''}`}>
+                                <Clock className="h-3 w-3 mr-1" />
+                                {game.time}
+                              </span>
+                              <span className={`flex items-center ${(game.field === 'Unassigned' || game.field === 'TBD') ? 'text-yellow-600 font-medium' : ''}`}>
+                                <MapPin className="h-3 w-3 mr-1" />
+                                {game.field}
+                              </span>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <Badge variant="outline" className="text-xs">
+                                {game.ageGroup}
+                              </Badge>
+                              <Badge 
+                                variant={game.status === 'scheduled' ? 'default' : 'secondary'}
+                                className="text-xs"
+                              >
+                                {game.status}
+                              </Badge>
+                              {game.flightName && (
+                                <Badge variant="secondary" className="text-xs">
+                                  {game.flightName}
+                                </Badge>
+                              )}
+                            </div>
                           </div>
-                          <div className="flex items-center space-x-2">
-                            <Badge variant="outline" className="text-xs">
-                              {game.ageGroup}
-                            </Badge>
-                            <Badge 
-                              variant={game.status === 'scheduled' ? 'default' : 'secondary'}
-                              className="text-xs"
-                            >
-                              {game.status}
-                            </Badge>
-                          </div>
-                        </div>
+                        )}
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleDeleteGame(game.id)}
-                        className="h-8 w-8 p-0 text-red-600 hover:bg-red-50"
-                      >
-                        <Trash2 className="h-3 w-3" />
-                      </Button>
+                      <div className="flex gap-1">
+                        {editingGame !== game.id && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setEditingGame(game.id)}
+                            className="h-8 w-8 p-0 text-blue-600 hover:bg-blue-50"
+                          >
+                            <Edit className="h-3 w-3" />
+                          </Button>
+                        )}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDeleteGame(game.id)}
+                          className="h-8 w-8 p-0 text-red-600 hover:bg-red-50"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>

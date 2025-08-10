@@ -143,6 +143,7 @@ import {
 import userRouter from "./routes/user";
 import sendgridWebhookRouter from "./routes/sendgrid-webhook";
 import { fixCardDetails } from "./routes/fix-card-details";
+import gameTeamsRouter from "./routes/admin/game-teams";
 import { processDestinationCharge } from "./routes/stripe-connect-payments";
 import { sql, eq, and, or, inArray, notInArray, isNull, desc, asc, ilike, isNotNull } from "drizzle-orm";
 import { sendTemplatedEmail, sendRegistrationReceiptEmail, sendRegistrationConfirmationEmail } from "./services/emailService";
@@ -1674,6 +1675,7 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/events', isAdmin, flightTemplatesRouter); // Tournament-wide flight template management
     app.use('/api/admin/games', isAdmin, adminGamesRouter); // Game scheduling and management
     app.use('/api/admin/events', isAdmin, fieldsRouter); // Field assignment and management
+    app.use('/api/admin', isAdmin, gameTeamsRouter); // Game team editing functionality
     app.use('/api/admin/field-management', isAdmin, fieldManagementRouter); // Real field availability service
     app.use('/api/admin/enhanced-conflict-detection', isAdmin, enhancedConflictDetectionRouter); // Advanced conflict analysis
     app.use('/api/admin/enhanced-field-management', isAdmin, enhancedFieldManagementRouter); // Flexible time slots and blackouts

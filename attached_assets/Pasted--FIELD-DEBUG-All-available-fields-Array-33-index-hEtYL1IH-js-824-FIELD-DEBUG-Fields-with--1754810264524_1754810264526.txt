@@ -1,0 +1,2664 @@
+🎯 [FIELD DEBUG] All available fields: Array(33)
+index-hEtYL1IH.js:824 🎯 [FIELD DEBUG] Fields with games assigned: Array(8)
+index-hEtYL1IH.js:824 🎯 [FIELD DEBUG] Field 11 (Galway Downs Field A2) has 1 games
+index-hEtYL1IH.js:824 🎯 [FIELD DEBUG] Field 36 (Birdsall Field 2) has 2 games
+index-hEtYL1IH.js:824 🎯 [FIELD DEBUG] Field 37 (Birdsall Field 3) has 1 games
+index-hEtYL1IH.js:824 🎯 [FIELD DEBUG] Field 15 (f4) has 1 games
+index-hEtYL1IH.js:824 🎯 [FIELD DEBUG] Field 17 (f6) has 1 games
+index-hEtYL1IH.js:824 🎯 [FIELD DEBUG] Field 19 (Small2) has 1 games
+index-hEtYL1IH.js:824 🎯 [FIELD DEBUG] Field 29 (Galway Downs Field 10) has 2 games
+index-hEtYL1IH.js:824 🎯 [FIELD DEBUG] Field 30 (Galway Downs Field 11) has 1 games
+index-hEtYL1IH.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: Object
+index-hEtYL1IH.js:823 🔍 [CONFLICT DETECTION] Starting enhanced overlap detection for 10 games
+index-hEtYL1IH.js:823 🚨 [OVERLAP DETECTED] Team conflict between games 10340 and 10343: Array(1)
+index-hEtYL1IH.js:823 ⚠️ [REST PERIOD] Rest period violation between games 10340 and 10342: Array(1) Gap: 35min, Required: 60min
+index-hEtYL1IH.js:823 ⚠️ [REST PERIOD] Rest period violation between games 10343 and 10345: Array(1) Gap: 50min, Required: 60min
+index-hEtYL1IH.js:823 ⚠️ [REST PERIOD] Rest period violation between games 10343 and 10346: Array(1) Gap: 50min, Required: 60min
+index-hEtYL1IH.js:823 ⚠️ [REST PERIOD] Rest period violation between games 10342 and 10339: Array(1) Gap: 50min, Required: 60min
+index-hEtYL1IH.js:823 ⚠️ [REST PERIOD] Rest period violation between games 10344 and 10341: Array(1) Gap: 35min, Required: 60min
+index-hEtYL1IH.js:823 ⚠️ [REST PERIOD] Rest period violation between games 10346 and 10341: Array(1) Gap: 50min, Required: 60min
+index-hEtYL1IH.js:823 🔍 [CONFLICT DETECTION] Starting legacy slot-based detection for 10 games
+index-hEtYL1IH.js:823 🔍 [CONFLICT DETECTION] Time slots: 48
+index-hEtYL1IH.js:823 🔍 [CONFLICT DETECTION] Sample games: Array(3)
+index-hEtYL1IH.js:824 🎯 [FIELD DEBUG] All available fields: Array(33)
+index-hEtYL1IH.js:824 🎯 [FIELD DEBUG] Fields with games assigned: Array(8)
+index-hEtYL1IH.js:824 🎯 [FIELD DEBUG] Field 11 (Galway Downs Field A2) has 1 games
+index-hEtYL1IH.js:824 🎯 [FIELD DEBUG] Field 36 (Birdsall Field 2) has 2 games
+index-hEtYL1IH.js:824 🎯 [FIELD DEBUG] Field 37 (Birdsall Field 3) has 1 games
+index-hEtYL1IH.js:824 🎯 [FIELD DEBUG] Field 15 (f4) has 1 games
+index-hEtYL1IH.js:824 🎯 [FIELD DEBUG] Field 17 (f6) has 1 games
+index-hEtYL1IH.js:824 🎯 [FIELD DEBUG] Field 19 (Small2) has 1 games
+index-hEtYL1IH.js:824 🎯 [FIELD DEBUG] Field 29 (Galway Downs Field 10) has 2 games
+index-hEtYL1IH.js:824 🎯 [FIELD DEBUG] Field 30 (Galway Downs Field 11) has 1 games
+index-hEtYL1IH.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: Object
+index-hEtYL1IH.js:823 🎯 [ENHANCED DRAG DROP] Transformed games for calendar: Array(0)
+index-hEtYL1IH.js:823 🎯 [ENHANCED DRAG DROP] Fields data: Array(33)
+index-hEtYL1IH.js:824 🎯 [FIELD DEBUG] All available fields: Array(33)
+index-hEtYL1IH.js:824 🎯 [FIELD DEBUG] Fields with games assigned: Array(0)
+index-hEtYL1IH.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: Object
+index-hEtYL1IH.js:823 🔍 [CONFLICT DETECTION] Starting enhanced overlap detection for 0 games
+index-hEtYL1IH.js:823 🔍 [CONFLICT DETECTION] Starting legacy slot-based detection for 0 games
+index-hEtYL1IH.js:823 🔍 [CONFLICT DETECTION] Time slots: 48
+index-hEtYL1IH.js:823 🔍 [CONFLICT DETECTION] Sample games: Array(0)
+index-hEtYL1IH.js:824 🎯 [FIELD DEBUG] All available fields: Array(33)
+index-hEtYL1IH.js:824 🎯 [FIELD DEBUG] Fields with games assigned: Array(0)
+index-hEtYL1IH.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Schedule API Response: Object
+UnifiedTournamentControlCenter-BU-rw5Ba.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentControlCenter-BU-rw5Ba.js:1 Configured flights: 1 of 76
+ScheduleViewerFixed-a5xMiCE8.js:6 Schedule API Response: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 1 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 1 API data: {
+  "id": 10350,
+  "homeTeam": "Empire Surf NPL B2010 Academy ",
+  "awayTeam": "Cal Elite B2010 - Charlie",
+  "ageGroup": "U16 Boys",
+  "field": "f3",
+  "fieldId": 14,
+  "fieldName": "f3",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf NPL B2010 Academy ",
+  "awayTeamName": "Cal Elite B2010 - Charlie"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 1 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 2 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 2 API data: {
+  "id": 10357,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "ageGroup": "U16 Boys",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "pending",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 2 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 3 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 3 API data: {
+  "id": 10356,
+  "homeTeam": "ALBION Riverside B2010 EA",
+  "awayTeam": "Club Tijuana Xoloitzcuincles B2011",
+  "ageGroup": "U16 Boys",
+  "field": "f2",
+  "fieldId": 9,
+  "fieldName": "f2",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "ALBION Riverside B2010 EA",
+  "awayTeamName": "Club Tijuana Xoloitzcuincles B2011"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 3 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 4 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 4 API data: {
+  "id": 10353,
+  "homeTeam": "Empire Surf B2010 E64",
+  "awayTeam": "Cal Elite B2010 - Charlie",
+  "ageGroup": "U16 Boys",
+  "field": "f3",
+  "fieldId": 14,
+  "fieldName": "f3",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B2010 E64",
+  "awayTeamName": "Cal Elite B2010 - Charlie"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 4 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 5 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 5 API data: {
+  "id": 10348,
+  "homeTeam": "Empire Surf NPL B2010 Academy ",
+  "awayTeam": "City SC Southwest B2010 EA",
+  "ageGroup": "U16 Boys",
+  "field": "f4",
+  "fieldId": 15,
+  "fieldName": "f4",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf NPL B2010 Academy ",
+  "awayTeamName": "City SC Southwest B2010 EA"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 5 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 6 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 6 API data: {
+  "id": 10355,
+  "homeTeam": "Rebels SC B2010 ECNL",
+  "awayTeam": "Club Tijuana Xoloitzcuincles B2011",
+  "ageGroup": "U16 Boys",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Rebels SC B2010 ECNL",
+  "awayTeamName": "Club Tijuana Xoloitzcuincles B2011"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 6 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 7 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 7 API data: {
+  "id": 10352,
+  "homeTeam": "City SC Southwest B2010 EA",
+  "awayTeam": "Cal Elite B2010 - Charlie",
+  "ageGroup": "U16 Boys",
+  "field": "f2",
+  "fieldId": 9,
+  "fieldName": "f2",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B2010 EA",
+  "awayTeamName": "Cal Elite B2010 - Charlie"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 7 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 8 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 8 API data: {
+  "id": 10349,
+  "homeTeam": "Empire Surf NPL B2010 Academy ",
+  "awayTeam": "Empire Surf B2010 E64",
+  "ageGroup": "U16 Boys",
+  "field": "f3",
+  "fieldId": 14,
+  "fieldName": "f3",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf NPL B2010 Academy ",
+  "awayTeamName": "Empire Surf B2010 E64"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 8 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 9 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 9 API data: {
+  "id": 10354,
+  "homeTeam": "Rebels SC B2010 ECNL",
+  "awayTeam": "ALBION Riverside B2010 EA",
+  "ageGroup": "U16 Boys",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Rebels SC B2010 ECNL",
+  "awayTeamName": "ALBION Riverside B2010 EA"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 9 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 10 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 10 API data: {
+  "id": 10351,
+  "homeTeam": "City SC Southwest B2010 EA",
+  "awayTeam": "Empire Surf B2010 E64",
+  "ageGroup": "U16 Boys",
+  "field": "f2",
+  "fieldId": 9,
+  "fieldName": "f2",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B2010 EA",
+  "awayTeamName": "Empire Surf B2010 E64"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 10 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Schedule API Response: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 1 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 1 API data: {
+  "id": 10350,
+  "homeTeam": "Empire Surf NPL B2010 Academy ",
+  "awayTeam": "Cal Elite B2010 - Charlie",
+  "ageGroup": "U16 Boys",
+  "field": "f3",
+  "fieldId": 14,
+  "fieldName": "f3",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf NPL B2010 Academy ",
+  "awayTeamName": "Cal Elite B2010 - Charlie"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 1 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 2 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 2 API data: {
+  "id": 10357,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "ageGroup": "U16 Boys",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "pending",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 2 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 3 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 3 API data: {
+  "id": 10356,
+  "homeTeam": "ALBION Riverside B2010 EA",
+  "awayTeam": "Club Tijuana Xoloitzcuincles B2011",
+  "ageGroup": "U16 Boys",
+  "field": "f2",
+  "fieldId": 9,
+  "fieldName": "f2",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "ALBION Riverside B2010 EA",
+  "awayTeamName": "Club Tijuana Xoloitzcuincles B2011"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 3 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 4 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 4 API data: {
+  "id": 10353,
+  "homeTeam": "Empire Surf B2010 E64",
+  "awayTeam": "Cal Elite B2010 - Charlie",
+  "ageGroup": "U16 Boys",
+  "field": "f3",
+  "fieldId": 14,
+  "fieldName": "f3",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B2010 E64",
+  "awayTeamName": "Cal Elite B2010 - Charlie"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 4 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 5 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 5 API data: {
+  "id": 10348,
+  "homeTeam": "Empire Surf NPL B2010 Academy ",
+  "awayTeam": "City SC Southwest B2010 EA",
+  "ageGroup": "U16 Boys",
+  "field": "f4",
+  "fieldId": 15,
+  "fieldName": "f4",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf NPL B2010 Academy ",
+  "awayTeamName": "City SC Southwest B2010 EA"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 5 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 6 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 6 API data: {
+  "id": 10355,
+  "homeTeam": "Rebels SC B2010 ECNL",
+  "awayTeam": "Club Tijuana Xoloitzcuincles B2011",
+  "ageGroup": "U16 Boys",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Rebels SC B2010 ECNL",
+  "awayTeamName": "Club Tijuana Xoloitzcuincles B2011"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 6 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 7 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 7 API data: {
+  "id": 10352,
+  "homeTeam": "City SC Southwest B2010 EA",
+  "awayTeam": "Cal Elite B2010 - Charlie",
+  "ageGroup": "U16 Boys",
+  "field": "f2",
+  "fieldId": 9,
+  "fieldName": "f2",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B2010 EA",
+  "awayTeamName": "Cal Elite B2010 - Charlie"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 7 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 8 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 8 API data: {
+  "id": 10349,
+  "homeTeam": "Empire Surf NPL B2010 Academy ",
+  "awayTeam": "Empire Surf B2010 E64",
+  "ageGroup": "U16 Boys",
+  "field": "f3",
+  "fieldId": 14,
+  "fieldName": "f3",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf NPL B2010 Academy ",
+  "awayTeamName": "Empire Surf B2010 E64"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 8 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 9 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 9 API data: {
+  "id": 10354,
+  "homeTeam": "Rebels SC B2010 ECNL",
+  "awayTeam": "ALBION Riverside B2010 EA",
+  "ageGroup": "U16 Boys",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Rebels SC B2010 ECNL",
+  "awayTeamName": "ALBION Riverside B2010 EA"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 9 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 10 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 10 API data: {
+  "id": 10351,
+  "homeTeam": "City SC Southwest B2010 EA",
+  "awayTeam": "Empire Surf B2010 E64",
+  "ageGroup": "U16 Boys",
+  "field": "f2",
+  "fieldId": 9,
+  "fieldName": "f2",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B2010 EA",
+  "awayTeamName": "Empire Surf B2010 E64"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 10 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Schedule API Response: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 1 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 1 API data: {
+  "id": 10350,
+  "homeTeam": "Empire Surf NPL B2010 Academy ",
+  "awayTeam": "Cal Elite B2010 - Charlie",
+  "ageGroup": "U16 Boys",
+  "field": "f3",
+  "fieldId": 14,
+  "fieldName": "f3",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf NPL B2010 Academy ",
+  "awayTeamName": "Cal Elite B2010 - Charlie"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 1 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 2 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 2 API data: {
+  "id": 10357,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "ageGroup": "U16 Boys",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "pending",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 2 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 3 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 3 API data: {
+  "id": 10356,
+  "homeTeam": "ALBION Riverside B2010 EA",
+  "awayTeam": "Club Tijuana Xoloitzcuincles B2011",
+  "ageGroup": "U16 Boys",
+  "field": "f2",
+  "fieldId": 9,
+  "fieldName": "f2",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "ALBION Riverside B2010 EA",
+  "awayTeamName": "Club Tijuana Xoloitzcuincles B2011"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 3 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 4 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 4 API data: {
+  "id": 10353,
+  "homeTeam": "Empire Surf B2010 E64",
+  "awayTeam": "Cal Elite B2010 - Charlie",
+  "ageGroup": "U16 Boys",
+  "field": "f3",
+  "fieldId": 14,
+  "fieldName": "f3",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B2010 E64",
+  "awayTeamName": "Cal Elite B2010 - Charlie"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 4 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 5 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 5 API data: {
+  "id": 10348,
+  "homeTeam": "Empire Surf NPL B2010 Academy ",
+  "awayTeam": "City SC Southwest B2010 EA",
+  "ageGroup": "U16 Boys",
+  "field": "f4",
+  "fieldId": 15,
+  "fieldName": "f4",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf NPL B2010 Academy ",
+  "awayTeamName": "City SC Southwest B2010 EA"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 5 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 6 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 6 API data: {
+  "id": 10355,
+  "homeTeam": "Rebels SC B2010 ECNL",
+  "awayTeam": "Club Tijuana Xoloitzcuincles B2011",
+  "ageGroup": "U16 Boys",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Rebels SC B2010 ECNL",
+  "awayTeamName": "Club Tijuana Xoloitzcuincles B2011"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 6 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 7 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 7 API data: {
+  "id": 10352,
+  "homeTeam": "City SC Southwest B2010 EA",
+  "awayTeam": "Cal Elite B2010 - Charlie",
+  "ageGroup": "U16 Boys",
+  "field": "f2",
+  "fieldId": 9,
+  "fieldName": "f2",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B2010 EA",
+  "awayTeamName": "Cal Elite B2010 - Charlie"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 7 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 8 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 8 API data: {
+  "id": 10349,
+  "homeTeam": "Empire Surf NPL B2010 Academy ",
+  "awayTeam": "Empire Surf B2010 E64",
+  "ageGroup": "U16 Boys",
+  "field": "f3",
+  "fieldId": 14,
+  "fieldName": "f3",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf NPL B2010 Academy ",
+  "awayTeamName": "Empire Surf B2010 E64"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 8 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 9 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 9 API data: {
+  "id": 10354,
+  "homeTeam": "Rebels SC B2010 ECNL",
+  "awayTeam": "ALBION Riverside B2010 EA",
+  "ageGroup": "U16 Boys",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Rebels SC B2010 ECNL",
+  "awayTeamName": "ALBION Riverside B2010 EA"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 9 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 10 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 10 API data: {
+  "id": 10351,
+  "homeTeam": "City SC Southwest B2010 EA",
+  "awayTeam": "Empire Surf B2010 E64",
+  "ageGroup": "U16 Boys",
+  "field": "f2",
+  "fieldId": 9,
+  "fieldName": "f2",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B2010 EA",
+  "awayTeamName": "Empire Surf B2010 E64"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 10 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Schedule API Response: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 1 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 1 API data: {
+  "id": 10350,
+  "homeTeam": "Empire Surf NPL B2010 Academy ",
+  "awayTeam": "Cal Elite B2010 - Charlie",
+  "ageGroup": "U16 Boys",
+  "field": "f3",
+  "fieldId": 14,
+  "fieldName": "f3",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf NPL B2010 Academy ",
+  "awayTeamName": "Cal Elite B2010 - Charlie"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 1 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 2 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 2 API data: {
+  "id": 10357,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "ageGroup": "U16 Boys",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "pending",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 2 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 3 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 3 API data: {
+  "id": 10356,
+  "homeTeam": "ALBION Riverside B2010 EA",
+  "awayTeam": "Club Tijuana Xoloitzcuincles B2011",
+  "ageGroup": "U16 Boys",
+  "field": "f2",
+  "fieldId": 9,
+  "fieldName": "f2",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "ALBION Riverside B2010 EA",
+  "awayTeamName": "Club Tijuana Xoloitzcuincles B2011"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 3 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 4 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 4 API data: {
+  "id": 10353,
+  "homeTeam": "Empire Surf B2010 E64",
+  "awayTeam": "Cal Elite B2010 - Charlie",
+  "ageGroup": "U16 Boys",
+  "field": "f3",
+  "fieldId": 14,
+  "fieldName": "f3",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B2010 E64",
+  "awayTeamName": "Cal Elite B2010 - Charlie"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 4 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 5 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 5 API data: {
+  "id": 10348,
+  "homeTeam": "Empire Surf NPL B2010 Academy ",
+  "awayTeam": "City SC Southwest B2010 EA",
+  "ageGroup": "U16 Boys",
+  "field": "f4",
+  "fieldId": 15,
+  "fieldName": "f4",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf NPL B2010 Academy ",
+  "awayTeamName": "City SC Southwest B2010 EA"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 5 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 6 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 6 API data: {
+  "id": 10355,
+  "homeTeam": "Rebels SC B2010 ECNL",
+  "awayTeam": "Club Tijuana Xoloitzcuincles B2011",
+  "ageGroup": "U16 Boys",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Rebels SC B2010 ECNL",
+  "awayTeamName": "Club Tijuana Xoloitzcuincles B2011"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 6 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 7 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 7 API data: {
+  "id": 10352,
+  "homeTeam": "City SC Southwest B2010 EA",
+  "awayTeam": "Cal Elite B2010 - Charlie",
+  "ageGroup": "U16 Boys",
+  "field": "f2",
+  "fieldId": 9,
+  "fieldName": "f2",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B2010 EA",
+  "awayTeamName": "Cal Elite B2010 - Charlie"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 7 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 8 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 8 API data: {
+  "id": 10349,
+  "homeTeam": "Empire Surf NPL B2010 Academy ",
+  "awayTeam": "Empire Surf B2010 E64",
+  "ageGroup": "U16 Boys",
+  "field": "f3",
+  "fieldId": 14,
+  "fieldName": "f3",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf NPL B2010 Academy ",
+  "awayTeamName": "Empire Surf B2010 E64"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 8 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 9 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 9 API data: {
+  "id": 10354,
+  "homeTeam": "Rebels SC B2010 ECNL",
+  "awayTeam": "ALBION Riverside B2010 EA",
+  "ageGroup": "U16 Boys",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Rebels SC B2010 ECNL",
+  "awayTeamName": "ALBION Riverside B2010 EA"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 9 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 10 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 10 API data: {
+  "id": 10351,
+  "homeTeam": "City SC Southwest B2010 EA",
+  "awayTeam": "Empire Surf B2010 E64",
+  "ageGroup": "U16 Boys",
+  "field": "f2",
+  "fieldId": 9,
+  "fieldName": "f2",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B2010 EA",
+  "awayTeamName": "Empire Surf B2010 E64"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 10 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Schedule API Response: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 1 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 1 API data: {
+  "id": 10350,
+  "homeTeam": "Empire Surf NPL B2010 Academy ",
+  "awayTeam": "Cal Elite B2010 - Charlie",
+  "ageGroup": "U16 Boys",
+  "field": "f3",
+  "fieldId": 14,
+  "fieldName": "f3",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf NPL B2010 Academy ",
+  "awayTeamName": "Cal Elite B2010 - Charlie"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 1 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 2 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 2 API data: {
+  "id": 10357,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "ageGroup": "U16 Boys",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "pending",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 2 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 3 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 3 API data: {
+  "id": 10356,
+  "homeTeam": "ALBION Riverside B2010 EA",
+  "awayTeam": "Club Tijuana Xoloitzcuincles B2011",
+  "ageGroup": "U16 Boys",
+  "field": "f2",
+  "fieldId": 9,
+  "fieldName": "f2",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "ALBION Riverside B2010 EA",
+  "awayTeamName": "Club Tijuana Xoloitzcuincles B2011"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 3 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 4 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 4 API data: {
+  "id": 10353,
+  "homeTeam": "Empire Surf B2010 E64",
+  "awayTeam": "Cal Elite B2010 - Charlie",
+  "ageGroup": "U16 Boys",
+  "field": "f3",
+  "fieldId": 14,
+  "fieldName": "f3",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B2010 E64",
+  "awayTeamName": "Cal Elite B2010 - Charlie"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 4 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 5 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 5 API data: {
+  "id": 10348,
+  "homeTeam": "Empire Surf NPL B2010 Academy ",
+  "awayTeam": "City SC Southwest B2010 EA",
+  "ageGroup": "U16 Boys",
+  "field": "f4",
+  "fieldId": 15,
+  "fieldName": "f4",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf NPL B2010 Academy ",
+  "awayTeamName": "City SC Southwest B2010 EA"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 5 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 6 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 6 API data: {
+  "id": 10355,
+  "homeTeam": "Rebels SC B2010 ECNL",
+  "awayTeam": "Club Tijuana Xoloitzcuincles B2011",
+  "ageGroup": "U16 Boys",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Rebels SC B2010 ECNL",
+  "awayTeamName": "Club Tijuana Xoloitzcuincles B2011"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 6 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 7 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 7 API data: {
+  "id": 10352,
+  "homeTeam": "City SC Southwest B2010 EA",
+  "awayTeam": "Cal Elite B2010 - Charlie",
+  "ageGroup": "U16 Boys",
+  "field": "f2",
+  "fieldId": 9,
+  "fieldName": "f2",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B2010 EA",
+  "awayTeamName": "Cal Elite B2010 - Charlie"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 7 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 8 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 8 API data: {
+  "id": 10349,
+  "homeTeam": "Empire Surf NPL B2010 Academy ",
+  "awayTeam": "Empire Surf B2010 E64",
+  "ageGroup": "U16 Boys",
+  "field": "f3",
+  "fieldId": 14,
+  "fieldName": "f3",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf NPL B2010 Academy ",
+  "awayTeamName": "Empire Surf B2010 E64"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 8 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 9 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 9 API data: {
+  "id": 10354,
+  "homeTeam": "Rebels SC B2010 ECNL",
+  "awayTeam": "ALBION Riverside B2010 EA",
+  "ageGroup": "U16 Boys",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Rebels SC B2010 ECNL",
+  "awayTeamName": "ALBION Riverside B2010 EA"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 9 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 10 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 10 API data: {
+  "id": 10351,
+  "homeTeam": "City SC Southwest B2010 EA",
+  "awayTeam": "Empire Surf B2010 E64",
+  "ageGroup": "U16 Boys",
+  "field": "f2",
+  "fieldId": 9,
+  "fieldName": "f2",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B2010 EA",
+  "awayTeamName": "Empire Surf B2010 E64"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 10 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Schedule API Response: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 1 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 1 API data: {
+  "id": 10350,
+  "homeTeam": "Empire Surf NPL B2010 Academy ",
+  "awayTeam": "Cal Elite B2010 - Charlie",
+  "ageGroup": "U16 Boys",
+  "field": "f3",
+  "fieldId": 14,
+  "fieldName": "f3",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf NPL B2010 Academy ",
+  "awayTeamName": "Cal Elite B2010 - Charlie"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 1 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 2 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 2 API data: {
+  "id": 10357,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "ageGroup": "U16 Boys",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "pending",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 2 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 3 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 3 API data: {
+  "id": 10356,
+  "homeTeam": "ALBION Riverside B2010 EA",
+  "awayTeam": "Club Tijuana Xoloitzcuincles B2011",
+  "ageGroup": "U16 Boys",
+  "field": "f2",
+  "fieldId": 9,
+  "fieldName": "f2",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "ALBION Riverside B2010 EA",
+  "awayTeamName": "Club Tijuana Xoloitzcuincles B2011"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 3 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 4 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 4 API data: {
+  "id": 10353,
+  "homeTeam": "Empire Surf B2010 E64",
+  "awayTeam": "Cal Elite B2010 - Charlie",
+  "ageGroup": "U16 Boys",
+  "field": "f3",
+  "fieldId": 14,
+  "fieldName": "f3",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B2010 E64",
+  "awayTeamName": "Cal Elite B2010 - Charlie"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 4 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 5 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 5 API data: {
+  "id": 10348,
+  "homeTeam": "Empire Surf NPL B2010 Academy ",
+  "awayTeam": "City SC Southwest B2010 EA",
+  "ageGroup": "U16 Boys",
+  "field": "f4",
+  "fieldId": 15,
+  "fieldName": "f4",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf NPL B2010 Academy ",
+  "awayTeamName": "City SC Southwest B2010 EA"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 5 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 6 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 6 API data: {
+  "id": 10355,
+  "homeTeam": "Rebels SC B2010 ECNL",
+  "awayTeam": "Club Tijuana Xoloitzcuincles B2011",
+  "ageGroup": "U16 Boys",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Rebels SC B2010 ECNL",
+  "awayTeamName": "Club Tijuana Xoloitzcuincles B2011"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 6 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 7 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 7 API data: {
+  "id": 10352,
+  "homeTeam": "City SC Southwest B2010 EA",
+  "awayTeam": "Cal Elite B2010 - Charlie",
+  "ageGroup": "U16 Boys",
+  "field": "f2",
+  "fieldId": 9,
+  "fieldName": "f2",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B2010 EA",
+  "awayTeamName": "Cal Elite B2010 - Charlie"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 7 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 8 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 8 API data: {
+  "id": 10349,
+  "homeTeam": "Empire Surf NPL B2010 Academy ",
+  "awayTeam": "Empire Surf B2010 E64",
+  "ageGroup": "U16 Boys",
+  "field": "f3",
+  "fieldId": 14,
+  "fieldName": "f3",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf NPL B2010 Academy ",
+  "awayTeamName": "Empire Surf B2010 E64"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 8 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 9 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 9 API data: {
+  "id": 10354,
+  "homeTeam": "Rebels SC B2010 ECNL",
+  "awayTeam": "ALBION Riverside B2010 EA",
+  "ageGroup": "U16 Boys",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Rebels SC B2010 ECNL",
+  "awayTeamName": "ALBION Riverside B2010 EA"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 9 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 10 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 10 API data: {
+  "id": 10351,
+  "homeTeam": "City SC Southwest B2010 EA",
+  "awayTeam": "Empire Surf B2010 E64",
+  "ageGroup": "U16 Boys",
+  "field": "f2",
+  "fieldId": 9,
+  "fieldName": "f2",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B2010 EA",
+  "awayTeamName": "Empire Surf B2010 E64"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 10 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Schedule API Response: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 1 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 1 API data: {
+  "id": 10350,
+  "homeTeam": "Empire Surf NPL B2010 Academy ",
+  "awayTeam": "Cal Elite B2010 - Charlie",
+  "ageGroup": "U16 Boys",
+  "field": "f3",
+  "fieldId": 14,
+  "fieldName": "f3",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf NPL B2010 Academy ",
+  "awayTeamName": "Cal Elite B2010 - Charlie"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 1 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 2 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 2 API data: {
+  "id": 10357,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "ageGroup": "U16 Boys",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "pending",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 2 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 3 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 3 API data: {
+  "id": 10356,
+  "homeTeam": "ALBION Riverside B2010 EA",
+  "awayTeam": "Club Tijuana Xoloitzcuincles B2011",
+  "ageGroup": "U16 Boys",
+  "field": "f2",
+  "fieldId": 9,
+  "fieldName": "f2",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "ALBION Riverside B2010 EA",
+  "awayTeamName": "Club Tijuana Xoloitzcuincles B2011"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 3 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 4 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 4 API data: {
+  "id": 10353,
+  "homeTeam": "Empire Surf B2010 E64",
+  "awayTeam": "Cal Elite B2010 - Charlie",
+  "ageGroup": "U16 Boys",
+  "field": "f3",
+  "fieldId": 14,
+  "fieldName": "f3",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B2010 E64",
+  "awayTeamName": "Cal Elite B2010 - Charlie"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 4 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 5 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 5 API data: {
+  "id": 10348,
+  "homeTeam": "Empire Surf NPL B2010 Academy ",
+  "awayTeam": "City SC Southwest B2010 EA",
+  "ageGroup": "U16 Boys",
+  "field": "f4",
+  "fieldId": 15,
+  "fieldName": "f4",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf NPL B2010 Academy ",
+  "awayTeamName": "City SC Southwest B2010 EA"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 5 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 6 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 6 API data: {
+  "id": 10355,
+  "homeTeam": "Rebels SC B2010 ECNL",
+  "awayTeam": "Club Tijuana Xoloitzcuincles B2011",
+  "ageGroup": "U16 Boys",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Rebels SC B2010 ECNL",
+  "awayTeamName": "Club Tijuana Xoloitzcuincles B2011"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 6 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 7 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 7 API data: {
+  "id": 10352,
+  "homeTeam": "City SC Southwest B2010 EA",
+  "awayTeam": "Cal Elite B2010 - Charlie",
+  "ageGroup": "U16 Boys",
+  "field": "f2",
+  "fieldId": 9,
+  "fieldName": "f2",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B2010 EA",
+  "awayTeamName": "Cal Elite B2010 - Charlie"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 7 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 8 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 8 API data: {
+  "id": 10349,
+  "homeTeam": "Empire Surf NPL B2010 Academy ",
+  "awayTeam": "Empire Surf B2010 E64",
+  "ageGroup": "U16 Boys",
+  "field": "f3",
+  "fieldId": 14,
+  "fieldName": "f3",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf NPL B2010 Academy ",
+  "awayTeamName": "Empire Surf B2010 E64"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 8 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 9 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 9 API data: {
+  "id": 10354,
+  "homeTeam": "Rebels SC B2010 ECNL",
+  "awayTeam": "ALBION Riverside B2010 EA",
+  "ageGroup": "U16 Boys",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Rebels SC B2010 ECNL",
+  "awayTeamName": "ALBION Riverside B2010 EA"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 9 transformed: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 10 transformation debug: Object
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 10 API data: {
+  "id": 10351,
+  "homeTeam": "City SC Southwest B2010 EA",
+  "awayTeam": "Empire Surf B2010 E64",
+  "ageGroup": "U16 Boys",
+  "field": "f2",
+  "fieldId": 9,
+  "fieldName": "f2",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B2010 EA",
+  "awayTeamName": "Empire Surf B2010 E64"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 10 transformed: Object
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+ScheduleViewerFixed-a5xMiCE8.js:6 Schedule API Response: {games: Array(10), fields: Array(33), ageGroups: Array(1), dates: Array(2), totalGames: 10, …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 1 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf NPL B2010 Academy ', awayTeamStructure: 'Cal Elite B2010 - Charlie', fieldStructure: 'f3', rawFieldName: 'f3', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 1 API data: {
+  "id": 10350,
+  "homeTeam": "Empire Surf NPL B2010 Academy ",
+  "awayTeam": "Cal Elite B2010 - Charlie",
+  "ageGroup": "U16 Boys",
+  "field": "f3",
+  "fieldId": 14,
+  "fieldName": "f3",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf NPL B2010 Academy ",
+  "awayTeamName": "Cal Elite B2010 - Charlie"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 1 transformed: {id: 10350, homeTeam: 'Empire Surf NPL B2010 Academy ', awayTeam: 'Cal Elite B2010 - Charlie', ageGroup: 'U16 Boys', field: 'f3', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 2 transformation debug: {raw: {…}, homeTeamStructure: 'TBD', awayTeamStructure: 'TBD', fieldStructure: 'f1', rawFieldName: 'f1', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 2 API data: {
+  "id": 10357,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "ageGroup": "U16 Boys",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "pending",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 2 transformed: {id: 10357, homeTeam: 'TBD', awayTeam: 'TBD', ageGroup: 'U16 Boys', field: 'f1', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 3 transformation debug: {raw: {…}, homeTeamStructure: 'ALBION Riverside B2010 EA', awayTeamStructure: 'Club Tijuana Xoloitzcuincles B2011', fieldStructure: 'f2', rawFieldName: 'f2', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 3 API data: {
+  "id": 10356,
+  "homeTeam": "ALBION Riverside B2010 EA",
+  "awayTeam": "Club Tijuana Xoloitzcuincles B2011",
+  "ageGroup": "U16 Boys",
+  "field": "f2",
+  "fieldId": 9,
+  "fieldName": "f2",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "ALBION Riverside B2010 EA",
+  "awayTeamName": "Club Tijuana Xoloitzcuincles B2011"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 3 transformed: {id: 10356, homeTeam: 'ALBION Riverside B2010 EA', awayTeam: 'Club Tijuana Xoloitzcuincles B2011', ageGroup: 'U16 Boys', field: 'f2', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 4 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf B2010 E64', awayTeamStructure: 'Cal Elite B2010 - Charlie', fieldStructure: 'f3', rawFieldName: 'f3', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 4 API data: {
+  "id": 10353,
+  "homeTeam": "Empire Surf B2010 E64",
+  "awayTeam": "Cal Elite B2010 - Charlie",
+  "ageGroup": "U16 Boys",
+  "field": "f3",
+  "fieldId": 14,
+  "fieldName": "f3",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B2010 E64",
+  "awayTeamName": "Cal Elite B2010 - Charlie"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 4 transformed: {id: 10353, homeTeam: 'Empire Surf B2010 E64', awayTeam: 'Cal Elite B2010 - Charlie', ageGroup: 'U16 Boys', field: 'f3', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 5 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf NPL B2010 Academy ', awayTeamStructure: 'City SC Southwest B2010 EA', fieldStructure: 'f4', rawFieldName: 'f4', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 5 API data: {
+  "id": 10348,
+  "homeTeam": "Empire Surf NPL B2010 Academy ",
+  "awayTeam": "City SC Southwest B2010 EA",
+  "ageGroup": "U16 Boys",
+  "field": "f4",
+  "fieldId": 15,
+  "fieldName": "f4",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf NPL B2010 Academy ",
+  "awayTeamName": "City SC Southwest B2010 EA"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 5 transformed: {id: 10348, homeTeam: 'Empire Surf NPL B2010 Academy ', awayTeam: 'City SC Southwest B2010 EA', ageGroup: 'U16 Boys', field: 'f4', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 6 transformation debug: {raw: {…}, homeTeamStructure: 'Rebels SC B2010 ECNL', awayTeamStructure: 'Club Tijuana Xoloitzcuincles B2011', fieldStructure: 'f1', rawFieldName: 'f1', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 6 API data: {
+  "id": 10355,
+  "homeTeam": "Rebels SC B2010 ECNL",
+  "awayTeam": "Club Tijuana Xoloitzcuincles B2011",
+  "ageGroup": "U16 Boys",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Rebels SC B2010 ECNL",
+  "awayTeamName": "Club Tijuana Xoloitzcuincles B2011"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 6 transformed: {id: 10355, homeTeam: 'Rebels SC B2010 ECNL', awayTeam: 'Club Tijuana Xoloitzcuincles B2011', ageGroup: 'U16 Boys', field: 'f1', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 7 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest B2010 EA', awayTeamStructure: 'Cal Elite B2010 - Charlie', fieldStructure: 'f2', rawFieldName: 'f2', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 7 API data: {
+  "id": 10352,
+  "homeTeam": "City SC Southwest B2010 EA",
+  "awayTeam": "Cal Elite B2010 - Charlie",
+  "ageGroup": "U16 Boys",
+  "field": "f2",
+  "fieldId": 9,
+  "fieldName": "f2",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B2010 EA",
+  "awayTeamName": "Cal Elite B2010 - Charlie"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 7 transformed: {id: 10352, homeTeam: 'City SC Southwest B2010 EA', awayTeam: 'Cal Elite B2010 - Charlie', ageGroup: 'U16 Boys', field: 'f2', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 8 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf NPL B2010 Academy ', awayTeamStructure: 'Empire Surf B2010 E64', fieldStructure: 'f3', rawFieldName: 'f3', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 8 API data: {
+  "id": 10349,
+  "homeTeam": "Empire Surf NPL B2010 Academy ",
+  "awayTeam": "Empire Surf B2010 E64",
+  "ageGroup": "U16 Boys",
+  "field": "f3",
+  "fieldId": 14,
+  "fieldName": "f3",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf NPL B2010 Academy ",
+  "awayTeamName": "Empire Surf B2010 E64"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 8 transformed: {id: 10349, homeTeam: 'Empire Surf NPL B2010 Academy ', awayTeam: 'Empire Surf B2010 E64', ageGroup: 'U16 Boys', field: 'f3', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 9 transformation debug: {raw: {…}, homeTeamStructure: 'Rebels SC B2010 ECNL', awayTeamStructure: 'ALBION Riverside B2010 EA', fieldStructure: 'f1', rawFieldName: 'f1', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 9 API data: {
+  "id": 10354,
+  "homeTeam": "Rebels SC B2010 ECNL",
+  "awayTeam": "ALBION Riverside B2010 EA",
+  "ageGroup": "U16 Boys",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Rebels SC B2010 ECNL",
+  "awayTeamName": "ALBION Riverside B2010 EA"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 9 transformed: {id: 10354, homeTeam: 'Rebels SC B2010 ECNL', awayTeam: 'ALBION Riverside B2010 EA', ageGroup: 'U16 Boys', field: 'f1', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 10 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest B2010 EA', awayTeamStructure: 'Empire Surf B2010 E64', fieldStructure: 'f2', rawFieldName: 'f2', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 10 API data: {
+  "id": 10351,
+  "homeTeam": "City SC Southwest B2010 EA",
+  "awayTeam": "Empire Surf B2010 E64",
+  "ageGroup": "U16 Boys",
+  "field": "f2",
+  "fieldId": 9,
+  "fieldName": "f2",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B2010 EA",
+  "awayTeamName": "Empire Surf B2010 E64"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 10 transformed: {id: 10351, homeTeam: 'City SC Southwest B2010 EA', awayTeam: 'Empire Surf B2010 E64', ageGroup: 'U16 Boys', field: 'f2', …}
+6Fetch finished loading: GET "<URL>".
+ScheduleViewerFixed-a5xMiCE8.js:6 Schedule API Response: {games: Array(10), fields: Array(33), ageGroups: Array(1), dates: Array(2), totalGames: 10, …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 1 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf NPL B2010 Academy ', awayTeamStructure: 'Cal Elite B2010 - Charlie', fieldStructure: 'f3', rawFieldName: 'f3', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 1 API data: {
+  "id": 10350,
+  "homeTeam": "Empire Surf NPL B2010 Academy ",
+  "awayTeam": "Cal Elite B2010 - Charlie",
+  "ageGroup": "U16 Boys",
+  "field": "f3",
+  "fieldId": 14,
+  "fieldName": "f3",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf NPL B2010 Academy ",
+  "awayTeamName": "Cal Elite B2010 - Charlie"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 1 transformed: {id: 10350, homeTeam: 'Empire Surf NPL B2010 Academy ', awayTeam: 'Cal Elite B2010 - Charlie', ageGroup: 'U16 Boys', field: 'f3', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 2 transformation debug: {raw: {…}, homeTeamStructure: 'TBD', awayTeamStructure: 'TBD', fieldStructure: 'f1', rawFieldName: 'f1', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 2 API data: {
+  "id": 10357,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "ageGroup": "U16 Boys",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "pending",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 2 transformed: {id: 10357, homeTeam: 'TBD', awayTeam: 'TBD', ageGroup: 'U16 Boys', field: 'f1', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 3 transformation debug: {raw: {…}, homeTeamStructure: 'ALBION Riverside B2010 EA', awayTeamStructure: 'Club Tijuana Xoloitzcuincles B2011', fieldStructure: 'f2', rawFieldName: 'f2', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 3 API data: {
+  "id": 10356,
+  "homeTeam": "ALBION Riverside B2010 EA",
+  "awayTeam": "Club Tijuana Xoloitzcuincles B2011",
+  "ageGroup": "U16 Boys",
+  "field": "f2",
+  "fieldId": 9,
+  "fieldName": "f2",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "ALBION Riverside B2010 EA",
+  "awayTeamName": "Club Tijuana Xoloitzcuincles B2011"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 3 transformed: {id: 10356, homeTeam: 'ALBION Riverside B2010 EA', awayTeam: 'Club Tijuana Xoloitzcuincles B2011', ageGroup: 'U16 Boys', field: 'f2', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 4 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf B2010 E64', awayTeamStructure: 'Cal Elite B2010 - Charlie', fieldStructure: 'f3', rawFieldName: 'f3', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 4 API data: {
+  "id": 10353,
+  "homeTeam": "Empire Surf B2010 E64",
+  "awayTeam": "Cal Elite B2010 - Charlie",
+  "ageGroup": "U16 Boys",
+  "field": "f3",
+  "fieldId": 14,
+  "fieldName": "f3",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B2010 E64",
+  "awayTeamName": "Cal Elite B2010 - Charlie"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 4 transformed: {id: 10353, homeTeam: 'Empire Surf B2010 E64', awayTeam: 'Cal Elite B2010 - Charlie', ageGroup: 'U16 Boys', field: 'f3', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 5 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf NPL B2010 Academy ', awayTeamStructure: 'City SC Southwest B2010 EA', fieldStructure: 'f4', rawFieldName: 'f4', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 5 API data: {
+  "id": 10348,
+  "homeTeam": "Empire Surf NPL B2010 Academy ",
+  "awayTeam": "City SC Southwest B2010 EA",
+  "ageGroup": "U16 Boys",
+  "field": "f4",
+  "fieldId": 15,
+  "fieldName": "f4",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf NPL B2010 Academy ",
+  "awayTeamName": "City SC Southwest B2010 EA"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 5 transformed: {id: 10348, homeTeam: 'Empire Surf NPL B2010 Academy ', awayTeam: 'City SC Southwest B2010 EA', ageGroup: 'U16 Boys', field: 'f4', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 6 transformation debug: {raw: {…}, homeTeamStructure: 'Rebels SC B2010 ECNL', awayTeamStructure: 'Club Tijuana Xoloitzcuincles B2011', fieldStructure: 'f1', rawFieldName: 'f1', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 6 API data: {
+  "id": 10355,
+  "homeTeam": "Rebels SC B2010 ECNL",
+  "awayTeam": "Club Tijuana Xoloitzcuincles B2011",
+  "ageGroup": "U16 Boys",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Rebels SC B2010 ECNL",
+  "awayTeamName": "Club Tijuana Xoloitzcuincles B2011"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 6 transformed: {id: 10355, homeTeam: 'Rebels SC B2010 ECNL', awayTeam: 'Club Tijuana Xoloitzcuincles B2011', ageGroup: 'U16 Boys', field: 'f1', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 7 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest B2010 EA', awayTeamStructure: 'Cal Elite B2010 - Charlie', fieldStructure: 'f2', rawFieldName: 'f2', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 7 API data: {
+  "id": 10352,
+  "homeTeam": "City SC Southwest B2010 EA",
+  "awayTeam": "Cal Elite B2010 - Charlie",
+  "ageGroup": "U16 Boys",
+  "field": "f2",
+  "fieldId": 9,
+  "fieldName": "f2",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B2010 EA",
+  "awayTeamName": "Cal Elite B2010 - Charlie"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 7 transformed: {id: 10352, homeTeam: 'City SC Southwest B2010 EA', awayTeam: 'Cal Elite B2010 - Charlie', ageGroup: 'U16 Boys', field: 'f2', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 8 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf NPL B2010 Academy ', awayTeamStructure: 'Empire Surf B2010 E64', fieldStructure: 'f3', rawFieldName: 'f3', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 8 API data: {
+  "id": 10349,
+  "homeTeam": "Empire Surf NPL B2010 Academy ",
+  "awayTeam": "Empire Surf B2010 E64",
+  "ageGroup": "U16 Boys",
+  "field": "f3",
+  "fieldId": 14,
+  "fieldName": "f3",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf NPL B2010 Academy ",
+  "awayTeamName": "Empire Surf B2010 E64"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 8 transformed: {id: 10349, homeTeam: 'Empire Surf NPL B2010 Academy ', awayTeam: 'Empire Surf B2010 E64', ageGroup: 'U16 Boys', field: 'f3', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 9 transformation debug: {raw: {…}, homeTeamStructure: 'Rebels SC B2010 ECNL', awayTeamStructure: 'ALBION Riverside B2010 EA', fieldStructure: 'f1', rawFieldName: 'f1', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 9 API data: {
+  "id": 10354,
+  "homeTeam": "Rebels SC B2010 ECNL",
+  "awayTeam": "ALBION Riverside B2010 EA",
+  "ageGroup": "U16 Boys",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Rebels SC B2010 ECNL",
+  "awayTeamName": "ALBION Riverside B2010 EA"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 9 transformed: {id: 10354, homeTeam: 'Rebels SC B2010 ECNL', awayTeam: 'ALBION Riverside B2010 EA', ageGroup: 'U16 Boys', field: 'f1', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 10 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest B2010 EA', awayTeamStructure: 'Empire Surf B2010 E64', fieldStructure: 'f2', rawFieldName: 'f2', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 10 API data: {
+  "id": 10351,
+  "homeTeam": "City SC Southwest B2010 EA",
+  "awayTeam": "Empire Surf B2010 E64",
+  "ageGroup": "U16 Boys",
+  "field": "f2",
+  "fieldId": 9,
+  "fieldName": "f2",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B2010 EA",
+  "awayTeamName": "Empire Surf B2010 E64"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 10 transformed: {id: 10351, homeTeam: 'City SC Southwest B2010 EA', awayTeam: 'Empire Surf B2010 E64', ageGroup: 'U16 Boys', field: 'f2', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Schedule API Response: {games: Array(10), fields: Array(33), ageGroups: Array(1), dates: Array(2), totalGames: 10, …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 1 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf NPL B2010 Academy ', awayTeamStructure: 'Cal Elite B2010 - Charlie', fieldStructure: 'f3', rawFieldName: 'f3', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 1 API data: {
+  "id": 10350,
+  "homeTeam": "Empire Surf NPL B2010 Academy ",
+  "awayTeam": "Cal Elite B2010 - Charlie",
+  "ageGroup": "U16 Boys",
+  "field": "f3",
+  "fieldId": 14,
+  "fieldName": "f3",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf NPL B2010 Academy ",
+  "awayTeamName": "Cal Elite B2010 - Charlie"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 1 transformed: {id: 10350, homeTeam: 'Empire Surf NPL B2010 Academy ', awayTeam: 'Cal Elite B2010 - Charlie', ageGroup: 'U16 Boys', field: 'f3', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 2 transformation debug: {raw: {…}, homeTeamStructure: 'TBD', awayTeamStructure: 'TBD', fieldStructure: 'f1', rawFieldName: 'f1', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 2 API data: {
+  "id": 10357,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "ageGroup": "U16 Boys",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "pending",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 2 transformed: {id: 10357, homeTeam: 'TBD', awayTeam: 'TBD', ageGroup: 'U16 Boys', field: 'f1', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 3 transformation debug: {raw: {…}, homeTeamStructure: 'ALBION Riverside B2010 EA', awayTeamStructure: 'Club Tijuana Xoloitzcuincles B2011', fieldStructure: 'f2', rawFieldName: 'f2', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 3 API data: {
+  "id": 10356,
+  "homeTeam": "ALBION Riverside B2010 EA",
+  "awayTeam": "Club Tijuana Xoloitzcuincles B2011",
+  "ageGroup": "U16 Boys",
+  "field": "f2",
+  "fieldId": 9,
+  "fieldName": "f2",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "ALBION Riverside B2010 EA",
+  "awayTeamName": "Club Tijuana Xoloitzcuincles B2011"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 3 transformed: {id: 10356, homeTeam: 'ALBION Riverside B2010 EA', awayTeam: 'Club Tijuana Xoloitzcuincles B2011', ageGroup: 'U16 Boys', field: 'f2', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 4 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf B2010 E64', awayTeamStructure: 'Cal Elite B2010 - Charlie', fieldStructure: 'f3', rawFieldName: 'f3', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 4 API data: {
+  "id": 10353,
+  "homeTeam": "Empire Surf B2010 E64",
+  "awayTeam": "Cal Elite B2010 - Charlie",
+  "ageGroup": "U16 Boys",
+  "field": "f3",
+  "fieldId": 14,
+  "fieldName": "f3",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B2010 E64",
+  "awayTeamName": "Cal Elite B2010 - Charlie"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 4 transformed: {id: 10353, homeTeam: 'Empire Surf B2010 E64', awayTeam: 'Cal Elite B2010 - Charlie', ageGroup: 'U16 Boys', field: 'f3', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 5 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf NPL B2010 Academy ', awayTeamStructure: 'City SC Southwest B2010 EA', fieldStructure: 'f4', rawFieldName: 'f4', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 5 API data: {
+  "id": 10348,
+  "homeTeam": "Empire Surf NPL B2010 Academy ",
+  "awayTeam": "City SC Southwest B2010 EA",
+  "ageGroup": "U16 Boys",
+  "field": "f4",
+  "fieldId": 15,
+  "fieldName": "f4",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf NPL B2010 Academy ",
+  "awayTeamName": "City SC Southwest B2010 EA"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 5 transformed: {id: 10348, homeTeam: 'Empire Surf NPL B2010 Academy ', awayTeam: 'City SC Southwest B2010 EA', ageGroup: 'U16 Boys', field: 'f4', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 6 transformation debug: {raw: {…}, homeTeamStructure: 'Rebels SC B2010 ECNL', awayTeamStructure: 'Club Tijuana Xoloitzcuincles B2011', fieldStructure: 'f1', rawFieldName: 'f1', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 6 API data: {
+  "id": 10355,
+  "homeTeam": "Rebels SC B2010 ECNL",
+  "awayTeam": "Club Tijuana Xoloitzcuincles B2011",
+  "ageGroup": "U16 Boys",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Rebels SC B2010 ECNL",
+  "awayTeamName": "Club Tijuana Xoloitzcuincles B2011"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 6 transformed: {id: 10355, homeTeam: 'Rebels SC B2010 ECNL', awayTeam: 'Club Tijuana Xoloitzcuincles B2011', ageGroup: 'U16 Boys', field: 'f1', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 7 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest B2010 EA', awayTeamStructure: 'Cal Elite B2010 - Charlie', fieldStructure: 'f2', rawFieldName: 'f2', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 7 API data: {
+  "id": 10352,
+  "homeTeam": "City SC Southwest B2010 EA",
+  "awayTeam": "Cal Elite B2010 - Charlie",
+  "ageGroup": "U16 Boys",
+  "field": "f2",
+  "fieldId": 9,
+  "fieldName": "f2",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B2010 EA",
+  "awayTeamName": "Cal Elite B2010 - Charlie"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 7 transformed: {id: 10352, homeTeam: 'City SC Southwest B2010 EA', awayTeam: 'Cal Elite B2010 - Charlie', ageGroup: 'U16 Boys', field: 'f2', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 8 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf NPL B2010 Academy ', awayTeamStructure: 'Empire Surf B2010 E64', fieldStructure: 'f3', rawFieldName: 'f3', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 8 API data: {
+  "id": 10349,
+  "homeTeam": "Empire Surf NPL B2010 Academy ",
+  "awayTeam": "Empire Surf B2010 E64",
+  "ageGroup": "U16 Boys",
+  "field": "f3",
+  "fieldId": 14,
+  "fieldName": "f3",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf NPL B2010 Academy ",
+  "awayTeamName": "Empire Surf B2010 E64"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 8 transformed: {id: 10349, homeTeam: 'Empire Surf NPL B2010 Academy ', awayTeam: 'Empire Surf B2010 E64', ageGroup: 'U16 Boys', field: 'f3', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 9 transformation debug: {raw: {…}, homeTeamStructure: 'Rebels SC B2010 ECNL', awayTeamStructure: 'ALBION Riverside B2010 EA', fieldStructure: 'f1', rawFieldName: 'f1', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 9 API data: {
+  "id": 10354,
+  "homeTeam": "Rebels SC B2010 ECNL",
+  "awayTeam": "ALBION Riverside B2010 EA",
+  "ageGroup": "U16 Boys",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Rebels SC B2010 ECNL",
+  "awayTeamName": "ALBION Riverside B2010 EA"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 9 transformed: {id: 10354, homeTeam: 'Rebels SC B2010 ECNL', awayTeam: 'ALBION Riverside B2010 EA', ageGroup: 'U16 Boys', field: 'f1', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 10 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest B2010 EA', awayTeamStructure: 'Empire Surf B2010 E64', fieldStructure: 'f2', rawFieldName: 'f2', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 10 API data: {
+  "id": 10351,
+  "homeTeam": "City SC Southwest B2010 EA",
+  "awayTeam": "Empire Surf B2010 E64",
+  "ageGroup": "U16 Boys",
+  "field": "f2",
+  "fieldId": 9,
+  "fieldName": "f2",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B2010 EA",
+  "awayTeamName": "Empire Surf B2010 E64"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 10 transformed: {id: 10351, homeTeam: 'City SC Southwest B2010 EA', awayTeam: 'Empire Surf B2010 E64', ageGroup: 'U16 Boys', field: 'f2', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Schedule API Response: {games: Array(10), fields: Array(33), ageGroups: Array(1), dates: Array(2), totalGames: 10, …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 1 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf NPL B2010 Academy ', awayTeamStructure: 'Cal Elite B2010 - Charlie', fieldStructure: 'f3', rawFieldName: 'f3', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 1 API data: {
+  "id": 10350,
+  "homeTeam": "Empire Surf NPL B2010 Academy ",
+  "awayTeam": "Cal Elite B2010 - Charlie",
+  "ageGroup": "U16 Boys",
+  "field": "f3",
+  "fieldId": 14,
+  "fieldName": "f3",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf NPL B2010 Academy ",
+  "awayTeamName": "Cal Elite B2010 - Charlie"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 1 transformed: {id: 10350, homeTeam: 'Empire Surf NPL B2010 Academy ', awayTeam: 'Cal Elite B2010 - Charlie', ageGroup: 'U16 Boys', field: 'f3', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 2 transformation debug: {raw: {…}, homeTeamStructure: 'TBD', awayTeamStructure: 'TBD', fieldStructure: 'f1', rawFieldName: 'f1', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 2 API data: {
+  "id": 10357,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "ageGroup": "U16 Boys",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "pending",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 2 transformed: {id: 10357, homeTeam: 'TBD', awayTeam: 'TBD', ageGroup: 'U16 Boys', field: 'f1', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 3 transformation debug: {raw: {…}, homeTeamStructure: 'ALBION Riverside B2010 EA', awayTeamStructure: 'Club Tijuana Xoloitzcuincles B2011', fieldStructure: 'f2', rawFieldName: 'f2', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 3 API data: {
+  "id": 10356,
+  "homeTeam": "ALBION Riverside B2010 EA",
+  "awayTeam": "Club Tijuana Xoloitzcuincles B2011",
+  "ageGroup": "U16 Boys",
+  "field": "f2",
+  "fieldId": 9,
+  "fieldName": "f2",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "ALBION Riverside B2010 EA",
+  "awayTeamName": "Club Tijuana Xoloitzcuincles B2011"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 3 transformed: {id: 10356, homeTeam: 'ALBION Riverside B2010 EA', awayTeam: 'Club Tijuana Xoloitzcuincles B2011', ageGroup: 'U16 Boys', field: 'f2', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 4 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf B2010 E64', awayTeamStructure: 'Cal Elite B2010 - Charlie', fieldStructure: 'f3', rawFieldName: 'f3', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 4 API data: {
+  "id": 10353,
+  "homeTeam": "Empire Surf B2010 E64",
+  "awayTeam": "Cal Elite B2010 - Charlie",
+  "ageGroup": "U16 Boys",
+  "field": "f3",
+  "fieldId": 14,
+  "fieldName": "f3",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B2010 E64",
+  "awayTeamName": "Cal Elite B2010 - Charlie"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 4 transformed: {id: 10353, homeTeam: 'Empire Surf B2010 E64', awayTeam: 'Cal Elite B2010 - Charlie', ageGroup: 'U16 Boys', field: 'f3', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 5 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf NPL B2010 Academy ', awayTeamStructure: 'City SC Southwest B2010 EA', fieldStructure: 'f4', rawFieldName: 'f4', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 5 API data: {
+  "id": 10348,
+  "homeTeam": "Empire Surf NPL B2010 Academy ",
+  "awayTeam": "City SC Southwest B2010 EA",
+  "ageGroup": "U16 Boys",
+  "field": "f4",
+  "fieldId": 15,
+  "fieldName": "f4",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf NPL B2010 Academy ",
+  "awayTeamName": "City SC Southwest B2010 EA"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 5 transformed: {id: 10348, homeTeam: 'Empire Surf NPL B2010 Academy ', awayTeam: 'City SC Southwest B2010 EA', ageGroup: 'U16 Boys', field: 'f4', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 6 transformation debug: {raw: {…}, homeTeamStructure: 'Rebels SC B2010 ECNL', awayTeamStructure: 'Club Tijuana Xoloitzcuincles B2011', fieldStructure: 'f1', rawFieldName: 'f1', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 6 API data: {
+  "id": 10355,
+  "homeTeam": "Rebels SC B2010 ECNL",
+  "awayTeam": "Club Tijuana Xoloitzcuincles B2011",
+  "ageGroup": "U16 Boys",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Rebels SC B2010 ECNL",
+  "awayTeamName": "Club Tijuana Xoloitzcuincles B2011"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 6 transformed: {id: 10355, homeTeam: 'Rebels SC B2010 ECNL', awayTeam: 'Club Tijuana Xoloitzcuincles B2011', ageGroup: 'U16 Boys', field: 'f1', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 7 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest B2010 EA', awayTeamStructure: 'Cal Elite B2010 - Charlie', fieldStructure: 'f2', rawFieldName: 'f2', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 7 API data: {
+  "id": 10352,
+  "homeTeam": "City SC Southwest B2010 EA",
+  "awayTeam": "Cal Elite B2010 - Charlie",
+  "ageGroup": "U16 Boys",
+  "field": "f2",
+  "fieldId": 9,
+  "fieldName": "f2",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B2010 EA",
+  "awayTeamName": "Cal Elite B2010 - Charlie"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 7 transformed: {id: 10352, homeTeam: 'City SC Southwest B2010 EA', awayTeam: 'Cal Elite B2010 - Charlie', ageGroup: 'U16 Boys', field: 'f2', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 8 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf NPL B2010 Academy ', awayTeamStructure: 'Empire Surf B2010 E64', fieldStructure: 'f3', rawFieldName: 'f3', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 8 API data: {
+  "id": 10349,
+  "homeTeam": "Empire Surf NPL B2010 Academy ",
+  "awayTeam": "Empire Surf B2010 E64",
+  "ageGroup": "U16 Boys",
+  "field": "f3",
+  "fieldId": 14,
+  "fieldName": "f3",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf NPL B2010 Academy ",
+  "awayTeamName": "Empire Surf B2010 E64"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 8 transformed: {id: 10349, homeTeam: 'Empire Surf NPL B2010 Academy ', awayTeam: 'Empire Surf B2010 E64', ageGroup: 'U16 Boys', field: 'f3', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 9 transformation debug: {raw: {…}, homeTeamStructure: 'Rebels SC B2010 ECNL', awayTeamStructure: 'ALBION Riverside B2010 EA', fieldStructure: 'f1', rawFieldName: 'f1', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 9 API data: {
+  "id": 10354,
+  "homeTeam": "Rebels SC B2010 ECNL",
+  "awayTeam": "ALBION Riverside B2010 EA",
+  "ageGroup": "U16 Boys",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Rebels SC B2010 ECNL",
+  "awayTeamName": "ALBION Riverside B2010 EA"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 9 transformed: {id: 10354, homeTeam: 'Rebels SC B2010 ECNL', awayTeam: 'ALBION Riverside B2010 EA', ageGroup: 'U16 Boys', field: 'f1', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 10 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest B2010 EA', awayTeamStructure: 'Empire Surf B2010 E64', fieldStructure: 'f2', rawFieldName: 'f2', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 10 API data: {
+  "id": 10351,
+  "homeTeam": "City SC Southwest B2010 EA",
+  "awayTeam": "Empire Surf B2010 E64",
+  "ageGroup": "U16 Boys",
+  "field": "f2",
+  "fieldId": 9,
+  "fieldName": "f2",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B2010 EA",
+  "awayTeamName": "Empire Surf B2010 E64"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 10 transformed: {id: 10351, homeTeam: 'City SC Southwest B2010 EA', awayTeam: 'Empire Surf B2010 E64', ageGroup: 'U16 Boys', field: 'f2', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Schedule API Response: {games: Array(10), fields: Array(33), ageGroups: Array(1), dates: Array(2), totalGames: 10, …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 1 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf NPL B2010 Academy ', awayTeamStructure: 'Cal Elite B2010 - Charlie', fieldStructure: 'f3', rawFieldName: 'f3', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 1 API data: {
+  "id": 10350,
+  "homeTeam": "Empire Surf NPL B2010 Academy ",
+  "awayTeam": "Cal Elite B2010 - Charlie",
+  "ageGroup": "U16 Boys",
+  "field": "f3",
+  "fieldId": 14,
+  "fieldName": "f3",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf NPL B2010 Academy ",
+  "awayTeamName": "Cal Elite B2010 - Charlie"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 1 transformed: {id: 10350, homeTeam: 'Empire Surf NPL B2010 Academy ', awayTeam: 'Cal Elite B2010 - Charlie', ageGroup: 'U16 Boys', field: 'f3', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 2 transformation debug: {raw: {…}, homeTeamStructure: 'TBD', awayTeamStructure: 'TBD', fieldStructure: 'f1', rawFieldName: 'f1', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 2 API data: {
+  "id": 10357,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "ageGroup": "U16 Boys",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "pending",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 2 transformed: {id: 10357, homeTeam: 'TBD', awayTeam: 'TBD', ageGroup: 'U16 Boys', field: 'f1', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 3 transformation debug: {raw: {…}, homeTeamStructure: 'ALBION Riverside B2010 EA', awayTeamStructure: 'Club Tijuana Xoloitzcuincles B2011', fieldStructure: 'f2', rawFieldName: 'f2', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 3 API data: {
+  "id": 10356,
+  "homeTeam": "ALBION Riverside B2010 EA",
+  "awayTeam": "Club Tijuana Xoloitzcuincles B2011",
+  "ageGroup": "U16 Boys",
+  "field": "f2",
+  "fieldId": 9,
+  "fieldName": "f2",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "ALBION Riverside B2010 EA",
+  "awayTeamName": "Club Tijuana Xoloitzcuincles B2011"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 3 transformed: {id: 10356, homeTeam: 'ALBION Riverside B2010 EA', awayTeam: 'Club Tijuana Xoloitzcuincles B2011', ageGroup: 'U16 Boys', field: 'f2', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 4 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf B2010 E64', awayTeamStructure: 'Cal Elite B2010 - Charlie', fieldStructure: 'f3', rawFieldName: 'f3', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 4 API data: {
+  "id": 10353,
+  "homeTeam": "Empire Surf B2010 E64",
+  "awayTeam": "Cal Elite B2010 - Charlie",
+  "ageGroup": "U16 Boys",
+  "field": "f3",
+  "fieldId": 14,
+  "fieldName": "f3",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B2010 E64",
+  "awayTeamName": "Cal Elite B2010 - Charlie"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 4 transformed: {id: 10353, homeTeam: 'Empire Surf B2010 E64', awayTeam: 'Cal Elite B2010 - Charlie', ageGroup: 'U16 Boys', field: 'f3', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 5 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf NPL B2010 Academy ', awayTeamStructure: 'City SC Southwest B2010 EA', fieldStructure: 'f4', rawFieldName: 'f4', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 5 API data: {
+  "id": 10348,
+  "homeTeam": "Empire Surf NPL B2010 Academy ",
+  "awayTeam": "City SC Southwest B2010 EA",
+  "ageGroup": "U16 Boys",
+  "field": "f4",
+  "fieldId": 15,
+  "fieldName": "f4",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf NPL B2010 Academy ",
+  "awayTeamName": "City SC Southwest B2010 EA"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 5 transformed: {id: 10348, homeTeam: 'Empire Surf NPL B2010 Academy ', awayTeam: 'City SC Southwest B2010 EA', ageGroup: 'U16 Boys', field: 'f4', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 6 transformation debug: {raw: {…}, homeTeamStructure: 'Rebels SC B2010 ECNL', awayTeamStructure: 'Club Tijuana Xoloitzcuincles B2011', fieldStructure: 'f1', rawFieldName: 'f1', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 6 API data: {
+  "id": 10355,
+  "homeTeam": "Rebels SC B2010 ECNL",
+  "awayTeam": "Club Tijuana Xoloitzcuincles B2011",
+  "ageGroup": "U16 Boys",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Rebels SC B2010 ECNL",
+  "awayTeamName": "Club Tijuana Xoloitzcuincles B2011"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 6 transformed: {id: 10355, homeTeam: 'Rebels SC B2010 ECNL', awayTeam: 'Club Tijuana Xoloitzcuincles B2011', ageGroup: 'U16 Boys', field: 'f1', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 7 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest B2010 EA', awayTeamStructure: 'Cal Elite B2010 - Charlie', fieldStructure: 'f2', rawFieldName: 'f2', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 7 API data: {
+  "id": 10352,
+  "homeTeam": "City SC Southwest B2010 EA",
+  "awayTeam": "Cal Elite B2010 - Charlie",
+  "ageGroup": "U16 Boys",
+  "field": "f2",
+  "fieldId": 9,
+  "fieldName": "f2",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B2010 EA",
+  "awayTeamName": "Cal Elite B2010 - Charlie"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 7 transformed: {id: 10352, homeTeam: 'City SC Southwest B2010 EA', awayTeam: 'Cal Elite B2010 - Charlie', ageGroup: 'U16 Boys', field: 'f2', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 8 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf NPL B2010 Academy ', awayTeamStructure: 'Empire Surf B2010 E64', fieldStructure: 'f3', rawFieldName: 'f3', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 8 API data: {
+  "id": 10349,
+  "homeTeam": "Empire Surf NPL B2010 Academy ",
+  "awayTeam": "Empire Surf B2010 E64",
+  "ageGroup": "U16 Boys",
+  "field": "f3",
+  "fieldId": 14,
+  "fieldName": "f3",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf NPL B2010 Academy ",
+  "awayTeamName": "Empire Surf B2010 E64"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 8 transformed: {id: 10349, homeTeam: 'Empire Surf NPL B2010 Academy ', awayTeam: 'Empire Surf B2010 E64', ageGroup: 'U16 Boys', field: 'f3', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 9 transformation debug: {raw: {…}, homeTeamStructure: 'Rebels SC B2010 ECNL', awayTeamStructure: 'ALBION Riverside B2010 EA', fieldStructure: 'f1', rawFieldName: 'f1', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 9 API data: {
+  "id": 10354,
+  "homeTeam": "Rebels SC B2010 ECNL",
+  "awayTeam": "ALBION Riverside B2010 EA",
+  "ageGroup": "U16 Boys",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Rebels SC B2010 ECNL",
+  "awayTeamName": "ALBION Riverside B2010 EA"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 9 transformed: {id: 10354, homeTeam: 'Rebels SC B2010 ECNL', awayTeam: 'ALBION Riverside B2010 EA', ageGroup: 'U16 Boys', field: 'f1', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 10 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest B2010 EA', awayTeamStructure: 'Empire Surf B2010 E64', fieldStructure: 'f2', rawFieldName: 'f2', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 10 API data: {
+  "id": 10351,
+  "homeTeam": "City SC Southwest B2010 EA",
+  "awayTeam": "Empire Surf B2010 E64",
+  "ageGroup": "U16 Boys",
+  "field": "f2",
+  "fieldId": 9,
+  "fieldName": "f2",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B2010 EA",
+  "awayTeamName": "Empire Surf B2010 E64"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 10 transformed: {id: 10351, homeTeam: 'City SC Southwest B2010 EA', awayTeam: 'Empire Surf B2010 E64', ageGroup: 'U16 Boys', field: 'f2', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Schedule API Response: {games: Array(10), fields: Array(33), ageGroups: Array(1), dates: Array(2), totalGames: 10, …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 1 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf NPL B2010 Academy ', awayTeamStructure: 'Cal Elite B2010 - Charlie', fieldStructure: 'f3', rawFieldName: 'f3', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 1 API data: {
+  "id": 10350,
+  "homeTeam": "Empire Surf NPL B2010 Academy ",
+  "awayTeam": "Cal Elite B2010 - Charlie",
+  "ageGroup": "U16 Boys",
+  "field": "f3",
+  "fieldId": 14,
+  "fieldName": "f3",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf NPL B2010 Academy ",
+  "awayTeamName": "Cal Elite B2010 - Charlie"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 1 transformed: {id: 10350, homeTeam: 'Empire Surf NPL B2010 Academy ', awayTeam: 'Cal Elite B2010 - Charlie', ageGroup: 'U16 Boys', field: 'f3', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 2 transformation debug: {raw: {…}, homeTeamStructure: 'TBD', awayTeamStructure: 'TBD', fieldStructure: 'f1', rawFieldName: 'f1', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 2 API data: {
+  "id": 10357,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "ageGroup": "U16 Boys",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "pending",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 2 transformed: {id: 10357, homeTeam: 'TBD', awayTeam: 'TBD', ageGroup: 'U16 Boys', field: 'f1', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 3 transformation debug: {raw: {…}, homeTeamStructure: 'ALBION Riverside B2010 EA', awayTeamStructure: 'Club Tijuana Xoloitzcuincles B2011', fieldStructure: 'f2', rawFieldName: 'f2', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 3 API data: {
+  "id": 10356,
+  "homeTeam": "ALBION Riverside B2010 EA",
+  "awayTeam": "Club Tijuana Xoloitzcuincles B2011",
+  "ageGroup": "U16 Boys",
+  "field": "f2",
+  "fieldId": 9,
+  "fieldName": "f2",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "ALBION Riverside B2010 EA",
+  "awayTeamName": "Club Tijuana Xoloitzcuincles B2011"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 3 transformed: {id: 10356, homeTeam: 'ALBION Riverside B2010 EA', awayTeam: 'Club Tijuana Xoloitzcuincles B2011', ageGroup: 'U16 Boys', field: 'f2', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 4 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf B2010 E64', awayTeamStructure: 'Cal Elite B2010 - Charlie', fieldStructure: 'f3', rawFieldName: 'f3', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 4 API data: {
+  "id": 10353,
+  "homeTeam": "Empire Surf B2010 E64",
+  "awayTeam": "Cal Elite B2010 - Charlie",
+  "ageGroup": "U16 Boys",
+  "field": "f3",
+  "fieldId": 14,
+  "fieldName": "f3",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B2010 E64",
+  "awayTeamName": "Cal Elite B2010 - Charlie"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 4 transformed: {id: 10353, homeTeam: 'Empire Surf B2010 E64', awayTeam: 'Cal Elite B2010 - Charlie', ageGroup: 'U16 Boys', field: 'f3', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 5 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf NPL B2010 Academy ', awayTeamStructure: 'City SC Southwest B2010 EA', fieldStructure: 'f4', rawFieldName: 'f4', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 5 API data: {
+  "id": 10348,
+  "homeTeam": "Empire Surf NPL B2010 Academy ",
+  "awayTeam": "City SC Southwest B2010 EA",
+  "ageGroup": "U16 Boys",
+  "field": "f4",
+  "fieldId": 15,
+  "fieldName": "f4",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf NPL B2010 Academy ",
+  "awayTeamName": "City SC Southwest B2010 EA"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 5 transformed: {id: 10348, homeTeam: 'Empire Surf NPL B2010 Academy ', awayTeam: 'City SC Southwest B2010 EA', ageGroup: 'U16 Boys', field: 'f4', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 6 transformation debug: {raw: {…}, homeTeamStructure: 'Rebels SC B2010 ECNL', awayTeamStructure: 'Club Tijuana Xoloitzcuincles B2011', fieldStructure: 'f1', rawFieldName: 'f1', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 6 API data: {
+  "id": 10355,
+  "homeTeam": "Rebels SC B2010 ECNL",
+  "awayTeam": "Club Tijuana Xoloitzcuincles B2011",
+  "ageGroup": "U16 Boys",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Rebels SC B2010 ECNL",
+  "awayTeamName": "Club Tijuana Xoloitzcuincles B2011"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 6 transformed: {id: 10355, homeTeam: 'Rebels SC B2010 ECNL', awayTeam: 'Club Tijuana Xoloitzcuincles B2011', ageGroup: 'U16 Boys', field: 'f1', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 7 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest B2010 EA', awayTeamStructure: 'Cal Elite B2010 - Charlie', fieldStructure: 'f2', rawFieldName: 'f2', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 7 API data: {
+  "id": 10352,
+  "homeTeam": "City SC Southwest B2010 EA",
+  "awayTeam": "Cal Elite B2010 - Charlie",
+  "ageGroup": "U16 Boys",
+  "field": "f2",
+  "fieldId": 9,
+  "fieldName": "f2",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B2010 EA",
+  "awayTeamName": "Cal Elite B2010 - Charlie"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 7 transformed: {id: 10352, homeTeam: 'City SC Southwest B2010 EA', awayTeam: 'Cal Elite B2010 - Charlie', ageGroup: 'U16 Boys', field: 'f2', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 8 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf NPL B2010 Academy ', awayTeamStructure: 'Empire Surf B2010 E64', fieldStructure: 'f3', rawFieldName: 'f3', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 8 API data: {
+  "id": 10349,
+  "homeTeam": "Empire Surf NPL B2010 Academy ",
+  "awayTeam": "Empire Surf B2010 E64",
+  "ageGroup": "U16 Boys",
+  "field": "f3",
+  "fieldId": 14,
+  "fieldName": "f3",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf NPL B2010 Academy ",
+  "awayTeamName": "Empire Surf B2010 E64"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 8 transformed: {id: 10349, homeTeam: 'Empire Surf NPL B2010 Academy ', awayTeam: 'Empire Surf B2010 E64', ageGroup: 'U16 Boys', field: 'f3', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 9 transformation debug: {raw: {…}, homeTeamStructure: 'Rebels SC B2010 ECNL', awayTeamStructure: 'ALBION Riverside B2010 EA', fieldStructure: 'f1', rawFieldName: 'f1', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 9 API data: {
+  "id": 10354,
+  "homeTeam": "Rebels SC B2010 ECNL",
+  "awayTeam": "ALBION Riverside B2010 EA",
+  "ageGroup": "U16 Boys",
+  "field": "f1",
+  "fieldId": 8,
+  "fieldName": "f1",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Rebels SC B2010 ECNL",
+  "awayTeamName": "ALBION Riverside B2010 EA"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 9 transformed: {id: 10354, homeTeam: 'Rebels SC B2010 ECNL', awayTeam: 'ALBION Riverside B2010 EA', ageGroup: 'U16 Boys', field: 'f1', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 10 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest B2010 EA', awayTeamStructure: 'Empire Surf B2010 E64', fieldStructure: 'f2', rawFieldName: 'f2', …}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 10 API data: {
+  "id": 10351,
+  "homeTeam": "City SC Southwest B2010 EA",
+  "awayTeam": "Empire Surf B2010 E64",
+  "ageGroup": "U16 Boys",
+  "field": "f2",
+  "fieldId": 9,
+  "fieldName": "f2",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B2010 EA",
+  "awayTeamName": "Empire Surf B2010 E64"
+}
+ScheduleViewerFixed-a5xMiCE8.js:6 Game 10 transformed: {id: 10351, homeTeam: 'City SC Southwest B2010 EA', awayTeam: 'Empire Surf B2010 E64', ageGroup: 'U16 Boys', field: 'f2', …}
