@@ -126,7 +126,14 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
         credentials: 'include'
       });
       if (!response.ok) {
-        throw new Error('Failed to fetch schedule data');
+        if (response.status === 401) {
+          throw new Error('Authentication required - please log in as admin');
+        } else if (response.status === 500) {
+          const errorData = await response.json().catch(() => ({ error: 'Unknown server error' }));
+          throw new Error(`Server error: ${errorData.error || errorData.details || 'Unknown error'}`);
+        } else {
+          throw new Error(`Failed to fetch schedule data: ${response.status} ${response.statusText}`);
+        }
       }
       const data = await response.json();
       console.log('Schedule API Response:', data);

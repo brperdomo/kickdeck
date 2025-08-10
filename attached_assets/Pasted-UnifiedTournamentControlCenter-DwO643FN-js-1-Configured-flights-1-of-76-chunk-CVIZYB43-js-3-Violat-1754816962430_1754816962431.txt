@@ -1,0 +1,193 @@
+UnifiedTournamentControlCenter-DwO643FN.js:1 Configured flights: 1 of 76
+chunk-CVIZYB43.js:3 [Violation] 'setTimeout' handler took 80ms
+shared-df7789195bf09b6f338558bdd92c931a.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+e @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+c @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+setTimeout
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+Promise.then
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+value @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+16720 @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e.O @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+shared-df7789195bf09b6f338558bdd92c931a.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+e @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+c @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+setTimeout
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+Promise.then
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+log @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+log @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+16720 @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e.O @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+ScheduleViewerFixed-DF8eyY1g.js:6  GET https://app.matchpro.ai/api/admin/events/1844329078/schedule-calendar 500 (Internal Server Error)
+queryFn @ ScheduleViewerFixed-DF8eyY1g.js:6
+i @ index-BUpeXbIR.js:41
+f @ index-BUpeXbIR.js:41
+start @ index-BUpeXbIR.js:41
+fetch @ index-BUpeXbIR.js:41
+ng @ index-BUpeXbIR.js:41
+onSubscribe @ index-BUpeXbIR.js:41
+subscribe @ index-BUpeXbIR.js:41
+(anonymous) @ index-BUpeXbIR.js:41
+iW @ index-BUpeXbIR.js:39
+SS @ index-BUpeXbIR.js:41
+Jh @ index-BUpeXbIR.js:41
+rhe @ index-BUpeXbIR.js:41
+ku @ index-BUpeXbIR.js:41
+BM @ index-BUpeXbIR.js:41
+iu @ index-BUpeXbIR.js:39
+(anonymous) @ index-BUpeXbIR.js:41Understand this error
+util.js:33 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+$Aa @ util.js:33
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1384
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1384
+setTimeout
+Tda @ js?libraries=places&v=beta&callback=Function.prototype:1384
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641Understand this warning
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+Promise.then
+S @ out-4.5.44.js:1
+y @ out-4.5.44.js:1
+E @ out-4.5.44.js:1
+e.onload @ inner.html:1
+script
+(anonymous) @ inner.html:1
+(anonymous) @ inner.html:1
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+h @ out-4.5.44.js:1
+e @ inner.html:1
+index-BUpeXbIR.js:824 🎯 [FIELD DEBUG] All available fields: []
+index-BUpeXbIR.js:824 🎯 [FIELD DEBUG] Fields with games assigned: []
+index-BUpeXbIR.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: true, error: null, scheduleData: undefined, fieldsCount: 0, gamesCount: 0, …}
+index-BUpeXbIR.js:823  GET https://app.matchpro.ai/api/admin/events/1844329078/schedule-calendar 500 (Internal Server Error)
+queryFn @ index-BUpeXbIR.js:823
+i @ index-BUpeXbIR.js:41
+f @ index-BUpeXbIR.js:41
+start @ index-BUpeXbIR.js:41
+fetch @ index-BUpeXbIR.js:41
+ng @ index-BUpeXbIR.js:41
+onSubscribe @ index-BUpeXbIR.js:41
+subscribe @ index-BUpeXbIR.js:41
+(anonymous) @ index-BUpeXbIR.js:41
+iW @ index-BUpeXbIR.js:39
+SS @ index-BUpeXbIR.js:41
+Jh @ index-BUpeXbIR.js:41
+rhe @ index-BUpeXbIR.js:41
+ku @ index-BUpeXbIR.js:41
+BM @ index-BUpeXbIR.js:41
+iu @ index-BUpeXbIR.js:39
+(anonymous) @ index-BUpeXbIR.js:41Understand this error
+index-BUpeXbIR.js:824 🎯 [FIELD DEBUG] All available fields: []
+index-BUpeXbIR.js:824 🎯 [FIELD DEBUG] Fields with games assigned: []
+index-BUpeXbIR.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: Error: Failed to fetch schedule data
+    at queryFn (https://app.matchpro.ai/assets/index-BUpeXbIR.…, scheduleData: undefined, fieldsCount: 0, gamesCount: 0, …}
+index-BUpeXbIR.js:824 🚨 [ENHANCED DRAG DROP] API Error: Error: Failed to fetch schedule data
+    at queryFn (index-BUpeXbIR.js:823:69551)
+SFe @ index-BUpeXbIR.js:824
+uO @ index-BUpeXbIR.js:39
+rP @ index-BUpeXbIR.js:41
+VW @ index-BUpeXbIR.js:41
+zW @ index-BUpeXbIR.js:41
+the @ index-BUpeXbIR.js:41
+nw @ index-BUpeXbIR.js:41
+BM @ index-BUpeXbIR.js:41
+iu @ index-BUpeXbIR.js:39
+(anonymous) @ index-BUpeXbIR.js:41
+setTimeout
+whe @ index-BUpeXbIR.js:41
+o @ index-BUpeXbIR.js:41
+batch @ index-BUpeXbIR.js:41
+ac @ index-BUpeXbIR.js:41
+c @ index-BUpeXbIR.js:41
+h @ index-BUpeXbIR.js:41
+(anonymous) @ index-BUpeXbIR.js:41
+Promise.catch
+f @ index-BUpeXbIR.js:41
+start @ index-BUpeXbIR.js:41
+fetch @ index-BUpeXbIR.js:41
+ng @ index-BUpeXbIR.js:41
+onSubscribe @ index-BUpeXbIR.js:41
+subscribe @ index-BUpeXbIR.js:41
+(anonymous) @ index-BUpeXbIR.js:41
+iW @ index-BUpeXbIR.js:39
+SS @ index-BUpeXbIR.js:41
+Jh @ index-BUpeXbIR.js:41
+rhe @ index-BUpeXbIR.js:41
+ku @ index-BUpeXbIR.js:41
+BM @ index-BUpeXbIR.js:41
+iu @ index-BUpeXbIR.js:39
+(anonymous) @ index-BUpeXbIR.js:41Understand this error
+shared-df7789195bf09b6f338558bdd92c931a.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+e @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+c @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+setTimeout
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+log @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+log @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+value @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+value @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1

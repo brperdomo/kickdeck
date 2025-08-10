@@ -41,6 +41,7 @@ export const isAdmin = async (req: Request, res: Response, next: NextFunction) =
   // First check the isAdmin flag
   if (user?.isAdmin) {
     console.log(`[Admin Auth] SUCCESS - Admin access granted via isAdmin flag for user ${user.email}`);
+    console.log(`[Admin Auth] CONTINUING TO ROUTE HANDLER - No auth middleware errors`);
     return next();
   }
 

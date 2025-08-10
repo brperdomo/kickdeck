@@ -1327,6 +1327,28 @@ export function registerRoutes(app: Express): Server {
     // RESTORE AUTH ON SCHEDULE CALENDAR WITH 500 ERROR DEBUGGING
     app.use('/api/admin/events', isAdmin, scheduleCalendarRouter); // Schedule calendar - WITH AUTH + 500 DEBUG
     
+    // DEBUG USER AUTHENTICATION STATUS
+    app.get('/api/debug-auth', (req, res) => {
+      console.log('[AUTH DEBUG] Session details:', {
+        sessionID: req.sessionID,
+        session: req.session,
+        user: req.user,
+        isAuthenticated: req.isAuthenticated?.(),
+        headers: {
+          cookie: req.headers.cookie,
+          authorization: req.headers.authorization
+        }
+      });
+      
+      res.json({
+        sessionID: req.sessionID,
+        isAuthenticated: req.isAuthenticated?.(),
+        user: req.user,
+        hasSession: !!req.session,
+        debug: 'Authentication debug endpoint'
+      });
+    });
+
     // BYPASS AUTH COMPLETELY - SEPARATE NAMESPACE TO DEBUG 500 ERROR
     app.get('/api/debug-schedule/:eventId', async (req, res) => {
       try {
