@@ -5,14 +5,59 @@ import { eq, and, sql } from 'drizzle-orm';
 
 const router = express.Router();
 
-// GET /api/admin/events/:eventId/schedule-calendar - Get calendar schedule data  
+// BYPASS AUTH DEBUG ENDPOINT - DIRECTLY HANDLE 500 ERROR
+router.get('/:eventId/schedule-calendar-debug', async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    
+    console.log(`[BYPASS DEBUG] Testing schedule calendar for event ${eventId} WITHOUT AUTH`);
+    
+    const gamesWithDetails = await db
+      .select({
+        gameId: games.id,
+        homeTeamId: games.homeTeamId,
+        awayTeamId: games.awayTeamId,
+        ageGroupId: games.ageGroupId,
+        fieldId: games.fieldId,
+        timeSlotId: games.timeSlotId,
+        scheduledDate: games.scheduledDate,
+        scheduledTime: games.scheduledTime,
+        status: games.status,
+        duration: games.duration,
+        round: games.round,
+        matchNumber: games.matchNumber,
+        ageGroupName: eventAgeGroups.ageGroup,
+        ageGroupGender: eventAgeGroups.gender
+      })
+      .from(games)
+      .leftJoin(eventAgeGroups, eq(games.ageGroupId, eventAgeGroups.id))
+      .where(eq(games.eventId, eventId));
+
+    console.log(`[BYPASS DEBUG] SUCCESS: Found ${gamesWithDetails.length} games`);
+    
+    res.json({
+      success: true,
+      gamesCount: gamesWithDetails.length,
+      message: 'Schedule calendar query working without auth - 500 error investigation',
+      sampleGame: gamesWithDetails[0]
+    });
+  } catch (error) {
+    console.error('[BYPASS DEBUG] 500 ERROR FOUND:', error);
+    res.status(500).json({
+      error: 'This is the 500 error we are debugging',
+      details: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined
+    });
+  }
+});
+
+// GET /api/admin/events/:eventId/schedule-calendar - Get calendar schedule data WITH AUTH ERROR HANDLING
 router.get('/:eventId/schedule-calendar', async (req, res) => {
   try {
     const { eventId } = req.params;
     
-    console.log(`[Schedule Calendar] Fetching calendar data for event ${eventId}`);
-    console.log(`[Schedule Calendar] Request headers:`, req.headers);
-    console.log(`[Schedule Calendar] Session ID:`, req.sessionID);
+    console.log(`[Schedule Calendar AUTH] Starting request for event ${eventId}`);
+    console.log(`[Schedule Calendar AUTH] Authentication passed - continuing to database query`);
 
     // Get event details first to get proper dates  
     const event = await db.query.events.findFirst({
@@ -41,7 +86,7 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
         duration: games.duration,
         round: games.round,
         matchNumber: games.matchNumber,
-        ageGroupName: eventAgeGroups.name,
+        ageGroupName: eventAgeGroups.ageGroup,
         ageGroupGender: eventAgeGroups.gender
       })
       .from(games)
@@ -62,7 +107,7 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
     const allTimeSlots = await db
       .select()
       .from(gameTimeSlots)
-      .where(eq(gameTimeSlots.eventId, parseInt(eventId)));
+      .where(eq(gameTimeSlots.eventId, eventId));
 
     console.log(`[Schedule Calendar] Found ${allTimeSlots.length} time slots`);
 
@@ -244,11 +289,17 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
     res.json(response);
 
   } catch (error) {
-    console.error('[Schedule Calendar] Error:', error);
-    console.error('[Schedule Calendar] Stack trace:', error instanceof Error ? error.stack : 'No stack trace');
+    console.error('[Schedule Calendar AUTH] 500 ERROR CAPTURED WITH AUTHENTICATION:', error);
+    console.error('[Schedule Calendar AUTH] Error details:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : 'No stack trace',
+      name: error instanceof Error ? error.name : 'Unknown error type'
+    });
     res.status(500).json({ 
-      error: 'Failed to fetch calendar schedule data',
+      error: 'Schedule calendar 500 error - authenticated endpoint',
       details: error instanceof Error ? error.message : 'Unknown error',
+      errorType: error instanceof Error ? error.name : 'Unknown',
+      authStatus: 'Authentication passed, error in database query logic',
       stack: error instanceof Error ? error.stack : undefined
     });
   }

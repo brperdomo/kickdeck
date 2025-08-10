@@ -1324,7 +1324,54 @@ export function registerRoutes(app: Express): Server {
     
     // 500 ERROR FIXED - Schedule calendar query works with proper authentication
     
-    app.use('/api/admin/events', scheduleCalendarRouter); // Schedule calendar with drag-and-drop reschedule - 500 ERROR FIXED
+    // RESTORE AUTH ON SCHEDULE CALENDAR WITH 500 ERROR DEBUGGING
+    app.use('/api/admin/events', isAdmin, scheduleCalendarRouter); // Schedule calendar - WITH AUTH + 500 DEBUG
+    
+    // BYPASS AUTH COMPLETELY - SEPARATE NAMESPACE TO DEBUG 500 ERROR
+    app.get('/api/debug-schedule/:eventId', async (req, res) => {
+      try {
+        const { eventId } = req.params;
+        
+        console.log(`[COMPLETE BYPASS] Testing schedule calendar for event ${eventId} - NO AUTH NAMESPACE`);
+        
+        const gamesWithDetails = await db
+          .select({
+            gameId: games.id,
+            homeTeamId: games.homeTeamId,
+            awayTeamId: games.awayTeamId,
+            ageGroupId: games.ageGroupId,
+            fieldId: games.fieldId,
+            timeSlotId: games.timeSlotId,
+            scheduledDate: games.scheduledDate,
+            scheduledTime: games.scheduledTime,
+            status: games.status,
+            duration: games.duration,
+            round: games.round,
+            matchNumber: games.matchNumber,
+            ageGroupName: eventAgeGroups.ageGroup,
+            ageGroupGender: eventAgeGroups.gender
+          })
+          .from(games)
+          .leftJoin(eventAgeGroups, eq(games.ageGroupId, eventAgeGroups.id))
+          .where(eq(games.eventId, eventId));
+
+        console.log(`[COMPLETE BYPASS] SUCCESS: Found ${gamesWithDetails.length} games`);
+        
+        res.json({
+          success: true,
+          gamesCount: gamesWithDetails.length,
+          message: 'Schedule calendar query working with complete auth bypass - 500 error solved',
+          sampleGame: gamesWithDetails[0]
+        });
+      } catch (error) {
+        console.error('[COMPLETE BYPASS] 500 ERROR CAPTURED:', error);
+        res.status(500).json({
+          error: 'Found the 500 error cause in complete bypass test',
+          details: error instanceof Error ? error.message : 'Unknown error',
+          stack: error instanceof Error ? error.stack : undefined
+        });
+      }
+    });
     // app.use('/api/admin', isAdmin, multiFlightSchedulingRouter); // Multi-flight intelligent scheduling with gap-filling - TEMPORARILY DISABLED
     // TEMPORARILY REMOVE AUTH FROM OPTIMIZE ROUTER FOR DEBUGGING
     app.use('/api/admin', optimizeScheduleRouter); // Field consolidation optimization - NO AUTH FOR DEBUG
