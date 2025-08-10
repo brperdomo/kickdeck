@@ -937,6 +937,7 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
                   <SelectItem value="10">10 minutes</SelectItem>
                   <SelectItem value="15">15 minutes</SelectItem>
                   <SelectItem value="30">30 minutes</SelectItem>
+                  <SelectItem value="60">60 minutes</SelectItem>
                 </SelectContent>
               </Select>
             </div>
