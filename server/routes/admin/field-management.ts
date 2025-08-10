@@ -24,8 +24,41 @@ router.get('/events/:eventId/fields', requireAuth, isAdmin, async (req, res) => 
     
     console.log(`🏟️ API: Getting available fields for event ${eventId} with configurations`);
     
-    // Get base field data
-    const baseFields = await FieldAvailabilityService.getAvailableFields(eventId);
+    // Get ALL field data for this event (including closed ones for management purposes)
+    const { fields, complexes, eventComplexes } = await import('@db/schema');
+    const { eq, and } = await import('drizzle-orm');
+    
+    const eventComplexesData = await db
+      .select({
+        complexId: eventComplexes.complexId,
+        complexName: complexes.name,
+        complexOpenTime: complexes.openTime,
+        complexCloseTime: complexes.closeTime,
+        fieldId: fields.id,
+        fieldName: fields.name,
+        fieldSize: fields.fieldSize,
+        fieldOpenTime: fields.openTime,
+        fieldCloseTime: fields.closeTime,
+        hasLights: fields.hasLights,
+        isOpen: fields.isOpen,
+        complexIsOpen: complexes.isOpen
+      })
+      .from(eventComplexes)
+      .innerJoin(complexes, eq(complexes.id, eventComplexes.complexId))
+      .innerJoin(fields, eq(fields.complexId, complexes.id))
+      .where(eq(eventComplexes.eventId, eventId));
+
+    const baseFields = eventComplexesData.map((row: any) => ({
+      id: row.fieldId,
+      name: row.fieldName,
+      fieldSize: row.fieldSize,
+      complexId: row.complexId,
+      complexName: row.complexName,
+      openTime: row.fieldOpenTime || row.complexOpenTime,
+      closeTime: row.fieldCloseTime || row.complexCloseTime,
+      hasLights: row.hasLights,
+      isOpen: row.isOpen && row.complexIsOpen // Field is open only if both field AND complex are open
+    }));
     
     // Get event-specific configurations
     const configurations = await db
@@ -50,8 +83,8 @@ router.get('/events/:eventId/fields', requireAuth, isAdmin, async (req, res) => 
         isActive: config?.isActive !== undefined ? config.isActive : true,
         firstGameTime: config?.firstGameTime || null,
         sortOrder: config?.sortOrder || 0,
-        // Complex status - fix the "Complex Closed" issue
-        isOpen: field.isOpen !== false
+        // Complex status - use actual field/complex open status
+        isOpen: field.isOpen
       };
     });
     

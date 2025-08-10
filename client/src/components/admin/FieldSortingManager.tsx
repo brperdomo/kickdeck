@@ -367,7 +367,12 @@ export default function FieldSortingManager({ fields, onFieldsReordered, eventId
                 type="time"
                 value={bulkTimeSettings['7v7']}
                 onChange={(e) => setBulkTimeSettings(prev => ({ ...prev, '7v7': e.target.value }))}
-                className="bg-slate-700 border-slate-600 text-white [color-scheme:dark]"
+                className="bg-slate-800 border-slate-600 text-white [color-scheme:dark] !text-white !bg-slate-800"
+                style={{ 
+                  backgroundColor: '#1e293b', 
+                  color: '#ffffff',
+                  colorScheme: 'dark'
+                }}
               />
             </div>
             <div className="space-y-2">
@@ -377,7 +382,12 @@ export default function FieldSortingManager({ fields, onFieldsReordered, eventId
                 type="time"
                 value={bulkTimeSettings['9v9']}
                 onChange={(e) => setBulkTimeSettings(prev => ({ ...prev, '9v9': e.target.value }))}
-                className="bg-slate-700 border-slate-600 text-white [color-scheme:dark]"
+                className="bg-slate-800 border-slate-600 text-white [color-scheme:dark] !text-white !bg-slate-800"
+                style={{ 
+                  backgroundColor: '#1e293b', 
+                  color: '#ffffff',
+                  colorScheme: 'dark'
+                }}
               />
             </div>
             <div className="space-y-2">
@@ -387,7 +397,12 @@ export default function FieldSortingManager({ fields, onFieldsReordered, eventId
                 type="time"
                 value={bulkTimeSettings['11v11']}
                 onChange={(e) => setBulkTimeSettings(prev => ({ ...prev, '11v11': e.target.value }))}
-                className="bg-slate-700 border-slate-600 text-white [color-scheme:dark]"
+                className="bg-slate-800 border-slate-600 text-white [color-scheme:dark] !text-white !bg-slate-800"
+                style={{ 
+                  backgroundColor: '#1e293b', 
+                  color: '#ffffff',
+                  colorScheme: 'dark'
+                }}
               />
             </div>
             <Button
@@ -508,7 +523,12 @@ export default function FieldSortingManager({ fields, onFieldsReordered, eventId
                                     type="time"
                                     value={field.firstGameTime || ''}
                                     onChange={(e) => handleFirstGameTimeChange(field.id, e.target.value)}
-                                    className="w-32 h-9 text-sm bg-slate-700 border-slate-500 text-white hover:bg-slate-600 focus:border-blue-400 focus:bg-slate-600 [color-scheme:dark]"
+                                    className="w-32 h-9 text-sm bg-slate-800 border-slate-500 text-white hover:bg-slate-700 focus:border-blue-400 focus:bg-slate-700 [color-scheme:dark] !text-white !bg-slate-800"
+                                    style={{ 
+                                      backgroundColor: '#1e293b', 
+                                      color: '#ffffff',
+                                      colorScheme: 'dark'
+                                    }}
                                     placeholder="08:00"
                                   />
                                 </div>
