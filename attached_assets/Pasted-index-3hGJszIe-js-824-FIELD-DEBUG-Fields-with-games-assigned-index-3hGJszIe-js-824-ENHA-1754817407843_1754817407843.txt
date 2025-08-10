@@ -1,0 +1,78 @@
+index-3hGJszIe.js:824 🎯 [FIELD DEBUG] Fields with games assigned: []
+index-3hGJszIe.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: true, error: null, scheduleData: undefined, fieldsCount: 0, gamesCount: 0, …}
+index-3hGJszIe.js:823  GET https://app.matchpro.ai/api/admin/events/1844329078/schedule-calendar 500 (Internal Server Error)
+queryFn @ index-3hGJszIe.js:823
+i @ index-3hGJszIe.js:41
+f @ index-3hGJszIe.js:41
+start @ index-3hGJszIe.js:41
+fetch @ index-3hGJszIe.js:41
+ng @ index-3hGJszIe.js:41
+onSubscribe @ index-3hGJszIe.js:41
+subscribe @ index-3hGJszIe.js:41
+(anonymous) @ index-3hGJszIe.js:41
+iW @ index-3hGJszIe.js:39
+SS @ index-3hGJszIe.js:41
+Jh @ index-3hGJszIe.js:41
+rhe @ index-3hGJszIe.js:41
+ku @ index-3hGJszIe.js:41
+BM @ index-3hGJszIe.js:41
+iu @ index-3hGJszIe.js:39
+(anonymous) @ index-3hGJszIe.js:41Understand this error
+index-3hGJszIe.js:824 🎯 [FIELD DEBUG] All available fields: []
+index-3hGJszIe.js:824 🎯 [FIELD DEBUG] Fields with games assigned: []
+index-3hGJszIe.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: Error: Failed to fetch schedule data
+    at queryFn (https://app.matchpro.ai/assets/index-3hGJszIe.…, scheduleData: undefined, fieldsCount: 0, gamesCount: 0, …}
+index-3hGJszIe.js:824 🚨 [ENHANCED DRAG DROP] API Error: Error: Failed to fetch schedule data
+    at queryFn (index-3hGJszIe.js:823:69551)
+SFe @ index-3hGJszIe.js:824
+uO @ index-3hGJszIe.js:39
+rP @ index-3hGJszIe.js:41
+VW @ index-3hGJszIe.js:41
+zW @ index-3hGJszIe.js:41
+the @ index-3hGJszIe.js:41
+nw @ index-3hGJszIe.js:41
+BM @ index-3hGJszIe.js:41
+iu @ index-3hGJszIe.js:39
+(anonymous) @ index-3hGJszIe.js:41
+setTimeout
+whe @ index-3hGJszIe.js:41
+o @ index-3hGJszIe.js:41
+batch @ index-3hGJszIe.js:41
+ac @ index-3hGJszIe.js:41
+c @ index-3hGJszIe.js:41
+h @ index-3hGJszIe.js:41
+(anonymous) @ index-3hGJszIe.js:41
+Promise.catch
+f @ index-3hGJszIe.js:41
+start @ index-3hGJszIe.js:41
+fetch @ index-3hGJszIe.js:41
+ng @ index-3hGJszIe.js:41
+onSubscribe @ index-3hGJszIe.js:41
+subscribe @ index-3hGJszIe.js:41
+(anonymous) @ index-3hGJszIe.js:41
+iW @ index-3hGJszIe.js:39
+SS @ index-3hGJszIe.js:41
+Jh @ index-3hGJszIe.js:41
+rhe @ index-3hGJszIe.js:41
+ku @ index-3hGJszIe.js:41
+BM @ index-3hGJszIe.js:41
+iu @ index-3hGJszIe.js:39
+(anonymous) @ index-3hGJszIe.js:41Understand this error
+index-3hGJszIe.js:823 Fetch failed loading: GET "https://app.matchpro.ai/api/admin/events/1844329078/schedule-calendar".
+queryFn @ index-3hGJszIe.js:823
+i @ index-3hGJszIe.js:41
+f @ index-3hGJszIe.js:41
+start @ index-3hGJszIe.js:41
+fetch @ index-3hGJszIe.js:41
+ng @ index-3hGJszIe.js:41
+onSubscribe @ index-3hGJszIe.js:41
+subscribe @ index-3hGJszIe.js:41
+(anonymous) @ index-3hGJszIe.js:41
+iW @ index-3hGJszIe.js:39
+SS @ index-3hGJszIe.js:41
+Jh @ index-3hGJszIe.js:41
+rhe @ index-3hGJszIe.js:41
+ku @ index-3hGJszIe.js:41
+BM @ index-3hGJszIe.js:41
+iu @ index-3hGJszIe.js:39
+(anonymous) @ index-3hGJszIe.js:41
