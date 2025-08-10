@@ -5832,39 +5832,12 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       }
     });
 
-    // Delete field endpoint with comprehensive constraint checking
+    // Delete field endpoint - validation constraints removed per user request
     app.delete('/api/admin/fields/:id', isAdmin, async (req, res) => {
       try {
         const fieldId = parseInt(req.params.id);
         
-        // Check all possible references before attempting deletion
-        const constraintChecks = await Promise.allSettled([
-          db.select({ count: sql`count(*)` }).from(games).where(eq(games.fieldId, fieldId)),
-          db.select({ count: sql`count(*)` }).from(eventFieldSizes).where(eq(eventFieldSizes.fieldId, fieldId)),
-          db.select({ count: sql`count(*)` }).from(gameTimeSlots).where(eq(gameTimeSlots.fieldId, fieldId))
-        ]);
-        
-        // Check each constraint result
-        let blockedBy = [];
-        if (constraintChecks[0].status === 'fulfilled' && constraintChecks[0].value[0]?.count > 0) {
-          blockedBy.push(`${constraintChecks[0].value[0].count} scheduled games`);
-        }
-        if (constraintChecks[1].status === 'fulfilled' && constraintChecks[1].value[0]?.count > 0) {
-          blockedBy.push(`${constraintChecks[1].value[0].count} event field size configurations`);
-        }
-        if (constraintChecks[2].status === 'fulfilled' && constraintChecks[2].value[0]?.count > 0) {
-          blockedBy.push(`${constraintChecks[2].value[0].count} time slot configurations`);
-        }
-        
-        if (blockedBy.length > 0) {
-          return res.status(400).json({
-            error: "Cannot delete field",
-            message: `Field is referenced by: ${blockedBy.join(', ')}. Remove these references first.`,
-            details: { blockedBy }
-          });
-        }
-
-        // Attempt deletion
+        // Direct deletion without constraint validation (removed per user request)
         const [deletedField] = await db
           .delete(fields)
           .where(eq(fields.id, fieldId))
@@ -5878,11 +5851,9 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       } catch (error: any) {
         console.error('Error deleting field:', error);
         
+        // Only log database constraint errors, don't block deletion
         if (error?.code === '23503') {
-          return res.status(400).json({ 
-            error: "Cannot delete field", 
-            message: "Field has database references that prevent deletion. Contact administrator if this persists."
-          });
+          console.warn(`Field deletion may have database references: ${error.message}`);
         }
         
         res.status(500).json({ 
