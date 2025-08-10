@@ -67,9 +67,8 @@ router.get('/events/:eventId/bracket-assignments', async (req, res) => {
               .from(teams)
               .where(and(
                 eq(teams.bracketId, flight.flightId),
-                eq(teams.groupId, bracket.id),
-                // Include both approved teams and placeholder teams
-                eq(teams.status, 'approved')
+                eq(teams.groupId, bracket.id)
+                // Include both approved teams and placeholder teams (status filtering removed)
               ));
 
             return {
@@ -80,7 +79,7 @@ router.get('/events/:eventId/bracket-assignments', async (req, res) => {
           })
         );
 
-        // Get unassigned teams (teams in flight but no groupId)
+        // Get unassigned teams (teams in flight but no groupId) - include approved teams only, not placeholders
         const unassignedTeams = await db
           .select({
             id: teams.id,
@@ -94,17 +93,15 @@ router.get('/events/:eventId/bracket-assignments', async (req, res) => {
           .where(and(
             eq(teams.bracketId, flight.flightId),
             eq(teams.status, 'approved'),
-            isNull(teams.groupId)
+            isNull(teams.groupId),
+            eq(teams.isPlaceholder, false) // Only real teams, not placeholders
           ));
 
-        // Get total teams in this flight
+        // Get total teams in this flight (both approved and placeholders)
         const totalTeams = await db
           .select()
           .from(teams)
-          .where(and(
-            eq(teams.bracketId, flight.flightId),
-            eq(teams.status, 'approved')
-          ));
+          .where(eq(teams.bracketId, flight.flightId));
 
         console.log(`BRACKET ASSIGNMENT DEBUG: Flight ${flight.flightName}:
           - Total teams: ${totalTeams.length}
