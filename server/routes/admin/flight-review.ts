@@ -224,16 +224,20 @@ router.post('/events/:eventId/placeholders', async (req, res) => {
     const placeholderTeam = await db
       .insert(teams)
       .values({
+        eventId: parseInt(eventId),
         name: name,
         status: 'approved',
         ageGroupId: flight[0].ageGroupId,
         bracketId: flightId, // Assign to the flight
-        isPlaceholder: true,
         // Set minimal required fields
         submitterEmail: 'placeholder@system.local',
         submitterName: 'System Generated',
+        managerName: 'TBD',
+        managerEmail: 'placeholder@system.local',
         selectedFeeIds: '[]',
-        totalAmount: 0
+        totalAmount: 0,
+        clubName: 'TBD',
+        isPlaceholder: true
       })
       .returning({ id: teams.id, name: teams.name });
 

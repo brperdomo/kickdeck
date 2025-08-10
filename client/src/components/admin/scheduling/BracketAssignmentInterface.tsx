@@ -302,8 +302,8 @@ export function BracketAssignmentInterface({ eventId }: BracketAssignmentInterfa
     // Sort by birth year (oldest to youngest) then by gender (Boys first)
     flights = flights.sort((a, b) => {
       // First sort by birth year (descending - oldest first)
-      const yearA = parseInt(a.birthYear) || 0;
-      const yearB = parseInt(b.birthYear) || 0;
+      const yearA = parseInt(a.birthYear) || 9999; // Use 9999 for invalid years to put them at end
+      const yearB = parseInt(b.birthYear) || 9999;
       if (yearA !== yearB) {
         return yearA - yearB; // Ascending order for birth years (2010 before 2015)
       }
@@ -412,7 +412,10 @@ export function BracketAssignmentInterface({ eventId }: BracketAssignmentInterfa
                     <SelectItem key={flight.flightId} value={flight.flightId.toString()}>
                       <div className="flex items-center gap-2">
                         {getFlightLevelBadge(flight.flightLevel)}
-                        <span>U{new Date().getFullYear() - parseInt(flight.birthYear)} {flight.gender} ({flight.birthYear}) - {flight.flightName}</span>
+                        <span>
+                          {flight.ageGroup} {flight.gender}
+                          {flight.birthYear && !isNaN(parseInt(flight.birthYear)) ? ` (${flight.birthYear})` : ''} - {flight.flightName}
+                        </span>
                         <span className="text-slate-400">({flight.totalTeams} teams)</span>
                       </div>
                     </SelectItem>
@@ -430,7 +433,10 @@ export function BracketAssignmentInterface({ eventId }: BracketAssignmentInterfa
                     <SelectItem key={flight.flightId} value={flight.flightId.toString()}>
                       <div className="flex items-center gap-2">
                         {getFlightLevelBadge(flight.flightLevel)}
-                        <span>U{new Date().getFullYear() - parseInt(flight.birthYear)} {flight.gender} ({flight.birthYear}) - {flight.flightName}</span>
+                        <span>
+                          {flight.ageGroup} {flight.gender}
+                          {flight.birthYear && !isNaN(parseInt(flight.birthYear)) ? ` (${flight.birthYear})` : ''} - {flight.flightName}
+                        </span>
                         <span className="text-slate-400">({flight.totalTeams} teams)</span>
                         <Badge variant="secondary" className="text-xs">Completed</Badge>
                       </div>
@@ -459,7 +465,8 @@ export function BracketAssignmentInterface({ eventId }: BracketAssignmentInterfa
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <CardTitle className="text-white">
-                    U{new Date().getFullYear() - parseInt(selectedFlightData.birthYear)} {selectedFlightData.gender} ({selectedFlightData.birthYear}) - {selectedFlightData.flightName}
+                    {selectedFlightData.ageGroup} {selectedFlightData.gender}
+                    {selectedFlightData.birthYear && !isNaN(parseInt(selectedFlightData.birthYear)) ? ` (${selectedFlightData.birthYear})` : ''} - {selectedFlightData.flightName}
                   </CardTitle>
                   {getFlightLevelBadge(selectedFlightData.flightLevel)}
                   {selectedFlightData.isCompleted && (
