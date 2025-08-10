@@ -21,6 +21,8 @@ router.get('/events/:eventId/flight-configurations', isAdmin, async (req, res) =
       .where(eq(events.id, parseInt(eventId)))
       .limit(1);
 
+    console.log(`[FLIGHT CONFIG] Event ${eventId} details:`, eventDetails);
+    
     // Use the EXACT SAME data source as MasterSchedulePage
     // Query event_brackets (flights) with their game formats from the game_formats table
     const flightsWithFormats = await db
@@ -82,6 +84,8 @@ router.get('/events/:eventId/flight-configurations', isAdmin, async (req, res) =
     // Use event dates or fall back to defaults
     const startDate = eventDetails?.startDate || new Date().toISOString().split('T')[0];
     const endDate = eventDetails?.endDate || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+    
+    console.log(`[FLIGHT CONFIG] Using dates - Start: ${startDate}, End: ${endDate}`);
 
     const configuredFlights = flightsWithFormats.filter(f => f.gameFormatId !== null);
     console.log(`Found ${configuredFlights.length} flights with game formats out of ${flightsWithFormats.length} total`);
