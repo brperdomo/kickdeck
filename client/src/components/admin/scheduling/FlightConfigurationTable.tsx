@@ -6,8 +6,9 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Pencil, Check, X, Calendar, Clock, Users, Trophy, Search, Filter, FileText } from 'lucide-react';
+import { Pencil, Check, X, Calendar, Clock, Users, Trophy, Search, Filter, FileText, Download } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { stringify } from 'csv-stringify/browser/esm/sync';
 import { EditableInput } from './EditableInput';
 
 interface FlightConfig {
@@ -148,6 +149,82 @@ export function FlightConfigurationTable({ eventId }: { eventId: string }) {
     return fullGameTime + breakTime + paddingTime;
   };
 
+  const exportToCSV = () => {
+    try {
+      // Prepare the data for CSV export
+      const csvData = filteredFlights.map(flight => ({
+        'Division/Flight': `${flight.gender} ${flight.birthYear} - ${flight.divisionName}`,
+        'Age Group': flight.ageGroup,
+        'Gender': flight.gender,
+        'Birth Year': flight.birthYear,
+        'Field Size': flight.fieldSize || '7v7',
+        'Start Date': formatDate(flight.startDate),
+        'End Date': formatDate(flight.endDate),
+        'Match Count': flight.matchCount,
+        'Half Time Length (min)': flight.matchTime,
+        'Break Time (min)': flight.breakTime,
+        'Padding Time (min)': flight.paddingTime,
+        'Rest Period (min)': flight.restPeriod,
+        'Total Time (min)': calculateTotalTime(flight.matchTime, flight.breakTime, flight.paddingTime),
+        'Format Name': flight.formatName,
+        'Team Count': flight.teamCount,
+        'Status': flight.status,
+        'Scheduled Games': flight.scheduledGames || 0,
+        'Is Configured': flight.isConfigured ? 'Yes' : 'No'
+      }));
+
+      // Convert to CSV string
+      const csv = stringify(csvData, { 
+        header: true,
+        columns: [
+          'Division/Flight',
+          'Age Group', 
+          'Gender',
+          'Birth Year',
+          'Field Size',
+          'Start Date',
+          'End Date',
+          'Match Count',
+          'Half Time Length (min)',
+          'Break Time (min)',
+          'Padding Time (min)',
+          'Rest Period (min)',
+          'Total Time (min)',
+          'Format Name',
+          'Team Count',
+          'Status',
+          'Scheduled Games',
+          'Is Configured'
+        ]
+      });
+
+      // Create and download the file
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      
+      link.setAttribute('href', url);
+      link.setAttribute('download', `flight-configurations-${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      toast({
+        title: 'Export Successful',
+        description: `Exported ${filteredFlights.length} flight configurations to CSV`,
+      });
+    } catch (error) {
+      console.error('CSV Export Error:', error);
+      toast({
+        title: 'Export Failed',
+        description: 'Failed to export flight configurations to CSV',
+        variant: 'destructive',
+      });
+    }
+  };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       month: 'short',
@@ -186,6 +263,18 @@ export function FlightConfigurationTable({ eventId }: { eventId: string }) {
           
           {/* Search and Filter Controls */}
           <div className="flex items-center gap-3">
+            {/* CSV Export Button */}
+            <Button
+              onClick={exportToCSV}
+              variant="outline"
+              size="sm"
+              className="bg-green-600 hover:bg-green-700 text-white border-green-600 hover:border-green-700"
+              disabled={filteredFlights.length === 0}
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Export CSV
+            </Button>
+            
             {/* Search Input */}
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
