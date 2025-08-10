@@ -4,7 +4,8 @@ import {
   teams, 
   eventBrackets, 
   eventAgeGroups, 
-  tournamentGroups 
+  tournamentGroups,
+  games 
 } from '@db/schema';
 import { eq, and, isNull, isNotNull } from 'drizzle-orm';
 
@@ -17,7 +18,7 @@ router.get('/events/:eventId/bracket-assignments', async (req, res) => {
     
     console.log(`BRACKET ASSIGNMENT DEBUG: Fetching data for event ${eventId}`);
 
-    // Get all flights (eventBrackets) for this event
+    // Get all flights (eventBrackets) for this event with birth years
     const flights = await db
       .select({
         flightId: eventBrackets.id,
@@ -25,7 +26,8 @@ router.get('/events/:eventId/bracket-assignments', async (req, res) => {
         flightLevel: eventBrackets.level,
         ageGroupId: eventBrackets.ageGroupId,
         ageGroup: eventAgeGroups.ageGroup,
-        gender: eventAgeGroups.gender
+        gender: eventAgeGroups.gender,
+        birthYear: eventAgeGroups.birthYear
       })
       .from(eventBrackets)
       .innerJoin(eventAgeGroups, eq(eventBrackets.ageGroupId, eventAgeGroups.id))
@@ -107,20 +109,42 @@ router.get('/events/:eventId/bracket-assignments', async (req, res) => {
           - Unassigned teams: ${unassignedTeams.length}
           - Teams in brackets: ${bracketsWithTeams.reduce((sum, b) => sum + b.teamCount, 0)}`);
 
+        // Check if this flight has completed bracket play (has games generated)
+        const hasGames = await db.query.games.findFirst({
+          where: and(
+            eq(games.eventId, eventId),
+            eq(games.ageGroupId, flight.ageGroupId)
+          )
+        });
+
+        const isCompleted = !!hasGames && bracketsWithTeams.length > 0;
+
         return {
           flightId: flight.flightId,
           flightName: flight.flightName,
           flightLevel: flight.flightLevel,
           ageGroup: flight.ageGroup,
           gender: flight.gender,
+          birthYear: flight.birthYear,
           totalTeams: totalTeams.length,
           brackets: bracketsWithTeams,
-          unassignedTeams
+          unassignedTeams,
+          isCompleted
         };
       })
     );
 
-    res.json(bracketAssignmentData);
+    // Sort flights by gender (boys first) then by age descending
+    const sortedData = bracketAssignmentData.sort((a, b) => {
+      // Boys first, then girls
+      if (a.gender !== b.gender) {
+        return a.gender === 'Boys' ? -1 : 1;
+      }
+      // Within same gender, sort by birth year descending (older first)
+      return parseInt(String(b.birthYear || '0')) - parseInt(String(a.birthYear || '0'));
+    });
+
+    res.json(sortedData);
   } catch (error) {
     console.error('Error fetching bracket assignment data:', error);
     res.status(500).json({ error: 'Failed to fetch bracket assignment data' });
