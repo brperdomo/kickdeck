@@ -1,0 +1,98 @@
+index-vnuSTfVm.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: true, error: null, scheduleData: undefined, fieldsCount: 0, gamesCount: 0, …}
+index-vnuSTfVm.js:823  GET https://app.matchpro.ai/api/admin/events/1844329078/schedule-calendar 500 (Internal Server Error)
+queryFn @ index-vnuSTfVm.js:823
+i @ index-vnuSTfVm.js:41
+f @ index-vnuSTfVm.js:41
+start @ index-vnuSTfVm.js:41
+fetch @ index-vnuSTfVm.js:41
+ng @ index-vnuSTfVm.js:41
+onSubscribe @ index-vnuSTfVm.js:41
+subscribe @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+iW @ index-vnuSTfVm.js:39
+SS @ index-vnuSTfVm.js:41
+Jh @ index-vnuSTfVm.js:41
+rhe @ index-vnuSTfVm.js:41
+ku @ index-vnuSTfVm.js:41
+BM @ index-vnuSTfVm.js:41
+iu @ index-vnuSTfVm.js:39
+(anonymous) @ index-vnuSTfVm.js:41Understand this error
+index-vnuSTfVm.js:824 🎯 [FIELD DEBUG] All available fields: []
+index-vnuSTfVm.js:824 🎯 [FIELD DEBUG] Fields with games assigned: []
+index-vnuSTfVm.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: Error: Failed to fetch schedule data
+    at queryFn (https://app.matchpro.ai/assets/index-vnuSTfVm.…, scheduleData: undefined, fieldsCount: 0, gamesCount: 0, …}
+index-vnuSTfVm.js:824 🚨 [ENHANCED DRAG DROP] API Error: Error: Failed to fetch schedule data
+    at queryFn (index-vnuSTfVm.js:823:69551)
+SFe @ index-vnuSTfVm.js:824
+uO @ index-vnuSTfVm.js:39
+rP @ index-vnuSTfVm.js:41
+VW @ index-vnuSTfVm.js:41
+zW @ index-vnuSTfVm.js:41
+the @ index-vnuSTfVm.js:41
+nw @ index-vnuSTfVm.js:41
+BM @ index-vnuSTfVm.js:41
+iu @ index-vnuSTfVm.js:39
+(anonymous) @ index-vnuSTfVm.js:41
+setTimeout
+whe @ index-vnuSTfVm.js:41
+o @ index-vnuSTfVm.js:41
+batch @ index-vnuSTfVm.js:41
+ac @ index-vnuSTfVm.js:41
+c @ index-vnuSTfVm.js:41
+h @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+Promise.catch
+f @ index-vnuSTfVm.js:41
+start @ index-vnuSTfVm.js:41
+fetch @ index-vnuSTfVm.js:41
+ng @ index-vnuSTfVm.js:41
+onSubscribe @ index-vnuSTfVm.js:41
+subscribe @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+iW @ index-vnuSTfVm.js:39
+SS @ index-vnuSTfVm.js:41
+Jh @ index-vnuSTfVm.js:41
+rhe @ index-vnuSTfVm.js:41
+ku @ index-vnuSTfVm.js:41
+BM @ index-vnuSTfVm.js:41
+iu @ index-vnuSTfVm.js:39
+(anonymous) @ index-vnuSTfVm.js:41Understand this error
+index-vnuSTfVm.js:823 Fetch failed loading: GET "https://app.matchpro.ai/api/admin/events/1844329078/schedule-calendar".
+queryFn @ index-vnuSTfVm.js:823
+i @ index-vnuSTfVm.js:41
+f @ index-vnuSTfVm.js:41
+start @ index-vnuSTfVm.js:41
+fetch @ index-vnuSTfVm.js:41
+ng @ index-vnuSTfVm.js:41
+onSubscribe @ index-vnuSTfVm.js:41
+subscribe @ index-vnuSTfVm.js:41
+(anonymous) @ index-vnuSTfVm.js:41
+iW @ index-vnuSTfVm.js:39
+SS @ index-vnuSTfVm.js:41
+Jh @ index-vnuSTfVm.js:41
+rhe @ index-vnuSTfVm.js:41
+ku @ index-vnuSTfVm.js:41
+BM @ index-vnuSTfVm.js:41
+iu @ index-vnuSTfVm.js:39
+(anonymous) @ index-vnuSTfVm.js:41
+shared-df7789195bf09b6f338558bdd92c931a.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+e @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+c @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+setTimeout
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+log @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+log @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+value @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+value @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
