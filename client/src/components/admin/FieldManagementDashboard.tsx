@@ -10,6 +10,8 @@ interface Field {
   sortOrder: number;
   hasLights: boolean;
   isOpen: boolean;
+  isActive?: boolean;
+  firstGameTime?: string;
   complexName?: string;
 }
 
@@ -25,10 +27,12 @@ export default function FieldManagementDashboard({ eventId }: FieldManagementDas
       console.log(`[DEBUG] Fetching fields for event: ${eventId}`);
       console.log(`[DEBUG] Making authenticated request with credentials`);
       
-      const response = await fetch(`/api/public/events/${eventId}/fields`, {
+      const response = await fetch(`/api/admin/events/${eventId}/fields`, {
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-        }
+        },
+        credentials: 'include',
       });
       
       console.log(`[DEBUG] Response status: ${response.status}`);
@@ -53,7 +57,9 @@ export default function FieldManagementDashboard({ eventId }: FieldManagementDas
   });
 
   const handleFieldsReordered = (reorderedFields: Field[]) => {
-    // Refetch fields data to ensure UI is updated
+    console.log('🔄 FIELD REFRESH: Parent component received field update notification');
+    console.log('🔄 FIELD REFRESH: Triggering data refetch to ensure persistence...');
+    // Refetch fields data to ensure UI is updated with latest database values
     refetch();
   };
 
