@@ -61,14 +61,15 @@ router.get('/events/:eventId/bracket-assignments', async (req, res) => {
                 name: teams.name,
                 status: teams.status,
                 groupId: teams.groupId,
-                seedRanking: teams.seedRanking
+                seedRanking: teams.seedRanking,
+                isPlaceholder: teams.isPlaceholder
               })
               .from(teams)
               .where(and(
                 eq(teams.bracketId, flight.flightId),
                 eq(teams.groupId, bracket.id),
                 // Include both approved teams and placeholder teams
-                inArray(teams.status, ['approved', 'placeholder'])
+                eq(teams.status, 'approved')
               ));
 
             return {
@@ -86,12 +87,13 @@ router.get('/events/:eventId/bracket-assignments', async (req, res) => {
             name: teams.name,
             status: teams.status,
             groupId: teams.groupId,
-            seedRanking: teams.seedRanking
+            seedRanking: teams.seedRanking,
+            isPlaceholder: teams.isPlaceholder
           })
           .from(teams)
           .where(and(
             eq(teams.bracketId, flight.flightId),
-            inArray(teams.status, ['approved', 'placeholder']),
+            eq(teams.status, 'approved'),
             isNull(teams.groupId)
           ));
 
@@ -101,7 +103,7 @@ router.get('/events/:eventId/bracket-assignments', async (req, res) => {
           .from(teams)
           .where(and(
             eq(teams.bracketId, flight.flightId),
-            inArray(teams.status, ['approved', 'placeholder'])
+            eq(teams.status, 'approved')
           ));
 
         console.log(`BRACKET ASSIGNMENT DEBUG: Flight ${flight.flightName}:
