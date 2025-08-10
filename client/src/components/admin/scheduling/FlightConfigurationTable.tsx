@@ -193,7 +193,12 @@ export function FlightConfigurationTable({ eventId }: { eventId: string }) {
                 placeholder="Search flights..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 w-64 bg-slate-700 border-slate-600 text-white placeholder-slate-400 focus:bg-slate-600 focus:border-blue-400"
+                className="pl-10 w-64 bg-slate-700 border-slate-600 !text-white !placeholder-slate-400 focus:bg-slate-600 focus:border-blue-400"
+                style={{ 
+                  backgroundColor: '#334155', 
+                  color: '#ffffff',
+                  borderColor: '#475569'
+                }}
               />
             </div>
             
