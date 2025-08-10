@@ -24,6 +24,7 @@ interface TournamentGroup {
   stage: string;
   teamCount: number;
   teams: Team[];
+  parentBracketId?: number; // For virtual Pool A/B brackets
 }
 
 interface FlightBracketData {

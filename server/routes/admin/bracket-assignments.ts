@@ -7,7 +7,7 @@ import {
   tournamentGroups,
   games 
 } from '@db/schema';
-import { eq, and, isNull, isNotNull, inArray, or } from 'drizzle-orm';
+import { eq, and, isNull, isNotNull, inArray, or, asc } from 'drizzle-orm';
 
 const router = Router();
 
@@ -112,7 +112,7 @@ router.get('/events/:eventId/bracket-assignments', async (req, res) => {
         console.log(`BRACKET ASSIGNMENT DEBUG: Flight ${flight.flightName} has ${finalBrackets.length} related brackets:`, 
           finalBrackets.map(b => b.name));
 
-        // Get teams for each related bracket
+        // Get teams for each related bracket and handle crossplay Pool A/B assignments
         const bracketsWithTeams = await Promise.all(
           finalBrackets.map(async (bracket) => {
             const bracketTeams = await db
@@ -128,18 +128,51 @@ router.get('/events/:eventId/bracket-assignments', async (req, res) => {
               .where(and(
                 eq(teams.bracketId, bracket.id),
                 eq(teams.status, 'approved')
-              ));
+              ))
+              .orderBy(asc(teams.name)); // Consistent ordering for Pool A/B assignment
 
-            return {
+            // For 6-team flights, create virtual Pool A/B brackets for assignment interface
+            if (bracketTeams.length === 6) {
+              // Split teams into Pool A (first 3) and Pool B (next 3) based on alphabetical order
+              const poolATeams = bracketTeams.slice(0, 3);
+              const poolBTeams = bracketTeams.slice(3, 6);
+
+              return [
+                {
+                  id: bracket.id * 1000 + 1, // Virtual ID for Pool A
+                  name: `${bracket.name} - Pool A`,
+                  type: 'crossplay_pool',
+                  stage: 'pool_a',
+                  teamCount: poolATeams.length,
+                  teams: poolATeams,
+                  parentBracketId: bracket.id
+                },
+                {
+                  id: bracket.id * 1000 + 2, // Virtual ID for Pool B  
+                  name: `${bracket.name} - Pool B`,
+                  type: 'crossplay_pool',
+                  stage: 'pool_b',
+                  teamCount: poolBTeams.length,
+                  teams: poolBTeams,
+                  parentBracketId: bracket.id
+                }
+              ];
+            }
+
+            // For non-6-team flights, return single bracket
+            return [{
               id: bracket.id,
               name: bracket.name,
               type: bracket.tournamentFormat === 'crossplay' ? 'crossplay_group' : 'bracket',
               stage: 'main',
               teamCount: bracketTeams.length,
               teams: bracketTeams
-            };
+            }];
           })
         );
+
+        // Flatten the brackets array (since 6-team flights return multiple pools)
+        const flattenedBrackets = bracketsWithTeams.flat();
 
         // Get unassigned teams for this flight
         const allFlightBracketIds = finalBrackets.map(b => b.id);
@@ -161,18 +194,18 @@ router.get('/events/:eventId/bracket-assignments', async (req, res) => {
 
         // Find teams that should be in this flight but aren't assigned to any of its brackets
         const assignedTeamIds = new Set(
-          bracketsWithTeams.flatMap(bracket => bracket.teams.map(team => team.id))
+          flattenedBrackets.flatMap(bracket => bracket.teams.map(team => team.id))
         );
         const unassignedTeams = allTeamsInAgeGroup.filter(team => 
           !assignedTeamIds.has(team.id) && 
           (!team.bracketId || allFlightBracketIds.includes(team.bracketId))
         );
 
-        const totalTeams = bracketsWithTeams.reduce((sum, bracket) => sum + bracket.teamCount, 0);
+        const totalTeams = flattenedBrackets.reduce((sum, bracket) => sum + bracket.teamCount, 0);
 
         console.log(`BRACKET ASSIGNMENT DEBUG: Flight ${flight.flightName}:
           - Total teams: ${totalTeams}
-          - Brackets: ${bracketsWithTeams.length}
+          - Brackets: ${flattenedBrackets.length}
           - Unassigned teams: ${unassignedTeams.length}`);
 
         // Check if this flight has completed bracket play
@@ -183,7 +216,7 @@ router.get('/events/:eventId/bracket-assignments', async (req, res) => {
           )
         });
 
-        const isCompleted = !!hasGames && bracketsWithTeams.length > 0;
+        const isCompleted = !!hasGames && flattenedBrackets.length > 0;
 
         return {
           flightId: flight.flightId,
@@ -193,7 +226,7 @@ router.get('/events/:eventId/bracket-assignments', async (req, res) => {
           gender: flight.gender,
           birthYear: flight.birthYear,
           totalTeams: totalTeams,
-          brackets: bracketsWithTeams,
+          brackets: flattenedBrackets,
           unassignedTeams,
           isCompleted
         };
@@ -234,12 +267,30 @@ router.post('/events/:eventId/teams/bulk-bracket-assign', async (req, res) => {
       assignments.map(async ({ teamId, groupId }) => {
         console.log(`BRACKET ASSIGNMENT DEBUG: Assigning team ${teamId} to group ${groupId}`);
         
-        await db
-          .update(teams)
-          .set({ 
-            groupId: groupId
-          })
-          .where(eq(teams.id, teamId));
+        // Handle virtual Pool A/B IDs (format: bracketId * 1000 + poolNumber)
+        if (groupId > 10000) {
+          const parentBracketId = Math.floor(groupId / 1000);
+          const poolNumber = groupId % 1000;
+          const poolAssignment = poolNumber === 1 ? 'pool_a' : 'pool_b';
+          
+          console.log(`BRACKET ASSIGNMENT DEBUG: Virtual pool assignment - Team ${teamId} to bracket ${parentBracketId}, pool ${poolAssignment}`);
+          
+          await db
+            .update(teams)
+            .set({ 
+              bracketId: parentBracketId,
+              groupId: groupId // Store the virtual pool ID for Pool A/B tracking
+            })
+            .where(eq(teams.id, teamId));
+        } else {
+          // Standard bracket assignment
+          await db
+            .update(teams)
+            .set({ 
+              groupId: groupId
+            })
+            .where(eq(teams.id, teamId));
+        }
       })
     );
 
