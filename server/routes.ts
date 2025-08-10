@@ -349,7 +349,7 @@ export function registerRoutes(app: Express): Server {
             eventId: teams.eventId
           })
           .from(teams)
-          .where(eq(teams.id, parseInt(teamId, 10)));
+          .where(eq(teams.id, Number(teamId)));
         
         if (!teamResult || teamResult.length === 0) {
           return res.status(404).json({ error: 'Team not found' });
@@ -447,7 +447,7 @@ export function registerRoutes(app: Express): Server {
         const teamResult = await db
           .select()
           .from(teams)
-          .where(eq(teams.id, parseInt(teamId, 10)));
+          .where(eq(teams.id, Number(teamId)));
         
         if (!teamResult || teamResult.length === 0) {
           return res.status(404).json({ error: 'Team not found' });
@@ -647,7 +647,7 @@ export function registerRoutes(app: Express): Server {
           
           // Create transaction record for Payment Logs report
           await db.insert(paymentTransactions).values({
-            teamId: parseInt(teamId, 10),
+            teamId: Number(teamId),
             eventId: team.eventId,
             userId: null, // No specific user for payment completion
             paymentIntentId: paymentIntent.id,
@@ -681,7 +681,7 @@ export function registerRoutes(app: Express): Server {
               stripeCustomerId: customerId,
               notes: `${team.notes || ''} | Payment completed after Setup Intent confirmation (Connect funds routed)`.trim()
             })
-            .where(eq(teams.id, parseInt(teamId, 10)));
+            .where(eq(teams.id, Number(teamId)));
           
           console.log(`Payment successful for team ${teamId}. Payment Intent: ${paymentIntent.id}, Transaction recorded in payment_transactions table`);
           
@@ -1223,7 +1223,7 @@ export function registerRoutes(app: Express): Server {
         res.json({ 
           success: true, 
           event: event.name,
-          eventId: parseInt(eventId),
+          eventId: Number(eventId),
           debug: 'Direct endpoint working'
         });
       } catch (error) {
@@ -1287,7 +1287,7 @@ export function registerRoutes(app: Express): Server {
         const allTimeSlots = await db
           .select()
           .from(gameTimeSlots)
-          .where(eq(gameTimeSlots.eventId, parseInt(eventId)));
+          .where(eq(gameTimeSlots.eventId, Number(eventId)));
 
         console.log(`[Schedule Calendar TEST] Found ${allTimeSlots.length} time slots`);
 
@@ -1307,7 +1307,7 @@ export function registerRoutes(app: Express): Server {
         res.json({ 
           success: true, 
           event: event.name,
-          eventId: parseInt(eventId),
+          eventId: Number(eventId),
           gamesCount: gamesWithDetails.rows.length,
           timeSlotsCount: allTimeSlots.length,
           fieldsCount: allFields.length,

@@ -1,0 +1,150 @@
+chunk-CVIZYB43.js:3 [Violation] 'setTimeout' handler took 59ms
+ScheduleViewerFixed-ET7UZziM.js:6 
+ GET https://app.matchpro.ai/api/admin/events/1844329078/schedule-calendar 500 (Internal Server Error)
+queryFn	@	ScheduleViewerFixed-ET7UZziM.js:6
+i	@	index-vnuSTfVm.js:41
+f	@	index-vnuSTfVm.js:41
+start	@	index-vnuSTfVm.js:41
+fetch	@	index-vnuSTfVm.js:41
+ng	@	index-vnuSTfVm.js:41
+onSubscribe	@	index-vnuSTfVm.js:41
+subscribe	@	index-vnuSTfVm.js:41
+(anonymous)	@	index-vnuSTfVm.js:41
+iW	@	index-vnuSTfVm.js:39
+SS	@	index-vnuSTfVm.js:41
+Jh	@	index-vnuSTfVm.js:41
+rhe	@	index-vnuSTfVm.js:41
+ku	@	index-vnuSTfVm.js:41
+BM	@	index-vnuSTfVm.js:41
+iu	@	index-vnuSTfVm.js:39
+(anonymous)	@	index-vnuSTfVm.js:41
+
+12
+Fetch failed loading: GET "<URL>".
+ScheduleViewerFixed-ET7UZziM.js:6 
+ GET https://app.matchpro.ai/api/admin/events/1844329078/schedule-calendar 500 (Internal Server Error)
+queryFn	@	ScheduleViewerFixed-ET7UZziM.js:6
+i	@	index-vnuSTfVm.js:41
+f	@	index-vnuSTfVm.js:41
+(anonymous)	@	index-vnuSTfVm.js:41
+Promise.then		
+(anonymous)	@	index-vnuSTfVm.js:41
+Promise.catch		
+f	@	index-vnuSTfVm.js:41
+start	@	index-vnuSTfVm.js:41
+fetch	@	index-vnuSTfVm.js:41
+ng	@	index-vnuSTfVm.js:41
+onSubscribe	@	index-vnuSTfVm.js:41
+subscribe	@	index-vnuSTfVm.js:41
+(anonymous)	@	index-vnuSTfVm.js:41
+iW	@	index-vnuSTfVm.js:39
+SS	@	index-vnuSTfVm.js:41
+Jh	@	index-vnuSTfVm.js:41
+rhe	@	index-vnuSTfVm.js:41
+ku	@	index-vnuSTfVm.js:41
+BM	@	index-vnuSTfVm.js:41
+iu	@	index-vnuSTfVm.js:39
+(anonymous)	@	index-vnuSTfVm.js:41
+util.js:33 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+ScheduleViewerFixed-ET7UZziM.js:6 
+ GET https://app.matchpro.ai/api/admin/events/1844329078/schedule-calendar 500 (Internal Server Error)
+queryFn	@	ScheduleViewerFixed-ET7UZziM.js:6
+i	@	index-vnuSTfVm.js:41
+f	@	index-vnuSTfVm.js:41
+(anonymous)	@	index-vnuSTfVm.js:41
+Promise.then		
+(anonymous)	@	index-vnuSTfVm.js:41
+Promise.catch		
+f	@	index-vnuSTfVm.js:41
+(anonymous)	@	index-vnuSTfVm.js:41
+Promise.then		
+(anonymous)	@	index-vnuSTfVm.js:41
+Promise.catch		
+f	@	index-vnuSTfVm.js:41
+start	@	index-vnuSTfVm.js:41
+fetch	@	index-vnuSTfVm.js:41
+ng	@	index-vnuSTfVm.js:41
+onSubscribe	@	index-vnuSTfVm.js:41
+subscribe	@	index-vnuSTfVm.js:41
+(anonymous)	@	index-vnuSTfVm.js:41
+iW	@	index-vnuSTfVm.js:39
+SS	@	index-vnuSTfVm.js:41
+Jh	@	index-vnuSTfVm.js:41
+rhe	@	index-vnuSTfVm.js:41
+ku	@	index-vnuSTfVm.js:41
+BM	@	index-vnuSTfVm.js:41
+iu	@	index-vnuSTfVm.js:39
+(anonymous)	@	index-vnuSTfVm.js:41
+shared-df7789195bf09…8558bdd92c931a.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+ScheduleViewerFixed-ET7UZziM.js:6 
+ GET https://app.matchpro.ai/api/admin/events/1844329078/schedule-calendar 500 (Internal Server Error)
+ScheduleViewerFixed-ET7UZziM.js:6 
+ GET https://app.matchpro.ai/api/admin/events/1844329078/schedule-calendar 500 (Internal Server Error)
+ScheduleViewerFixed-ET7UZziM.js:6 
+ GET https://app.matchpro.ai/api/admin/events/1844329078/schedule-calendar 500 (Internal Server Error)
+index-vnuSTfVm.js:824 🎯 [FIELD DEBUG] All available fields: 
+[]
+index-vnuSTfVm.js:824 🎯 [FIELD DEBUG] Fields with games assigned: 
+[]
+index-vnuSTfVm.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: 
+{isLoading: true, error: null, scheduleData: undefined, fieldsCount: 0, gamesCount: 0, …}
+index-vnuSTfVm.js:823 
+ GET https://app.matchpro.ai/api/admin/events/1844329078/schedule-calendar 500 (Internal Server Error)
+index-vnuSTfVm.js:824 🎯 [FIELD DEBUG] All available fields: 
+[]
+index-vnuSTfVm.js:824 🎯 [FIELD DEBUG] Fields with games assigned: 
+[]
+index-vnuSTfVm.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: 
+{isLoading: false, error: Error: Failed to fetch schedule data
+    at queryFn (https://app.matchpro.ai/assets/index-vnuSTfVm.…, scheduleData: undefined, fieldsCount: 0, gamesCount: 0, …}
+index-vnuSTfVm.js:824 🚨 [ENHANCED DRAG DROP] API Error: Error: Failed to fetch schedule data
+    at queryFn (index-vnuSTfVm.js:823:69551)
+MasterSchedulePage-BlQE-uMB.js:273 Fetch finished loading: GET "https://app.matchpro.ai/api/schedule-calendar/1844329078/schedule-calendar".
+MasterSchedulePage-BlQE-uMB.js:274 [DEBUG] Fetching fields for event: 1844329078
+MasterSchedulePage-BlQE-uMB.js:274 [DEBUG] Making authenticated request with credentials
+MasterSchedulePage-BlQE-uMB.js:274 [DEBUG] Response status: 200
+MasterSchedulePage-BlQE-uMB.js:274 [DEBUG] Response headers: 
+{alt-svc: 'h3=":443"; ma=2592000,h3-29=":443"; ma=2592000', cache-control: 'private', content-length: '5158', content-type: 'application/json; charset=utf-8', date: 'Sun, 10 Aug 2025 09:47:08 GMT', …}
+MasterSchedulePage-BlQE-uMB.js:274 [DEBUG] Fields response: 
+(33) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+MasterSchedulePage-BlQE-uMB.js:274 [DEBUG] Fields array length: 33
+MasterSchedulePage-BlQE-uMB.js:274 [DEBUG] Fields data: 
+(33) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+MasterSchedulePage-BlQE-uMB.js:274 [DEBUG] Fields array: 
+(33) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+MasterSchedulePage-BlQE-uMB.js:274 [DEBUG] Fields length: 33
+MasterSchedulePage-BlQE-uMB.js:274 [DEBUG] Is fieldsData an array?: true
+MasterSchedulePage-BlQE-uMB.js:274 [DEBUG] fieldsData.fields exists?: false
+MasterSchedulePage-BlQE-uMB.js:274 Fetch finished loading: GET "https://app.matchpro.ai/api/admin/events/1844329078/fields".
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955
+MasterSchedulePage-BlQE-uMB.js:274 Fetch finished loading: GET "https://app.matchpro.ai/api/admin/events/1844329078/published-schedules".
+MasterSchedulePage-BlQE-uMB.js:274 
+ GET https://app.matchpro.ai/api/admin/events/1844329078/schedule-preview 500 (Internal Server Error)
+index-vnuSTfVm.js:824 🎯 [FIELD DEBUG] All available fields: 
+[]
+index-vnuSTfVm.js:824 🎯 [FIELD DEBUG] Fields with games assigned: 
+[]
+index-vnuSTfVm.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: 
+{isLoading: true, error: null, scheduleData: undefined, fieldsCount: 0, gamesCount: 0, …}
+index-vnuSTfVm.js:823 
+ GET https://app.matchpro.ai/api/admin/events/1844329078/schedule-calendar 500 (Internal Server Error)
+index-vnuSTfVm.js:824 🎯 [FIELD DEBUG] All available fields: 
+[]
+index-vnuSTfVm.js:824 🎯 [FIELD DEBUG] Fields with games assigned: 
+[]
+index-vnuSTfVm.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: 
+{isLoading: false, error: Error: Failed to fetch schedule data
+    at queryFn (https://app.matchpro.ai/assets/index-vnuSTfVm.…, scheduleData: undefined, fieldsCount: 0, gamesCount: 0, …}
+index-vnuSTfVm.js:824 🚨 [ENHANCED DRAG DROP] API Error: Error: Failed to fetch schedule data
+    at queryFn (index-vnuSTfVm.js:823:69551)
+ScheduleViewerFixed-ET7UZziM.js:6 
+ GET https://app.matchpro.ai/api/admin/events/1844329078/schedule-calendar 500 (Internal Server Error)
+ScheduleViewerFixed-ET7UZziM.js:6 
+ GET https://app.matchpro.ai/api/admin/events/1844329078/schedule-calendar 500 (Internal Server Error)
+ScheduleViewerFixed-ET7UZziM.js:6 
+ GET https://app.matchpro.ai/api/admin/events/1844329078/schedule-calendar 500 (Internal Server Error)
+﻿
+
