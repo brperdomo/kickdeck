@@ -135,6 +135,14 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
         });
         
         console.log(`Game ${index + 1} API data:`, JSON.stringify(game, null, 2));
+        console.log(`Game ${index + 1} Team IDs Debug:`, {
+          homeTeamId: game.homeTeamId,
+          awayTeamId: game.awayTeamId,
+          homeTeamIdType: typeof game.homeTeamId,
+          awayTeamIdType: typeof game.awayTeamId,
+          hasHomeTeamId: game.homeTeamId !== null && game.homeTeamId !== undefined,
+          hasAwayTeamId: game.awayTeamId !== null && game.awayTeamId !== undefined
+        });
         
         // Handle team names - the API is returning them directly as strings in homeTeam/awayTeam
         const homeTeamName = game.homeTeam || game.homeTeamName || `Team ${game.homeTeamId || 'Unknown'}`;
@@ -177,6 +185,8 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
           id: game.id,
           homeTeam: homeTeamName,
           awayTeam: awayTeamName,
+          homeTeamId: game.homeTeamId,
+          awayTeamId: game.awayTeamId,
           ageGroup: game.ageGroup || 'Unknown',
           field: fieldName,
           date: dateDisplay,
@@ -185,7 +195,9 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
           status: game.status || 'scheduled',
           startTime: game.startTime,
           endTime: game.endTime,
-          fieldName: fieldName
+          fieldName: fieldName,
+          bracketId: game.bracketId,
+          flightName: game.flightName
         };
         
         console.log(`Game ${index + 1} transformed:`, transformed);
@@ -844,7 +856,12 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                                     });
                                     
                                     if (!game.homeTeamId) {
-                                      console.warn('Cannot swap: homeTeamId is missing');
+                                      console.warn('Cannot swap: homeTeamId is missing for game:', game);
+                                      toast({ 
+                                        title: 'Cannot swap teams', 
+                                        description: 'This game does not have team IDs assigned. Please ensure teams are properly assigned to brackets.',
+                                        variant: 'destructive' 
+                                      });
                                       return;
                                     }
                                     
@@ -899,7 +916,12 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                                     });
                                     
                                     if (!game.awayTeamId) {
-                                      console.warn('Cannot swap: awayTeamId is missing');
+                                      console.warn('Cannot swap: awayTeamId is missing for game:', game);
+                                      toast({ 
+                                        title: 'Cannot swap teams', 
+                                        description: 'This game does not have team IDs assigned. Please ensure teams are properly assigned to brackets.',
+                                        variant: 'destructive' 
+                                      });
                                       return;
                                     }
                                     
