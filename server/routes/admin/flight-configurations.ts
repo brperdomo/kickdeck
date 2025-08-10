@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { isAdmin } from '../../middleware';
 import { db } from '@db';
 import { eventAgeGroups, teams, events, eventGameFormats, eventBrackets, gameFormats } from '@db/schema';
-import { eq, and, count } from 'drizzle-orm';
+import { eq, and, count, isNotNull } from 'drizzle-orm';
 
 const router = Router();
 
@@ -62,6 +62,23 @@ router.get('/events/:eventId/flight-configurations', isAdmin, async (req, res) =
       ))
       .groupBy(teams.bracketId);
 
+    // Get scheduled games count for each bracket to determine "Scheduled" status
+    const { games } = await import('../../../db/schema.js');
+    const scheduledGames = await db
+      .select({
+        bracketId: teams.bracketId,
+        gameCount: count(games.id),
+      })
+      .from(games)
+      .innerJoin(teams, eq(teams.id, games.homeTeamId)) // Join to get bracket from team
+      .where(and(
+        eq(games.eventId, eventId),
+        isNotNull(games.scheduledTime), // Games with scheduled start times
+        isNotNull(games.fieldId),       // Games assigned to fields
+        isNotNull(teams.bracketId)      // Teams assigned to brackets
+      ))
+      .groupBy(teams.bracketId);
+
     // Use event dates or fall back to defaults
     const startDate = eventDetails?.startDate || new Date().toISOString().split('T')[0];
     const endDate = eventDetails?.endDate || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
@@ -72,6 +89,7 @@ router.get('/events/:eventId/flight-configurations', isAdmin, async (req, res) =
     // Transform into the expected response format
     const result = flightsWithFormats.map(flight => {
       const teamCountData = teamCounts.find(tc => tc.bracketId === flight.flightId);
+      const gameCountData = scheduledGames.find(gc => gc.bracketId === flight.flightId);
       
       // Parse tournament_settings to get the correct rest period
       let restPeriodFromSettings = 90; // default
@@ -92,6 +110,10 @@ router.get('/events/:eventId/flight-configurations', isAdmin, async (req, res) =
                                    flight.gameLength !== null && 
                                    flight.fieldSize !== null && 
                                    flight.bufferTime !== null;
+
+      // Determine status: Scheduled > Ready > Needs Setup
+      const hasScheduledGames = (gameCountData?.gameCount || 0) > 0;
+      const status = hasScheduledGames ? 'scheduled' : (isCompletelyConfigured ? 'ready' : 'needs_setup');
 
       console.log(`Processing flight ${flight.flightName}: ${teamCountData?.teamCount || 0} teams, configured = ${isCompletelyConfigured}`);
 
@@ -118,6 +140,8 @@ router.get('/events/:eventId/flight-configurations', isAdmin, async (req, res) =
         teamCount: teamCountData?.teamCount || 0,
         ageGroupId: flight.ageGroupId,
         isConfigured: isCompletelyConfigured,
+        status: status, // Add the new status field
+        scheduledGames: gameCountData?.gameCount || 0, // Add scheduled games count
         ageGroup: flight.ageGroup,
         gender: flight.gender,
         birthYear: flight.birthYear || '2024',

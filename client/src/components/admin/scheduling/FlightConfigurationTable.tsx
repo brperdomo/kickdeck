@@ -25,6 +25,8 @@ interface FlightConfig {
   teamCount: number;
   ageGroupId: number;
   isConfigured: boolean;
+  status: 'scheduled' | 'ready' | 'needs_setup'; // New status field
+  scheduledGames: number; // Number of scheduled games
   ageGroup: string;
   gender: string;
   birthYear: string;
@@ -92,14 +94,14 @@ export function FlightConfigurationTable({ eventId }: { eventId: string }) {
     
     // Apply ready filter
     if (showReadyOnly) {
-      flights = flights.filter(flight => flight.isConfigured);
+      flights = flights.filter(flight => flight.status === 'ready' || flight.status === 'scheduled');
     }
     
     return flights;
   }, [allFlights, searchTerm, showReadyOnly]);
 
   const readyFlights = useMemo(() => {
-    return allFlights?.filter(flight => flight.isConfigured && flight.teamCount > 0) || [];
+    return allFlights?.filter(flight => (flight.status === 'ready' || flight.status === 'scheduled') && flight.teamCount > 0) || [];
   }, [allFlights]);
 
   const updateFlightMutation = useMutation({
@@ -254,7 +256,11 @@ export function FlightConfigurationTable({ eventId }: { eventId: string }) {
                         <Badge variant="outline" className="bg-blue-600/20 text-blue-400 border-blue-600">
                           {flight.gender} {flight.birthYear} - {flight.divisionName}
                         </Badge>
-                        {flight.isConfigured ? (
+                        {flight.status === 'scheduled' ? (
+                          <Badge variant="outline" className="bg-purple-600/20 text-purple-400 border-purple-600">
+                            📅 Scheduled ({flight.scheduledGames || 0} games)
+                          </Badge>
+                        ) : flight.status === 'ready' ? (
                           <Badge variant="outline" className="bg-green-600/20 text-green-400 border-green-600">
                             ✓ Ready
                           </Badge>
