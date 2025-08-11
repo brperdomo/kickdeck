@@ -1,0 +1,64 @@
+MasterSchedulePage-D9ofAPN7.js:247 
+ POST https://app.matchpro.ai/api/admin/events/1844329078/flights/629/create-brackets 400 (Bad Request)
+mutationFn	@	MasterSchedulePage-D9ofAPN7.js:247
+fn	@	index-C_N99rUl.js:41
+f	@	index-C_N99rUl.js:41
+start	@	index-C_N99rUl.js:41
+execute	@	index-C_N99rUl.js:41
+await in execute		
+mutate	@	index-C_N99rUl.js:41
+(anonymous)	@	index-C_N99rUl.js:41
+K	@	MasterSchedulePage-D9ofAPN7.js:247
+wue	@	index-C_N99rUl.js:38
+Sue	@	index-C_N99rUl.js:38
+Cue	@	index-C_N99rUl.js:38
+dM	@	index-C_N99rUl.js:38
+V7	@	index-C_N99rUl.js:38
+(anonymous)	@	index-C_N99rUl.js:38
+yO	@	index-C_N99rUl.js:41
+f7	@	index-C_N99rUl.js:38
+N2	@	index-C_N99rUl.js:38
+H4	@	index-C_N99rUl.js:38
+zue	@	index-C_N99rUl.js:38
+
+MasterSchedulePage-D9ofAPN7.js:247 UnifiedBracketManager Debug: 
+{selectedFlight: 629, allFlightData: Array(76), selectedFlightData: {…}, apiResponse: {…}}
+MasterSchedulePage-D9ofAPN7.js:247 Fetch failed loading: POST "https://app.matchpro.ai/api/admin/events/1844329078/flights/629/create-brackets".
+MasterSchedulePage-D9ofAPN7.js:247 UnifiedBracketManager Debug: 
+{selectedFlight: 629, allFlightData: Array(76), selectedFlightData: {…}, apiResponse: {…}}
+allFlightData
+: 
+(76) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+apiResponse
+: 
+{flights: Array(76), stats: {…}}
+selectedFlight
+: 
+629
+selectedFlightData
+: 
+{flightId: 629, name: 'Nike Classic', bracketsLength: undefined, brackets: undefined, assignedTeams: 4, …}
+[[Prototype]]
+: 
+Object
+MasterSchedulePage-D9ofAPN7.js:247 UnifiedBracketManager Debug: 
+{selectedFlight: 629, allFlightData: Array(76), selectedFlightData: {…}, apiResponse: {…}}
+allFlightData
+: 
+(76) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+apiResponse
+: 
+{flights: Array(76), stats: {…}}
+selectedFlight
+: 
+629
+selectedFlightData
+: 
+{flightId: 629, name: 'Nike Classic', bracketsLength: undefined, brackets: undefined, assignedTeams: 4, …}
+[[Prototype]]
+: 
+Object
+MasterSchedulePage-D9ofAPN7.js:247 UnifiedBracketManager Debug: 
+{selectedFlight: 629, allFlightData: Array(76), selectedFlightData: {…}, apiResponse: {…}}
+﻿
+

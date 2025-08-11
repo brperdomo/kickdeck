@@ -178,20 +178,43 @@ router.get('/:eventId/bracket-creation', isAdmin, async (req, res) => {
         placeholderLabel: team.status === 'placeholder' ? team.name : undefined
       }));
 
-      // Get existing brackets for this flight
+      // Get existing brackets for this flight with proper team data
       const brackets = await db.query.tournamentGroups.findMany({
         where: and(
           eq(tournamentGroups.eventId, parseInt(eventId)),
           eq(tournamentGroups.ageGroupId, flight.ageGroupId)
-        ),
-        with: {
-          teams: {
-            orderBy: (teams, { asc }) => [asc(teams.name)]
-          }
-        }
+        )
       });
 
       console.log(`[Bracket Creation] Flight ${flight.id} (${flight.name}) - Age Group ${flight.ageGroupId} - Found ${brackets.length} brackets`);
+
+      // Get teams assigned to each bracket manually for better control
+      const bracketsWithTeams = await Promise.all(
+        brackets.map(async (bracket) => {
+          const bracketTeams = await db.query.teams.findMany({
+            where: and(
+              eq(teams.groupId, bracket.id),
+              eq(teams.status, 'approved')
+            ),
+            orderBy: teams.name
+          });
+
+          return {
+            id: bracket.id,
+            name: bracket.name,
+            type: bracket.type,
+            stage: bracket.stage,
+            teamCount: bracketTeams.length,
+            teams: bracketTeams.map(team => ({
+              id: team.id,
+              name: team.name,
+              clubName: team.clubName || '',
+              status: team.status,
+              groupId: team.groupId
+            }))
+          };
+        })
+      );
 
       flightData.push({
         flightId: flight.id,
@@ -208,14 +231,7 @@ router.get('/:eventId/bracket-creation', isAdmin, async (req, res) => {
         isConfigured,
         registeredTeams: teamsInFlight,
         ageGroupId: flight.ageGroupId,
-        brackets: brackets.map(bracket => ({
-          id: bracket.id,
-          name: bracket.name,
-          type: bracket.type,
-          stage: bracket.stage,
-          teamCount: bracket.teams?.length || 0,
-          teams: bracket.teams || []
-        }))
+        brackets: bracketsWithTeams
       });
 
     }
@@ -1361,6 +1377,39 @@ router.post('/:eventId/flights/:flightId/auto-balance', isAdmin, async (req, res
   } catch (error) {
     console.error('[Bracket Assignment] Error auto-balancing brackets:', error);
     res.status(500).json({ error: 'Failed to auto-balance brackets' });
+  }
+});
+
+// POST /api/admin/events/:eventId/teams/bulk-bracket-assign
+router.post('/:eventId/teams/bulk-bracket-assign', isAdmin, async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const { assignments } = req.body; // Array of { teamId: number, groupId: number }
+    
+    console.log(`[Bulk Bracket Assign] Processing ${assignments.length} team assignments for event ${eventId}`);
+    
+    // Update all teams in a transaction
+    for (const assignment of assignments) {
+      if (assignment.groupId === 0) {
+        // Unassign team (set group_id to null)
+        await db.update(teams)
+          .set({ groupId: null })
+          .where(eq(teams.id, assignment.teamId));
+        console.log(`[Bulk Bracket Assign] Unassigned team ${assignment.teamId}`);
+      } else {
+        // Assign team to bracket
+        await db.update(teams)
+          .set({ groupId: assignment.groupId })
+          .where(eq(teams.id, assignment.teamId));
+        console.log(`[Bulk Bracket Assign] Assigned team ${assignment.teamId} to bracket ${assignment.groupId}`);
+      }
+    }
+    
+    res.json({ success: true, message: `Successfully updated ${assignments.length} team assignments` });
+    
+  } catch (error) {
+    console.error('[Bulk Bracket Assign] Error updating team assignments:', error);
+    res.status(500).json({ error: 'Failed to update team assignments' });
   }
 });
 
