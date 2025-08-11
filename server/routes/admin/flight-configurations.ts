@@ -309,4 +309,39 @@ router.patch('/events/:eventId/flight-configurations/:flightId', isAdmin, async 
   }
 });
 
+// Get games count per flight for status indicators
+router.get('/events/:eventId/flight-game-counts', isAdmin, async (req, res) => {
+  try {
+    const { eventId } = req.params;
+
+    // Import games schema
+    const { games } = await import('../../../db/schema.js');
+    
+    // Get games count for each bracket/flight
+    const gameCountsByFlight = await db
+      .select({
+        bracketId: eventBrackets.id,
+        gameCount: count(games.id),
+      })
+      .from(eventBrackets)
+      .leftJoin(teams, eq(teams.bracketId, eventBrackets.id))
+      .leftJoin(games, eq(games.homeTeamId, teams.id))
+      .where(eq(eventBrackets.eventId, eventId))
+      .groupBy(eventBrackets.id);
+
+    // Convert to object with flightId as key
+    const flightGameCounts: Record<string, number> = {};
+    gameCountsByFlight.forEach(item => {
+      if (item.bracketId) {
+        flightGameCounts[item.bracketId.toString()] = item.gameCount || 0;
+      }
+    });
+
+    res.json({ flightGameCounts });
+  } catch (error) {
+    console.error('Error fetching flight game counts:', error);
+    res.status(500).json({ error: 'Failed to fetch flight game counts' });
+  }
+});
+
 export default router;

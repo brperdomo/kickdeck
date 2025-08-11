@@ -71,6 +71,24 @@ export function UnifiedTournamentControlCenter({ eventId }: TournamentControlCen
     refetchInterval: 10000
   });
 
+  // Fetch flight scheduling status (games count per flight)
+  const { data: flightGameCounts } = useQuery({
+    queryKey: ['flight-game-counts', eventId],
+    queryFn: async () => {
+      try {
+        const response = await fetch(`/api/admin/events/${eventId}/flight-game-counts`);
+        if (!response.ok) return {};
+        const data = await response.json();
+        return data.flightGameCounts || {};
+      } catch (error) {
+        console.error('Flight game counts fetch failed:', error);
+        return {};
+      }
+    },
+    refetchInterval: 5000,
+    retry: 1
+  });
+
   // Fetch scheduling readiness (configured flights with game formats)
   const { data: schedulingReadiness, error: schedulingError } = useQuery({
     queryKey: ['scheduling-readiness', eventId],
@@ -110,7 +128,8 @@ export function UnifiedTournamentControlCenter({ eventId }: TournamentControlCen
           flightName: flight.flightName,
           ageGroup: flight.ageGroup,
           formatName: flight.formatName,
-          teamCount: flight.teamCount || 0
+          teamCount: flight.teamCount || 0,
+          scheduledGamesCount: flightGameCounts?.[flight.id] || 0
         }))
       };
     },
@@ -278,7 +297,9 @@ export function UnifiedTournamentControlCenter({ eventId }: TournamentControlCen
   };
   
   const selectAllFlights = () => {
-    const allFlightIds = schedulingReadiness?.flights?.map((f: any) => f.id) || [];
+    // Only select flights that don't already have scheduled games
+    const unscheduledFlights = schedulingReadiness?.flights?.filter((f: any) => (f.scheduledGamesCount || 0) === 0) || [];
+    const allFlightIds = unscheduledFlights.map((f: any) => f.id);
     setSelectedFlights(allFlightIds);
   };
   
@@ -476,52 +497,86 @@ export function UnifiedTournamentControlCenter({ eventId }: TournamentControlCen
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                    {schedulingReadiness.flights.map((flight: any) => (
-                      <Card 
-                        key={flight.id} 
-                        className={`border transition-colors cursor-pointer ${
-                          selectedFlights.includes(flight.id)
-                            ? 'border-blue-500 bg-blue-900/20' 
-                            : 'border-slate-600 bg-slate-800 hover:bg-slate-700'
-                        }`}
-                        onClick={() => toggleFlightSelection(flight.id)}
-                      >
-                        <CardContent className="p-4">
-                          <div className="flex items-start justify-between">
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-2">
-                                <Checkbox
-                                  checked={selectedFlights.includes(flight.id)}
-                                  onChange={() => toggleFlightSelection(flight.id)}
-                                  className="text-blue-500"
-                                />
-                                <span className="font-medium text-white text-sm">
-                                  {flight.flightName}
-                                </span>
-                              </div>
-                              <div className="space-y-1">
-                                <p className="text-xs text-slate-300">
-                                  <strong>{flight.ageGroup}</strong>
-                                </p>
-                                <p className="text-xs text-slate-400">
-                                  Format: {flight.formatName}
-                                </p>
-                                <div className="flex items-center gap-2">
-                                  <Badge variant="outline" className="text-xs text-slate-300 border-slate-600">
-                                    {flight.teamCount} teams
-                                  </Badge>
+                    {schedulingReadiness.flights.map((flight: any) => {
+                      const hasScheduledGames = (flight.scheduledGamesCount || 0) > 0;
+                      const isScheduled = hasScheduledGames;
+                      
+                      return (
+                        <Card 
+                          key={flight.id} 
+                          className={`border transition-colors cursor-pointer ${
+                            isScheduled 
+                              ? 'border-slate-500 bg-slate-700/50 opacity-60' // Grayed out for scheduled
+                              : selectedFlights.includes(flight.id)
+                                ? 'border-blue-500 bg-blue-900/20' 
+                                : 'border-slate-600 bg-slate-800 hover:bg-slate-700'
+                          }`}
+                          onClick={() => !isScheduled && toggleFlightSelection(flight.id)}
+                          style={{ cursor: isScheduled ? 'not-allowed' : 'pointer' }}
+                        >
+                          <CardContent className="p-4">
+                            <div className="flex items-start justify-between">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <Checkbox
+                                    checked={selectedFlights.includes(flight.id)}
+                                    onChange={() => !isScheduled && toggleFlightSelection(flight.id)}
+                                    className="text-blue-500"
+                                    disabled={isScheduled}
+                                  />
+                                  <span className={`font-medium text-sm ${
+                                    isScheduled ? 'text-slate-400' : 'text-white'
+                                  }`}>
+                                    {flight.flightName}
+                                  </span>
+                                  {isScheduled && (
+                                    <Badge variant="secondary" className="text-xs bg-green-900/30 text-green-300 border-green-600">
+                                      Scheduled
+                                    </Badge>
+                                  )}
+                                </div>
+                                <div className="space-y-1">
+                                  <p className={`text-xs ${isScheduled ? 'text-slate-400' : 'text-slate-300'}`}>
+                                    <strong>{flight.ageGroup}</strong>
+                                  </p>
+                                  <p className={`text-xs ${isScheduled ? 'text-slate-500' : 'text-slate-400'}`}>
+                                    Format: {flight.formatName}
+                                  </p>
+                                  <div className="flex items-center gap-2">
+                                    <Badge 
+                                      variant="outline" 
+                                      className={`text-xs border-slate-600 ${
+                                        isScheduled ? 'text-slate-500' : 'text-slate-300'
+                                      }`}
+                                    >
+                                      {flight.teamCount} teams
+                                    </Badge>
+                                    {isScheduled && (
+                                      <Badge 
+                                        variant="outline" 
+                                        className="text-xs text-green-400 border-green-600"
+                                      >
+                                        {flight.scheduledGamesCount} games
+                                      </Badge>
+                                    )}
+                                  </div>
                                 </div>
                               </div>
                             </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
                   </div>
                   
                   <div className="flex items-center justify-between pt-4 border-t border-slate-600">
                     <div className="text-sm text-slate-300">
                       <strong>{selectedFlights.length}</strong> of <strong>{schedulingReadiness.flights.length}</strong> flights selected
+                      {schedulingReadiness.flights.some((f: any) => (f.scheduledGamesCount || 0) > 0) && (
+                        <span className="ml-2 text-xs text-green-400">
+                          ({schedulingReadiness.flights.filter((f: any) => (f.scheduledGamesCount || 0) > 0).length} already scheduled)
+                        </span>
+                      )}
                     </div>
                     <div className="flex items-center gap-3">
                       <Button
