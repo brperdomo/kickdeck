@@ -208,8 +208,8 @@ export function UnifiedBracketManager({ eventId }: UnifiedBracketManagerProps) {
 
   // Assign teams to brackets mutation
   const assignTeamsMutation = useMutation({
-    mutationFn: async ({ assignments }: { assignments: { teamId: number; groupId: number }[] }) => {
-      const response = await fetch(`/api/admin/events/${eventId}/teams/bulk-bracket-assign`, {
+    mutationFn: async (assignments: { [teamId: number]: number }) => {
+      const response = await fetch(`/api/admin/events/${eventId}/bracket-creation/assign-teams`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -283,7 +283,7 @@ export function UnifiedBracketManager({ eventId }: UnifiedBracketManagerProps) {
       return;
     }
     
-    assignTeamsMutation.mutate({ assignments });
+    assignTeamsMutation.mutate(teamAssignments);
   };
 
   const getBracketTypeDescription = (bracketType: string) => {
@@ -606,7 +606,7 @@ export function UnifiedBracketManager({ eventId }: UnifiedBracketManagerProps) {
                 </div>
 
                 {/* Unassigned Teams */}
-                {selectedFlightData.registeredTeams.filter((t: Team) => !t.groupId).length > 0 && (
+                {selectedFlightData.registeredTeams.filter((t: Team) => !t.groupId && !t.bracketId).length > 0 && (
                   <Card className="border-slate-600 bg-slate-700">
                     <CardHeader className="pb-3">
                       <CardTitle className="text-sm text-white flex items-center gap-2">
@@ -617,7 +617,7 @@ export function UnifiedBracketManager({ eventId }: UnifiedBracketManagerProps) {
                     <CardContent>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         {selectedFlightData.registeredTeams
-                          .filter((team: Team) => !team.groupId)
+                          .filter((team: Team) => !team.groupId && !team.bracketId)
                           .map((team: Team) => (
                           <div key={team.id} className="flex items-center justify-between p-3 bg-slate-600 rounded">
                             <div className="flex-1">
