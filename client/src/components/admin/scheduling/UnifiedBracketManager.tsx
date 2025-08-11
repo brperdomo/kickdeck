@@ -637,6 +637,13 @@ export function UnifiedBracketManager({ eventId }: UnifiedBracketManagerProps) {
                 </div>
               </CardContent>
             </Card>
+          ) : (
+            <Alert className="border-orange-600 bg-orange-900/20">
+              <AlertTriangle className="h-4 w-4 text-orange-400" />
+              <AlertDescription className="text-slate-200">
+                No brackets found for the selected flight. Please create brackets first using the "Bracket Configuration" tab.
+              </AlertDescription>
+            </Alert>
           )}
         </TabsContent>
       </Tabs>
