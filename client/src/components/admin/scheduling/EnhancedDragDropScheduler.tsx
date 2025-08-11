@@ -42,7 +42,7 @@ interface TimeSlot {
 }
 
 interface ConflictInfo {
-  type: 'coach' | 'team_rest' | 'field_size' | 'capacity' | 'games_per_day' | 'team_conflict' | 'rest_period' | 'field_conflict';
+  type: 'coach' | 'team_rest' | 'field_size' | 'capacity' | 'games_per_day' | 'team_conflict' | 'rest_period' | 'field_conflict' | 'travel_conflict';
   severity: 'warning' | 'error';
   message: string;
   gameIds: number[];
@@ -503,6 +503,42 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
           message: `${teamName} has ${teamGames.length} games scheduled for ${selectedDate} (limit: ${MAX_GAMES_PER_DAY} games per day)`,
           gameIds: teamGames.map(g => g.id)
         });
+      }
+    });
+
+    // NEW: Check for travel conflicts - teams playing at different complexes on the same day
+    gamesPerTeamPerDay.forEach((teamGames, teamName) => {
+      if (teamName === 'TBD' || isWinnerPlaceholder(teamName)) return; // Skip placeholder teams
+      
+      if (teamGames.length > 1) {
+        // Get unique complexes for this team's games
+        const complexes = new Set<string>();
+        const gamesByComplex = new Map<string, Game[]>();
+        
+        teamGames.forEach(game => {
+          // Find the field data to get complex name
+          const field = scheduleData?.fields?.find(f => f.id === game.fieldId);
+          const complexName = field?.complexName || 'Unknown Complex';
+          
+          complexes.add(complexName);
+          if (!gamesByComplex.has(complexName)) {
+            gamesByComplex.set(complexName, []);
+          }
+          gamesByComplex.get(complexName)!.push(game);
+        });
+        
+        if (complexes.size > 1) {
+          const complexList = Array.from(complexes).join(' and ');
+          const allGameIds = teamGames.map(g => g.id);
+          
+          console.log(`🏟️ [TRAVEL CONFLICT] ${teamName} has games at multiple complexes on ${selectedDate}: ${complexList}`);
+          conflicts.push({
+            type: 'travel_conflict' as const,
+            severity: 'warning' as const,
+            message: `${teamName} has games at different complexes on ${selectedDate}: ${complexList}`,
+            gameIds: allGameIds
+          });
+        }
       }
     });
 
@@ -1239,7 +1275,9 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
                                     ? gameConflicts.some(c => c.type === 'field_conflict')
                                       ? 'bg-red-600 text-white border-2 border-orange-400 shadow-lg shadow-orange-400/50' 
                                       : 'bg-red-600 text-white' 
-                                    : 'bg-yellow-600 text-white'
+                                    : gameConflicts.some(c => c.type === 'travel_conflict')
+                                      ? 'bg-purple-600 text-white border border-purple-400 shadow-sm shadow-purple-400/30'
+                                      : 'bg-yellow-600 text-white'
                                   : 'bg-blue-600 text-white'
                                 }
                                 hover:scale-105 hover:shadow-lg
@@ -1434,6 +1472,9 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
                                       {gameConflicts.some(c => c.type === 'field_conflict') && (
                                         <span className="text-xs text-orange-200" title="Field Conflict">🏟️</span>
                                       )}
+                                      {gameConflicts.some(c => c.type === 'travel_conflict') && (
+                                        <span className="text-xs text-purple-200" title="Travel Conflict">🚗</span>
+                                      )}
                                     </div>
                                   </div>
                                 )}
@@ -1479,9 +1520,11 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
                 <li>• <span className="text-red-300">Red:</span> Coach conflicts (same coach, overlapping games)</li>
                 <li>• <span className="text-orange-300">Red + Orange Border:</span> Field conflicts (multiple games on same field)</li>
                 <li>• <span className="text-yellow-300">Yellow:</span> Team rest period violations</li>
+                <li>• <span className="text-purple-300">Purple:</span> Travel conflicts (team games at different complexes)</li>
                 <li>• <span className="text-blue-300">Blue:</span> Normal scheduled games</li>
                 <li>• <span className="text-slate-400">👨‍🏫:</span> Coach conflict indicator</li>
                 <li>• <span className="text-orange-400">🏟️:</span> Field conflict indicator</li>
+                <li>• <span className="text-purple-400">🚗:</span> Travel conflict indicator</li>
                 <li>• Game cards show team names, birth year, and division</li>
               </ul>
             </div>
