@@ -543,9 +543,40 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
     }
   });
 
-  // Date/Time editing mutation
+  // Date/Time editing mutation with overlap detection
   const updateGameDateTimeMutation = useMutation({
-    mutationFn: async ({ gameId, date, time }: { gameId: number; date: string; time: string }) => {
+    mutationFn: async ({ gameId, date, time, skipOverlapCheck = false }: { gameId: number; date: string; time: string; skipOverlapCheck?: boolean }) => {
+      // Get the game being edited
+      const gameToEdit = scheduleData?.games.find(g => g.id === gameId);
+      
+      // Check for overlaps if the game has a field assigned
+      if (!skipOverlapCheck && gameToEdit && gameToEdit.fieldId) {
+        const overlapCheck = checkFieldOverlap(
+          gameId, 
+          gameToEdit.fieldId, 
+          date, 
+          time, 
+          gameToEdit.duration
+        );
+        
+        if (overlapCheck.hasOverlap) {
+          const conflictDetails = overlapCheck.conflicts.map(c => 
+            `${c.time} - ${c.homeTeam} vs ${c.awayTeam} (${c.field})`
+          ).join('\n');
+          
+          const confirmOverride = window.confirm(
+            `⚠️ SCHEDULING CONFLICT DETECTED!\n\n` +
+            `This time change will create a field overlap:\n\n` +
+            `${conflictDetails}\n\n` +
+            `Do you want to proceed anyway? This may cause double-booking issues.`
+          );
+          
+          if (!confirmOverride) {
+            throw new Error('Schedule update cancelled due to overlap conflict');
+          }
+        }
+      }
+
       const startTime = `${date}T${time}:00`;
       const response = await fetch(`/api/admin/games/${gameId}/reschedule`, {
         method: 'PUT',
@@ -565,13 +596,96 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
       toast({ title: 'Game date and time updated successfully', variant: 'default' });
     },
     onError: (error) => {
-      toast({ title: 'Failed to update date/time', description: error.message, variant: 'destructive' });
+      if (error.message.includes('cancelled due to overlap')) {
+        toast({ title: 'Schedule update cancelled', description: 'Overlap conflict detected', variant: 'default' });
+      } else {
+        toast({ title: 'Failed to update date/time', description: error.message, variant: 'destructive' });
+      }
     }
   });
 
-  // Field assignment mutation
+  // Field overlap detection function
+  const checkFieldOverlap = (gameId: number, fieldId: number, gameDate: string, gameTime: string, gameDuration: number) => {
+    if (!scheduleData?.games || !gameDate || !gameTime || gameDate === 'TBD' || gameTime === 'TBD') {
+      return { hasOverlap: false, conflicts: [] };
+    }
+
+    // Parse the game's start and end times
+    const [startHour, startMinute] = gameTime.split(':').map(Number);
+    const gameStartTime = startHour * 60 + startMinute; // minutes since midnight
+    const gameEndTime = gameStartTime + (gameDuration || 90); // default 90 min duration
+
+    const conflicts = scheduleData.games.filter(existingGame => {
+      // Skip the game we're editing
+      if (existingGame.id === gameId) return false;
+      
+      // Skip games without proper field/time assignments
+      if (!existingGame.fieldId || existingGame.date === 'TBD' || existingGame.time === 'TBD') return false;
+      
+      // Only check games on the same field and date
+      if (existingGame.fieldId !== fieldId || existingGame.date !== gameDate) return false;
+
+      // Parse existing game times
+      const [existingStartHour, existingStartMinute] = existingGame.time.split(':').map(Number);
+      const existingStartTime = existingStartHour * 60 + existingStartMinute;
+      const existingEndTime = existingStartTime + (existingGame.duration || 90);
+
+      // Check for time overlap (with 15-minute buffer)
+      const buffer = 15; // 15-minute buffer between games
+      const hasTimeOverlap = (
+        (gameStartTime < existingEndTime + buffer) && 
+        (gameEndTime + buffer > existingStartTime)
+      );
+
+      return hasTimeOverlap;
+    });
+
+    return {
+      hasOverlap: conflicts.length > 0,
+      conflicts: conflicts.map(game => ({
+        id: game.id,
+        homeTeam: game.homeTeam,
+        awayTeam: game.awayTeam,
+        time: game.time,
+        field: game.field
+      }))
+    };
+  };
+
+  // Field assignment mutation with overlap detection
   const updateGameFieldMutation = useMutation({
-    mutationFn: async ({ gameId, fieldId }: { gameId: number; fieldId: number }) => {
+    mutationFn: async ({ gameId, fieldId, skipOverlapCheck = false }: { gameId: number; fieldId: number; skipOverlapCheck?: boolean }) => {
+      // Get the game being edited
+      const gameToEdit = scheduleData?.games.find(g => g.id === gameId);
+      
+      // Check for overlaps before making the API call
+      if (!skipOverlapCheck && gameToEdit) {
+        const overlapCheck = checkFieldOverlap(
+          gameId, 
+          fieldId, 
+          gameToEdit.date, 
+          gameToEdit.time, 
+          gameToEdit.duration
+        );
+        
+        if (overlapCheck.hasOverlap) {
+          const conflictDetails = overlapCheck.conflicts.map(c => 
+            `${c.time} - ${c.homeTeam} vs ${c.awayTeam} (${c.field})`
+          ).join('\n');
+          
+          const confirmOverride = window.confirm(
+            `⚠️ FIELD OVERLAP DETECTED!\n\n` +
+            `This assignment will create a scheduling conflict:\n\n` +
+            `${conflictDetails}\n\n` +
+            `Do you want to proceed anyway? This may cause double-booking issues.`
+          );
+          
+          if (!confirmOverride) {
+            throw new Error('Field assignment cancelled due to overlap conflict');
+          }
+        }
+      }
+
       const response = await fetch(`/api/admin/games/${gameId}/assign-field`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -587,7 +701,11 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
       toast({ title: 'Field assigned successfully', variant: 'default' });
     },
     onError: (error) => {
-      toast({ title: 'Failed to assign field', description: error.message, variant: 'destructive' });
+      if (error.message.includes('cancelled due to overlap')) {
+        toast({ title: 'Field assignment cancelled', description: 'Overlap conflict detected', variant: 'default' });
+      } else {
+        toast({ title: 'Failed to assign field', description: error.message, variant: 'destructive' });
+      }
     }
   });
 
@@ -660,6 +778,15 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
   };
 
   // Generate tooltip message for TBD/unassigned games
+  // Check for existing overlaps in the schedule
+  const getGameOverlaps = (game: Game) => {
+    if (!game.fieldId || game.date === 'TBD' || game.time === 'TBD') {
+      return { hasOverlap: false, conflicts: [] };
+    }
+    
+    return checkFieldOverlap(game.id, game.fieldId, game.date, game.time, game.duration);
+  };
+
   const getUnassignedTooltip = (game: Game) => {
     const issues = [];
     
@@ -675,9 +802,18 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
       issues.push('No date assigned - tournament dates may be incomplete');
     }
 
+    // Check for field overlaps
+    const overlapCheck = getGameOverlaps(game);
+    if (overlapCheck.hasOverlap) {
+      const conflictDetails = overlapCheck.conflicts.map(c => 
+        `${c.time} - ${c.homeTeam} vs ${c.awayTeam}`
+      ).join('; ');
+      issues.push(`FIELD OVERLAP: Double-booked with ${conflictDetails}`);
+    }
+
     if (issues.length === 0) return null;
     
-    return `⚠️ Assignment Issues:\n${issues.map(issue => `• ${issue}`).join('\n')}\n\nSolutions:\n• Use Calendar Interface to manually assign\n• Check field availability and size requirements\n• Verify tournament dates are properly configured`;
+    return `⚠️ Assignment Issues:\n${issues.map(issue => `• ${issue}`).join('\n')}\n\nSolutions:\n• Use Calendar Interface to manually assign\n• Check field availability and size requirements\n• Verify tournament dates are properly configured\n• Resolve field overlaps to prevent double-booking`;
   };
 
   const handleExportSchedule = () => {
@@ -945,13 +1081,17 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
               {filteredGames.map((game) => {
                 const tooltipMessage = getUnassignedTooltip(game);
                 const hasUnassignedFields = game.time === 'TBD' || game.field === 'Unassigned' || game.field === 'TBD' || game.date === 'TBD';
+                const overlapCheck = getGameOverlaps(game);
+                const hasOverlap = overlapCheck.hasOverlap;
                 
                 return (
                 <Card 
                   key={game.id} 
                   className={`border transition-colors ${
                     selectedGames.includes(game.id) ? 'border-blue-300 bg-blue-50' : 'border-gray-200'
-                  } ${hasUnassignedFields ? 'border-yellow-300 bg-yellow-50' : ''}`}
+                  } ${hasUnassignedFields ? 'border-yellow-300 bg-yellow-50' : ''} ${
+                    hasOverlap ? 'border-red-400 bg-red-50' : ''
+                  }`}
                   title={tooltipMessage || undefined}
                 >
                   <CardContent className="p-4">
@@ -1326,6 +1466,12 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                               >
                                 {game.status}
                               </Badge>
+                              {hasOverlap && (
+                                <Badge variant="destructive" className="text-xs">
+                                  <AlertTriangle className="h-3 w-3 mr-1" />
+                                  OVERLAP
+                                </Badge>
+                              )}
                               {game.flightName && (
                                 <Badge variant="secondary" className="text-xs">
                                   {game.flightName}
