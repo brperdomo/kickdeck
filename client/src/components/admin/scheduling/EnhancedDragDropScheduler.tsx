@@ -292,11 +292,62 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
     return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
   };
 
-  // Helper function to get rest period (60min default, configurable by admins)
-  const getRestPeriod = (): number => {
-    // TODO: Load from admin configuration/database settings
-    // For now, use universal 60-minute default
-    return 60;
+  // Fetch flight configurations to get rest periods dynamically
+  const { data: flightConfigData } = useQuery({
+    queryKey: ['/api/admin/events', eventId, 'flight-configurations'],
+    queryFn: async () => {
+      const response = await fetch(`/api/admin/events/${eventId}/flight-configurations`, {
+        credentials: 'include'
+      });
+      if (!response.ok) {
+        console.log(`[REST PERIOD] Failed to fetch flight configurations: ${response.status}`);
+        return null;
+      }
+      const data = await response.json();
+      console.log(`[REST PERIOD] Flight config data received:`, Array.isArray(data) ? `Array of ${data.length} flights` : 'not array');
+      return data;
+    },
+    enabled: !!eventId,
+    retry: false
+  });
+
+  const getRestPeriod = (game1?: Game, game2?: Game): number => {
+    // Try to get rest period from flight configuration for either game
+    const gamesToCheck = [game1, game2].filter(Boolean);
+    
+    if (Array.isArray(flightConfigData) && gamesToCheck.length > 0) {
+      for (const game of gamesToCheck) {
+        // Try to find flight config by bracket or age group
+        const flightConfig = flightConfigData.find((flight: any) => 
+          flight.ageGroup === game?.ageGroup || flight.flightName === game?.bracketName
+        );
+        if (flightConfig?.restPeriod) {
+          console.log(`[REST PERIOD] Using flight config rest period: ${flightConfig.restPeriod}min for ${game?.ageGroup}`);
+          return flightConfig.restPeriod;
+        }
+      }
+    }
+    
+    // Fallback to age group-based logic
+    const ageGroups = gamesToCheck.map(g => g?.ageGroup).filter(Boolean);
+    for (const ageGroup of ageGroups) {
+      const ageGroupUpper = ageGroup.toUpperCase();
+      if (ageGroupUpper.includes('U13') || ageGroupUpper.includes('U14') || 
+          ageGroupUpper.includes('U15') || ageGroupUpper.includes('U16') || 
+          ageGroupUpper.includes('U17') || ageGroupUpper.includes('U18') || 
+          ageGroupUpper.includes('U19')) {
+        console.log(`[REST PERIOD] Using age group logic: 120min for ${ageGroup}`);
+        return 120; // 120 minutes for U13-U19
+      } else if (ageGroupUpper.includes('U7') || ageGroupUpper.includes('U8') || 
+                 ageGroupUpper.includes('U9') || ageGroupUpper.includes('U10') || 
+                 ageGroupUpper.includes('U11') || ageGroupUpper.includes('U12')) {
+        console.log(`[REST PERIOD] Using age group logic: 90min for ${ageGroup}`);
+        return 90; // 90 minutes for U7-U12
+      }
+    }
+    
+    console.log(`[REST PERIOD] Using default: 60min`);
+    return 60; // Default 60 minutes for other age groups
   };
 
   // Helper function to check if a team name is a winner placeholder
@@ -391,8 +442,8 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
         const teamRestViolation = teams1.some(team => teams2.includes(team));
         
         if (teamRestViolation && !hasTimeOverlap) {
-          // Use universal 60-minute rest period (configurable by admins)
-          const requiredRestPeriod = getRestPeriod();
+          // Get dynamic rest period based on game age groups and flight configurations
+          const requiredRestPeriod = getRestPeriod(game1, game2);
           
           // Calculate time between games
           const timeBetween = Math.abs(gameEndMinutes1 - gameStartMinutes2);
