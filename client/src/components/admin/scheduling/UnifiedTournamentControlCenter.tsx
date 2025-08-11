@@ -498,6 +498,7 @@ export function UnifiedTournamentControlCenter({ eventId }: TournamentControlCen
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                     {schedulingReadiness.flights.map((flight: any) => {
+                      console.log('Flight gender debug:', { flightName: flight.flightName, gender: flight.gender, ageGroup: flight.ageGroup });
                       const hasScheduledGames = (flight.scheduledGamesCount || 0) > 0;
                       const isScheduled = hasScheduledGames;
                       
@@ -543,12 +544,13 @@ export function UnifiedTournamentControlCenter({ eventId }: TournamentControlCen
                                     <Badge 
                                       variant="outline" 
                                       className={`text-xs px-1.5 py-0.5 ${
-                                        flight.gender === 'Boys' 
+                                        flight.gender === 'Boys' || flight.gender === 'Male' || flight.gender === 'M'
                                           ? 'bg-blue-900/30 text-blue-300 border-blue-600' 
                                           : 'bg-pink-900/30 text-pink-300 border-pink-600'
                                       }`}
+                                      title={`Gender: ${flight.gender || 'Unknown'}`}
                                     >
-                                      {flight.gender === 'Boys' ? 'B' : 'G'}
+                                      {(flight.gender === 'Boys' || flight.gender === 'Male' || flight.gender === 'M') ? 'B' : 'G'}
                                     </Badge>
                                   </div>
                                   <p className={`text-xs ${isScheduled ? 'text-slate-500' : 'text-slate-400'}`}>
