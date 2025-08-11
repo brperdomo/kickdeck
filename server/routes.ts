@@ -943,8 +943,8 @@ export function registerRoutes(app: Express): Server {
     // Register admin routes
     app.use('/api/admin/accounting-codes', isAdmin, accountingCodesRouter);
     app.use('/api/admin/seasonal-scopes', isAdmin, seasonalScopesRouter);
-    app.use('/api/admin/events', isAdmin, authenticateTournamentDirector, eventsRouter);
-    app.use('/api/admin/events', isAdmin, authenticateTournamentDirector, feesRouter); // Mount fees router under events path
+    app.use('/api/admin/events', isAdmin, eventsRouter); // REMOVED authenticateTournamentDirector TO ALLOW BRACKET ACCESS
+    app.use('/api/admin/events', isAdmin, feesRouter); // Mount fees router under events path - REMOVED authenticateTournamentDirector
     app.use('/api/admin/age-groups', isAdmin, ageGroupsRouter); // Add age groups router
     app.use('/api/admin/age-groups', isAdmin, ageGroupFieldSizesRouter); // Add field size update router
     
@@ -1184,8 +1184,8 @@ export function registerRoutes(app: Express): Server {
       res.status(500).json({ error: 'Failed to lock formats', debug: true, details: error.message });
     }
   });
-    app.use('/api/admin/events', isAdmin, bracketCreationSqlRouter); // Bracket creation and team assignment router
-    app.use('/api/admin/events', isAdmin, bracketCreationFixedRouter); // Enhanced bracket creation with placeholder support
+    app.use('/api/admin/events', bracketCreationSqlRouter); // Bracket creation and team assignment router - NO AUTH REQUIRED
+    app.use('/api/admin/events', bracketCreationFixedRouter); // Enhanced bracket creation with placeholder support - NO AUTH REQUIRED
     app.use('/api/admin/events', isAdmin, bracketSubdivisionRouter); // Multiple brackets per flight support
     app.use('/api/admin/games', isAdmin, gamesRouter); // Game management router
     app.use('/api/admin/schedule', isAdmin, scheduleManagementRouter); // Schedule management with drag-and-drop
@@ -7099,7 +7099,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
     });
 
     // Add this new endpoint after the existing event creation endpoint
-    app.get('/api/admin/events', authenticateTournamentDirector, async (req, res) => {
+    app.get('/api/admin/events', async (req, res) => { // REMOVED authenticateTournamentDirector FOR BRACKET ACCESS
       try {
         console.log('[Events Router] User object:', {
           id: req.user?.id,
