@@ -1260,11 +1260,32 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                     ? scheduleData.games 
                     : scheduleData.games.filter(game => game.ageGroup === selectedAgeGroup);
                   
+                  // Debug logging for flight names
+                  const allFlightNames = filteredByAge.map(game => game.flightName);
+                  console.log('FLIGHT FILTER DEBUG: All flight names from games:', allFlightNames);
+                  
                   const uniqueFlights = [...new Set(
                     filteredByAge
                       .map(game => game.flightName)
-                      .filter(flight => flight && flight !== '')
-                  )].sort();
+                      .filter(flight => flight && flight !== '' && flight !== 'undefined')
+                  )].sort((a, b) => {
+                    // Sort Nike flights in preferred order: Elite > Premier > Classic
+                    const order = ['Nike Elite', 'Nike Premier', 'Nike Classic'];
+                    const aIndex = order.indexOf(a);
+                    const bIndex = order.indexOf(b);
+                    
+                    if (aIndex !== -1 && bIndex !== -1) {
+                      return aIndex - bIndex;
+                    } else if (aIndex !== -1) {
+                      return -1;
+                    } else if (bIndex !== -1) {
+                      return 1;
+                    } else {
+                      return a.localeCompare(b);
+                    }
+                  });
+                  
+                  console.log('FLIGHT FILTER DEBUG: Unique flights for dropdown:', uniqueFlights);
                   
                   return uniqueFlights.map(flight => (
                     <SelectItem key={flight} value={flight}>{flight}</SelectItem>
