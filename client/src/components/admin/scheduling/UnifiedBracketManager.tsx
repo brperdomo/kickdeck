@@ -226,6 +226,17 @@ export function UnifiedBracketManager({ eventId }: UnifiedBracketManagerProps) {
   });
 
   const selectedFlightData = flightData?.find((f: Flight) => f.flightId === selectedFlight);
+  
+  // Debug logging for tab accessibility
+  console.log('UnifiedBracketManager Debug:', {
+    selectedFlight,
+    selectedFlightData: selectedFlightData ? {
+      flightId: selectedFlightData.flightId,
+      name: selectedFlightData.name,
+      bracketsLength: selectedFlightData.brackets?.length,
+      brackets: selectedFlightData.brackets
+    } : null
+  });
   const bracketConfigs = selectedFlightData ? getBracketConfigurations(selectedFlightData.teamCount) : [];
 
   const handleCreateBrackets = () => {
@@ -304,7 +315,7 @@ export function UnifiedBracketManager({ eventId }: UnifiedBracketManagerProps) {
           <TabsTrigger 
             value="team-assignment" 
             className="data-[state=active]:bg-blue-600 data-[state=active]:text-white text-slate-300"
-            disabled={!selectedFlightData?.brackets?.length}
+            disabled={!selectedFlightData?.brackets || selectedFlightData.brackets.length === 0}
           >
             <Users className="h-4 w-4 mr-2" />
             Assign Teams
