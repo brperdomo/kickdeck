@@ -302,7 +302,9 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
       id: field.id,
       name: field.name,
       surface: 'Grass',
-      fieldSize: field.fieldSize || '11v11'
+      fieldSize: field.fieldSize || '11v11',
+      complexName: field.complexName || 'Unknown Complex',
+      isOpen: true
     }));
     
     // Debug field mapping
