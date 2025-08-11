@@ -45,7 +45,7 @@ expectedPoolA.forEach(teamA => {
 });
 
 console.log(`\n🏆 Expected Championship Game:`);
-console.log(`Game ${gameNumber}: 1st Pool A vs 1st Pool B (TBD)`);
+console.log(`Game ${gameNumber}: 1st in Points vs 2nd in Points (TBD)`);
 
 console.log(`\n✅ Total Expected Games: ${expectedGames.length + 1} (9 crossplay + 1 championship)`);
 console.log('🚨 Critical: NO intra-pool games should be generated (no A1 vs A2, etc.)');

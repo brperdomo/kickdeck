@@ -460,11 +460,11 @@ export class TournamentScheduler {
       
       console.log(`✅ Generated 9 crossplay games (Pool A vs Pool B) for 6-team bracket`);
       
-      // Add championship TBD final game (Pool A winner vs Pool B winner)
+      // Add championship TBD final game (1st in Points vs 2nd in Points across both pools)
       const championshipGame = this.generateChampionshipGame(bracket, gameCounter);
       games.push(championshipGame);
       
-      console.log(`🏆 6-Team Crossplay Complete: Generated ${games.length - 1} crossplay pool games + 1 TBD championship final = ${games.length} total games`);
+      console.log(`🏆 6-Team Crossplay Complete: Generated ${games.length - 1} crossplay pool games + 1 TBD championship final (1st vs 2nd in Points) = ${games.length} total games`);
       return games;
     }
     
@@ -626,8 +626,8 @@ export class TournamentScheduler {
       case 'crossplay':
       case 'group_of_6_crossplay':
         return {
-          homeTeamName: '1st Pool A',
-          awayTeamName: '1st Pool B'
+          homeTeamName: '1st in Points',
+          awayTeamName: '2nd in Points'
         };
         
       case 'group_of_8':
