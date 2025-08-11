@@ -522,18 +522,17 @@ export class TournamentScheduler {
     let bracketA: Team[], bracketB: Team[];
     
     if (uniqueGroupIds.length >= 2) {
-      // Use groupId-based assignment
+      // Use admin-controlled groupId-based assignment ONLY
       const firstGroupId = uniqueGroupIds[0];
       const secondGroupId = uniqueGroupIds[1];
       bracketA = sortedTeams.filter(t => t.groupId === firstGroupId);
       bracketB = sortedTeams.filter(t => t.groupId === secondGroupId);
       
-      console.log(`📊 Group of 8 using groupId assignment: Group ${firstGroupId} → Bracket A, Group ${secondGroupId} → Bracket B`);
+      console.log(`📊 Group of 8 using admin groupId assignment: Group ${firstGroupId} → Bracket A, Group ${secondGroupId} → Bracket B`);
     } else {
-      // Fallback to simple split if groupId assignments are missing
-      console.log(`⚠️  Group of 8 fallback: No proper groupId assignments found, using simple split`);
-      bracketA = sortedTeams.slice(0, 4);
-      bracketB = sortedTeams.slice(4, 8);
+      // NO FALLBACK: Require admin assignment for fairplay control
+      console.error(`❌ GROUP OF 8 ERROR: Admin must assign all teams to brackets first. Found teams without groupId assignments.`);
+      throw new Error(`Group of 8 format requires admin to assign all 8 teams to brackets first. Teams must be manually placed in Bracket A or B for fairplay control.`);
     }
     
     // Validate bracket sizes for Group of 8 format

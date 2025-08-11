@@ -188,43 +188,17 @@ router.get('/:eventId/bracket-creation', async (req, res) => {
             bracketId: t.bracketId
           }));
           
-          // Initialize teamsByBracket structure
-          let teamsByBracket: Record<string, any[]> = {};
-          
-          // CRITICAL FIX: Auto-assign teams for 8-team brackets when all teams are unassigned
-          if (teamsWithoutGroups.length === 8 && teamsWithGroups.length === 0) {
-            console.log(`[GROUP OF 8 AUTO-ASSIGN] All 8 teams are unassigned - auto-distributing 4v4 between brackets`);
-            
-            // Auto-assign teams to brackets: first 4 to Bracket A, last 4 to Bracket B
-            const autoAssignedTeams = teamsWithoutGroups.map((team, index) => ({
-              ...team,
-              groupId: index < 4 ? 1 : 2  // First 4 teams go to groupId 1 (Bracket A), rest go to groupId 2 (Bracket B)
-            }));
-            
-            // Override the team assignment data structures for auto-assignment
-            teamsByBracket = {
-              '1': autoAssignedTeams.slice(0, 4),
-              '2': autoAssignedTeams.slice(4, 8)
-            };
-            
-            console.log(`[GROUP OF 8 AUTO-ASSIGN] Bracket A:`, teamsByBracket['1'].map(t => t.name));
-            console.log(`[GROUP OF 8 AUTO-ASSIGN] Bracket B:`, teamsByBracket['2'].map(t => t.name));
-            
-            // Clear unassigned teams since we just assigned them all
-            unassignedTeams = [];
-          } else {
-            // Group teams by their groupId (which represents bracket assignments)  
-            teamsByBracket = teamsWithGroups.reduce((acc, team) => {
-              if (team.groupId) {
-                const bracketKey = team.groupId.toString();
-                if (!acc[bracketKey]) {
-                  acc[bracketKey] = [];
-                }
-                acc[bracketKey].push(team);
+          // Group teams by their groupId (which represents bracket assignments) - ADMIN CONTROL ONLY
+          let teamsByBracket: Record<string, any[]> = teamsWithGroups.reduce((acc, team) => {
+            if (team.groupId) {
+              const bracketKey = team.groupId.toString();
+              if (!acc[bracketKey]) {
+                acc[bracketKey] = [];
               }
-              return acc;
-            }, {} as Record<string, any[]>);
-          }
+              acc[bracketKey].push(team);
+            }
+            return acc;
+          }, {} as Record<string, any[]>);
           
           console.log(`[BRACKET DISPLAY DEBUG] Flight ${flight.flightId} - Teams by bracket:`, teamsByBracket);
           
