@@ -245,7 +245,7 @@ router.get('/:id/age-groups', async (req, res) => {
             birthYear: ag.birthYear,
             gender: ag.gender,
             divisionCode: ag.divisionCode,
-            fieldSize: ag.ageGroup.startsWith('U') ?
+            fieldSize: (ag.ageGroup && typeof ag.ageGroup === 'string' && ag.ageGroup.startsWith('U')) ?
               (parseInt(ag.ageGroup.substring(1)) <= 7 ? '4v4' :
                 parseInt(ag.ageGroup.substring(1)) <= 10 ? '7v7' :
                   parseInt(ag.ageGroup.substring(1)) <= 12 ? '9v9' : '11v11') : '11v11', // U13 and up (including U19) use 11v11
