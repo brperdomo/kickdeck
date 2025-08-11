@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -12,7 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import { 
   Trophy, Users, Target, Shuffle, CheckCircle, AlertTriangle,
   Settings, Play, Eye, Move, ArrowRight, Plus, Minus,
-  Star, Split, ArrowLeftRight, UserPlus, UserMinus, Filter
+  Star, Split, ArrowLeftRight, UserPlus, UserMinus, Filter, GripVertical
 } from 'lucide-react';
 
 interface Team {
@@ -38,7 +39,7 @@ interface Flight {
   birthYear?: number;
   teamCount: number;
   assignedTeams: number;
-  unassignedTeams: number;
+  unassignedTeamsCount: number;
   registeredTeams: Team[];
   maxTeams?: number;
   bracketType?: string;
@@ -46,6 +47,7 @@ interface Flight {
   isConfigured: boolean;
   ageGroupId?: number;
   brackets?: TournamentBracket[];
+  unassignedTeams?: Team[];
 }
 
 interface TournamentBracket {
@@ -284,6 +286,57 @@ export function UnifiedBracketManager({ eventId }: UnifiedBracketManagerProps) {
     }
     
     assignTeamsMutation.mutate({ assignments: teamAssignments, flightId: selectedFlight! });
+  };
+
+  // Handle drag and drop
+  const onDragEnd = (result: DropResult) => {
+    const { destination, source, draggableId } = result;
+
+    if (!destination) {
+      return;
+    }
+
+    if (destination.droppableId === source.droppableId && destination.index === source.index) {
+      return;
+    }
+
+    const teamId = parseInt(draggableId);
+
+    // Determine the target bracket/pool
+    let targetBracketId = 0;
+    if (destination.droppableId === 'pool-a') {
+      targetBracketId = 1;
+    } else if (destination.droppableId === 'pool-b') {
+      targetBracketId = 2;
+    }
+    // If dropped on 'unassigned', targetBracketId remains 0 (unassigned)
+
+    // Update the team assignments
+    setTeamAssignments(prev => {
+      const updated = { ...prev };
+      if (targetBracketId === 0) {
+        // Remove from assignments (unassign)
+        delete updated[teamId];
+      } else {
+        // Assign to bracket
+        updated[teamId] = targetBracketId;
+      }
+      return updated;
+    });
+
+    // Auto-save after drag and drop
+    setTimeout(() => {
+      const assignments = { ...teamAssignments };
+      if (targetBracketId === 0) {
+        delete assignments[teamId];
+      } else {
+        assignments[teamId] = targetBracketId;
+      }
+      
+      if (Object.keys(assignments).length > 0) {
+        assignTeamsMutation.mutate({ assignments, flightId: selectedFlight! });
+      }
+    }, 100);
   };
 
   const getBracketTypeDescription = (bracketType: string) => {
@@ -564,85 +617,134 @@ export function UnifiedBracketManager({ eventId }: UnifiedBracketManagerProps) {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {selectedFlightData.brackets.map((bracket: TournamentBracket, idx: number) => (
-                    <Card key={bracket.id} className="border-slate-600 bg-slate-700">
-                      <CardHeader className="pb-3">
-                        <CardTitle className="text-sm text-white flex items-center justify-between">
-                          <span>{bracket.name}</span>
-                          <Badge variant="outline" className="text-xs">
-                            {bracket.teams.length} teams
-                          </Badge>
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-2">
-                          {bracket.teams.length > 0 ? (
-                            bracket.teams.map((team: Team) => (
-                              <div key={team.id} className="flex items-center justify-between p-2 bg-slate-600 rounded">
-                                <div>
-                                  <div className="text-sm font-medium text-white">{team.name}</div>
-                                  <div className="text-xs text-slate-300">{team.clubName}</div>
-                                </div>
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={() => handleAssignTeam(team.id, 0)} // Unassign
-                                  className="border-slate-500 text-slate-300 hover:bg-slate-500"
-                                >
-                                  <UserMinus className="h-3 w-3" />
-                                </Button>
+                {/* Drag and Drop Team Assignment Interface */}
+                <DragDropContext onDragEnd={onDragEnd}>
+                  <div className="space-y-6">
+                    {/* Unassigned Teams Pool */}
+                    {(selectedFlightData.unassignedTeams && selectedFlightData.unassignedTeams.length > 0) && (
+                      <Droppable droppableId="unassigned">
+                        {(provided, snapshot) => (
+                          <Card 
+                            {...provided.droppableProps}
+                            ref={provided.innerRef}
+                            className={`border-slate-600 transition-colors ${
+                              snapshot.isDraggingOver ? 'bg-yellow-900/20 border-yellow-400' : 'bg-slate-700'
+                            }`}
+                          >
+                            <CardHeader className="pb-3">
+                              <CardTitle className="text-sm text-white flex items-center gap-2">
+                                <AlertTriangle className="h-4 w-4 text-yellow-400" />
+                                Unassigned Teams
+                                <Badge variant="outline" className="text-xs">
+                                  {selectedFlightData.unassignedTeams.length} teams
+                                </Badge>
+                              </CardTitle>
+                              <CardDescription className="text-slate-300">
+                                Drag teams to assign them to Pool A or Pool B
+                              </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                              <div className="space-y-2 min-h-[80px]">
+                                {selectedFlightData.unassignedTeams.map((team: Team, index: number) => (
+                                  <Draggable key={team.id} draggableId={team.id.toString()} index={index}>
+                                    {(provided, snapshot) => (
+                                      <div
+                                        ref={provided.innerRef}
+                                        {...provided.draggableProps}
+                                        {...provided.dragHandleProps}
+                                        className={`flex items-center gap-3 p-3 rounded transition-colors ${
+                                          snapshot.isDragging 
+                                            ? 'bg-blue-600 shadow-lg border border-blue-400' 
+                                            : 'bg-slate-600 hover:bg-slate-500 cursor-grab active:cursor-grabbing'
+                                        }`}
+                                      >
+                                        <GripVertical className="h-4 w-4 text-slate-400" />
+                                        <div>
+                                          <div className="text-sm font-medium text-white">{team.name}</div>
+                                          <div className="text-xs text-slate-300">{team.clubName}</div>
+                                        </div>
+                                      </div>
+                                    )}
+                                  </Draggable>
+                                ))}
+                                {provided.placeholder}
                               </div>
-                            ))
-                          ) : (
-                            <div className="text-center py-4 text-slate-400 text-sm">
-                              No teams assigned
-                            </div>
-                          )}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
+                            </CardContent>
+                          </Card>
+                        )}
+                      </Droppable>
+                    )}
 
-                {/* Unassigned Teams */}
-                {selectedFlightData.registeredTeams.filter((t: Team) => !t.groupId && !t.bracketId).length > 0 && (
-                  <Card className="border-slate-600 bg-slate-700">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-sm text-white flex items-center gap-2">
-                        <AlertTriangle className="h-4 w-4 text-yellow-400" />
-                        Unassigned Teams
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        {selectedFlightData.registeredTeams
-                          .filter((team: Team) => !team.groupId && !team.bracketId)
-                          .map((team: Team) => (
-                          <div key={team.id} className="flex items-center justify-between p-3 bg-slate-600 rounded">
-                            <div className="flex-1">
-                              <div className="text-sm font-medium text-white">{team.name}</div>
-                              <div className="text-xs text-slate-300">{team.clubName}</div>
-                            </div>
-                            <div className="flex gap-2">
-                              {selectedFlightData.brackets?.map((bracket: TournamentBracket) => (
-                                <Button
-                                  key={bracket.id}
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={() => handleAssignTeam(team.id, bracket.id)}
-                                  className="border-blue-500 text-blue-300 hover:bg-blue-600 hover:text-white text-xs"
-                                >
-                                  {bracket.name.replace('Bracket ', '')}
-                                </Button>
-                              ))}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
+                    {/* Brackets with Assigned Teams */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                      {selectedFlightData.brackets.map((bracket: TournamentBracket) => (
+                        <Droppable key={bracket.id} droppableId={bracket.name === 'Pool A' ? 'pool-a' : 'pool-b'}>
+                          {(provided, snapshot) => (
+                            <Card 
+                              {...provided.droppableProps}
+                              ref={provided.innerRef}
+                              className={`border-slate-600 transition-colors ${
+                                snapshot.isDraggingOver 
+                                  ? bracket.name === 'Pool A' 
+                                    ? 'bg-green-900/20 border-green-400' 
+                                    : 'bg-purple-900/20 border-purple-400'
+                                  : 'bg-slate-700'
+                              }`}
+                            >
+                              <CardHeader className="pb-3">
+                                <CardTitle className="text-sm text-white flex items-center justify-between">
+                                  <span className="flex items-center gap-2">
+                                    {bracket.name === 'Pool A' ? 
+                                      <div className="w-3 h-3 bg-green-500 rounded-full"></div> : 
+                                      <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
+                                    }
+                                    {bracket.name}
+                                  </span>
+                                  <Badge variant="outline" className="text-xs">
+                                    {bracket.teams.length} teams
+                                  </Badge>
+                                </CardTitle>
+                              </CardHeader>
+                              <CardContent>
+                                <div className="space-y-2 min-h-[120px]">
+                                  {bracket.teams.length > 0 ? (
+                                    bracket.teams.map((team: Team, index: number) => (
+                                      <Draggable key={team.id} draggableId={team.id.toString()} index={index}>
+                                        {(provided, snapshot) => (
+                                          <div
+                                            ref={provided.innerRef}
+                                            {...provided.draggableProps}
+                                            {...provided.dragHandleProps}
+                                            className={`flex items-center gap-3 p-3 rounded transition-colors ${
+                                              snapshot.isDragging 
+                                                ? 'bg-blue-600 shadow-lg border border-blue-400' 
+                                                : 'bg-slate-600 hover:bg-slate-500 cursor-grab active:cursor-grabbing'
+                                            }`}
+                                          >
+                                            <GripVertical className="h-4 w-4 text-slate-400" />
+                                            <div>
+                                              <div className="text-sm font-medium text-white">{team.name}</div>
+                                              <div className="text-xs text-slate-300">{team.clubName}</div>
+                                            </div>
+                                          </div>
+                                        )}
+                                      </Draggable>
+                                    ))
+                                  ) : (
+                                    <div className="text-center py-8 text-slate-400 text-sm border-2 border-dashed border-slate-500 rounded">
+                                      Drop teams here
+                                    </div>
+                                  )}
+                                  {provided.placeholder}
+                                </div>
+                              </CardContent>
+                            </Card>
+                          )}
+                        </Droppable>
+                      ))}
+                    </div>
+                  </div>
+                </DragDropContext>
 
                 <div className="flex justify-end gap-3 pt-4 border-t border-slate-600">
                   <Button

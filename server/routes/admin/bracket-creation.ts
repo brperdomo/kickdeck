@@ -160,7 +160,10 @@ router.get('/:eventId/bracket-creation', async (req, res) => {
 
         // Get existing brackets for Group of 6 and Group of 8 configurations
         // For these formats, we need to check if teams are properly assigned to pools/brackets
-        const brackets = [];
+        const brackets: any[] = [];
+        
+        // Always include unassigned teams list for bracket management
+        let unassignedTeams: any[] = [];
         
         if (assignedTeams.length > 0 && (templateName === 'group_of_6' || templateName === 'group_of_8')) {
           // Create virtual brackets based on groupId assignments
@@ -168,62 +171,65 @@ router.get('/:eventId/bracket-creation', async (req, res) => {
           const teamsWithoutGroups = assignedTeams.filter(t => !t.groupId);
           
           console.log(`[BRACKET DISPLAY DEBUG] Flight ${flight.flightId} - Teams with groups:`, teamsWithGroups.map(t => `${t.name} (groupId: ${t.groupId})`));
+          console.log(`[BRACKET DISPLAY DEBUG] Flight ${flight.flightId} - Unassigned teams:`, teamsWithoutGroups.map(t => t.name));
+          
+          // Store unassigned teams for UI display
+          unassignedTeams = teamsWithoutGroups.map(t => ({
+            id: t.id,
+            name: t.name,
+            clubName: t.clubName || '',
+            status: t.status,
+            groupId: null,
+            bracketId: t.bracketId
+          }));
           
           // Group teams by their groupId (which represents bracket assignments)
           const teamsByBracket = teamsWithGroups.reduce((acc, team) => {
-            const bracketKey = team.groupId || 'unassigned';
-            if (!acc[bracketKey]) {
-              acc[bracketKey] = [];
+            if (team.groupId) {
+              const bracketKey = team.groupId.toString();
+              if (!acc[bracketKey]) {
+                acc[bracketKey] = [];
+              }
+              acc[bracketKey].push(team);
             }
-            acc[bracketKey].push(team);
             return acc;
           }, {} as Record<string, any[]>);
           
           console.log(`[BRACKET DISPLAY DEBUG] Flight ${flight.flightId} - Teams by bracket:`, teamsByBracket);
           
-          // For display purposes, we need to map actual tournament group IDs to UI bracket IDs
-          // Get the tournament groups for this flight to map them correctly
-          const groupIds = Object.keys(teamsByBracket).filter(key => key !== 'unassigned').sort();
+          // Always create both brackets (even if empty) for assignment interface
+          brackets.push({
+            id: 1,
+            name: templateName === 'group_of_6' ? 'Pool A' : 'Bracket A',
+            teamCount: 0,
+            teams: []
+          });
+          brackets.push({
+            id: 2, 
+            name: templateName === 'group_of_6' ? 'Pool B' : 'Bracket B',
+            teamCount: 0,
+            teams: []
+          });
           
-          // Create bracket objects for assigned teams
+          // Populate brackets with assigned teams
+          const groupIds = Object.keys(teamsByBracket).sort();
           groupIds.forEach((groupId, index) => {
-            const bracketName = templateName === 'group_of_6' ? 
-                    (index === 0 ? 'Pool A' : 'Pool B') :
-                    (index === 0 ? 'Bracket A' : 'Bracket B');
-            
-            console.log(`[BRACKET DISPLAY DEBUG] Creating bracket ${index + 1} (${bracketName}) with ${teamsByBracket[groupId].length} teams`);
-            
-            brackets.push({
-              id: index + 1, // UI bracket ID (1 = Pool A, 2 = Pool B) 
-              name: bracketName,
-              teamCount: teamsByBracket[groupId].length,
-              teams: teamsByBracket[groupId].map(t => ({
+            if (brackets[index]) {
+              const bracketTeams = teamsByBracket[groupId].map(t => ({
                 id: t.id,
                 name: t.name,
                 clubName: t.clubName || '',
                 status: t.status,
                 groupId: t.groupId,
                 bracketId: t.bracketId
-              }))
-            });
+              }));
+              
+              brackets[index].teams = bracketTeams;
+              brackets[index].teamCount = bracketTeams.length;
+              
+              console.log(`[BRACKET DISPLAY DEBUG] Populated bracket ${index + 1} (${brackets[index].name}) with ${bracketTeams.length} teams`);
+            }
           });
-          
-          // Always create default brackets if none exist (for initial display)
-          if (brackets.length === 0) {
-            console.log(`[BRACKET DISPLAY DEBUG] Flight ${flight.flightId} - Creating empty default brackets`);
-            brackets.push({
-              id: 1,
-              name: templateName === 'group_of_6' ? 'Pool A' : 'Bracket A',
-              teamCount: 0,
-              teams: []
-            });
-            brackets.push({
-              id: 2, 
-              name: templateName === 'group_of_6' ? 'Pool B' : 'Bracket B',
-              teamCount: 0,
-              teams: []
-            });
-          }
         }
 
         return {
@@ -234,22 +240,23 @@ router.get('/:eventId/bracket-creation', async (req, res) => {
           level: flight.level,
           teamCount: assignedTeams.length,
           assignedTeams: assignedTeams.length,
-          unassignedTeams: 0,
+          unassignedTeamsCount: unassignedTeams.length,
           bracketType,
           estimatedGames,
           isConfigured,
           brackets: brackets, // Add brackets information
-          debugInfo: `${brackets.length} brackets created`,
+          unassignedTeams: unassignedTeams, // Teams not yet assigned to brackets
+          debugInfo: `${brackets.length} brackets created, ${unassignedTeams.length} unassigned teams`,
           registeredTeams: assignedTeams.map(t => ({
             ...t,
             seed: 0,
-            ageGroupId: flight.ageGroupId || 0,
+            ageGroupId: 0,
             isPlaceholder: false,
             flightId: flight.flightId,
             groupId: t.groupId, // Include groupId for team assignments
             bracketId: t.bracketId // Include bracketId for team assignments
           })),
-          ageGroupId: flight.ageGroupId || 0
+          ageGroupId: 0
         };
       })
     );
