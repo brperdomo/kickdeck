@@ -517,7 +517,7 @@ export class TournamentScheduler {
     const sortedTeams = [...teams].sort((a, b) => (a.groupId || 0) - (b.groupId || 0));
     
     // Teams with the lowest groupId go to Bracket A, teams with the highest groupId go to Bracket B
-    const uniqueGroupIds = [...new Set(sortedTeams.map(t => t.groupId))].filter(id => id).sort();
+    const uniqueGroupIds = Array.from(new Set(sortedTeams.map(t => t.groupId))).filter(id => id).sort();
     
     let bracketA: Team[], bracketB: Team[];
     
@@ -599,7 +599,7 @@ export class TournamentScheduler {
       bracketId: bracket.bracketId,
       bracketName: bracket.bracketName,
       round: 'Championship Final',
-      gameType: 'final',
+      gameType: 'final' as const,
       gameNumber: gameCounter++,
       duration: 90
     };
@@ -630,7 +630,7 @@ export class TournamentScheduler {
       bracketId: bracket.bracketId,
       bracketName: bracket.bracketName,
       round: 'Championship',
-      gameType: 'final',
+      gameType: 'final' as const,
       gameNumber: gameNumber,
       duration: 90
     };
@@ -807,7 +807,7 @@ export class TournamentScheduler {
         bracketId: bracket.bracketId,
         bracketName: bracket.bracketName,
         round: 'Final',
-        gameType: 'final',
+        gameType: 'final' as const,
         gameNumber: gameCounter++,
         duration: 90
       });
