@@ -42,8 +42,8 @@ case 'crossover_bracket_6_teams':
 case 'crossplay':
 case 'group_of_6_crossplay':
   return {
-    homeTeamName: '1st Pool A',
-    awayTeamName: '1st Pool B'
+    homeTeamName: '1st in Points',
+    awayTeamName: '2nd in Points'
   };
 ```
 
@@ -53,7 +53,7 @@ case 'group_of_6_crossplay':
 1. **Pool Assignment**: Teams sorted by `group_id`, first 3 go to Pool A, remaining 3 to Pool B
 2. **Crossplay Games**: Exactly 9 games generated (Pool A vs Pool B matchups ONLY)
 3. **No Intra-Pool Games**: No games between teams within the same pool
-4. **TBD Championship**: Final game shows "1st Pool A vs 1st Pool B"
+4. **TBD Championship**: Final game shows "1st in Points vs 2nd in Points" (across both pools)
 
 ### Game Generation Pattern:
 ```
@@ -72,7 +72,7 @@ Game 8: Team A3 vs Team B2
 Game 9: Team A3 vs Team B3
 
 Championship Game (1 total):
-Game 10: 1st Pool A vs 1st Pool B (TBD)
+Game 10: 1st in Points vs 2nd in Points (TBD)
 
 Total: 10 games (9 crossplay + 1 championship)
 ```
