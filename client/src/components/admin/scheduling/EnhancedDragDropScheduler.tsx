@@ -1198,7 +1198,7 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
                                 <div className="flex-1 overflow-hidden p-1">
                                   <div className="text-xs leading-tight space-y-1">
                                     {/* Flight information at top */}
-                                    <div className="text-[9px] text-blue-200 font-medium text-center bg-blue-800/30 rounded px-1 mb-1">
+                                    <div className="text-[9px] text-blue-200 font-medium text-center bg-blue-800/30 rounded px-1">
                                       {(game as any).flightName || `Round ${(game as any).round || 1}`}
                                     </div>
                                     

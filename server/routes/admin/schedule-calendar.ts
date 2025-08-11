@@ -1,6 +1,6 @@
 import express from 'express';
 import { db } from '@db';
-import { games, teams, eventAgeGroups, fields, complexes, gameTimeSlots, events, eventBrackets, tournamentGroups } from '@db/schema';
+import { games, teams, eventAgeGroups, fields, complexes, gameTimeSlots, events, eventBrackets } from '@db/schema';
 import { eq, and, sql } from 'drizzle-orm';
 
 const router = express.Router();
@@ -93,8 +93,7 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
       })
       .from(games)
       .leftJoin(eventAgeGroups, eq(games.ageGroupId, eventAgeGroups.id))
-      .leftJoin(tournamentGroups, eq(games.groupId, tournamentGroups.id))
-      .leftJoin(eventBrackets, eq(tournamentGroups.ageGroupId, eventBrackets.ageGroupId))
+      .leftJoin(eventBrackets, eq(games.groupId, eventBrackets.id))
       .where(eq(games.eventId, eventId));
 
     console.log(`[Schedule Calendar] Found ${gamesWithDetails.length} total games with age group data`);
@@ -277,15 +276,7 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
         homeTeamName: homeTeam?.name || 'TBD',
         awayTeamName: awayTeam?.name || 'TBD',
         bracketId: homeTeam?.bracketId || awayTeam?.bracketId || game.groupId,
-        flightName: (() => {
-          // Map specific tournament groups to flight names for U19 Boys (TWO FLIGHTS ONLY)
-          if (game.ageGroupId === 9965) { // U19 Boys
-            if (game.groupId === 76) return 'Nike Premier'; // Flight with 2 brackets (10 games)
-            if (game.groupId === 78) return 'Nike Elite';   // Flight with 1 bracket (7 games)
-          }
-          // Fallback to bracket name or round
-          return game.bracketName || (game.round === 10 ? 'Championship' : `Round ${game.round}`);
-        })(),
+        flightName: game.bracketName || (game.round === 10 ? 'Championship' : `Round ${game.round}`),
         round: game.round
       });
     }
