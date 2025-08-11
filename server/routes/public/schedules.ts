@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { db } from '../../../db';
 import { publishedSchedules, games, teams, events, eventAgeGroups, eventBrackets, fields, complexes } from '../../../db/schema';
-import { eq, and, desc, isNull, isNotNull } from 'drizzle-orm';
+import { eq, and, desc, isNull, isNotNull, inArray, or } from 'drizzle-orm';
 
 const router = Router();
 
@@ -133,6 +133,7 @@ router.get('/:eventId', async (req: Request, res: Response) => {
       
       if (!genderMap.has(ageGroupKey)) {
         genderMap.set(ageGroupKey, {
+          ageGroupId: ageGroup.ageGroupId,
           ageGroup: ageGroup.ageGroup,
           gender: ageGroup.gender,
           birthYear: ageGroup.birthYear,
@@ -184,6 +185,7 @@ router.get('/:eventId', async (req: Request, res: Response) => {
       ageGroupsStructure.boys = Array.from(ageGroupsByGender.get('Boys').values())
         .filter(ageGroup => ageGroup.flights.size > 0) // Only include age groups with flights that have teams
         .map(ageGroup => ({
+          ageGroupId: ageGroup.ageGroupId,
           ageGroup: ageGroup.ageGroup,
           gender: ageGroup.gender,
           birthYear: ageGroup.birthYear,
@@ -201,6 +203,7 @@ router.get('/:eventId', async (req: Request, res: Response) => {
       ageGroupsStructure.girls = Array.from(ageGroupsByGender.get('Girls').values())
         .filter(ageGroup => ageGroup.flights.size > 0) // Only include age groups with flights that have teams
         .map(ageGroup => ({
+          ageGroupId: ageGroup.ageGroupId,
           ageGroup: ageGroup.ageGroup,
           gender: ageGroup.gender,
           birthYear: ageGroup.birthYear,
@@ -275,6 +278,185 @@ router.get('/:eventId', async (req: Request, res: Response) => {
   } catch (error) {
     console.error('Error fetching public schedule:', error);
     res.status(500).json({ error: 'Failed to fetch tournament schedule' });
+  }
+});
+
+// Get age group specific schedule data
+router.get('/:eventId/age-group/:ageGroupId', async (req: Request, res: Response) => {
+  try {
+    const { eventId, ageGroupId } = req.params;
+    const eventIdNum = parseInt(eventId);
+    const ageGroupIdNum = parseInt(ageGroupId);
+    
+    console.log(`[Public Age Group Schedule] Fetching data for event ${eventId}, age group ${ageGroupId}`);
+    
+    // Get event info
+    const eventInfo = await db
+      .select({
+        name: events.name,
+        startDate: events.startDate,
+        endDate: events.endDate,
+        logoUrl: events.logoUrl
+      })
+      .from(events)
+      .where(eq(events.id, eventIdNum))
+      .limit(1);
+
+    if (!eventInfo.length) {
+      return res.status(404).json({ 
+        error: 'Event not found',
+        message: 'The requested tournament does not exist.'
+      });
+    }
+
+    // Override with the specific tournament logo for this event
+    eventInfo[0].logoUrl = 'https://app.matchpro.ai/uploads/2025-EmpireSurf-SuperCup-logo_badge_blue_1748622426612_i7ic0i.jpg';
+
+    // Get age group info
+    const ageGroupInfo = await db
+      .select({
+        ageGroup: eventAgeGroups.ageGroup,
+        gender: eventAgeGroups.gender,
+        birthYear: eventAgeGroups.birthYear,
+        divisionCode: eventAgeGroups.divisionCode
+      })
+      .from(eventAgeGroups)
+      .where(and(
+        eq(eventAgeGroups.eventId, eventIdNum),
+        eq(eventAgeGroups.id, ageGroupIdNum)
+      ))
+      .limit(1);
+
+    if (!ageGroupInfo.length) {
+      return res.status(404).json({ 
+        error: 'Age group not found',
+        message: 'The requested age group does not exist for this tournament.'
+      });
+    }
+
+    const ageGroup = ageGroupInfo[0];
+    const displayName = `${ageGroup.gender} ${ageGroup.birthYear}`;
+
+    // Get flights for this age group
+    const flightsData = await db
+      .select({
+        flightId: eventBrackets.id,
+        flightName: eventBrackets.name
+      })
+      .from(eventBrackets)
+      .where(and(
+        eq(eventBrackets.eventId, eventIdNum),
+        eq(eventBrackets.ageGroupId, ageGroupIdNum)
+      ));
+
+    // Get teams for this age group
+    const teamsData = await db
+      .select({
+        id: teams.id,
+        name: teams.name,
+        bracketId: teams.bracketId,
+        status: teams.status
+      })
+      .from(teams)
+      .where(and(
+        eq(teams.eventId, eventIdNum),
+        eq(teams.ageGroupId, ageGroupIdNum),
+        isNotNull(teams.bracketId)
+      ));
+
+    // Get games for this age group (by finding teams in this age group)
+    const teamIds = teamsData.map(team => team.id);
+    
+    const gamesData = teamIds.length > 0 ? await db
+      .select({
+        id: games.id,
+        homeTeamId: games.homeTeamId,
+        awayTeamId: games.awayTeamId,
+        scheduledDate: games.scheduledDate,
+        scheduledTime: games.scheduledTime,
+        fieldId: games.fieldId,
+        fieldName: fields.name,
+        duration: games.duration,
+        status: games.status,
+        homeScore: games.homeScore,
+        awayScore: games.awayScore
+      })
+      .from(games)
+      .leftJoin(fields, eq(games.fieldId, fields.id))
+      .where(and(
+        eq(games.eventId, eventIdNum),
+        or(
+          inArray(games.homeTeamId, teamIds),
+          inArray(games.awayTeamId, teamIds)
+        )
+      )) : [];
+
+    // Create teams lookup
+    const teamsMap = new Map();
+    teamsData.forEach(team => teamsMap.set(team.id, team));
+
+    // Process flights with their teams and games
+    const processedFlights = flightsData.map(flight => {
+      const flightTeams = teamsData.filter(team => 
+        team.bracketId === flight.flightId &&
+        (team.status === 'approved' || team.status === 'registered')
+      );
+
+      const flightGames = gamesData.filter(game => {
+        const homeTeam = teamsMap.get(game.homeTeamId);
+        const awayTeam = teamsMap.get(game.awayTeamId);
+        return homeTeam?.bracketId === flight.flightId || awayTeam?.bracketId === flight.flightId;
+      }).map(game => ({
+        id: game.id,
+        homeTeam: teamsMap.get(game.homeTeamId)?.name || `Team ${game.homeTeamId}`,
+        awayTeam: teamsMap.get(game.awayTeamId)?.name || `Team ${game.awayTeamId}`,
+        date: game.scheduledDate || new Date().toISOString().split('T')[0],
+        time: game.scheduledTime || '08:00',
+        field: game.fieldName || `Field ${game.fieldId}`,
+        status: game.status || 'scheduled',
+        homeScore: game.homeScore,
+        awayScore: game.awayScore
+      })).sort((a, b) => {
+        // Sort by date first, then by time
+        const dateA = new Date(a.date);
+        const dateB = new Date(b.date);
+        if (dateA.getTime() !== dateB.getTime()) {
+          return dateA.getTime() - dateB.getTime();
+        }
+        return a.time.localeCompare(b.time);
+      });
+
+      return {
+        flightId: flight.flightId,
+        flightName: flight.flightName,
+        teamCount: flightTeams.length,
+        teams: flightTeams.map(team => ({
+          id: team.id,
+          name: team.name,
+          status: team.status
+        })),
+        games: flightGames
+      };
+    }).filter(flight => flight.teamCount > 0); // Only include flights with teams
+
+    const responseData = {
+      eventInfo: eventInfo[0],
+      ageGroupInfo: {
+        ageGroup: ageGroup.ageGroup,
+        gender: ageGroup.gender,
+        birthYear: ageGroup.birthYear,
+        divisionCode: ageGroup.divisionCode,
+        displayName: displayName
+      },
+      flights: processedFlights
+    };
+
+    console.log(`[Public Age Group Schedule] Found ${processedFlights.length} flights with ${processedFlights.reduce((sum, f) => sum + f.teamCount, 0)} teams`);
+    
+    res.json(responseData);
+  } catch (error) {
+    console.error('Error fetching age group schedule:', error);
+    res.status(500).json({ error: 'Failed to fetch age group schedule' });
   }
 });
 

@@ -223,6 +223,9 @@ function Router() {
       <Route path="/public/schedules/:eventId">
         {(params) => <PublicSchedules />}
       </Route>
+      <Route path="/public/schedules/:eventId/age-group/:ageGroupId">
+        {(params) => <AgeGroupSchedule />}
+      </Route>
       
       {/* Age group specific schedules - no auth required */}
       <Route path="/public/schedules/:eventId/age-group/:ageGroupId">
