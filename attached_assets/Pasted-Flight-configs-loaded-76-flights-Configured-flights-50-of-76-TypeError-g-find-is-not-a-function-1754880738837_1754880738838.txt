@@ -1,0 +1,313 @@
+Flight configs loaded: 76 flights
+ Configured flights: 50 of 76
+ TypeError: g.find is not a function
+    at O1 (MasterSchedulePage-O_zfrXqE.js:247:31372)
+    at uO (index-BNfjckxs.js:39:17031)
+    at rP (index-BNfjckxs.js:41:3143)
+    at VW (index-BNfjckxs.js:41:44880)
+    at zW (index-BNfjckxs.js:41:39822)
+    at the (index-BNfjckxs.js:41:39748)
+    at nw (index-BNfjckxs.js:41:39598)
+    at fP (index-BNfjckxs.js:41:35960)
+    at BM (index-BNfjckxs.js:41:36765)
+    at iu (index-BNfjckxs.js:39:3288)
+nP @ index-BNfjckxs.js:41Understand this error
+index-BNfjckxs.js:39 Uncaught TypeError: g.find is not a function
+    at O1 (MasterSchedulePage-O_zfrXqE.js:247:31372)
+    at uO (index-BNfjckxs.js:39:17031)
+    at rP (index-BNfjckxs.js:41:3143)
+    at VW (index-BNfjckxs.js:41:44880)
+    at zW (index-BNfjckxs.js:41:39822)
+    at the (index-BNfjckxs.js:41:39748)
+    at nw (index-BNfjckxs.js:41:39598)
+    at fP (index-BNfjckxs.js:41:35960)
+    at BM (index-BNfjckxs.js:41:36765)
+    at iu (index-BNfjckxs.js:39:3288)Understand this error
+ Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+$Aa @ maps.googleapis.com/…/14-beta/util.js:33Understand this warning
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+Navigated to https://app.matchpro.ai/admin/events/1844329078/master-schedule
+js?libraries=places&v=beta&callback=Function.prototype:1382 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+Tda @ js?libraries=places&v=beta&callback=Function.prototype:1382
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641Understand this warning
+js?libraries=places&v=beta&callback=Function.prototype:1414 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+_.B.send @ js?libraries=places&v=beta&callback=Function.prototype:1414
+Qda @ js?libraries=places&v=beta&callback=Function.prototype:1391
+Tda @ js?libraries=places&v=beta&callback=Function.prototype:1383
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641
+index-BNfjckxs.js:880 Google Maps API key length: 0 characters
+index-BNfjckxs.js:880 Mapbox API key length: 93 characters
+index-BNfjckxs.js:880 Google Maps API already loaded
+index-BNfjckxs.js:657 Current route location (Wouter): /admin/events/1844329078/master-schedule
+index-BNfjckxs.js:657 Current URL: https://app.matchpro.ai/admin/events/1844329078/master-schedule
+index-BNfjckxs.js:657 Current pathname: /admin/events/1844329078/master-schedule
+index-BNfjckxs.js:657 Current search: 
+index-BNfjckxs.js:657 Fetching user with emulation token: not present
+6Fetch finished loading: GET "<URL>".
+index-BNfjckxs.js:657 User data fetched: {id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: '$2b$12$d6n1CBWgsWFm0fh77F1OX.YxDZy7/O3aLSuJOuq4QkvOtFmSit7BC', firstName: 'Bryan', …}
+shared-df7789195bf09b6f338558bdd92c931a.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+e @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+c @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+g @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+value @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+16720 @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e.O @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+shared-df7789195bf09b6f338558bdd92c931a.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+e @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+c @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+g @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+log @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+log @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+16720 @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e.O @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+index-BNfjckxs.js:649 Fetch failed loading: GET "https://app.matchpro.ai/api/user".
+queryFn @ index-BNfjckxs.js:649
+i @ index-BNfjckxs.js:41
+f @ index-BNfjckxs.js:41
+start @ index-BNfjckxs.js:41
+fetch @ index-BNfjckxs.js:41
+rg @ index-BNfjckxs.js:41
+onSubscribe @ index-BNfjckxs.js:41
+subscribe @ index-BNfjckxs.js:41
+(anonymous) @ index-BNfjckxs.js:41
+iW @ index-BNfjckxs.js:39
+SS @ index-BNfjckxs.js:41
+Jh @ index-BNfjckxs.js:41
+BM @ index-BNfjckxs.js:41
+iu @ index-BNfjckxs.js:39
+rhe @ index-BNfjckxs.js:41
+ku @ index-BNfjckxs.js:41
+$W @ index-BNfjckxs.js:41
+w @ index-BNfjckxs.js:26
+A @ index-BNfjckxs.js:26
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+UnifiedTournamentControlCenter-S4KeUzGw.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentControlCenter-S4KeUzGw.js:1 Configured flights: 50 of 76
+shared-df7789195bf09b6f338558bdd92c931a.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+e @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+c @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+setTimeout
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+Promise.then
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+value @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+16720 @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e.O @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+shared-df7789195bf09b6f338558bdd92c931a.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+e @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+c @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+setTimeout
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+Promise.then
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+log @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+log @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+16720 @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e.O @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+util.js:33 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+$Aa @ util.js:33
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1384
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1384
+setTimeout
+Tda @ js?libraries=places&v=beta&callback=Function.prototype:1384
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641Understand this warning
+index-BNfjckxs.js:41 TypeError: g.find is not a function
+    at O1 (MasterSchedulePage-O_zfrXqE.js:247:31372)
+    at uO (index-BNfjckxs.js:39:17031)
+    at rP (index-BNfjckxs.js:41:3143)
+    at VW (index-BNfjckxs.js:41:44880)
+    at zW (index-BNfjckxs.js:41:39822)
+    at the (index-BNfjckxs.js:41:39748)
+    at nw (index-BNfjckxs.js:41:39598)
+    at fP (index-BNfjckxs.js:41:35960)
+    at BM (index-BNfjckxs.js:41:36765)
+    at iu (index-BNfjckxs.js:39:3288)
+nP @ index-BNfjckxs.js:41
+r.callback @ index-BNfjckxs.js:41
+bM @ index-BNfjckxs.js:39
+MM @ index-BNfjckxs.js:41
+MW @ index-BNfjckxs.js:41
+Jme @ index-BNfjckxs.js:41
+rhe @ index-BNfjckxs.js:41
+ku @ index-BNfjckxs.js:41
+BM @ index-BNfjckxs.js:41
+iu @ index-BNfjckxs.js:39
+(anonymous) @ index-BNfjckxs.js:41
+setTimeout
+whe @ index-BNfjckxs.js:41
+o @ index-BNfjckxs.js:41
+batch @ index-BNfjckxs.js:41
+ac @ index-BNfjckxs.js:41
+setData @ index-BNfjckxs.js:41
+onSuccess @ index-BNfjckxs.js:41
+m @ index-BNfjckxs.js:41
+Promise.then
+f @ index-BNfjckxs.js:41
+start @ index-BNfjckxs.js:41
+fetch @ index-BNfjckxs.js:41
+rg @ index-BNfjckxs.js:41
+onSubscribe @ index-BNfjckxs.js:41
+subscribe @ index-BNfjckxs.js:41
+(anonymous) @ index-BNfjckxs.js:41
+iW @ index-BNfjckxs.js:39
+SS @ index-BNfjckxs.js:41
+Jh @ index-BNfjckxs.js:41
+rhe @ index-BNfjckxs.js:41
+ku @ index-BNfjckxs.js:41
+BM @ index-BNfjckxs.js:41
+iu @ index-BNfjckxs.js:39
+(anonymous) @ index-BNfjckxs.js:41Understand this error
+index-BNfjckxs.js:39 Uncaught TypeError: g.find is not a function
+    at O1 (MasterSchedulePage-O_zfrXqE.js:247:31372)
+    at uO (index-BNfjckxs.js:39:17031)
+    at rP (index-BNfjckxs.js:41:3143)
+    at VW (index-BNfjckxs.js:41:44880)
+    at zW (index-BNfjckxs.js:41:39822)
+    at the (index-BNfjckxs.js:41:39748)
+    at nw (index-BNfjckxs.js:41:39598)
+    at fP (index-BNfjckxs.js:41:35960)
+    at BM (index-BNfjckxs.js:41:36765)
+    at iu (index-BNfjckxs.js:39:3288)
+O1 @ MasterSchedulePage-O_zfrXqE.js:247
+uO @ index-BNfjckxs.js:39
+rP @ index-BNfjckxs.js:41
+VW @ index-BNfjckxs.js:41
+zW @ index-BNfjckxs.js:41
+the @ index-BNfjckxs.js:41
+nw @ index-BNfjckxs.js:41
+fP @ index-BNfjckxs.js:41
+BM @ index-BNfjckxs.js:41
+iu @ index-BNfjckxs.js:39
+(anonymous) @ index-BNfjckxs.js:41
+setTimeout
+whe @ index-BNfjckxs.js:41
+o @ index-BNfjckxs.js:41
+batch @ index-BNfjckxs.js:41
+ac @ index-BNfjckxs.js:41
+setData @ index-BNfjckxs.js:41
+onSuccess @ index-BNfjckxs.js:41
+m @ index-BNfjckxs.js:41
+Promise.then
+f @ index-BNfjckxs.js:41
+start @ index-BNfjckxs.js:41
+fetch @ index-BNfjckxs.js:41
+rg @ index-BNfjckxs.js:41
+onSubscribe @ index-BNfjckxs.js:41
+subscribe @ index-BNfjckxs.js:41
+(anonymous) @ index-BNfjckxs.js:41
+iW @ index-BNfjckxs.js:39
+SS @ index-BNfjckxs.js:41
+Jh @ index-BNfjckxs.js:41
+rhe @ index-BNfjckxs.js:41
+ku @ index-BNfjckxs.js:41
+BM @ index-BNfjckxs.js:41
+iu @ index-BNfjckxs.js:39
+(anonymous) @ index-BNfjckxs.js:41Understand this error
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+Promise.then
+S @ out-4.5.44.js:1
+y @ out-4.5.44.js:1
+E @ out-4.5.44.js:1
+e.onload @ inner.html:1
+script
+(anonymous) @ inner.html:1
+(anonymous) @ inner.html:1
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+h @ out-4.5.44.js:1
+e @ inner.html:1
+shared-df7789195bf09b6f338558bdd92c931a.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+e @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+c @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+setTimeout
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+log @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+log @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+value @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+value @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1

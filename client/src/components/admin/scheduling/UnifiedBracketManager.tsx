@@ -76,16 +76,20 @@ export function UnifiedBracketManager({ eventId }: UnifiedBracketManagerProps) {
   const [activeTab, setActiveTab] = useState('flight-selection');
 
   // Fetch flight data with bracket information
-  const { data: flightData, isLoading } = useQuery({
+  const { data: bracketData, isLoading } = useQuery({
     queryKey: ['unified-bracket-manager', eventId],
-    queryFn: async (): Promise<Flight[]> => {
+    queryFn: async () => {
       const response = await fetch(`/api/admin/events/${eventId}/bracket-creation`, {
         credentials: 'include'
       });
       if (!response.ok) throw new Error('Failed to fetch flight data');
-      return response.json();
+      const data = await response.json();
+      return data;
     }
   });
+
+  const flightData = bracketData?.flights || [];
+  const stats = bracketData?.stats;
 
   // Get bracket configurations based on team count
   const getBracketConfigurations = (teamCount: number): BracketConfiguration[] => {
