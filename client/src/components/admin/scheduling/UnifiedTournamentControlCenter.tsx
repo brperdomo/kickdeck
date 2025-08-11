@@ -543,13 +543,13 @@ export function UnifiedTournamentControlCenter({ eventId }: TournamentControlCen
                                     <Badge 
                                       variant="outline" 
                                       className={`text-xs px-1.5 py-0.5 ${
-                                        flight.gender === 'Boys' || flight.gender === 'Male' || flight.gender === 'M'
+                                        flight.gender === 'Boys' || flight.gender === 'Male' || flight.gender === 'M' || flight.gender === 'B'
                                           ? 'bg-blue-900/30 text-blue-300 border-blue-600' 
                                           : 'bg-pink-900/30 text-pink-300 border-pink-600'
                                       }`}
-                                      title={`Gender: ${flight.gender || 'Unknown'}`}
+                                      title={`Gender: ${flight.gender || 'Unknown'} (Debug: ${JSON.stringify(flight.gender)})`}
                                     >
-                                      {(flight.gender === 'Boys' || flight.gender === 'Male' || flight.gender === 'M') ? 'B' : 'G'}
+                                      {(flight.gender === 'Boys' || flight.gender === 'Male' || flight.gender === 'M' || flight.gender === 'B') ? 'B' : 'G'}
                                     </Badge>
                                   </div>
                                   <p className={`text-xs ${isScheduled ? 'text-slate-500' : 'text-slate-400'}`}>

@@ -1260,46 +1260,43 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
                               }}
                             >
                               <div className="flex flex-col justify-between h-full">
-                                <div className="flex-1 overflow-hidden p-1">
-                                  <div className="text-xs leading-tight space-y-1">
-                                    {/* Flight information at top */}
-                                    <div className="text-[9px] text-blue-200 font-medium text-center bg-blue-800/30 rounded px-1">
+                                <div className="flex-1 overflow-hidden px-1 py-2">
+                                  <div className="text-sm leading-tight space-y-2">
+                                    {/* Flight information at top - larger and more readable */}
+                                    <div className="text-xs text-blue-100 font-semibold text-center bg-blue-800/40 rounded px-2 py-1">
                                       {(game as any).flightName || game.ageGroup || 'Flight TBD'}
                                     </div>
                                     
-                                    {/* Team names display - shortened intelligently */}
-                                    <div className="text-blue-100 leading-tight text-center">
-                                      <div className="text-[10px] font-medium truncate">
+                                    {/* Team names display - much larger and clearer */}
+                                    <div className="text-white leading-tight text-center">
+                                      <div className="text-sm font-bold truncate max-w-full">
                                         {(game.homeTeamName || 'TBD')
                                           .replace(/FC |SC | Academy| Elite| Premier/g, '')
                                           .replace(/B\d+\/?\d*/g, '')
                                           .replace(/U\d+/g, '')
                                           .trim()
-                                          .slice(0, 15)}
+                                          .slice(0, 12)}
                                       </div>
-                                      <div className="text-[8px] text-slate-300 my-0.5">vs</div>
-                                      <div className="text-[10px] font-medium truncate">
+                                      <div className="text-xs text-blue-200 font-medium my-1">vs</div>
+                                      <div className="text-sm font-bold truncate max-w-full">
                                         {(game.awayTeamName || 'TBD')
                                           .replace(/FC |SC | Academy| Elite| Premier/g, '')
                                           .replace(/B\d+\/?\d*/g, '')
                                           .replace(/U\d+/g, '')
                                           .trim()
-                                          .slice(0, 15)}
+                                          .slice(0, 12)}
                                       </div>
                                     </div>
                                   </div>
                                 </div>
                                 
-                                <div className="flex justify-between items-center mt-1">
-                                  <div className="text-[9px] opacity-90 font-medium leading-tight">
-                                    <div className="text-blue-200">
-                                      {/* Show team names, birth year, and division instead of just age group */}
+                                <div className="flex justify-between items-end mt-2">
+                                  <div className="text-xs opacity-95 font-bold leading-tight">
+                                    <div className="text-blue-100">
+                                      {/* Show birth year and division clearly */}
                                       {game.homeTeamName && game.awayTeamName && game.homeTeamName !== 'TBD' && game.awayTeamName !== 'TBD' ? (
-                                        <div className="space-y-0.5">
-                                          <div className="truncate max-w-[60px]">{game.homeTeamName.split(' ')[0]}</div>
-                                          <div className="text-slate-300">vs</div>
-                                          <div className="truncate max-w-[60px]">{game.awayTeamName.split(' ')[0]}</div>
-                                          <div className="text-blue-300 font-semibold">
+                                        <div className="text-center">
+                                          <div className="text-blue-200 font-bold text-sm">
                                             {((game as any).homeTeamData?.birthYear || (game as any).awayTeamData?.birthYear || 
                                               game.ageGroup?.match(/\d{4}/)?.[0] || 
                                               new Date().getFullYear() - parseInt(game.ageGroup?.replace(/\D/g, '') || '19'))} 
@@ -1309,28 +1306,28 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
                                         </div>
                                       ) : (
                                         <div className="text-center">
-                                          <div>{game.ageGroup?.replace(/[^\dUB]/g, '') || 'U?'}</div>
+                                          <div className="text-sm font-bold">{game.ageGroup?.replace(/[^\dUB]/g, '') || 'U?'}</div>
                                           <div className="text-blue-300">TBD</div>
                                         </div>
                                       )}
                                     </div>
                                   </div>
                                   
-                                  {/* Status and conflict indicators */}
-                                  <div className="flex flex-col items-center gap-0.5">
+                                  {/* Status and conflict indicators - larger */}
+                                  <div className="flex flex-col items-center gap-1">
                                     {gameConflicts.length > 0 && (
-                                      <div className="flex items-center gap-0.5">
-                                        <AlertTriangle className="h-2.5 w-2.5" />
-                                        <span className="text-[8px]">{gameConflicts.length}</span>
+                                      <div className="flex items-center gap-1">
+                                        <AlertTriangle className="h-4 w-4 text-red-300" />
+                                        <span className="text-xs font-bold text-red-200">{gameConflicts.length}</span>
                                       </div>
                                     )}
-                                    <div className="text-[10px]">
+                                    <div className="text-sm">
                                       {hasWinnerPlaceholder(game) ? '🏆' : '⚽'}
                                     </div>
                                     
-                                    {/* Coach conflict indicator */}
+                                    {/* Coach conflict indicator - larger */}
                                     {gameConflicts.some(c => c.type === 'coach') && (
-                                      <div className="text-[8px] text-red-200" title="Coach Conflict">
+                                      <div className="text-sm text-red-200" title="Coach Conflict">
                                         👨‍🏫
                                       </div>
                                     )}
