@@ -1516,7 +1516,7 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 xl:grid-cols-4 lg:grid-cols-3 gap-2">
               {filteredGames.map((game) => {
                 const tooltipMessage = getUnassignedTooltip(game);
                 const hasUnassignedFields = game.time === 'TBD' || game.field === 'Unassigned' || game.field === 'TBD' || game.date === 'TBD';
@@ -1536,7 +1536,7 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                   }`}
                   title={tooltipMessage || undefined}
                 >
-                  <CardContent className="p-3">
+                  <CardContent className="p-2">
                     <div className="flex items-start justify-between">
                       <div className="flex items-center space-x-2">
                         <Checkbox
@@ -1646,8 +1646,8 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                           </div>
                         ) : (
                           // Normal Game Display
-                          <div className="space-y-1">
-                            <div className="font-medium text-sm text-gray-900 flex items-center gap-2">
+                          <div className="space-y-0.5">
+                            <div className="font-medium text-xs text-gray-900 flex items-center gap-1">
                               <div className="flex items-center gap-2">
                                 {replacingTeam?.gameId === game.id && replacingTeam?.position === 'home' ? (
                                   // Team replacement interface for home team
@@ -1957,27 +1957,27 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                               </div>
                             ) : (
                               // Normal Date/Time Display (clickable to edit)
-                              <div className="flex items-center space-x-3 text-xs text-gray-600">
+                              <div className="flex items-center space-x-2 text-xs text-gray-600">
                                 <span 
-                                  className={`flex items-center cursor-pointer hover:bg-blue-100 px-1 rounded ${game.date === 'TBD' ? 'text-yellow-600 font-medium' : ''}`}
+                                  className={`flex items-center cursor-pointer hover:bg-blue-100 px-0.5 rounded ${game.date === 'TBD' ? 'text-yellow-600 font-medium' : ''}`}
                                   onClick={() => setEditingDateTime({
                                     gameId: game.id,
                                     currentDate: game.date !== 'TBD' ? game.date : new Date().toISOString().split('T')[0],
                                     currentTime: game.time !== 'TBD' ? game.time : '09:00'
                                   })}
                                 >
-                                  <Calendar className="h-3 w-3 mr-1" />
+                                  <Calendar className="h-2.5 w-2.5 mr-0.5" />
                                   {game.date}
                                 </span>
                                 <span 
-                                  className={`flex items-center cursor-pointer hover:bg-blue-100 px-1 rounded ${game.time === 'TBD' ? 'text-yellow-600 font-medium' : ''}`}
+                                  className={`flex items-center cursor-pointer hover:bg-blue-100 px-0.5 rounded ${game.time === 'TBD' ? 'text-yellow-600 font-medium' : ''}`}
                                   onClick={() => setEditingDateTime({
                                     gameId: game.id,
                                     currentDate: game.date !== 'TBD' ? game.date : new Date().toISOString().split('T')[0],
                                     currentTime: game.time !== 'TBD' ? game.time : '09:00'
                                   })}
                                 >
-                                  <Clock className="h-3 w-3 mr-1" />
+                                  <Clock className="h-2.5 w-2.5 mr-0.5" />
                                   {game.time}
                                 </span>
                                 {editingField?.gameId === game.id ? (
@@ -2033,26 +2033,26 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                                 )}
                               </div>
                             )}
-                            <div className="flex items-center space-x-2">
-                              <Badge variant="outline" className="text-xs">
+                            <div className="flex items-center space-x-1">
+                              <Badge variant="outline" className="text-xs px-1 py-0">
                                 {game.ageGroup}
                               </Badge>
                               <Badge 
                                 variant={game.status === 'scheduled' ? 'default' : 'secondary'}
-                                className="text-xs"
+                                className="text-xs px-1 py-0"
                               >
                                 {game.status}
                               </Badge>
                               {hasOverlap && (
                                 <>
                                   {overlapCheck.conflicts.length > 0 && (
-                                    <Badge variant="destructive" className="text-xs">
-                                      <AlertTriangle className="h-3 w-3 mr-1" />
-                                      FIELD OVERLAP
+                                    <Badge variant="destructive" className="text-xs px-1 py-0">
+                                      <AlertTriangle className="h-2 w-2 mr-1" />
+                                      OVERLAP
                                     </Badge>
                                   )}
                                   {overlapCheck.restPeriodViolations?.length > 0 && (
-                                    <Badge variant="destructive" className="text-xs bg-orange-500 hover:bg-orange-600">
+                                    <Badge variant="destructive" className="text-xs px-1 py-0 bg-orange-500 hover:bg-orange-600">
                                       <Clock className="h-3 w-3 mr-1" />
                                       REST VIOLATION
                                     </Badge>
