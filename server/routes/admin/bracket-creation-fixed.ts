@@ -1151,14 +1151,22 @@ router.post('/:eventId/flights/:flightId/create-brackets', isAdmin, async (req, 
     // Get teams assigned to this flight
     const assignedTeams = await db.query.teams.findMany({
       where: and(
-        eq(teams.eventId, eventId),
+        eq(teams.eventId, parseInt(eventId)),
         eq(teams.bracketId, parseInt(flightId)),
         eq(teams.status, 'approved')
       )
     });
 
+    console.log(`[Bracket Assignment] Found ${assignedTeams.length} teams assigned to flight ${flightId}`);
+    console.log(`[Bracket Assignment] Request body:`, req.body);
+
     if (assignedTeams.length === 0) {
-      return res.status(400).json({ error: 'No teams assigned to this flight' });
+      return res.status(400).json({ 
+        error: 'No teams assigned to this flight',
+        details: `Flight ${flightId} has no approved teams assigned to it`,
+        eventId: parseInt(eventId),
+        flightId: parseInt(flightId)
+      });
     }
 
     // Get the flight details to find ageGroupId
@@ -1173,13 +1181,19 @@ router.post('/:eventId/flights/:flightId/create-brackets', isAdmin, async (req, 
     // Check if brackets already exist
     const existingBrackets = await db.query.tournamentGroups.findMany({
       where: and(
-        eq(tournamentGroups.eventId, eventId),
+        eq(tournamentGroups.eventId, parseInt(eventId)),
         eq(tournamentGroups.ageGroupId, flight.ageGroupId)
       )
     });
 
+    console.log(`[Bracket Assignment] Found ${existingBrackets.length} existing brackets for flight ${flightId} (age group ${flight.ageGroupId})`);
+
     if (existingBrackets.length > 0) {
-      return res.status(400).json({ error: 'Brackets already exist for this flight' });
+      return res.status(400).json({ 
+        error: 'Brackets already exist for this flight',
+        details: `Found ${existingBrackets.length} existing brackets for this age group`,
+        existingBrackets: existingBrackets.map(b => ({ id: b.id, name: b.name }))
+      });
     }
 
     const teamCount = assignedTeams.length;

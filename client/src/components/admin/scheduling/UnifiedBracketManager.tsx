@@ -161,7 +161,10 @@ export function UnifiedBracketManager({ eventId }: UnifiedBracketManagerProps) {
           teamsPerBracket: bracketConfig.teamsPerBracket
         })
       });
-      if (!response.ok) throw new Error('Failed to create brackets');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to create brackets');
+      }
       return response.json();
     },
     onSuccess: (data) => {
@@ -172,10 +175,22 @@ export function UnifiedBracketManager({ eventId }: UnifiedBracketManagerProps) {
       queryClient.invalidateQueries({ queryKey: ['unified-bracket-manager', eventId] });
       setActiveTab('team-assignment');
     },
-    onError: (error) => {
+    onError: (error: any) => {
+      let errorMessage = error.message;
+      let errorTitle = "Failed to Create Brackets";
+      
+      // Handle specific error cases
+      if (error.message.includes('already exist')) {
+        errorTitle = "Brackets Already Exist";
+        errorMessage = "This flight already has brackets created. Use the team assignment tab to manage existing brackets.";
+      } else if (error.message.includes('No teams assigned')) {
+        errorTitle = "No Teams Assigned";
+        errorMessage = "Please assign teams to this flight before creating brackets.";
+      }
+      
       toast({
-        title: "Failed to Create Brackets",
-        description: error.message,
+        title: errorTitle,
+        description: errorMessage,
         variant: "destructive"
       });
     }
@@ -373,10 +388,13 @@ export function UnifiedBracketManager({ eventId }: UnifiedBracketManagerProps) {
                           {flight.brackets && flight.brackets.length > 0 && (
                             <div className="pt-2 border-t border-slate-600">
                               <div className="text-xs text-slate-300 space-y-1">
+                                <div className="font-medium text-green-400 mb-1">Existing Brackets:</div>
                                 {flight.brackets.map((bracket: TournamentBracket, idx: number) => (
-                                  <div key={bracket.id} className="flex justify-between">
+                                  <div key={bracket.id} className="flex justify-between items-center">
                                     <span>{bracket.name}</span>
-                                    <span>{bracket.teamCount} teams</span>
+                                    <Badge variant="outline" className="text-xs border-green-500 text-green-400">
+                                      {bracket.teamCount} teams
+                                    </Badge>
                                   </div>
                                 ))}
                               </div>
@@ -468,20 +486,37 @@ export function UnifiedBracketManager({ eventId }: UnifiedBracketManagerProps) {
                       >
                         Back to Flight Selection
                       </Button>
-                      <Button
-                        onClick={handleCreateBrackets}
-                        disabled={!selectedBracketConfig || createBracketsMutation.isPending}
-                        className="bg-blue-600 hover:bg-blue-500 text-white"
-                      >
-                        {createBracketsMutation.isPending ? 'Creating...' : 'Create Brackets'}
-                      </Button>
+                      {selectedFlightData.brackets && selectedFlightData.brackets.length > 0 ? (
+                        <Button
+                          onClick={() => setActiveTab('team-assignment')}
+                          className="bg-green-600 hover:bg-green-500 text-white"
+                        >
+                          <Eye className="h-4 w-4 mr-2" />
+                          View Team Assignments
+                        </Button>
+                      ) : (
+                        <Button
+                          onClick={handleCreateBrackets}
+                          disabled={!selectedBracketConfig || createBracketsMutation.isPending}
+                          className="bg-blue-600 hover:bg-blue-500 text-white"
+                        >
+                          {createBracketsMutation.isPending ? 'Creating...' : 'Create Brackets'}
+                        </Button>
+                      )}
                     </div>
                   </div>
+                ) : selectedFlightData.brackets && selectedFlightData.brackets.length > 0 ? (
+                  <Alert className="border-green-600 bg-green-900/20">
+                    <CheckCircle className="h-4 w-4 text-green-400" />
+                    <AlertDescription className="text-slate-200">
+                      Brackets are already created for this flight. Use the "Team Assignment" tab to manage team assignments.
+                    </AlertDescription>
+                  </Alert>
                 ) : (
                   <Alert className="border-slate-600 bg-slate-700">
                     <AlertTriangle className="h-4 w-4 text-yellow-400" />
                     <AlertDescription className="text-slate-200">
-                      This flight has {selectedFlightData.teamCount} teams, which doesn't fit standard bracket configurations. 
+                      This flight has {selectedFlightData.assignedTeams} teams, which doesn't fit standard bracket configurations. 
                       Consider adding or removing teams to reach 4, 6, 8, or more teams.
                     </AlertDescription>
                   </Alert>
