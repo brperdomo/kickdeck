@@ -181,7 +181,7 @@ router.get('/:eventId/bracket-creation', isAdmin, async (req, res) => {
       // Get existing brackets for this flight
       const brackets = await db.query.tournamentGroups.findMany({
         where: and(
-          eq(tournamentGroups.eventId, eventId),
+          eq(tournamentGroups.eventId, parseInt(eventId)),
           eq(tournamentGroups.ageGroupId, flight.ageGroupId)
         ),
         with: {
@@ -190,6 +190,8 @@ router.get('/:eventId/bracket-creation', isAdmin, async (req, res) => {
           }
         }
       });
+
+      console.log(`[Bracket Creation] Flight ${flight.id} (${flight.name}) - Age Group ${flight.ageGroupId} - Found ${brackets.length} brackets`);
 
       flightData.push({
         flightId: flight.id,

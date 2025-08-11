@@ -527,7 +527,7 @@ export function UnifiedBracketManager({ eventId }: UnifiedBracketManagerProps) {
         </TabsContent>
 
         <TabsContent value="team-assignment" className="space-y-4">
-          {selectedFlightData?.brackets && selectedFlightData.brackets.length > 0 && (
+          {selectedFlightData?.brackets && selectedFlightData.brackets.length > 0 ? (
             <Card className="border-slate-600 bg-slate-800">
               <CardHeader>
                 <CardTitle className="text-white flex items-center gap-2">
