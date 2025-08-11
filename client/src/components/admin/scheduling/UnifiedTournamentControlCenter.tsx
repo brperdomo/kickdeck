@@ -498,7 +498,6 @@ export function UnifiedTournamentControlCenter({ eventId }: TournamentControlCen
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                     {schedulingReadiness.flights.map((flight: any) => {
-                      console.log('Flight gender debug:', { flightName: flight.flightName, gender: flight.gender, ageGroup: flight.ageGroup });
                       const hasScheduledGames = (flight.scheduledGamesCount || 0) > 0;
                       const isScheduled = hasScheduledGames;
                       

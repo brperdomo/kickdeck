@@ -1,0 +1,162 @@
+
+index-Clo7RXIr.js:649 Fetch failed loading: GET "https://app.matchpro.ai/api/user".
+queryFn @ index-Clo7RXIr.js:649
+i @ index-Clo7RXIr.js:41
+f @ index-Clo7RXIr.js:41
+start @ index-Clo7RXIr.js:41
+fetch @ index-Clo7RXIr.js:41
+rg @ index-Clo7RXIr.js:41
+onSubscribe @ index-Clo7RXIr.js:41
+subscribe @ index-Clo7RXIr.js:41
+(anonymous) @ index-Clo7RXIr.js:41
+iW @ index-Clo7RXIr.js:39
+SS @ index-Clo7RXIr.js:41
+Jh @ index-Clo7RXIr.js:41
+BM @ index-Clo7RXIr.js:41
+iu @ index-Clo7RXIr.js:39
+rhe @ index-Clo7RXIr.js:41
+ku @ index-Clo7RXIr.js:41
+$W @ index-Clo7RXIr.js:41
+w @ index-Clo7RXIr.js:26
+A @ index-Clo7RXIr.js:26
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Configured flights: 50 of 76
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Elite', gender: undefined, ageGroup: 'U19'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Premier', gender: undefined, ageGroup: 'U19'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Classic', gender: undefined, ageGroup: 'U19'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Elite', gender: undefined, ageGroup: 'U19'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Elite', gender: undefined, ageGroup: 'U17'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Premier', gender: undefined, ageGroup: 'U17'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Classic', gender: undefined, ageGroup: 'U17'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Elite', gender: undefined, ageGroup: 'U17'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Elite', gender: undefined, ageGroup: 'U16'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Premier', gender: undefined, ageGroup: 'U16'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Elite', gender: undefined, ageGroup: 'U16'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Premier', gender: undefined, ageGroup: 'U16'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Classic', gender: undefined, ageGroup: 'U15'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Elite', gender: undefined, ageGroup: 'U15'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Premier', gender: undefined, ageGroup: 'U15'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Classic', gender: undefined, ageGroup: 'U15'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Elite', gender: undefined, ageGroup: 'U15'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Premier', gender: undefined, ageGroup: 'U15'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Classic', gender: undefined, ageGroup: 'U14'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Elite', gender: undefined, ageGroup: 'U14'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Premier', gender: undefined, ageGroup: 'U14'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Classic', gender: undefined, ageGroup: 'U14'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Elite', gender: undefined, ageGroup: 'U14'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Premier', gender: undefined, ageGroup: 'U14'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Classic', gender: undefined, ageGroup: 'U13'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Elite', gender: undefined, ageGroup: 'U13'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Premier', gender: undefined, ageGroup: 'U13'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Classic', gender: undefined, ageGroup: 'U13'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Premier', gender: undefined, ageGroup: 'U13'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Classic', gender: undefined, ageGroup: 'U12'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Elite', gender: undefined, ageGroup: 'U12'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Premier', gender: undefined, ageGroup: 'U12'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Classic', gender: undefined, ageGroup: 'U12'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Elite', gender: undefined, ageGroup: 'U12'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Premier', gender: undefined, ageGroup: 'U12'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Classic', gender: undefined, ageGroup: 'U11'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Elite', gender: undefined, ageGroup: 'U11'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Premier', gender: undefined, ageGroup: 'U11'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Classic', gender: undefined, ageGroup: 'U11'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Elite', gender: undefined, ageGroup: 'U11'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Premier', gender: undefined, ageGroup: 'U11'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Classic', gender: undefined, ageGroup: 'U10'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Elite', gender: undefined, ageGroup: 'U10'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Premier', gender: undefined, ageGroup: 'U10'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Classic', gender: undefined, ageGroup: 'U10'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Classic', gender: undefined, ageGroup: 'U9'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Premier', gender: undefined, ageGroup: 'U9'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Premier', gender: undefined, ageGroup: 'U9'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Classic', gender: undefined, ageGroup: 'U8'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Classic', gender: undefined, ageGroup: 'U7'}
+util.js:33 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+$Aa @ util.js:33
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1384
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1384
+setTimeout
+Tda @ js?libraries=places&v=beta&callback=Function.prototype:1384
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641Understand this warning
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+Promise.then
+S @ out-4.5.44.js:1
+y @ out-4.5.44.js:1
+E @ out-4.5.44.js:1
+e.onload @ inner.html:1
+script
+(anonymous) @ inner.html:1
+(anonymous) @ inner.html:1
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Configured flights: 50 of 76
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Elite', gender: undefined, ageGroup: 'U19'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Premier', gender: undefined, ageGroup: 'U19'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Classic', gender: undefined, ageGroup: 'U19'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Elite', gender: undefined, ageGroup: 'U19'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Elite', gender: undefined, ageGroup: 'U17'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Premier', gender: undefined, ageGroup: 'U17'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Classic', gender: undefined, ageGroup: 'U17'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Elite', gender: undefined, ageGroup: 'U17'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Elite', gender: undefined, ageGroup: 'U16'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Premier', gender: undefined, ageGroup: 'U16'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Elite', gender: undefined, ageGroup: 'U16'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Premier', gender: undefined, ageGroup: 'U16'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Classic', gender: undefined, ageGroup: 'U15'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Elite', gender: undefined, ageGroup: 'U15'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Premier', gender: undefined, ageGroup: 'U15'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Classic', gender: undefined, ageGroup: 'U15'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Elite', gender: undefined, ageGroup: 'U15'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Premier', gender: undefined, ageGroup: 'U15'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Classic', gender: undefined, ageGroup: 'U14'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Elite', gender: undefined, ageGroup: 'U14'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Premier', gender: undefined, ageGroup: 'U14'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Classic', gender: undefined, ageGroup: 'U14'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Elite', gender: undefined, ageGroup: 'U14'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Premier', gender: undefined, ageGroup: 'U14'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Classic', gender: undefined, ageGroup: 'U13'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Elite', gender: undefined, ageGroup: 'U13'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Premier', gender: undefined, ageGroup: 'U13'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Classic', gender: undefined, ageGroup: 'U13'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Premier', gender: undefined, ageGroup: 'U13'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Classic', gender: undefined, ageGroup: 'U12'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Elite', gender: undefined, ageGroup: 'U12'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Premier', gender: undefined, ageGroup: 'U12'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Classic', gender: undefined, ageGroup: 'U12'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Elite', gender: undefined, ageGroup: 'U12'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Premier', gender: undefined, ageGroup: 'U12'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Classic', gender: undefined, ageGroup: 'U11'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Elite', gender: undefined, ageGroup: 'U11'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Premier', gender: undefined, ageGroup: 'U11'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Classic', gender: undefined, ageGroup: 'U11'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Elite', gender: undefined, ageGroup: 'U11'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Premier', gender: undefined, ageGroup: 'U11'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Classic', gender: undefined, ageGroup: 'U10'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Elite', gender: undefined, ageGroup: 'U10'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Premier', gender: undefined, ageGroup: 'U10'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Classic', gender: undefined, ageGroup: 'U10'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Classic', gender: undefined, ageGroup: 'U9'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Premier', gender: undefined, ageGroup: 'U9'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Premier', gender: undefined, ageGroup: 'U9'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Classic', gender: undefined, ageGroup: 'U8'}
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight gender debug: {flightName: 'Nike Classic', gender: undefined, ageGroup: 'U7'}
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+h @ out-4.5.44.js:1
+e @ inner.html:1
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Configured flights: 50 of 76
+master-schedule:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this error
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Configured flights: 50 of 76
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentControlCenter-Cvufhjk-.js:1 Configured flights: 50 of 76

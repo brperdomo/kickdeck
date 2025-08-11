@@ -25,6 +25,7 @@ router.get('/events/:eventId/flight-configurations', isAdmin, async (req, res) =
     
     // Use the EXACT SAME data source as MasterSchedulePage
     // Query event_brackets (flights) with their game formats from the game_formats table
+    console.log(`[FLIGHT CONFIG] About to query for eventId: ${eventId}`);
     const flightsWithFormats = await db
       .select({
         flightId: eventBrackets.id,
@@ -47,9 +48,16 @@ router.get('/events/:eventId/flight-configurations', isAdmin, async (req, res) =
       .from(eventBrackets)
       .innerJoin(eventAgeGroups, eq(eventBrackets.ageGroupId, eventAgeGroups.id))
       .leftJoin(gameFormats, eq(gameFormats.bracketId, eventBrackets.id))
-      .where(eq(eventBrackets.eventId, eventId));
+      .where(eq(eventBrackets.eventId, parseInt(eventId)));
 
     console.log(`Found ${flightsWithFormats.length} brackets/flights for event ${eventId}`);
+    console.log(`[FLIGHT CONFIG DEBUG] First few raw flights:`, flightsWithFormats.slice(0, 3).map(f => ({ 
+      flightName: f.flightName, 
+      gender: f.gender, 
+      ageGroup: f.ageGroup,
+      ageGroupId: f.ageGroupId,
+      rawObject: JSON.stringify(f).substring(0, 200)
+    })));
 
     // Get team counts for each bracket
     const teamCounts = await db
@@ -119,7 +127,7 @@ router.get('/events/:eventId/flight-configurations', isAdmin, async (req, res) =
       const hasScheduledGames = (gameCountData?.gameCount || 0) > 0;
       const status = hasScheduledGames ? 'scheduled' : (isCompletelyConfigured ? 'ready' : 'needs_setup');
 
-      console.log(`Processing flight ${flight.flightName}: ${teamCountData?.teamCount || 0} teams, configured = ${isCompletelyConfigured}`);
+      console.log(`Processing flight ${flight.flightName}: ${teamCountData?.teamCount || 0} teams, configured = ${isCompletelyConfigured}, gender = "${flight.gender}"`);
 
       // Get the proper game format data from event_game_formats table
       const halfLength = Math.floor((flight.gameLength || 90) / 2);
