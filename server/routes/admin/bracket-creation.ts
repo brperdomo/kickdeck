@@ -158,14 +158,19 @@ router.get('/:eventId/bracket-creation', async (req, res) => {
           estimatedGames = Math.max(0, assignedTeams.length - 1);
         }
 
-        // Get existing brackets for Group of 6 and Group of 8 configurations
+        // Get existing brackets for multi-bracket configurations
         // For these formats, we need to check if teams are properly assigned to pools/brackets
         const brackets: any[] = [];
         
         // Always include unassigned teams list for bracket management
         let unassignedTeams: any[] = [];
         
-        if (assignedTeams.length > 0 && (templateName === 'group_of_6' || templateName === 'group_of_8')) {
+        // Create brackets for any flight with teams that can benefit from bracket organization
+        const needsBrackets = assignedTeams.length >= 4; // All flights with 4+ teams should have brackets available
+        
+        if (needsBrackets) {
+          console.log(`[BRACKET CREATION DEBUG] Creating brackets for flight ${flight.flightId} (${flight.name}) - templateName: ${templateName}, teamCount: ${assignedTeams.length}`);
+          
           // Create virtual brackets based on groupId assignments
           const teamsWithGroups = assignedTeams.filter(t => t.groupId);
           const teamsWithoutGroups = assignedTeams.filter(t => !t.groupId);
@@ -198,15 +203,35 @@ router.get('/:eventId/bracket-creation', async (req, res) => {
           console.log(`[BRACKET DISPLAY DEBUG] Flight ${flight.flightId} - Teams by bracket:`, teamsByBracket);
           
           // Always create both brackets (even if empty) for assignment interface
+          // Determine bracket names based on format
+          let bracketAName = 'Bracket A';
+          let bracketBName = 'Bracket B';
+          
+          if (templateName === 'group_of_6') {
+            bracketAName = 'Pool A';
+            bracketBName = 'Pool B';
+          } else if (templateName === 'group_of_8') {
+            bracketAName = 'Bracket A';
+            bracketBName = 'Bracket B';
+          } else if (assignedTeams.length === 6) {
+            // Default 6-team setup to pools for crossplay
+            bracketAName = 'Pool A';
+            bracketBName = 'Pool B';
+          } else if (assignedTeams.length === 4) {
+            // Default 4-team setup
+            bracketAName = 'Pool A';
+            bracketBName = 'Pool B';
+          }
+          
           brackets.push({
             id: 1,
-            name: templateName === 'group_of_6' ? 'Pool A' : 'Bracket A',
+            name: bracketAName,
             teamCount: 0,
             teams: []
           });
           brackets.push({
             id: 2, 
-            name: templateName === 'group_of_6' ? 'Pool B' : 'Bracket B',
+            name: bracketBName,
             teamCount: 0,
             teams: []
           });
@@ -230,6 +255,10 @@ router.get('/:eventId/bracket-creation', async (req, res) => {
               console.log(`[BRACKET DISPLAY DEBUG] Populated bracket ${index + 1} (${brackets[index].name}) with ${bracketTeams.length} teams`);
             }
           });
+          
+          console.log(`[BRACKET CREATION SUCCESS] Created ${brackets.length} brackets for flight ${flight.flightId} (${flight.name})`);
+        } else {
+          console.log(`[BRACKET CREATION SKIP] Skipping bracket creation for flight ${flight.flightId} (${flight.name}) - needsBrackets: ${needsBrackets}, templateName: ${templateName}, teamCount: ${assignedTeams.length}, isConfigured: ${isConfigured}`);
         }
 
         return {
