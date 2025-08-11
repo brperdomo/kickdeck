@@ -686,29 +686,34 @@ export function UnifiedBracketManager({ eventId }: UnifiedBracketManagerProps) {
 
                     {/* Brackets with Assigned Teams */}
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                      {selectedFlightData.brackets.map((bracket: TournamentBracket) => (
-                        <Droppable key={bracket.id} droppableId={bracket.name === 'Pool A' ? 'pool-a' : 'pool-b'}>
-                          {(provided, snapshot) => (
-                            <Card 
-                              {...provided.droppableProps}
-                              ref={provided.innerRef}
-                              className={`border-slate-600 transition-colors ${
-                                snapshot.isDraggingOver 
-                                  ? bracket.name === 'Pool A' 
-                                    ? 'bg-green-900/20 border-green-400' 
-                                    : 'bg-purple-900/20 border-purple-400'
-                                  : 'bg-slate-700'
-                              }`}
-                            >
-                              <CardHeader className="pb-3">
-                                <CardTitle className="text-sm text-white flex items-center justify-between">
-                                  <span className="flex items-center gap-2">
-                                    {bracket.name === 'Pool A' ? 
-                                      <div className="w-3 h-3 bg-green-500 rounded-full"></div> : 
-                                      <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
-                                    }
-                                    {bracket.name}
-                                  </span>
+                      {selectedFlightData.brackets.map((bracket: TournamentBracket, bracketIndex: number) => {
+                        // Map bracket to correct droppable ID based on index or name
+                        const isPoolA = bracket.name.includes('Pool A') || bracket.name.includes('Bracket A') || bracketIndex === 0;
+                        const droppableId = isPoolA ? 'pool-a' : 'pool-b';
+                        
+                        return (
+                          <Droppable key={bracket.id} droppableId={droppableId}>
+                            {(provided, snapshot) => (
+                              <Card 
+                                {...provided.droppableProps}
+                                ref={provided.innerRef}
+                                className={`border-slate-600 transition-colors ${
+                                  snapshot.isDraggingOver 
+                                    ? isPoolA 
+                                      ? 'bg-green-900/20 border-green-400' 
+                                      : 'bg-purple-900/20 border-purple-400'
+                                    : 'bg-slate-700'
+                                }`}
+                              >
+                                <CardHeader className="pb-3">
+                                  <CardTitle className="text-sm text-white flex items-center justify-between">
+                                    <span className="flex items-center gap-2">
+                                      {isPoolA ? 
+                                        <div className="w-3 h-3 bg-green-500 rounded-full"></div> : 
+                                        <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
+                                      }
+                                      {bracket.name}
+                                    </span>
                                   <Badge variant="outline" className="text-xs">
                                     {bracket.teams.length} teams
                                   </Badge>
@@ -750,7 +755,8 @@ export function UnifiedBracketManager({ eventId }: UnifiedBracketManagerProps) {
                             </Card>
                           )}
                         </Droppable>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
                 </DragDropContext>
