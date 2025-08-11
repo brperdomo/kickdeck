@@ -192,9 +192,15 @@ export class TournamentScheduler {
     console.log(`🎯 Generating games for ${teams.length} teams in ${bracket.format} format`);
     console.log(`🔍 BRACKET DEBUG: bracketId=${bracket.bracketId}, tournamentFormat=${bracket.tournamentFormat}, format=${bracket.format}, templateName=${bracket.templateName}`);
     
-    // Use the bracket's configured tournament format - NO ROUND ROBIN FALLBACK FOR 6-TEAM BRACKETS
-    const format = bracket.tournamentFormat || bracket.format || (teams.length === 6 ? 'group_of_6' : 'round_robin');
+    // Use the bracket's configured tournament format - WITH TEMPLATE FALLBACK ONLY FOR VALID FORMATS
+    const format = bracket.tournamentFormat || bracket.format || bracket.templateName;
     console.log(`🎯 FINAL FORMAT DECISION: '${format}' for ${teams.length} teams`);
+    console.log(`🔍 FORMAT SOURCE: tournamentFormat=${bracket.tournamentFormat}, format=${bracket.format}, templateName=${bracket.templateName}`);
+    
+    if (!format) {
+      console.error(`❌ NO FORMAT CONFIGURED: Bracket must have explicit format configured, got: tournamentFormat=${bracket.tournamentFormat}, format=${bracket.format}, templateName=${bracket.templateName}`);
+      throw new Error(`No format configured for bracket ${bracket.bracketName}. Format must be explicitly set in Tournament Control Center.`);
+    }
     
     switch (format) {
       case 'round_robin':
@@ -261,19 +267,16 @@ export class TournamentScheduler {
         break;
         
       default:
-        // Handle team-count specific formats
+        // Handle team-count specific formats - NO GROUP OF 8 FALLBACKS
         if (teams.length === 6) {
           console.log(`🚨 CRITICAL: Unknown format '${bracket.format}' for 6-team bracket - ENFORCING crossplay (ONLY format for 6 teams)`);
           games.push(...this.generate6TeamCrossover(bracket, teams, gameCounter));
-        } else if (teams.length === 8) {
-          console.log(`🚨 CRITICAL: Unknown format '${bracket.format}' for 8-team bracket - ENFORCING dual bracket (two separate 4-team brackets)`);
-          games.push(...this.generate8TeamDualBracket(bracket, teams, gameCounter));
         } else if (teams.length === 4) {
           console.log(`🚨 CRITICAL: Unknown format '${bracket.format}' for 4-team bracket - ENFORCING single bracket round-robin`);
           games.push(...this.generateRoundRobinGames(bracket, teams, gameCounter));
         } else {
-          console.log(`⚠️  Unknown bracket format: ${bracket.format}, defaulting to round robin`);
-          games.push(...this.generateRoundRobinGames(bracket, teams, gameCounter));
+          console.error(`❌ UNSUPPORTED FORMAT: No fallback for format '${bracket.format}' with ${teams.length} teams. Format must be explicitly configured.`);
+          throw new Error(`Unsupported format '${bracket.format}' for ${teams.length} teams. No fallback available.`);
         }
     }
     
@@ -329,38 +332,9 @@ export class TournamentScheduler {
         return this.generate8TeamDualBracket(bracket, teams, startingGameNumber);
       
       default:
-        // Fallback based on team count for legacy support
-        if (teamCount === 4) {
-          console.log(`🎯 4-team bracket detected - using 4 Team Single Bracket logic (6 pool + 1 championship)`);
-          // Use the corrected logic for 4-team brackets
-          const games = [];
-          let gameCounter = startingGameNumber;
-          
-          // Generate 6 pool games (round-robin)
-          const poolPlayGames = this.generateRoundRobinGames(bracket, teams, gameCounter);
-          games.push(...poolPlayGames);
-          gameCounter += poolPlayGames.length;
-          
-          // Add championship final with proper winner descriptions
-          const championshipGame = this.generateChampionshipGame(bracket, gameCounter);
-          games.push(championshipGame);
-          
-          console.log(`🏆 4 Team Single Bracket: Generated ${poolPlayGames.length} pool + 1 championship = ${games.length} total games`);
-          return games;
-        } else if (teamCount === 6) {
-          return this.generate6TeamCrossover(bracket, teams, startingGameNumber);
-        } else if (teamCount === 8 || teamCount === 9) {
-          return this.generate8TeamDualBracket(bracket, teams, startingGameNumber);
-        } else {
-          // CRITICAL: No round-robin fallback for 6-team brackets
-          if (teamCount === 6) {
-            console.log(`🚨 CRITICAL: 6-team bracket detected - ENFORCING crossplay format instead of round-robin`);
-            return this.generate6TeamCrossover(bracket, teams, startingGameNumber);
-          } else {
-            console.log(`⚠️  No specific format for ${teamCount} teams, using standard round robin`);
-            return this.generateRoundRobinGames(bracket, teams, startingGameNumber);
-          }
-        }
+        // NO FALLBACKS - Format must be explicitly configured
+        console.error(`❌ UNSUPPORTED TEMPLATE: No handler for template '${templateName}' with ${teamCount} teams. Template must be explicitly configured.`);
+        throw new Error(`Unsupported template '${templateName}' for ${teamCount} teams. No fallback available.`);
     }
   }
 
