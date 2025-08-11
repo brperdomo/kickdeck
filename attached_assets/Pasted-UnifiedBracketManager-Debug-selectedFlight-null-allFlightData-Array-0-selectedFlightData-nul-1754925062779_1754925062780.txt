@@ -1,0 +1,96 @@
+UnifiedBracketManager Debug: {selectedFlight: null, allFlightData: Array(0), selectedFlightData: null, apiResponse: undefined}
+MasterSchedulePage-Cob6ZNLo.js:247 UnifiedBracketManager Debug: {selectedFlight: null, allFlightData: Array(76), selectedFlightData: null, apiResponse: {…}}
+MasterSchedulePage-Cob6ZNLo.js:247 UnifiedBracketManager Debug: {selectedFlight: 604, allFlightData: Array(76), selectedFlightData: {…}, apiResponse: {…}}
+MasterSchedulePage-Cob6ZNLo.js:247 UnifiedBracketManager Debug: {selectedFlight: 604, allFlightData: Array(76), selectedFlightData: {…}, apiResponse: {…}}
+MasterSchedulePage-Cob6ZNLo.js:247 UnifiedBracketManager Debug: {selectedFlight: 604, allFlightData: Array(76), selectedFlightData: {…}, apiResponse: {…}}
+MasterSchedulePage-Cob6ZNLo.js:247 UnifiedBracketManager Debug: {selectedFlight: 604, allFlightData: Array(76), selectedFlightData: {…}, apiResponse: {…}}
+MasterSchedulePage-Cob6ZNLo.js:247  POST https://app.matchpro.ai/api/admin/events/1844329078/bracket-creation/assign-teams 500 (Internal Server Error)
+mutationFn @ MasterSchedulePage-Cob6ZNLo.js:247
+fn @ index-DX4VdOdg.js:41
+f @ index-DX4VdOdg.js:41
+start @ index-DX4VdOdg.js:41
+execute @ index-DX4VdOdg.js:41
+await in execute
+mutate @ index-DX4VdOdg.js:41
+(anonymous) @ index-DX4VdOdg.js:41
+B @ MasterSchedulePage-Cob6ZNLo.js:247
+Nue @ index-DX4VdOdg.js:38
+Cue @ index-DX4VdOdg.js:38
+Eue @ index-DX4VdOdg.js:38
+dM @ index-DX4VdOdg.js:38
+q7 @ index-DX4VdOdg.js:38
+(anonymous) @ index-DX4VdOdg.js:38
+yO @ index-DX4VdOdg.js:41
+p7 @ index-DX4VdOdg.js:38
+N2 @ index-DX4VdOdg.js:38
+H4 @ index-DX4VdOdg.js:38
+Uue @ index-DX4VdOdg.js:38Understand this error
+MasterSchedulePage-Cob6ZNLo.js:247 UnifiedBracketManager Debug: {selectedFlight: 604, allFlightData: Array(76), selectedFlightData: {…}, apiResponse: {…}}
+MasterSchedulePage-Cob6ZNLo.js:247 Fetch failed loading: POST "https://app.matchpro.ai/api/admin/events/1844329078/bracket-creation/assign-teams".
+mutationFn @ MasterSchedulePage-Cob6ZNLo.js:247
+fn @ index-DX4VdOdg.js:41
+f @ index-DX4VdOdg.js:41
+start @ index-DX4VdOdg.js:41
+execute @ index-DX4VdOdg.js:41
+await in execute
+mutate @ index-DX4VdOdg.js:41
+(anonymous) @ index-DX4VdOdg.js:41
+B @ MasterSchedulePage-Cob6ZNLo.js:247
+Nue @ index-DX4VdOdg.js:38
+Cue @ index-DX4VdOdg.js:38
+Eue @ index-DX4VdOdg.js:38
+dM @ index-DX4VdOdg.js:38
+q7 @ index-DX4VdOdg.js:38
+(anonymous) @ index-DX4VdOdg.js:38
+yO @ index-DX4VdOdg.js:41
+p7 @ index-DX4VdOdg.js:38
+N2 @ index-DX4VdOdg.js:38
+H4 @ index-DX4VdOdg.js:38
+Uue @ index-DX4VdOdg.js:38
+MasterSchedulePage-Cob6ZNLo.js:247 UnifiedBracketManager Debug: {selectedFlight: 604, allFlightData: Array(76), selectedFlightData: {…}, apiResponse: {…}}
+MasterSchedulePage-Cob6ZNLo.js:247 UnifiedBracketManager Debug: {selectedFlight: 604, allFlightData: Array(76), selectedFlightData: {…}, apiResponse: {…}}
+MasterSchedulePage-Cob6ZNLo.js:247  POST https://app.matchpro.ai/api/admin/events/1844329078/bracket-creation/assign-teams 500 (Internal Server Error)
+mutationFn @ MasterSchedulePage-Cob6ZNLo.js:247
+fn @ index-DX4VdOdg.js:41
+f @ index-DX4VdOdg.js:41
+start @ index-DX4VdOdg.js:41
+execute @ index-DX4VdOdg.js:41
+await in execute
+mutate @ index-DX4VdOdg.js:41
+(anonymous) @ index-DX4VdOdg.js:41
+B @ MasterSchedulePage-Cob6ZNLo.js:247
+Nue @ index-DX4VdOdg.js:38
+Cue @ index-DX4VdOdg.js:38
+Eue @ index-DX4VdOdg.js:38
+dM @ index-DX4VdOdg.js:38
+q7 @ index-DX4VdOdg.js:38
+(anonymous) @ index-DX4VdOdg.js:38
+yO @ index-DX4VdOdg.js:41
+p7 @ index-DX4VdOdg.js:38
+N2 @ index-DX4VdOdg.js:38
+H4 @ index-DX4VdOdg.js:38
+Uue @ index-DX4VdOdg.js:38Understand this error
+MasterSchedulePage-Cob6ZNLo.js:247 UnifiedBracketManager Debug: {selectedFlight: 604, allFlightData: Array(76), selectedFlightData: {…}, apiResponse: {…}}
+MasterSchedulePage-Cob6ZNLo.js:247 Fetch failed loading: POST "https://app.matchpro.ai/api/admin/events/1844329078/bracket-creation/assign-teams".
+mutationFn @ MasterSchedulePage-Cob6ZNLo.js:247
+fn @ index-DX4VdOdg.js:41
+f @ index-DX4VdOdg.js:41
+start @ index-DX4VdOdg.js:41
+execute @ index-DX4VdOdg.js:41
+await in execute
+mutate @ index-DX4VdOdg.js:41
+(anonymous) @ index-DX4VdOdg.js:41
+B @ MasterSchedulePage-Cob6ZNLo.js:247
+Nue @ index-DX4VdOdg.js:38
+Cue @ index-DX4VdOdg.js:38
+Eue @ index-DX4VdOdg.js:38
+dM @ index-DX4VdOdg.js:38
+q7 @ index-DX4VdOdg.js:38
+(anonymous) @ index-DX4VdOdg.js:38
+yO @ index-DX4VdOdg.js:41
+p7 @ index-DX4VdOdg.js:38
+N2 @ index-DX4VdOdg.js:38
+H4 @ index-DX4VdOdg.js:38
+Uue @ index-DX4VdOdg.js:38
+MasterSchedulePage-Cob6ZNLo.js:247 UnifiedBracketManager Debug: {selectedFlight: 604, allFlightData: Array(76), selectedFlightData: {…}, apiResponse: {…}}
+MasterSchedulePage-Cob6ZNLo.js:247 UnifiedBracketManager Debug: {selectedFlight: 604, allFlightData: Array(76), selectedFlightData: {…}, apiResponse: {…}}

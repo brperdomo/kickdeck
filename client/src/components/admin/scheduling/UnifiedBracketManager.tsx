@@ -208,12 +208,12 @@ export function UnifiedBracketManager({ eventId }: UnifiedBracketManagerProps) {
 
   // Assign teams to brackets mutation
   const assignTeamsMutation = useMutation({
-    mutationFn: async (assignments: { [teamId: number]: number }) => {
+    mutationFn: async ({ assignments, flightId }: { assignments: { [teamId: number]: number }, flightId: number }) => {
       const response = await fetch(`/api/admin/events/${eventId}/bracket-creation/assign-teams`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ assignments })
+        body: JSON.stringify({ assignments, flightId })
       });
       if (!response.ok) throw new Error('Failed to assign teams to brackets');
       return response.json();
@@ -283,7 +283,7 @@ export function UnifiedBracketManager({ eventId }: UnifiedBracketManagerProps) {
       return;
     }
     
-    assignTeamsMutation.mutate(teamAssignments);
+    assignTeamsMutation.mutate({ assignments: teamAssignments, flightId: selectedFlight! });
   };
 
   const getBracketTypeDescription = (bracketType: string) => {

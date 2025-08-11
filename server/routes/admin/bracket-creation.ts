@@ -5,7 +5,8 @@ import {
   eventAgeGroups, 
   eventBrackets, 
   teams,
-  gameFormats
+  gameFormats,
+  tournamentGroups
 } from '@db/schema';
 import { eq, and, isNull } from 'drizzle-orm';
 import { isAdmin } from '../../middleware/auth.js';
@@ -305,32 +306,124 @@ router.get('/:eventId/bracket-creation', async (req, res) => {
 router.post('/:eventId/bracket-creation/assign-teams', async (req, res) => {
   try {
     const eventId = req.params.eventId;
-    const { assignments } = req.body; // { teamId: bracketId, ... }
+    const { assignments, flightId } = req.body; // { teamId: bracketId, ... }, flightId
 
     console.log(`[Bracket Creation] POST /${eventId}/bracket-creation/assign-teams`);
     console.log('[Team Assignment] Assignments received:', assignments);
+    console.log('[Team Assignment] Flight ID:', flightId);
 
     if (!assignments || Object.keys(assignments).length === 0) {
       return res.status(400).json({ error: 'No team assignments provided' });
     }
 
+    // First, we need to ensure tournament groups exist for the bracket assignments
+    // Get flight information to determine age group
+    const flight = await db
+      .select({
+        ageGroupId: eventBrackets.ageGroupId,
+        name: eventBrackets.name
+      })
+      .from(eventBrackets)
+      .where(eq(eventBrackets.id, flightId))
+      .limit(1);
+
+    if (flight.length === 0) {
+      return res.status(404).json({ error: 'Flight not found' });
+    }
+
+    const { ageGroupId, name: flightName } = flight[0];
+
+    // Create or find Pool A and Pool B tournament groups for this age group
+    const poolAName = `${flightName} - Pool A`;
+    const poolBName = `${flightName} - Pool B`;
+
+    // Check if groups already exist
+    let poolAGroup = await db
+      .select({ id: tournamentGroups.id })
+      .from(tournamentGroups)
+      .where(and(
+        eq(tournamentGroups.eventId, eventId),
+        eq(tournamentGroups.ageGroupId, ageGroupId),
+        eq(tournamentGroups.name, poolAName)
+      ))
+      .limit(1);
+
+    let poolBGroup = await db
+      .select({ id: tournamentGroups.id })
+      .from(tournamentGroups)
+      .where(and(
+        eq(tournamentGroups.eventId, eventId),
+        eq(tournamentGroups.ageGroupId, ageGroupId),
+        eq(tournamentGroups.name, poolBName)
+      ))
+      .limit(1);
+
+    // Create Pool A group if it doesn't exist
+    if (poolAGroup.length === 0) {
+      const newPoolAGroup = await db
+        .insert(tournamentGroups)
+        .values({
+          eventId: eventId,
+          ageGroupId: ageGroupId,
+          name: poolAName,
+          type: 'pool',
+          stage: 'group'
+        })
+        .returning({ id: tournamentGroups.id });
+      
+      poolAGroup = newPoolAGroup;
+      console.log('[Team Assignment] Created Pool A group:', newPoolAGroup[0].id);
+    }
+
+    // Create Pool B group if it doesn't exist
+    if (poolBGroup.length === 0) {
+      const newPoolBGroup = await db
+        .insert(tournamentGroups)
+        .values({
+          eventId: eventId,
+          ageGroupId: ageGroupId,
+          name: poolBName,
+          type: 'pool',
+          stage: 'group'
+        })
+        .returning({ id: tournamentGroups.id });
+      
+      poolBGroup = newPoolBGroup;
+      console.log('[Team Assignment] Created Pool B group:', newPoolBGroup[0].id);
+    }
+
+    // Map UI bracket IDs to actual tournament group IDs
+    const bracketMapping = {
+      1: poolAGroup[0].id, // Pool A
+      2: poolBGroup[0].id  // Pool B
+    };
+
     // Update each team's groupId based on assignments
-    for (const [teamIdStr, bracketId] of Object.entries(assignments)) {
+    for (const [teamIdStr, uiBracketId] of Object.entries(assignments)) {
       const teamId = parseInt(teamIdStr);
-      const groupId = bracketId === 0 ? null : bracketId; // 0 means unassign
+      const actualGroupId = uiBracketId === 0 ? null : bracketMapping[uiBracketId as keyof typeof bracketMapping];
+
+      if (uiBracketId !== 0 && !actualGroupId) {
+        console.error(`[Team Assignment] Invalid bracket ID: ${uiBracketId}`);
+        continue;
+      }
 
       await db
         .update(teams)
-        .set({ groupId: groupId })
+        .set({ groupId: actualGroupId })
         .where(eq(teams.id, teamId));
 
-      console.log(`[Team Assignment] Team ${teamId} assigned to bracket ${groupId}`);
+      console.log(`[Team Assignment] Team ${teamId} assigned to bracket ${actualGroupId} (UI bracket ${uiBracketId})`);
     }
 
     res.json({ 
       success: true, 
       message: `Updated assignments for ${Object.keys(assignments).length} teams`,
-      assignments: assignments
+      assignments: assignments,
+      createdGroups: {
+        poolA: poolAGroup[0].id,
+        poolB: poolBGroup[0].id
+      }
     });
 
   } catch (error) {
