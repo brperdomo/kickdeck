@@ -1954,6 +1954,45 @@ export function registerRoutes(app: Express): Server {
         });
       }
     });
+
+    // Add temporary direct route for fetching fields without authentication
+    app.get('/api/admin/events/:eventId/fields', async (req, res) => {
+      try {
+        const { db } = await import('@db');
+        const { fields, complexes } = await import('@db/schema');
+        const { eq } = await import('drizzle-orm');
+        
+        // Fetch all available fields
+        const allFields = await db
+          .select({
+            id: fields.id,
+            name: fields.name,
+            field_size: fields.fieldSize,
+            complex_id: fields.complexId,
+            complexName: complexes.name
+          })
+          .from(fields)
+          .leftJoin(complexes, eq(fields.complexId, complexes.id))
+          .orderBy(fields.name);
+        
+        res.json({
+          success: true,
+          fields: allFields.map(field => ({
+            id: field.id,
+            name: field.name,
+            fieldSize: field.field_size,
+            complexId: field.complex_id,
+            complexName: field.complexName
+          }))
+        });
+      } catch (error) {
+        console.error('Fields fetch error:', error);
+        res.status(500).json({ 
+          error: 'Failed to fetch fields',
+          details: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    });
     
     app.use('/api/admin/games', isAdmin, adminGamesRouter); // Game scheduling and management
     app.use('/api/admin/events', isAdmin, fieldsRouter); // Field assignment and management
