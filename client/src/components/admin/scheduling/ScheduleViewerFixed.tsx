@@ -1206,13 +1206,13 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Header Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
         <Card>
-          <CardContent className="p-4">
+          <CardContent className="p-3">
             <div className="flex items-center">
-              <Database className="h-8 w-8 text-blue-600 mr-3" />
+              <Database className="h-6 w-6 text-blue-600 mr-2" />
               <div>
                 <p className="text-sm font-medium text-gray-600">
                   {scheduleData.actualData.scheduleType || 'Database Games'}
@@ -1224,9 +1224,9 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
         </Card>
         
         <Card>
-          <CardContent className="p-4">
+          <CardContent className="p-3">
             <div className="flex items-center">
-              <Users className="h-8 w-8 text-green-600 mr-3" />
+              <Users className="h-6 w-6 text-green-600 mr-2" />
               <div>
                 <p className="text-sm font-medium text-gray-600">Teams</p>
                 <p className="text-2xl font-bold text-gray-900">{scheduleData.actualData.teamsInDatabase}</p>
@@ -1236,9 +1236,9 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
         </Card>
         
         <Card>
-          <CardContent className="p-4">
+          <CardContent className="p-3">
             <div className="flex items-center">
-              <Calendar className="h-8 w-8 text-purple-600 mr-3" />
+              <Calendar className="h-6 w-6 text-purple-600 mr-2" />
               <div>
                 <p className="text-sm font-medium text-gray-600">Age Groups</p>
                 <p className="text-2xl font-bold text-gray-900">{scheduleData.actualData.ageGroupsConfigured}</p>
@@ -1248,9 +1248,9 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
         </Card>
         
         <Card>
-          <CardContent className="p-4">
+          <CardContent className="p-3">
             <div className="flex items-center">
-              <MapPin className="h-8 w-8 text-orange-600 mr-3" />
+              <MapPin className="h-6 w-6 text-orange-600 mr-2" />
               <div>
                 <p className="text-sm font-medium text-gray-600">Fields</p>
                 <p className="text-2xl font-bold text-gray-900">{scheduleData.fields.length}</p>
@@ -1390,9 +1390,9 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
           </div>
         </CardHeader>
 
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-3">
           {/* Filters */}
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
             <div className="relative">
               <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
               <Input
@@ -1516,7 +1516,7 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-2 gap-3">
               {filteredGames.map((game) => {
                 const tooltipMessage = getUnassignedTooltip(game);
                 const hasUnassignedFields = game.time === 'TBD' || game.field === 'Unassigned' || game.field === 'TBD' || game.date === 'TBD';
@@ -1536,9 +1536,9 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                   }`}
                   title={tooltipMessage || undefined}
                 >
-                  <CardContent className="p-4">
+                  <CardContent className="p-3">
                     <div className="flex items-start justify-between">
-                      <div className="flex items-center space-x-3">
+                      <div className="flex items-center space-x-2">
                         <Checkbox
                           checked={isFillingSlotsMode ? 
                             selectedUnscheduledGames.includes(game.id) : 
@@ -1647,7 +1647,7 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                         ) : (
                           // Normal Game Display
                           <div className="space-y-1">
-                            <div className="font-medium text-gray-900 flex items-center gap-2">
+                            <div className="font-medium text-sm text-gray-900 flex items-center gap-2">
                               <div className="flex items-center gap-2">
                                 {replacingTeam?.gameId === game.id && replacingTeam?.position === 'home' ? (
                                   // Team replacement interface for home team
@@ -1957,7 +1957,7 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                               </div>
                             ) : (
                               // Normal Date/Time Display (clickable to edit)
-                              <div className="flex items-center space-x-4 text-sm text-gray-600">
+                              <div className="flex items-center space-x-3 text-xs text-gray-600">
                                 <span 
                                   className={`flex items-center cursor-pointer hover:bg-blue-100 px-1 rounded ${game.date === 'TBD' ? 'text-yellow-600 font-medium' : ''}`}
                                   onClick={() => setEditingDateTime({
