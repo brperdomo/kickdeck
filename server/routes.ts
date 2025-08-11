@@ -73,6 +73,7 @@ import scheduleCalendarRouter from "./routes/admin/schedule-calendar";
 import fieldManagementRouter from "./routes/admin/field-management";
 import fieldsRouter from "./routes/admin/fields";
 import enhancedConflictDetectionRouter from "./routes/admin/enhanced-conflict-detection";
+import fillEmptySlotsRouter from "./routes/admin/fill-empty-slots";
 import enhancedFieldManagementRouter from "./routes/admin/enhanced-field-management";
 import optimizeScheduleRouter from "./routes/admin/optimize-schedule";
 import multiFlightSchedulingRouter from "./routes/admin/multi-flight-scheduling";
@@ -1995,6 +1996,7 @@ export function registerRoutes(app: Express): Server {
     });
     
     app.use('/api/admin/games', isAdmin, adminGamesRouter); // Game scheduling and management
+    app.use('/api/admin/events', isAdmin, fillEmptySlotsRouter); // Fill empty slots functionality
     app.use('/api/admin/events', isAdmin, fieldsRouter); // Field assignment and management
     app.use('/api/admin', isAdmin, gameTeamsRouter); // Game team editing functionality
     app.use('/api/admin/field-management', isAdmin, fieldManagementRouter); // Real field availability service
