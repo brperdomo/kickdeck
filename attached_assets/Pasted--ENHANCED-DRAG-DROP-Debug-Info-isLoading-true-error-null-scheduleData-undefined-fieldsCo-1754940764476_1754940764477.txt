@@ -1,0 +1,232 @@
+🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: true, error: null, scheduleData: undefined, fieldsCount: 0, gamesCount: 0, …}
+index-w2AQmpbE.js:823 [EnhancedDragDropScheduler] Loaded 125 games for event 1844329078
+index-w2AQmpbE.js:823 [EnhancedDragDropScheduler] API returned 125 raw games before transformation
+index-w2AQmpbE.js:824 🎯 [FIELD DEBUG] All available fields: (21) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-w2AQmpbE.js:824 🎯 [FIELD DEBUG] Fields with games assigned: (21) [37, 36, 33, 25, 30, 22, 32, 31, 29, 21, 28, 20, 35, 24, 34, 26, 39, 27, 23, 38, 40]
+index-w2AQmpbE.js:824 🎯 [FIELD DEBUG] Field 20 (Galway Downs Field 1) has 8 games
+index-w2AQmpbE.js:824 🎯 [FIELD DEBUG] Field 21 (Galway Downs Field 2) has 7 games
+index-w2AQmpbE.js:824 🎯 [FIELD DEBUG] Field 22 (Galway Downs Field 3) has 7 games
+index-w2AQmpbE.js:824 🎯 [FIELD DEBUG] Field 23 (Galway Downs Field 4) has 7 games
+index-w2AQmpbE.js:824 🎯 [FIELD DEBUG] Field 24 (Galway Downs Field 5) has 7 games
+index-w2AQmpbE.js:824 🎯 [FIELD DEBUG] Field 25 (Galway Downs Field 6) has 7 games
+index-w2AQmpbE.js:824 🎯 [FIELD DEBUG] Field 26 (Galway Downs Field 7) has 7 games
+index-w2AQmpbE.js:824 🎯 [FIELD DEBUG] Field 27 (Galway Downs Field 8) has 7 games
+index-w2AQmpbE.js:824 🎯 [FIELD DEBUG] Field 28 (Galway Downs Field 9) has 7 games
+index-w2AQmpbE.js:824 🎯 [FIELD DEBUG] Field 29 (Galway Downs Field 10) has 7 games
+index-w2AQmpbE.js:824 🎯 [FIELD DEBUG] Field 30 (Galway Downs Field 11) has 5 games
+index-w2AQmpbE.js:824 🎯 [FIELD DEBUG] Field 31 (Galway Downs Field 12) has 6 games
+index-w2AQmpbE.js:824 🎯 [FIELD DEBUG] Field 32 (Galway Downs Field 13) has 7 games
+index-w2AQmpbE.js:824 🎯 [FIELD DEBUG] Field 33 (Galway Downs Field 14) has 6 games
+index-w2AQmpbE.js:824 🎯 [FIELD DEBUG] Field 34 (Galway Downs Field 15) has 5 games
+index-w2AQmpbE.js:824 🎯 [FIELD DEBUG] Field 35 (Galway Downs Field 20) has 6 games
+index-w2AQmpbE.js:824 🎯 [FIELD DEBUG] Field 36 (Birdsall Field 2) has 8 games
+index-w2AQmpbE.js:824 🎯 [FIELD DEBUG] Field 37 (Birdsall Field 3) has 4 games
+index-w2AQmpbE.js:824 🎯 [FIELD DEBUG] Field 38 (Birdsall Field 4) has 2 games
+index-w2AQmpbE.js:824 🎯 [FIELD DEBUG] Field 39 (Sommersbend 1) has 3 games
+index-w2AQmpbE.js:824 🎯 [FIELD DEBUG] Field 40 (Sommersbend 2) has 2 games
+index-w2AQmpbE.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 21, gamesCount: 125, …}
+index-w2AQmpbE.js:823 Fetch finished loading: GET "https://app.matchpro.ai/api/admin/events/1844329078/schedule-calendar".
+queryFn @ index-w2AQmpbE.js:823
+i @ index-w2AQmpbE.js:41
+f @ index-w2AQmpbE.js:41
+start @ index-w2AQmpbE.js:41
+fetch @ index-w2AQmpbE.js:41
+rg @ index-w2AQmpbE.js:41
+onSubscribe @ index-w2AQmpbE.js:41
+subscribe @ index-w2AQmpbE.js:41
+(anonymous) @ index-w2AQmpbE.js:41
+oW @ index-w2AQmpbE.js:39
+SS @ index-w2AQmpbE.js:41
+Jh @ index-w2AQmpbE.js:41
+she @ index-w2AQmpbE.js:41
+Eu @ index-w2AQmpbE.js:41
+BM @ index-w2AQmpbE.js:41
+au @ index-w2AQmpbE.js:39
+(anonymous) @ index-w2AQmpbE.js:41
+index-w2AQmpbE.js:823 🔍 [CONFLICT DETECTION] Starting enhanced overlap detection for 125 games
+index-w2AQmpbE.js:823 [REST PERIOD] Using age group logic: 120min for U17 Boys
+index-w2AQmpbE.js:823 [REST PERIOD] Using age group logic: 120min for U19 Boys
+4index-w2AQmpbE.js:823 [REST PERIOD] Using age group logic: 120min for U14 Girls
+2index-w2AQmpbE.js:823 [REST PERIOD] Using age group logic: 120min for U17 Boys
+3index-w2AQmpbE.js:823 [REST PERIOD] Using age group logic: 120min for U14 Boys
+index-w2AQmpbE.js:823 [REST PERIOD] Using age group logic: 120min for U19 Boys
+index-w2AQmpbE.js:823 [REST PERIOD] Using age group logic: 120min for U17 Boys
+2index-w2AQmpbE.js:823 [REST PERIOD] Using age group logic: 120min for U14 Girls
+index-w2AQmpbE.js:823 [REST PERIOD] Using age group logic: 120min for U14 Boys
+2index-w2AQmpbE.js:823 [REST PERIOD] Using age group logic: 120min for U14 Girls
+2index-w2AQmpbE.js:823 [REST PERIOD] Using age group logic: 120min for U14 Boys
+2index-w2AQmpbE.js:823 [REST PERIOD] Using age group logic: 120min for U15 Boys
+2index-w2AQmpbE.js:823 [REST PERIOD] Using age group logic: 120min for U14 Boys
+2index-w2AQmpbE.js:823 [REST PERIOD] Using age group logic: 120min for U17 Boys
+10index-w2AQmpbE.js:823 [REST PERIOD] Using age group logic: 120min for U15 Boys
+4index-w2AQmpbE.js:823 [REST PERIOD] Using age group logic: 120min for U15 Girls
+2index-w2AQmpbE.js:823 [REST PERIOD] Using age group logic: 120min for U19 Girls
+4index-w2AQmpbE.js:823 [REST PERIOD] Using age group logic: 120min for U16 Girls
+2index-w2AQmpbE.js:823 [REST PERIOD] Using age group logic: 120min for U17 Boys
+2index-w2AQmpbE.js:823 [REST PERIOD] Using age group logic: 120min for U19 Girls
+6index-w2AQmpbE.js:823 [REST PERIOD] Using age group logic: 120min for U16 Girls
+4index-w2AQmpbE.js:823 [REST PERIOD] Using age group logic: 120min for U17 Girls
+4index-w2AQmpbE.js:823 [REST PERIOD] Using age group logic: 120min for U19 Boys
+4index-w2AQmpbE.js:823 [REST PERIOD] Using age group logic: 120min for U19 Girls
+index-w2AQmpbE.js:823 🔍 [CONFLICT DETECTION] Starting legacy slot-based detection for 125 games
+index-w2AQmpbE.js:823 🔍 [CONFLICT DETECTION] Time slots: 48
+index-w2AQmpbE.js:823 🔍 [CONFLICT DETECTION] Sample games: (3) [{…}, {…}, {…}]
+index-w2AQmpbE.js:824 🎯 [FIELD DEBUG] All available fields: (21) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-w2AQmpbE.js:824 🎯 [FIELD DEBUG] Fields with games assigned: (21) [37, 36, 33, 25, 30, 22, 32, 31, 29, 21, 28, 20, 35, 24, 34, 26, 39, 27, 23, 38, 40]
+index-w2AQmpbE.js:824 🎯 [FIELD DEBUG] Field 20 (Galway Downs Field 1) has 8 games
+index-w2AQmpbE.js:824 🎯 [FIELD DEBUG] Field 21 (Galway Downs Field 2) has 7 games
+index-w2AQmpbE.js:824 🎯 [FIELD DEBUG] Field 22 (Galway Downs Field 3) has 7 games
+index-w2AQmpbE.js:824 🎯 [FIELD DEBUG] Field 23 (Galway Downs Field 4) has 7 games
+index-w2AQmpbE.js:824 🎯 [FIELD DEBUG] Field 24 (Galway Downs Field 5) has 7 games
+index-w2AQmpbE.js:824 🎯 [FIELD DEBUG] Field 25 (Galway Downs Field 6) has 7 games
+index-w2AQmpbE.js:824 🎯 [FIELD DEBUG] Field 26 (Galway Downs Field 7) has 7 games
+index-w2AQmpbE.js:824 🎯 [FIELD DEBUG] Field 27 (Galway Downs Field 8) has 7 games
+index-w2AQmpbE.js:824 🎯 [FIELD DEBUG] Field 28 (Galway Downs Field 9) has 7 games
+index-w2AQmpbE.js:824 🎯 [FIELD DEBUG] Field 29 (Galway Downs Field 10) has 7 games
+index-w2AQmpbE.js:824 🎯 [FIELD DEBUG] Field 30 (Galway Downs Field 11) has 5 games
+index-w2AQmpbE.js:824 🎯 [FIELD DEBUG] Field 31 (Galway Downs Field 12) has 6 games
+index-w2AQmpbE.js:824 🎯 [FIELD DEBUG] Field 32 (Galway Downs Field 13) has 7 games
+index-w2AQmpbE.js:824 🎯 [FIELD DEBUG] Field 33 (Galway Downs Field 14) has 6 games
+index-w2AQmpbE.js:824 🎯 [FIELD DEBUG] Field 34 (Galway Downs Field 15) has 5 games
+index-w2AQmpbE.js:824 🎯 [FIELD DEBUG] Field 35 (Galway Downs Field 20) has 6 games
+index-w2AQmpbE.js:824 🎯 [FIELD DEBUG] Field 36 (Birdsall Field 2) has 8 games
+index-w2AQmpbE.js:824 🎯 [FIELD DEBUG] Field 37 (Birdsall Field 3) has 4 games
+index-w2AQmpbE.js:824 🎯 [FIELD DEBUG] Field 38 (Birdsall Field 4) has 2 games
+index-w2AQmpbE.js:824 🎯 [FIELD DEBUG] Field 39 (Sommersbend 1) has 3 games
+index-w2AQmpbE.js:824 🎯 [FIELD DEBUG] Field 40 (Sommersbend 2) has 2 games
+index-w2AQmpbE.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 21, gamesCount: 125, …}
+index-w2AQmpbE.js:823 Fetch finished loading: GET "https://app.matchpro.ai/api/admin/events/1844329078/game-metadata".
+queryFn @ index-w2AQmpbE.js:823
+i @ index-w2AQmpbE.js:41
+f @ index-w2AQmpbE.js:41
+start @ index-w2AQmpbE.js:41
+fetch @ index-w2AQmpbE.js:41
+rg @ index-w2AQmpbE.js:41
+onSubscribe @ index-w2AQmpbE.js:41
+subscribe @ index-w2AQmpbE.js:41
+(anonymous) @ index-w2AQmpbE.js:41
+oW @ index-w2AQmpbE.js:39
+SS @ index-w2AQmpbE.js:41
+Jh @ index-w2AQmpbE.js:41
+she @ index-w2AQmpbE.js:41
+Eu @ index-w2AQmpbE.js:41
+BM @ index-w2AQmpbE.js:41
+au @ index-w2AQmpbE.js:39
+(anonymous) @ index-w2AQmpbE.js:41
+setTimeout
+Nhe @ index-w2AQmpbE.js:41
+o @ index-w2AQmpbE.js:41
+batch @ index-w2AQmpbE.js:41
+sc @ index-w2AQmpbE.js:41
+setData @ index-w2AQmpbE.js:41
+onSuccess @ index-w2AQmpbE.js:41
+m @ index-w2AQmpbE.js:41
+Promise.then
+f @ index-w2AQmpbE.js:41
+start @ index-w2AQmpbE.js:41
+fetch @ index-w2AQmpbE.js:41
+rg @ index-w2AQmpbE.js:41
+onSubscribe @ index-w2AQmpbE.js:41
+subscribe @ index-w2AQmpbE.js:41
+(anonymous) @ index-w2AQmpbE.js:41
+oW @ index-w2AQmpbE.js:39
+SS @ index-w2AQmpbE.js:41
+Jh @ index-w2AQmpbE.js:41
+she @ index-w2AQmpbE.js:41
+Eu @ index-w2AQmpbE.js:41
+BM @ index-w2AQmpbE.js:41
+au @ index-w2AQmpbE.js:39
+(anonymous) @ index-w2AQmpbE.js:41
+index-w2AQmpbE.js:823 Fetch finished loading: GET "https://app.matchpro.ai/api/admin/events/1844329078/quick-gap-analysis?date=2025-08-16".
+queryFn @ index-w2AQmpbE.js:823
+i @ index-w2AQmpbE.js:41
+f @ index-w2AQmpbE.js:41
+start @ index-w2AQmpbE.js:41
+fetch @ index-w2AQmpbE.js:41
+rg @ index-w2AQmpbE.js:41
+onSubscribe @ index-w2AQmpbE.js:41
+subscribe @ index-w2AQmpbE.js:41
+(anonymous) @ index-w2AQmpbE.js:41
+oW @ index-w2AQmpbE.js:39
+SS @ index-w2AQmpbE.js:41
+Jh @ index-w2AQmpbE.js:41
+she @ index-w2AQmpbE.js:41
+Eu @ index-w2AQmpbE.js:41
+BM @ index-w2AQmpbE.js:41
+au @ index-w2AQmpbE.js:39
+(anonymous) @ index-w2AQmpbE.js:41
+setTimeout
+Nhe @ index-w2AQmpbE.js:41
+o @ index-w2AQmpbE.js:41
+batch @ index-w2AQmpbE.js:41
+sc @ index-w2AQmpbE.js:41
+setData @ index-w2AQmpbE.js:41
+onSuccess @ index-w2AQmpbE.js:41
+m @ index-w2AQmpbE.js:41
+Promise.then
+f @ index-w2AQmpbE.js:41
+start @ index-w2AQmpbE.js:41
+fetch @ index-w2AQmpbE.js:41
+rg @ index-w2AQmpbE.js:41
+onSubscribe @ index-w2AQmpbE.js:41
+subscribe @ index-w2AQmpbE.js:41
+(anonymous) @ index-w2AQmpbE.js:41
+oW @ index-w2AQmpbE.js:39
+SS @ index-w2AQmpbE.js:41
+Jh @ index-w2AQmpbE.js:41
+she @ index-w2AQmpbE.js:41
+Eu @ index-w2AQmpbE.js:41
+BM @ index-w2AQmpbE.js:41
+au @ index-w2AQmpbE.js:39
+(anonymous) @ index-w2AQmpbE.js:41
+util.js:33 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+$Aa @ util.js:33
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1384
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1384
+setTimeout
+Tda @ js?libraries=places&v=beta&callback=Function.prototype:1384
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641Understand this warning
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+Promise.then
+S @ out-4.5.44.js:1
+y @ out-4.5.44.js:1
+E @ out-4.5.44.js:1
+e.onload @ inner.html:1
+script
+(anonymous) @ inner.html:1
+(anonymous) @ inner.html:1
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+h @ out-4.5.44.js:1
+e @ inner.html:1
+shared-82806d4c11708165b1c75958e9763ed5.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+e @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+c @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+value @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+value @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+value @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+value @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+value @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+(anonymous) @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+setTimeout
+value @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+value @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+value @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+(anonymous) @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+value @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+log @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+log @ controller-with-preconnect-58e122e008ba62a5c9d71f0940c0f376.js:1
+value @ controller-with-preconnect-58e122e008ba62a5c9d71f0940c0f376.js:1
+value @ controller-with-preconnect-58e122e008ba62a5c9d71f0940c0f376.js:1
+(anonymous) @ controller-with-preconnect-58e122e008ba62a5c9d71f0940c0f376.js:1

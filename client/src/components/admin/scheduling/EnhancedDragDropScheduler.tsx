@@ -381,6 +381,8 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
     const conflicts: ConflictInfo[] = [];
     
     console.log(`🔍 [CONFLICT DETECTION] Starting enhanced overlap detection for ${games.length} games`);
+    console.log(`🚗 [TRAVEL DEBUG] scheduleData available: ${!!scheduleData}, fields count: ${scheduleData?.fields?.length || 0}`);
+    console.log(`🚗 [TRAVEL DEBUG] Sample field data:`, scheduleData?.fields?.slice(0, 3));
     
     // Enhanced overlap detection - check each game against all other games
     games.forEach((game1, i) => {
@@ -507,8 +509,12 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
     });
 
     // NEW: Check for travel conflicts - teams playing at different complexes on the same day
+    console.log(`🚗 [TRAVEL DEBUG] Starting travel conflict detection for ${gamesPerTeamPerDay.size} teams on ${selectedDate}`);
+    
     gamesPerTeamPerDay.forEach((teamGames, teamName) => {
       if (teamName === 'TBD' || isWinnerPlaceholder(teamName)) return; // Skip placeholder teams
+      
+      console.log(`🚗 [TRAVEL DEBUG] Checking team ${teamName} with ${teamGames.length} games`);
       
       if (teamGames.length > 1) {
         // Get unique complexes for this team's games
@@ -520,6 +526,8 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
           const field = scheduleData?.fields?.find(f => f.id === game.fieldId);
           const complexName = field?.complexName || 'Unknown Complex';
           
+          console.log(`🚗 [TRAVEL DEBUG] Game ${game.id}: field ${game.fieldId} -> complex "${complexName}"`);
+          
           complexes.add(complexName);
           if (!gamesByComplex.has(complexName)) {
             gamesByComplex.set(complexName, []);
@@ -527,11 +535,13 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
           gamesByComplex.get(complexName)!.push(game);
         });
         
+        console.log(`🚗 [TRAVEL DEBUG] Team ${teamName} complexes: ${Array.from(complexes).join(', ')}`);
+        
         if (complexes.size > 1) {
           const complexList = Array.from(complexes).join(' and ');
           const allGameIds = teamGames.map(g => g.id);
           
-          console.log(`🏟️ [TRAVEL CONFLICT] ${teamName} has games at multiple complexes on ${selectedDate}: ${complexList}`);
+          console.log(`🚗 [TRAVEL CONFLICT] ${teamName} has games at multiple complexes on ${selectedDate}: ${complexList}`);
           conflicts.push({
             type: 'travel_conflict' as const,
             severity: 'warning' as const,
