@@ -544,57 +544,61 @@ export class TournamentScheduler {
     console.log(`📊 Bracket A teams (${bracketA.length}):`, bracketA.map(t => t.name));
     console.log(`📊 Bracket B teams (${bracketB.length}):`, bracketB.map(t => t.name));
     
-    // Generate round-robin games WITHIN Bracket A (6 games)
-    console.log(`🔄 Generating round-robin games within Bracket A`);
-    for (let i = 0; i < bracketA.length; i++) {
-      for (let j = i + 1; j < bracketA.length; j++) {
-        games.push({
-          id: `${bracket.bracketId}_A_${gameCounter}`,
-          homeTeamId: bracketA[i].id,
-          homeTeamName: bracketA[i].name,
-          awayTeamId: bracketA[j].id,
-          awayTeamName: bracketA[j].name,
-          bracketId: bracket.bracketId,
-          bracketName: `${bracket.bracketName} - Bracket A`,
-          poolId: 'bracket_a',
-          poolName: 'Bracket A',
-          round: 'Bracket A Pool Play',
-          gameType: 'pool_play',
-          gameNumber: gameCounter++,
-          duration: 90
-        });
-      }
+    // CRITICAL: Generate EXACT matchup pattern as specified by user
+    // A1 A2, B1 B2, A3 A4, B3 B4, A1 A3, B1 B3, A2 A4, B2 B4, A1 A4, B1 B4
+    console.log(`🔄 Generating USER-SPECIFIED matchup pattern for Group of 8`);
+    
+    // Label teams A1, A2, A3, A4 and B1, B2, B3, B4 for clarity
+    const A1 = bracketA[0], A2 = bracketA[1], A3 = bracketA[2], A4 = bracketA[3];
+    const B1 = bracketB[0], B2 = bracketB[1], B3 = bracketB[2], B4 = bracketB[3];
+    
+    // EXACT USER MATCHUP PATTERN:
+    const matchups: Array<{ home: Team, away: Team, round: string }> = [
+      // Round 1
+      { home: A1, away: A2, round: 'Bracket A Pool Play' },
+      { home: B1, away: B2, round: 'Bracket B Pool Play' },
+      // Round 2  
+      { home: A3, away: A4, round: 'Bracket A Pool Play' },
+      { home: B3, away: B4, round: 'Bracket B Pool Play' },
+      // Round 3
+      { home: A1, away: A3, round: 'Bracket A Pool Play' },
+      { home: B1, away: B3, round: 'Bracket B Pool Play' },
+      // Round 4
+      { home: A2, away: A4, round: 'Bracket A Pool Play' },
+      { home: B2, away: B4, round: 'Bracket B Pool Play' },
+      // Round 5
+      { home: A1, away: A4, round: 'Bracket A Pool Play' },
+      { home: B1, away: B4, round: 'Bracket B Pool Play' }
+    ];
+    
+    // Generate games based on exact user pattern
+    for (const matchup of matchups) {
+      const { home, away, round } = matchup;
+      const isPoolA = bracketA.includes(home);
+      games.push({
+        id: `${bracket.bracketId}_${isPoolA ? 'A' : 'B'}_${gameCounter}`,
+        homeTeamId: home.id,
+        homeTeamName: home.name,
+        awayTeamId: away.id,
+        awayTeamName: away.name,
+        bracketId: bracket.bracketId,
+        bracketName: `${bracket.bracketName} - ${isPoolA ? 'Bracket A' : 'Bracket B'}`,
+        poolId: isPoolA ? 'bracket_a' : 'bracket_b',
+        poolName: isPoolA ? 'Bracket A' : 'Bracket B',
+        round: round,
+        gameType: 'pool_play',
+        gameNumber: gameCounter++,
+        duration: 90
+      });
     }
     
-    // Generate round-robin games WITHIN Bracket B (6 games)  
-    console.log(`🔄 Generating round-robin games within Bracket B`);
-    for (let i = 0; i < bracketB.length; i++) {
-      for (let j = i + 1; j < bracketB.length; j++) {
-        games.push({
-          id: `${bracket.bracketId}_B_${gameCounter}`,
-          homeTeamId: bracketB[i].id,
-          homeTeamName: bracketB[i].name,
-          awayTeamId: bracketB[j].id,
-          awayTeamName: bracketB[j].name,
-          bracketId: bracket.bracketId,
-          bracketName: `${bracket.bracketName} - Bracket B`,
-          poolId: 'bracket_b',
-          poolName: 'Bracket B',
-          round: 'Bracket B Pool Play',
-          gameType: 'pool_play',
-          gameNumber: gameCounter++,
-          duration: 90
-        });
-      }
-    }
-    
-    // Add ONLY championship final: Winner of Bracket A vs Winner of Bracket B
+    // Add ONLY championship final: 1st in Points A vs 1st in Points B
     const championshipGame = {
       id: `${bracket.bracketId}_final_${gameCounter}`,
-      homeTeamId: 0, // Placeholder - will be determined from Bracket A winner
-      homeTeamName: 'Winner of Bracket A',
-      awayTeamId: 0, // Placeholder - will be determined from Bracket B winner  
-      awayTeamName: 'Winner of Bracket B',
+      homeTeamId: 0, // Placeholder - will be determined from standings
+      homeTeamName: '1st in Points A',
+      awayTeamId: 0, // Placeholder - will be determined from standings  
+      awayTeamName: '1st in Points B',
       bracketId: bracket.bracketId,
       bracketName: bracket.bracketName,
       round: 'Championship Final',
@@ -604,8 +608,8 @@ export class TournamentScheduler {
     };
     games.push(championshipGame);
     
-    console.log(`✅ Generated Group of 8 dual bracket: 6 games in Bracket A + 6 games in Bracket B + 1 Championship Final = ${games.length} total games`);
-    console.log(`🚫 NO CROSS-BRACKET PLAY: Teams only play within their own bracket until championship final`);
+    console.log(`✅ Generated Group of 8 EXACT USER PATTERN: 10 specific matchup games + 1 Championship Final = ${games.length} total games`);
+    console.log(`🚫 USER PATTERN: A1-A2, B1-B2, A3-A4, B3-B4, A1-A3, B1-B3, A2-A4, B2-B4, A1-A4, B1-B4, Championship`);
     
     return games;
   }
