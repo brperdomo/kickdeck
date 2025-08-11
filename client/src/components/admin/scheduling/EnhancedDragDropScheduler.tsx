@@ -60,6 +60,7 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
   const [isOptimisticUpdate, setIsOptimisticUpdate] = useState(false);
   const [conflicts, setConflicts] = useState<ConflictInfo[]>([]);
   const [gamePositions, setGamePositions] = useState<Map<number, { fieldId: number; startTime: string }>>(new Map());
+  const [showAllConflicts, setShowAllConflicts] = useState(false);
   
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -1029,7 +1030,7 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
           </CardHeader>
           <CardContent>
             <div className="space-y-2 max-h-32 overflow-y-auto">
-              {conflicts.slice(0, 5).map((conflict, index) => (
+              {(showAllConflicts ? conflicts : conflicts.slice(0, 5)).map((conflict, index) => (
                 <div key={index} className={`p-2 rounded text-sm ${
                   conflict.severity === 'error' ? 'bg-red-900/30 text-red-200' : 'bg-yellow-900/30 text-yellow-200'
                 }`}>
@@ -1037,7 +1038,15 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
                 </div>
               ))}
               {conflicts.length > 5 && (
-                <div className="text-orange-300 text-sm">+ {conflicts.length - 5} more conflicts</div>
+                <button 
+                  onClick={() => setShowAllConflicts(!showAllConflicts)}
+                  className="text-orange-300 text-sm hover:text-orange-200 underline cursor-pointer transition-colors"
+                >
+                  {showAllConflicts 
+                    ? '- Show fewer conflicts' 
+                    : `+ Show ${conflicts.length - 5} more conflicts`
+                  }
+                </button>
               )}
             </div>
           </CardContent>

@@ -60,6 +60,7 @@ export function RefereeAssignmentEngine({ eventId, scheduleData, onComplete }: R
   const [conflicts, setConflicts] = useState<AssignmentConflict[]>([]);
   const [isAutoAssigning, setIsAutoAssigning] = useState(false);
   const [showAddReferee, setShowAddReferee] = useState(false);
+  const [showAllConflicts, setShowAllConflicts] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -365,15 +366,21 @@ export function RefereeAssignmentEngine({ eventId, scheduleData, onComplete }: R
               <AlertDescription>
                 <div className="space-y-2">
                   <div className="font-medium">Assignment Conflicts Detected:</div>
-                  {conflicts.slice(0, 3).map((conflict, index) => (
+                  {(showAllConflicts ? conflicts : conflicts.slice(0, 3)).map((conflict, index) => (
                     <div key={index} className="text-sm">
                       • {conflict.message}
                     </div>
                   ))}
                   {conflicts.length > 3 && (
-                    <div className="text-sm text-muted-foreground">
-                      +{conflicts.length - 3} more conflicts
-                    </div>
+                    <button 
+                      onClick={() => setShowAllConflicts(!showAllConflicts)}
+                      className="text-sm text-orange-600 hover:text-orange-500 underline cursor-pointer transition-colors"
+                    >
+                      {showAllConflicts 
+                        ? '- Show fewer conflicts' 
+                        : `+ Show ${conflicts.length - 3} more conflicts`
+                      }
+                    </button>
                   )}
                 </div>
               </AlertDescription>

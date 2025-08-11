@@ -73,6 +73,7 @@ export function ComprehensiveScheduleManager({ eventId }: ComprehensiveScheduleM
   const [isGenerating, setIsGenerating] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [selectedField, setSelectedField] = useState<string>('all');
+  const [showAllConflicts, setShowAllConflicts] = useState(false);
   const [editMode, setEditMode] = useState(false);
 
   useEffect(() => {
@@ -329,15 +330,21 @@ export function ComprehensiveScheduleManager({ eventId }: ComprehensiveScheduleM
               {conflicts.length} scheduling conflicts detected
             </div>
             <div className="space-y-1">
-              {conflicts.slice(0, 3).map((conflict, index) => (
+              {(showAllConflicts ? conflicts : conflicts.slice(0, 3)).map((conflict, index) => (
                 <div key={index} className="text-sm">
                   • {conflict.description} - {conflict.suggestion}
                 </div>
               ))}
               {conflicts.length > 3 && (
-                <div className="text-sm font-medium">
-                  + {conflicts.length - 3} more conflicts
-                </div>
+                <button 
+                  onClick={() => setShowAllConflicts(!showAllConflicts)}
+                  className="text-sm font-medium text-orange-300 hover:text-orange-200 underline cursor-pointer transition-colors"
+                >
+                  {showAllConflicts 
+                    ? '- Show fewer conflicts' 
+                    : `+ Show ${conflicts.length - 3} more conflicts`
+                  }
+                </button>
               )}
             </div>
           </AlertDescription>
