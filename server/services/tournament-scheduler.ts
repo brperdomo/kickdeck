@@ -30,6 +30,7 @@ export interface Team {
   id: number;
   name: string;
   bracketId: string;
+  groupId?: number;
   seedRanking?: number;
   poolAssignment?: string;
 }
@@ -189,9 +190,11 @@ export class TournamentScheduler {
     }
     
     console.log(`🎯 Generating games for ${teams.length} teams in ${bracket.format} format`);
+    console.log(`🔍 BRACKET DEBUG: bracketId=${bracket.bracketId}, tournamentFormat=${bracket.tournamentFormat}, format=${bracket.format}, templateName=${bracket.templateName}`);
     
     // Use the bracket's configured tournament format - NO ROUND ROBIN FALLBACK FOR 6-TEAM BRACKETS
     const format = bracket.tournamentFormat || bracket.format || (teams.length === 6 ? 'group_of_6' : 'round_robin');
+    console.log(`🎯 FINAL FORMAT DECISION: '${format}' for ${teams.length} teams`);
     
     switch (format) {
       case 'round_robin':
@@ -501,14 +504,43 @@ export class TournamentScheduler {
     let gameCounter = startingGameNumber;
     
     console.log(`🚨 GROUP OF 8 ENFORCEMENT: Two separate 4-team brackets with NO cross-bracket play`);
+    console.log(`🎯 FORMAT VERIFICATION: Processing 'group_of_8' format for ${teams.length} teams`);
+    console.log(`🎯 BRACKET INFO: bracketId=${bracket.bracketId}, format=${bracket.format}, templateName=${bracket.templateName}`);
     
     if (teams.length !== 8) {
+      console.error(`❌ TEAM COUNT ERROR: Group of 8 requires exactly 8 teams, got ${teams.length}`);
       throw new Error(`Group of 8 format requires exactly 8 teams, got ${teams.length}`);
     }
     
-    // Split teams into Bracket A and Bracket B (4 teams each)
-    const bracketA = teams.slice(0, 4);
-    const bracketB = teams.slice(4, 8);
+    // Split teams into Bracket A and Bracket B based on groupId assignments
+    // Sort teams by groupId to ensure consistent bracket assignment
+    const sortedTeams = [...teams].sort((a, b) => (a.groupId || 0) - (b.groupId || 0));
+    
+    // Teams with the lowest groupId go to Bracket A, teams with the highest groupId go to Bracket B
+    const uniqueGroupIds = [...new Set(sortedTeams.map(t => t.groupId))].filter(id => id).sort();
+    
+    let bracketA: Team[], bracketB: Team[];
+    
+    if (uniqueGroupIds.length >= 2) {
+      // Use groupId-based assignment
+      const firstGroupId = uniqueGroupIds[0];
+      const secondGroupId = uniqueGroupIds[1];
+      bracketA = sortedTeams.filter(t => t.groupId === firstGroupId);
+      bracketB = sortedTeams.filter(t => t.groupId === secondGroupId);
+      
+      console.log(`📊 Group of 8 using groupId assignment: Group ${firstGroupId} → Bracket A, Group ${secondGroupId} → Bracket B`);
+    } else {
+      // Fallback to simple split if groupId assignments are missing
+      console.log(`⚠️  Group of 8 fallback: No proper groupId assignments found, using simple split`);
+      bracketA = sortedTeams.slice(0, 4);
+      bracketB = sortedTeams.slice(4, 8);
+    }
+    
+    // Validate bracket sizes for Group of 8 format
+    if (bracketA.length !== 4 || bracketB.length !== 4) {
+      console.error(`❌ GROUP OF 8 ERROR: Expected 4v4 brackets, got ${bracketA.length}v${bracketB.length}`);
+      throw new Error(`Group of 8 format requires 4 teams in each bracket, got ${bracketA.length}v${bracketB.length}`);
+    }
     
     console.log(`📊 Bracket A teams (${bracketA.length}):`, bracketA.map(t => t.name));
     console.log(`📊 Bracket B teams (${bracketB.length}):`, bracketB.map(t => t.name));

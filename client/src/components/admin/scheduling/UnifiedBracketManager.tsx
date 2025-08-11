@@ -346,7 +346,7 @@ export function UnifiedBracketManager({ eventId }: UnifiedBracketManagerProps) {
       case 'group_of_6':
         return 'Pool A vs Pool B format where teams only play against teams from the opposite pool';
       case 'group_of_8':
-        return 'Pool A vs Pool B format where teams only play against teams from the opposite pool';
+        return 'Two separate 4-team round-robin brackets where teams only play within their own bracket, plus one championship game between bracket winners';
       default:
         return 'Standard tournament bracket';
     }

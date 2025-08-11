@@ -49,6 +49,7 @@ Preferred communication style: Simple, everyday language.
     - **Swiss Tournament System**: Intelligent pairing algorithm, comprehensive tiebreaker system, and color balance management.
     - **Referee Management System**: Intelligent assignment engine, certification compliance, workload balancing, and payment tracking.
 - **Critical Data Structure**: AGE GROUP → FLIGHTS → BRACKETS → Teams. Tournament formats are assigned to FLIGHTS (represented as event_brackets in database). FLIGHTS are competitive levels within age groups. Each FLIGHT generates its own brackets and matchups based on the assigned tournament_format. Teams have both `bracketId` (flight assignment) and `groupId` (specific bracket within flight) for granular tournament organization.
+- **Group of 8 Format Fix (Aug 2025)**: Corrected dual bracket system implementation. Group of 8 now properly generates two separate 4-team round-robin brackets with no cross-bracket play except championship final. Fixed UI description, team assignment logic using groupId, and added validation for 4v4 bracket distribution.
 
 ### Data Storage
 - **Primary Database**: PostgreSQL for all event, team, player, payment, and scheduling data.
