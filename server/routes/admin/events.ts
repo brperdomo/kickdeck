@@ -4,7 +4,6 @@ import { events, eventAgeGroups, eventScoringRules, eventComplexes, eventFieldSi
 import { eq, sql, and, or, lt, gt, gte, lte, inArray } from 'drizzle-orm';
 import { z } from 'zod';
 import { hasEventAccess } from '../../middleware/event-access';
-import { isAdmin } from '../../middleware/auth';
 
 const router = Router();
 
@@ -409,7 +408,7 @@ router.patch('/:id/toggle-archive', hasEventAccess, async (req, res) => {
 });
 
 // Get age groups with flights for TBD game creation
-router.get('/:eventId/age-groups', isAdmin, async (req, res) => {
+router.get('/:eventId/age-groups', hasEventAccess, async (req, res) => {
   try {
     const eventId = req.params.eventId;
     
@@ -423,8 +422,8 @@ router.get('/:eventId/age-groups', isAdmin, async (req, res) => {
       ageGroups.map(async (ageGroup) => {
         const flights = await db.query.eventBrackets.findMany({
           where: and(
-            eq(eventBrackets.eventId, eventId),
-            eq(eventBrackets.ageGroup, ageGroup.ageGroup)
+            eq(eventBrackets.eventId, parseInt(eventId)),
+            eq(eventBrackets.ageGroupId, ageGroup.id)
           )
         });
 
@@ -448,7 +447,7 @@ router.get('/:eventId/age-groups', isAdmin, async (req, res) => {
 });
 
 // Get fields for TBD game creation
-router.get('/:eventId/fields', isAdmin, async (req, res) => {
+router.get('/:eventId/fields', hasEventAccess, async (req, res) => {
   try {
     const eventId = req.params.eventId;
     
@@ -457,17 +456,11 @@ router.get('/:eventId/fields', isAdmin, async (req, res) => {
       .select({
         id: fields.id,
         name: fields.name,
-        fieldSize: fields.fieldSize,
-        isAvailable: fields.isAvailable
+        fieldSize: fields.fieldSize
       })
       .from(fields)
       .innerJoin(eventComplexes, eq(fields.complexId, eventComplexes.complexId))
-      .where(
-        and(
-          eq(eventComplexes.eventId, eventId),
-          eq(fields.isAvailable, true)
-        )
-      );
+      .where(eq(eventComplexes.eventId, eventId));
 
     res.json(eventComplexFields);
   } catch (error) {
