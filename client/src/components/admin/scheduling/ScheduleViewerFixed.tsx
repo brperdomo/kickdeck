@@ -725,17 +725,35 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
   });
 
   // Fetch flight configurations to get rest periods dynamically
-  const { data: flightConfigData } = useQuery({
+  const { data: flightConfigData, error: flightConfigError } = useQuery({
     queryKey: ['/api/admin/events', eventId, 'flight-configurations'],
     queryFn: async () => {
+      console.log(`[REST PERIOD DEBUG] Fetching flight configurations for event ${eventId}`);
       const response = await fetch(`/api/admin/events/${eventId}/flight-configurations`, {
         credentials: 'include'
       });
-      if (!response.ok) throw new Error('Failed to fetch flight configurations');
-      return response.json();
+      console.log(`[REST PERIOD DEBUG] Flight config API response status: ${response.status}`);
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`[REST PERIOD DEBUG] API error: ${response.status} - ${errorText}`);
+        throw new Error(`Failed to fetch flight configurations: ${response.status}`);
+      }
+      const data = await response.json();
+      console.log(`[REST PERIOD DEBUG] Flight config data received:`, {
+        isArray: Array.isArray(data),
+        length: Array.isArray(data) ? data.length : 'not array',
+        firstFew: Array.isArray(data) ? data.slice(0, 2).map(f => ({ id: f.id, flightName: f.flightName, restPeriod: f.restPeriod })) : 'not array'
+      });
+      return data;
     },
-    enabled: !!eventId
+    enabled: !!eventId,
+    retry: false // Don't retry on failure so we can see the error immediately
   });
+
+  // Log any flight configuration loading errors
+  if (flightConfigError) {
+    console.error(`[REST PERIOD DEBUG] Flight config query error:`, flightConfigError);
+  }
 
   // Helper function to determine required rest period based on flight configuration
   const getRequiredRestPeriod = (game: any): number => {
@@ -816,7 +834,18 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
 
     // Find the current game details to get teams and flight configuration
     const currentGame = scheduleData.games.find(g => g.id === gameId);
+    if (currentGame) {
+      console.log(`[REST PERIOD DEBUG] About to check rest period for game:`, {
+        gameId: currentGame.id,
+        homeTeam: currentGame.homeTeam,
+        awayTeam: currentGame.awayTeam,
+        ageGroup: currentGame.ageGroup,
+        bracketId: currentGame.bracketId,
+        flightName: currentGame.flightName
+      });
+    }
     const requiredRestPeriod = currentGame ? getRequiredRestPeriod(currentGame) : 60;
+    console.log(`[REST PERIOD DEBUG] Final rest period for game ${gameId}: ${requiredRestPeriod} minutes`);
 
     // Check field conflicts
     const fieldConflicts = scheduleData.games.filter(existingGame => {

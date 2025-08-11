@@ -1,0 +1,272 @@
+finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+e @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+c @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+value @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+value @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+value @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+value @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+value @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+(anonymous) @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+setTimeout
+value @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+value @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+value @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+(anonymous) @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+value @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+value @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+(anonymous) @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+Promise.then
+value @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+value @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+value @ controller-with-preconnect-58e122e008ba62a5c9d71f0940c0f376.js:1
+e @ controller-with-preconnect-58e122e008ba62a5c9d71f0940c0f376.js:1
+value @ controller-with-preconnect-58e122e008ba62a5c9d71f0940c0f376.js:1
+e @ controller-with-preconnect-58e122e008ba62a5c9d71f0940c0f376.js:1
+16720 @ controller-with-preconnect-58e122e008ba62a5c9d71f0940c0f376.js:1
+e @ controller-with-preconnect-58e122e008ba62a5c9d71f0940c0f376.js:1
+(anonymous) @ controller-with-preconnect-58e122e008ba62a5c9d71f0940c0f376.js:1
+e.O @ controller-with-preconnect-58e122e008ba62a5c9d71f0940c0f376.js:1
+(anonymous) @ controller-with-preconnect-58e122e008ba62a5c9d71f0940c0f376.js:1
+(anonymous) @ controller-with-preconnect-58e122e008ba62a5c9d71f0940c0f376.js:1
+shared-82806d4c11708165b1c75958e9763ed5.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+e @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+c @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+value @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+value @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+value @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+value @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+value @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+(anonymous) @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+setTimeout
+value @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+value @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+value @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+(anonymous) @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+value @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+value @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+(anonymous) @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+Promise.then
+value @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+value @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+log @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+log @ controller-with-preconnect-58e122e008ba62a5c9d71f0940c0f376.js:1
+e @ controller-with-preconnect-58e122e008ba62a5c9d71f0940c0f376.js:1
+16720 @ controller-with-preconnect-58e122e008ba62a5c9d71f0940c0f376.js:1
+e @ controller-with-preconnect-58e122e008ba62a5c9d71f0940c0f376.js:1
+(anonymous) @ controller-with-preconnect-58e122e008ba62a5c9d71f0940c0f376.js:1
+e.O @ controller-with-preconnect-58e122e008ba62a5c9d71f0940c0f376.js:1
+(anonymous) @ controller-with-preconnect-58e122e008ba62a5c9d71f0940c0f376.js:1
+(anonymous) @ controller-with-preconnect-58e122e008ba62a5c9d71f0940c0f376.js:1
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] All available fields: []
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] Fields with games assigned: []
+index-rMVsaK1c.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: true, error: null, scheduleData: undefined, fieldsCount: 0, gamesCount: 0, …}
+index-rMVsaK1c.js:823 [EnhancedDragDropScheduler] Clearing cache to prevent data multiplication
+index-rMVsaK1c.js:823 Fetch finished loading: GET "https://app.matchpro.ai/api/admin/events/1844329078/schedule-calendar".
+queryFn @ index-rMVsaK1c.js:823
+i @ index-rMVsaK1c.js:41
+f @ index-rMVsaK1c.js:41
+start @ index-rMVsaK1c.js:41
+fetch @ index-rMVsaK1c.js:41
+rg @ index-rMVsaK1c.js:41
+onSubscribe @ index-rMVsaK1c.js:41
+subscribe @ index-rMVsaK1c.js:41
+(anonymous) @ index-rMVsaK1c.js:41
+oW @ index-rMVsaK1c.js:39
+SS @ index-rMVsaK1c.js:41
+Jh @ index-rMVsaK1c.js:41
+she @ index-rMVsaK1c.js:41
+Eu @ index-rMVsaK1c.js:41
+BM @ index-rMVsaK1c.js:41
+au @ index-rMVsaK1c.js:39
+(anonymous) @ index-rMVsaK1c.js:41
+index-rMVsaK1c.js:823 [EnhancedDragDropScheduler] Loaded 125 games for event 1844329078
+index-rMVsaK1c.js:823 [EnhancedDragDropScheduler] API returned 125 raw games before transformation
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] All available fields: (21) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] Fields with games assigned: (21) [37, 38, 33, 20, 34, 32, 35, 36, 31, 29, 30, 28, 24, 21, 27, 26, 25, 39, 22, 40, 23]
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] Field 20 (Galway Downs Field 1) has 7 games
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] Field 21 (Galway Downs Field 2) has 7 games
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] Field 22 (Galway Downs Field 3) has 7 games
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] Field 23 (Galway Downs Field 4) has 7 games
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] Field 24 (Galway Downs Field 5) has 7 games
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] Field 25 (Galway Downs Field 6) has 7 games
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] Field 26 (Galway Downs Field 7) has 7 games
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] Field 27 (Galway Downs Field 8) has 7 games
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] Field 28 (Galway Downs Field 9) has 7 games
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] Field 29 (Galway Downs Field 10) has 7 games
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] Field 30 (Galway Downs Field 11) has 5 games
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] Field 31 (Galway Downs Field 12) has 5 games
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] Field 32 (Galway Downs Field 13) has 6 games
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] Field 33 (Galway Downs Field 14) has 7 games
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] Field 34 (Galway Downs Field 15) has 6 games
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] Field 35 (Galway Downs Field 20) has 7 games
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] Field 36 (Birdsall Field 2) has 5 games
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] Field 37 (Birdsall Field 3) has 6 games
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] Field 38 (Birdsall Field 4) has 3 games
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] Field 39 (Sommersbend 1) has 3 games
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] Field 40 (Sommersbend 2) has 2 games
+index-rMVsaK1c.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 21, gamesCount: 125, …}
+index-rMVsaK1c.js:823 🔍 [CONFLICT DETECTION] Starting enhanced overlap detection for 125 games
+index-rMVsaK1c.js:823 🔍 [CONFLICT DETECTION] Starting legacy slot-based detection for 125 games
+index-rMVsaK1c.js:823 🔍 [CONFLICT DETECTION] Time slots: 48
+index-rMVsaK1c.js:823 🔍 [CONFLICT DETECTION] Sample games: (3) [{…}, {…}, {…}]0: {id: 10728, homeTeamName: 'Future Fc B09', awayTeamName: 'Empire Surf North B2009', startTime: '2025-08-17T11:00:00'}1: {id: 10726, homeTeamName: 'Empire Surf North B2009', awayTeamName: 'South Bay FC 2010', startTime: '2025-08-17T08:00:00'}2: {id: 10727, homeTeamName: 'Escondido surf b2009', awayTeamName: 'Future Fc B09', startTime: '2025-08-17T08:00:00'}length: 3[[Prototype]]: Array(0)
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] All available fields: (21) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]0: {id: 20, name: 'Galway Downs Field 1', fieldSize: '11v11'}1: {id: 21, name: 'Galway Downs Field 2', fieldSize: '11v11'}2: {id: 22, name: 'Galway Downs Field 3', fieldSize: '11v11'}3: {id: 23, name: 'Galway Downs Field 4', fieldSize: '11v11'}4: {id: 24, name: 'Galway Downs Field 5', fieldSize: '11v11'}5: {id: 25, name: 'Galway Downs Field 6', fieldSize: '11v11'}6: {id: 26, name: 'Galway Downs Field 7', fieldSize: '11v11'}7: {id: 27, name: 'Galway Downs Field 8', fieldSize: '11v11'}8: {id: 28, name: 'Galway Downs Field 9', fieldSize: '11v11'}9: {id: 29, name: 'Galway Downs Field 10', fieldSize: '11v11'}10: {id: 30, name: 'Galway Downs Field 11', fieldSize: '11v11'}11: {id: 31, name: 'Galway Downs Field 12', fieldSize: '11v11'}12: {id: 32, name: 'Galway Downs Field 13', fieldSize: '11v11'}13: {id: 33, name: 'Galway Downs Field 14', fieldSize: '11v11'}14: {id: 34, name: 'Galway Downs Field 15', fieldSize: '11v11'}15: {id: 35, name: 'Galway Downs Field 20', fieldSize: '11v11'}16: {id: 36, name: 'Birdsall Field 2', fieldSize: '11v11'}17: {id: 37, name: 'Birdsall Field 3', fieldSize: '11v11'}18: {id: 38, name: 'Birdsall Field 4', fieldSize: '11v11'}19: {id: 39, name: 'Sommersbend 1', fieldSize: '11v11'}20: {id: 40, name: 'Sommersbend 2', fieldSize: '11v11'}length: 21[[Prototype]]: Array(0)
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] Fields with games assigned: (21) [37, 38, 33, 20, 34, 32, 35, 36, 31, 29, 30, 28, 24, 21, 27, 26, 25, 39, 22, 40, 23]0: 371: 382: 333: 204: 345: 326: 357: 368: 319: 2910: 3011: 2812: 2413: 2114: 2715: 2616: 2517: 3918: 2219: 4020: 23length: 21[[Prototype]]: Array(0)
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] Field 20 (Galway Downs Field 1) has 7 games
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] Field 21 (Galway Downs Field 2) has 7 games
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] Field 22 (Galway Downs Field 3) has 7 games
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] Field 23 (Galway Downs Field 4) has 7 games
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] Field 24 (Galway Downs Field 5) has 7 games
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] Field 25 (Galway Downs Field 6) has 7 games
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] Field 26 (Galway Downs Field 7) has 7 games
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] Field 27 (Galway Downs Field 8) has 7 games
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] Field 28 (Galway Downs Field 9) has 7 games
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] Field 29 (Galway Downs Field 10) has 7 games
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] Field 30 (Galway Downs Field 11) has 5 games
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] Field 31 (Galway Downs Field 12) has 5 games
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] Field 32 (Galway Downs Field 13) has 6 games
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] Field 33 (Galway Downs Field 14) has 7 games
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] Field 34 (Galway Downs Field 15) has 6 games
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] Field 35 (Galway Downs Field 20) has 7 games
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] Field 36 (Birdsall Field 2) has 5 games
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] Field 37 (Birdsall Field 3) has 6 games
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] Field 38 (Birdsall Field 4) has 3 games
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] Field 39 (Sommersbend 1) has 3 games
+index-rMVsaK1c.js:824 🎯 [FIELD DEBUG] Field 40 (Sommersbend 2) has 2 games
+index-rMVsaK1c.js:824 🎯 [ENHANCED DRAG DROP] Debug Info: {isLoading: false, error: null, scheduleData: {…}, fieldsCount: 21, gamesCount: 125, …}
+util.js:33 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+$Aa @ util.js:33
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1384
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1384
+setTimeout
+Tda @ js?libraries=places&v=beta&callback=Function.prototype:1384
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641Understand this warning
+index-rMVsaK1c.js:823 Fetch finished loading: GET "https://app.matchpro.ai/api/admin/events/1844329078/game-metadata".
+queryFn @ index-rMVsaK1c.js:823
+i @ index-rMVsaK1c.js:41
+f @ index-rMVsaK1c.js:41
+start @ index-rMVsaK1c.js:41
+fetch @ index-rMVsaK1c.js:41
+rg @ index-rMVsaK1c.js:41
+onSubscribe @ index-rMVsaK1c.js:41
+subscribe @ index-rMVsaK1c.js:41
+(anonymous) @ index-rMVsaK1c.js:41
+oW @ index-rMVsaK1c.js:39
+SS @ index-rMVsaK1c.js:41
+Jh @ index-rMVsaK1c.js:41
+she @ index-rMVsaK1c.js:41
+Eu @ index-rMVsaK1c.js:41
+BM @ index-rMVsaK1c.js:41
+au @ index-rMVsaK1c.js:39
+(anonymous) @ index-rMVsaK1c.js:41
+setTimeout
+Nhe @ index-rMVsaK1c.js:41
+o @ index-rMVsaK1c.js:41
+batch @ index-rMVsaK1c.js:41
+sc @ index-rMVsaK1c.js:41
+setData @ index-rMVsaK1c.js:41
+onSuccess @ index-rMVsaK1c.js:41
+m @ index-rMVsaK1c.js:41
+Promise.then
+f @ index-rMVsaK1c.js:41
+start @ index-rMVsaK1c.js:41
+fetch @ index-rMVsaK1c.js:41
+rg @ index-rMVsaK1c.js:41
+onSubscribe @ index-rMVsaK1c.js:41
+subscribe @ index-rMVsaK1c.js:41
+(anonymous) @ index-rMVsaK1c.js:41
+oW @ index-rMVsaK1c.js:39
+SS @ index-rMVsaK1c.js:41
+Jh @ index-rMVsaK1c.js:41
+she @ index-rMVsaK1c.js:41
+Eu @ index-rMVsaK1c.js:41
+BM @ index-rMVsaK1c.js:41
+au @ index-rMVsaK1c.js:39
+(anonymous) @ index-rMVsaK1c.js:41
+index-rMVsaK1c.js:823 Fetch finished loading: GET "https://app.matchpro.ai/api/admin/events/1844329078/quick-gap-analysis?date=2025-08-16".
+queryFn @ index-rMVsaK1c.js:823
+i @ index-rMVsaK1c.js:41
+f @ index-rMVsaK1c.js:41
+start @ index-rMVsaK1c.js:41
+fetch @ index-rMVsaK1c.js:41
+rg @ index-rMVsaK1c.js:41
+onSubscribe @ index-rMVsaK1c.js:41
+subscribe @ index-rMVsaK1c.js:41
+(anonymous) @ index-rMVsaK1c.js:41
+oW @ index-rMVsaK1c.js:39
+SS @ index-rMVsaK1c.js:41
+Jh @ index-rMVsaK1c.js:41
+she @ index-rMVsaK1c.js:41
+Eu @ index-rMVsaK1c.js:41
+BM @ index-rMVsaK1c.js:41
+au @ index-rMVsaK1c.js:39
+(anonymous) @ index-rMVsaK1c.js:41
+setTimeout
+Nhe @ index-rMVsaK1c.js:41
+o @ index-rMVsaK1c.js:41
+batch @ index-rMVsaK1c.js:41
+sc @ index-rMVsaK1c.js:41
+setData @ index-rMVsaK1c.js:41
+onSuccess @ index-rMVsaK1c.js:41
+m @ index-rMVsaK1c.js:41
+Promise.then
+f @ index-rMVsaK1c.js:41
+start @ index-rMVsaK1c.js:41
+fetch @ index-rMVsaK1c.js:41
+rg @ index-rMVsaK1c.js:41
+onSubscribe @ index-rMVsaK1c.js:41
+subscribe @ index-rMVsaK1c.js:41
+(anonymous) @ index-rMVsaK1c.js:41
+oW @ index-rMVsaK1c.js:39
+SS @ index-rMVsaK1c.js:41
+Jh @ index-rMVsaK1c.js:41
+she @ index-rMVsaK1c.js:41
+Eu @ index-rMVsaK1c.js:41
+BM @ index-rMVsaK1c.js:41
+au @ index-rMVsaK1c.js:39
+(anonymous) @ index-rMVsaK1c.js:41
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+Promise.then
+S @ out-4.5.44.js:1
+y @ out-4.5.44.js:1
+E @ out-4.5.44.js:1
+e.onload @ inner.html:1
+script
+(anonymous) @ inner.html:1
+(anonymous) @ inner.html:1
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+h @ out-4.5.44.js:1
+e @ inner.html:1
+shared-82806d4c11708165b1c75958e9763ed5.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+e @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+c @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+value @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+value @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+value @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+value @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+value @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+(anonymous) @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+setTimeout
+value @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+value @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+value @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+(anonymous) @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+value @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+log @ shared-82806d4c11708165b1c75958e9763ed5.js:1
+log @ controller-with-preconnect-58e122e008ba62a5c9d71f0940c0f376.js:1
+value @ controller-with-preconnect-58e122e008ba62a5c9d71f0940c0f376.js:1
+value @ controller-with-preconnect-58e122e008ba62a5c9d71f0940c0f376.js:1
+(anonymous) @ controller-with-preconnect-58e122e008ba62a5c9d71f0940c0f376.js:1
