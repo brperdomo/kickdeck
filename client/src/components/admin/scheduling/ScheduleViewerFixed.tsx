@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -113,7 +113,14 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: scheduleData, isLoading, error } = useQuery<ScheduleData>({
+  // CRITICAL: Clear cache on mount to prevent stale data multiplication
+  useEffect(() => {
+    console.log('[ScheduleViewer] Clearing cache to prevent data multiplication');
+    queryClient.removeQueries({ queryKey: ['schedule-data'] });
+    queryClient.removeQueries({ queryKey: ['enhanced-schedule'] });
+  }, [eventId, queryClient]);
+
+  const { data: scheduleData, isLoading, error, refetch } = useQuery<ScheduleData>({
     queryKey: ['schedule-data', eventId],
     queryFn: async () => {
       const response = await fetch(`/api/admin/events/${eventId}/schedule-calendar`, {
@@ -130,7 +137,24 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
         }
       }
       const data = await response.json();
-      console.log('Schedule API Response:', data);
+      
+      // CRITICAL: Check for data multiplication at the API level
+      if (data.games && Array.isArray(data.games)) {
+        console.log(`[ScheduleViewer] API returned ${data.games.length} games`);
+        
+        // Check for duplicate game IDs
+        const gameIds = data.games.map((g: any) => g.id);
+        const uniqueGameIds = [...new Set(gameIds)];
+        if (gameIds.length !== uniqueGameIds.length) {
+          console.error(`[ScheduleViewer] DUPLICATION DETECTED: API returned ${gameIds.length} games but only ${uniqueGameIds.length} unique IDs`);
+          // Deduplicate by game ID
+          const uniqueGames = data.games.filter((game: any, index: number) => 
+            gameIds.indexOf(game.id) === index
+          );
+          console.log(`[ScheduleViewer] Deduplicated to ${uniqueGames.length} games`);
+          data.games = uniqueGames;
+        }
+      }
       
       // Transform the API response to match the expected format
       const transformedGames = data.games?.map((game: any, index: number) => {
@@ -244,9 +268,17 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
         }
       };
     },
+    staleTime: 0,
     refetchOnWindowFocus: true,
-    refetchInterval: 5000, // Auto-refresh every 5 seconds for real-time updates
-    staleTime: 1000 // Consider data stale after 1 second
+    // CRITICAL: Force fresh data and prevent cache corruption
+    refetchOnMount: 'always',
+    retry: (failureCount, error) => {
+      // Don't retry auth errors, but retry others
+      if (error.message.includes('Authentication required')) {
+        return false;
+      }
+      return failureCount < 2;
+    }
   });
 
   // Fetch available teams for a specific flight when editing - moved after scheduleData declaration

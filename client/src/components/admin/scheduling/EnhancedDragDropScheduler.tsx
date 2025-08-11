@@ -64,6 +64,13 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const gridRef = useRef<HTMLDivElement>(null);
+
+  // CRITICAL: Clear cache on mount to prevent stale data multiplication
+  useEffect(() => {
+    console.log('[EnhancedDragDropScheduler] Clearing cache to prevent data multiplication');
+    queryClient.removeQueries({ queryKey: ['schedule-data'] });
+    queryClient.removeQueries({ queryKey: ['enhanced-schedule'] });
+  }, [eventId, queryClient]);
   
   // Available tournament days (this should come from event data)
   const availableDays = [
@@ -104,13 +111,32 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
         console.log(`[EnhancedDragDropScheduler] Loaded ${transformedGames.length} games for event ${eventId}`);
       }
       
+      // CRITICAL: Check for data multiplication at the API level for EnhancedDragDropScheduler
+      if (data.games && Array.isArray(data.games)) {
+        console.log(`[EnhancedDragDropScheduler] API returned ${data.games.length} raw games before transformation`);
+        
+        // Check for duplicate game IDs in raw data
+        const gameIds = data.games.map((g: any) => g.id);
+        const uniqueGameIds = [...new Set(gameIds)];
+        if (gameIds.length !== uniqueGameIds.length) {
+          console.error(`[EnhancedDragDropScheduler] DUPLICATION DETECTED: API returned ${gameIds.length} games but only ${uniqueGameIds.length} unique IDs`);
+          // Deduplicate by game ID
+          const uniqueGames = data.games.filter((game: any, index: number) => 
+            gameIds.indexOf(game.id) === index
+          );
+          console.log(`[EnhancedDragDropScheduler] Deduplicated to ${uniqueGames.length} games`);
+          data.games = uniqueGames;
+        }
+      }
+
       return {
         ...data,
         games: transformedGames
       };
     },
-    staleTime: 30000, // Cache for 30 seconds to prevent excessive requests
-    refetchOnWindowFocus: false // Prevent refetch when switching tabs
+    staleTime: 0, // No cache to prevent stale data multiplication
+    refetchOnWindowFocus: false, // Prevent refetch when switching tabs
+    refetchOnMount: 'always' // Always fetch fresh data
   });
 
   // Calculate total game duration to match Flight Configuration Overview
