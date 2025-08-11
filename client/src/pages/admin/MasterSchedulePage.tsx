@@ -19,17 +19,16 @@ import { GameFormatEngine } from '@/components/admin/scheduling/GameFormatEngine
 import { FormatTemplateManager } from '@/components/admin/templates/FormatTemplateManager';
 import { FlightConfigurationTable } from '@/components/admin/scheduling/FlightConfigurationTable';
 import { WorkflowDataFlow } from '@/components/admin/scheduling/WorkflowDataFlow';
-import BracketCreationEngine from '@/components/admin/scheduling/BracketCreationEngine';
+import { UnifiedBracketManager } from '@/components/admin/scheduling/UnifiedBracketManager';
 import { MasterScheduleConflictDetection } from '@/components/admin/scheduling/MasterScheduleConflictDetection';
 import { PublishSchedules } from '@/components/admin/scheduling/PublishSchedules';
-import { BracketAssignmentInterface } from '@/components/admin/scheduling/BracketAssignmentInterface';
 import FieldSortingManager from '@/components/admin/FieldSortingManager';
 import FieldManagementDashboard from '@/components/admin/FieldManagementDashboard';
 
 export default function MasterSchedulePage() {
   const { eventId } = useParams<{ eventId: string }>();
   const [, setLocation] = useLocation();
-  const [currentView, setCurrentView] = useState<'view' | 'calendar' | 'cards' | 'manage' | 'flights' | 'formats' | 'brackets' | 'bracket-assignment' | 'overview' | 'workflow' | 'publish' | 'field-sorting'>('overview');
+  const [currentView, setCurrentView] = useState<'view' | 'calendar' | 'cards' | 'manage' | 'flights' | 'formats' | 'brackets' | 'overview' | 'workflow' | 'publish' | 'field-sorting'>('overview');
 
   if (!eventId) {
     return <div>Event ID not found</div>;
@@ -118,7 +117,7 @@ export default function MasterSchedulePage() {
             2. Flight Assignment
           </Button>
           
-          {/* Phase 3: Bracket Creation */}
+          {/* Phase 3: Unified Bracket Management */}
           <Button
             variant={currentView === 'brackets' ? 'default' : 'outline'}
             onClick={() => setCurrentView('brackets')}
@@ -129,21 +128,7 @@ export default function MasterSchedulePage() {
             }`}
           >
             <Trophy className="h-4 w-4" />
-            3. Create Brackets
-          </Button>
-          
-          {/* Phase 4: Bracket Assignment */}
-          <Button
-            variant={currentView === 'bracket-assignment' ? 'default' : 'outline'}
-            onClick={() => setCurrentView('bracket-assignment')}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 whitespace-nowrap ${
-              currentView === 'bracket-assignment' 
-                ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25 hover:bg-blue-500' 
-                : 'bg-slate-700 text-slate-200 hover:bg-slate-600 border border-slate-600 hover:border-slate-500'
-            }`}
-          >
-            <Users className="h-4 w-4" />
-            4. Assign Teams to Brackets
+            3. Bracket Management
           </Button>
           
           {/* Schedule Management */}
@@ -333,22 +318,12 @@ export default function MasterSchedulePage() {
             <Alert className="border-slate-600 bg-slate-800">
               <Trophy className="h-4 w-4 text-blue-400" />
               <AlertDescription className="text-slate-200">
-                <strong>Phase 3 - Bracket Creation:</strong> Assign teams to flights and create tournament brackets. 
-                Auto-assign teams for balanced competition or manage assignments manually.
+                <strong>Phase 3 - Bracket Management:</strong> Unified interface for creating brackets and assigning teams. 
+                Choose between Group of 4 (round-robin), Group of 6 (crossplay pools), or Group of 8 (crossplay pools) formats. 
+                Team assignments persist for fair competition pairing.
               </AlertDescription>
             </Alert>
-            <BracketCreationEngine eventId={eventId} />
-          </div>
-        ) : currentView === 'bracket-assignment' ? (
-          <div className="space-y-6">
-            <Alert className="border-slate-600 bg-slate-800">
-              <Users className="h-4 w-4 text-blue-400" />
-              <AlertDescription className="text-slate-200">
-                <strong>Phase 4 - Team Assignment:</strong> Assign specific teams to brackets within flights. 
-                Control which teams compete in Bracket A vs Bracket B for optimal seeding and competition balance.
-              </AlertDescription>
-            </Alert>
-            <BracketAssignmentInterface eventId={eventId} />
+            <UnifiedBracketManager eventId={eventId} />
           </div>
         ) : currentView === 'publish' ? (
           <div className="space-y-6">

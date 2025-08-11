@@ -1111,8 +1111,9 @@ router.post('/:eventId/teams/bulk-bracket-assign', isAdmin, async (req, res) => 
 router.post('/:eventId/flights/:flightId/create-brackets', isAdmin, async (req, res) => {
   try {
     const { eventId, flightId } = req.params;
+    const { bracketType, bracketCount, teamsPerBracket } = req.body;
     
-    console.log(`[Bracket Assignment] POST /${eventId}/flights/${flightId}/create-brackets`);
+    console.log(`[Bracket Assignment] POST /${eventId}/flights/${flightId}/create-brackets with type: ${bracketType}`);
 
     // Get teams assigned to this flight
     const assignedTeams = await db.query.teams.findMany({
@@ -1148,43 +1149,99 @@ router.post('/:eventId/flights/:flightId/create-brackets', isAdmin, async (req, 
       return res.status(400).json({ error: 'Brackets already exist for this flight' });
     }
 
-    // Create brackets based on team count
     const teamCount = assignedTeams.length;
     let bracketsToCreate = [];
+    let tournamentFormat = 'round_robin'; // Default format
 
-    if (teamCount <= 8) {
-      bracketsToCreate = [{ name: 'Bracket A', size: teamCount }];
-    } else if (teamCount <= 16) {
-      bracketsToCreate = [
-        { name: 'Bracket A', size: Math.ceil(teamCount / 2) },
-        { name: 'Bracket B', size: Math.floor(teamCount / 2) }
-      ];
+    // Create brackets based on the specified bracket configuration
+    if (bracketType && bracketCount && teamsPerBracket) {
+      // Use provided configuration
+      switch (bracketType) {
+        case 'group_of_4':
+          tournamentFormat = 'group_of_4';
+          for (let i = 0; i < bracketCount; i++) {
+            bracketsToCreate.push({
+              name: `Bracket ${String.fromCharCode(65 + i)}`,
+              size: Math.min(teamsPerBracket, 4),
+              format: 'group_of_4'
+            });
+          }
+          break;
+          
+        case 'group_of_6':
+          tournamentFormat = 'group_of_6';
+          // Group of 6 always creates Pool A and Pool B
+          bracketsToCreate = [
+            { name: 'Pool A', size: Math.ceil(teamCount / 2), format: 'group_of_6' },
+            { name: 'Pool B', size: Math.floor(teamCount / 2), format: 'group_of_6' }
+          ];
+          break;
+          
+        case 'group_of_8':
+          tournamentFormat = 'group_of_8';
+          // Group of 8 always creates Pool A and Pool B
+          bracketsToCreate = [
+            { name: 'Pool A', size: Math.ceil(teamCount / 2), format: 'group_of_8' },
+            { name: 'Pool B', size: Math.floor(teamCount / 2), format: 'group_of_8' }
+          ];
+          break;
+          
+        default:
+          return res.status(400).json({ error: `Unsupported bracket type: ${bracketType}` });
+      }
     } else {
-      // For larger tournaments, create multiple brackets
-      const bracketsNeeded = Math.ceil(teamCount / 8);
-      for (let i = 0; i < bracketsNeeded; i++) {
-        bracketsToCreate.push({ 
-          name: `Bracket ${String.fromCharCode(65 + i)}`, 
-          size: Math.ceil(teamCount / bracketsNeeded) 
-        });
+      // Legacy logic for backward compatibility
+      if (teamCount <= 8) {
+        bracketsToCreate = [{ name: 'Bracket A', size: teamCount, format: 'round_robin' }];
+      } else if (teamCount <= 16) {
+        bracketsToCreate = [
+          { name: 'Bracket A', size: Math.ceil(teamCount / 2), format: 'round_robin' },
+          { name: 'Bracket B', size: Math.floor(teamCount / 2), format: 'round_robin' }
+        ];
+      } else {
+        // For larger tournaments, create multiple brackets
+        const bracketsNeeded = Math.ceil(teamCount / 8);
+        for (let i = 0; i < bracketsNeeded; i++) {
+          bracketsToCreate.push({ 
+            name: `Bracket ${String.fromCharCode(65 + i)}`, 
+            size: Math.ceil(teamCount / bracketsNeeded),
+            format: 'round_robin'
+          });
+        }
       }
     }
 
+    // Update the flight with the tournament format
+    await db
+      .update(eventBrackets)
+      .set({ tournamentFormat })
+      .where(eq(eventBrackets.id, parseInt(flightId)));
+
     // Create tournament groups (brackets)
+    const createdBrackets = [];
     for (const bracket of bracketsToCreate) {
-      await db.insert(tournamentGroups).values({
+      const [createdBracket] = await db.insert(tournamentGroups).values({
         eventId: eventId,
         ageGroupId: flight.ageGroupId,
         name: bracket.name,
         type: 'pool',
         stage: 'group'
+      }).returning();
+      
+      createdBrackets.push({
+        id: createdBracket.id,
+        name: bracket.name,
+        size: bracket.size,
+        format: bracket.format
       });
     }
 
     res.json({
       success: true,
-      message: `Created ${bracketsToCreate.length} brackets for this flight`,
-      brackets: bracketsToCreate
+      message: `Created ${bracketsToCreate.length} ${bracketType || 'standard'} brackets for this flight`,
+      brackets: createdBrackets,
+      bracketType,
+      tournamentFormat
     });
 
   } catch (error) {
