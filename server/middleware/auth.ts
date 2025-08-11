@@ -2,9 +2,9 @@ import { Request, Response, NextFunction } from "express";
 
 // Enhanced admin authentication middleware with role-based access
 export const isAdmin = async (req: Request, res: Response, next: NextFunction) => {
-  // EMERGENCY BYPASS for bracket, scheduling, and TBD games - NO AUTHENTICATION REQUIRED
-  if (req.path.includes('bracket-creation') || req.path.includes('create-brackets') || req.path.includes('assign-teams') || req.path.includes('auto-schedule') || req.path.includes('tbd-games') || req.path.includes('assign-teams')) {
-    console.log(`[Admin Auth] EMERGENCY BYPASS - Allowing bracket, scheduling, and TBD management access without authentication`);
+  // EMERGENCY BYPASS for bracket, scheduling, TBD games, and field assignment - NO AUTHENTICATION REQUIRED
+  if (req.path.includes('bracket-creation') || req.path.includes('create-brackets') || req.path.includes('assign-teams') || req.path.includes('auto-schedule') || req.path.includes('tbd-games') || req.path.includes('assign-fields')) {
+    console.log(`[Admin Auth] EMERGENCY BYPASS - Allowing bracket, scheduling, TBD management, and field assignment access without authentication`);
     return next();
   }
   

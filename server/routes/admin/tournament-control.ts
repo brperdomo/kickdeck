@@ -689,12 +689,19 @@ async function generateGamesForFlight(eventId: string, flight: any) {
   if (gamesToCreate.length > 0) {
     await db.insert(games).values(gamesToCreate);
     console.log(`[Generate Games] Created ${gamesToCreate.length} games for flight ${flight.divisionName} (${gamesToCreate.length - (bracketsWithTeams.length >= 2 ? 1 : 0)} pool play + ${bracketsWithTeams.length >= 2 ? 1 : 0} championship)`);
+    
+    // CRITICAL FIX: Immediately assign fields to newly created games
+    console.log(`[Generate Games] FIELD ASSIGNMENT: Automatically assigning fields to ${gamesToCreate.length} newly created games`);
+    await assignFieldsToGames(eventId);
+    console.log(`[Generate Games] FIELD ASSIGNMENT: Field assignment completed for flight ${flight.divisionName}`);
   }
 
   return { gamesCreated: gamesToCreate.length };
 }
 
 export async function assignFieldsToGames(eventId: string) {
+  console.log(`[Assign Fields] Starting field assignment for event ${eventId}`);
+  
   // Get unscheduled games with their age group field size requirements
   const unscheduledGames = await db
     .select({
@@ -710,6 +717,13 @@ export async function assignFieldsToGames(eventId: string) {
       isNull(games.fieldId)
     ));
 
+  console.log(`[Assign Fields] Found ${unscheduledGames.length} games without field assignments`);
+  
+  if (unscheduledGames.length === 0) {
+    console.log('[Assign Fields] No games need field assignment - all games already have fields assigned');
+    return;
+  }
+
   // Get available fields grouped by field size
   const availableFields = await db
     .select()
@@ -717,9 +731,11 @@ export async function assignFieldsToGames(eventId: string) {
     .where(eq(fields.isOpen, true));
 
   if (availableFields.length === 0) {
-    console.log('[Assign Fields] No available fields found');
+    console.log('[Assign Fields] ERROR: No available fields found - cannot assign fields');
     return;
   }
+  
+  console.log(`[Assign Fields] Found ${availableFields.length} available fields`);
 
   // Group fields by size for efficient assignment
   const fieldsBySize: { [size: string]: typeof availableFields } = {};
@@ -743,7 +759,20 @@ export async function assignFieldsToGames(eventId: string) {
     const compatibleFields = fieldsBySize[requiredSize];
     
     if (!compatibleFields || compatibleFields.length === 0) {
-      console.warn(`[Assign Fields] No ${requiredSize} fields available for game ${game.id} - skipping`);
+      console.warn(`[Assign Fields] WARNING: No ${requiredSize} fields available for game ${game.id} - trying fallback assignment`);
+      
+      // Try to assign to any available field as fallback
+      const fallbackFields = Object.values(fieldsBySize).flat();
+      if (fallbackFields.length > 0) {
+        const fallbackField = fallbackFields[0];
+        console.log(`[Assign Fields] FALLBACK: Assigning game ${game.id} to field ${fallbackField.name} (${fallbackField.fieldSize})`);
+        updates.push({
+          gameId: game.id,
+          fieldId: fallbackField.id,
+          fieldSize: fallbackField.fieldSize,
+          fieldName: fallbackField.name
+        });
+      }
       continue;
     }
     
@@ -755,6 +784,8 @@ export async function assignFieldsToGames(eventId: string) {
     // Round-robin assignment within compatible fields
     const assignedField = compatibleFields[fieldIndexes[requiredSize] % compatibleFields.length];
     fieldIndexes[requiredSize]++;
+    
+    console.log(`[Assign Fields] Assigning game ${game.id} to field ${assignedField.name} (${assignedField.fieldSize})`);
     
     updates.push({
       gameId: game.id,
@@ -863,5 +894,37 @@ function isFieldSizeCompatible(gameFieldSize: string, availableFieldSize: string
   const compatibleSizes = compatibilityMap[gameFieldSize] || [gameFieldSize];
   return compatibleSizes.includes(availableFieldSize);
 }
+
+// Manual field assignment endpoint for testing
+router.post('/tournaments/:eventId/assign-fields', isAdmin, async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    
+    console.log(`[Manual Field Assignment] Starting for event ${eventId}`);
+    
+    await assignFieldsToGames(eventId);
+    
+    // Get count of games now with fields assigned
+    const gamesWithFields = await db
+      .select({ count: count() })
+      .from(games)
+      .where(and(
+        eq(games.eventId, eventId),
+        isNull(games.fieldId)
+      ));
+    
+    const remainingUnassigned = gamesWithFields[0]?.count || 0;
+    
+    res.json({
+      success: true,
+      message: 'Field assignment completed',
+      remainingUnassigned: remainingUnassigned
+    });
+    
+  } catch (error: any) {
+    console.error('[Manual Field Assignment] Error:', error);
+    res.status(500).json({ error: 'Failed to assign fields: ' + error.message });
+  }
+});
 
 export default router;
