@@ -130,6 +130,10 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
     duration: 90
   });
   
+  // Fill Next Empty Slot state
+  const [selectedUnscheduledGames, setSelectedUnscheduledGames] = useState<number[]>([]);
+  const [isFillingSlotsMode, setIsFillingSlotsMode] = useState(false);
+  
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -392,6 +396,21 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
     });
   }, [scheduleData?.games, searchTerm, selectedDate, selectedField, selectedAgeGroup]);
 
+  // Identify unscheduled games - games without proper time, date, or field assignments
+  const unscheduledGames = useMemo(() => {
+    if (!scheduleData?.games) return [];
+    
+    return scheduleData.games.filter(game => {
+      return game.date === 'TBD' || 
+             game.time === 'TBD' || 
+             game.field === 'Unassigned' || 
+             game.field === 'TBD' ||
+             !game.date || 
+             !game.time || 
+             !game.field;
+    });
+  }, [scheduleData?.games]);
+
   // Delete mutations
   const deleteSingleGameMutation = useMutation({
     mutationFn: async (gameId: number) => {
@@ -501,6 +520,40 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
     },
     onError: (error) => {
       toast({ title: 'Failed to update game teams', variant: 'destructive' });
+    }
+  });
+
+  // Fill next empty slot mutation
+  const fillEmptySlotsMutation = useMutation({
+    mutationFn: async (gameIds: number[]) => {
+      const response = await fetch(`/api/admin/events/${eventId}/games/fill-empty-slots`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ gameIds })
+      });
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+        throw new Error(errorData.error || 'Failed to fill empty slots');
+      }
+      return response.json();
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['schedule-data', eventId] });
+      setSelectedUnscheduledGames([]);
+      setIsFillingSlotsMode(false);
+      toast({ 
+        title: 'Games Scheduled Successfully', 
+        description: `${data.scheduledCount || 0} games were assigned to available time slots`,
+        variant: 'default' 
+      });
+    },
+    onError: (error) => {
+      toast({ 
+        title: 'Failed to fill empty slots', 
+        description: error.message,
+        variant: 'destructive' 
+      });
     }
   });
 
@@ -943,7 +996,7 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
             
             {/* Management Actions */}
             <div className="flex flex-wrap gap-2">
-              {selectedGames.length > 0 && (
+              {selectedGames.length > 0 && !isFillingSlotsMode && (
                 <>
                   <Button
                     variant="outline"
@@ -963,6 +1016,58 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                     <Trash2 className="h-4 w-4 mr-1" />
                     Delete Selected
                   </Button>
+                </>
+              )}
+              
+              {/* Fill Empty Slots Mode - Show when there are unscheduled games */}
+              {unscheduledGames.length > 0 && (
+                <>
+                  {!isFillingSlotsMode ? (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setIsFillingSlotsMode(true);
+                        setSelectedGames([]); // Clear regular game selection
+                      }}
+                      className="text-blue-600 border-blue-600 hover:bg-blue-50"
+                    >
+                      <Clock className="h-4 w-4 mr-1" />
+                      Fill Empty Slots ({unscheduledGames.length} unscheduled)
+                    </Button>
+                  ) : (
+                    <>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setIsFillingSlotsMode(false);
+                          setSelectedUnscheduledGames([]);
+                        }}
+                        className="text-gray-600"
+                      >
+                        <X className="h-4 w-4 mr-1" />
+                        Cancel
+                      </Button>
+                      
+                      {selectedUnscheduledGames.length > 0 && (
+                        <Button
+                          variant="default"
+                          size="sm"
+                          onClick={() => fillEmptySlotsMutation.mutate(selectedUnscheduledGames)}
+                          disabled={fillEmptySlotsMutation.isPending}
+                          className="bg-green-600 hover:bg-green-700"
+                        >
+                          {fillEmptySlotsMutation.isPending ? (
+                            <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                          ) : (
+                            <Clock className="h-4 w-4 mr-1" />
+                          )}
+                          Fill Next Empty Slot ({selectedUnscheduledGames.length})
+                        </Button>
+                      )}
+                    </>
+                  )}
                 </>
               )}
               
@@ -1088,8 +1193,11 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                 <Card 
                   key={game.id} 
                   className={`border transition-colors ${
-                    selectedGames.includes(game.id) ? 'border-blue-300 bg-blue-50' : 'border-gray-200'
-                  } ${hasUnassignedFields ? 'border-yellow-300 bg-yellow-50' : ''} ${
+                    isFillingSlotsMode ? 
+                      (selectedUnscheduledGames.includes(game.id) ? 'border-green-400 bg-green-50' : 
+                       hasUnassignedFields ? 'border-yellow-300 bg-yellow-50' : 'border-gray-200 opacity-50') :
+                      (selectedGames.includes(game.id) ? 'border-blue-300 bg-blue-50' : 'border-gray-200')
+                  } ${hasUnassignedFields && !isFillingSlotsMode ? 'border-yellow-300 bg-yellow-50' : ''} ${
                     hasOverlap ? 'border-red-400 bg-red-50' : ''
                   }`}
                   title={tooltipMessage || undefined}
@@ -1098,8 +1206,25 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                     <div className="flex items-start justify-between">
                       <div className="flex items-center space-x-3">
                         <Checkbox
-                          checked={selectedGames.includes(game.id)}
-                          onCheckedChange={() => toggleGameSelection(game.id)}
+                          checked={isFillingSlotsMode ? 
+                            selectedUnscheduledGames.includes(game.id) : 
+                            selectedGames.includes(game.id)
+                          }
+                          onCheckedChange={() => {
+                            if (isFillingSlotsMode) {
+                              // Only allow selection of unscheduled games in this mode
+                              if (hasUnassignedFields) {
+                                setSelectedUnscheduledGames(prev => 
+                                  prev.includes(game.id) ? 
+                                    prev.filter(id => id !== game.id) :
+                                    [...prev, game.id]
+                                );
+                              }
+                            } else {
+                              toggleGameSelection(game.id);
+                            }
+                          }}
+                          disabled={isFillingSlotsMode && !hasUnassignedFields}
                         />
                         {editingGame?.gameId === game.id ? (
                           // Team Editing Interface
