@@ -172,8 +172,12 @@ export function UnifiedBracketManager({ eventId }: UnifiedBracketManagerProps) {
         title: "Brackets Created",
         description: `Successfully created ${selectedBracketConfig?.bracketCount} ${selectedBracketConfig?.bracketType.replace('_', ' ')} brackets`
       });
+      // Force immediate refresh and switch to team assignment
       queryClient.invalidateQueries({ queryKey: ['unified-bracket-manager', eventId] });
-      setActiveTab('team-assignment');
+      queryClient.refetchQueries({ queryKey: ['unified-bracket-manager', eventId] });
+      setTimeout(() => {
+        setActiveTab('team-assignment');
+      }, 500); // Small delay to allow data refresh
     },
     onError: (error: any) => {
       let errorMessage = error.message;
@@ -183,6 +187,12 @@ export function UnifiedBracketManager({ eventId }: UnifiedBracketManagerProps) {
       if (error.message.includes('already exist')) {
         errorTitle = "Brackets Already Exist";
         errorMessage = "This flight already has brackets created. Use the team assignment tab to manage existing brackets.";
+        // Force refresh and switch to team assignment tab for existing brackets
+        queryClient.invalidateQueries({ queryKey: ['unified-bracket-manager', eventId] });
+        queryClient.refetchQueries({ queryKey: ['unified-bracket-manager', eventId] });
+        setTimeout(() => {
+          setActiveTab('team-assignment');
+        }, 500);
       } else if (error.message.includes('No teams assigned')) {
         errorTitle = "No Teams Assigned";
         errorMessage = "Please assign teams to this flight before creating brackets.";
@@ -230,12 +240,16 @@ export function UnifiedBracketManager({ eventId }: UnifiedBracketManagerProps) {
   // Debug logging for tab accessibility
   console.log('UnifiedBracketManager Debug:', {
     selectedFlight,
+    allFlightData: flightData,
     selectedFlightData: selectedFlightData ? {
       flightId: selectedFlightData.flightId,
       name: selectedFlightData.name,
       bracketsLength: selectedFlightData.brackets?.length,
-      brackets: selectedFlightData.brackets
-    } : null
+      brackets: selectedFlightData.brackets,
+      assignedTeams: selectedFlightData.assignedTeams,
+      registeredTeams: selectedFlightData.registeredTeams?.length
+    } : null,
+    apiResponse: bracketData
   });
   const bracketConfigs = selectedFlightData ? getBracketConfigurations(selectedFlightData.teamCount) : [];
 
