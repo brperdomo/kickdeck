@@ -420,17 +420,17 @@ export class TournamentScheduler {
     
     console.log(`🚨 CROSSPLAY ENFORCEMENT: Processing ${teamCount}-team bracket for proper Pool A vs Pool B matchups`);
     
-    // ONLY GROUP OF 6 USES CROSSPLAY - Split teams by pool assignment
+    // ONLY GROUP OF 6 USES CROSSPLAY - Split teams by group_id for Pool A/B assignment
     if (teamCount === 6) {
-      const poolA = teams.filter(team => team.poolAssignment === 'Pool A' || 
-                                         (team.groupId && team.groupId === 76) ||
-                                         team.name?.includes('Pool A'));
-      const poolB = teams.filter(team => team.poolAssignment === 'Pool B' || 
-                                         (team.groupId && team.groupId === 77) ||
-                                         team.name?.includes('Pool B'));
+      // Sort teams by group_id to ensure consistent Pool A/B assignment
+      const sortedTeams = [...teams].sort((a, b) => (a.groupId || 0) - (b.groupId || 0));
       
-      console.log(`📊 Pool A teams (${poolA.length}):`, poolA.map(t => t.name));
-      console.log(`📊 Pool B teams (${poolB.length}):`, poolB.map(t => t.name));
+      // Split teams: first 3 teams (by group_id) go to Pool A, remaining 3 to Pool B
+      const poolA = sortedTeams.slice(0, 3);
+      const poolB = sortedTeams.slice(3, 6);
+      
+      console.log(`📊 CROSSPLAY POOL ASSIGNMENT - Pool A teams (${poolA.length}):`, poolA.map(t => `${t.name} (groupId: ${t.groupId})`));
+      console.log(`📊 CROSSPLAY POOL ASSIGNMENT - Pool B teams (${poolB.length}):`, poolB.map(t => `${t.name} (groupId: ${t.groupId})`));
       
       // 6-team crossplay: Pool A (3 teams) vs Pool B (3 teams) = 9 crossplay games
       if (poolA.length !== 3 || poolB.length !== 3) {
@@ -438,9 +438,10 @@ export class TournamentScheduler {
         throw new Error(`6-team crossplay requires 3 teams in each pool, got ${poolA.length}v${poolB.length}`);
       }
       
-      // Generate all Pool A vs Pool B matchups (3x3 = 9 games)
+      // Generate all Pool A vs Pool B matchups ONLY (3x3 = 9 crossplay games)
       poolA.forEach((teamA, idxA) => {
         poolB.forEach((teamB, idxB) => {
+          console.log(`🔄 Creating crossplay matchup: Pool A ${teamA.name} vs Pool B ${teamB.name}`);
           games.push({
             id: `${bracket.bracketId}_cross_${gameCounter}`,
             homeTeamId: teamA.id,
@@ -459,10 +460,11 @@ export class TournamentScheduler {
       
       console.log(`✅ Generated 9 crossplay games (Pool A vs Pool B) for 6-team bracket`);
       
-      // Add championship final
-      games.push(this.generateChampionshipGame(bracket, gameCounter));
+      // Add championship TBD final game (Pool A winner vs Pool B winner)
+      const championshipGame = this.generateChampionshipGame(bracket, gameCounter);
+      games.push(championshipGame);
       
-      console.log(`🏆 6-Team Crossplay: ${games.length - 1} pool + 1 final for ${bracket.bracketName}`);
+      console.log(`🏆 6-Team Crossplay Complete: Generated ${games.length - 1} crossplay pool games + 1 TBD championship final = ${games.length} total games`);
       return games;
     }
     
@@ -621,9 +623,11 @@ export class TournamentScheduler {
         
       case 'group_of_6':
       case 'crossover_bracket_6_teams':
+      case 'crossplay':
+      case 'group_of_6_crossplay':
         return {
-          homeTeamName: '1st in Points',
-          awayTeamName: '2nd in Points'
+          homeTeamName: '1st Pool A',
+          awayTeamName: '1st Pool B'
         };
         
       case 'group_of_8':
