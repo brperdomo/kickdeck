@@ -673,12 +673,23 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
             `${c.time} - ${c.homeTeam} vs ${c.awayTeam} (${c.field})`
           ).join('\n');
           
-          const confirmOverride = window.confirm(
-            `⚠️ SCHEDULING CONFLICT DETECTED!\n\n` +
-            `This time change will create a field overlap:\n\n` +
-            `${conflictDetails}\n\n` +
-            `Do you want to proceed anyway? This may cause double-booking issues.`
-          );
+          const restViolationDetails = overlapCheck.restPeriodViolations?.map(rv => 
+            `${rv.team}: ${Math.round(rv.actualRest)}min rest (need ${rv.requiredRest}min) vs ${rv.conflictingGame} at ${rv.conflictTime}`
+          ).join('\n') || '';
+          
+          let warningMessage = `⚠️ SCHEDULING CONFLICT DETECTED!\n\n`;
+          
+          if (overlapCheck.conflicts.length > 0) {
+            warningMessage += `Field overlaps:\n${conflictDetails}\n\n`;
+          }
+          
+          if (overlapCheck.restPeriodViolations?.length > 0) {
+            warningMessage += `Rest period violations (U13-U19 need 120min):\n${restViolationDetails}\n\n`;
+          }
+          
+          warningMessage += `Do you want to proceed anyway? This may cause scheduling issues.`;
+          
+          const confirmOverride = window.confirm(warningMessage);
           
           if (!confirmOverride) {
             throw new Error('Schedule update cancelled due to overlap conflict');
@@ -713,10 +724,23 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
     }
   });
 
-  // Field overlap detection function
+  // Helper function to determine required rest period based on age group
+  const getRequiredRestPeriod = (ageGroup: string): number => {
+    // U13-U19 age groups require 120-minute rest periods
+    const ageGroupUpper = ageGroup.toUpperCase();
+    if (ageGroupUpper.includes('U13') || ageGroupUpper.includes('U14') || 
+        ageGroupUpper.includes('U15') || ageGroupUpper.includes('U16') || 
+        ageGroupUpper.includes('U17') || ageGroupUpper.includes('U18') || 
+        ageGroupUpper.includes('U19')) {
+      return 120; // 120 minutes for U13-U19
+    }
+    return 60; // Default 60 minutes for other age groups
+  };
+
+  // Field overlap detection function enhanced with rest period validation
   const checkFieldOverlap = (gameId: number, fieldId: number, gameDate: string, gameTime: string, gameDuration: number) => {
     if (!scheduleData?.games || !gameDate || !gameTime || gameDate === 'TBD' || gameTime === 'TBD') {
-      return { hasOverlap: false, conflicts: [] };
+      return { hasOverlap: false, conflicts: [], restPeriodViolations: [] };
     }
 
     // Parse the game's start and end times
@@ -724,7 +748,13 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
     const gameStartTime = startHour * 60 + startMinute; // minutes since midnight
     const gameEndTime = gameStartTime + (gameDuration || 90); // default 90 min duration
 
-    const conflicts = scheduleData.games.filter(existingGame => {
+    // Find the current game details to get teams and age group
+    const currentGame = scheduleData.games.find(g => g.id === gameId);
+    const currentAgeGroup = currentGame?.ageGroup || '';
+    const requiredRestPeriod = getRequiredRestPeriod(currentAgeGroup);
+
+    // Check field conflicts
+    const fieldConflicts = scheduleData.games.filter(existingGame => {
       // Skip the game we're editing
       if (existingGame.id === gameId) return false;
       
@@ -749,15 +779,66 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
       return hasTimeOverlap;
     });
 
+    // Check for rest period violations for teams in the current game
+    const restPeriodViolations = [];
+    if (currentGame) {
+      const teamsToCheck = [
+        { id: currentGame.homeTeamId, name: currentGame.homeTeam },
+        { id: currentGame.awayTeamId, name: currentGame.awayTeam }
+      ].filter(team => team.id); // Only check teams with valid IDs
+
+      for (const team of teamsToCheck) {
+        const teamGames = scheduleData.games.filter(game => 
+          game.id !== gameId && // Exclude current game
+          game.date === gameDate && // Same date
+          game.time !== 'TBD' && game.date !== 'TBD' && // Has scheduled time
+          (game.homeTeamId === team.id || game.awayTeamId === team.id) // Same team
+        );
+
+        for (const teamGame of teamGames) {
+          const [teamGameStartHour, teamGameStartMinute] = teamGame.time.split(':').map(Number);
+          const teamGameStartTime = teamGameStartHour * 60 + teamGameStartMinute;
+          const teamGameEndTime = teamGameStartTime + (teamGame.duration || 90);
+
+          // Check rest period from team game end to current game start
+          const restAfterTeamGame = gameStartTime - teamGameEndTime;
+          if (restAfterTeamGame >= 0 && restAfterTeamGame < requiredRestPeriod) {
+            restPeriodViolations.push({
+              team: team.name,
+              conflictingGame: `${teamGame.homeTeam} vs ${teamGame.awayTeam}`,
+              conflictTime: teamGame.time,
+              actualRest: restAfterTeamGame,
+              requiredRest: requiredRestPeriod,
+              type: 'insufficient_rest_after'
+            });
+          }
+
+          // Check rest period from current game end to team game start
+          const restBeforeTeamGame = teamGameStartTime - gameEndTime;
+          if (restBeforeTeamGame >= 0 && restBeforeTeamGame < requiredRestPeriod) {
+            restPeriodViolations.push({
+              team: team.name,
+              conflictingGame: `${teamGame.homeTeam} vs ${teamGame.awayTeam}`,
+              conflictTime: teamGame.time,
+              actualRest: restBeforeTeamGame,
+              requiredRest: requiredRestPeriod,
+              type: 'insufficient_rest_before'
+            });
+          }
+        }
+      }
+    }
+
     return {
-      hasOverlap: conflicts.length > 0,
-      conflicts: conflicts.map(game => ({
+      hasOverlap: fieldConflicts.length > 0 || restPeriodViolations.length > 0,
+      conflicts: fieldConflicts.map(game => ({
         id: game.id,
         homeTeam: game.homeTeam,
         awayTeam: game.awayTeam,
         time: game.time,
         field: game.field
-      }))
+      })),
+      restPeriodViolations: restPeriodViolations
     };
   };
 
@@ -782,12 +863,23 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
             `${c.time} - ${c.homeTeam} vs ${c.awayTeam} (${c.field})`
           ).join('\n');
           
-          const confirmOverride = window.confirm(
-            `⚠️ FIELD OVERLAP DETECTED!\n\n` +
-            `This assignment will create a scheduling conflict:\n\n` +
-            `${conflictDetails}\n\n` +
-            `Do you want to proceed anyway? This may cause double-booking issues.`
-          );
+          const restViolationDetails = overlapCheck.restPeriodViolations?.map(rv => 
+            `${rv.team}: ${Math.round(rv.actualRest)}min rest (need ${rv.requiredRest}min) vs ${rv.conflictingGame} at ${rv.conflictTime}`
+          ).join('\n') || '';
+          
+          let warningMessage = `⚠️ SCHEDULING CONFLICT DETECTED!\n\n`;
+          
+          if (overlapCheck.conflicts.length > 0) {
+            warningMessage += `Field overlaps:\n${conflictDetails}\n\n`;
+          }
+          
+          if (overlapCheck.restPeriodViolations?.length > 0) {
+            warningMessage += `Rest period violations (U13-U19 need 120min):\n${restViolationDetails}\n\n`;
+          }
+          
+          warningMessage += `Do you want to proceed anyway? This may cause scheduling issues.`;
+          
+          const confirmOverride = window.confirm(warningMessage);
           
           if (!confirmOverride) {
             throw new Error('Field assignment cancelled due to overlap conflict');
@@ -914,7 +1006,7 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
   // Check for existing overlaps in the schedule
   const getGameOverlaps = (game: Game) => {
     if (!game.fieldId || game.date === 'TBD' || game.time === 'TBD') {
-      return { hasOverlap: false, conflicts: [] };
+      return { hasOverlap: false, conflicts: [], restPeriodViolations: [] };
     }
     
     return checkFieldOverlap(game.id, game.fieldId, game.date, game.time, game.duration);
@@ -935,13 +1027,22 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
       issues.push('No date assigned - tournament dates may be incomplete');
     }
 
-    // Check for field overlaps
+    // Check for field overlaps and rest period violations
     const overlapCheck = getGameOverlaps(game);
     if (overlapCheck.hasOverlap) {
-      const conflictDetails = overlapCheck.conflicts.map(c => 
-        `${c.time} - ${c.homeTeam} vs ${c.awayTeam}`
-      ).join('; ');
-      issues.push(`FIELD OVERLAP: Double-booked with ${conflictDetails}`);
+      if (overlapCheck.conflicts.length > 0) {
+        const conflictDetails = overlapCheck.conflicts.map(c => 
+          `${c.time} - ${c.homeTeam} vs ${c.awayTeam}`
+        ).join('; ');
+        issues.push(`FIELD OVERLAP: Double-booked with ${conflictDetails}`);
+      }
+      
+      if (overlapCheck.restPeriodViolations?.length > 0) {
+        const restViolationDetails = overlapCheck.restPeriodViolations.map(rv => 
+          `${rv.team} has only ${Math.round(rv.actualRest)}min rest (needs ${rv.requiredRest}min)`
+        ).join('; ');
+        issues.push(`REST PERIOD VIOLATION: ${restViolationDetails}`);
+      }
     }
 
     if (issues.length === 0) return null;
@@ -1849,10 +1950,20 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                                 {game.status}
                               </Badge>
                               {hasOverlap && (
-                                <Badge variant="destructive" className="text-xs">
-                                  <AlertTriangle className="h-3 w-3 mr-1" />
-                                  OVERLAP
-                                </Badge>
+                                <>
+                                  {overlapCheck.conflicts.length > 0 && (
+                                    <Badge variant="destructive" className="text-xs">
+                                      <AlertTriangle className="h-3 w-3 mr-1" />
+                                      FIELD OVERLAP
+                                    </Badge>
+                                  )}
+                                  {overlapCheck.restPeriodViolations?.length > 0 && (
+                                    <Badge variant="destructive" className="text-xs bg-orange-500 hover:bg-orange-600">
+                                      <Clock className="h-3 w-3 mr-1" />
+                                      REST VIOLATION
+                                    </Badge>
+                                  )}
+                                </>
                               )}
                               {game.flightName && (
                                 <Badge variant="secondary" className="text-xs">
