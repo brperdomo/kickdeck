@@ -204,6 +204,24 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
     enabled: !!selectedSeasonalScopeId
   });
   
+  // For fetching existing event's age groups in edit mode
+  const eventAgeGroupsQuery = useQuery({
+    queryKey: ['/api/admin/events/age-groups', defaultValues?.id],
+    queryFn: async () => {
+      if (!defaultValues?.id) return [];
+      console.log('Fetching event age groups for event:', defaultValues.id);
+      const response = await fetch(`/api/admin/events/${defaultValues.id}/age-groups`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch event age groups');
+      }
+      
+      const data = await response.json();
+      console.log('Event age groups loaded:', data);
+      return data;
+    },
+    enabled: !!defaultValues?.id && mode === 'edit'
+  });
+
   // For fetching eligibility settings in edit mode
   const eligibilitySettingsQuery = useQuery({
     queryKey: ['ageGroupEligibilitySettings', defaultValues?.id],
@@ -275,22 +293,28 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
   }, [defaultValues?.seasonalScopeId, form, mode]);
 
   useEffect(() => {
-    if (ageGroupsQuery.data) {
+    // Prioritize event age groups over seasonal scope age groups when in edit mode
+    const sourceData = (mode === 'edit' && eventAgeGroupsQuery.data) || ageGroupsQuery.data;
+    
+    if (sourceData) {
+      console.log('Formatting age groups from source:', { mode, sourceData });
+      
       // Format and update age groups from query
-      const formattedGroups = ageGroupsQuery.data.map((group: any) => ({
-        id: `${group.gender}-${group.birthYear}-${group.ageGroup}`,
+      const formattedGroups = sourceData.map((group: any) => ({
+        id: group.id || `${group.gender}-${group.birthYear}-${group.ageGroup}`, // Use actual DB ID if available
         ageGroup: group.ageGroup,
         birthYear: group.birthYear,
         gender: group.gender,
         divisionCode: group.divisionCode,
-        isEligible: true, // Default to eligible
-        fieldSize: group.ageGroup.startsWith('U') ?
+        fieldSize: group.fieldSize || (group.ageGroup.startsWith('U') ?
           (parseInt(group.ageGroup.substring(1)) <= 7 ? '4v4' :
             parseInt(group.ageGroup.substring(1)) <= 10 ? '7v7' :
-              parseInt(group.ageGroup.substring(1)) <= 12 ? '9v9' : '11v11') : '11v11',
+              parseInt(group.ageGroup.substring(1)) <= 12 ? '9v9' : '11v11') : '11v11'),
+        isEligible: group.isEligible !== undefined ? group.isEligible : true, // Use actual eligibility if available
         selected: true
       }));
       
+      console.log('Formatted age groups:', formattedGroups);
       setAgeGroups(formattedGroups);
       form.setValue('ageGroups', formattedGroups);
       
@@ -320,7 +344,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
         form.setValue('ageGroups', updatedGroups);
       }
     }
-  }, [ageGroupsQuery.data, eligibilitySettingsQuery.data, form]);
+  }, [ageGroupsQuery.data, eventAgeGroupsQuery.data, eligibilitySettingsQuery.data, form, mode]);
 
   const handleSeasonalScopeChange = async (scopeId: number) => {
     setSelectedSeasonalScopeId(scopeId);
