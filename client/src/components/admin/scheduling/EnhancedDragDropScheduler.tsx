@@ -1172,6 +1172,35 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
                                 const fieldName = field?.name || 'Unknown Field';
                                 const duration = totalDuration || 90;
                                 
+                                // Extract coach information from game data
+                                const homeCoach = (game as any).homeTeamData?.coach;
+                                const awayCoach = (game as any).awayTeamData?.coach;
+                                let homeCoachInfo = null;
+                                let awayCoachInfo = null;
+                                
+                                // Parse coach data if available
+                                try {
+                                  if (homeCoach) {
+                                    const coachData = typeof homeCoach === 'string' ? JSON.parse(homeCoach) : homeCoach;
+                                    homeCoachInfo = {
+                                      name: coachData.name || coachData.headCoachName || 'Coach',
+                                      email: coachData.email || coachData.headCoachEmail
+                                    };
+                                  }
+                                  if (awayCoach) {
+                                    const coachData = typeof awayCoach === 'string' ? JSON.parse(awayCoach) : awayCoach;
+                                    awayCoachInfo = {
+                                      name: coachData.name || coachData.headCoachName || 'Coach',
+                                      email: coachData.email || coachData.headCoachEmail
+                                    };
+                                  }
+                                } catch (e) {
+                                  // Silent fail for coach data parsing
+                                }
+                                
+                                // Check for coach conflicts
+                                const coachConflicts = gameConflicts.filter(c => c.type === 'coach');
+                                
                                 tooltip.innerHTML = `
                                   <div class="font-bold text-blue-300 mb-3">${game.homeTeamName || 'TBD'} vs ${game.awayTeamName || 'TBD'}</div>
                                   <div class="space-y-2 text-xs text-slate-200">
@@ -1183,10 +1212,21 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
                                       <div><span class="text-slate-400">Age Group:</span> ${game.ageGroup || 'Unknown'}</div>
                                       <div><span class="text-slate-400">Flight:</span> ${(game as any).flightName || game.ageGroup || 'TBD'}</div>
                                     </div>
-                                    ${(game as any).homeTeamCoach || (game as any).awayTeamCoach ? `
+                                    ${homeCoachInfo || awayCoachInfo ? `
                                       <div class="mt-3 pt-2 border-t border-slate-600">
-                                        ${(game as any).homeTeamCoach ? `<div><span class="text-slate-400">Home Coach:</span> ${(game as any).homeTeamCoach}</div>` : ''}
-                                        ${(game as any).awayTeamCoach ? `<div><span class="text-slate-400">Away Coach:</span> ${(game as any).awayTeamCoach}</div>` : ''}
+                                        <div class="text-slate-300 font-medium mb-1">👨‍🏫 Coaches</div>
+                                        ${homeCoachInfo ? `
+                                          <div><span class="text-slate-400">Home:</span> ${homeCoachInfo.name}${homeCoachInfo.email ? ` (${homeCoachInfo.email})` : ''}</div>
+                                        ` : ''}
+                                        ${awayCoachInfo ? `
+                                          <div><span class="text-slate-400">Away:</span> ${awayCoachInfo.name}${awayCoachInfo.email ? ` (${awayCoachInfo.email})` : ''}</div>
+                                        ` : ''}
+                                      </div>
+                                    ` : ''}
+                                    ${coachConflicts.length > 0 ? `
+                                      <div class="mt-3 pt-2 border-t border-red-600/30">
+                                        <div class="text-red-300 font-medium mb-1">⚠️ Coach Conflicts</div>
+                                        ${coachConflicts.map(c => `<div class="text-red-200 text-xs">${c.message}</div>`).join('')}
                                       </div>
                                     ` : ''}
                                   </div>
@@ -1251,21 +1291,49 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
                                 </div>
                                 
                                 <div className="flex justify-between items-center mt-1">
-                                  <div className="text-xs opacity-80 font-bold">
-                                    {game.ageGroup?.replace(/[^\dUB]/g, '') || 'U?'}
+                                  <div className="text-[9px] opacity-90 font-medium leading-tight">
+                                    <div className="text-blue-200">
+                                      {/* Show team names, birth year, and division instead of just age group */}
+                                      {game.homeTeamName && game.awayTeamName && game.homeTeamName !== 'TBD' && game.awayTeamName !== 'TBD' ? (
+                                        <div className="space-y-0.5">
+                                          <div className="truncate max-w-[60px]">{game.homeTeamName.split(' ')[0]}</div>
+                                          <div className="text-slate-300">vs</div>
+                                          <div className="truncate max-w-[60px]">{game.awayTeamName.split(' ')[0]}</div>
+                                          <div className="text-blue-300 font-semibold">
+                                            {((game as any).homeTeamData?.birthYear || (game as any).awayTeamData?.birthYear || 
+                                              game.ageGroup?.match(/\d{4}/)?.[0] || 
+                                              new Date().getFullYear() - parseInt(game.ageGroup?.replace(/\D/g, '') || '19'))} 
+                                            {((game as any).homeTeamData?.division || (game as any).awayTeamData?.division || 
+                                              game.ageGroup?.replace(/\d+/g, '') || 'B')}
+                                          </div>
+                                        </div>
+                                      ) : (
+                                        <div className="text-center">
+                                          <div>{game.ageGroup?.replace(/[^\dUB]/g, '') || 'U?'}</div>
+                                          <div className="text-blue-300">TBD</div>
+                                        </div>
+                                      )}
+                                    </div>
                                   </div>
                                   
                                   {/* Status and conflict indicators */}
-                                  <div className="flex items-center gap-1">
+                                  <div className="flex flex-col items-center gap-0.5">
                                     {gameConflicts.length > 0 && (
-                                      <div className="flex items-center gap-1">
-                                        <AlertTriangle className="h-3 w-3" />
-                                        <span className="text-xs">{gameConflicts.length}</span>
+                                      <div className="flex items-center gap-0.5">
+                                        <AlertTriangle className="h-2.5 w-2.5" />
+                                        <span className="text-[8px]">{gameConflicts.length}</span>
                                       </div>
                                     )}
-                                    <div className="text-xs">
+                                    <div className="text-[10px]">
                                       {hasWinnerPlaceholder(game) ? '🏆' : '⚽'}
                                     </div>
+                                    
+                                    {/* Coach conflict indicator */}
+                                    {gameConflicts.some(c => c.type === 'coach') && (
+                                      <div className="text-[8px] text-red-200" title="Coach Conflict">
+                                        👨‍🏫
+                                      </div>
+                                    )}
                                   </div>
                                 </div>
                               </div>
@@ -1305,11 +1373,13 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
               </ul>
             </div>
             <div>
-              <h4 className="font-medium text-white mb-2">Conflict Types</h4>
+              <h4 className="font-medium text-white mb-2">Conflict Types & Features</h4>
               <ul className="space-y-1 text-slate-300">
-                <li>• <span className="text-red-300">Red:</span> Coach conflicts (critical)</li>
-                <li>• <span className="text-yellow-300">Yellow:</span> Team rest period issues</li>
+                <li>• <span className="text-red-300">Red:</span> Coach conflicts (same coach, overlapping games)</li>
+                <li>• <span className="text-yellow-300">Yellow:</span> Team rest period violations</li>
                 <li>• <span className="text-blue-300">Blue:</span> Normal scheduled games</li>
+                <li>• <span className="text-slate-400">👨‍🏫:</span> Coach conflict indicator in game cards</li>
+                <li>• Game cards show team names, birth year, and division</li>
               </ul>
             </div>
           </div>

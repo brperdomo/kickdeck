@@ -275,6 +275,22 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
         awayScore: null,
         homeTeamName: homeTeam?.name || 'TBD',
         awayTeamName: awayTeam?.name || 'TBD',
+        homeTeamCoach: homeTeamCoach,
+        awayTeamCoach: awayTeamCoach,
+        homeTeamData: homeTeam ? {
+          id: homeTeam.id,
+          name: homeTeam.name,
+          coach: homeTeam.coach,
+          birthYear: homeTeam.birthYear,
+          division: homeTeam.division || game.ageGroupGender
+        } : null,
+        awayTeamData: awayTeam ? {
+          id: awayTeam.id,
+          name: awayTeam.name,
+          coach: awayTeam.coach,
+          birthYear: awayTeam.birthYear,
+          division: awayTeam.division || game.ageGroupGender
+        } : null,
         bracketId: homeTeam?.bracketId || awayTeam?.bracketId || game.groupId,
         flightName: game.bracketName || (game.round === 10 ? 'Championship' : `Round ${game.round}`),
         round: game.round
