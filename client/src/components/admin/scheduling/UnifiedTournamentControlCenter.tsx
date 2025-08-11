@@ -536,9 +536,21 @@ export function UnifiedTournamentControlCenter({ eventId }: TournamentControlCen
                                   )}
                                 </div>
                                 <div className="space-y-1">
-                                  <p className={`text-xs ${isScheduled ? 'text-slate-400' : 'text-slate-300'}`}>
-                                    <strong>{flight.ageGroup}</strong>
-                                  </p>
+                                  <div className="flex items-center gap-2">
+                                    <p className={`text-xs ${isScheduled ? 'text-slate-400' : 'text-slate-300'}`}>
+                                      <strong>{flight.ageGroup}</strong>
+                                    </p>
+                                    <Badge 
+                                      variant="outline" 
+                                      className={`text-xs px-1.5 py-0.5 ${
+                                        flight.gender === 'Boys' 
+                                          ? 'bg-blue-900/30 text-blue-300 border-blue-600' 
+                                          : 'bg-pink-900/30 text-pink-300 border-pink-600'
+                                      }`}
+                                    >
+                                      {flight.gender === 'Boys' ? 'B' : 'G'}
+                                    </Badge>
+                                  </div>
                                   <p className={`text-xs ${isScheduled ? 'text-slate-500' : 'text-slate-400'}`}>
                                     Format: {flight.formatName}
                                   </p>
