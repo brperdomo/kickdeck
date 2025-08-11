@@ -8,7 +8,7 @@ import {
   gameFormats,
   tournamentGroups
 } from '@db/schema';
-import { eq, and, isNull } from 'drizzle-orm';
+import { eq, and, isNull, like } from 'drizzle-orm';
 import { isAdmin } from '../../middleware/auth.js';
 
 const router = Router();
@@ -236,25 +236,47 @@ router.get('/:eventId/bracket-creation', async (req, res) => {
             teams: []
           });
           
-          // Populate brackets with assigned teams
-          const groupIds = Object.keys(teamsByBracket).sort();
-          groupIds.forEach((groupId, index) => {
-            if (brackets[index]) {
-              const bracketTeams = teamsByBracket[groupId].map(t => ({
-                id: t.id,
-                name: t.name,
-                clubName: t.clubName || '',
-                status: t.status,
-                groupId: t.groupId,
-                bracketId: t.bracketId
-              }));
-              
-              brackets[index].teams = bracketTeams;
-              brackets[index].teamCount = bracketTeams.length;
-              
-              console.log(`[BRACKET DISPLAY DEBUG] Populated bracket ${index + 1} (${brackets[index].name}) with ${bracketTeams.length} teams`);
+          // Populate brackets with assigned teams - Fixed bracket mapping
+          const groupIds = Object.keys(teamsByBracket);
+          
+          // For each group, find if it's Pool A or Pool B and assign to correct bracket
+          for (const groupId of groupIds) {
+            const bracketTeams = teamsByBracket[groupId].map(t => ({
+              id: t.id,
+              name: t.name,
+              clubName: t.clubName || '',
+              status: t.status,
+              groupId: t.groupId,
+              bracketId: t.bracketId
+            }));
+            
+            // Determine bracket index based on group name pattern
+            // Groups ending with "Pool A" go to bracket index 0 (Bracket A)
+            // Groups ending with "Pool B" go to bracket index 1 (Bracket B)
+            let bracketIndex = 0; // Default to Bracket A
+            
+            // Check existing tournament groups to find the name pattern
+            try {
+              const groupRecord = await db
+                .select({ name: tournamentGroups.name })
+                .from(tournamentGroups)
+                .where(eq(tournamentGroups.id, parseInt(groupId)))
+                .limit(1);
+                
+              if (groupRecord.length > 0 && groupRecord[0].name.includes('Pool B')) {
+                bracketIndex = 1; // Pool B goes to Bracket B (index 1)
+              }
+            } catch (error) {
+              console.error(`[BRACKET MAPPING] Error checking group ${groupId}:`, error);
             }
-          });
+            
+            if (brackets[bracketIndex]) {
+              brackets[bracketIndex].teams = bracketTeams;
+              brackets[bracketIndex].teamCount = bracketTeams.length;
+              
+              console.log(`[BRACKET DISPLAY DEBUG] Populated bracket ${bracketIndex + 1} (${brackets[bracketIndex].name}) with ${bracketTeams.length} teams from group ${groupId}`);
+            }
+          }
           
           console.log(`[BRACKET CREATION SUCCESS] Created ${brackets.length} brackets for flight ${flight.flightId} (${flight.name})`);
         } else {
