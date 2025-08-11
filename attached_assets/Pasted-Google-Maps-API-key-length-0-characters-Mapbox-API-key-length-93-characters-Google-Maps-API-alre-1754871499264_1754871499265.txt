@@ -1,0 +1,4276 @@
+Google Maps API key length: 0 characters
+ Mapbox API key length: 93 characters
+ Google Maps API already loaded
+ Current route location (Wouter): /admin/events/1844329078/master-schedule
+ Current URL: https://app.matchpro.ai/admin/events/1844329078/master-schedule
+ Current pathname: /admin/events/1844329078/master-schedule
+ Current search: 
+ Fetching user with emulation token: not present
+ User data fetched: Object
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+ Flight configs loaded: 76 flights
+ Configured flights: 50 of 76
+ Schedule API Response: Object
+ Game 1 transformation debug: Object
+ Game 1 API data: {
+  "id": 10474,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "homeTeamId": null,
+  "awayTeamId": null,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 3",
+  "fieldId": 22,
+  "fieldName": "Galway Downs Field 3",
+  "date": "2025-08-17",
+  "time": "14:00",
+  "startTime": "2025-08-17T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD",
+  "bracketId": 78,
+  "flightName": "Nike Elite",
+  "round": 10
+}
+ Game 1 Team IDs Debug: Object
+ Game 1 transformed: Object
+ Game 2 transformation debug: Object
+ Game 2 API data: {
+  "id": 10473,
+  "homeTeam": "Cal Elite SC B2007",
+  "awayTeam": "City SC Southwest B07/08",
+  "homeTeamId": 108,
+  "awayTeamId": 561,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 9",
+  "fieldId": 28,
+  "fieldName": "Galway Downs Field 9",
+  "date": "2025-08-17",
+  "time": "11:00",
+  "startTime": "2025-08-17T11:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Cal Elite SC B2007",
+  "awayTeamName": "City SC Southwest B07/08",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 6
+}
+ Game 2 Team IDs Debug: Object
+ Game 2 transformed: Object
+ Game 3 transformation debug: Object
+ Game 3 API data: {
+  "id": 10472,
+  "homeTeam": "Albion SC Riverside EA08",
+  "awayTeam": "Future FC B07/08 NPL",
+  "homeTeamId": 632,
+  "awayTeamId": 750,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 8",
+  "fieldId": 27,
+  "fieldName": "Galway Downs Field 8",
+  "date": "2025-08-17",
+  "time": "11:30",
+  "startTime": "2025-08-17T11:30:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC Riverside EA08",
+  "awayTeamName": "Future FC B07/08 NPL",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 5
+}
+ Game 3 Team IDs Debug: Object
+ Game 3 transformed: Object
+ Game 4 transformation debug: Object
+ Game 4 API data: {
+  "id": 10471,
+  "homeTeam": "Cal Elite SC B2007",
+  "awayTeam": "Future FC B07/08 NPL",
+  "homeTeamId": 108,
+  "awayTeamId": 750,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 7",
+  "fieldId": 26,
+  "fieldName": "Galway Downs Field 7",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Cal Elite SC B2007",
+  "awayTeamName": "Future FC B07/08 NPL",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 4
+}
+ Game 4 Team IDs Debug: Object
+ Game 4 transformed: Object
+ Game 5 transformation debug: Object
+ Game 5 API data: {
+  "id": 10470,
+  "homeTeam": "Albion SC Riverside EA08",
+  "awayTeam": "City SC Southwest B07/08",
+  "homeTeamId": 632,
+  "awayTeamId": 561,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 6",
+  "fieldId": 25,
+  "fieldName": "Galway Downs Field 6",
+  "date": "2025-08-16",
+  "time": "11:00",
+  "startTime": "2025-08-16T11:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC Riverside EA08",
+  "awayTeamName": "City SC Southwest B07/08",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 3
+}
+ Game 5 Team IDs Debug: Object
+ Game 5 transformed: Object
+ Game 6 transformation debug: Object
+ Game 6 API data: {
+  "id": 10469,
+  "homeTeam": "City SC Southwest B07/08",
+  "awayTeam": "Future FC B07/08 NPL",
+  "homeTeamId": 561,
+  "awayTeamId": 750,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 5",
+  "fieldId": 24,
+  "fieldName": "Galway Downs Field 5",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B07/08",
+  "awayTeamName": "Future FC B07/08 NPL",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 2
+}
+ Game 6 Team IDs Debug: Object
+ Game 6 transformed: Object
+ Game 7 transformation debug: Object
+ Game 7 API data: {
+  "id": 10468,
+  "homeTeam": "Albion SC Riverside EA08",
+  "awayTeam": "Cal Elite SC B2007",
+  "homeTeamId": 632,
+  "awayTeamId": 108,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 4",
+  "fieldId": 23,
+  "fieldName": "Galway Downs Field 4",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC Riverside EA08",
+  "awayTeamName": "Cal Elite SC B2007",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 1
+}
+ Game 7 Team IDs Debug: Object
+ Game 7 transformed: Object
+ Game 8 transformation debug: Object
+ Game 8 API data: {
+  "id": 10467,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "homeTeamId": null,
+  "awayTeamId": null,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 1",
+  "fieldId": 20,
+  "fieldName": "Galway Downs Field 1",
+  "date": "2025-08-17",
+  "time": "12:00",
+  "startTime": "2025-08-17T12:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD",
+  "bracketId": 76,
+  "flightName": "Nike Premier",
+  "round": 10
+}
+ Game 8 Team IDs Debug: Object
+ Game 8 transformed: Object
+ Game 9 transformation debug: Object
+ Game 9 API data: {
+  "id": 10466,
+  "homeTeam": "FC Premier Elite B2007",
+  "awayTeam": "Pro Alliance FC 08 Academy",
+  "homeTeamId": 212,
+  "awayTeamId": 517,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 3",
+  "fieldId": 22,
+  "fieldName": "Galway Downs Field 3",
+  "date": "2025-08-17",
+  "time": "09:00",
+  "startTime": "2025-08-17T09:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "FC Premier Elite B2007",
+  "awayTeamName": "Pro Alliance FC 08 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 9
+}
+ Game 9 Team IDs Debug: Object
+ Game 9 transformed: Object
+ Game 10 transformation debug: Object
+ Game 10 API data: {
+  "id": 10465,
+  "homeTeam": "Empire Surf B07/08 Academy-1",
+  "awayTeam": "Pro Alliance B07 Academy",
+  "homeTeamId": 699,
+  "awayTeamId": 692,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 2",
+  "fieldId": 21,
+  "fieldName": "Galway Downs Field 2",
+  "date": "2025-08-17",
+  "time": "08:30",
+  "startTime": "2025-08-17T08:30:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B07/08 Academy-1",
+  "awayTeamName": "Pro Alliance B07 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 8
+}
+ Game 10 Team IDs Debug: Object
+ Game 10 transformed: Object
+ Game 11 transformation debug: Object
+ Game 11 API data: {
+  "id": 10464,
+  "homeTeam": "Albion SC San Diego B07/08 EA 2",
+  "awayTeam": "Rebels SC B07/08 ECRL",
+  "homeTeamId": 595,
+  "awayTeamId": 700,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 1",
+  "fieldId": 20,
+  "fieldName": "Galway Downs Field 1",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC San Diego B07/08 EA 2",
+  "awayTeamName": "Rebels SC B07/08 ECRL",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 7
+}
+ Game 11 Team IDs Debug: Object
+ Game 11 transformed: Object
+ Game 12 transformation debug: Object
+ Game 12 API data: {
+  "id": 10463,
+  "homeTeam": "FC Premier Elite B2007",
+  "awayTeam": "Pro Alliance B07 Academy",
+  "homeTeamId": 212,
+  "awayTeamId": 692,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 3",
+  "fieldId": 22,
+  "fieldName": "Galway Downs Field 3",
+  "date": "2025-08-16",
+  "time": "13:00",
+  "startTime": "2025-08-16T13:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "FC Premier Elite B2007",
+  "awayTeamName": "Pro Alliance B07 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 6
+}
+ Game 12 Team IDs Debug: Object
+ Game 12 transformed: Object
+ Game 13 transformation debug: Object
+ Game 13 API data: {
+  "id": 10462,
+  "homeTeam": "Empire Surf B07/08 Academy-1",
+  "awayTeam": "Rebels SC B07/08 ECRL",
+  "homeTeamId": 699,
+  "awayTeamId": 700,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 2",
+  "fieldId": 21,
+  "fieldName": "Galway Downs Field 2",
+  "date": "2025-08-16",
+  "time": "12:30",
+  "startTime": "2025-08-16T12:30:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B07/08 Academy-1",
+  "awayTeamName": "Rebels SC B07/08 ECRL",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 5
+}
+ Game 13 Team IDs Debug: Object
+ Game 13 transformed: Object
+ Game 14 transformation debug: Object
+ Game 14 API data: {
+  "id": 10461,
+  "homeTeam": "Albion SC San Diego B07/08 EA 2",
+  "awayTeam": "Pro Alliance FC 08 Academy",
+  "homeTeamId": 595,
+  "awayTeamId": 517,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 1",
+  "fieldId": 20,
+  "fieldName": "Galway Downs Field 1",
+  "date": "2025-08-16",
+  "time": "12:00",
+  "startTime": "2025-08-16T12:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC San Diego B07/08 EA 2",
+  "awayTeamName": "Pro Alliance FC 08 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 4
+}
+ Game 14 Team IDs Debug: Object
+ Game 14 transformed: Object
+ Game 15 transformation debug: Object
+ Game 15 API data: {
+  "id": 10460,
+  "homeTeam": "FC Premier Elite B2007",
+  "awayTeam": "Rebels SC B07/08 ECRL",
+  "homeTeamId": 212,
+  "awayTeamId": 700,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 3",
+  "fieldId": 22,
+  "fieldName": "Galway Downs Field 3",
+  "date": "2025-08-16",
+  "time": "09:00",
+  "startTime": "2025-08-16T09:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "FC Premier Elite B2007",
+  "awayTeamName": "Rebels SC B07/08 ECRL",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 3
+}
+ Game 15 Team IDs Debug: Object
+ Game 15 transformed: Object
+ Game 16 transformation debug: Object
+ Game 16 API data: {
+  "id": 10459,
+  "homeTeam": "Empire Surf B07/08 Academy-1",
+  "awayTeam": "Pro Alliance FC 08 Academy",
+  "homeTeamId": 699,
+  "awayTeamId": 517,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 2",
+  "fieldId": 21,
+  "fieldName": "Galway Downs Field 2",
+  "date": "2025-08-16",
+  "time": "08:30",
+  "startTime": "2025-08-16T08:30:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B07/08 Academy-1",
+  "awayTeamName": "Pro Alliance FC 08 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 2
+}
+ Game 16 Team IDs Debug: Object
+ Game 16 transformed: Object
+ Game 17 transformation debug: Object
+ Game 17 API data: {
+  "id": 10458,
+  "homeTeam": "Albion SC San Diego B07/08 EA 2",
+  "awayTeam": "Pro Alliance B07 Academy",
+  "homeTeamId": 595,
+  "awayTeamId": 692,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 1",
+  "fieldId": 20,
+  "fieldName": "Galway Downs Field 1",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC San Diego B07/08 EA 2",
+  "awayTeamName": "Pro Alliance B07 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 1
+}
+ Game 17 Team IDs Debug: Object
+ Game 17 transformed: Object
+ Game 18 transformation debug: Object
+ Game 18 API data: {
+  "id": 10474,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "homeTeamId": null,
+  "awayTeamId": null,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 3",
+  "fieldId": 22,
+  "fieldName": "Galway Downs Field 3",
+  "date": "2025-08-17",
+  "time": "14:00",
+  "startTime": "2025-08-17T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD",
+  "bracketId": 78,
+  "flightName": "Nike Elite",
+  "round": 10
+}
+ Game 18 Team IDs Debug: Object
+ Game 18 transformed: Object
+ Game 19 transformation debug: Object
+ Game 19 API data: {
+  "id": 10473,
+  "homeTeam": "Cal Elite SC B2007",
+  "awayTeam": "City SC Southwest B07/08",
+  "homeTeamId": 108,
+  "awayTeamId": 561,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 9",
+  "fieldId": 28,
+  "fieldName": "Galway Downs Field 9",
+  "date": "2025-08-17",
+  "time": "11:00",
+  "startTime": "2025-08-17T11:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Cal Elite SC B2007",
+  "awayTeamName": "City SC Southwest B07/08",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 6
+}
+ Game 19 Team IDs Debug: Object
+ Game 19 transformed: Object
+ Game 20 transformation debug: Object
+ Game 20 API data: {
+  "id": 10472,
+  "homeTeam": "Albion SC Riverside EA08",
+  "awayTeam": "Future FC B07/08 NPL",
+  "homeTeamId": 632,
+  "awayTeamId": 750,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 8",
+  "fieldId": 27,
+  "fieldName": "Galway Downs Field 8",
+  "date": "2025-08-17",
+  "time": "11:30",
+  "startTime": "2025-08-17T11:30:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC Riverside EA08",
+  "awayTeamName": "Future FC B07/08 NPL",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 5
+}
+ Game 20 Team IDs Debug: Object
+ Game 20 transformed: Object
+ Game 21 transformation debug: Object
+ Game 21 API data: {
+  "id": 10471,
+  "homeTeam": "Cal Elite SC B2007",
+  "awayTeam": "Future FC B07/08 NPL",
+  "homeTeamId": 108,
+  "awayTeamId": 750,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 7",
+  "fieldId": 26,
+  "fieldName": "Galway Downs Field 7",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Cal Elite SC B2007",
+  "awayTeamName": "Future FC B07/08 NPL",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 4
+}
+ Game 21 Team IDs Debug: Object
+ Game 21 transformed: Object
+ Game 22 transformation debug: Object
+ Game 22 API data: {
+  "id": 10470,
+  "homeTeam": "Albion SC Riverside EA08",
+  "awayTeam": "City SC Southwest B07/08",
+  "homeTeamId": 632,
+  "awayTeamId": 561,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 6",
+  "fieldId": 25,
+  "fieldName": "Galway Downs Field 6",
+  "date": "2025-08-16",
+  "time": "11:00",
+  "startTime": "2025-08-16T11:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC Riverside EA08",
+  "awayTeamName": "City SC Southwest B07/08",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 3
+}
+ Game 22 Team IDs Debug: Object
+ Game 22 transformed: Object
+ Game 23 transformation debug: Object
+ Game 23 API data: {
+  "id": 10469,
+  "homeTeam": "City SC Southwest B07/08",
+  "awayTeam": "Future FC B07/08 NPL",
+  "homeTeamId": 561,
+  "awayTeamId": 750,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 5",
+  "fieldId": 24,
+  "fieldName": "Galway Downs Field 5",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B07/08",
+  "awayTeamName": "Future FC B07/08 NPL",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 2
+}
+ Game 23 Team IDs Debug: Object
+ Game 23 transformed: Object
+ Game 24 transformation debug: Object
+ Game 24 API data: {
+  "id": 10468,
+  "homeTeam": "Albion SC Riverside EA08",
+  "awayTeam": "Cal Elite SC B2007",
+  "homeTeamId": 632,
+  "awayTeamId": 108,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 4",
+  "fieldId": 23,
+  "fieldName": "Galway Downs Field 4",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC Riverside EA08",
+  "awayTeamName": "Cal Elite SC B2007",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 1
+}
+ Game 24 Team IDs Debug: Object
+ Game 24 transformed: Object
+ Game 25 transformation debug: Object
+ Game 25 API data: {
+  "id": 10467,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "homeTeamId": null,
+  "awayTeamId": null,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 1",
+  "fieldId": 20,
+  "fieldName": "Galway Downs Field 1",
+  "date": "2025-08-17",
+  "time": "12:00",
+  "startTime": "2025-08-17T12:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD",
+  "bracketId": 76,
+  "flightName": "Nike Premier",
+  "round": 10
+}
+ Game 25 Team IDs Debug: Object
+ Game 25 transformed: Object
+ Game 26 transformation debug: Object
+ Game 26 API data: {
+  "id": 10466,
+  "homeTeam": "FC Premier Elite B2007",
+  "awayTeam": "Pro Alliance FC 08 Academy",
+  "homeTeamId": 212,
+  "awayTeamId": 517,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 3",
+  "fieldId": 22,
+  "fieldName": "Galway Downs Field 3",
+  "date": "2025-08-17",
+  "time": "09:00",
+  "startTime": "2025-08-17T09:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "FC Premier Elite B2007",
+  "awayTeamName": "Pro Alliance FC 08 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 9
+}
+ Game 26 Team IDs Debug: Object
+ Game 26 transformed: Object
+ Game 27 transformation debug: Object
+ Game 27 API data: {
+  "id": 10465,
+  "homeTeam": "Empire Surf B07/08 Academy-1",
+  "awayTeam": "Pro Alliance B07 Academy",
+  "homeTeamId": 699,
+  "awayTeamId": 692,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 2",
+  "fieldId": 21,
+  "fieldName": "Galway Downs Field 2",
+  "date": "2025-08-17",
+  "time": "08:30",
+  "startTime": "2025-08-17T08:30:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B07/08 Academy-1",
+  "awayTeamName": "Pro Alliance B07 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 8
+}
+ Game 27 Team IDs Debug: Object
+ Game 27 transformed: Object
+ Game 28 transformation debug: Object
+ Game 28 API data: {
+  "id": 10464,
+  "homeTeam": "Albion SC San Diego B07/08 EA 2",
+  "awayTeam": "Rebels SC B07/08 ECRL",
+  "homeTeamId": 595,
+  "awayTeamId": 700,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 1",
+  "fieldId": 20,
+  "fieldName": "Galway Downs Field 1",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC San Diego B07/08 EA 2",
+  "awayTeamName": "Rebels SC B07/08 ECRL",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 7
+}
+ Game 28 Team IDs Debug: Object
+ Game 28 transformed: Object
+ Game 29 transformation debug: Object
+ Game 29 API data: {
+  "id": 10463,
+  "homeTeam": "FC Premier Elite B2007",
+  "awayTeam": "Pro Alliance B07 Academy",
+  "homeTeamId": 212,
+  "awayTeamId": 692,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 3",
+  "fieldId": 22,
+  "fieldName": "Galway Downs Field 3",
+  "date": "2025-08-16",
+  "time": "13:00",
+  "startTime": "2025-08-16T13:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "FC Premier Elite B2007",
+  "awayTeamName": "Pro Alliance B07 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 6
+}
+ Game 29 Team IDs Debug: Object
+ Game 29 transformed: Object
+ Game 30 transformation debug: Object
+ Game 30 API data: {
+  "id": 10462,
+  "homeTeam": "Empire Surf B07/08 Academy-1",
+  "awayTeam": "Rebels SC B07/08 ECRL",
+  "homeTeamId": 699,
+  "awayTeamId": 700,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 2",
+  "fieldId": 21,
+  "fieldName": "Galway Downs Field 2",
+  "date": "2025-08-16",
+  "time": "12:30",
+  "startTime": "2025-08-16T12:30:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B07/08 Academy-1",
+  "awayTeamName": "Rebels SC B07/08 ECRL",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 5
+}
+ Game 30 Team IDs Debug: Object
+ Game 30 transformed: Object
+ Game 31 transformation debug: Object
+ Game 31 API data: {
+  "id": 10461,
+  "homeTeam": "Albion SC San Diego B07/08 EA 2",
+  "awayTeam": "Pro Alliance FC 08 Academy",
+  "homeTeamId": 595,
+  "awayTeamId": 517,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 1",
+  "fieldId": 20,
+  "fieldName": "Galway Downs Field 1",
+  "date": "2025-08-16",
+  "time": "12:00",
+  "startTime": "2025-08-16T12:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC San Diego B07/08 EA 2",
+  "awayTeamName": "Pro Alliance FC 08 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 4
+}
+ Game 31 Team IDs Debug: Object
+ Game 31 transformed: Object
+ Game 32 transformation debug: Object
+ Game 32 API data: {
+  "id": 10460,
+  "homeTeam": "FC Premier Elite B2007",
+  "awayTeam": "Rebels SC B07/08 ECRL",
+  "homeTeamId": 212,
+  "awayTeamId": 700,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 3",
+  "fieldId": 22,
+  "fieldName": "Galway Downs Field 3",
+  "date": "2025-08-16",
+  "time": "09:00",
+  "startTime": "2025-08-16T09:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "FC Premier Elite B2007",
+  "awayTeamName": "Rebels SC B07/08 ECRL",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 3
+}
+ Game 32 Team IDs Debug: Object
+ Game 32 transformed: Object
+ Game 33 transformation debug: Object
+ Game 33 API data: {
+  "id": 10459,
+  "homeTeam": "Empire Surf B07/08 Academy-1",
+  "awayTeam": "Pro Alliance FC 08 Academy",
+  "homeTeamId": 699,
+  "awayTeamId": 517,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 2",
+  "fieldId": 21,
+  "fieldName": "Galway Downs Field 2",
+  "date": "2025-08-16",
+  "time": "08:30",
+  "startTime": "2025-08-16T08:30:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B07/08 Academy-1",
+  "awayTeamName": "Pro Alliance FC 08 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 2
+}
+ Game 33 Team IDs Debug: Object
+ Game 33 transformed: Object
+ Game 34 transformation debug: Object
+ Game 34 API data: {
+  "id": 10458,
+  "homeTeam": "Albion SC San Diego B07/08 EA 2",
+  "awayTeam": "Pro Alliance B07 Academy",
+  "homeTeamId": 595,
+  "awayTeamId": 692,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 1",
+  "fieldId": 20,
+  "fieldName": "Galway Downs Field 1",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC San Diego B07/08 EA 2",
+  "awayTeamName": "Pro Alliance B07 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 1
+}
+ Game 34 Team IDs Debug: Object
+ Game 34 transformed: Object
+ Game 35 transformation debug: Object
+ Game 35 API data: {
+  "id": 10474,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "homeTeamId": null,
+  "awayTeamId": null,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 3",
+  "fieldId": 22,
+  "fieldName": "Galway Downs Field 3",
+  "date": "2025-08-17",
+  "time": "14:00",
+  "startTime": "2025-08-17T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD",
+  "bracketId": 78,
+  "flightName": "Nike Elite",
+  "round": 10
+}
+ Game 35 Team IDs Debug: Object
+ Game 35 transformed: Object
+ Game 36 transformation debug: Object
+ Game 36 API data: {
+  "id": 10473,
+  "homeTeam": "Cal Elite SC B2007",
+  "awayTeam": "City SC Southwest B07/08",
+  "homeTeamId": 108,
+  "awayTeamId": 561,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 9",
+  "fieldId": 28,
+  "fieldName": "Galway Downs Field 9",
+  "date": "2025-08-17",
+  "time": "11:00",
+  "startTime": "2025-08-17T11:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Cal Elite SC B2007",
+  "awayTeamName": "City SC Southwest B07/08",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 6
+}
+ Game 36 Team IDs Debug: Object
+ Game 36 transformed: Object
+ Game 37 transformation debug: Object
+ Game 37 API data: {
+  "id": 10472,
+  "homeTeam": "Albion SC Riverside EA08",
+  "awayTeam": "Future FC B07/08 NPL",
+  "homeTeamId": 632,
+  "awayTeamId": 750,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 8",
+  "fieldId": 27,
+  "fieldName": "Galway Downs Field 8",
+  "date": "2025-08-17",
+  "time": "11:30",
+  "startTime": "2025-08-17T11:30:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC Riverside EA08",
+  "awayTeamName": "Future FC B07/08 NPL",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 5
+}
+ Game 37 Team IDs Debug: Object
+ Game 37 transformed: Object
+ Game 38 transformation debug: Object
+ Game 38 API data: {
+  "id": 10471,
+  "homeTeam": "Cal Elite SC B2007",
+  "awayTeam": "Future FC B07/08 NPL",
+  "homeTeamId": 108,
+  "awayTeamId": 750,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 7",
+  "fieldId": 26,
+  "fieldName": "Galway Downs Field 7",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Cal Elite SC B2007",
+  "awayTeamName": "Future FC B07/08 NPL",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 4
+}
+ Game 38 Team IDs Debug: Object
+ Game 38 transformed: Object
+ Game 39 transformation debug: Object
+ Game 39 API data: {
+  "id": 10470,
+  "homeTeam": "Albion SC Riverside EA08",
+  "awayTeam": "City SC Southwest B07/08",
+  "homeTeamId": 632,
+  "awayTeamId": 561,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 6",
+  "fieldId": 25,
+  "fieldName": "Galway Downs Field 6",
+  "date": "2025-08-16",
+  "time": "11:00",
+  "startTime": "2025-08-16T11:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC Riverside EA08",
+  "awayTeamName": "City SC Southwest B07/08",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 3
+}
+ Game 39 Team IDs Debug: Object
+ Game 39 transformed: Object
+ Game 40 transformation debug: Object
+ Game 40 API data: {
+  "id": 10469,
+  "homeTeam": "City SC Southwest B07/08",
+  "awayTeam": "Future FC B07/08 NPL",
+  "homeTeamId": 561,
+  "awayTeamId": 750,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 5",
+  "fieldId": 24,
+  "fieldName": "Galway Downs Field 5",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B07/08",
+  "awayTeamName": "Future FC B07/08 NPL",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 2
+}
+ Game 40 Team IDs Debug: Object
+ Game 40 transformed: Object
+ Game 41 transformation debug: Object
+ Game 41 API data: {
+  "id": 10468,
+  "homeTeam": "Albion SC Riverside EA08",
+  "awayTeam": "Cal Elite SC B2007",
+  "homeTeamId": 632,
+  "awayTeamId": 108,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 4",
+  "fieldId": 23,
+  "fieldName": "Galway Downs Field 4",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC Riverside EA08",
+  "awayTeamName": "Cal Elite SC B2007",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 1
+}
+ Game 41 Team IDs Debug: Object
+ Game 41 transformed: Object
+ Game 42 transformation debug: Object
+ Game 42 API data: {
+  "id": 10467,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "homeTeamId": null,
+  "awayTeamId": null,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 1",
+  "fieldId": 20,
+  "fieldName": "Galway Downs Field 1",
+  "date": "2025-08-17",
+  "time": "12:00",
+  "startTime": "2025-08-17T12:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD",
+  "bracketId": 76,
+  "flightName": "Nike Premier",
+  "round": 10
+}
+ Game 42 Team IDs Debug: Object
+ Game 42 transformed: Object
+ Game 43 transformation debug: Object
+ Game 43 API data: {
+  "id": 10466,
+  "homeTeam": "FC Premier Elite B2007",
+  "awayTeam": "Pro Alliance FC 08 Academy",
+  "homeTeamId": 212,
+  "awayTeamId": 517,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 3",
+  "fieldId": 22,
+  "fieldName": "Galway Downs Field 3",
+  "date": "2025-08-17",
+  "time": "09:00",
+  "startTime": "2025-08-17T09:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "FC Premier Elite B2007",
+  "awayTeamName": "Pro Alliance FC 08 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 9
+}
+ Game 43 Team IDs Debug: Object
+ Game 43 transformed: Object
+ Game 44 transformation debug: Object
+ Game 44 API data: {
+  "id": 10465,
+  "homeTeam": "Empire Surf B07/08 Academy-1",
+  "awayTeam": "Pro Alliance B07 Academy",
+  "homeTeamId": 699,
+  "awayTeamId": 692,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 2",
+  "fieldId": 21,
+  "fieldName": "Galway Downs Field 2",
+  "date": "2025-08-17",
+  "time": "08:30",
+  "startTime": "2025-08-17T08:30:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B07/08 Academy-1",
+  "awayTeamName": "Pro Alliance B07 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 8
+}
+ Game 44 Team IDs Debug: Object
+ Game 44 transformed: Object
+ Game 45 transformation debug: Object
+ Game 45 API data: {
+  "id": 10464,
+  "homeTeam": "Albion SC San Diego B07/08 EA 2",
+  "awayTeam": "Rebels SC B07/08 ECRL",
+  "homeTeamId": 595,
+  "awayTeamId": 700,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 1",
+  "fieldId": 20,
+  "fieldName": "Galway Downs Field 1",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC San Diego B07/08 EA 2",
+  "awayTeamName": "Rebels SC B07/08 ECRL",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 7
+}
+ Game 45 Team IDs Debug: Object
+ Game 45 transformed: Object
+ Game 46 transformation debug: Object
+ Game 46 API data: {
+  "id": 10463,
+  "homeTeam": "FC Premier Elite B2007",
+  "awayTeam": "Pro Alliance B07 Academy",
+  "homeTeamId": 212,
+  "awayTeamId": 692,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 3",
+  "fieldId": 22,
+  "fieldName": "Galway Downs Field 3",
+  "date": "2025-08-16",
+  "time": "13:00",
+  "startTime": "2025-08-16T13:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "FC Premier Elite B2007",
+  "awayTeamName": "Pro Alliance B07 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 6
+}
+ Game 46 Team IDs Debug: Object
+ Game 46 transformed: Object
+ Game 47 transformation debug: Object
+ Game 47 API data: {
+  "id": 10462,
+  "homeTeam": "Empire Surf B07/08 Academy-1",
+  "awayTeam": "Rebels SC B07/08 ECRL",
+  "homeTeamId": 699,
+  "awayTeamId": 700,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 2",
+  "fieldId": 21,
+  "fieldName": "Galway Downs Field 2",
+  "date": "2025-08-16",
+  "time": "12:30",
+  "startTime": "2025-08-16T12:30:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B07/08 Academy-1",
+  "awayTeamName": "Rebels SC B07/08 ECRL",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 5
+}
+ Game 47 Team IDs Debug: Object
+ Game 47 transformed: Object
+ Game 48 transformation debug: Object
+ Game 48 API data: {
+  "id": 10461,
+  "homeTeam": "Albion SC San Diego B07/08 EA 2",
+  "awayTeam": "Pro Alliance FC 08 Academy",
+  "homeTeamId": 595,
+  "awayTeamId": 517,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 1",
+  "fieldId": 20,
+  "fieldName": "Galway Downs Field 1",
+  "date": "2025-08-16",
+  "time": "12:00",
+  "startTime": "2025-08-16T12:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC San Diego B07/08 EA 2",
+  "awayTeamName": "Pro Alliance FC 08 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 4
+}
+ Game 48 Team IDs Debug: Object
+ Game 48 transformed: Object
+ Game 49 transformation debug: Object
+ Game 49 API data: {
+  "id": 10460,
+  "homeTeam": "FC Premier Elite B2007",
+  "awayTeam": "Rebels SC B07/08 ECRL",
+  "homeTeamId": 212,
+  "awayTeamId": 700,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 3",
+  "fieldId": 22,
+  "fieldName": "Galway Downs Field 3",
+  "date": "2025-08-16",
+  "time": "09:00",
+  "startTime": "2025-08-16T09:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "FC Premier Elite B2007",
+  "awayTeamName": "Rebels SC B07/08 ECRL",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 3
+}
+ Game 49 Team IDs Debug: Object
+ Game 49 transformed: Object
+ Game 50 transformation debug: Object
+ Game 50 API data: {
+  "id": 10459,
+  "homeTeam": "Empire Surf B07/08 Academy-1",
+  "awayTeam": "Pro Alliance FC 08 Academy",
+  "homeTeamId": 699,
+  "awayTeamId": 517,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 2",
+  "fieldId": 21,
+  "fieldName": "Galway Downs Field 2",
+  "date": "2025-08-16",
+  "time": "08:30",
+  "startTime": "2025-08-16T08:30:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B07/08 Academy-1",
+  "awayTeamName": "Pro Alliance FC 08 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 2
+}
+ Game 50 Team IDs Debug: Object
+ Game 50 transformed: Object
+ Game 51 transformation debug: Object
+ Game 51 API data: {
+  "id": 10458,
+  "homeTeam": "Albion SC San Diego B07/08 EA 2",
+  "awayTeam": "Pro Alliance B07 Academy",
+  "homeTeamId": 595,
+  "awayTeamId": 692,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 1",
+  "fieldId": 20,
+  "fieldName": "Galway Downs Field 1",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC San Diego B07/08 EA 2",
+  "awayTeamName": "Pro Alliance B07 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 1
+}
+ Game 51 Team IDs Debug: Object
+ Game 51 transformed: Object
+ Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+$Aa @ util.js:33Understand this warning
+ Schedule API Response: Object
+ Game 1 transformation debug: Object
+ Game 1 API data: {
+  "id": 10474,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "homeTeamId": null,
+  "awayTeamId": null,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 3",
+  "fieldId": 22,
+  "fieldName": "Galway Downs Field 3",
+  "date": "2025-08-17",
+  "time": "14:00",
+  "startTime": "2025-08-17T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD",
+  "bracketId": 78,
+  "flightName": "Nike Elite",
+  "round": 10
+}
+ Game 1 Team IDs Debug: Object
+ Game 1 transformed: Object
+ Game 2 transformation debug: Object
+ Game 2 API data: {
+  "id": 10473,
+  "homeTeam": "Cal Elite SC B2007",
+  "awayTeam": "City SC Southwest B07/08",
+  "homeTeamId": 108,
+  "awayTeamId": 561,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 9",
+  "fieldId": 28,
+  "fieldName": "Galway Downs Field 9",
+  "date": "2025-08-17",
+  "time": "11:00",
+  "startTime": "2025-08-17T11:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Cal Elite SC B2007",
+  "awayTeamName": "City SC Southwest B07/08",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 6
+}
+ Game 2 Team IDs Debug: Object
+ Game 2 transformed: Object
+ Game 3 transformation debug: Object
+ Game 3 API data: {
+  "id": 10472,
+  "homeTeam": "Albion SC Riverside EA08",
+  "awayTeam": "Future FC B07/08 NPL",
+  "homeTeamId": 632,
+  "awayTeamId": 750,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 8",
+  "fieldId": 27,
+  "fieldName": "Galway Downs Field 8",
+  "date": "2025-08-17",
+  "time": "11:30",
+  "startTime": "2025-08-17T11:30:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC Riverside EA08",
+  "awayTeamName": "Future FC B07/08 NPL",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 5
+}
+ Game 3 Team IDs Debug: Object
+ Game 3 transformed: Object
+ Game 4 transformation debug: Object
+ Game 4 API data: {
+  "id": 10471,
+  "homeTeam": "Cal Elite SC B2007",
+  "awayTeam": "Future FC B07/08 NPL",
+  "homeTeamId": 108,
+  "awayTeamId": 750,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 7",
+  "fieldId": 26,
+  "fieldName": "Galway Downs Field 7",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Cal Elite SC B2007",
+  "awayTeamName": "Future FC B07/08 NPL",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 4
+}
+ Game 4 Team IDs Debug: Object
+ Game 4 transformed: Object
+ Game 5 transformation debug: Object
+ Game 5 API data: {
+  "id": 10470,
+  "homeTeam": "Albion SC Riverside EA08",
+  "awayTeam": "City SC Southwest B07/08",
+  "homeTeamId": 632,
+  "awayTeamId": 561,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 6",
+  "fieldId": 25,
+  "fieldName": "Galway Downs Field 6",
+  "date": "2025-08-16",
+  "time": "11:00",
+  "startTime": "2025-08-16T11:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC Riverside EA08",
+  "awayTeamName": "City SC Southwest B07/08",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 3
+}
+ Game 5 Team IDs Debug: Object
+ Game 5 transformed: Object
+ Game 6 transformation debug: Object
+ Game 6 API data: {
+  "id": 10469,
+  "homeTeam": "City SC Southwest B07/08",
+  "awayTeam": "Future FC B07/08 NPL",
+  "homeTeamId": 561,
+  "awayTeamId": 750,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 5",
+  "fieldId": 24,
+  "fieldName": "Galway Downs Field 5",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B07/08",
+  "awayTeamName": "Future FC B07/08 NPL",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 2
+}
+ Game 6 Team IDs Debug: Object
+ Game 6 transformed: Object
+ Game 7 transformation debug: Object
+ Game 7 API data: {
+  "id": 10468,
+  "homeTeam": "Albion SC Riverside EA08",
+  "awayTeam": "Cal Elite SC B2007",
+  "homeTeamId": 632,
+  "awayTeamId": 108,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 4",
+  "fieldId": 23,
+  "fieldName": "Galway Downs Field 4",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC Riverside EA08",
+  "awayTeamName": "Cal Elite SC B2007",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 1
+}
+ Game 7 Team IDs Debug: Object
+ Game 7 transformed: Object
+ Game 8 transformation debug: Object
+ Game 8 API data: {
+  "id": 10467,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "homeTeamId": null,
+  "awayTeamId": null,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 1",
+  "fieldId": 20,
+  "fieldName": "Galway Downs Field 1",
+  "date": "2025-08-17",
+  "time": "12:00",
+  "startTime": "2025-08-17T12:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD",
+  "bracketId": 76,
+  "flightName": "Nike Premier",
+  "round": 10
+}
+ Game 8 Team IDs Debug: Object
+ Game 8 transformed: Object
+ Game 9 transformation debug: Object
+ Game 9 API data: {
+  "id": 10466,
+  "homeTeam": "FC Premier Elite B2007",
+  "awayTeam": "Pro Alliance FC 08 Academy",
+  "homeTeamId": 212,
+  "awayTeamId": 517,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 3",
+  "fieldId": 22,
+  "fieldName": "Galway Downs Field 3",
+  "date": "2025-08-17",
+  "time": "09:00",
+  "startTime": "2025-08-17T09:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "FC Premier Elite B2007",
+  "awayTeamName": "Pro Alliance FC 08 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 9
+}
+ Game 9 Team IDs Debug: Object
+ Game 9 transformed: Object
+ Game 10 transformation debug: Object
+ Game 10 API data: {
+  "id": 10465,
+  "homeTeam": "Empire Surf B07/08 Academy-1",
+  "awayTeam": "Pro Alliance B07 Academy",
+  "homeTeamId": 699,
+  "awayTeamId": 692,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 2",
+  "fieldId": 21,
+  "fieldName": "Galway Downs Field 2",
+  "date": "2025-08-17",
+  "time": "08:30",
+  "startTime": "2025-08-17T08:30:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B07/08 Academy-1",
+  "awayTeamName": "Pro Alliance B07 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 8
+}
+ Game 10 Team IDs Debug: Object
+ Game 10 transformed: Object
+ Game 11 transformation debug: Object
+ Game 11 API data: {
+  "id": 10464,
+  "homeTeam": "Albion SC San Diego B07/08 EA 2",
+  "awayTeam": "Rebels SC B07/08 ECRL",
+  "homeTeamId": 595,
+  "awayTeamId": 700,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 1",
+  "fieldId": 20,
+  "fieldName": "Galway Downs Field 1",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC San Diego B07/08 EA 2",
+  "awayTeamName": "Rebels SC B07/08 ECRL",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 7
+}
+ Game 11 Team IDs Debug: Object
+ Game 11 transformed: Object
+ Game 12 transformation debug: Object
+ Game 12 API data: {
+  "id": 10463,
+  "homeTeam": "FC Premier Elite B2007",
+  "awayTeam": "Pro Alliance B07 Academy",
+  "homeTeamId": 212,
+  "awayTeamId": 692,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 3",
+  "fieldId": 22,
+  "fieldName": "Galway Downs Field 3",
+  "date": "2025-08-16",
+  "time": "13:00",
+  "startTime": "2025-08-16T13:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "FC Premier Elite B2007",
+  "awayTeamName": "Pro Alliance B07 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 6
+}
+ Game 12 Team IDs Debug: Object
+ Game 12 transformed: Object
+ Game 13 transformation debug: Object
+ Game 13 API data: {
+  "id": 10462,
+  "homeTeam": "Empire Surf B07/08 Academy-1",
+  "awayTeam": "Rebels SC B07/08 ECRL",
+  "homeTeamId": 699,
+  "awayTeamId": 700,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 2",
+  "fieldId": 21,
+  "fieldName": "Galway Downs Field 2",
+  "date": "2025-08-16",
+  "time": "12:30",
+  "startTime": "2025-08-16T12:30:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B07/08 Academy-1",
+  "awayTeamName": "Rebels SC B07/08 ECRL",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 5
+}
+ Game 13 Team IDs Debug: Object
+ Game 13 transformed: Object
+ Game 14 transformation debug: Object
+ Game 14 API data: {
+  "id": 10461,
+  "homeTeam": "Albion SC San Diego B07/08 EA 2",
+  "awayTeam": "Pro Alliance FC 08 Academy",
+  "homeTeamId": 595,
+  "awayTeamId": 517,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 1",
+  "fieldId": 20,
+  "fieldName": "Galway Downs Field 1",
+  "date": "2025-08-16",
+  "time": "12:00",
+  "startTime": "2025-08-16T12:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC San Diego B07/08 EA 2",
+  "awayTeamName": "Pro Alliance FC 08 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 4
+}
+ Game 14 Team IDs Debug: Object
+ Game 14 transformed: Object
+ Game 15 transformation debug: Object
+ Game 15 API data: {
+  "id": 10460,
+  "homeTeam": "FC Premier Elite B2007",
+  "awayTeam": "Rebels SC B07/08 ECRL",
+  "homeTeamId": 212,
+  "awayTeamId": 700,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 3",
+  "fieldId": 22,
+  "fieldName": "Galway Downs Field 3",
+  "date": "2025-08-16",
+  "time": "09:00",
+  "startTime": "2025-08-16T09:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "FC Premier Elite B2007",
+  "awayTeamName": "Rebels SC B07/08 ECRL",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 3
+}
+ Game 15 Team IDs Debug: Object
+ Game 15 transformed: Object
+ Game 16 transformation debug: Object
+ Game 16 API data: {
+  "id": 10459,
+  "homeTeam": "Empire Surf B07/08 Academy-1",
+  "awayTeam": "Pro Alliance FC 08 Academy",
+  "homeTeamId": 699,
+  "awayTeamId": 517,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 2",
+  "fieldId": 21,
+  "fieldName": "Galway Downs Field 2",
+  "date": "2025-08-16",
+  "time": "08:30",
+  "startTime": "2025-08-16T08:30:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B07/08 Academy-1",
+  "awayTeamName": "Pro Alliance FC 08 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 2
+}
+ Game 16 Team IDs Debug: Object
+ Game 16 transformed: Object
+ Game 17 transformation debug: Object
+ Game 17 API data: {
+  "id": 10458,
+  "homeTeam": "Albion SC San Diego B07/08 EA 2",
+  "awayTeam": "Pro Alliance B07 Academy",
+  "homeTeamId": 595,
+  "awayTeamId": 692,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 1",
+  "fieldId": 20,
+  "fieldName": "Galway Downs Field 1",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC San Diego B07/08 EA 2",
+  "awayTeamName": "Pro Alliance B07 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 1
+}
+ Game 17 Team IDs Debug: Object
+ Game 17 transformed: Object
+ Game 18 transformation debug: Object
+ Game 18 API data: {
+  "id": 10474,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "homeTeamId": null,
+  "awayTeamId": null,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 3",
+  "fieldId": 22,
+  "fieldName": "Galway Downs Field 3",
+  "date": "2025-08-17",
+  "time": "14:00",
+  "startTime": "2025-08-17T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD",
+  "bracketId": 78,
+  "flightName": "Nike Elite",
+  "round": 10
+}
+ Game 18 Team IDs Debug: Object
+ Game 18 transformed: Object
+ Game 19 transformation debug: Object
+ Game 19 API data: {
+  "id": 10473,
+  "homeTeam": "Cal Elite SC B2007",
+  "awayTeam": "City SC Southwest B07/08",
+  "homeTeamId": 108,
+  "awayTeamId": 561,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 9",
+  "fieldId": 28,
+  "fieldName": "Galway Downs Field 9",
+  "date": "2025-08-17",
+  "time": "11:00",
+  "startTime": "2025-08-17T11:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Cal Elite SC B2007",
+  "awayTeamName": "City SC Southwest B07/08",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 6
+}
+ Game 19 Team IDs Debug: Object
+ Game 19 transformed: Object
+ Game 20 transformation debug: Object
+ Game 20 API data: {
+  "id": 10472,
+  "homeTeam": "Albion SC Riverside EA08",
+  "awayTeam": "Future FC B07/08 NPL",
+  "homeTeamId": 632,
+  "awayTeamId": 750,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 8",
+  "fieldId": 27,
+  "fieldName": "Galway Downs Field 8",
+  "date": "2025-08-17",
+  "time": "11:30",
+  "startTime": "2025-08-17T11:30:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC Riverside EA08",
+  "awayTeamName": "Future FC B07/08 NPL",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 5
+}
+ Game 20 Team IDs Debug: Object
+ Game 20 transformed: Object
+ Game 21 transformation debug: Object
+ Game 21 API data: {
+  "id": 10471,
+  "homeTeam": "Cal Elite SC B2007",
+  "awayTeam": "Future FC B07/08 NPL",
+  "homeTeamId": 108,
+  "awayTeamId": 750,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 7",
+  "fieldId": 26,
+  "fieldName": "Galway Downs Field 7",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Cal Elite SC B2007",
+  "awayTeamName": "Future FC B07/08 NPL",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 4
+}
+ Game 21 Team IDs Debug: Object
+ Game 21 transformed: Object
+ Game 22 transformation debug: Object
+ Game 22 API data: {
+  "id": 10470,
+  "homeTeam": "Albion SC Riverside EA08",
+  "awayTeam": "City SC Southwest B07/08",
+  "homeTeamId": 632,
+  "awayTeamId": 561,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 6",
+  "fieldId": 25,
+  "fieldName": "Galway Downs Field 6",
+  "date": "2025-08-16",
+  "time": "11:00",
+  "startTime": "2025-08-16T11:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC Riverside EA08",
+  "awayTeamName": "City SC Southwest B07/08",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 3
+}
+ Game 22 Team IDs Debug: Object
+ Game 22 transformed: Object
+ Game 23 transformation debug: Object
+ Game 23 API data: {
+  "id": 10469,
+  "homeTeam": "City SC Southwest B07/08",
+  "awayTeam": "Future FC B07/08 NPL",
+  "homeTeamId": 561,
+  "awayTeamId": 750,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 5",
+  "fieldId": 24,
+  "fieldName": "Galway Downs Field 5",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B07/08",
+  "awayTeamName": "Future FC B07/08 NPL",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 2
+}
+ Game 23 Team IDs Debug: Object
+ Game 23 transformed: Object
+ Game 24 transformation debug: Object
+ Game 24 API data: {
+  "id": 10468,
+  "homeTeam": "Albion SC Riverside EA08",
+  "awayTeam": "Cal Elite SC B2007",
+  "homeTeamId": 632,
+  "awayTeamId": 108,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 4",
+  "fieldId": 23,
+  "fieldName": "Galway Downs Field 4",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC Riverside EA08",
+  "awayTeamName": "Cal Elite SC B2007",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 1
+}
+ Game 24 Team IDs Debug: Object
+ Game 24 transformed: Object
+ Game 25 transformation debug: Object
+ Game 25 API data: {
+  "id": 10467,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "homeTeamId": null,
+  "awayTeamId": null,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 1",
+  "fieldId": 20,
+  "fieldName": "Galway Downs Field 1",
+  "date": "2025-08-17",
+  "time": "12:00",
+  "startTime": "2025-08-17T12:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD",
+  "bracketId": 76,
+  "flightName": "Nike Premier",
+  "round": 10
+}
+ Game 25 Team IDs Debug: Object
+ Game 25 transformed: Object
+ Game 26 transformation debug: Object
+ Game 26 API data: {
+  "id": 10466,
+  "homeTeam": "FC Premier Elite B2007",
+  "awayTeam": "Pro Alliance FC 08 Academy",
+  "homeTeamId": 212,
+  "awayTeamId": 517,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 3",
+  "fieldId": 22,
+  "fieldName": "Galway Downs Field 3",
+  "date": "2025-08-17",
+  "time": "09:00",
+  "startTime": "2025-08-17T09:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "FC Premier Elite B2007",
+  "awayTeamName": "Pro Alliance FC 08 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 9
+}
+ Game 26 Team IDs Debug: Object
+ Game 26 transformed: Object
+ Game 27 transformation debug: Object
+ Game 27 API data: {
+  "id": 10465,
+  "homeTeam": "Empire Surf B07/08 Academy-1",
+  "awayTeam": "Pro Alliance B07 Academy",
+  "homeTeamId": 699,
+  "awayTeamId": 692,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 2",
+  "fieldId": 21,
+  "fieldName": "Galway Downs Field 2",
+  "date": "2025-08-17",
+  "time": "08:30",
+  "startTime": "2025-08-17T08:30:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B07/08 Academy-1",
+  "awayTeamName": "Pro Alliance B07 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 8
+}
+ Game 27 Team IDs Debug: Object
+ Game 27 transformed: Object
+ Game 28 transformation debug: Object
+ Game 28 API data: {
+  "id": 10464,
+  "homeTeam": "Albion SC San Diego B07/08 EA 2",
+  "awayTeam": "Rebels SC B07/08 ECRL",
+  "homeTeamId": 595,
+  "awayTeamId": 700,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 1",
+  "fieldId": 20,
+  "fieldName": "Galway Downs Field 1",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC San Diego B07/08 EA 2",
+  "awayTeamName": "Rebels SC B07/08 ECRL",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 7
+}
+ Game 28 Team IDs Debug: Object
+ Game 28 transformed: Object
+ Game 29 transformation debug: Object
+ Game 29 API data: {
+  "id": 10463,
+  "homeTeam": "FC Premier Elite B2007",
+  "awayTeam": "Pro Alliance B07 Academy",
+  "homeTeamId": 212,
+  "awayTeamId": 692,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 3",
+  "fieldId": 22,
+  "fieldName": "Galway Downs Field 3",
+  "date": "2025-08-16",
+  "time": "13:00",
+  "startTime": "2025-08-16T13:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "FC Premier Elite B2007",
+  "awayTeamName": "Pro Alliance B07 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 6
+}
+ Game 29 Team IDs Debug: Object
+ Game 29 transformed: Object
+ Game 30 transformation debug: Object
+ Game 30 API data: {
+  "id": 10462,
+  "homeTeam": "Empire Surf B07/08 Academy-1",
+  "awayTeam": "Rebels SC B07/08 ECRL",
+  "homeTeamId": 699,
+  "awayTeamId": 700,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 2",
+  "fieldId": 21,
+  "fieldName": "Galway Downs Field 2",
+  "date": "2025-08-16",
+  "time": "12:30",
+  "startTime": "2025-08-16T12:30:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B07/08 Academy-1",
+  "awayTeamName": "Rebels SC B07/08 ECRL",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 5
+}
+ Game 30 Team IDs Debug: Object
+ Game 30 transformed: Object
+ Game 31 transformation debug: Object
+ Game 31 API data: {
+  "id": 10461,
+  "homeTeam": "Albion SC San Diego B07/08 EA 2",
+  "awayTeam": "Pro Alliance FC 08 Academy",
+  "homeTeamId": 595,
+  "awayTeamId": 517,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 1",
+  "fieldId": 20,
+  "fieldName": "Galway Downs Field 1",
+  "date": "2025-08-16",
+  "time": "12:00",
+  "startTime": "2025-08-16T12:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC San Diego B07/08 EA 2",
+  "awayTeamName": "Pro Alliance FC 08 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 4
+}
+ Game 31 Team IDs Debug: Object
+ Game 31 transformed: Object
+ Game 32 transformation debug: Object
+ Game 32 API data: {
+  "id": 10460,
+  "homeTeam": "FC Premier Elite B2007",
+  "awayTeam": "Rebels SC B07/08 ECRL",
+  "homeTeamId": 212,
+  "awayTeamId": 700,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 3",
+  "fieldId": 22,
+  "fieldName": "Galway Downs Field 3",
+  "date": "2025-08-16",
+  "time": "09:00",
+  "startTime": "2025-08-16T09:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "FC Premier Elite B2007",
+  "awayTeamName": "Rebels SC B07/08 ECRL",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 3
+}
+ Game 32 Team IDs Debug: Object
+ Game 32 transformed: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 33 transformation debug: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 33 API data: {
+  "id": 10459,
+  "homeTeam": "Empire Surf B07/08 Academy-1",
+  "awayTeam": "Pro Alliance FC 08 Academy",
+  "homeTeamId": 699,
+  "awayTeamId": 517,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 2",
+  "fieldId": 21,
+  "fieldName": "Galway Downs Field 2",
+  "date": "2025-08-16",
+  "time": "08:30",
+  "startTime": "2025-08-16T08:30:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B07/08 Academy-1",
+  "awayTeamName": "Pro Alliance FC 08 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 2
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 33 Team IDs Debug: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 33 transformed: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 34 transformation debug: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 34 API data: {
+  "id": 10458,
+  "homeTeam": "Albion SC San Diego B07/08 EA 2",
+  "awayTeam": "Pro Alliance B07 Academy",
+  "homeTeamId": 595,
+  "awayTeamId": 692,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 1",
+  "fieldId": 20,
+  "fieldName": "Galway Downs Field 1",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC San Diego B07/08 EA 2",
+  "awayTeamName": "Pro Alliance B07 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 1
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 34 Team IDs Debug: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 34 transformed: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 35 transformation debug: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 35 API data: {
+  "id": 10474,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "homeTeamId": null,
+  "awayTeamId": null,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 3",
+  "fieldId": 22,
+  "fieldName": "Galway Downs Field 3",
+  "date": "2025-08-17",
+  "time": "14:00",
+  "startTime": "2025-08-17T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD",
+  "bracketId": 78,
+  "flightName": "Nike Elite",
+  "round": 10
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 35 Team IDs Debug: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 35 transformed: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 36 transformation debug: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 36 API data: {
+  "id": 10473,
+  "homeTeam": "Cal Elite SC B2007",
+  "awayTeam": "City SC Southwest B07/08",
+  "homeTeamId": 108,
+  "awayTeamId": 561,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 9",
+  "fieldId": 28,
+  "fieldName": "Galway Downs Field 9",
+  "date": "2025-08-17",
+  "time": "11:00",
+  "startTime": "2025-08-17T11:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Cal Elite SC B2007",
+  "awayTeamName": "City SC Southwest B07/08",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 6
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 36 Team IDs Debug: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 36 transformed: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 37 transformation debug: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 37 API data: {
+  "id": 10472,
+  "homeTeam": "Albion SC Riverside EA08",
+  "awayTeam": "Future FC B07/08 NPL",
+  "homeTeamId": 632,
+  "awayTeamId": 750,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 8",
+  "fieldId": 27,
+  "fieldName": "Galway Downs Field 8",
+  "date": "2025-08-17",
+  "time": "11:30",
+  "startTime": "2025-08-17T11:30:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC Riverside EA08",
+  "awayTeamName": "Future FC B07/08 NPL",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 5
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 37 Team IDs Debug: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 37 transformed: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 38 transformation debug: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 38 API data: {
+  "id": 10471,
+  "homeTeam": "Cal Elite SC B2007",
+  "awayTeam": "Future FC B07/08 NPL",
+  "homeTeamId": 108,
+  "awayTeamId": 750,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 7",
+  "fieldId": 26,
+  "fieldName": "Galway Downs Field 7",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Cal Elite SC B2007",
+  "awayTeamName": "Future FC B07/08 NPL",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 4
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 38 Team IDs Debug: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 38 transformed: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 39 transformation debug: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 39 API data: {
+  "id": 10470,
+  "homeTeam": "Albion SC Riverside EA08",
+  "awayTeam": "City SC Southwest B07/08",
+  "homeTeamId": 632,
+  "awayTeamId": 561,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 6",
+  "fieldId": 25,
+  "fieldName": "Galway Downs Field 6",
+  "date": "2025-08-16",
+  "time": "11:00",
+  "startTime": "2025-08-16T11:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC Riverside EA08",
+  "awayTeamName": "City SC Southwest B07/08",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 3
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 39 Team IDs Debug: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 39 transformed: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 40 transformation debug: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 40 API data: {
+  "id": 10469,
+  "homeTeam": "City SC Southwest B07/08",
+  "awayTeam": "Future FC B07/08 NPL",
+  "homeTeamId": 561,
+  "awayTeamId": 750,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 5",
+  "fieldId": 24,
+  "fieldName": "Galway Downs Field 5",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B07/08",
+  "awayTeamName": "Future FC B07/08 NPL",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 2
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 40 Team IDs Debug: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 40 transformed: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 41 transformation debug: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 41 API data: {
+  "id": 10468,
+  "homeTeam": "Albion SC Riverside EA08",
+  "awayTeam": "Cal Elite SC B2007",
+  "homeTeamId": 632,
+  "awayTeamId": 108,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 4",
+  "fieldId": 23,
+  "fieldName": "Galway Downs Field 4",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC Riverside EA08",
+  "awayTeamName": "Cal Elite SC B2007",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 1
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 41 Team IDs Debug: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 41 transformed: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 42 transformation debug: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 42 API data: {
+  "id": 10467,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "homeTeamId": null,
+  "awayTeamId": null,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 1",
+  "fieldId": 20,
+  "fieldName": "Galway Downs Field 1",
+  "date": "2025-08-17",
+  "time": "12:00",
+  "startTime": "2025-08-17T12:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD",
+  "bracketId": 76,
+  "flightName": "Nike Premier",
+  "round": 10
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 42 Team IDs Debug: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 42 transformed: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 43 transformation debug: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 43 API data: {
+  "id": 10466,
+  "homeTeam": "FC Premier Elite B2007",
+  "awayTeam": "Pro Alliance FC 08 Academy",
+  "homeTeamId": 212,
+  "awayTeamId": 517,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 3",
+  "fieldId": 22,
+  "fieldName": "Galway Downs Field 3",
+  "date": "2025-08-17",
+  "time": "09:00",
+  "startTime": "2025-08-17T09:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "FC Premier Elite B2007",
+  "awayTeamName": "Pro Alliance FC 08 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 9
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 43 Team IDs Debug: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 43 transformed: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 44 transformation debug: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 44 API data: {
+  "id": 10465,
+  "homeTeam": "Empire Surf B07/08 Academy-1",
+  "awayTeam": "Pro Alliance B07 Academy",
+  "homeTeamId": 699,
+  "awayTeamId": 692,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 2",
+  "fieldId": 21,
+  "fieldName": "Galway Downs Field 2",
+  "date": "2025-08-17",
+  "time": "08:30",
+  "startTime": "2025-08-17T08:30:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B07/08 Academy-1",
+  "awayTeamName": "Pro Alliance B07 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 8
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 44 Team IDs Debug: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 44 transformed: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 45 transformation debug: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 45 API data: {
+  "id": 10464,
+  "homeTeam": "Albion SC San Diego B07/08 EA 2",
+  "awayTeam": "Rebels SC B07/08 ECRL",
+  "homeTeamId": 595,
+  "awayTeamId": 700,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 1",
+  "fieldId": 20,
+  "fieldName": "Galway Downs Field 1",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC San Diego B07/08 EA 2",
+  "awayTeamName": "Rebels SC B07/08 ECRL",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 7
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 45 Team IDs Debug: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 45 transformed: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 46 transformation debug: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 46 API data: {
+  "id": 10463,
+  "homeTeam": "FC Premier Elite B2007",
+  "awayTeam": "Pro Alliance B07 Academy",
+  "homeTeamId": 212,
+  "awayTeamId": 692,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 3",
+  "fieldId": 22,
+  "fieldName": "Galway Downs Field 3",
+  "date": "2025-08-16",
+  "time": "13:00",
+  "startTime": "2025-08-16T13:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "FC Premier Elite B2007",
+  "awayTeamName": "Pro Alliance B07 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 6
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 46 Team IDs Debug: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 46 transformed: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 47 transformation debug: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 47 API data: {
+  "id": 10462,
+  "homeTeam": "Empire Surf B07/08 Academy-1",
+  "awayTeam": "Rebels SC B07/08 ECRL",
+  "homeTeamId": 699,
+  "awayTeamId": 700,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 2",
+  "fieldId": 21,
+  "fieldName": "Galway Downs Field 2",
+  "date": "2025-08-16",
+  "time": "12:30",
+  "startTime": "2025-08-16T12:30:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B07/08 Academy-1",
+  "awayTeamName": "Rebels SC B07/08 ECRL",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 5
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 47 Team IDs Debug: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 47 transformed: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 48 transformation debug: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 48 API data: {
+  "id": 10461,
+  "homeTeam": "Albion SC San Diego B07/08 EA 2",
+  "awayTeam": "Pro Alliance FC 08 Academy",
+  "homeTeamId": 595,
+  "awayTeamId": 517,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 1",
+  "fieldId": 20,
+  "fieldName": "Galway Downs Field 1",
+  "date": "2025-08-16",
+  "time": "12:00",
+  "startTime": "2025-08-16T12:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC San Diego B07/08 EA 2",
+  "awayTeamName": "Pro Alliance FC 08 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 4
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 48 Team IDs Debug: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 48 transformed: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 49 transformation debug: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 49 API data: {
+  "id": 10460,
+  "homeTeam": "FC Premier Elite B2007",
+  "awayTeam": "Rebels SC B07/08 ECRL",
+  "homeTeamId": 212,
+  "awayTeamId": 700,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 3",
+  "fieldId": 22,
+  "fieldName": "Galway Downs Field 3",
+  "date": "2025-08-16",
+  "time": "09:00",
+  "startTime": "2025-08-16T09:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "FC Premier Elite B2007",
+  "awayTeamName": "Rebels SC B07/08 ECRL",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 3
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 49 Team IDs Debug: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 49 transformed: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 50 transformation debug: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 50 API data: {
+  "id": 10459,
+  "homeTeam": "Empire Surf B07/08 Academy-1",
+  "awayTeam": "Pro Alliance FC 08 Academy",
+  "homeTeamId": 699,
+  "awayTeamId": 517,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 2",
+  "fieldId": 21,
+  "fieldName": "Galway Downs Field 2",
+  "date": "2025-08-16",
+  "time": "08:30",
+  "startTime": "2025-08-16T08:30:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B07/08 Academy-1",
+  "awayTeamName": "Pro Alliance FC 08 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 2
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 50 Team IDs Debug: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 50 transformed: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 51 transformation debug: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 51 API data: {
+  "id": 10458,
+  "homeTeam": "Albion SC San Diego B07/08 EA 2",
+  "awayTeam": "Pro Alliance B07 Academy",
+  "homeTeamId": 595,
+  "awayTeamId": 692,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 1",
+  "fieldId": 20,
+  "fieldName": "Galway Downs Field 1",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC San Diego B07/08 EA 2",
+  "awayTeamName": "Pro Alliance B07 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 1
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 51 Team IDs Debug: Object
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 51 transformed: Object
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+Navigated to https://app.matchpro.ai/admin/events/1844329078/master-schedule
+js?libraries=places&v=beta&callback=Function.prototype:1382 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+Tda @ js?libraries=places&v=beta&callback=Function.prototype:1382
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641Understand this warning
+js?libraries=places&v=beta&callback=Function.prototype:1414 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+_.B.send @ js?libraries=places&v=beta&callback=Function.prototype:1414
+Qda @ js?libraries=places&v=beta&callback=Function.prototype:1391
+Tda @ js?libraries=places&v=beta&callback=Function.prototype:1383
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641
+index-DDQy7Mpb.js:880 Google Maps API key length: 0 characters
+index-DDQy7Mpb.js:880 Mapbox API key length: 93 characters
+index-DDQy7Mpb.js:880 Google Maps API already loaded
+index-DDQy7Mpb.js:657 Current route location (Wouter): /admin/events/1844329078/master-schedule
+index-DDQy7Mpb.js:657 Current URL: https://app.matchpro.ai/admin/events/1844329078/master-schedule
+index-DDQy7Mpb.js:657 Current pathname: /admin/events/1844329078/master-schedule
+index-DDQy7Mpb.js:657 Current search: 
+index-DDQy7Mpb.js:657 Fetching user with emulation token: not present
+index-DDQy7Mpb.js:657 User data fetched: {id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: '$2b$12$d6n1CBWgsWFm0fh77F1OX.YxDZy7/O3aLSuJOuq4QkvOtFmSit7BC', firstName: 'Bryan', …}
+12Fetch finished loading: GET "<URL>".
+shared-df7789195bf09b6f338558bdd92c931a.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+e @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+c @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+g @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+value @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+16720 @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e.O @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+shared-df7789195bf09b6f338558bdd92c931a.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+e @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+c @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+g @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+log @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+log @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+16720 @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e.O @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+index-DDQy7Mpb.js:649 Fetch failed loading: GET "https://app.matchpro.ai/api/user".
+queryFn @ index-DDQy7Mpb.js:649
+i @ index-DDQy7Mpb.js:41
+f @ index-DDQy7Mpb.js:41
+start @ index-DDQy7Mpb.js:41
+fetch @ index-DDQy7Mpb.js:41
+rg @ index-DDQy7Mpb.js:41
+onSubscribe @ index-DDQy7Mpb.js:41
+subscribe @ index-DDQy7Mpb.js:41
+(anonymous) @ index-DDQy7Mpb.js:41
+iW @ index-DDQy7Mpb.js:39
+SS @ index-DDQy7Mpb.js:41
+Jh @ index-DDQy7Mpb.js:41
+BM @ index-DDQy7Mpb.js:41
+iu @ index-DDQy7Mpb.js:39
+rhe @ index-DDQy7Mpb.js:41
+ku @ index-DDQy7Mpb.js:41
+$W @ index-DDQy7Mpb.js:41
+w @ index-DDQy7Mpb.js:26
+A @ index-DDQy7Mpb.js:26
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+UnifiedTournamentControlCenter-BKROJDch.js:1 Flight configs loaded: 76 flights
+UnifiedTournamentControlCenter-BKROJDch.js:1 Configured flights: 50 of 76
+shared-df7789195bf09b6f338558bdd92c931a.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+e @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+c @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+setTimeout
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+Promise.then
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+value @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+16720 @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e.O @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+shared-df7789195bf09b6f338558bdd92c931a.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+e @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+c @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+setTimeout
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+Promise.then
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+log @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+log @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+16720 @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+e.O @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+ScheduleViewerFixed-Ct5n24ks.js:11 Schedule API Response: {games: Array(51), fields: Array(21), ageGroups: Array(1), dates: Array(2), totalGames: 51, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 1 transformation debug: {raw: {…}, homeTeamStructure: 'TBD', awayTeamStructure: 'TBD', fieldStructure: 'Galway Downs Field 3', rawFieldName: 'Galway Downs Field 3', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 1 API data: {
+  "id": 10474,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "homeTeamId": null,
+  "awayTeamId": null,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 3",
+  "fieldId": 22,
+  "fieldName": "Galway Downs Field 3",
+  "date": "2025-08-17",
+  "time": "14:00",
+  "startTime": "2025-08-17T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD",
+  "bracketId": 78,
+  "flightName": "Nike Elite",
+  "round": 10
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 1 Team IDs Debug: {homeTeamId: null, awayTeamId: null, homeTeamIdType: 'object', awayTeamIdType: 'object', hasHomeTeamId: false, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 1 transformed: {id: 10474, homeTeam: 'TBD', awayTeam: 'TBD', homeTeamId: null, awayTeamId: null, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 2 transformation debug: {raw: {…}, homeTeamStructure: 'Cal Elite SC B2007', awayTeamStructure: 'City SC Southwest B07/08', fieldStructure: 'Galway Downs Field 9', rawFieldName: 'Galway Downs Field 9', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 2 API data: {
+  "id": 10473,
+  "homeTeam": "Cal Elite SC B2007",
+  "awayTeam": "City SC Southwest B07/08",
+  "homeTeamId": 108,
+  "awayTeamId": 561,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 9",
+  "fieldId": 28,
+  "fieldName": "Galway Downs Field 9",
+  "date": "2025-08-17",
+  "time": "11:00",
+  "startTime": "2025-08-17T11:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Cal Elite SC B2007",
+  "awayTeamName": "City SC Southwest B07/08",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 6
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 2 Team IDs Debug: {homeTeamId: 108, awayTeamId: 561, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 2 transformed: {id: 10473, homeTeam: 'Cal Elite SC B2007', awayTeam: 'City SC Southwest B07/08', homeTeamId: 108, awayTeamId: 561, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 3 transformation debug: {raw: {…}, homeTeamStructure: 'Albion SC Riverside EA08', awayTeamStructure: 'Future FC B07/08 NPL', fieldStructure: 'Galway Downs Field 8', rawFieldName: 'Galway Downs Field 8', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 3 API data: {
+  "id": 10472,
+  "homeTeam": "Albion SC Riverside EA08",
+  "awayTeam": "Future FC B07/08 NPL",
+  "homeTeamId": 632,
+  "awayTeamId": 750,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 8",
+  "fieldId": 27,
+  "fieldName": "Galway Downs Field 8",
+  "date": "2025-08-17",
+  "time": "11:30",
+  "startTime": "2025-08-17T11:30:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC Riverside EA08",
+  "awayTeamName": "Future FC B07/08 NPL",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 5
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 3 Team IDs Debug: {homeTeamId: 632, awayTeamId: 750, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 3 transformed: {id: 10472, homeTeam: 'Albion SC Riverside EA08', awayTeam: 'Future FC B07/08 NPL', homeTeamId: 632, awayTeamId: 750, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 4 transformation debug: {raw: {…}, homeTeamStructure: 'Cal Elite SC B2007', awayTeamStructure: 'Future FC B07/08 NPL', fieldStructure: 'Galway Downs Field 7', rawFieldName: 'Galway Downs Field 7', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 4 API data: {
+  "id": 10471,
+  "homeTeam": "Cal Elite SC B2007",
+  "awayTeam": "Future FC B07/08 NPL",
+  "homeTeamId": 108,
+  "awayTeamId": 750,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 7",
+  "fieldId": 26,
+  "fieldName": "Galway Downs Field 7",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Cal Elite SC B2007",
+  "awayTeamName": "Future FC B07/08 NPL",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 4
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 4 Team IDs Debug: {homeTeamId: 108, awayTeamId: 750, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 4 transformed: {id: 10471, homeTeam: 'Cal Elite SC B2007', awayTeam: 'Future FC B07/08 NPL', homeTeamId: 108, awayTeamId: 750, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 5 transformation debug: {raw: {…}, homeTeamStructure: 'Albion SC Riverside EA08', awayTeamStructure: 'City SC Southwest B07/08', fieldStructure: 'Galway Downs Field 6', rawFieldName: 'Galway Downs Field 6', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 5 API data: {
+  "id": 10470,
+  "homeTeam": "Albion SC Riverside EA08",
+  "awayTeam": "City SC Southwest B07/08",
+  "homeTeamId": 632,
+  "awayTeamId": 561,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 6",
+  "fieldId": 25,
+  "fieldName": "Galway Downs Field 6",
+  "date": "2025-08-16",
+  "time": "11:00",
+  "startTime": "2025-08-16T11:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC Riverside EA08",
+  "awayTeamName": "City SC Southwest B07/08",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 3
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 5 Team IDs Debug: {homeTeamId: 632, awayTeamId: 561, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 5 transformed: {id: 10470, homeTeam: 'Albion SC Riverside EA08', awayTeam: 'City SC Southwest B07/08', homeTeamId: 632, awayTeamId: 561, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 6 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest B07/08', awayTeamStructure: 'Future FC B07/08 NPL', fieldStructure: 'Galway Downs Field 5', rawFieldName: 'Galway Downs Field 5', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 6 API data: {
+  "id": 10469,
+  "homeTeam": "City SC Southwest B07/08",
+  "awayTeam": "Future FC B07/08 NPL",
+  "homeTeamId": 561,
+  "awayTeamId": 750,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 5",
+  "fieldId": 24,
+  "fieldName": "Galway Downs Field 5",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B07/08",
+  "awayTeamName": "Future FC B07/08 NPL",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 2
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 6 Team IDs Debug: {homeTeamId: 561, awayTeamId: 750, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 6 transformed: {id: 10469, homeTeam: 'City SC Southwest B07/08', awayTeam: 'Future FC B07/08 NPL', homeTeamId: 561, awayTeamId: 750, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 7 transformation debug: {raw: {…}, homeTeamStructure: 'Albion SC Riverside EA08', awayTeamStructure: 'Cal Elite SC B2007', fieldStructure: 'Galway Downs Field 4', rawFieldName: 'Galway Downs Field 4', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 7 API data: {
+  "id": 10468,
+  "homeTeam": "Albion SC Riverside EA08",
+  "awayTeam": "Cal Elite SC B2007",
+  "homeTeamId": 632,
+  "awayTeamId": 108,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 4",
+  "fieldId": 23,
+  "fieldName": "Galway Downs Field 4",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC Riverside EA08",
+  "awayTeamName": "Cal Elite SC B2007",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 1
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 7 Team IDs Debug: {homeTeamId: 632, awayTeamId: 108, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 7 transformed: {id: 10468, homeTeam: 'Albion SC Riverside EA08', awayTeam: 'Cal Elite SC B2007', homeTeamId: 632, awayTeamId: 108, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 8 transformation debug: {raw: {…}, homeTeamStructure: 'TBD', awayTeamStructure: 'TBD', fieldStructure: 'Galway Downs Field 1', rawFieldName: 'Galway Downs Field 1', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 8 API data: {
+  "id": 10467,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "homeTeamId": null,
+  "awayTeamId": null,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 1",
+  "fieldId": 20,
+  "fieldName": "Galway Downs Field 1",
+  "date": "2025-08-17",
+  "time": "12:00",
+  "startTime": "2025-08-17T12:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD",
+  "bracketId": 76,
+  "flightName": "Nike Premier",
+  "round": 10
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 8 Team IDs Debug: {homeTeamId: null, awayTeamId: null, homeTeamIdType: 'object', awayTeamIdType: 'object', hasHomeTeamId: false, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 8 transformed: {id: 10467, homeTeam: 'TBD', awayTeam: 'TBD', homeTeamId: null, awayTeamId: null, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 9 transformation debug: {raw: {…}, homeTeamStructure: 'FC Premier Elite B2007', awayTeamStructure: 'Pro Alliance FC 08 Academy', fieldStructure: 'Galway Downs Field 3', rawFieldName: 'Galway Downs Field 3', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 9 API data: {
+  "id": 10466,
+  "homeTeam": "FC Premier Elite B2007",
+  "awayTeam": "Pro Alliance FC 08 Academy",
+  "homeTeamId": 212,
+  "awayTeamId": 517,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 3",
+  "fieldId": 22,
+  "fieldName": "Galway Downs Field 3",
+  "date": "2025-08-17",
+  "time": "09:00",
+  "startTime": "2025-08-17T09:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "FC Premier Elite B2007",
+  "awayTeamName": "Pro Alliance FC 08 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 9
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 9 Team IDs Debug: {homeTeamId: 212, awayTeamId: 517, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 9 transformed: {id: 10466, homeTeam: 'FC Premier Elite B2007', awayTeam: 'Pro Alliance FC 08 Academy', homeTeamId: 212, awayTeamId: 517, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 10 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf B07/08 Academy-1', awayTeamStructure: 'Pro Alliance B07 Academy', fieldStructure: 'Galway Downs Field 2', rawFieldName: 'Galway Downs Field 2', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 10 API data: {
+  "id": 10465,
+  "homeTeam": "Empire Surf B07/08 Academy-1",
+  "awayTeam": "Pro Alliance B07 Academy",
+  "homeTeamId": 699,
+  "awayTeamId": 692,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 2",
+  "fieldId": 21,
+  "fieldName": "Galway Downs Field 2",
+  "date": "2025-08-17",
+  "time": "08:30",
+  "startTime": "2025-08-17T08:30:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B07/08 Academy-1",
+  "awayTeamName": "Pro Alliance B07 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 8
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 10 Team IDs Debug: {homeTeamId: 699, awayTeamId: 692, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 10 transformed: {id: 10465, homeTeam: 'Empire Surf B07/08 Academy-1', awayTeam: 'Pro Alliance B07 Academy', homeTeamId: 699, awayTeamId: 692, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 11 transformation debug: {raw: {…}, homeTeamStructure: 'Albion SC San Diego B07/08 EA 2', awayTeamStructure: 'Rebels SC B07/08 ECRL', fieldStructure: 'Galway Downs Field 1', rawFieldName: 'Galway Downs Field 1', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 11 API data: {
+  "id": 10464,
+  "homeTeam": "Albion SC San Diego B07/08 EA 2",
+  "awayTeam": "Rebels SC B07/08 ECRL",
+  "homeTeamId": 595,
+  "awayTeamId": 700,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 1",
+  "fieldId": 20,
+  "fieldName": "Galway Downs Field 1",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC San Diego B07/08 EA 2",
+  "awayTeamName": "Rebels SC B07/08 ECRL",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 7
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 11 Team IDs Debug: {homeTeamId: 595, awayTeamId: 700, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 11 transformed: {id: 10464, homeTeam: 'Albion SC San Diego B07/08 EA 2', awayTeam: 'Rebels SC B07/08 ECRL', homeTeamId: 595, awayTeamId: 700, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 12 transformation debug: {raw: {…}, homeTeamStructure: 'FC Premier Elite B2007', awayTeamStructure: 'Pro Alliance B07 Academy', fieldStructure: 'Galway Downs Field 3', rawFieldName: 'Galway Downs Field 3', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 12 API data: {
+  "id": 10463,
+  "homeTeam": "FC Premier Elite B2007",
+  "awayTeam": "Pro Alliance B07 Academy",
+  "homeTeamId": 212,
+  "awayTeamId": 692,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 3",
+  "fieldId": 22,
+  "fieldName": "Galway Downs Field 3",
+  "date": "2025-08-16",
+  "time": "13:00",
+  "startTime": "2025-08-16T13:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "FC Premier Elite B2007",
+  "awayTeamName": "Pro Alliance B07 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 6
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 12 Team IDs Debug: {homeTeamId: 212, awayTeamId: 692, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 12 transformed: {id: 10463, homeTeam: 'FC Premier Elite B2007', awayTeam: 'Pro Alliance B07 Academy', homeTeamId: 212, awayTeamId: 692, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 13 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf B07/08 Academy-1', awayTeamStructure: 'Rebels SC B07/08 ECRL', fieldStructure: 'Galway Downs Field 2', rawFieldName: 'Galway Downs Field 2', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 13 API data: {
+  "id": 10462,
+  "homeTeam": "Empire Surf B07/08 Academy-1",
+  "awayTeam": "Rebels SC B07/08 ECRL",
+  "homeTeamId": 699,
+  "awayTeamId": 700,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 2",
+  "fieldId": 21,
+  "fieldName": "Galway Downs Field 2",
+  "date": "2025-08-16",
+  "time": "12:30",
+  "startTime": "2025-08-16T12:30:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B07/08 Academy-1",
+  "awayTeamName": "Rebels SC B07/08 ECRL",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 5
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 13 Team IDs Debug: {homeTeamId: 699, awayTeamId: 700, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 13 transformed: {id: 10462, homeTeam: 'Empire Surf B07/08 Academy-1', awayTeam: 'Rebels SC B07/08 ECRL', homeTeamId: 699, awayTeamId: 700, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 14 transformation debug: {raw: {…}, homeTeamStructure: 'Albion SC San Diego B07/08 EA 2', awayTeamStructure: 'Pro Alliance FC 08 Academy', fieldStructure: 'Galway Downs Field 1', rawFieldName: 'Galway Downs Field 1', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 14 API data: {
+  "id": 10461,
+  "homeTeam": "Albion SC San Diego B07/08 EA 2",
+  "awayTeam": "Pro Alliance FC 08 Academy",
+  "homeTeamId": 595,
+  "awayTeamId": 517,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 1",
+  "fieldId": 20,
+  "fieldName": "Galway Downs Field 1",
+  "date": "2025-08-16",
+  "time": "12:00",
+  "startTime": "2025-08-16T12:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC San Diego B07/08 EA 2",
+  "awayTeamName": "Pro Alliance FC 08 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 4
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 14 Team IDs Debug: {homeTeamId: 595, awayTeamId: 517, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 14 transformed: {id: 10461, homeTeam: 'Albion SC San Diego B07/08 EA 2', awayTeam: 'Pro Alliance FC 08 Academy', homeTeamId: 595, awayTeamId: 517, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 15 transformation debug: {raw: {…}, homeTeamStructure: 'FC Premier Elite B2007', awayTeamStructure: 'Rebels SC B07/08 ECRL', fieldStructure: 'Galway Downs Field 3', rawFieldName: 'Galway Downs Field 3', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 15 API data: {
+  "id": 10460,
+  "homeTeam": "FC Premier Elite B2007",
+  "awayTeam": "Rebels SC B07/08 ECRL",
+  "homeTeamId": 212,
+  "awayTeamId": 700,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 3",
+  "fieldId": 22,
+  "fieldName": "Galway Downs Field 3",
+  "date": "2025-08-16",
+  "time": "09:00",
+  "startTime": "2025-08-16T09:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "FC Premier Elite B2007",
+  "awayTeamName": "Rebels SC B07/08 ECRL",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 3
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 15 Team IDs Debug: {homeTeamId: 212, awayTeamId: 700, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 15 transformed: {id: 10460, homeTeam: 'FC Premier Elite B2007', awayTeam: 'Rebels SC B07/08 ECRL', homeTeamId: 212, awayTeamId: 700, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 16 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf B07/08 Academy-1', awayTeamStructure: 'Pro Alliance FC 08 Academy', fieldStructure: 'Galway Downs Field 2', rawFieldName: 'Galway Downs Field 2', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 16 API data: {
+  "id": 10459,
+  "homeTeam": "Empire Surf B07/08 Academy-1",
+  "awayTeam": "Pro Alliance FC 08 Academy",
+  "homeTeamId": 699,
+  "awayTeamId": 517,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 2",
+  "fieldId": 21,
+  "fieldName": "Galway Downs Field 2",
+  "date": "2025-08-16",
+  "time": "08:30",
+  "startTime": "2025-08-16T08:30:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B07/08 Academy-1",
+  "awayTeamName": "Pro Alliance FC 08 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 2
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 16 Team IDs Debug: {homeTeamId: 699, awayTeamId: 517, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 16 transformed: {id: 10459, homeTeam: 'Empire Surf B07/08 Academy-1', awayTeam: 'Pro Alliance FC 08 Academy', homeTeamId: 699, awayTeamId: 517, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 17 transformation debug: {raw: {…}, homeTeamStructure: 'Albion SC San Diego B07/08 EA 2', awayTeamStructure: 'Pro Alliance B07 Academy', fieldStructure: 'Galway Downs Field 1', rawFieldName: 'Galway Downs Field 1', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 17 API data: {
+  "id": 10458,
+  "homeTeam": "Albion SC San Diego B07/08 EA 2",
+  "awayTeam": "Pro Alliance B07 Academy",
+  "homeTeamId": 595,
+  "awayTeamId": 692,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 1",
+  "fieldId": 20,
+  "fieldName": "Galway Downs Field 1",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC San Diego B07/08 EA 2",
+  "awayTeamName": "Pro Alliance B07 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 1
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 17 Team IDs Debug: {homeTeamId: 595, awayTeamId: 692, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 17 transformed: {id: 10458, homeTeam: 'Albion SC San Diego B07/08 EA 2', awayTeam: 'Pro Alliance B07 Academy', homeTeamId: 595, awayTeamId: 692, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 18 transformation debug: {raw: {…}, homeTeamStructure: 'TBD', awayTeamStructure: 'TBD', fieldStructure: 'Galway Downs Field 3', rawFieldName: 'Galway Downs Field 3', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 18 API data: {
+  "id": 10474,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "homeTeamId": null,
+  "awayTeamId": null,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 3",
+  "fieldId": 22,
+  "fieldName": "Galway Downs Field 3",
+  "date": "2025-08-17",
+  "time": "14:00",
+  "startTime": "2025-08-17T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD",
+  "bracketId": 78,
+  "flightName": "Nike Elite",
+  "round": 10
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 18 Team IDs Debug: {homeTeamId: null, awayTeamId: null, homeTeamIdType: 'object', awayTeamIdType: 'object', hasHomeTeamId: false, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 18 transformed: {id: 10474, homeTeam: 'TBD', awayTeam: 'TBD', homeTeamId: null, awayTeamId: null, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 19 transformation debug: {raw: {…}, homeTeamStructure: 'Cal Elite SC B2007', awayTeamStructure: 'City SC Southwest B07/08', fieldStructure: 'Galway Downs Field 9', rawFieldName: 'Galway Downs Field 9', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 19 API data: {
+  "id": 10473,
+  "homeTeam": "Cal Elite SC B2007",
+  "awayTeam": "City SC Southwest B07/08",
+  "homeTeamId": 108,
+  "awayTeamId": 561,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 9",
+  "fieldId": 28,
+  "fieldName": "Galway Downs Field 9",
+  "date": "2025-08-17",
+  "time": "11:00",
+  "startTime": "2025-08-17T11:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Cal Elite SC B2007",
+  "awayTeamName": "City SC Southwest B07/08",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 6
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 19 Team IDs Debug: {homeTeamId: 108, awayTeamId: 561, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 19 transformed: {id: 10473, homeTeam: 'Cal Elite SC B2007', awayTeam: 'City SC Southwest B07/08', homeTeamId: 108, awayTeamId: 561, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 20 transformation debug: {raw: {…}, homeTeamStructure: 'Albion SC Riverside EA08', awayTeamStructure: 'Future FC B07/08 NPL', fieldStructure: 'Galway Downs Field 8', rawFieldName: 'Galway Downs Field 8', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 20 API data: {
+  "id": 10472,
+  "homeTeam": "Albion SC Riverside EA08",
+  "awayTeam": "Future FC B07/08 NPL",
+  "homeTeamId": 632,
+  "awayTeamId": 750,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 8",
+  "fieldId": 27,
+  "fieldName": "Galway Downs Field 8",
+  "date": "2025-08-17",
+  "time": "11:30",
+  "startTime": "2025-08-17T11:30:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC Riverside EA08",
+  "awayTeamName": "Future FC B07/08 NPL",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 5
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 20 Team IDs Debug: {homeTeamId: 632, awayTeamId: 750, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 20 transformed: {id: 10472, homeTeam: 'Albion SC Riverside EA08', awayTeam: 'Future FC B07/08 NPL', homeTeamId: 632, awayTeamId: 750, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 21 transformation debug: {raw: {…}, homeTeamStructure: 'Cal Elite SC B2007', awayTeamStructure: 'Future FC B07/08 NPL', fieldStructure: 'Galway Downs Field 7', rawFieldName: 'Galway Downs Field 7', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 21 API data: {
+  "id": 10471,
+  "homeTeam": "Cal Elite SC B2007",
+  "awayTeam": "Future FC B07/08 NPL",
+  "homeTeamId": 108,
+  "awayTeamId": 750,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 7",
+  "fieldId": 26,
+  "fieldName": "Galway Downs Field 7",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Cal Elite SC B2007",
+  "awayTeamName": "Future FC B07/08 NPL",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 4
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 21 Team IDs Debug: {homeTeamId: 108, awayTeamId: 750, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 21 transformed: {id: 10471, homeTeam: 'Cal Elite SC B2007', awayTeam: 'Future FC B07/08 NPL', homeTeamId: 108, awayTeamId: 750, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 22 transformation debug: {raw: {…}, homeTeamStructure: 'Albion SC Riverside EA08', awayTeamStructure: 'City SC Southwest B07/08', fieldStructure: 'Galway Downs Field 6', rawFieldName: 'Galway Downs Field 6', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 22 API data: {
+  "id": 10470,
+  "homeTeam": "Albion SC Riverside EA08",
+  "awayTeam": "City SC Southwest B07/08",
+  "homeTeamId": 632,
+  "awayTeamId": 561,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 6",
+  "fieldId": 25,
+  "fieldName": "Galway Downs Field 6",
+  "date": "2025-08-16",
+  "time": "11:00",
+  "startTime": "2025-08-16T11:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC Riverside EA08",
+  "awayTeamName": "City SC Southwest B07/08",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 3
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 22 Team IDs Debug: {homeTeamId: 632, awayTeamId: 561, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 22 transformed: {id: 10470, homeTeam: 'Albion SC Riverside EA08', awayTeam: 'City SC Southwest B07/08', homeTeamId: 632, awayTeamId: 561, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 23 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest B07/08', awayTeamStructure: 'Future FC B07/08 NPL', fieldStructure: 'Galway Downs Field 5', rawFieldName: 'Galway Downs Field 5', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 23 API data: {
+  "id": 10469,
+  "homeTeam": "City SC Southwest B07/08",
+  "awayTeam": "Future FC B07/08 NPL",
+  "homeTeamId": 561,
+  "awayTeamId": 750,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 5",
+  "fieldId": 24,
+  "fieldName": "Galway Downs Field 5",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B07/08",
+  "awayTeamName": "Future FC B07/08 NPL",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 2
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 23 Team IDs Debug: {homeTeamId: 561, awayTeamId: 750, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 23 transformed: {id: 10469, homeTeam: 'City SC Southwest B07/08', awayTeam: 'Future FC B07/08 NPL', homeTeamId: 561, awayTeamId: 750, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 24 transformation debug: {raw: {…}, homeTeamStructure: 'Albion SC Riverside EA08', awayTeamStructure: 'Cal Elite SC B2007', fieldStructure: 'Galway Downs Field 4', rawFieldName: 'Galway Downs Field 4', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 24 API data: {
+  "id": 10468,
+  "homeTeam": "Albion SC Riverside EA08",
+  "awayTeam": "Cal Elite SC B2007",
+  "homeTeamId": 632,
+  "awayTeamId": 108,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 4",
+  "fieldId": 23,
+  "fieldName": "Galway Downs Field 4",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC Riverside EA08",
+  "awayTeamName": "Cal Elite SC B2007",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 1
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 24 Team IDs Debug: {homeTeamId: 632, awayTeamId: 108, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 24 transformed: {id: 10468, homeTeam: 'Albion SC Riverside EA08', awayTeam: 'Cal Elite SC B2007', homeTeamId: 632, awayTeamId: 108, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 25 transformation debug: {raw: {…}, homeTeamStructure: 'TBD', awayTeamStructure: 'TBD', fieldStructure: 'Galway Downs Field 1', rawFieldName: 'Galway Downs Field 1', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 25 API data: {
+  "id": 10467,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "homeTeamId": null,
+  "awayTeamId": null,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 1",
+  "fieldId": 20,
+  "fieldName": "Galway Downs Field 1",
+  "date": "2025-08-17",
+  "time": "12:00",
+  "startTime": "2025-08-17T12:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD",
+  "bracketId": 76,
+  "flightName": "Nike Premier",
+  "round": 10
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 25 Team IDs Debug: {homeTeamId: null, awayTeamId: null, homeTeamIdType: 'object', awayTeamIdType: 'object', hasHomeTeamId: false, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 25 transformed: {id: 10467, homeTeam: 'TBD', awayTeam: 'TBD', homeTeamId: null, awayTeamId: null, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 26 transformation debug: {raw: {…}, homeTeamStructure: 'FC Premier Elite B2007', awayTeamStructure: 'Pro Alliance FC 08 Academy', fieldStructure: 'Galway Downs Field 3', rawFieldName: 'Galway Downs Field 3', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 26 API data: {
+  "id": 10466,
+  "homeTeam": "FC Premier Elite B2007",
+  "awayTeam": "Pro Alliance FC 08 Academy",
+  "homeTeamId": 212,
+  "awayTeamId": 517,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 3",
+  "fieldId": 22,
+  "fieldName": "Galway Downs Field 3",
+  "date": "2025-08-17",
+  "time": "09:00",
+  "startTime": "2025-08-17T09:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "FC Premier Elite B2007",
+  "awayTeamName": "Pro Alliance FC 08 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 9
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 26 Team IDs Debug: {homeTeamId: 212, awayTeamId: 517, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 26 transformed: {id: 10466, homeTeam: 'FC Premier Elite B2007', awayTeam: 'Pro Alliance FC 08 Academy', homeTeamId: 212, awayTeamId: 517, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 27 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf B07/08 Academy-1', awayTeamStructure: 'Pro Alliance B07 Academy', fieldStructure: 'Galway Downs Field 2', rawFieldName: 'Galway Downs Field 2', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 27 API data: {
+  "id": 10465,
+  "homeTeam": "Empire Surf B07/08 Academy-1",
+  "awayTeam": "Pro Alliance B07 Academy",
+  "homeTeamId": 699,
+  "awayTeamId": 692,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 2",
+  "fieldId": 21,
+  "fieldName": "Galway Downs Field 2",
+  "date": "2025-08-17",
+  "time": "08:30",
+  "startTime": "2025-08-17T08:30:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B07/08 Academy-1",
+  "awayTeamName": "Pro Alliance B07 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 8
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 27 Team IDs Debug: {homeTeamId: 699, awayTeamId: 692, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 27 transformed: {id: 10465, homeTeam: 'Empire Surf B07/08 Academy-1', awayTeam: 'Pro Alliance B07 Academy', homeTeamId: 699, awayTeamId: 692, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 28 transformation debug: {raw: {…}, homeTeamStructure: 'Albion SC San Diego B07/08 EA 2', awayTeamStructure: 'Rebels SC B07/08 ECRL', fieldStructure: 'Galway Downs Field 1', rawFieldName: 'Galway Downs Field 1', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 28 API data: {
+  "id": 10464,
+  "homeTeam": "Albion SC San Diego B07/08 EA 2",
+  "awayTeam": "Rebels SC B07/08 ECRL",
+  "homeTeamId": 595,
+  "awayTeamId": 700,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 1",
+  "fieldId": 20,
+  "fieldName": "Galway Downs Field 1",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC San Diego B07/08 EA 2",
+  "awayTeamName": "Rebels SC B07/08 ECRL",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 7
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 28 Team IDs Debug: {homeTeamId: 595, awayTeamId: 700, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 28 transformed: {id: 10464, homeTeam: 'Albion SC San Diego B07/08 EA 2', awayTeam: 'Rebels SC B07/08 ECRL', homeTeamId: 595, awayTeamId: 700, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 29 transformation debug: {raw: {…}, homeTeamStructure: 'FC Premier Elite B2007', awayTeamStructure: 'Pro Alliance B07 Academy', fieldStructure: 'Galway Downs Field 3', rawFieldName: 'Galway Downs Field 3', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 29 API data: {
+  "id": 10463,
+  "homeTeam": "FC Premier Elite B2007",
+  "awayTeam": "Pro Alliance B07 Academy",
+  "homeTeamId": 212,
+  "awayTeamId": 692,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 3",
+  "fieldId": 22,
+  "fieldName": "Galway Downs Field 3",
+  "date": "2025-08-16",
+  "time": "13:00",
+  "startTime": "2025-08-16T13:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "FC Premier Elite B2007",
+  "awayTeamName": "Pro Alliance B07 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 6
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 29 Team IDs Debug: {homeTeamId: 212, awayTeamId: 692, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 29 transformed: {id: 10463, homeTeam: 'FC Premier Elite B2007', awayTeam: 'Pro Alliance B07 Academy', homeTeamId: 212, awayTeamId: 692, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 30 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf B07/08 Academy-1', awayTeamStructure: 'Rebels SC B07/08 ECRL', fieldStructure: 'Galway Downs Field 2', rawFieldName: 'Galway Downs Field 2', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 30 API data: {
+  "id": 10462,
+  "homeTeam": "Empire Surf B07/08 Academy-1",
+  "awayTeam": "Rebels SC B07/08 ECRL",
+  "homeTeamId": 699,
+  "awayTeamId": 700,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 2",
+  "fieldId": 21,
+  "fieldName": "Galway Downs Field 2",
+  "date": "2025-08-16",
+  "time": "12:30",
+  "startTime": "2025-08-16T12:30:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B07/08 Academy-1",
+  "awayTeamName": "Rebels SC B07/08 ECRL",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 5
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 30 Team IDs Debug: {homeTeamId: 699, awayTeamId: 700, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 30 transformed: {id: 10462, homeTeam: 'Empire Surf B07/08 Academy-1', awayTeam: 'Rebels SC B07/08 ECRL', homeTeamId: 699, awayTeamId: 700, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 31 transformation debug: {raw: {…}, homeTeamStructure: 'Albion SC San Diego B07/08 EA 2', awayTeamStructure: 'Pro Alliance FC 08 Academy', fieldStructure: 'Galway Downs Field 1', rawFieldName: 'Galway Downs Field 1', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 31 API data: {
+  "id": 10461,
+  "homeTeam": "Albion SC San Diego B07/08 EA 2",
+  "awayTeam": "Pro Alliance FC 08 Academy",
+  "homeTeamId": 595,
+  "awayTeamId": 517,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 1",
+  "fieldId": 20,
+  "fieldName": "Galway Downs Field 1",
+  "date": "2025-08-16",
+  "time": "12:00",
+  "startTime": "2025-08-16T12:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC San Diego B07/08 EA 2",
+  "awayTeamName": "Pro Alliance FC 08 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 4
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 31 Team IDs Debug: {homeTeamId: 595, awayTeamId: 517, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 31 transformed: {id: 10461, homeTeam: 'Albion SC San Diego B07/08 EA 2', awayTeam: 'Pro Alliance FC 08 Academy', homeTeamId: 595, awayTeamId: 517, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 32 transformation debug: {raw: {…}, homeTeamStructure: 'FC Premier Elite B2007', awayTeamStructure: 'Rebels SC B07/08 ECRL', fieldStructure: 'Galway Downs Field 3', rawFieldName: 'Galway Downs Field 3', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 32 API data: {
+  "id": 10460,
+  "homeTeam": "FC Premier Elite B2007",
+  "awayTeam": "Rebels SC B07/08 ECRL",
+  "homeTeamId": 212,
+  "awayTeamId": 700,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 3",
+  "fieldId": 22,
+  "fieldName": "Galway Downs Field 3",
+  "date": "2025-08-16",
+  "time": "09:00",
+  "startTime": "2025-08-16T09:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "FC Premier Elite B2007",
+  "awayTeamName": "Rebels SC B07/08 ECRL",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 3
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 32 Team IDs Debug: {homeTeamId: 212, awayTeamId: 700, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 32 transformed: {id: 10460, homeTeam: 'FC Premier Elite B2007', awayTeam: 'Rebels SC B07/08 ECRL', homeTeamId: 212, awayTeamId: 700, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 33 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf B07/08 Academy-1', awayTeamStructure: 'Pro Alliance FC 08 Academy', fieldStructure: 'Galway Downs Field 2', rawFieldName: 'Galway Downs Field 2', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 33 API data: {
+  "id": 10459,
+  "homeTeam": "Empire Surf B07/08 Academy-1",
+  "awayTeam": "Pro Alliance FC 08 Academy",
+  "homeTeamId": 699,
+  "awayTeamId": 517,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 2",
+  "fieldId": 21,
+  "fieldName": "Galway Downs Field 2",
+  "date": "2025-08-16",
+  "time": "08:30",
+  "startTime": "2025-08-16T08:30:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B07/08 Academy-1",
+  "awayTeamName": "Pro Alliance FC 08 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 2
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 33 Team IDs Debug: {homeTeamId: 699, awayTeamId: 517, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 33 transformed: {id: 10459, homeTeam: 'Empire Surf B07/08 Academy-1', awayTeam: 'Pro Alliance FC 08 Academy', homeTeamId: 699, awayTeamId: 517, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 34 transformation debug: {raw: {…}, homeTeamStructure: 'Albion SC San Diego B07/08 EA 2', awayTeamStructure: 'Pro Alliance B07 Academy', fieldStructure: 'Galway Downs Field 1', rawFieldName: 'Galway Downs Field 1', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 34 API data: {
+  "id": 10458,
+  "homeTeam": "Albion SC San Diego B07/08 EA 2",
+  "awayTeam": "Pro Alliance B07 Academy",
+  "homeTeamId": 595,
+  "awayTeamId": 692,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 1",
+  "fieldId": 20,
+  "fieldName": "Galway Downs Field 1",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC San Diego B07/08 EA 2",
+  "awayTeamName": "Pro Alliance B07 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 1
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 34 Team IDs Debug: {homeTeamId: 595, awayTeamId: 692, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 34 transformed: {id: 10458, homeTeam: 'Albion SC San Diego B07/08 EA 2', awayTeam: 'Pro Alliance B07 Academy', homeTeamId: 595, awayTeamId: 692, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 35 transformation debug: {raw: {…}, homeTeamStructure: 'TBD', awayTeamStructure: 'TBD', fieldStructure: 'Galway Downs Field 3', rawFieldName: 'Galway Downs Field 3', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 35 API data: {
+  "id": 10474,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "homeTeamId": null,
+  "awayTeamId": null,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 3",
+  "fieldId": 22,
+  "fieldName": "Galway Downs Field 3",
+  "date": "2025-08-17",
+  "time": "14:00",
+  "startTime": "2025-08-17T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD",
+  "bracketId": 78,
+  "flightName": "Nike Elite",
+  "round": 10
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 35 Team IDs Debug: {homeTeamId: null, awayTeamId: null, homeTeamIdType: 'object', awayTeamIdType: 'object', hasHomeTeamId: false, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 35 transformed: {id: 10474, homeTeam: 'TBD', awayTeam: 'TBD', homeTeamId: null, awayTeamId: null, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 36 transformation debug: {raw: {…}, homeTeamStructure: 'Cal Elite SC B2007', awayTeamStructure: 'City SC Southwest B07/08', fieldStructure: 'Galway Downs Field 9', rawFieldName: 'Galway Downs Field 9', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 36 API data: {
+  "id": 10473,
+  "homeTeam": "Cal Elite SC B2007",
+  "awayTeam": "City SC Southwest B07/08",
+  "homeTeamId": 108,
+  "awayTeamId": 561,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 9",
+  "fieldId": 28,
+  "fieldName": "Galway Downs Field 9",
+  "date": "2025-08-17",
+  "time": "11:00",
+  "startTime": "2025-08-17T11:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Cal Elite SC B2007",
+  "awayTeamName": "City SC Southwest B07/08",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 6
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 36 Team IDs Debug: {homeTeamId: 108, awayTeamId: 561, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 36 transformed: {id: 10473, homeTeam: 'Cal Elite SC B2007', awayTeam: 'City SC Southwest B07/08', homeTeamId: 108, awayTeamId: 561, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 37 transformation debug: {raw: {…}, homeTeamStructure: 'Albion SC Riverside EA08', awayTeamStructure: 'Future FC B07/08 NPL', fieldStructure: 'Galway Downs Field 8', rawFieldName: 'Galway Downs Field 8', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 37 API data: {
+  "id": 10472,
+  "homeTeam": "Albion SC Riverside EA08",
+  "awayTeam": "Future FC B07/08 NPL",
+  "homeTeamId": 632,
+  "awayTeamId": 750,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 8",
+  "fieldId": 27,
+  "fieldName": "Galway Downs Field 8",
+  "date": "2025-08-17",
+  "time": "11:30",
+  "startTime": "2025-08-17T11:30:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC Riverside EA08",
+  "awayTeamName": "Future FC B07/08 NPL",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 5
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 37 Team IDs Debug: {homeTeamId: 632, awayTeamId: 750, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 37 transformed: {id: 10472, homeTeam: 'Albion SC Riverside EA08', awayTeam: 'Future FC B07/08 NPL', homeTeamId: 632, awayTeamId: 750, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 38 transformation debug: {raw: {…}, homeTeamStructure: 'Cal Elite SC B2007', awayTeamStructure: 'Future FC B07/08 NPL', fieldStructure: 'Galway Downs Field 7', rawFieldName: 'Galway Downs Field 7', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 38 API data: {
+  "id": 10471,
+  "homeTeam": "Cal Elite SC B2007",
+  "awayTeam": "Future FC B07/08 NPL",
+  "homeTeamId": 108,
+  "awayTeamId": 750,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 7",
+  "fieldId": 26,
+  "fieldName": "Galway Downs Field 7",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Cal Elite SC B2007",
+  "awayTeamName": "Future FC B07/08 NPL",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 4
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 38 Team IDs Debug: {homeTeamId: 108, awayTeamId: 750, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 38 transformed: {id: 10471, homeTeam: 'Cal Elite SC B2007', awayTeam: 'Future FC B07/08 NPL', homeTeamId: 108, awayTeamId: 750, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 39 transformation debug: {raw: {…}, homeTeamStructure: 'Albion SC Riverside EA08', awayTeamStructure: 'City SC Southwest B07/08', fieldStructure: 'Galway Downs Field 6', rawFieldName: 'Galway Downs Field 6', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 39 API data: {
+  "id": 10470,
+  "homeTeam": "Albion SC Riverside EA08",
+  "awayTeam": "City SC Southwest B07/08",
+  "homeTeamId": 632,
+  "awayTeamId": 561,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 6",
+  "fieldId": 25,
+  "fieldName": "Galway Downs Field 6",
+  "date": "2025-08-16",
+  "time": "11:00",
+  "startTime": "2025-08-16T11:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC Riverside EA08",
+  "awayTeamName": "City SC Southwest B07/08",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 3
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 39 Team IDs Debug: {homeTeamId: 632, awayTeamId: 561, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 39 transformed: {id: 10470, homeTeam: 'Albion SC Riverside EA08', awayTeam: 'City SC Southwest B07/08', homeTeamId: 632, awayTeamId: 561, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 40 transformation debug: {raw: {…}, homeTeamStructure: 'City SC Southwest B07/08', awayTeamStructure: 'Future FC B07/08 NPL', fieldStructure: 'Galway Downs Field 5', rawFieldName: 'Galway Downs Field 5', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 40 API data: {
+  "id": 10469,
+  "homeTeam": "City SC Southwest B07/08",
+  "awayTeam": "Future FC B07/08 NPL",
+  "homeTeamId": 561,
+  "awayTeamId": 750,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 5",
+  "fieldId": 24,
+  "fieldName": "Galway Downs Field 5",
+  "date": "2025-08-16",
+  "time": "14:00",
+  "startTime": "2025-08-16T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "City SC Southwest B07/08",
+  "awayTeamName": "Future FC B07/08 NPL",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 2
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 40 Team IDs Debug: {homeTeamId: 561, awayTeamId: 750, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 40 transformed: {id: 10469, homeTeam: 'City SC Southwest B07/08', awayTeam: 'Future FC B07/08 NPL', homeTeamId: 561, awayTeamId: 750, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 41 transformation debug: {raw: {…}, homeTeamStructure: 'Albion SC Riverside EA08', awayTeamStructure: 'Cal Elite SC B2007', fieldStructure: 'Galway Downs Field 4', rawFieldName: 'Galway Downs Field 4', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 41 API data: {
+  "id": 10468,
+  "homeTeam": "Albion SC Riverside EA08",
+  "awayTeam": "Cal Elite SC B2007",
+  "homeTeamId": 632,
+  "awayTeamId": 108,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 4",
+  "fieldId": 23,
+  "fieldName": "Galway Downs Field 4",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC Riverside EA08",
+  "awayTeamName": "Cal Elite SC B2007",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 1
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 41 Team IDs Debug: {homeTeamId: 632, awayTeamId: 108, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 41 transformed: {id: 10468, homeTeam: 'Albion SC Riverside EA08', awayTeam: 'Cal Elite SC B2007', homeTeamId: 632, awayTeamId: 108, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 42 transformation debug: {raw: {…}, homeTeamStructure: 'TBD', awayTeamStructure: 'TBD', fieldStructure: 'Galway Downs Field 1', rawFieldName: 'Galway Downs Field 1', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 42 API data: {
+  "id": 10467,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "homeTeamId": null,
+  "awayTeamId": null,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 1",
+  "fieldId": 20,
+  "fieldName": "Galway Downs Field 1",
+  "date": "2025-08-17",
+  "time": "12:00",
+  "startTime": "2025-08-17T12:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD",
+  "bracketId": 76,
+  "flightName": "Nike Premier",
+  "round": 10
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 42 Team IDs Debug: {homeTeamId: null, awayTeamId: null, homeTeamIdType: 'object', awayTeamIdType: 'object', hasHomeTeamId: false, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 42 transformed: {id: 10467, homeTeam: 'TBD', awayTeam: 'TBD', homeTeamId: null, awayTeamId: null, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 43 transformation debug: {raw: {…}, homeTeamStructure: 'FC Premier Elite B2007', awayTeamStructure: 'Pro Alliance FC 08 Academy', fieldStructure: 'Galway Downs Field 3', rawFieldName: 'Galway Downs Field 3', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 43 API data: {
+  "id": 10466,
+  "homeTeam": "FC Premier Elite B2007",
+  "awayTeam": "Pro Alliance FC 08 Academy",
+  "homeTeamId": 212,
+  "awayTeamId": 517,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 3",
+  "fieldId": 22,
+  "fieldName": "Galway Downs Field 3",
+  "date": "2025-08-17",
+  "time": "09:00",
+  "startTime": "2025-08-17T09:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "FC Premier Elite B2007",
+  "awayTeamName": "Pro Alliance FC 08 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 9
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 43 Team IDs Debug: {homeTeamId: 212, awayTeamId: 517, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 43 transformed: {id: 10466, homeTeam: 'FC Premier Elite B2007', awayTeam: 'Pro Alliance FC 08 Academy', homeTeamId: 212, awayTeamId: 517, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 44 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf B07/08 Academy-1', awayTeamStructure: 'Pro Alliance B07 Academy', fieldStructure: 'Galway Downs Field 2', rawFieldName: 'Galway Downs Field 2', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 44 API data: {
+  "id": 10465,
+  "homeTeam": "Empire Surf B07/08 Academy-1",
+  "awayTeam": "Pro Alliance B07 Academy",
+  "homeTeamId": 699,
+  "awayTeamId": 692,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 2",
+  "fieldId": 21,
+  "fieldName": "Galway Downs Field 2",
+  "date": "2025-08-17",
+  "time": "08:30",
+  "startTime": "2025-08-17T08:30:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B07/08 Academy-1",
+  "awayTeamName": "Pro Alliance B07 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 8
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 44 Team IDs Debug: {homeTeamId: 699, awayTeamId: 692, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 44 transformed: {id: 10465, homeTeam: 'Empire Surf B07/08 Academy-1', awayTeam: 'Pro Alliance B07 Academy', homeTeamId: 699, awayTeamId: 692, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 45 transformation debug: {raw: {…}, homeTeamStructure: 'Albion SC San Diego B07/08 EA 2', awayTeamStructure: 'Rebels SC B07/08 ECRL', fieldStructure: 'Galway Downs Field 1', rawFieldName: 'Galway Downs Field 1', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 45 API data: {
+  "id": 10464,
+  "homeTeam": "Albion SC San Diego B07/08 EA 2",
+  "awayTeam": "Rebels SC B07/08 ECRL",
+  "homeTeamId": 595,
+  "awayTeamId": 700,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 1",
+  "fieldId": 20,
+  "fieldName": "Galway Downs Field 1",
+  "date": "2025-08-17",
+  "time": "08:00",
+  "startTime": "2025-08-17T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC San Diego B07/08 EA 2",
+  "awayTeamName": "Rebels SC B07/08 ECRL",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 7
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 45 Team IDs Debug: {homeTeamId: 595, awayTeamId: 700, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 45 transformed: {id: 10464, homeTeam: 'Albion SC San Diego B07/08 EA 2', awayTeam: 'Rebels SC B07/08 ECRL', homeTeamId: 595, awayTeamId: 700, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 46 transformation debug: {raw: {…}, homeTeamStructure: 'FC Premier Elite B2007', awayTeamStructure: 'Pro Alliance B07 Academy', fieldStructure: 'Galway Downs Field 3', rawFieldName: 'Galway Downs Field 3', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 46 API data: {
+  "id": 10463,
+  "homeTeam": "FC Premier Elite B2007",
+  "awayTeam": "Pro Alliance B07 Academy",
+  "homeTeamId": 212,
+  "awayTeamId": 692,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 3",
+  "fieldId": 22,
+  "fieldName": "Galway Downs Field 3",
+  "date": "2025-08-16",
+  "time": "13:00",
+  "startTime": "2025-08-16T13:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "FC Premier Elite B2007",
+  "awayTeamName": "Pro Alliance B07 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 6
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 46 Team IDs Debug: {homeTeamId: 212, awayTeamId: 692, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 46 transformed: {id: 10463, homeTeam: 'FC Premier Elite B2007', awayTeam: 'Pro Alliance B07 Academy', homeTeamId: 212, awayTeamId: 692, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 47 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf B07/08 Academy-1', awayTeamStructure: 'Rebels SC B07/08 ECRL', fieldStructure: 'Galway Downs Field 2', rawFieldName: 'Galway Downs Field 2', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 47 API data: {
+  "id": 10462,
+  "homeTeam": "Empire Surf B07/08 Academy-1",
+  "awayTeam": "Rebels SC B07/08 ECRL",
+  "homeTeamId": 699,
+  "awayTeamId": 700,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 2",
+  "fieldId": 21,
+  "fieldName": "Galway Downs Field 2",
+  "date": "2025-08-16",
+  "time": "12:30",
+  "startTime": "2025-08-16T12:30:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B07/08 Academy-1",
+  "awayTeamName": "Rebels SC B07/08 ECRL",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 5
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 47 Team IDs Debug: {homeTeamId: 699, awayTeamId: 700, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 47 transformed: {id: 10462, homeTeam: 'Empire Surf B07/08 Academy-1', awayTeam: 'Rebels SC B07/08 ECRL', homeTeamId: 699, awayTeamId: 700, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 48 transformation debug: {raw: {…}, homeTeamStructure: 'Albion SC San Diego B07/08 EA 2', awayTeamStructure: 'Pro Alliance FC 08 Academy', fieldStructure: 'Galway Downs Field 1', rawFieldName: 'Galway Downs Field 1', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 48 API data: {
+  "id": 10461,
+  "homeTeam": "Albion SC San Diego B07/08 EA 2",
+  "awayTeam": "Pro Alliance FC 08 Academy",
+  "homeTeamId": 595,
+  "awayTeamId": 517,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 1",
+  "fieldId": 20,
+  "fieldName": "Galway Downs Field 1",
+  "date": "2025-08-16",
+  "time": "12:00",
+  "startTime": "2025-08-16T12:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC San Diego B07/08 EA 2",
+  "awayTeamName": "Pro Alliance FC 08 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 4
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 48 Team IDs Debug: {homeTeamId: 595, awayTeamId: 517, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 48 transformed: {id: 10461, homeTeam: 'Albion SC San Diego B07/08 EA 2', awayTeam: 'Pro Alliance FC 08 Academy', homeTeamId: 595, awayTeamId: 517, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 49 transformation debug: {raw: {…}, homeTeamStructure: 'FC Premier Elite B2007', awayTeamStructure: 'Rebels SC B07/08 ECRL', fieldStructure: 'Galway Downs Field 3', rawFieldName: 'Galway Downs Field 3', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 49 API data: {
+  "id": 10460,
+  "homeTeam": "FC Premier Elite B2007",
+  "awayTeam": "Rebels SC B07/08 ECRL",
+  "homeTeamId": 212,
+  "awayTeamId": 700,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 3",
+  "fieldId": 22,
+  "fieldName": "Galway Downs Field 3",
+  "date": "2025-08-16",
+  "time": "09:00",
+  "startTime": "2025-08-16T09:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "FC Premier Elite B2007",
+  "awayTeamName": "Rebels SC B07/08 ECRL",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 3
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 49 Team IDs Debug: {homeTeamId: 212, awayTeamId: 700, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 49 transformed: {id: 10460, homeTeam: 'FC Premier Elite B2007', awayTeam: 'Rebels SC B07/08 ECRL', homeTeamId: 212, awayTeamId: 700, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 50 transformation debug: {raw: {…}, homeTeamStructure: 'Empire Surf B07/08 Academy-1', awayTeamStructure: 'Pro Alliance FC 08 Academy', fieldStructure: 'Galway Downs Field 2', rawFieldName: 'Galway Downs Field 2', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 50 API data: {
+  "id": 10459,
+  "homeTeam": "Empire Surf B07/08 Academy-1",
+  "awayTeam": "Pro Alliance FC 08 Academy",
+  "homeTeamId": 699,
+  "awayTeamId": 517,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 2",
+  "fieldId": 21,
+  "fieldName": "Galway Downs Field 2",
+  "date": "2025-08-16",
+  "time": "08:30",
+  "startTime": "2025-08-16T08:30:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Empire Surf B07/08 Academy-1",
+  "awayTeamName": "Pro Alliance FC 08 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 2
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 50 Team IDs Debug: {homeTeamId: 699, awayTeamId: 517, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 50 transformed: {id: 10459, homeTeam: 'Empire Surf B07/08 Academy-1', awayTeam: 'Pro Alliance FC 08 Academy', homeTeamId: 699, awayTeamId: 517, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 51 transformation debug: {raw: {…}, homeTeamStructure: 'Albion SC San Diego B07/08 EA 2', awayTeamStructure: 'Pro Alliance B07 Academy', fieldStructure: 'Galway Downs Field 1', rawFieldName: 'Galway Downs Field 1', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 51 API data: {
+  "id": 10458,
+  "homeTeam": "Albion SC San Diego B07/08 EA 2",
+  "awayTeam": "Pro Alliance B07 Academy",
+  "homeTeamId": 595,
+  "awayTeamId": 692,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 1",
+  "fieldId": 20,
+  "fieldName": "Galway Downs Field 1",
+  "date": "2025-08-16",
+  "time": "08:00",
+  "startTime": "2025-08-16T08:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC San Diego B07/08 EA 2",
+  "awayTeamName": "Pro Alliance B07 Academy",
+  "bracketId": 604,
+  "flightName": "Nike Premier",
+  "round": 1
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 51 Team IDs Debug: {homeTeamId: 595, awayTeamId: 692, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 51 transformed: {id: 10458, homeTeam: 'Albion SC San Diego B07/08 EA 2', awayTeam: 'Pro Alliance B07 Academy', homeTeamId: 595, awayTeamId: 692, …}
+util.js:33 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+$Aa @ util.js:33
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1384
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1384
+setTimeout
+Tda @ js?libraries=places&v=beta&callback=Function.prototype:1384
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641Understand this warning
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+Promise.then
+S @ out-4.5.44.js:1
+y @ out-4.5.44.js:1
+E @ out-4.5.44.js:1
+e.onload @ inner.html:1
+script
+(anonymous) @ inner.html:1
+(anonymous) @ inner.html:1
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+h @ out-4.5.44.js:1
+e @ inner.html:1
+shared-df7789195bf09b6f338558bdd92c931a.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+e @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+c @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+setTimeout
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+log @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+log @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+value @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+value @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+ScheduleViewerFixed-Ct5n24ks.js:11 Schedule API Response: {games: Array(51), fields: Array(21), ageGroups: Array(1), dates: Array(2), totalGames: 51, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 1 transformation debug: {raw: {…}, homeTeamStructure: 'TBD', awayTeamStructure: 'TBD', fieldStructure: 'Galway Downs Field 3', rawFieldName: 'Galway Downs Field 3', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 1 API data: {
+  "id": 10474,
+  "homeTeam": "TBD",
+  "awayTeam": "TBD",
+  "homeTeamId": null,
+  "awayTeamId": null,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 3",
+  "fieldId": 22,
+  "fieldName": "Galway Downs Field 3",
+  "date": "2025-08-17",
+  "time": "14:00",
+  "startTime": "2025-08-17T14:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "TBD",
+  "awayTeamName": "TBD",
+  "bracketId": 78,
+  "flightName": "Nike Elite",
+  "round": 10
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 1 Team IDs Debug: {homeTeamId: null, awayTeamId: null, homeTeamIdType: 'object', awayTeamIdType: 'object', hasHomeTeamId: false, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 1 transformed: {id: 10474, homeTeam: 'TBD', awayTeam: 'TBD', homeTeamId: null, awayTeamId: null, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 2 transformation debug: {raw: {…}, homeTeamStructure: 'Cal Elite SC B2007', awayTeamStructure: 'City SC Southwest B07/08', fieldStructure: 'Galway Downs Field 9', rawFieldName: 'Galway Downs Field 9', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 2 API data: {
+  "id": 10473,
+  "homeTeam": "Cal Elite SC B2007",
+  "awayTeam": "City SC Southwest B07/08",
+  "homeTeamId": 108,
+  "awayTeamId": 561,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 9",
+  "fieldId": 28,
+  "fieldName": "Galway Downs Field 9",
+  "date": "2025-08-17",
+  "time": "11:00",
+  "startTime": "2025-08-17T11:00:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Cal Elite SC B2007",
+  "awayTeamName": "City SC Southwest B07/08",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 6
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 2 Team IDs Debug: {homeTeamId: 108, awayTeamId: 561, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 2 transformed: {id: 10473, homeTeam: 'Cal Elite SC B2007', awayTeam: 'City SC Southwest B07/08', homeTeamId: 108, awayTeamId: 561, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 3 transformation debug: {raw: {…}, homeTeamStructure: 'Albion SC Riverside EA08', awayTeamStructure: 'Future FC B07/08 NPL', fieldStructure: 'Galway Downs Field 8', rawFieldName: 'Galway Downs Field 8', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 3 API data: {
+  "id": 10472,
+  "homeTeam": "Albion SC Riverside EA08",
+  "awayTeam": "Future FC B07/08 NPL",
+  "homeTeamId": 632,
+  "awayTeamId": 750,
+  "ageGroup": "U19 Boys",
+  "field": "Galway Downs Field 8",
+  "fieldId": 27,
+  "fieldName": "Galway Downs Field 8",
+  "date": "2025-08-17",
+  "time": "11:30",
+  "startTime": "2025-08-17T11:30:00",
+  "duration": 90,
+  "status": "scheduled",
+  "homeScore": null,
+  "awayScore": null,
+  "homeTeamName": "Albion SC Riverside EA08",
+  "awayTeamName": "Future FC B07/08 NPL",
+  "bracketId": 580,
+  "flightName": "Nike Elite",
+  "round": 5
+}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 3 Team IDs Debug: {homeTeamId: 632, awayTeamId: 750, homeTeamIdType: 'number', awayTeamIdType: 'number', hasHomeTeamId: true, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 3 transformed: {id: 10472, homeTeam: 'Albion SC Riverside EA08', awayTeam: 'Future FC B07/08 NPL', homeTeamId: 632, awayTeamId: 750, …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 4 transformation debug: {raw: {…}, homeTeamStructure: 'Cal Elite SC B2007', awayTeamStructure: 'Future FC B07/08 NPL', fieldStructure: 'Galway Downs Field 7', rawFieldName: 'Galway Downs Field 7', …}
+ScheduleViewerFixed-Ct5n24ks.js:11 Game 4 API data: {
+  "id": 10471,
+  "homeTeam": "Cal Elite SC B2007",
+  "awayTeam": "Future FC B07/08 NPL",
+  "homeTeamId": 108,
+  "awayTeamId": 750,
