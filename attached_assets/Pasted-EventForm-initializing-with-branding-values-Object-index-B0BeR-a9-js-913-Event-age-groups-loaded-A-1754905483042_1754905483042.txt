@@ -1,0 +1,77 @@
+EventForm initializing with branding values: Object
+index-B0BeR-a9.js:913 Event age groups loaded: Array(24)
+index-B0BeR-a9.js:913 EventForm initializing with branding values: Object
+index-B0BeR-a9.js:913 Formatting age groups from source: Object
+index-B0BeR-a9.js:41 TypeError: Cannot read properties of undefined (reading 'startsWith')
+    at index-B0BeR-a9.js:913:76305
+    at Array.map (<anonymous>)
+    at index-B0BeR-a9.js:913:76112
+    at SS (index-B0BeR-a9.js:41:24296)
+    at Jh (index-B0BeR-a9.js:41:42451)
+    at rhe (index-B0BeR-a9.js:41:41273)
+    at Eu (index-B0BeR-a9.js:41:40312)
+    at BM (index-B0BeR-a9.js:41:36913)
+    at au (index-B0BeR-a9.js:39:3288)
+    at index-B0BeR-a9.js:41:34286
+nP @ index-B0BeR-a9.js:41Understand this error
+index-B0BeR-a9.js:39 Uncaught TypeError: Cannot read properties of undefined (reading 'startsWith')
+    at index-B0BeR-a9.js:913:76305
+    at Array.map (<anonymous>)
+    at index-B0BeR-a9.js:913:76112
+    at SS (index-B0BeR-a9.js:41:24296)
+    at Jh (index-B0BeR-a9.js:41:42451)
+    at rhe (index-B0BeR-a9.js:41:41273)
+    at Eu (index-B0BeR-a9.js:41:40312)
+    at BM (index-B0BeR-a9.js:41:36913)
+    at au (index-B0BeR-a9.js:39:3288)
+    at index-B0BeR-a9.js:41:34286Understand this error
+tinymce.min.js:16 Failed to load plugin: onboarding from url plugins/onboarding/plugin.min.js
+mE @ tinymce.min.js:16Understand this error
+edit:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+edit:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+util.js:33 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+$Aa @ util.js:33
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1384
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1384Understand this warning
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+Promise.then
+S @ out-4.5.44.js:1
+y @ out-4.5.44.js:1
+E @ out-4.5.44.js:1
+e.onload @ inner.html:1
+script
+(anonymous) @ inner.html:1
+(anonymous) @ inner.html:1
+shared-df7789195bf09b6f338558bdd92c931a.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+e @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+c @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+setTimeout
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+(anonymous) @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+value @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+log @ shared-df7789195bf09b6f338558bdd92c931a.js:1
+log @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+value @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+value @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+(anonymous) @ controller-with-preconnect-094733b229cbd8ab28cfe11deb2ab484.js:1
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+h @ out-4.5.44.js:1
+e @ inner.html:1

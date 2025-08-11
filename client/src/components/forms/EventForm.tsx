@@ -266,18 +266,29 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
               console.log('Fetched age groups from scope on initial load:', ageGroupsData);
               
               // Format age groups for the form
-              const formattedAgeGroups = ageGroupsData.map((group: any) => ({
-                id: `${group.gender}-${group.birthYear}-${group.ageGroup}`,
-                ageGroup: group.ageGroup,
-                birthYear: group.birthYear,
-                gender: group.gender,
-                divisionCode: group.divisionCode,
-                fieldSize: group.ageGroup.startsWith('U') ?
-                  (parseInt(group.ageGroup.substring(1)) <= 7 ? '4v4' :
-                    parseInt(group.ageGroup.substring(1)) <= 10 ? '7v7' :
-                      parseInt(group.ageGroup.substring(1)) <= 12 ? '9v9' : '11v11') : '11v11',
-                selected: true
-              }));
+              const formattedAgeGroups = ageGroupsData.map((group: any) => {
+                const ageGroupValue = group.ageGroup || group.age_group || group.name || '';
+                
+                let fieldSize = group.fieldSize || group.field_size || '11v11';
+                if (!fieldSize && ageGroupValue && typeof ageGroupValue === 'string' && ageGroupValue.startsWith('U')) {
+                  const ageNumber = parseInt(ageGroupValue.substring(1));
+                  if (!isNaN(ageNumber)) {
+                    fieldSize = ageNumber <= 7 ? '4v4' :
+                               ageNumber <= 10 ? '7v7' :
+                               ageNumber <= 12 ? '9v9' : '11v11';
+                  }
+                }
+                
+                return {
+                  id: `${group.gender}-${group.birthYear}-${ageGroupValue}`,
+                  ageGroup: ageGroupValue,
+                  birthYear: group.birthYear,
+                  gender: group.gender,
+                  divisionCode: group.divisionCode,
+                  fieldSize: fieldSize,
+                  selected: true
+                };
+              });
               
               // Update age groups state and form value
               setAgeGroups(formattedAgeGroups);
@@ -300,19 +311,34 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
       console.log('Formatting age groups from source:', { mode, sourceData });
       
       // Format and update age groups from query
-      const formattedGroups = sourceData.map((group: any) => ({
-        id: group.id || `${group.gender}-${group.birthYear}-${group.ageGroup}`, // Use actual DB ID if available
-        ageGroup: group.ageGroup,
-        birthYear: group.birthYear,
-        gender: group.gender,
-        divisionCode: group.divisionCode,
-        fieldSize: group.fieldSize || (group.ageGroup.startsWith('U') ?
-          (parseInt(group.ageGroup.substring(1)) <= 7 ? '4v4' :
-            parseInt(group.ageGroup.substring(1)) <= 10 ? '7v7' :
-              parseInt(group.ageGroup.substring(1)) <= 12 ? '9v9' : '11v11') : '11v11'),
-        isEligible: group.isEligible !== undefined ? group.isEligible : true, // Use actual eligibility if available
-        selected: true
-      }));
+      const formattedGroups = sourceData.map((group: any) => {
+        console.log('Processing age group:', group);
+        
+        // Safely get ageGroup field (could be ageGroup, age_group, or similar)
+        const ageGroupValue = group.ageGroup || group.age_group || group.name || '';
+        
+        // Calculate field size safely
+        let fieldSize = group.fieldSize || group.field_size || '11v11';
+        if (!fieldSize && ageGroupValue && typeof ageGroupValue === 'string' && ageGroupValue.startsWith('U')) {
+          const ageNumber = parseInt(ageGroupValue.substring(1));
+          if (!isNaN(ageNumber)) {
+            fieldSize = ageNumber <= 7 ? '4v4' :
+                       ageNumber <= 10 ? '7v7' :
+                       ageNumber <= 12 ? '9v9' : '11v11';
+          }
+        }
+        
+        return {
+          id: group.id || `${group.gender}-${group.birthYear}-${ageGroupValue}`,
+          ageGroup: ageGroupValue,
+          birthYear: group.birthYear || group.birth_year,
+          gender: group.gender,
+          divisionCode: group.divisionCode || group.division_code,
+          fieldSize: fieldSize,
+          isEligible: group.isEligible !== undefined ? group.isEligible : true,
+          selected: true
+        };
+      });
       
       console.log('Formatted age groups:', formattedGroups);
       setAgeGroups(formattedGroups);
@@ -357,18 +383,29 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
         const ageGroupsData = await response.json();
         
         // Convert to the expected age group format with proper field sizes
-        const formattedAgeGroups = ageGroupsData.map((group: any) => ({
-          id: `${group.gender}-${group.birthYear}-${group.ageGroup}`,
-          ageGroup: group.ageGroup,
-          birthYear: group.birthYear,
-          gender: group.gender,
-          divisionCode: group.divisionCode,
-          fieldSize: group.ageGroup.startsWith('U') ?
-            (parseInt(group.ageGroup.substring(1)) <= 7 ? '4v4' :
-              parseInt(group.ageGroup.substring(1)) <= 10 ? '7v7' :
-                parseInt(group.ageGroup.substring(1)) <= 12 ? '9v9' : '11v11') : '11v11', // U13 and up (including U19) use 11v11
-          selected: true
-        }));
+        const formattedAgeGroups = ageGroupsData.map((group: any) => {
+          const ageGroupValue = group.ageGroup || group.age_group || group.name || '';
+          
+          let fieldSize = group.fieldSize || group.field_size || '11v11';
+          if (!fieldSize && ageGroupValue && typeof ageGroupValue === 'string' && ageGroupValue.startsWith('U')) {
+            const ageNumber = parseInt(ageGroupValue.substring(1));
+            if (!isNaN(ageNumber)) {
+              fieldSize = ageNumber <= 7 ? '4v4' :
+                         ageNumber <= 10 ? '7v7' :
+                         ageNumber <= 12 ? '9v9' : '11v11';
+            }
+          }
+          
+          return {
+            id: `${group.gender}-${group.birthYear}-${ageGroupValue}`,
+            ageGroup: ageGroupValue,
+            birthYear: group.birthYear,
+            gender: group.gender,
+            divisionCode: group.divisionCode,
+            fieldSize: fieldSize,
+            selected: true
+          };
+        });
         
         // Update age groups state and form value
         setAgeGroups(formattedAgeGroups);
