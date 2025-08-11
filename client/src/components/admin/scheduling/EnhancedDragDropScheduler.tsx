@@ -1181,7 +1181,7 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
                                       <div><span class="text-slate-400">Field:</span> ${fieldName}</div>
                                       <div><span class="text-slate-400">Duration:</span> ${duration} min</div>
                                       <div><span class="text-slate-400">Age Group:</span> ${game.ageGroup || 'Unknown'}</div>
-                                      <div><span class="text-slate-400">Round:</span> ${(game as any).round || 1}</div>
+                                      <div><span class="text-slate-400">Flight:</span> ${(game as any).flightName || game.ageGroup || 'TBD'}</div>
                                     </div>
                                     ${(game as any).homeTeamCoach || (game as any).awayTeamCoach ? `
                                       <div class="mt-3 pt-2 border-t border-slate-600">
@@ -1224,7 +1224,7 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
                                   <div className="text-xs leading-tight space-y-1">
                                     {/* Flight information at top */}
                                     <div className="text-[9px] text-blue-200 font-medium text-center bg-blue-800/30 rounded px-1">
-                                      {(game as any).flightName || `Round ${(game as any).round || 1}`}
+                                      {(game as any).flightName || game.ageGroup || 'Flight TBD'}
                                     </div>
                                     
                                     {/* Team names display - shortened intelligently */}
