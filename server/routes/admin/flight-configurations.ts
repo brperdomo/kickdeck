@@ -155,6 +155,29 @@ router.get('/events/:eventId/flight-configurations', isAdmin, async (req, res) =
       };
     });
 
+    // Sort flights by age (oldest to youngest) and then by gender (Boys first, then Girls)
+    result.sort((a, b) => {
+      // Extract numeric age from age group (e.g., "U10" -> 10)
+      const ageA = parseInt(a.ageGroup.replace(/[^\d]/g, '')) || 0;
+      const ageB = parseInt(b.ageGroup.replace(/[^\d]/g, '')) || 0;
+      
+      // First sort by age (descending for oldest to youngest)
+      if (ageA !== ageB) {
+        return ageB - ageA;
+      }
+      
+      // Then sort by gender (Boys first, then Girls)
+      if (a.gender !== b.gender) {
+        return a.gender === 'Boys' ? -1 : 1;
+      }
+      
+      // Finally sort by flight name
+      return a.flightName.localeCompare(b.flightName);
+    });
+
+    console.log(`[FLIGHT CONFIG] Returning ${result.length} sorted flights for event ${eventId}`);
+    console.log(`[FLIGHT CONFIG] First few flights:`, result.slice(0, 3).map(f => ({ ageGroup: f.ageGroup, gender: f.gender, flightName: f.flightName })));
+
     res.json(result);
   } catch (error) {
     console.error('Error fetching flight configurations:', error);

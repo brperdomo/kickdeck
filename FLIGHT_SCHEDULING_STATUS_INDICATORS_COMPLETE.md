@@ -15,6 +15,8 @@ Added visual indicators to show which flights already have scheduled games in th
 - **Select All behavior**: Only selects unscheduled flights, skipping those with existing games
 - **Status counter**: Shows count of already scheduled flights in the selection summary
 - **Click prevention**: Scheduled flights cannot be clicked or selected
+- **Organized display**: Flights sorted from oldest to youngest age groups
+- **Gender indicators**: Blue "B" badges for boys, pink "G" badges for girls
 
 ### 3. Backend API Integration
 - **New endpoint**: `/api/admin/events/{eventId}/flight-game-counts` provides real-time game counts
@@ -40,6 +42,8 @@ bg-green-900/30 text-green-300 border-green-600
 - **Disabled cursor**: `cursor: not-allowed` for scheduled flights
 - **Checkbox disabled**: Cannot select flights that already have games
 - **Hover effects**: Only work on unscheduled flights
+- **Logical ordering**: Flights displayed oldest to youngest (U19, U18, U17, etc.)
+- **Gender grouping**: Boys flights listed before girls within each age group
 
 ## Technical Implementation
 
