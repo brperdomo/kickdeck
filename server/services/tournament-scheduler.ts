@@ -526,23 +526,22 @@ export class TournamentScheduler {
     const A1 = bracketA[0], A2 = bracketA[1], A3 = bracketA[2], A4 = bracketA[3];
     const B1 = bracketB[0], B2 = bracketB[1], B3 = bracketB[2], B4 = bracketB[3];
     
-    // EXACT USER MATCHUP PATTERN:
+    // GROUP OF 8: 12 POOL GAMES (6 per bracket) + 1 CHAMPIONSHIP = 13 TOTAL
     const matchups: Array<{ home: Team, away: Team, round: string }> = [
-      // Round 1
+      // Bracket A: 6 round-robin games (A1 A2, A3 A4, A1 A3, A2 A4, A1 A4, A2 A3)
       { home: A1, away: A2, round: 'Bracket A Pool Play' },
-      { home: B1, away: B2, round: 'Bracket B Pool Play' },
-      // Round 2  
       { home: A3, away: A4, round: 'Bracket A Pool Play' },
-      { home: B3, away: B4, round: 'Bracket B Pool Play' },
-      // Round 3
       { home: A1, away: A3, round: 'Bracket A Pool Play' },
-      { home: B1, away: B3, round: 'Bracket B Pool Play' },
-      // Round 4
       { home: A2, away: A4, round: 'Bracket A Pool Play' },
-      { home: B2, away: B4, round: 'Bracket B Pool Play' },
-      // Round 5
       { home: A1, away: A4, round: 'Bracket A Pool Play' },
-      { home: B1, away: B4, round: 'Bracket B Pool Play' }
+      { home: A2, away: A3, round: 'Bracket A Pool Play' },
+      // Bracket B: 6 round-robin games (B1 B2, B3 B4, B1 B3, B2 B4, B1 B4, B2 B3)
+      { home: B1, away: B2, round: 'Bracket B Pool Play' },
+      { home: B3, away: B4, round: 'Bracket B Pool Play' },
+      { home: B1, away: B3, round: 'Bracket B Pool Play' },
+      { home: B2, away: B4, round: 'Bracket B Pool Play' },
+      { home: B1, away: B4, round: 'Bracket B Pool Play' },
+      { home: B2, away: B3, round: 'Bracket B Pool Play' }
     ];
     
     // Generate games based on exact user pattern
@@ -582,8 +581,8 @@ export class TournamentScheduler {
     };
     games.push(championshipGame);
     
-    console.log(`✅ Generated Group of 8 EXACT USER PATTERN: 10 specific matchup games + 1 Championship Final = ${games.length} total games`);
-    console.log(`🚫 USER PATTERN: A1-A2, B1-B2, A3-A4, B3-B4, A1-A3, B1-B3, A2-A4, B2-B4, A1-A4, B1-B4, Championship`);
+    console.log(`✅ Generated Group of 8 DUAL BRACKET FORMAT: 12 pool games (6 per bracket) + 1 Championship Final = ${games.length} total games`);
+    console.log(`📊 BRACKET FORMAT: Two separate 4-team round-robin brackets + winner vs winner championship`);
     
     return games;
   }
