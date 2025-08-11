@@ -2,7 +2,14 @@
  * Traditional Tournament Scheduling Service
  * 
  * Implements standard soccer tournament scheduling algorithms without AI dependency.
- * Supports round-robin, single/double elimination, and hybrid formats.
+ * 
+ * CRITICAL TOURNAMENT FORMAT RULES:
+ * - Group of 4: Single 4-team round-robin bracket (6 games + 1 championship)
+ * - Group of 6: CROSSPLAY ONLY - Pool A (3) vs Pool B (3) = 9 games + 1 championship  
+ * - Group of 8: Dual bracket - Two separate 4-team round-robins + 1 championship (Winner A vs Winner B)
+ * 
+ * NO EXCEPTIONS: Group of 6 is the ONLY format that uses crossplay.
+ * Group of 8 has NO cross-bracket play except the final championship game.
  */
 
 import { db } from "../../db";
@@ -188,15 +195,13 @@ export class TournamentScheduler {
       case 'full_crossplay':
       case 'crossover_bracket_6_teams':
       case 'group_of_6_crossplay':
-        // CRITICAL FIX: Handle crossplay formats with proper pool separation
+        // CRITICAL FIX: ONLY 6-team brackets use crossplay
         console.log(`🚨 CROSSPLAY DETECTED: Generating crossplay games for format '${format}'`);
         if (teams.length === 6) {
           games.push(...this.generateCrossplayGames(bracket, teams, gameCounter, 6));
-        } else if (teams.length === 4) {
-          games.push(...this.generateCrossplayGames(bracket, teams, gameCounter, 4));
         } else {
-          console.error(`❌ CROSSPLAY ERROR: Crossplay requires 4 or 6 teams, got ${teams.length}`);
-          throw new Error(`Crossplay format requires exactly 4 or 6 teams, got ${teams.length}`);
+          console.error(`❌ CROSSPLAY ERROR: ONLY 6-team brackets use crossplay format, got ${teams.length} teams`);
+          throw new Error(`Crossplay format is ONLY for 6-team brackets, got ${teams.length} teams`);
         }
         break;
         
@@ -246,10 +251,16 @@ export class TournamentScheduler {
         break;
         
       default:
-        // CRITICAL: Check for 6-team brackets and force crossplay
+        // Handle team-count specific formats
         if (teams.length === 6) {
-          console.log(`🚨 CRITICAL: Unknown format '${bracket.format}' for 6-team bracket - ENFORCING crossplay instead of round-robin`);
+          console.log(`🚨 CRITICAL: Unknown format '${bracket.format}' for 6-team bracket - ENFORCING crossplay (ONLY format for 6 teams)`);
           games.push(...this.generate6TeamCrossover(bracket, teams, gameCounter));
+        } else if (teams.length === 8) {
+          console.log(`🚨 CRITICAL: Unknown format '${bracket.format}' for 8-team bracket - ENFORCING dual bracket (two separate 4-team brackets)`);
+          games.push(...this.generate8TeamDualBracket(bracket, teams, gameCounter));
+        } else if (teams.length === 4) {
+          console.log(`🚨 CRITICAL: Unknown format '${bracket.format}' for 4-team bracket - ENFORCING single bracket round-robin`);
+          games.push(...this.generateRoundRobinGames(bracket, teams, gameCounter));
         } else {
           console.log(`⚠️  Unknown bracket format: ${bracket.format}, defaulting to round robin`);
           games.push(...this.generateRoundRobinGames(bracket, teams, gameCounter));
@@ -402,14 +413,18 @@ export class TournamentScheduler {
     
     console.log(`🚨 CROSSPLAY ENFORCEMENT: Processing ${teamCount}-team bracket for proper Pool A vs Pool B matchups`);
     
-    // Split teams by group_id (Pool A vs Pool B) - CRITICAL for proper crossplay
-    const poolA = teams.filter(team => team.groupId && (team.groupId === 76 || team.groupId === 79)); // Pool A groups
-    const poolB = teams.filter(team => team.groupId && (team.groupId === 77 || team.groupId === 80)); // Pool B groups
-    
-    console.log(`📊 Pool A teams (${poolA.length}):`, poolA.map(t => t.name));
-    console.log(`📊 Pool B teams (${poolB.length}):`, poolB.map(t => t.name));
-    
+    // ONLY GROUP OF 6 USES CROSSPLAY - Split teams by pool assignment
     if (teamCount === 6) {
+      const poolA = teams.filter(team => team.poolAssignment === 'Pool A' || 
+                                         (team.groupId && team.groupId === 76) ||
+                                         team.name?.includes('Pool A'));
+      const poolB = teams.filter(team => team.poolAssignment === 'Pool B' || 
+                                         (team.groupId && team.groupId === 77) ||
+                                         team.name?.includes('Pool B'));
+      
+      console.log(`📊 Pool A teams (${poolA.length}):`, poolA.map(t => t.name));
+      console.log(`📊 Pool B teams (${poolB.length}):`, poolB.map(t => t.name));
+      
       // 6-team crossplay: Pool A (3 teams) vs Pool B (3 teams) = 9 crossplay games
       if (poolA.length !== 3 || poolB.length !== 3) {
         console.error(`❌ 6-TEAM CROSSPLAY ERROR: Expected 3v3 pools, got ${poolA.length}v${poolB.length}`);
@@ -437,40 +452,16 @@ export class TournamentScheduler {
       
       console.log(`✅ Generated 9 crossplay games (Pool A vs Pool B) for 6-team bracket`);
       
-    } else if (teamCount === 4) {
-      // 4-team crossplay: Pool A (2 teams) vs Pool B (2 teams) = 4 crossplay games  
-      if (poolA.length !== 2 || poolB.length !== 2) {
-        console.error(`❌ 4-TEAM CROSSPLAY ERROR: Expected 2v2 pools, got ${poolA.length}v${poolB.length}`);
-        throw new Error(`4-team crossplay requires 2 teams in each pool, got ${poolA.length}v${poolB.length}`);
-      }
+      // Add championship final
+      games.push(this.generateChampionshipGame(bracket, gameCounter));
       
-      // Generate all Pool A vs Pool B matchups (2x2 = 4 games)
-      poolA.forEach((teamA, idxA) => {
-        poolB.forEach((teamB, idxB) => {
-          games.push({
-            id: `${bracket.bracketId}_cross_${gameCounter}`,
-            homeTeamId: teamA.id,
-            homeTeamName: teamA.name,
-            awayTeamId: teamB.id,
-            awayTeamName: teamB.name,
-            bracketId: bracket.bracketId,
-            bracketName: bracket.bracketName,
-            round: 'Pool Play',
-            gameType: 'pool_play',
-            gameNumber: gameCounter++,
-            duration: 90
-          });
-        });
-      });
-      
-      console.log(`✅ Generated 4 crossplay games (Pool A vs Pool B) for 4-team bracket`);
+      console.log(`🏆 6-Team Crossplay: ${games.length - 1} pool + 1 final for ${bracket.bracketName}`);
+      return games;
     }
     
-    // Add championship final
-    games.push(this.generateChampionshipGame(bracket, gameCounter));
-    
-    console.log(`🏆 ${teamCount}-Team Crossplay: ${games.length - 1} pool + 1 final for ${bracket.bracketName}`);
-    return games;
+    // NO OTHER FORMATS USE CROSSPLAY
+    console.error(`❌ CROSSPLAY ERROR: Only 6-team brackets use crossplay format, got ${teamCount} teams`);
+    throw new Error(`Crossplay format is only for 6-team brackets, got ${teamCount} teams`);
   }
 
   /**
@@ -488,6 +479,10 @@ export class TournamentScheduler {
   /**
    * 8 teams dual bracket: 12 pool games + 1 final (your third scenario)
    */
+  /**
+   * CORRECTED Group of 8 Format: Two separate 4-team round-robin brackets
+   * NO CROSS-BRACKET PLAY except championship final (Winner A vs Winner B)
+   */
   private static generate8TeamDualBracket(
     bracket: any,
     teams: Team[],
@@ -496,39 +491,82 @@ export class TournamentScheduler {
     const games: Game[] = [];
     let gameCounter = startingGameNumber;
     
-    // Split into brackets A (0,1,2,3) and B (4,5,6,7)
+    console.log(`🚨 GROUP OF 8 ENFORCEMENT: Two separate 4-team brackets with NO cross-bracket play`);
+    
+    if (teams.length !== 8) {
+      throw new Error(`Group of 8 format requires exactly 8 teams, got ${teams.length}`);
+    }
+    
+    // Split teams into Bracket A and Bracket B (4 teams each)
     const bracketA = teams.slice(0, 4);
     const bracketB = teams.slice(4, 8);
     
-    // Your specified matchups within each bracket: A1-A2, B1-B2, A3-A4, B3-B4, A1-A3, B1-B3, A2-A4, B2-B4, A1-A4, B1-B4, A2-A3, B2-B3
-    [bracketA, bracketB].forEach((bracketTeams, bracketIdx) => {
-      const bracketLetter = bracketIdx === 0 ? 'A' : 'B';
-      
-      // Round robin within bracket
-      for (let i = 0; i < bracketTeams.length; i++) {
-        for (let j = i + 1; j < bracketTeams.length; j++) {
-          games.push({
-            id: `${bracket.bracketId}_${bracketLetter}_${gameCounter}`,
-            homeTeamId: bracketTeams[i].id,
-            homeTeamName: bracketTeams[i].name,
-            awayTeamId: bracketTeams[j].id,
-            awayTeamName: bracketTeams[j].name,
-            bracketId: bracket.bracketId,
-            bracketName: bracket.bracketName,
-            round: 'Pool Play',
-            gameType: 'pool_play',
-            gameNumber: gameCounter++,
-            duration: 90
-          });
-        }
+    console.log(`📊 Bracket A teams (${bracketA.length}):`, bracketA.map(t => t.name));
+    console.log(`📊 Bracket B teams (${bracketB.length}):`, bracketB.map(t => t.name));
+    
+    // Generate round-robin games WITHIN Bracket A (6 games)
+    console.log(`🔄 Generating round-robin games within Bracket A`);
+    for (let i = 0; i < bracketA.length; i++) {
+      for (let j = i + 1; j < bracketA.length; j++) {
+        games.push({
+          id: `${bracket.bracketId}_A_${gameCounter}`,
+          homeTeamId: bracketA[i].id,
+          homeTeamName: bracketA[i].name,
+          awayTeamId: bracketA[j].id,
+          awayTeamName: bracketA[j].name,
+          bracketId: bracket.bracketId,
+          bracketName: `${bracket.bracketName} - Bracket A`,
+          poolId: 'bracket_a',
+          poolName: 'Bracket A',
+          round: 'Bracket A Pool Play',
+          gameType: 'pool_play',
+          gameNumber: gameCounter++,
+          duration: 90
+        });
       }
-    });
+    }
     
-    // Add final: 1st from A vs 1st from B using unified championship game generation
-    games.push(this.generateChampionshipGame(bracket, gameCounter));
+    // Generate round-robin games WITHIN Bracket B (6 games)  
+    console.log(`🔄 Generating round-robin games within Bracket B`);
+    for (let i = 0; i < bracketB.length; i++) {
+      for (let j = i + 1; j < bracketB.length; j++) {
+        games.push({
+          id: `${bracket.bracketId}_B_${gameCounter}`,
+          homeTeamId: bracketB[i].id,
+          homeTeamName: bracketB[i].name,
+          awayTeamId: bracketB[j].id,
+          awayTeamName: bracketB[j].name,
+          bracketId: bracket.bracketId,
+          bracketName: `${bracket.bracketName} - Bracket B`,
+          poolId: 'bracket_b',
+          poolName: 'Bracket B',
+          round: 'Bracket B Pool Play',
+          gameType: 'pool_play',
+          gameNumber: gameCounter++,
+          duration: 90
+        });
+      }
+    }
     
-    console.log(`🏆 8 Team Dual Bracket: 12 pool + 1 final = 13 total games for ${bracket.bracketName}`);
-    console.log(`📊 Generated games breakdown: ${games.length} total (6 Pool A + 6 Pool B + 1 Championship)`);
+    // Add ONLY championship final: Winner of Bracket A vs Winner of Bracket B
+    const championshipGame = {
+      id: `${bracket.bracketId}_final_${gameCounter}`,
+      homeTeamId: 0, // Placeholder - will be determined from Bracket A winner
+      homeTeamName: 'Winner of Bracket A',
+      awayTeamId: 0, // Placeholder - will be determined from Bracket B winner  
+      awayTeamName: 'Winner of Bracket B',
+      bracketId: bracket.bracketId,
+      bracketName: bracket.bracketName,
+      round: 'Championship Final',
+      gameType: 'final',
+      gameNumber: gameCounter++,
+      duration: 90
+    };
+    games.push(championshipGame);
+    
+    console.log(`✅ Generated Group of 8 dual bracket: 6 games in Bracket A + 6 games in Bracket B + 1 Championship Final = ${games.length} total games`);
+    console.log(`🚫 NO CROSS-BRACKET PLAY: Teams only play within their own bracket until championship final`);
+    
     return games;
   }
 
