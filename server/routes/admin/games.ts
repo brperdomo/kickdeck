@@ -386,4 +386,87 @@ router.post('/:eventId/games/create-tbd', isAdmin, async (req, res) => {
   }
 });
 
+// Replace team in game endpoint
+router.put('/:eventId/games/:gameId/replace-team', isAdmin, async (req, res) => {
+  try {
+    const { eventId, gameId } = req.params;
+    const { position, newTeamId } = req.body;
+
+    if (!position || !newTeamId) {
+      return res.status(400).json({ error: 'Position and newTeamId are required' });
+    }
+
+    if (position !== 'home' && position !== 'away') {
+      return res.status(400).json({ error: 'Position must be "home" or "away"' });
+    }
+
+    // Verify the game exists and belongs to the event
+    const gameToUpdate = await db.query.games.findFirst({
+      where: eq(games.id, parseInt(gameId)),
+      with: {
+        bracket: true
+      }
+    });
+
+    if (!gameToUpdate) {
+      return res.status(404).json({ error: 'Game not found' });
+    }
+
+    if (gameToUpdate.bracket?.eventId !== eventId) {
+      return res.status(403).json({ error: 'Game does not belong to this event' });
+    }
+
+    // Update the appropriate team position
+    const updateData = position === 'home' 
+      ? { homeTeamId: parseInt(newTeamId) }
+      : { awayTeamId: parseInt(newTeamId) };
+
+    await db
+      .update(games)
+      .set(updateData)
+      .where(eq(games.id, parseInt(gameId)));
+
+    res.json({ success: true, message: 'Team replaced successfully' });
+  } catch (error) {
+    console.error('Error replacing team:', error);
+    res.status(500).json({ error: 'Failed to replace team' });
+  }
+});
+
+// Get teams by flight name endpoint
+router.get('/:eventId/flights/:flightName/teams', isAdmin, async (req, res) => {
+  try {
+    const { eventId, flightName } = req.params;
+    
+    // Get all brackets with the specified flight name for this event
+    const brackets = await db.query.eventBrackets.findMany({
+      where: and(
+        eq(eventBrackets.eventId, eventId),
+        eq(eventBrackets.name, decodeURIComponent(flightName))
+      )
+    });
+
+    if (!brackets.length) {
+      return res.json({ teams: [] });
+    }
+
+    const bracketIds = brackets.map(b => b.id);
+
+    // Get all teams in these brackets
+    const teamsInFlight = await db.query.teams.findMany({
+      where: sql`${teams.bracketId} = ANY(${bracketIds})`,
+      columns: {
+        id: true,
+        name: true,
+        club: true
+      }
+    });
+
+    res.json({ teams: teamsInFlight });
+  } catch (error) {
+    console.error('Error fetching flight teams:', error);
+    res.status(500).json({ error: 'Failed to fetch flight teams' });
+  }
+});
+
 export default router;

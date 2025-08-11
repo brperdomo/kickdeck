@@ -23,7 +23,8 @@ import {
   Trash2,
   X,
   AlertTriangle,
-  ArrowLeftRight
+  ArrowLeftRight,
+  RefreshCw
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -97,6 +98,7 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
     selectedDate: 'all',
     selectedField: 'all', 
     selectedAgeGroup: 'all',
+    selectedFlight: 'all',
     selectedGames: [] as number[],
     showDeleteConfirm: false,
     deleteType: 'single' as 'single' | 'bulk' | 'all',
@@ -107,6 +109,7 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
   const [selectedDate, setSelectedDate] = useState(initialState.selectedDate);
   const [selectedField, setSelectedField] = useState(initialState.selectedField);
   const [selectedAgeGroup, setSelectedAgeGroup] = useState(initialState.selectedAgeGroup);
+  const [selectedFlight, setSelectedFlight] = useState(initialState.selectedFlight);
   const [selectedGames, setSelectedGames] = useState(initialState.selectedGames);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(initialState.showDeleteConfirm);
   const [deleteType, setDeleteType] = useState(initialState.deleteType);
@@ -116,6 +119,15 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
   const [editingGame, setEditingGame] = useState<EditingGameState | null>(null);
   const [swappingTeam, setSwappingTeam] = useState<{ gameId: number; teamId: number; teamName: string; position: 'home' | 'away' } | null>(null);
   const [availableTeams, setAvailableTeams] = useState<Array<{id: number, name: string, flightName: string}>>([]);
+  
+  // Team replacement state
+  const [replacingTeam, setReplacingTeam] = useState<{ 
+    gameId: number; 
+    currentTeamId: number; 
+    currentTeamName: string; 
+    position: 'home' | 'away';
+    flightName: string;
+  } | null>(null);
   
   // Date/Time editing state
   const [editingDateTime, setEditingDateTime] = useState<{ gameId: number; currentDate: string; currentTime: string } | null>(null);
@@ -327,6 +339,21 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
     enabled: !!editingGame && !!scheduleData
   });
 
+  // Fetch teams for replacement (same flight)
+  const { data: replacementTeams } = useQuery({
+    queryKey: ['replacement-teams', eventId, replacingTeam?.flightName],
+    queryFn: async () => {
+      if (!replacingTeam?.flightName) return [];
+      
+      const response = await fetch(`/api/admin/events/${eventId}/flights/${encodeURIComponent(replacingTeam.flightName)}/teams`, {
+        credentials: 'include'
+      });
+      if (!response.ok) throw new Error('Failed to fetch replacement teams');
+      return response.json();
+    },
+    enabled: !!replacingTeam?.flightName
+  });
+
   // Fetch age groups and flights for TBD game creation
   const { data: ageGroupsData } = useQuery({
     queryKey: ['age-groups', eventId],
@@ -395,10 +422,11 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
       const matchesDate = selectedDate === 'all' || game.date === selectedDate;
       const matchesField = selectedField === 'all' || game.field === selectedField;
       const matchesAgeGroup = selectedAgeGroup === 'all' || game.ageGroup === selectedAgeGroup;
+      const matchesFlight = selectedFlight === 'all' || game.flightName === selectedFlight;
       
-      return matchesSearch && matchesDate && matchesField && matchesAgeGroup;
+      return matchesSearch && matchesDate && matchesField && matchesAgeGroup && matchesFlight;
     });
-  }, [scheduleData?.games, searchTerm, selectedDate, selectedField, selectedAgeGroup]);
+  }, [scheduleData?.games, searchTerm, selectedDate, selectedField, selectedAgeGroup, selectedFlight]);
 
   // Identify unscheduled games - games without proper time, date, or field assignments
   const unscheduledGames = useMemo(() => {
@@ -558,6 +586,30 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
         description: error.message,
         variant: 'destructive' 
       });
+    }
+  });
+
+  // Team replacement mutation - replace one team with another in the same flight
+  const replaceTeamMutation = useMutation({
+    mutationFn: async ({ gameId, position, newTeamId }: {
+      gameId: number; position: 'home' | 'away'; newTeamId: number;
+    }) => {
+      const response = await fetch(`/api/admin/events/${eventId}/games/${gameId}/replace-team`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ position, newTeamId })
+      });
+      if (!response.ok) throw new Error('Failed to replace team');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['schedule-data', eventId] });
+      setReplacingTeam(null);
+      toast({ title: 'Team replaced successfully', variant: 'default' });
+    },
+    onError: (error) => {
+      toast({ title: 'Failed to replace team', variant: 'destructive' });
     }
   });
 
@@ -1180,7 +1232,11 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
               </SelectContent>
             </Select>
             
-            <Select value={selectedAgeGroup} onValueChange={setSelectedAgeGroup}>
+            <Select value={selectedAgeGroup} onValueChange={(value) => {
+              setSelectedAgeGroup(value);
+              // Reset flight filter when age group changes
+              setSelectedFlight('all');
+            }}>
               <SelectTrigger>
                 <SelectValue placeholder="All Age Groups" />
               </SelectTrigger>
@@ -1189,6 +1245,31 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                 {scheduleData.ageGroups.map(ageGroup => (
                   <SelectItem key={ageGroup} value={ageGroup}>{ageGroup}</SelectItem>
                 ))}
+              </SelectContent>
+            </Select>
+            
+            <Select value={selectedFlight} onValueChange={setSelectedFlight}>
+              <SelectTrigger>
+                <SelectValue placeholder="All Flights" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Flights</SelectItem>
+                {(() => {
+                  // Get unique flight names from games, filtered by selected age group
+                  const filteredByAge = selectedAgeGroup === 'all' 
+                    ? scheduleData.games 
+                    : scheduleData.games.filter(game => game.ageGroup === selectedAgeGroup);
+                  
+                  const uniqueFlights = [...new Set(
+                    filteredByAge
+                      .map(game => game.flightName)
+                      .filter(flight => flight && flight !== '')
+                  )].sort();
+                  
+                  return uniqueFlights.map(flight => (
+                    <SelectItem key={flight} value={flight}>{flight}</SelectItem>
+                  ));
+                })()}
               </SelectContent>
             </Select>
 
@@ -1352,16 +1433,53 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                           <div className="space-y-1">
                             <div className="font-medium text-gray-900 flex items-center gap-2">
                               <div className="flex items-center gap-2">
-                                <span 
-                                  className={`cursor-pointer hover:bg-blue-100 px-1 rounded ${
-                                    swappingTeam?.teamId === game.homeTeamId ? 'bg-blue-200' : ''
-                                  }`}
-                                  onClick={() => {
-                                    console.log('HOME TEAM CLICKED:', {
-                                      gameId: game.id,
-                                      homeTeamId: game.homeTeamId,
-                                      homeTeam: game.homeTeam,
-                                      swappingTeam: swappingTeam
+                                {replacingTeam?.gameId === game.id && replacingTeam?.position === 'home' ? (
+                                  // Team replacement interface for home team
+                                  <div className="flex items-center gap-2 p-2 bg-blue-50 rounded border">
+                                    <span className="text-xs text-gray-600">Replace:</span>
+                                    <Select 
+                                      onValueChange={(value) => {
+                                        replaceTeamMutation.mutate({
+                                          gameId: game.id,
+                                          position: 'home',
+                                          newTeamId: parseInt(value)
+                                        });
+                                      }}
+                                    >
+                                      <SelectTrigger className="h-6 text-xs w-32">
+                                        <SelectValue placeholder="Select team" />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        {replacementTeams?.teams
+                                          ?.filter((team: any) => team.id !== game.awayTeamId) // Don't allow same team
+                                          ?.map((team: any) => (
+                                          <SelectItem key={team.id} value={team.id.toString()}>
+                                            {team.name}
+                                          </SelectItem>
+                                        ))}
+                                      </SelectContent>
+                                    </Select>
+                                    <Button 
+                                      size="sm" 
+                                      variant="outline" 
+                                      onClick={() => setReplacingTeam(null)}
+                                      className="h-6 px-2 text-xs"
+                                    >
+                                      Cancel
+                                    </Button>
+                                  </div>
+                                ) : (
+                                  <div className="flex items-center gap-1">
+                                    <span 
+                                      className={`cursor-pointer hover:bg-blue-100 px-1 rounded ${
+                                        swappingTeam?.teamId === game.homeTeamId ? 'bg-blue-200' : ''
+                                      }`}
+                                      onClick={() => {
+                                        console.log('HOME TEAM CLICKED:', {
+                                          gameId: game.id,
+                                          homeTeamId: game.homeTeamId,
+                                          homeTeam: game.homeTeam,
+                                          swappingTeam: swappingTeam
                                     });
                                     
                                     if (!game.homeTeamId || game.homeTeam.includes('TBD') || game.homeTeam.includes('Place')) {
@@ -1412,14 +1530,73 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                                     }
                                   }}
                                 >
-                                  <span className="text-blue-700 font-medium">{game.homeTeam}</span>
-                                </span>
+                                      <span className="text-blue-700 font-medium">{game.homeTeam}</span>
+                                    </span>
+                                    {game.flightName && (
+                                      <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          setReplacingTeam({
+                                            gameId: game.id,
+                                            currentTeamId: game.homeTeamId || 0,
+                                            currentTeamName: game.homeTeam,
+                                            position: 'home',
+                                            flightName: game.flightName
+                                          });
+                                        }}
+                                        className="h-4 w-4 p-0 hover:bg-blue-100"
+                                        title="Replace team"
+                                      >
+                                        <RefreshCw className="h-3 w-3" />
+                                      </Button>
+                                    )}
+                                  </div>
+                                )}
                                 <span className="mx-1 text-gray-500">vs</span>
-                                <span 
-                                  className={`cursor-pointer hover:bg-blue-100 px-1 rounded ${
-                                    swappingTeam?.teamId === game.awayTeamId ? 'bg-blue-200' : ''
-                                  }`}
-                                  onClick={() => {
+                                {replacingTeam?.gameId === game.id && replacingTeam?.position === 'away' ? (
+                                  // Team replacement interface for away team
+                                  <div className="flex items-center gap-2 p-2 bg-red-50 rounded border">
+                                    <span className="text-xs text-gray-600">Replace:</span>
+                                    <Select 
+                                      onValueChange={(value) => {
+                                        replaceTeamMutation.mutate({
+                                          gameId: game.id,
+                                          position: 'away',
+                                          newTeamId: parseInt(value)
+                                        });
+                                      }}
+                                    >
+                                      <SelectTrigger className="h-6 text-xs w-32">
+                                        <SelectValue placeholder="Select team" />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        {replacementTeams?.teams
+                                          ?.filter((team: any) => team.id !== game.homeTeamId) // Don't allow same team
+                                          ?.map((team: any) => (
+                                          <SelectItem key={team.id} value={team.id.toString()}>
+                                            {team.name}
+                                          </SelectItem>
+                                        ))}
+                                      </SelectContent>
+                                    </Select>
+                                    <Button 
+                                      size="sm" 
+                                      variant="outline" 
+                                      onClick={() => setReplacingTeam(null)}
+                                      className="h-6 px-2 text-xs"
+                                    >
+                                      Cancel
+                                    </Button>
+                                  </div>
+                                ) : (
+                                  <div className="flex items-center gap-1">
+                                    <span 
+                                      className={`cursor-pointer hover:bg-blue-100 px-1 rounded ${
+                                        swappingTeam?.teamId === game.awayTeamId ? 'bg-blue-200' : ''
+                                      }`}
+                                      onClick={() => {
                                     console.log('AWAY TEAM CLICKED:', {
                                       gameId: game.id,
                                       awayTeamId: game.awayTeamId,
@@ -1475,8 +1652,30 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                                     }
                                   }}
                                 >
-                                  <span className="text-red-700 font-medium">{game.awayTeam}</span>
-                                </span>
+                                      <span className="text-red-700 font-medium">{game.awayTeam}</span>
+                                    </span>
+                                    {game.flightName && (
+                                      <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          setReplacingTeam({
+                                            gameId: game.id,
+                                            currentTeamId: game.awayTeamId || 0,
+                                            currentTeamName: game.awayTeam,
+                                            position: 'away',
+                                            flightName: game.flightName
+                                          });
+                                        }}
+                                        className="h-4 w-4 p-0 hover:bg-red-100"
+                                        title="Replace team"
+                                      >
+                                        <RefreshCw className="h-3 w-3" />
+                                      </Button>
+                                    )}
+                                  </div>
+                                )}
                               </div>
                               {hasUnassignedFields && (
                                 <AlertTriangle className="h-4 w-4 text-yellow-600" />
