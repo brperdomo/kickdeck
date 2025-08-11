@@ -5,7 +5,7 @@ import {
   eventAgeGroups, 
   eventBrackets, 
   teams,
-  gameFormats 
+  gameFormats
 } from '@db/schema';
 import { eq, and, isNull } from 'drizzle-orm';
 import { isAdmin } from '../../middleware/auth.js';
@@ -153,6 +153,64 @@ router.get('/:eventId/bracket-creation', async (req, res) => {
           estimatedGames = Math.max(0, assignedTeams.length - 1);
         }
 
+        // Get existing brackets for Group of 6 and Group of 8 configurations
+        // For these formats, we need to check if teams are properly assigned to pools/brackets
+        const brackets = [];
+        
+        if (assignedTeams.length > 0 && (templateName === 'group_of_6' || templateName === 'group_of_8')) {
+          // Create virtual brackets based on groupId assignments
+          const teamsWithGroups = assignedTeams.filter(t => t.groupId);
+          const teamsWithoutGroups = assignedTeams.filter(t => !t.groupId);
+          
+          // Group teams by their groupId (which represents bracket assignments)
+          const teamsByBracket = teamsWithGroups.reduce((acc, team) => {
+            const bracketKey = team.groupId || 'unassigned';
+            if (!acc[bracketKey]) {
+              acc[bracketKey] = [];
+            }
+            acc[bracketKey].push(team);
+            return acc;
+          }, {} as Record<string, any[]>);
+          
+          // Create bracket objects for assigned teams
+          Object.keys(teamsByBracket).forEach((bracketId, index) => {
+            if (bracketId !== 'unassigned') {
+              brackets.push({
+                id: parseInt(bracketId),
+                name: templateName === 'group_of_6' ? 
+                      (index === 0 ? 'Pool A' : 'Pool B') :
+                      (index === 0 ? 'Bracket A' : 'Bracket B'),
+                teamCount: teamsByBracket[bracketId].length,
+                teams: teamsByBracket[bracketId].map(t => ({
+                  id: t.id,
+                  name: t.name,
+                  clubName: t.clubName || '',
+                  status: t.status,
+                  groupId: t.groupId,
+                  bracketId: t.bracketId
+                }))
+              });
+            }
+          });
+          
+          // If no brackets exist yet, create default structure for unassigned teams
+          if (brackets.length === 0 && teamsWithoutGroups.length > 0) {
+            // Create empty brackets that teams can be assigned to
+            brackets.push({
+              id: 1,
+              name: templateName === 'group_of_6' ? 'Pool A' : 'Bracket A',
+              teamCount: 0,
+              teams: []
+            });
+            brackets.push({
+              id: 2, 
+              name: templateName === 'group_of_6' ? 'Pool B' : 'Bracket B',
+              teamCount: 0,
+              teams: []
+            });
+          }
+        }
+
         return {
           flightId: flight.flightId,
           name: flight.name,
@@ -165,14 +223,17 @@ router.get('/:eventId/bracket-creation', async (req, res) => {
           bracketType,
           estimatedGames,
           isConfigured,
+          brackets: brackets, // Add brackets information
           registeredTeams: assignedTeams.map(t => ({
             ...t,
             seed: 0,
-            ageGroupId: 0,
+            ageGroupId: flight.ageGroupId || 0,
             isPlaceholder: false,
-            flightId: flight.flightId
+            flightId: flight.flightId,
+            groupId: t.groupId, // Include groupId for team assignments
+            bracketId: t.bracketId // Include bracketId for team assignments
           })),
-          ageGroupId: 0 // We'll set this properly later if needed
+          ageGroupId: flight.ageGroupId || 0
         };
       })
     );
@@ -235,6 +296,47 @@ router.get('/:eventId/bracket-creation', async (req, res) => {
     console.error('[Bracket Creation] Error fetching bracket creation data:', error);
     res.status(500).json({ 
       error: 'Failed to fetch bracket creation data',
+      details: (error as Error).message 
+    });
+  }
+});
+
+// Assign teams to specific brackets within a flight  
+router.post('/:eventId/bracket-creation/assign-teams', async (req, res) => {
+  try {
+    const eventId = req.params.eventId;
+    const { assignments } = req.body; // { teamId: bracketId, ... }
+
+    console.log(`[Bracket Creation] POST /${eventId}/bracket-creation/assign-teams`);
+    console.log('[Team Assignment] Assignments received:', assignments);
+
+    if (!assignments || Object.keys(assignments).length === 0) {
+      return res.status(400).json({ error: 'No team assignments provided' });
+    }
+
+    // Update each team's groupId based on assignments
+    for (const [teamIdStr, bracketId] of Object.entries(assignments)) {
+      const teamId = parseInt(teamIdStr);
+      const groupId = bracketId === 0 ? null : bracketId; // 0 means unassign
+
+      await db
+        .update(teams)
+        .set({ groupId: groupId })
+        .where(eq(teams.id, teamId));
+
+      console.log(`[Team Assignment] Team ${teamId} assigned to bracket ${groupId}`);
+    }
+
+    res.json({ 
+      success: true, 
+      message: `Updated assignments for ${Object.keys(assignments).length} teams`,
+      assignments: assignments
+    });
+
+  } catch (error) {
+    console.error('[Team Assignment] Error assigning teams:', error);
+    res.status(500).json({ 
+      error: 'Failed to assign teams',
       details: (error as Error).message 
     });
   }
