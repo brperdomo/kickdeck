@@ -124,6 +124,10 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
   const [editingField, setEditingField] = useState<{ gameId: number; currentFieldId?: number; currentFieldName?: string } | null>(null);
   const [availableFields, setAvailableFieldsState] = useState<Array<{id: number, name: string, fieldSize: string}>>([]);
   
+  // Bulk field assignment state
+  const [showBulkFieldAssignment, setShowBulkFieldAssignment] = useState(false);
+  const [bulkFieldId, setBulkFieldId] = useState<string>('');
+  
   // TBD Game Creation state
   const [showTBDCreator, setShowTBDCreator] = useState(false);
   const [tbdGameData, setTBDGameData] = useState<TBDGameCreation>({
@@ -762,6 +766,30 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
     }
   });
 
+  // Bulk field assignment mutation
+  const bulkAssignFieldMutation = useMutation({
+    mutationFn: async ({ gameIds, fieldId }: { gameIds: number[]; fieldId: number }) => {
+      const response = await fetch(`/api/admin/games/bulk-assign-field`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ gameIds, fieldId })
+      });
+      if (!response.ok) throw new Error('Failed to assign fields');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['schedule-data', eventId] });
+      setShowBulkFieldAssignment(false);
+      setBulkFieldId('');
+      setSelectedGames([]);
+      toast({ title: 'Fields assigned successfully', variant: 'default' });
+    },
+    onError: (error) => {
+      toast({ title: 'Failed to assign fields', description: error.message, variant: 'destructive' });
+    }
+  });
+
   // TBD Game Creation mutation
   const createTBDGameMutation = useMutation({
     mutationFn: async (gameData: TBDGameCreation) => {
@@ -1006,6 +1034,15 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                   >
                     <X className="h-4 w-4 mr-1" />
                     Clear ({selectedGames.length})
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowBulkFieldAssignment(true)}
+                    className="text-blue-600"
+                  >
+                    <MapPin className="h-4 w-4 mr-1" />
+                    Assign Field
                   </Button>
                   <Button
                     variant="destructive"
@@ -1830,6 +1867,74 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                     <Calendar className="h-4 w-4 mr-2" />
                   )}
                   Create TBD Game
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Bulk Field Assignment Dialog */}
+      {showBulkFieldAssignment && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <Card className="w-96 max-w-full mx-4">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <MapPin className="h-5 w-5" />
+                Assign Field to {selectedGames.length} Games
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label className="text-sm font-medium">Select Field</Label>
+                <Select 
+                  value={bulkFieldId} 
+                  onValueChange={setBulkFieldId}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choose field to assign" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {availableFields?.map((field) => (
+                      <SelectItem key={field.id} value={field.id.toString()}>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-gray-500">({field.fieldSize})</span>
+                          <span>{field.name}</span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="flex gap-3 justify-end">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowBulkFieldAssignment(false);
+                    setBulkFieldId('');
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={() => {
+                    if (bulkFieldId) {
+                      bulkAssignFieldMutation.mutate({
+                        gameIds: selectedGames,
+                        fieldId: parseInt(bulkFieldId)
+                      });
+                    }
+                  }}
+                  disabled={!bulkFieldId || bulkAssignFieldMutation.isPending}
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  {bulkAssignFieldMutation.isPending ? (
+                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  ) : (
+                    <MapPin className="h-4 w-4 mr-2" />
+                  )}
+                  Assign Field
                 </Button>
               </div>
             </CardContent>

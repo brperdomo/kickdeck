@@ -395,4 +395,63 @@ router.put('/:gameId/assign-field', async (req, res) => {
   }
 });
 
+// Bulk field assignment endpoint
+router.put('/bulk-assign-field', async (req, res) => {
+  try {
+    const { gameIds, fieldId } = req.body;
+    
+    // Validate input
+    if (!Array.isArray(gameIds) || gameIds.length === 0) {
+      return res.status(400).json({ error: "gameIds must be a non-empty array" });
+    }
+    
+    const parsedFieldId = parseInt(fieldId);
+    if (isNaN(parsedFieldId)) {
+      return res.status(400).json({ error: "Invalid field ID" });
+    }
+    
+    // Parse game IDs
+    const parsedGameIds = gameIds.map(id => parseInt(id)).filter(id => !isNaN(id));
+    if (parsedGameIds.length === 0) {
+      return res.status(400).json({ error: "No valid game IDs provided" });
+    }
+    
+    console.log(`🎯 BULK FIELD ASSIGNMENT: Assigning ${parsedGameIds.length} games to field ${parsedFieldId}`);
+    
+    // Check if the field exists
+    const field = await db.query.fields.findFirst({
+      where: eq(fields.id, parsedFieldId)
+    });
+    
+    if (!field) {
+      return res.status(404).json({ error: "Field not found" });
+    }
+    
+    // Update all games at once
+    await db
+      .update(games)
+      .set({
+        fieldId: parsedFieldId,
+        updatedAt: new Date().toISOString()
+      })
+      .where(inArray(games.id, parsedGameIds));
+    
+    console.log(`✅ BULK FIELD ASSIGNMENT: Successfully assigned ${parsedGameIds.length} games to field ${field.name}`);
+    
+    return res.json({ 
+      success: true,
+      message: `Successfully assigned ${parsedGameIds.length} games to field ${field.name}`,
+      gameIds: parsedGameIds,
+      fieldId: parsedFieldId,
+      fieldName: field.name
+    });
+  } catch (error) {
+    console.error("Error in bulk field assignment:", error);
+    return res.status(500).json({ 
+      error: "Failed to assign fields",
+      details: error instanceof Error ? error.message : String(error)
+    });
+  }
+});
+
 export default router;
