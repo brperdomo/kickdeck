@@ -1024,7 +1024,7 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
         </CardHeader>
         <CardContent>
           <div ref={gridRef} className="overflow-auto max-h-[800px]">
-            <div className="grid gap-1" style={{ gridTemplateRows: `60px repeat(${fields.length}, 60px)`, gridTemplateColumns: `150px repeat(${timeSlots.length}, 120px)` }}>
+            <div className="grid gap-1" style={{ gridTemplateRows: `60px repeat(${fields.length}, 80px)`, gridTemplateColumns: `150px repeat(${timeSlots.length}, 120px)` }}>
               {/* Header Row */}
               <div className="sticky left-0 bg-slate-700 p-3 border border-slate-600 font-medium text-slate-200">
                 Field
@@ -1068,7 +1068,7 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
                       <div
                         key={`${field.id}-${slot.id}`}
                         className={`
-                          min-w-[120px] h-[60px] p-1 border border-slate-600 transition-all duration-200 relative cursor-pointer
+                          min-w-[120px] h-[80px] p-1 border border-slate-600 transition-all duration-200 relative cursor-pointer
                           ${games.length > 0 ? 'bg-blue-900/30' : isOccupiedByExtendingGame ? 'bg-blue-900/20' : 'bg-slate-800'}
                           ${hasTeamConflict ? 'bg-red-900/40 border-red-500 border-2' : hasWarningConflict ? 'bg-yellow-900/30 border-yellow-500' : ''}
                           ${isDragOver ? 'bg-green-900/50 border-green-400 border-2 shadow-lg shadow-green-500/25 scale-105' : ''}
@@ -1156,6 +1156,7 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
                               style={{
                                 width: `${gameWidth}px`,
                                 height: 'calc(100% - 8px)',
+                                minHeight: '72px',
                                 top: '2px',
                                 left: '2px'
                               }}
