@@ -1,9 +1,10 @@
 import { Router } from 'express';
 import { db } from '../../../db';
-import { events, eventAgeGroups, eventScoringRules, eventComplexes, eventFieldSizes, eventFees, coupons, eventAgeGroupFees, teams } from '@db/schema';
+import { events, eventAgeGroups, eventScoringRules, eventComplexes, eventFieldSizes, eventFees, coupons, eventAgeGroupFees, teams, eventBrackets, fields } from '@db/schema';
 import { eq, sql, and, or, lt, gt, gte, lte, inArray } from 'drizzle-orm';
 import { z } from 'zod';
 import { hasEventAccess } from '../../middleware/event-access';
+import { isAdmin } from '../../middleware/auth';
 
 const router = Router();
 
@@ -404,6 +405,74 @@ router.patch('/:id/toggle-archive', hasEventAccess, async (req, res) => {
       error: error instanceof Error ? error.message : "Failed to toggle event archive status",
       details: error instanceof Error ? error.stack : undefined
     });
+  }
+});
+
+// Get age groups with flights for TBD game creation
+router.get('/:eventId/age-groups', isAdmin, async (req, res) => {
+  try {
+    const eventId = req.params.eventId;
+    
+    // Get age groups for this event
+    const ageGroups = await db.query.eventAgeGroups.findMany({
+      where: eq(eventAgeGroups.eventId, eventId)
+    });
+
+    // Get flights (event brackets) for each age group
+    const ageGroupsWithFlights = await Promise.all(
+      ageGroups.map(async (ageGroup) => {
+        const flights = await db.query.eventBrackets.findMany({
+          where: and(
+            eq(eventBrackets.eventId, eventId),
+            eq(eventBrackets.ageGroup, ageGroup.ageGroup)
+          )
+        });
+
+        return {
+          id: ageGroup.id,
+          name: ageGroup.ageGroup,
+          gender: ageGroup.gender,
+          flights: flights.map(flight => ({
+            id: flight.id,
+            name: flight.flightName || flight.name || 'Default Flight'
+          }))
+        };
+      })
+    );
+
+    res.json(ageGroupsWithFlights);
+  } catch (error) {
+    console.error('Error fetching age groups:', error);
+    res.status(500).json({ error: 'Failed to fetch age groups' });
+  }
+});
+
+// Get fields for TBD game creation
+router.get('/:eventId/fields', isAdmin, async (req, res) => {
+  try {
+    const eventId = req.params.eventId;
+    
+    // Get fields associated with this event's complexes
+    const eventComplexFields = await db
+      .select({
+        id: fields.id,
+        name: fields.name,
+        fieldSize: fields.fieldSize,
+        isAvailable: fields.isAvailable
+      })
+      .from(fields)
+      .innerJoin(eventComplexes, eq(fields.complexId, eventComplexes.complexId))
+      .where(
+        and(
+          eq(eventComplexes.eventId, eventId),
+          eq(fields.isAvailable, true)
+        )
+      );
+
+    res.json(eventComplexFields);
+  } catch (error) {
+    console.error('Error fetching fields:', error);
+    res.status(500).json({ error: 'Failed to fetch fields' });
   }
 });
 

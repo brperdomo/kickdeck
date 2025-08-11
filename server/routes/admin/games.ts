@@ -301,4 +301,80 @@ router.put('/:gameId/reschedule', isAdmin, async (req, res) => {
   }
 });
 
+// Create TBD Game endpoint
+router.post('/:eventId/games/create-tbd', isAdmin, async (req, res) => {
+  try {
+    const eventId = req.params.eventId;
+    const { ageGroupId, flightId, date, time, fieldId, duration } = req.body;
+
+    console.log('Creating TBD game:', { eventId, ageGroupId, flightId, date, time, fieldId, duration });
+
+    // Find the bracket for this flight
+    const bracket = await db.query.eventBrackets.findFirst({
+      where: and(
+        eq(eventBrackets.eventId, eventId),
+        eq(eventBrackets.id, flightId)
+      )
+    });
+
+    if (!bracket) {
+      return res.status(400).json({ error: 'Flight/bracket not found' });
+    }
+
+    // Create time slot if date and time provided
+    let timeSlotId = null;
+    if (date && time && fieldId) {
+      const startTime = new Date(`${date}T${time}:00`).toISOString();
+      const endTime = new Date(new Date(startTime).getTime() + duration * 60 * 1000).toISOString();
+      
+      const [timeSlot] = await db.insert(gameTimeSlots).values({
+        eventId: eventId.toString(),
+        fieldId: fieldId,
+        startTime: startTime,
+        endTime: endTime,
+        isAvailable: true,
+        dayIndex: Math.floor((new Date(startTime).getTime() - new Date('2025-08-16').getTime()) / (24 * 60 * 60 * 1000)),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }).returning();
+      
+      timeSlotId = timeSlot.id;
+    }
+
+    // Create the TBD game
+    const [newGame] = await db.insert(games).values({
+      eventId: eventId,
+      ageGroupId: ageGroupId,
+      groupId: flightId, // This references tournament groups/brackets
+      homeTeamId: null, // TBD
+      awayTeamId: null, // TBD
+      matchNumber: 999, // Placeholder number
+      round: 1, // Default round
+      status: 'scheduled',
+      fieldId: fieldId || null,
+      timeSlotId: timeSlotId,
+      duration: duration,
+      scheduledDate: date || null,
+      scheduledTime: time || null,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    }).returning();
+
+    console.log('TBD game created successfully:', newGame);
+
+    res.json({
+      success: true,
+      message: 'TBD game created successfully',
+      game: newGame
+    });
+
+  } catch (error) {
+    console.error('Error creating TBD game:', error);
+    res.status(500).json({ 
+      error: 'Failed to create TBD game',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
 export default router;

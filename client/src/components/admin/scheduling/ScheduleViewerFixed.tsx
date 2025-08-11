@@ -80,6 +80,15 @@ interface ScheduleViewerProps {
   eventId: string;
 }
 
+interface TBDGameCreation {
+  ageGroupId?: number;
+  flightId?: number;
+  date?: string;
+  time?: string;
+  fieldId?: number;
+  duration: number;
+}
+
 export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
   // Use useMemo for initial state to ensure stable references
   const initialState = useMemo(() => ({
@@ -109,6 +118,12 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
   
   // Date/Time editing state
   const [editingDateTime, setEditingDateTime] = useState<{ gameId: number; currentDate: string; currentTime: string } | null>(null);
+  
+  // TBD Game Creation state
+  const [showTBDCreator, setShowTBDCreator] = useState(false);
+  const [tbdGameData, setTBDGameData] = useState<TBDGameCreation>({
+    duration: 90
+  });
   
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -296,6 +311,31 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
       return response.json();
     },
     enabled: !!editingGame && !!scheduleData
+  });
+
+  // Fetch age groups and flights for TBD game creation
+  const { data: ageGroupsData } = useQuery({
+    queryKey: ['age-groups', eventId],
+    queryFn: async () => {
+      const response = await fetch(`/api/admin/events/${eventId}/age-groups`, {
+        credentials: 'include'
+      });
+      if (!response.ok) throw new Error('Failed to fetch age groups');
+      return response.json();
+    },
+    enabled: showTBDCreator
+  });
+
+  const { data: fieldsData } = useQuery({
+    queryKey: ['fields', eventId],
+    queryFn: async () => {
+      const response = await fetch(`/api/admin/events/${eventId}/fields`, {
+        credentials: 'include'
+      });
+      if (!response.ok) throw new Error('Failed to fetch fields');
+      return response.json();
+    },
+    enabled: showTBDCreator
   });
 
   // Memoize filtered games to prevent unnecessary recalculations
@@ -488,6 +528,29 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
     },
     onError: (error) => {
       toast({ title: 'Failed to update date/time', description: error.message, variant: 'destructive' });
+    }
+  });
+
+  // TBD Game Creation mutation
+  const createTBDGameMutation = useMutation({
+    mutationFn: async (gameData: TBDGameCreation) => {
+      const response = await fetch(`/api/admin/events/${eventId}/games/create-tbd`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(gameData)
+      });
+      if (!response.ok) throw new Error('Failed to create TBD game');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['schedule-data', eventId] });
+      setShowTBDCreator(false);
+      setTBDGameData({ duration: 90 });
+      toast({ title: 'TBD game created successfully', variant: 'default' });
+    },
+    onError: (error) => {
+      toast({ title: 'Failed to create TBD game', description: error.message, variant: 'destructive' });
     }
   });
 
@@ -715,6 +778,16 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
               >
                 <Download className="h-4 w-4 mr-1" />
                 Export CSV
+              </Button>
+              
+              <Button
+                variant="default"
+                size="sm"
+                onClick={() => setShowTBDCreator(true)}
+                className="bg-green-600 hover:bg-green-700 text-white"
+              >
+                <Calendar className="h-4 w-4 mr-1" />
+                Create TBD Game
               </Button>
               
               {scheduleData.games.length > 0 && (
@@ -977,9 +1050,9 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                                     }
                                   }}
                                 >
-                                  {game.homeTeam}
+                                  <span className="text-blue-700 font-medium">{game.homeTeam}</span>
                                 </span>
-                                vs
+                                <span className="mx-1 text-gray-500">vs</span>
                                 <span 
                                   className={`cursor-pointer hover:bg-blue-100 px-1 rounded ${
                                     swappingTeam?.teamId === game.awayTeamId ? 'bg-blue-200' : ''
@@ -1040,7 +1113,7 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                                     }
                                   }}
                                 >
-                                  {game.awayTeam}
+                                  <span className="text-red-700 font-medium">{game.awayTeam}</span>
                                 </span>
                               </div>
                               {hasUnassignedFields && (
@@ -1251,6 +1324,134 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                   {deleteType === 'single' && 'Delete Game'}
                   {deleteType === 'bulk' && `Delete ${selectedGames.length} Games`}
                   {deleteType === 'all' && 'Delete All Games'}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* TBD Game Creation Dialog */}
+      {showTBDCreator && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <Card className="w-full max-w-md mx-4">
+            <CardHeader>
+              <CardTitle className="flex items-center text-green-600">
+                <Calendar className="h-5 w-5 mr-2" />
+                Create TBD Game
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label className="text-sm font-medium">Age Group</Label>
+                <Select 
+                  value={tbdGameData.ageGroupId?.toString()} 
+                  onValueChange={(value) => setTBDGameData(prev => ({ ...prev, ageGroupId: parseInt(value) }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select age group" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {ageGroupsData?.map((ageGroup: any) => (
+                      <SelectItem key={ageGroup.id} value={ageGroup.id.toString()}>
+                        {ageGroup.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {tbdGameData.ageGroupId && (
+                <div>
+                  <Label className="text-sm font-medium">Flight</Label>
+                  <Select 
+                    value={tbdGameData.flightId?.toString()} 
+                    onValueChange={(value) => setTBDGameData(prev => ({ ...prev, flightId: parseInt(value) }))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select flight" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {ageGroupsData?.find((ag: any) => ag.id === tbdGameData.ageGroupId)?.flights?.map((flight: any) => (
+                        <SelectItem key={flight.id} value={flight.id.toString()}>
+                          {flight.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label className="text-sm font-medium">Date (Optional)</Label>
+                  <Input
+                    type="date"
+                    value={tbdGameData.date || ''}
+                    onChange={(e) => setTBDGameData(prev => ({ ...prev, date: e.target.value }))}
+                  />
+                </div>
+                <div>
+                  <Label className="text-sm font-medium">Time (Optional)</Label>
+                  <Input
+                    type="time"
+                    value={tbdGameData.time || ''}
+                    onChange={(e) => setTBDGameData(prev => ({ ...prev, time: e.target.value }))}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label className="text-sm font-medium">Field (Optional)</Label>
+                <Select 
+                  value={tbdGameData.fieldId?.toString()} 
+                  onValueChange={(value) => setTBDGameData(prev => ({ ...prev, fieldId: parseInt(value) }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select field" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {fieldsData?.map((field: any) => (
+                      <SelectItem key={field.id} value={field.id.toString()}>
+                        {field.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label className="text-sm font-medium">Duration (minutes)</Label>
+                <Input
+                  type="number"
+                  value={tbdGameData.duration}
+                  onChange={(e) => setTBDGameData(prev => ({ ...prev, duration: parseInt(e.target.value) || 90 }))}
+                  min="30"
+                  max="120"
+                />
+              </div>
+
+              <div className="flex gap-3 justify-end">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowTBDCreator(false);
+                    setTBDGameData({ duration: 90 });
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={() => createTBDGameMutation.mutate(tbdGameData)}
+                  disabled={createTBDGameMutation.isPending || !tbdGameData.ageGroupId}
+                  className="bg-green-600 hover:bg-green-700"
+                >
+                  {createTBDGameMutation.isPending ? (
+                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  ) : (
+                    <Calendar className="h-4 w-4 mr-2" />
+                  )}
+                  Create TBD Game
                 </Button>
               </div>
             </CardContent>
