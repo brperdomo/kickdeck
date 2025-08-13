@@ -2127,7 +2127,7 @@ function SchedulingView() {
   const [selectedEvent, setSelectedEvent] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedAgeGroup, setSelectedAgeGroup] = useState<string>("");
-  const [aiSchedulingModalOpen, setAiSchedulingModalOpen] = useState(false);
+  // AI scheduling moved to Master Schedule component
   const [bracketAssignmentModalOpen, setBracketAssignmentModalOpen] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isOptimizing, setIsOptimizing] = useState(false);
@@ -2397,98 +2397,8 @@ function SchedulingView() {
     });
   };
 
-  // Function to generate AI schedule
+  // AI scheduling functionality moved to Master Schedule component
   const queryClient = useQueryClient();
-  
-  const generateSchedule = async (constraints: any) => {
-    setIsGenerating(true);
-    try {
-      if (!selectedEvent) {
-        throw new Error("No event selected");
-      }
-      
-      // CRITICAL: Check if workflow steps are completed before allowing schedule generation
-      const isWorkflowValid = await validateWorkflowCompletion(selectedEvent);
-      if (!isWorkflowValid) {
-        setIsGenerating(false);
-        showWorkflowValidationError();
-        setAiSchedulingModalOpen(false);
-        return;
-      }
-      
-      // Call the actual API endpoint
-      const response = await fetch(`/api/admin/events/${selectedEvent}/generate-schedule`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          useAI: true, // Add the useAI flag to use the OpenAI integration
-          // NOTE: Flight configuration parameters are now automatically loaded from database
-          // The following parameters are only used as fallbacks if no flight configs exist
-          gamesPerDay: constraints.maxGamesPerDay || 3,
-          minutesPerGame: constraints.minutesPerGame || null, // Let scheduler use flight config
-          breakBetweenGames: constraints.breakBetweenGames || null, // Let scheduler use flight config
-          minRestPeriod: constraints.minRest || null, // Let scheduler use flight config
-          resolveCoachConflicts: constraints.resolveCoachConflicts,
-          optimizeFieldUsage: constraints.optimizeFieldUsage,
-          tournamentFormat: constraints.tournamentFormat || 'round_robin_knockout',
-          selectedAgeGroups: constraints.selectedAgeGroups || [], // Add age groups filter
-          selectedBrackets: constraints.selectedBrackets || [], // Add brackets filter
-          previewMode: constraints.previewMode || false // Add preview mode
-        })
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || `Failed to generate schedule: ${response.status}`);
-      }
-      
-      // Parse the response from our enhanced backend
-      const data = await response.json();
-      console.log('Schedule generation response:', data);
-      
-      // If we're in preview mode, show the preview games and keep the modal open
-      if (constraints.previewMode) {
-        setPreviewGames(data.previewGames || []);
-        
-        // Show the preview in a toast or dialog
-        toast({
-          title: "Schedule Preview",
-          description: `Generated ${data.previewGames?.length || 0} sample games. Review and confirm to generate the full schedule.`,
-          variant: "default",
-          duration: 5000,
-        });
-        
-        // Keep the dialog open for preview mode
-        return;
-      }
-      
-      // Set the quality score and conflicts from the AI response
-      setScheduleQuality(data.qualityScore || 85);
-      setConflicts(data.conflicts || []);
-      
-      // Refresh games data to show newly saved schedule
-      queryClient.invalidateQueries({ queryKey: ['admin', 'schedule', selectedEvent] });
-      
-      toast({
-        title: "Success",
-        description: data.savedToDB 
-          ? "AI schedule generated and saved to database successfully!" 
-          : "Schedule generation framework created. Refreshing data...",
-        variant: "default",
-      });
-    } catch (error) {
-      console.error("Error generating schedule:", error);
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to generate schedule",
-        variant: "destructive",
-      });
-    } finally {
-      setIsGenerating(false);
-    }
-  };
   
   // Function to optimize existing schedule
   const optimizeSchedule = async () => {
