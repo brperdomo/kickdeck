@@ -16,7 +16,7 @@ import EnhancedDragDropScheduler from '@/components/admin/scheduling/EnhancedDra
 import GameCardsGenerator from '@/components/admin/scheduling/GameCardsGenerator';
 import AgeGroupManagementPanel from '@/components/admin/scheduling/AgeGroupManagementPanel';
 import { FlightReviewDashboard } from '@/components/admin/scheduling/FlightReviewDashboard';
-import { GameFormatEngine } from '@/components/admin/scheduling/GameFormatEngine';
+
 import { FormatTemplateManager } from '@/components/admin/templates/FormatTemplateManager';
 import { FlightConfigurationTable } from '@/components/admin/scheduling/FlightConfigurationTable';
 import { WorkflowDataFlow } from '@/components/admin/scheduling/WorkflowDataFlow';
@@ -29,7 +29,7 @@ import FieldManagementDashboard from '@/components/admin/FieldManagementDashboar
 export default function MasterSchedulePage() {
   const { eventId } = useParams<{ eventId: string }>();
   const [, setLocation] = useLocation();
-  const [currentView, setCurrentView] = useState<'view' | 'calendar' | 'cards' | 'manage' | 'flights' | 'formats' | 'brackets' | 'overview' | 'workflow' | 'publish' | 'field-sorting'>('overview');
+  const [currentView, setCurrentView] = useState<'view' | 'calendar' | 'cards' | 'manage' | 'flights' | 'brackets' | 'overview' | 'workflow' | 'publish' | 'field-sorting'>('overview');
 
   if (!eventId) {
     return <div>Event ID not found</div>;
@@ -117,21 +117,7 @@ export default function MasterSchedulePage() {
               Overview
             </Button>
             
-            {/* Phase 1: Game Format Configuration */}
-            <Button
-              variant={currentView === 'formats' ? 'default' : 'outline'}
-              onClick={() => setCurrentView('formats')}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 whitespace-nowrap backdrop-blur-sm ${
-                currentView === 'formats' 
-                  ? 'bg-gradient-to-r from-purple-600 to-purple-700 text-white shadow-lg shadow-purple-600/25 hover:from-purple-500 hover:to-purple-600' 
-                  : 'bg-black/20 text-purple-100 hover:bg-purple-900/30 border border-purple-400/30 hover:border-purple-300/50'
-              }`}
-            >
-              <Settings className="h-4 w-4" />
-              1. Game Formats
-            </Button>
-            
-            {/* Phase 2: Flight Assignment */}
+            {/* Phase 1: Flight Assignment */}
             <Button
               variant={currentView === 'flights' ? 'default' : 'outline'}
               onClick={() => setCurrentView('flights')}
@@ -142,10 +128,10 @@ export default function MasterSchedulePage() {
               }`}
             >
               <Plane className="h-4 w-4" />
-              2. Flight Assignment
+              1. Flight Assignment
             </Button>
             
-            {/* Phase 3: Unified Bracket Management */}
+            {/* Phase 2: Unified Bracket Management */}
             <Button
               variant={currentView === 'brackets' ? 'default' : 'outline'}
               onClick={() => setCurrentView('brackets')}
@@ -156,7 +142,7 @@ export default function MasterSchedulePage() {
             }`}
           >
             <Trophy className="h-4 w-4" />
-            3. Bracket Management
+            2. Bracket Management
           </Button>
           
           {/* Schedule Management */}
@@ -329,17 +315,6 @@ export default function MasterSchedulePage() {
               </AlertDescription>
             </Alert>
             <GameCardsGenerator eventId={eventId} />
-          </div>
-        ) : currentView === 'formats' ? (
-          <div className="space-y-6">
-            <Alert className="border-purple-400/30 bg-black/30 backdrop-blur-sm">
-              <Settings className="h-4 w-4 text-purple-400" />
-              <AlertDescription className="text-purple-100">
-                <strong>Phase 2 - Game Format Configuration:</strong> Configure game lengths, field sizes, and rest periods for each flight. 
-                Use templates for quick setup or create custom formats for specific competitive levels.
-              </AlertDescription>
-            </Alert>
-            <GameFormatEngine eventId={eventId} />
           </div>
         ) : currentView === 'brackets' ? (
           <div className="space-y-6">

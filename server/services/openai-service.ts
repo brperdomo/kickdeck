@@ -11,7 +11,9 @@ import {
   gameTimeSlots,
   tournamentGroups,
   complexes,
-  eventComplexes
+  eventComplexes,
+  eventGameFormats,
+  gameFormats
 } from "../../db/schema";
 
 // Initialize the OpenAI client
@@ -55,6 +57,19 @@ export class SoccerSchedulerAI {
     }
     
     try {
+      // 0. Get flight configuration parameters from database
+      console.log("Fetching flight configuration parameters...");
+      const flightConfigs = await this.getFlightConfigurations(eventId.toString());
+      
+      // Override constraints with flight configuration if available
+      if (flightConfigs.length > 0) {
+        const config = flightConfigs[0];
+        constraints.minutesPerGame = constraints.minutesPerGame || config.gameLength;
+        constraints.breakBetweenGames = constraints.breakBetweenGames || config.bufferTime;
+        constraints.minRest = constraints.minRest || config.restPeriod;
+        console.log(`📋 Using flight config: ${config.gameLength}min games, ${config.restPeriod}min rest, ${config.bufferTime}min breaks`);
+      }
+      
       // 1. Fetch all necessary data for scheduling
       console.log("Fetching event data...");
       const eventData = await this.getEventData(eventId);
@@ -942,6 +957,46 @@ export class SoccerSchedulerAI {
     } catch (error) {
       console.error("Error fetching teams data:", error);
       throw error;
+    }
+  }
+
+  /**
+   * Get flight configuration parameters for scheduling
+   */
+  private static async getFlightConfigurations(eventId: string) {
+    try {
+      const eventGameFormats = await db.query.eventGameFormats.findMany({
+        where: eq(eventGameFormats.eventId, parseInt(eventId))
+      });
+
+      if (eventGameFormats.length > 0) {
+        return eventGameFormats.map(format => ({
+          gameLength: format.gameLength || 90,
+          restPeriod: format.restPeriod || 90,
+          bufferTime: format.bufferTime || 15,
+          fieldSize: format.fieldSize || '7v7'
+        }));
+      }
+
+      // Fallback to game_formats table
+      const gameFormats = await db.query.gameFormats.findMany({
+        where: eq(gameFormats.eventId, parseInt(eventId))
+      });
+
+      return gameFormats.map(format => ({
+        gameLength: format.gameLength || 90,
+        restPeriod: format.restPeriod || 90,
+        bufferTime: format.bufferTime || 15,
+        fieldSize: format.fieldSize || '7v7'
+      }));
+    } catch (error) {
+      console.warn('Failed to load flight configurations, using defaults:', error);
+      return [{
+        gameLength: 90,
+        restPeriod: 90,
+        bufferTime: 15,
+        fieldSize: '7v7'
+      }];
     }
   }
   

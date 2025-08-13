@@ -23,7 +23,9 @@ import {
   fields, 
   gameTimeSlots,
   complexes,
-  eventComplexes
+  eventComplexes,
+  eventGameFormats,
+  gameFormats
 } from "../../db/schema";
 
 export interface Team {
@@ -888,13 +890,57 @@ export class TournamentScheduler {
     const { FieldAvailabilityService } = await import('./field-availability-service');
     const fieldsInfo = await FieldAvailabilityService.getAvailableFields(eventId);
     
+    // Get flight configuration parameters from database
+    const flightConfigs = await this.getFlightConfigurations(eventId);
+    const defaultDuration = flightConfigs.length > 0 ? flightConfigs[0].gameLength : 90;
+    
     return fieldsInfo.map(field => ({
       id: field.id,
       name: field.name,
       complexId: field.complexId,
       complexName: field.complexName,
-      duration: 90 // Standard game duration
+      duration: defaultDuration // Use flight configuration, fallback to 90
     }));
+  }
+
+  /**
+   * Get flight configuration parameters for scheduling
+   */
+  private static async getFlightConfigurations(eventId: string) {
+    try {
+      const eventGameFormats = await db.query.eventGameFormats.findMany({
+        where: eq(eventGameFormats.eventId, parseInt(eventId))
+      });
+
+      if (eventGameFormats.length > 0) {
+        return eventGameFormats.map(format => ({
+          gameLength: format.gameLength || 90,
+          restPeriod: format.restPeriod || 90,
+          bufferTime: format.bufferTime || 15,
+          fieldSize: format.fieldSize || '7v7'
+        }));
+      }
+
+      // Fallback to game_formats table
+      const gameFormats = await db.query.gameFormats.findMany({
+        where: eq(gameFormats.eventId, parseInt(eventId))
+      });
+
+      return gameFormats.map(format => ({
+        gameLength: format.gameLength || 90,
+        restPeriod: format.restPeriod || 90,
+        bufferTime: format.bufferTime || 15,
+        fieldSize: format.fieldSize || '7v7'
+      }));
+    } catch (error) {
+      console.warn('Failed to load flight configurations, using defaults:', error);
+      return [{
+        gameLength: 90,
+        restPeriod: 90,
+        bufferTime: 15,
+        fieldSize: '7v7'
+      }];
+    }
   }
   
   /**
