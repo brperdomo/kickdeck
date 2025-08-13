@@ -56,7 +56,7 @@ router.get('/:eventId', async (req, res) => {
     const sortedGroups = sortAgeGroups(existingGroups);
 
     console.log(`Returning ${sortedGroups.length} age groups in unified order`);
-    console.log('Age groups order:', sortedGroups.map(g => `${g.ageGroup}-${g.gender}`).join(', '));
+    console.log('Age groups order:', sortedGroups.map(g => `${g.ageGroup}-${g.gender} (${g.fieldSize})`).join(', '));
     
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     res.json(sortedGroups);

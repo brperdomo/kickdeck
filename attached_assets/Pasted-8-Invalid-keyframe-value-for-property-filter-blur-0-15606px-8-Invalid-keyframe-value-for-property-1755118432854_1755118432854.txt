@@ -1,0 +1,47 @@
+8
+Invalid keyframe value for property filter: blur(-0.15606px)
+8
+Invalid keyframe value for property filter: blur(-0.13808px)
+8
+Invalid keyframe value for property filter: blur(-0.12106px)
+8
+Invalid keyframe value for property filter: blur(-0.10507px)
+8
+Invalid keyframe value for property filter: blur(-0.09014px)
+8
+Invalid keyframe value for property filter: blur(-0.07628px)
+8
+Invalid keyframe value for property filter: blur(-0.0635px)
+8
+Invalid keyframe value for property filter: blur(-0.0518px)
+8
+Invalid keyframe value for property filter: blur(-0.04115px)
+8
+Invalid keyframe value for property filter: blur(-0.03153px)
+8
+Invalid keyframe value for property filter: blur(-0.02289px)
+8
+Invalid keyframe value for property filter: blur(-0.01521px)
+8
+Invalid keyframe value for property filter: blur(-0.00842px)
+8
+Invalid keyframe value for property filter: blur(-0.00249px)
+index-Dc_6JRH3.js:967 Raw event data from server: 
+{id: 1825427780, name: 'Rise Cup', startDate: '2025-08-23', endDate: '2025-08-24', timezone: 'America/Los_Angeles', …}
+index-Dc_6JRH3.js:967 Has branding data: #007AFF 
+{logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-Dc_6JRH3.js:967 Final branding data for EventForm: 
+{logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-Dc_6JRH3.js:967 Prepared event data: 
+{id: 1825427780, name: 'Rise Cup', startDate: '2025-08-23', endDate: '2025-08-24', timezone: 'America/Los_Angeles', …}
+index-Dc_6JRH3.js:919 EventForm initializing with branding values: 
+{logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-Dc_6JRH3.js:919 defaultValues changed, updating branding colors: 
+{primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-Dc_6JRH3.js:49 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap
+index-Dc_6JRH3.js:49 OTS parsing error: invalid sfntVersion: 791289955
+util.js:33 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+﻿
+
