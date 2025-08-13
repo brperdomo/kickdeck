@@ -14,7 +14,7 @@ import {
   Wand2, Loader2
 } from 'lucide-react';
 import { UnifiedScheduleSetup } from '@/components/admin/scheduling/UnifiedScheduleSetup';
-// UnifiedTournamentControlCenter removed - functionality integrated into Master Schedule
+import { UnifiedTournamentControlCenter } from '@/components/admin/scheduling/UnifiedTournamentControlCenter';
 import { ScheduleViewer } from '@/components/admin/scheduling/ScheduleViewerFixed';
 import EnhancedDragDropScheduler from '@/components/admin/scheduling/EnhancedDragDropScheduler';
 import GameCardsGenerator from '@/components/admin/scheduling/GameCardsGenerator';
@@ -295,7 +295,8 @@ export default function MasterSchedulePage() {
               </AlertDescription>
             </Alert>
             
-            {/* Unified Tournament Control Center functionality integrated into Master Schedule interface */}
+            {/* Unified Tournament Control Center Integration */}
+            <UnifiedTournamentControlCenter eventId={eventId} />
             
             {/* Flight Configuration Table */}
             <div className="mt-8">
