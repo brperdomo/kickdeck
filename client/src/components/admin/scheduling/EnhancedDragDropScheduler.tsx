@@ -163,11 +163,12 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
   // Generate time slots with fine-grained intervals
   const generateTimeSlots = useCallback((): TimeSlot[] => {
     const slots: TimeSlot[] = [];
-    const startHour = 8; // 8 AM
+    const startHour = 7; // 7 AM
+    const startMinute = 30; // 7:30 AM
     const endHour = 20; // 8 PM
     const intervalMinutes = timeInterval;
 
-    for (let totalMinutes = startHour * 60; totalMinutes < endHour * 60; totalMinutes += intervalMinutes) {
+    for (let totalMinutes = startHour * 60 + startMinute; totalMinutes < endHour * 60; totalMinutes += intervalMinutes) {
       const hours = Math.floor(totalMinutes / 60);
       const minutes = totalMinutes % 60;
       const timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
@@ -1047,8 +1048,8 @@ export default function EnhancedDragDropScheduler({ eventId }: EnhancedDragDropS
 
   return (
     <div className="space-y-6">
-      {/* Scheduling Constraints Manager */}
-      <SchedulingConstraintsManager eventId={Number(eventId)} />
+      {/* Scheduling Constraints Manager - Hidden per user request */}
+      {/* <SchedulingConstraintsManager eventId={Number(eventId)} /> */}
 
       {/* Header Controls */}
       <Card className="border-slate-600 bg-slate-800">

@@ -56,7 +56,7 @@ export function SchedulingConstraintsManager({ eventId }: SchedulingConstraintsM
     enforceFieldCompatibility: true,
     prioritizeEvenScheduling: true,
     allowEveningGames: true,
-    earliestGameTime: '08:00',
+    earliestGameTime: '07:30',
     latestGameTime: '20:00',
     minRestBeforePlayoffs: 120,
     allowPlayoffBackToBack: false,
