@@ -2424,10 +2424,12 @@ function SchedulingView() {
         },
         body: JSON.stringify({
           useAI: true, // Add the useAI flag to use the OpenAI integration
+          // NOTE: Flight configuration parameters are now automatically loaded from database
+          // The following parameters are only used as fallbacks if no flight configs exist
           gamesPerDay: constraints.maxGamesPerDay || 3,
-          minutesPerGame: 60,
-          breakBetweenGames: 15,
-          minRestPeriod: constraints.minRest || 30, // Now in minutes instead of hours
+          minutesPerGame: constraints.minutesPerGame || null, // Let scheduler use flight config
+          breakBetweenGames: constraints.breakBetweenGames || null, // Let scheduler use flight config
+          minRestPeriod: constraints.minRest || null, // Let scheduler use flight config
           resolveCoachConflicts: constraints.resolveCoachConflicts,
           optimizeFieldUsage: constraints.optimizeFieldUsage,
           tournamentFormat: constraints.tournamentFormat || 'round_robin_knockout',
