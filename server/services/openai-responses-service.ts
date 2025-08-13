@@ -13,6 +13,7 @@ import {
   gameFormats,
   aiConversationHistory
 } from "../../db/schema";
+import { AIAuditLogger } from "./ai-audit-logger";
 import { v4 as uuidv4 } from 'uuid';
 
 // Initialize the OpenAI client
@@ -353,7 +354,26 @@ Current tournament data: ${JSON.stringify(tournamentData, null, 2)}
     }
   }
 
-  private static async swapTeams(eventId: string, { gameId, teamA, teamB }: { gameId: string, teamA: string, teamB: string }) {
+  private static async swapTeams(eventId: string, { gameId, teamA, teamB }: { gameId: string, teamA: string, teamB: string }, sessionId: string, userRequest: string) {
+    // Get old values for audit trail
+    const oldGame = await db.query.games.findFirst({
+      where: eq(games.id, parseInt(gameId))
+    });
+
+    if (!oldGame) {
+      await AIAuditLogger.logAction({
+        eventId,
+        sessionId,
+        actionType: 'swap_teams',
+        targetTable: 'games',
+        targetId: gameId,
+        userRequest,
+        success: false,
+        errorMessage: 'Game not found'
+      });
+      return { success: false, message: `❌ Game ${gameId} not found` };
+    }
+
     try {
       await db.update(games)
         .set({
@@ -363,8 +383,34 @@ Current tournament data: ${JSON.stringify(tournamentData, null, 2)}
         })
         .where(eq(games.id, parseInt(gameId)));
 
+      // Log successful action
+      await AIAuditLogger.logAction({
+        eventId,
+        sessionId,
+        actionType: 'swap_teams',
+        targetTable: 'games',
+        targetId: gameId,
+        oldValues: { homeTeam: oldGame.homeTeam, awayTeam: oldGame.awayTeam },
+        newValues: { homeTeam: teamA, awayTeam: teamB },
+        aiReasoning: `Team assignment updated per user request. Changed from ${oldGame.homeTeam} vs ${oldGame.awayTeam} to ${teamA} vs ${teamB}.`,
+        userRequest,
+        success: true
+      });
+
       return { success: true, message: `✅ Game ${gameId} teams updated to ${teamA} vs ${teamB}` };
     } catch (error) {
+      await AIAuditLogger.logAction({
+        eventId,
+        sessionId,
+        actionType: 'swap_teams',
+        targetTable: 'games',
+        targetId: gameId,
+        oldValues: { homeTeam: oldGame.homeTeam, awayTeam: oldGame.awayTeam },
+        userRequest,
+        success: false,
+        errorMessage: `Database error: ${error}`
+      });
+
       return { success: false, message: `❌ Database error: ${error}` };
     }
   }
@@ -445,9 +491,9 @@ Current tournament data: ${JSON.stringify(tournamentData, null, 2)}
           const args = JSON.parse(toolCall.function.arguments);
           
           if (toolCall.function.name === "moveGame") {
-            result = await this.moveGame(eventId, args);
+            result = await this.moveGame(eventId, args, sessionId, userMessage);
           } else if (toolCall.function.name === "swapTeams") {
-            result = await this.swapTeams(eventId, args);
+            result = await this.swapTeams(eventId, args, sessionId, userMessage);
           }
 
           // Store tool result in database

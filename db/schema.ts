@@ -1892,6 +1892,26 @@ export const aiConversationHistory = pgTable('ai_conversation_history', {
   updatedAt: timestamp('updated_at').defaultNow()
 });
 
+// AI Audit Log for tracking all AI-initiated changes
+export const aiAuditLog = pgTable("ai_audit_log", {
+  id: text("id").primaryKey(), // UUID
+  eventId: integer("event_id").notNull().references(() => events.id, { onDelete: 'cascade' }),
+  sessionId: text("session_id").notNull(),
+  actionType: text("action_type").notNull(), // move_game, swap_teams, create_game, etc.
+  targetTable: text("target_table").notNull(), // games, teams, fields, etc.
+  targetId: text("target_id").notNull(), // ID of the modified record
+  oldValues: text("old_values"), // JSON string of previous values
+  newValues: text("new_values"), // JSON string of new values
+  aiReasoning: text("ai_reasoning"), // AI's explanation for the change
+  userRequest: text("user_request").notNull(), // Original user request
+  success: boolean("success").notNull(), // Whether action succeeded
+  errorMessage: text("error_message"), // Error details if failed
+  timestamp: timestamp("timestamp").notNull().defaultNow(),
+  reviewedBy: text("reviewed_by"), // Admin who reviewed this change
+  reviewedAt: timestamp("reviewed_at"), // When it was reviewed
+  reviewNotes: text("review_notes"), // Admin notes about the change
+});
+
 export const aiConversationHistoryRelations = relations(aiConversationHistory, ({ one }) => ({
   event: one(events, {
     fields: [aiConversationHistory.eventId],
