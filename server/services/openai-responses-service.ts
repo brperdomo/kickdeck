@@ -433,8 +433,8 @@ Current tournament data: ${JSON.stringify(tournamentData, null, 2)}
             }
           }
         ],
-        temperature: 0.7,
-        max_tokens: 1000
+        temperature: 0.3, // Lower temperature for more consistent scheduling logic
+        max_tokens: 2000 // Increased for better tournament scheduling responses
       });
 
       // Handle tool calls
@@ -463,8 +463,8 @@ Current tournament data: ${JSON.stringify(tournamentData, null, 2)}
         const followUpResponse = await openai.chat.completions.create({
           model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
           messages: conversationHistory,
-          temperature: 0.7,
-          max_tokens: 1000
+          temperature: 0.3, // Lower temperature for more consistent scheduling logic
+          max_tokens: 2000 // Increased for better tournament scheduling responses
         });
 
         const aiMessage = followUpResponse.choices[0].message.content || "I've processed your request.";
