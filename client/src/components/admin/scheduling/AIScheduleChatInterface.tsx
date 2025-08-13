@@ -104,7 +104,7 @@ export default function AIScheduleChatInterface({ eventId }: AIScheduleChatInter
     if (conversation.length === 0) {
       setConversation([{
         role: 'assistant',
-        content: 'Hello! I\'m your tournament scheduling assistant. What would you like to do today?\n\nI can help you:\n• Move games to different times or fields\n• Check for scheduling conflicts\n• Swap teams in games\n• Optimize your tournament schedule\n\nJust tell me what you need!'
+        content: 'Hello! I\'m your tournament scheduling assistant. What would you like to do today?\n\nI can help you with:\n• Moving games to different times or fields\n• Checking for scheduling conflicts\n• Swapping teams in games\n• Finding optimal time slots\n• Reviewing tomorrow\'s schedule\n\nJust tell me what you need in plain English! For example:\n"Move the Lions vs Tigers game to Field 2 at 3 PM"\n"Are there any conflicts with today\'s schedule?"\n"Show me all games on Field 1"'
       }]);
     }
   };
@@ -241,21 +241,28 @@ export default function AIScheduleChatInterface({ eventId }: AIScheduleChatInter
                 className="border-blue-400/30 text-blue-300 hover:bg-blue-900/30 cursor-pointer"
                 onClick={() => setUserInput("Show me all games scheduled for tomorrow")}
               >
-                Check tomorrow's games
+                Tomorrow's games
               </Badge>
               <Badge 
                 variant="outline" 
                 className="border-blue-400/30 text-blue-300 hover:bg-blue-900/30 cursor-pointer"
-                onClick={() => setUserInput("Are there any scheduling conflicts?")}
+                onClick={() => setUserInput("Are there any scheduling conflicts in today's schedule?")}
               >
                 Check conflicts
               </Badge>
               <Badge 
                 variant="outline" 
                 className="border-blue-400/30 text-blue-300 hover:bg-blue-900/30 cursor-pointer"
-                onClick={() => setUserInput("Move the next game to Field 1")}
+                onClick={() => setUserInput("What games are on Field 1 today?")}
               >
-                Move game
+                Field 1 schedule
+              </Badge>
+              <Badge 
+                variant="outline" 
+                className="border-blue-400/30 text-blue-300 hover:bg-blue-900/30 cursor-pointer"
+                onClick={() => setUserInput("Find me an open time slot on Field 2")}
+              >
+                Find open slots
               </Badge>
             </div>
           </CardContent>
