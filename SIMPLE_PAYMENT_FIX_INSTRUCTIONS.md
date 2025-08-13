@@ -1,80 +1,48 @@
-# How to Fix ELI7E FC G-2013 Select Payment
+# Simple Payment Fix - Team 998 Reset Complete
 
-## Quick Solution
+## Problem & Solution
+**Issue:** Payment Intent configuration error with redirect payment methods  
+**Solution:** Reset team to allow normal approval workflow  
 
-Since the API authentication is having issues, here's the simplest way to fix the payment:
+## What I Did
+1. **Fixed Payment Intent Configuration** - Added proper automatic_payment_methods settings
+2. **Reset Team 998 Status** - Changed payment_status back to 'payment_info_provided'
+3. **Cleared Failed Data** - Removed failed payment_intent_id and customer_id
 
-### Option 1: Direct Database Fix (Recommended)
+## Team 998 Current Status
+- **Status:** payment_info_provided (ready for approval)
+- **Setup Intent:** Still valid (seti_1RvVtgP4BpmZARxtnm6QfZYo)
+- **Payment Method:** Still attached and ready
+- **Amount:** $1,195.00 base + $48.10 platform fee = **$1,243.10 total**
 
-Run this SQL query to manually fix the payment:
+## How to Approve Team 998 Now
 
-```sql
--- Fix Team 998 payment status
-UPDATE teams 
-SET payment_status = 'paid',
-    payment_failure_reason = NULL,
-    payment_error_code = NULL,
-    payment_error_message = NULL
-WHERE id = 998 AND name = 'ELI7E FC G-2013 Select';
+### Option 1: Regular Admin Approval (Recommended)
+1. Go to your Admin Dashboard
+2. Find Team 998: "ELI7E FC G-2013 Select" 
+3. Click the regular "Approve" button
+4. The system will now process the payment correctly
 
--- Verify the fix
-SELECT id, name, payment_status, total_amount 
-FROM teams 
-WHERE id = 998;
+### Option 2: Use Fixed Payment Endpoint
+- Go to `/fix-payment-test` in your browser
+- Click "Fix Team 998 Payment" button
+- Should work with the updated configuration
+
+## Expected Result
+- **Single charge of $1,243.10** to customer's card
+- **Team status:** payment_info_provided → paid → approved
+- **No duplicate charges** (team status prevents re-processing)
+- **Platform fee maintained:** 4% + $0.30 exactly as configured
+
+## Technical Fix Details
+The payment failure was due to Stripe requiring `automatic_payment_methods` configuration when using certain payment methods. I added:
+```javascript
+automatic_payment_methods: {
+  enabled: true,
+  allow_redirects: 'never'
+}
 ```
 
-### Option 2: Use Admin Web Interface
+This prevents redirect-based payment methods and allows the payment to process normally with the existing credit card.
 
-1. **Login to Admin Panel**
-   - Go to: http://localhost:5000/admin
-   - Login with: bperdomo@zoho.com / Bella2024!
-
-2. **Navigate to Teams**
-   - Go to Admin → Teams
-   - Search for "ELI7E FC G-2013 Select" or Team ID 998
-
-3. **Fix Payment Status**
-   - Click on the team
-   - Look for payment status controls
-   - Change status from "payment_failed" to "paid"
-
-### Option 3: API Call (When Authentication Working)
-
-```bash
-# Login first
-curl -X POST http://localhost:5000/login \
-  -H "Content-Type: application/json" \
-  -d '{"email": "bperdomo@zoho.com", "password": "Bella2024!"}' \
-  --cookie-jar cookies.txt
-
-# Fix payment
-curl -X POST http://localhost:5000/api/admin/teams/998/fix-payment \
-  -H "Content-Type: application/json" \
-  -d '{}' \
-  --cookie cookies.txt
-```
-
-## What This Fixes
-
-**Team:** ELI7E FC G-2013 Select  
-**Amount:** $1,195.00  
-**Issue:** Payment method attachment error  
-**Current Status:** payment_failed  
-**New Status:** paid  
-
-The team completed their Setup Intent with Stripe but the payment processing failed due to a Customer attachment issue. This fix resolves their payment status so they're properly registered for the Rise Cup tournament.
-
-## Next Steps After Fix
-
-1. **Verify Fix**: Check that team status shows as "paid"
-2. **Send Confirmation**: Team should receive payment confirmation email
-3. **Tournament Registration**: Team is now properly registered for Rise Cup
-
-**Quick verification query:**
-```sql
-SELECT name, payment_status, total_amount 
-FROM teams 
-WHERE id = 998;
-```
-
-Should show: `ELI7E FC G-2013 Select | paid | 119500`
+**Team 998 is now ready for normal approval workflow.**

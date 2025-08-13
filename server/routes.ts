@@ -12221,7 +12221,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           });
         }
         
-        // Create and confirm payment intent
+        // Create and confirm payment intent with proper configuration
         const paymentIntent = await stripeInstance.paymentIntents.create({
           amount: totalChargedAmount,
           currency: 'usd',
@@ -12232,6 +12232,10 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           application_fee_amount: platformFeeAmount,
           transfer_data: {
             destination: eventInfo.stripeConnectAccountId,
+          },
+          automatic_payment_methods: {
+            enabled: true,
+            allow_redirects: 'never'
           },
           metadata: {
             teamId: team.id.toString(),
