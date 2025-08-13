@@ -8,6 +8,7 @@ import { db } from "@db";
 import { emailTemplates, insertPlayerSchema } from "@db/schema";
 import Stripe from 'stripe';
 import { isAdmin, hasEventAccess } from "./middleware";
+import { requirePermission } from "./middleware/auth";
 import { authenticateTournamentDirector } from "./middleware/tournament-director-auth";
 // Removed problematic middleware import to fix server startup
 import seasonalScopesRouter from "./routes/seasonal-scopes";
@@ -7840,7 +7841,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
     });
 
     // Fix payment issues endpoint - handles payment method attachment problems
-    app.post('/api/admin/teams/:teamId/fix-payment', hasRole(['super_admin']), async (req, res) => {
+    app.post('/api/admin/teams/:teamId/fix-payment', isAdmin, async (req, res) => {
       try {
         const teamId = parseInt(req.params.teamId);
         console.log(`🔧 Payment fix requested for team ${teamId}`);
