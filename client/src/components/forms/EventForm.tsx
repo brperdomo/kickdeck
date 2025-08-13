@@ -1301,6 +1301,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
     const errors: Record<EventTab, boolean> = {
       'information': false,
       'age-groups': false,
+      'flights': false,
       'scoring': scoringRules.length === 0,
       'complexes': selectedComplexIds.length === 0,
       'settings': false,
@@ -1668,6 +1669,8 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                 >
                   {tab === 'administrators' 
                     ? 'Admins' 
+                    : tab === 'flights'
+                    ? 'Flights'
                     : tab.replace('-', ' ').charAt(0).toUpperCase() + tab.slice(1).replace('-', ' ')}
                 </TabsTrigger>
               ))}
@@ -1690,14 +1693,14 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
               
 
 
-              <TabsContent value="brackets">
+              <TabsContent value="flights">
                 {mode === 'edit' ? (
                   <BracketsContent />
                 ) : (
                   <div className="p-4 bg-muted/50 rounded-md text-center">
-                    <p>You must save the event before managing brackets.</p>
+                    <p>You must save the event before managing flights.</p>
                     <p className="text-sm text-muted-foreground mt-1">
-                      Save the event with age groups first, then you can add brackets in edit mode.
+                      Save the event with age groups first, then you can add flights in edit mode.
                     </p>
                   </div>
                 )}

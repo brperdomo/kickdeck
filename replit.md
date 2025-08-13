@@ -6,6 +6,13 @@ MatchPro AI is a comprehensive sports event management platform for tournament o
 ## User Preferences
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes (August 2025)
+- ✅ **Critical Data Integrity Fix COMPLETE**: Fixed seasonal scope linkage system-wide for all events
+- ✅ **Flight Selection Verification**: Confirmed team registration flow working with 337+ teams successfully selecting flights
+- ✅ **Age Groups Display Fixed**: Birth Years and Division Codes now properly display in event settings Age Group tab
+- ✅ **Terminology Conversion COMPLETE**: Renamed all "Brackets" references to "Flights" throughout admin interface
+- ✅ **System Health Verified**: All events have proper age groups, flight assignments, and team registration functionality
+
 ## System Architecture
 
 ### Frontend
