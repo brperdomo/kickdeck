@@ -7839,6 +7839,158 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       }
     });
 
+    // Fix payment issues endpoint - handles payment method attachment problems
+    app.post('/api/admin/teams/:teamId/fix-payment', hasRole(['super_admin']), async (req, res) => {
+      try {
+        const teamId = parseInt(req.params.teamId);
+        console.log(`🔧 Payment fix requested for team ${teamId}`);
+
+        if (!teamId) {
+          return res.status(400).json({
+            error: 'INVALID_TEAM_ID',
+            message: 'Valid team ID is required'
+          });
+        }
+
+        // Get team details
+        const team = await db.query.teams.findFirst({
+          where: eq(teams.id, teamId),
+          with: {
+            event: true
+          }
+        });
+
+        if (!team) {
+          return res.status(404).json({
+            error: 'TEAM_NOT_FOUND',
+            message: `Team ${teamId} not found`
+          });
+        }
+
+        console.log(`Team: ${team.name}, Status: ${team.paymentStatus}`);
+
+        if (!team.setupIntentId) {
+          return res.status(400).json({
+            error: 'NO_SETUP_INTENT',
+            message: 'Team does not have a setup intent'
+          });
+        }
+
+        // Import Stripe
+        const Stripe = (await import('stripe')).default;
+        const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+
+        // Get Setup Intent details
+        const setupIntent = await stripe.setupIntents.retrieve(team.setupIntentId);
+        console.log(`Setup Intent status: ${setupIntent.status}, Payment Method: ${setupIntent.payment_method}`);
+
+        if (setupIntent.status !== 'succeeded' || !setupIntent.payment_method) {
+          return res.status(400).json({
+            error: 'SETUP_INTENT_INCOMPLETE',
+            message: 'Setup intent is not completed or has no payment method',
+            setupIntentStatus: setupIntent.status
+          });
+        }
+
+        // Create or verify Stripe Customer
+        let customer;
+        if (team.stripeCustomerId) {
+          try {
+            customer = await stripe.customers.retrieve(team.stripeCustomerId);
+          } catch (error) {
+            console.log(`Customer ${team.stripeCustomerId} not found, creating new one`);
+            customer = null;
+          }
+        }
+
+        if (!customer) {
+          customer = await stripe.customers.create({
+            email: team.managerEmail || team.submitterEmail,
+            name: team.managerName,
+            metadata: {
+              teamId: team.id.toString(),
+              teamName: team.name,
+              eventName: team.event?.name || ''
+            }
+          });
+          console.log(`Created customer: ${customer.id}`);
+        }
+
+        // Attach payment method to customer
+        try {
+          await stripe.paymentMethods.attach(setupIntent.payment_method, {
+            customer: customer.id
+          });
+          console.log(`Payment method ${setupIntent.payment_method} attached to customer ${customer.id}`);
+        } catch (error: any) {
+          if (!error.message.includes('already been attached')) {
+            throw error;
+          }
+          console.log('Payment method already attached');
+        }
+
+        // Create Payment Intent
+        const paymentIntent = await stripe.paymentIntents.create({
+          amount: team.totalAmount,
+          currency: 'usd',
+          customer: customer.id,
+          payment_method: setupIntent.payment_method,
+          confirm: true,
+          description: `${team.event?.name || 'Tournament'} - ${team.name}`,
+          metadata: {
+            teamId: team.id.toString(),
+            teamName: team.name,
+            eventName: team.event?.name || '',
+            managerEmail: team.managerEmail || team.submitterEmail || ''
+          }
+        });
+
+        console.log(`Payment Intent created: ${paymentIntent.id}, Status: ${paymentIntent.status}`);
+
+        // Update team record
+        const newPaymentStatus = paymentIntent.status === 'succeeded' ? 'paid' : 
+                                paymentIntent.status === 'requires_action' ? 'requires_action' : 'processing';
+
+        await db.update(teams)
+          .set({
+            paymentIntentId: paymentIntent.id,
+            paymentStatus: newPaymentStatus,
+            paymentMethodId: setupIntent.payment_method,
+            stripeCustomerId: customer.id
+          })
+          .where(eq(teams.id, teamId));
+
+        // Record transaction
+        await db.insert(paymentTransactions).values({
+          teamId: team.id,
+          paymentIntentId: paymentIntent.id,
+          amount: team.totalAmount,
+          status: paymentIntent.status,
+          createdAt: new Date().toISOString(),
+          metadata: {
+            fixedByAdmin: true,
+            originalIssue: 'Payment method attachment error'
+          }
+        });
+
+        return res.json({
+          success: true,
+          message: 'Payment issue resolved',
+          paymentIntentId: paymentIntent.id,
+          paymentStatus: paymentIntent.status,
+          amountPaid: paymentIntent.status === 'succeeded' ? (team.totalAmount / 100) : 0,
+          teamUpdated: true
+        });
+
+      } catch (error) {
+        console.error('❌ Payment fix error:', error);
+        return res.status(500).json({
+          error: 'PAYMENT_FIX_FAILED',
+          message: error.message || 'Failed to fix payment issue'
+        });
+      }
+    });
+
     // OpenAI Realtime API endpoint for AI-powered scheduling
     app.post('/api/admin/events/:id/ai-schedule', hasEventAccess, async (req, res) => {
       try {
