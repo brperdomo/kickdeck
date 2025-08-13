@@ -7839,6 +7839,52 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       }
     });
 
+    // OpenAI Realtime API endpoint for AI-powered scheduling
+    app.post('/api/admin/events/:id/ai-schedule', hasEventAccess, async (req, res) => {
+      try {
+        console.log(`🤖 AI schedule generation endpoint called for event ID: ${req.params.id}`);
+        
+        const eventId = req.params.id;
+        const { prompt, useRealtimeAPI } = req.body;
+
+        if (!prompt || !prompt.trim()) {
+          return res.status(400).json({
+            error: 'PROMPT_REQUIRED',
+            message: 'Natural language prompt is required for AI scheduling'
+          });
+        }
+
+        if (!useRealtimeAPI) {
+          return res.status(400).json({
+            error: 'REALTIME_API_REQUIRED',
+            message: 'This endpoint requires useRealtimeAPI flag to be true'
+          });
+        }
+
+        // Import and use the OpenAI Realtime service
+        const { OpenAIRealtimeScheduler } = await import('./services/openai-realtime-service.js');
+        
+        console.log('🚀 Starting OpenAI Realtime API schedule generation...');
+        const result = await OpenAIRealtimeScheduler.generateScheduleWithRealtime(eventId, prompt.trim());
+        
+        console.log('✅ AI schedule generation completed successfully');
+        
+        return res.json({
+          message: "AI schedule generated successfully using OpenAI Realtime API",
+          ...result,
+          savedToDB: true
+        });
+
+      } catch (error) {
+        console.error('❌ AI schedule generation error:', error);
+        return res.status(500).json({
+          error: 'AI_SCHEDULE_FAILED',
+          message: error.message || 'An error occurred during AI schedule generation',
+          stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+        });
+      }
+    });
+
     app.post('/api/admin/events/:id/generate-schedule', hasEventAccess, async (req, res) => {
       try {
         console.log(`Schedule generation endpoint called for event ID: ${req.params.id}`);

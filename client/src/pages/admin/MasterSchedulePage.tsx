@@ -25,11 +25,12 @@ import { MasterScheduleConflictDetection } from '@/components/admin/scheduling/M
 import { PublishSchedules } from '@/components/admin/scheduling/PublishSchedules';
 import FieldSortingManager from '@/components/admin/FieldSortingManager';
 import FieldManagementDashboard from '@/components/admin/FieldManagementDashboard';
+import AIScheduleGenerator from '@/components/admin/scheduling/AIScheduleGenerator';
 
 export default function MasterSchedulePage() {
   const { eventId } = useParams<{ eventId: string }>();
   const [, setLocation] = useLocation();
-  const [currentView, setCurrentView] = useState<'view' | 'calendar' | 'cards' | 'manage' | 'flights' | 'brackets' | 'overview' | 'workflow' | 'publish' | 'field-sorting'>('overview');
+  const [currentView, setCurrentView] = useState<'view' | 'calendar' | 'cards' | 'manage' | 'flights' | 'brackets' | 'overview' | 'workflow' | 'publish' | 'field-sorting' | 'ai-schedule'>('overview');
 
   if (!eventId) {
     return <div>Event ID not found</div>;
@@ -189,6 +190,19 @@ export default function MasterSchedulePage() {
           
           {/* Post Schedules Tab */}
           <Button
+            variant={currentView === 'ai-schedule' ? 'default' : 'outline'}
+            onClick={() => setCurrentView('ai-schedule')}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 whitespace-nowrap backdrop-blur-sm ${
+              currentView === 'ai-schedule' 
+                ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/25 hover:from-blue-400 hover:to-blue-500' 
+                : 'bg-black/20 text-purple-100 hover:bg-blue-900/30 border border-blue-400/30 hover:border-blue-300/50'
+            }`}
+          >
+            <Zap className="h-4 w-4" />
+            Schedule with AI
+          </Button>
+
+          <Button
             variant={currentView === 'field-sorting' ? 'default' : 'outline'}
             onClick={() => setCurrentView('field-sorting')}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 whitespace-nowrap backdrop-blur-sm ${
@@ -338,6 +352,17 @@ export default function MasterSchedulePage() {
               </AlertDescription>
             </Alert>
             <PublishSchedules eventId={eventId} />
+          </div>
+        ) : currentView === 'ai-schedule' ? (
+          <div className="space-y-6">
+            <Alert className="border-blue-400/30 bg-black/30 backdrop-blur-sm">
+              <Zap className="h-4 w-4 text-blue-400" />
+              <AlertDescription className="text-blue-100">
+                <strong>AI Schedule Generator:</strong> Use OpenAI Realtime API to generate intelligent tournament schedules. 
+                Provide natural language instructions and let AI create optimized schedules using your flight configuration.
+              </AlertDescription>
+            </Alert>
+            <AIScheduleGenerator eventId={eventId} />
           </div>
         ) : currentView === 'field-sorting' ? (
           <div className="space-y-6">
