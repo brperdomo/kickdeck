@@ -7900,10 +7900,68 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
 
         console.log('✅ Safety validation passed - proceeding with scheduling');
 
+        // 🚨 CRITICAL FIX: Load Flight Configuration parameters FIRST
+        console.log('📋 Loading Flight Configuration parameters for dynamic scheduling...');
+        
+        // Helper function to get flight configurations  
+        const getFlightConfigurations = async (eventId: string) => {
+          try {
+            const eventGameFormats = await db.query.eventGameFormats.findMany({
+              where: eq(eventGameFormats.eventId, parseInt(eventId))
+            });
+
+            if (eventGameFormats.length > 0) {
+              return eventGameFormats.map(format => ({
+                gameLength: format.gameLength || 90,
+                restPeriod: format.restPeriod || 90,
+                bufferTime: format.bufferTime || 15,
+                fieldSize: format.fieldSize || '7v7'
+              }));
+            }
+
+            // Fallback to game_formats table
+            const gameFormats = await db.query.gameFormats.findMany({
+              where: eq(gameFormats.eventId, parseInt(eventId))
+            });
+
+            return gameFormats.map(format => ({
+              gameLength: format.gameLength || 90,
+              restPeriod: format.restPeriod || 90,
+              bufferTime: format.bufferTime || 15,
+              fieldSize: format.fieldSize || '7v7'
+            }));
+          } catch (error) {
+            console.warn('Failed to load flight configurations, using request parameters:', error);
+            return [];
+          }
+        };
+
+        // Load flight configuration parameters
+        const flightConfigs = await getFlightConfigurations(eventId);
+        
+        // 🎯 DYNAMIC PARAMETER MAPPING: Use flight config first, then UI parameters as fallbacks
+        let actualMinutesPerGame = minutesPerGame;
+        let actualBreakBetweenGames = breakBetweenGames;  
+        let actualMinRestPeriod = minRestPeriod;
+        
+        if (flightConfigs.length > 0) {
+          const config = flightConfigs[0];
+          actualMinutesPerGame = config.gameLength;
+          actualBreakBetweenGames = config.bufferTime;
+          actualMinRestPeriod = config.restPeriod;
+          console.log(`✅ Using Flight Configuration: ${config.gameLength}min games, ${config.restPeriod}min rest, ${config.bufferTime}min breaks`);
+        } else {
+          // Use UI parameters as fallback with defaults
+          actualMinutesPerGame = minutesPerGame || 90;
+          actualBreakBetweenGames = breakBetweenGames || 15;
+          actualMinRestPeriod = minRestPeriod || 90;
+          console.log(`⚠️ No Flight Configuration found, using UI parameters: ${actualMinutesPerGame}min games, ${actualMinRestPeriod}min rest, ${actualBreakBetweenGames}min breaks`);
+        }
+
         // Check if we should use AI to generate the schedule
         const useAI = req.query.useAI === 'true' || useAIFromBody === true;
         console.log(`Using AI for schedule generation: ${useAI}`);
-        console.log(`Request parameters: gamesPerDay=${gamesPerDay}, minutesPerGame=${minutesPerGame}, breakBetweenGames=${breakBetweenGames}, minRestPeriod=${minRestPeriod}`);
+        console.log(`Final scheduling parameters: gamesPerDay=${gamesPerDay}, minutesPerGame=${actualMinutesPerGame}, breakBetweenGames=${actualBreakBetweenGames}, minRestPeriod=${actualMinRestPeriod}`);
         console.log(`Request parameters: resolveCoachConflicts=${resolveCoachConflicts}, optimizeFieldUsage=${optimizeFieldUsage}, tournamentFormat=${tournamentFormat}`);
         console.log(`Filtering by age groups: ${JSON.stringify(selectedAgeGroups)}`);
         console.log(`Filtering by brackets: ${JSON.stringify(selectedBrackets)}`);
@@ -7917,14 +7975,14 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         // Extract workflow data from request body
         const { workflowGames, workflowTimeBlocks } = req.body;
         
-        // Generate schedule using workflow data with user parameters
+        // Generate schedule using workflow data with ACTUAL flight configuration parameters
         const scheduleResult = await SimpleScheduler.generateSchedule(eventId, { 
           workflowGames, 
           workflowTimeBlocks 
         }, {
-          minRestPeriod: minRestPeriod || 60,  // Default to 60 minutes if not specified
-          minutesPerGame: minutesPerGame || 90,
-          breakBetweenGames: breakBetweenGames || 15
+          minRestPeriod: actualMinRestPeriod,
+          minutesPerGame: actualMinutesPerGame,
+          breakBetweenGames: actualBreakBetweenGames
         });
 
         // Create time slots for the games before saving to database
@@ -7950,7 +8008,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         if (scheduleResult.games && scheduleResult.games.length > 0) {
           console.log('🕒 Creating time slots for generated games...');
           await SimpleScheduler.createTimeSlots(eventId, scheduleResult.games, null, 
-            minutesPerGame || 90, minRestPeriod || 60);
+            actualMinutesPerGame, actualMinRestPeriod);
         }
 
         // Save the generated schedule to the database
