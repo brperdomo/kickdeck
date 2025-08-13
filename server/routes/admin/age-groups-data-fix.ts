@@ -5,7 +5,128 @@ import { eq, and } from 'drizzle-orm';
 
 const router = Router();
 
-// Fix missing age groups data for events
+// Fix ALL events missing age groups data
+router.post('/fix-all-events', async (req, res) => {
+  try {
+    console.log(`🔧 Fixing age groups data for ALL events...`);
+
+    // Get all events without seasonal scope settings
+    const eventsWithoutScope = await db
+      .select({ id: events.id, name: events.name })
+      .from(events)
+      .leftJoin(eventSettings, and(
+        eq(eventSettings.eventId, events.id),
+        eq(eventSettings.settingKey, 'seasonalScopeId')
+      ))
+      .where(and(
+        eq(events.isArchived, false),
+        eq(eventSettings.eventId, null) // No seasonal scope setting
+      ));
+
+    // Get the most recent seasonal scope
+    const recentScope = await db.query.seasonalScopes.findFirst({
+      orderBy: (scopes, { desc }) => [desc(scopes.id)]
+    });
+
+    if (!recentScope) {
+      return res.json({
+        success: false,
+        message: 'No seasonal scope available'
+      });
+    }
+
+    const results = [];
+    
+    for (const event of eventsWithoutScope) {
+      console.log(`📅 Processing event: ${event.name} (ID: ${event.id})`);
+      
+      // Add seasonal scope setting
+      await db.insert(eventSettings).values({
+        eventId: event.id,
+        settingKey: 'seasonalScopeId',
+        settingValue: recentScope.id.toString()
+      });
+
+      // Check if event already has age groups
+      const existingAgeGroups = await db.query.eventAgeGroups.findMany({
+        where: eq(eventAgeGroups.eventId, event.id)
+      });
+
+      if (existingAgeGroups.length === 0) {
+        // Get age groups from the seasonal scope
+        const scopeAgeGroups = await db.query.ageGroupSettings.findMany({
+          where: eq(ageGroupSettings.seasonalScopeId, recentScope.id)
+        });
+
+        if (scopeAgeGroups.length > 0) {
+          // Convert scope age groups to event age groups format
+          const ageGroupsToInsert = scopeAgeGroups.map(ag => ({
+            eventId: event.id,
+            ageGroup: ag.ageGroup,
+            birthYear: ag.birthYear,
+            gender: ag.gender,
+            divisionCode: ag.divisionCode,
+            seasonalScopeId: recentScope.id,
+            fieldSize: (ag.ageGroup && typeof ag.ageGroup === 'string' && ag.ageGroup.startsWith('U')) ?
+              (parseInt(ag.ageGroup.substring(1)) <= 7 ? '4v4' :
+                parseInt(ag.ageGroup.substring(1)) <= 10 ? '7v7' :
+                  parseInt(ag.ageGroup.substring(1)) <= 12 ? '9v9' : '11v11') : '11v11',
+            projectedTeams: 8,
+            createdAt: new Date().toISOString(),
+            birth_date_start: new Date(ag.birthYear, 0, 1).toISOString().split('T')[0],
+            isEligible: true
+          }));
+
+          // Insert the age groups
+          await db.insert(eventAgeGroups).values(ageGroupsToInsert);
+          
+          results.push({
+            eventId: event.id,
+            eventName: event.name,
+            ageGroupsCreated: ageGroupsToInsert.length,
+            status: 'created'
+          });
+        }
+      } else {
+        // Update existing age groups to have seasonal scope ID if missing
+        let updated = 0;
+        for (const ageGroup of existingAgeGroups) {
+          if (!ageGroup.seasonalScopeId) {
+            await db.update(eventAgeGroups)
+              .set({ seasonalScopeId: recentScope.id })
+              .where(eq(eventAgeGroups.id, ageGroup.id));
+            updated++;
+          }
+        }
+        
+        results.push({
+          eventId: event.id,
+          eventName: event.name,
+          ageGroupsUpdated: updated,
+          existingGroups: existingAgeGroups.length,
+          status: 'updated'
+        });
+      }
+    }
+
+    res.json({
+      success: true,
+      message: `Fixed ${eventsWithoutScope.length} events`,
+      seasonalScopeName: recentScope.name,
+      results
+    });
+
+  } catch (error) {
+    console.error('Error fixing all events age groups data:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fix all events age groups data',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
+// Fix missing age groups data for specific event
 router.post('/fix-age-groups/:eventId', async (req, res) => {
   try {
     const eventId = req.params.eventId;
