@@ -14,7 +14,7 @@ import {
   Wand2, Loader2
 } from 'lucide-react';
 import { UnifiedScheduleSetup } from '@/components/admin/scheduling/UnifiedScheduleSetup';
-import { UnifiedTournamentControlCenter } from '@/components/admin/scheduling/UnifiedTournamentControlCenter';
+// UnifiedTournamentControlCenter removed - functionality integrated into Master Schedule
 import { ScheduleViewer } from '@/components/admin/scheduling/ScheduleViewerFixed';
 import EnhancedDragDropScheduler from '@/components/admin/scheduling/EnhancedDragDropScheduler';
 import GameCardsGenerator from '@/components/admin/scheduling/GameCardsGenerator';
@@ -81,7 +81,7 @@ export default function MasterSchedulePage() {
       console.error('AI scheduling error:', error);
       toast({
         title: "AI Scheduling Failed",
-        description: error.message || "Failed to generate schedule with AI",
+        description: (error as Error)?.message || "Failed to generate schedule with AI",
         variant: "destructive"
       });
     } finally {
@@ -295,8 +295,7 @@ export default function MasterSchedulePage() {
               </AlertDescription>
             </Alert>
             
-            {/* Unified Tournament Control Center Integration */}
-            <UnifiedTournamentControlCenter eventId={eventId} />
+            {/* Unified Tournament Control Center functionality integrated into Master Schedule interface */}
             
             {/* Flight Configuration Table */}
             <div className="mt-8">
