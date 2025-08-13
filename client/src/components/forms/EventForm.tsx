@@ -317,22 +317,30 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
         // Safely get ageGroup field (could be ageGroup, age_group, or similar)
         const ageGroupValue = group.ageGroup || group.age_group || group.name || '';
         
-        // Use actual field size from database, only fallback if completely missing
+        // Priority: Use actual field size from database first
         let fieldSize = group.fieldSize || group.field_size || null;
         
-        console.log(`Age group ${ageGroupValue} (${group.gender}): fieldSize from API = ${fieldSize}`);
+        console.log(`DEBUG: Age group ${ageGroupValue} (${group.gender}) raw data:`, {
+          fieldSize: group.fieldSize,
+          field_size: group.field_size,
+          finalFieldSize: fieldSize
+        });
         
-        // Only apply fallback logic if no field size exists at all
-        if (!fieldSize && ageGroupValue && typeof ageGroupValue === 'string' && ageGroupValue.startsWith('U')) {
-          const ageNumber = parseInt(ageGroupValue.substring(1));
-          if (!isNaN(ageNumber)) {
-            fieldSize = ageNumber <= 7 ? '4v4' :
-                       ageNumber <= 10 ? '7v7' :
-                       ageNumber <= 12 ? '9v9' : '11v11';
-            console.log(`Applied fallback field size for ${ageGroupValue}: ${fieldSize}`);
+        // CRITICAL: Only apply fallback if fieldSize is completely null/undefined
+        if (fieldSize === null || fieldSize === undefined) {
+          if (ageGroupValue && typeof ageGroupValue === 'string' && ageGroupValue.startsWith('U')) {
+            const ageNumber = parseInt(ageGroupValue.substring(1));
+            if (!isNaN(ageNumber)) {
+              fieldSize = ageNumber <= 7 ? '4v4' :
+                         ageNumber <= 10 ? '7v7' :
+                         ageNumber <= 12 ? '9v9' : '11v11';
+              console.log(`FALLBACK: Applied calculated field size for ${ageGroupValue}: ${fieldSize}`);
+            }
+          } else {
+            fieldSize = '11v11'; // Ultimate fallback
           }
         } else {
-          console.log(`Using existing field size for ${ageGroupValue}: ${fieldSize}`);
+          console.log(`DATABASE: Using saved field size for ${ageGroupValue}: ${fieldSize}`);
         }
         
         return {

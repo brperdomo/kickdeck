@@ -249,21 +249,21 @@ export function BulkFlightManager() {
   return (
     <Card className="mt-6">
       <CardHeader>
-        <CardTitle>Bulk Bracket Management</CardTitle>
+        <CardTitle>Bulk Flight Management</CardTitle>
         <CardDescription>
-          Create and manage brackets for multiple age groups at once
+          Create and manage flights for multiple age groups at once
         </CardDescription>
       </CardHeader>
       <CardContent>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="mb-4">Create Brackets in Bulk</Button>
+            <Button className="mb-4">Create Flights in Bulk</Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[600px] max-h-[85vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Create Brackets in Bulk</DialogTitle>
+              <DialogTitle>Create Flights in Bulk</DialogTitle>
               <DialogDescription>
-                Define bracket templates and apply them to multiple age groups at once
+                Define flight templates and apply them to multiple age groups at once
               </DialogDescription>
             </DialogHeader>
             

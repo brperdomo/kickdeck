@@ -57,7 +57,7 @@ export function BracketsContent() {
   // Get the display name for the age group - use original gender values
   const getAgeGroupDisplayName = (ageGroup: AgeGroup) => {
     const gender = ageGroup.gender || 'Unknown';
-    const ageGroupName = ageGroup.ageGroup || 'Undefined';
+    const ageGroupName = ageGroup.ageGroup || 'Unknown';
     return `${gender} ${ageGroupName}`;
   };
 
