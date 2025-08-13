@@ -25,12 +25,12 @@ import { MasterScheduleConflictDetection } from '@/components/admin/scheduling/M
 import { PublishSchedules } from '@/components/admin/scheduling/PublishSchedules';
 import FieldSortingManager from '@/components/admin/FieldSortingManager';
 import FieldManagementDashboard from '@/components/admin/FieldManagementDashboard';
-import AIScheduleChatInterface from '@/components/admin/scheduling/AIScheduleChatInterface';
+import PersistentAIChatbot from '@/components/admin/scheduling/PersistentAIChatbot';
 
 export default function MasterSchedulePage() {
   const { eventId } = useParams<{ eventId: string }>();
   const [, setLocation] = useLocation();
-  const [currentView, setCurrentView] = useState<'view' | 'calendar' | 'cards' | 'manage' | 'flights' | 'brackets' | 'overview' | 'workflow' | 'publish' | 'field-sorting' | 'ai-schedule'>('overview');
+  const [currentView, setCurrentView] = useState<'view' | 'calendar' | 'cards' | 'manage' | 'flights' | 'brackets' | 'overview' | 'workflow' | 'publish' | 'field-sorting'>('overview');
 
   if (!eventId) {
     return <div>Event ID not found</div>;
@@ -239,21 +239,7 @@ export default function MasterSchedulePage() {
             </div>
             
 
-            
-            {/* AI Schedule Generator - Now on Overview Tab */}
-            <div className="mt-8">
-              <Card className="bg-black/40 border-blue-400/30 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-white">
-                    <Zap className="h-5 w-5 text-blue-400" />
-                    Schedule with AI Assistant
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <AIScheduleChatInterface eventId={eventId} />
-                </CardContent>
-              </Card>
-            </div>
+
 
             {/* Add Data Flow Demo Button */}
             <div className="mt-6 text-center">
@@ -356,17 +342,7 @@ export default function MasterSchedulePage() {
             </Alert>
             <PublishSchedules eventId={eventId} />
           </div>
-        ) : currentView === 'ai-schedule' ? (
-          <div className="space-y-6">
-            <Alert className="border-blue-400/30 bg-black/30 backdrop-blur-sm">
-              <Zap className="h-4 w-4 text-blue-400" />
-              <AlertDescription className="text-blue-100">
-                <strong>AI Schedule Generator:</strong> Use OpenAI Realtime API to generate intelligent tournament schedules. 
-                Provide natural language instructions and let AI create optimized schedules using your flight configuration.
-              </AlertDescription>
-            </Alert>
-            <AIScheduleGenerator eventId={eventId} />
-          </div>
+
         ) : currentView === 'field-sorting' ? (
           <div className="space-y-6">
             <FieldManagementDashboard eventId={eventId} />
@@ -417,6 +393,9 @@ export default function MasterSchedulePage() {
         </Card>
       </div>
       </div>
+      
+      {/* Persistent AI Chatbot - Works across all tabs */}
+      <PersistentAIChatbot eventId={eventId} />
     </div>
   );
 }

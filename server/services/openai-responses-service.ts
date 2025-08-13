@@ -135,16 +135,34 @@ Current tournament data: ${JSON.stringify(tournamentData, null, 2)}
 
 Always be helpful and solution-oriented in your responses.
 
+Current flight configuration: ${JSON.stringify(flightConfig, null, 2)}
 Current tournament data: ${JSON.stringify(tournamentData, null, 2)}
 `;
   }
 
   /**
-   * Get flight configuration parameters for scheduling
+   * Get centralized flight configuration parameters from Flight Configuration Overview
    */
   private static async getFlightConfigurations(eventId: string) {
     try {
-      // Try eventGameFormats first
+      console.log(`📊 Fetching centralized flight configuration for event ${eventId}...`);
+      
+      // Fetch from the centralized flight configurations endpoint
+      const response = await fetch(`http://localhost:3000/api/admin/events/${eventId}/flight-configurations`);
+      if (response.ok) {
+        const flightConfigs = await response.json();
+        if (flightConfigs && flightConfigs.length > 0) {
+          console.log('✅ Using centralized flight configuration parameters');
+          return flightConfigs.map((config: any) => ({
+            gameLength: config.gameLength || 90,
+            restPeriod: config.restPeriod || 90,
+            bufferTime: config.bufferTime || 15,
+            fieldSize: config.fieldSize || '7v7'
+          }));
+        }
+      }
+
+      // Fallback to database query if API fails
       const eventFormats = await db.query.eventGameFormats.findMany({
         where: eq(eventGameFormats.eventId, parseInt(eventId))
       });
@@ -158,17 +176,13 @@ Current tournament data: ${JSON.stringify(tournamentData, null, 2)}
         }));
       }
 
-      // Fallback to game_formats table
-      const gameFormatsData = await db.query.gameFormats.findMany({
-        where: eq(gameFormats.eventId, parseInt(eventId))
-      });
-
-      return gameFormatsData.map(format => ({
-        gameLength: format.gameLength || 90,
-        restPeriod: 90, // Default rest period
-        bufferTime: format.bufferTime || 15,
-        fieldSize: format.fieldSize || '7v7'
-      }));
+      console.warn('No flight configurations found, using defaults');
+      return [{
+        gameLength: 90,
+        restPeriod: 90,
+        bufferTime: 15,
+        fieldSize: '7v7'
+      }];
     } catch (error) {
       console.warn('Failed to load flight configurations, using defaults:', error);
       return [{
@@ -204,8 +218,8 @@ Current tournament data: ${JSON.stringify(tournamentData, null, 2)}
 
       const gameData: TournamentGame[] = existingGames.map(game => ({
         id: game.id.toString(),
-        teamA: game.homeTeamName || 'TBD',
-        teamB: game.awayTeamName || 'TBD', 
+        teamA: game.homeTeam || 'TBD',
+        teamB: game.awayTeam || 'TBD', 
         time: game.scheduledTime || game.createdAt,
         field: game.fieldName || 'TBD',
         ageGroup: game.ageGroupId?.toString() || '',
@@ -329,7 +343,6 @@ Current tournament data: ${JSON.stringify(tournamentData, null, 2)}
       await db.update(games)
         .set({
           scheduledTime: newTime,
-          fieldName: newField,
           updatedAt: new Date().toISOString()
         })
         .where(eq(games.id, parseInt(gameId)));
@@ -344,8 +357,8 @@ Current tournament data: ${JSON.stringify(tournamentData, null, 2)}
     try {
       await db.update(games)
         .set({
-          homeTeamName: teamA,
-          awayTeamName: teamB,
+          homeTeam: teamA,
+          awayTeam: teamB,
           updatedAt: new Date().toISOString()
         })
         .where(eq(games.id, parseInt(gameId)));
