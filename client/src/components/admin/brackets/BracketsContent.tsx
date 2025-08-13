@@ -5,8 +5,8 @@ import axios from "axios";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { BracketManager } from "./BracketManager";
-import { BulkBracketManager } from "./BulkBracketManager";
+import { FlightManager } from "./FlightManager";
+import { BulkFlightManager } from "./BulkFlightManager";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -56,7 +56,9 @@ export function BracketsContent() {
 
   // Get the display name for the age group - use original gender values
   const getAgeGroupDisplayName = (ageGroup: AgeGroup) => {
-    return `${ageGroup.gender} ${ageGroup.ageGroup}`;
+    const gender = ageGroup.gender || 'Unknown';
+    const ageGroupName = ageGroup.ageGroup || 'Undefined';
+    return `${gender} ${ageGroupName}`;
   };
 
   // Handle loading state
@@ -115,9 +117,9 @@ export function BracketsContent() {
   return (
     <div className="space-y-6">
       <div className="space-y-2">
-        <h2 className="text-xl font-semibold">Bracket Management</h2>
+        <h2 className="text-xl font-semibold">Flight Management</h2>
         <p className="text-muted-foreground">
-          Create brackets for each age group to allow teams to select their competitive level during registration.
+          Create flights for each age group to allow teams to select their competitive level during registration.
         </p>
       </div>
 
@@ -130,7 +132,7 @@ export function BracketsContent() {
         <TabsContent value="individual">
           <Card>
             <CardHeader>
-              <CardTitle>Individual Age Group Brackets</CardTitle>
+              <CardTitle>Individual Age Group Flights</CardTitle>
             </CardHeader>
             <CardContent>
               {/* Improved age group selector with better layout and readability */}
@@ -163,12 +165,12 @@ export function BracketsContent() {
                         {getAgeGroupDisplayName(selectedAgeGroup)} - {selectedAgeGroup.divisionCode}
                       </h3>
                       <p className="text-muted-foreground text-sm">
-                        Manage brackets for this age group
+                        Manage flights for this age group
                       </p>
                     </div>
                     
                     <ScrollArea className="h-[calc(100vh-430px)] pr-4">
-                      <BracketManager 
+                      <FlightManager 
                         ageGroupId={selectedAgeGroup.id} 
                         eventId={eventId} 
                       />
@@ -181,7 +183,7 @@ export function BracketsContent() {
         </TabsContent>
         
         <TabsContent value="bulk">
-          <BulkBracketManager />
+          <BulkFlightManager />
         </TabsContent>
       </Tabs>
     </div>

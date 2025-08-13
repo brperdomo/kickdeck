@@ -245,6 +245,7 @@ router.get('/:id/age-groups', async (req, res) => {
             birthYear: ag.birthYear,
             gender: ag.gender,
             divisionCode: ag.divisionCode,
+            seasonalScopeId: seasonalScopeId, // Link back to seasonal scope
             fieldSize: (ag.ageGroup && typeof ag.ageGroup === 'string' && ag.ageGroup.startsWith('U')) ?
               (parseInt(ag.ageGroup.substring(1)) <= 7 ? '4v4' :
                 parseInt(ag.ageGroup.substring(1)) <= 10 ? '7v7' :

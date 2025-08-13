@@ -298,6 +298,7 @@ export const eventAgeGroups = pgTable("event_age_groups", {
   birth_date_start: text("birth_date_start"),
   divisionCode: text("division_code"),
   isEligible: boolean("is_eligible").notNull().default(true),
+  seasonalScopeId: integer("seasonal_scope_id").references(() => seasonalScopes.id),
 });
 
 export const insertEventAgeGroupSchema = createInsertSchema(eventAgeGroups, {

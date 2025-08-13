@@ -25,6 +25,8 @@ import publicAgeGroupsRouter from "./routes/age-groups";  // Public age groups r
 import publicBracketsRouter from "./routes/brackets";  // Public brackets router
 import eventsRouter from "./routes/admin/events";
 import ageGroupsRouter from "./routes/admin/age-groups";
+import adminAgeGroupsDataFixRoutes from "./routes/admin/age-groups-data-fix";
+import adminAgeGroupsStatusRoutes from "./routes/admin/age-groups-status";
 import ageGroupFieldSizesRouter from "./routes/admin/age-group-field-sizes";
 // Removed problematic age group eligibility imports to fix server startup
 // Removed problematic eligibility router import
@@ -950,6 +952,8 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin', isAdmin, aiAuditRoutes); // AI Audit Trail routes
     app.use('/api/admin/events', isAdmin, feesRouter); // Mount fees router under events path - REMOVED authenticateTournamentDirector
     app.use('/api/admin/age-groups', isAdmin, ageGroupsRouter); // Add age groups router
+    app.use('/api/admin/age-groups-fix', isAdmin, adminAgeGroupsDataFixRoutes); // Age groups data fix
+    app.use('/api/admin/age-groups-status', isAdmin, adminAgeGroupsStatusRoutes); // Age groups status
     app.use('/api/admin/age-groups', isAdmin, ageGroupFieldSizesRouter); // Add field size update router
     
     // Game schedule update endpoint for drag-and-drop persistence
