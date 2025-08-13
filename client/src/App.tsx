@@ -99,7 +99,8 @@ const QuickSchedulePage = lazy(() => import("@/pages/admin/QuickSchedulePage"));
 // Master Schedule Page - consolidated scheduling interface
 const MasterSchedulePage = lazy(() => import("@/pages/admin/MasterSchedulePage"));
 
-// Removed UnifiedTournamentControlPage - consolidated into Master Schedule
+// Unified Tournament Control Page - single interface for all scheduling
+const UnifiedTournamentControlPage = lazy(() => import("@/pages/UnifiedTournamentControlPage"));
 
 // Import landing page components
 import { isMainDomain } from "@/lib/domainHelper";
@@ -432,7 +433,15 @@ function Router() {
               </Suspense>
             ) : <NotFound />}
           </Route>
-          {/* Unified control removed - functionality moved to Master Schedule */}
+          <Route path="/admin/events/:eventId/unified-control">
+            {(params) => user.isAdmin ? (
+              <Suspense fallback={<div className="flex items-center justify-center min-h-screen">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              </div>}>
+                <UnifiedTournamentControlPage />
+              </Suspense>
+            ) : <NotFound />}
+          </Route>
           <Route path="/admin/reports">
             {user.isAdmin ? <AdminDashboard initialView="reports" /> : <NotFound />}
           </Route>

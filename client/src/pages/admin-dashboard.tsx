@@ -2729,7 +2729,7 @@ function SchedulingView() {
 
         <TabsContent value="ai" className="space-y-6">
           <div className="flex justify-between items-center">
-            <h3 className="text-lg font-medium">Schedule Management & Optimization</h3>
+            <h3 className="text-lg font-medium">AI-Powered Quick Scheduling</h3>
             <div className="flex gap-2">
               <Button 
                 variant="outline"
@@ -2747,6 +2747,25 @@ function SchedulingView() {
                     Assign Brackets
                   </>
                 )}
+              </Button>
+              <Button 
+                variant="outline"
+                onClick={async () => {
+                  if (!selectedEvent) return;
+                  
+                  // Validate workflow completion before opening modal
+                  const isWorkflowValid = await validateWorkflowCompletion(selectedEvent);
+                  if (!isWorkflowValid) {
+                    showWorkflowValidationError();
+                    return;
+                  }
+                  
+                  setAiSchedulingModalOpen(true);
+                }}
+                disabled={!selectedEvent}
+              >
+                <Wand2 className="mr-2 h-4 w-4" />
+                Generate AI Schedule
               </Button>
               <Button 
                 variant="default"
@@ -2767,12 +2786,6 @@ function SchedulingView() {
           </Button>
         </div>
       </div>
-      
-      <Alert>
-        <AlertDescription>
-          AI Schedule Generation has been moved to the Master Schedule page. Use the "Schedule with AI" button there for comprehensive tournament scheduling.
-        </AlertDescription>
-      </Alert>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         <Card>

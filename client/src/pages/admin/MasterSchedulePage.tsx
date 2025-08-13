@@ -4,14 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Textarea } from '@/components/ui/textarea';
-import { useToast } from '@/hooks/use-toast';
 import { AnimatedBackground } from '@/components/ui/AnimatedBackground';
 import { 
   Calendar, Zap, Eye, Settings, ArrowRight, 
-  CheckCircle, Clock, Users, Trophy, ArrowLeft, Home, FileText, Plane, Globe,
-  Wand2, Loader2
+  CheckCircle, Clock, Users, Trophy, ArrowLeft, Home, FileText, Plane, Globe 
 } from 'lucide-react';
 import { UnifiedScheduleSetup } from '@/components/admin/scheduling/UnifiedScheduleSetup';
 import { UnifiedTournamentControlCenter } from '@/components/admin/scheduling/UnifiedTournamentControlCenter';
@@ -33,61 +29,7 @@ import FieldManagementDashboard from '@/components/admin/FieldManagementDashboar
 export default function MasterSchedulePage() {
   const { eventId } = useParams<{ eventId: string }>();
   const [, setLocation] = useLocation();
-  const [currentView, setCurrentView] = useState<'view' | 'calendar' | 'cards' | 'manage' | 'flights' | 'brackets' | 'overview' | 'workflow' | 'publish' | 'field-sorting' | 'ai-schedule'>('overview');
-  const [aiPromptOpen, setAiPromptOpen] = useState(false);
-  const [aiPrompt, setAiPrompt] = useState('');
-  const [isGeneratingAI, setIsGeneratingAI] = useState(false);
-  const { toast } = useToast();
-
-  const handleAIScheduleGeneration = async () => {
-    if (!aiPrompt.trim()) {
-      toast({
-        title: "AI Prompt Required",
-        description: "Please enter scheduling requirements for the AI",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    setIsGeneratingAI(true);
-    try {
-      const response = await fetch(`/api/admin/events/${eventId}/generate-schedule`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          useAI: true,
-          aiPrompt: aiPrompt,
-          minutesPerGame: 90,
-          breakBetweenGames: 15,
-          minRestPeriod: 90
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to generate AI schedule');
-      }
-
-      const result = await response.json();
-      
-      toast({
-        title: "AI Schedule Generated!",
-        description: `Successfully created ${result.scheduleData?.length || 0} games using flight configuration parameters`,
-      });
-      
-      setAiPromptOpen(false);
-      setAiPrompt('');
-      
-    } catch (error) {
-      console.error('AI scheduling error:', error);
-      toast({
-        title: "AI Scheduling Failed",
-        description: (error as Error)?.message || "Failed to generate schedule with AI",
-        variant: "destructive"
-      });
-    } finally {
-      setIsGeneratingAI(false);
-    }
-  };
+  const [currentView, setCurrentView] = useState<'view' | 'calendar' | 'cards' | 'manage' | 'flights' | 'brackets' | 'overview' | 'workflow' | 'publish' | 'field-sorting'>('overview');
 
   if (!eventId) {
     return <div>Event ID not found</div>;
@@ -173,16 +115,6 @@ export default function MasterSchedulePage() {
             >
               <Trophy className="h-4 w-4" />
               Overview
-            </Button>
-            
-            {/* AI Scheduling Button */}
-            <Button
-              variant="outline"
-              onClick={() => setAiPromptOpen(true)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 whitespace-nowrap backdrop-blur-sm bg-gradient-to-r from-purple-500/20 to-blue-500/20 text-purple-100 hover:from-purple-400/30 hover:to-blue-400/30 border border-purple-400/30 hover:border-purple-300/50"
-            >
-              <Zap className="h-4 w-4" />
-              Schedule with AI
             </Button>
             
             {/* Phase 1: Flight Assignment */}
@@ -457,63 +389,6 @@ export default function MasterSchedulePage() {
         </Card>
       </div>
       </div>
-
-      {/* AI Scheduling Modal */}
-      <Dialog open={aiPromptOpen} onOpenChange={setAiPromptOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Wand2 className="h-5 w-5 text-purple-500" />
-              AI-Powered Schedule Generation
-            </DialogTitle>
-          </DialogHeader>
-          
-          <div className="space-y-4">
-            <Alert>
-              <AlertDescription>
-                Describe your scheduling requirements. The AI will use your Flight Configuration Overview parameters automatically.
-              </AlertDescription>
-            </Alert>
-            
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Scheduling Requirements</label>
-              <Textarea
-                value={aiPrompt}
-                onChange={(e) => setAiPrompt(e.target.value)}
-                placeholder="Example: Create a balanced schedule for U12 teams with no back-to-back games, prioritize afternoon time slots, and ensure each team plays every other team once..."
-                className="min-h-32 resize-none"
-              />
-            </div>
-          </div>
-
-          <DialogFooter>
-            <Button 
-              variant="outline" 
-              onClick={() => setAiPromptOpen(false)}
-              disabled={isGeneratingAI}
-            >
-              Cancel
-            </Button>
-            <Button 
-              onClick={handleAIScheduleGeneration}
-              disabled={isGeneratingAI || !aiPrompt.trim()}
-              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
-            >
-              {isGeneratingAI ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Generating with AI...
-                </>
-              ) : (
-                <>
-                  <Wand2 className="mr-2 h-4 w-4" />
-                  Generate AI Schedule
-                </>
-              )}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

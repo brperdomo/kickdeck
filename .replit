@@ -43,6 +43,3 @@ task = "packager.installForAll"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "npm run dev"
-
-[agent]
-integrations = ["javascript_openai==1.0.0"]
