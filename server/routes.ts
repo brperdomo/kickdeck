@@ -146,6 +146,7 @@ import sendgridWebhookRouter from "./routes/sendgrid-webhook";
 import { fixCardDetails } from "./routes/fix-card-details";
 import gameTeamsRouter from "./routes/admin/game-teams";
 import { processDestinationCharge } from "./routes/stripe-connect-payments";
+import aiAuditRoutes from "./routes/ai-audit-routes";
 // Email service for registration emails - create placeholder service to fix build
 const sendTemplatedEmail = async (template: string, data: any) => console.log('Email service not configured');
 const sendRegistrationReceiptEmail = async (data: any) => console.log('Registration receipt email not configured');
@@ -946,6 +947,7 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/accounting-codes', isAdmin, accountingCodesRouter);
     app.use('/api/admin/seasonal-scopes', isAdmin, seasonalScopesRouter);
     app.use('/api/admin/events', isAdmin, eventsRouter); // REMOVED authenticateTournamentDirector TO ALLOW BRACKET ACCESS
+    app.use('/api/admin', isAdmin, aiAuditRoutes); // AI Audit Trail routes
     app.use('/api/admin/events', isAdmin, feesRouter); // Mount fees router under events path - REMOVED authenticateTournamentDirector
     app.use('/api/admin/age-groups', isAdmin, ageGroupsRouter); // Add age groups router
     app.use('/api/admin/age-groups', isAdmin, ageGroupFieldSizesRouter); // Add field size update router
