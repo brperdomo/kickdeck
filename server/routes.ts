@@ -319,6 +319,73 @@ export function registerRoutes(app: Express): Server {
       });
     }
   });
+  // Stripe Connect Testing Endpoints
+  // These create customers and setup intents in tournament accounts, not MatchPro account
+  app.post('/api/stripe-connect/create-setup-intent', async (req, res) => {
+    try {
+      console.log('🧪 Stripe Connect setup intent test endpoint called');
+      
+      const { teamName, email, phone, testAmount, testMode } = req.body;
+
+      if (!email || !teamName) {
+        return res.status(400).json({
+          error: 'MISSING_REQUIRED_DATA',
+          message: 'Team name and email are required'
+        });
+      }
+
+      // Import the Stripe Connect service
+      const { StripeConnectService } = await import('./services/stripe-connect-service.js');
+
+      // For testing, use a hardcoded tournament account ID
+      // In production, this would come from the event/tournament being registered for
+      const TEST_TOURNAMENT_ACCOUNT_ID = 'acct_1QUyJVP1YNWM6KJ5'; // Replace with actual test account ID
+      
+      // Step 1: Create customer in tournament's Stripe Connect account
+      console.log('👤 Creating customer in tournament account...');
+      const { customerId, accountId } = await StripeConnectService.createCustomerInTournamentAccount({
+        stripeAccountId: TEST_TOURNAMENT_ACCOUNT_ID,
+        email,
+        name: teamName,
+        phone,
+        metadata: {
+          test_mode: testMode ? 'true' : 'false',
+          test_amount: testAmount ? testAmount.toString() : '0',
+          created_for: 'stripe_connect_testing'
+        }
+      });
+
+      // Step 2: Create setup intent in tournament's Stripe Connect account
+      console.log('💳 Creating setup intent in tournament account...');
+      const { setupIntent, clientSecret } = await StripeConnectService.createSetupIntentInTournamentAccount({
+        customerId,
+        accountId,
+        metadata: {
+          team_name: teamName,
+          test_amount: testAmount ? testAmount.toString() : '0'
+        }
+      });
+
+      console.log('✅ Stripe Connect setup intent created successfully');
+
+      return res.json({
+        message: 'Setup intent created in tournament account',
+        clientSecret,
+        customerId,
+        accountId,
+        setupIntentId: setupIntent.id,
+        testMode: testMode || false
+      });
+
+    } catch (error) {
+      console.error('❌ Stripe Connect setup intent error:', error);
+      return res.status(500).json({
+        error: 'STRIPE_CONNECT_FAILED',
+        message: error.message || 'Failed to create setup intent in tournament account'
+      });
+    }
+  });
+
   const httpServer = createServer(app);
   
   try {
