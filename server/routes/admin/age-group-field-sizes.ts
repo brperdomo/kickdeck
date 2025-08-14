@@ -32,6 +32,49 @@ router.patch('/:ageGroupId/field-size', async (req, res) => {
       .where(eq(eventAgeGroups.id, parseInt(ageGroupId)));
     
     console.log(`Successfully updated age group ${ageGroupId} field size to ${fieldSize}`);
+
+    // BI-DIRECTIONAL SYNC: Update corresponding flight configuration field sizes
+    // Find all brackets/flights associated with this age group and update their game formats
+    try {
+      const { eventBrackets, gameFormats } = await import('../../../db/schema');
+      
+      const brackets = await db.query.eventBrackets.findMany({
+        where: eq(eventBrackets.ageGroupId, parseInt(ageGroupId))
+      });
+      
+      console.log(`[BI-DIRECTIONAL SYNC] Found ${brackets.length} flights for age group ${ageGroupId}`);
+      
+      for (const bracket of brackets) {
+        // Update existing game format if it exists
+        const existingFormat = await db.query.gameFormats.findFirst({
+          where: eq(gameFormats.bracketId, bracket.id)
+        });
+        
+        if (existingFormat) {
+          await db.update(gameFormats)
+            .set({ fieldSize })
+            .where(eq(gameFormats.id, existingFormat.id));
+          console.log(`[BI-DIRECTIONAL SYNC] Updated game format for flight ${bracket.id} to field size ${fieldSize}`);
+        } else {
+          // Create new game format with field size if none exists
+          const newFormatData = {
+            bracketId: bracket.id,
+            gameLength: 90, // Default
+            restPeriod: 90, // Default
+            bufferTime: 15, // Default
+            fieldSize: fieldSize,
+            maxGamesPerDay: 3, // Default
+            templateName: 'Auto-configured'
+          };
+          
+          await db.insert(gameFormats).values(newFormatData);
+          console.log(`[BI-DIRECTIONAL SYNC] Created new game format for flight ${bracket.id} with field size ${fieldSize}`);
+        }
+      }
+    } catch (syncError) {
+      console.error('Error in bi-directional sync:', syncError);
+      // Don't fail the main request if sync fails, just log the error
+    }
     
     return res.json({ 
       success: true, 

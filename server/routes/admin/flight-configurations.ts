@@ -228,6 +228,21 @@ router.patch('/events/:eventId/flight-configurations/:flightId', isAdmin, async 
       console.log(`[FLIGHT CONFIG] Updated existing game format for bracketId ${parseInt(flightId)}:`, updateData);
       console.log(`[FLIGHT CONFIG] Template name set to: "${updates.formatName}" -> "${updateData.templateName}"`);
 
+      // BI-DIRECTIONAL SYNC: Update the corresponding age group field size when flight config changes
+      if (updates.fieldSize !== undefined) {
+        const bracket = await db.query.eventBrackets.findFirst({
+          where: eq(eventBrackets.id, parseInt(flightId))
+        });
+
+        if (bracket && bracket.ageGroupId) {
+          await db.update(eventAgeGroups)
+            .set({ fieldSize: updates.fieldSize })
+            .where(eq(eventAgeGroups.id, bracket.ageGroupId));
+            
+          console.log(`[BI-DIRECTIONAL SYNC] Updated age group ${bracket.ageGroupId} field size to ${updates.fieldSize}`);
+        }
+      }
+
       // BIDIRECTIONAL SYNC: Update the corresponding event_brackets.tournament_settings
       // This ensures the scheduling engine gets the updated rest period values
       if (updates.restPeriod !== undefined) {
@@ -299,6 +314,21 @@ router.patch('/events/:eventId/flight-configurations/:flightId', isAdmin, async 
       await db.insert(gameFormats).values(newFormatData);
       console.log(`[FLIGHT CONFIG] Created new game format for bracketId ${parseInt(flightId)}:`, newFormatData);
       console.log(`[FLIGHT CONFIG] Template name set to: "${updates.formatName}" -> "${newFormatData.templateName}"`);
+
+      // BI-DIRECTIONAL SYNC: Update the corresponding age group field size for new format
+      if (updates.fieldSize !== undefined) {
+        const bracket = await db.query.eventBrackets.findFirst({
+          where: eq(eventBrackets.id, parseInt(flightId))
+        });
+
+        if (bracket && bracket.ageGroupId) {
+          await db.update(eventAgeGroups)
+            .set({ fieldSize: updates.fieldSize })
+            .where(eq(eventAgeGroups.id, bracket.ageGroupId));
+            
+          console.log(`[BI-DIRECTIONAL SYNC] Updated age group ${bracket.ageGroupId} field size to ${updates.fieldSize} for new format`);
+        }
+      }
 
       // BIDIRECTIONAL SYNC: Also update event_brackets.tournament_settings for new format
       if (updates.restPeriod !== undefined) {

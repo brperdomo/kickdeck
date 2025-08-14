@@ -12,6 +12,7 @@ Preferred communication style: Simple, everyday language.
 - ✅ **Age Groups Display Fixed**: Birth Years and Division Codes now properly display in event settings Age Group tab
 - ✅ **Terminology Conversion COMPLETE**: Renamed all "Brackets" references to "Flights" throughout admin interface
 - ✅ **Field Size Persistence BACKEND FIX COMPLETE**: Fixed critical backend API issue where field sizes weren't being returned properly - changed Drizzle query from db.query to direct .select() with explicit fieldSize mapping to ensure proper data retrieval
+- ✅ **Bi-Directional Field Size Synchronization COMPLETE**: Implemented comprehensive sync between Flight Configuration Overview and Edit Event > Age Groups - changes in either interface automatically update both game_formats and event_age_groups tables with full bidirectional data consistency
 - ✅ **System Health Verified**: All events have proper age groups, flight assignments, and team registration functionality
 
 ## System Architecture
