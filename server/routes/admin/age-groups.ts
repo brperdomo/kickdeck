@@ -30,6 +30,12 @@ router.get('/:eventId', async (req, res) => {
       .where(eq(eventAgeGroups.eventId, eventId));
 
     console.log(`Found ${existingGroups.length} existing age groups in database`);
+    
+    // DEBUG: Check if field sizes are coming from database
+    console.log('Sample age group with field size:', existingGroups[0]);
+    existingGroups.slice(0, 3).forEach(group => {
+      console.log(`DEBUG Age Group ${group.id}: ${group.ageGroup} ${group.gender} - fieldSize: "${group.fieldSize}"`);
+    });
 
     // If no age groups exist, create them using the unified generator
     if (existingGroups.length === 0) {
@@ -57,6 +63,12 @@ router.get('/:eventId', async (req, res) => {
 
     console.log(`Returning ${sortedGroups.length} age groups in unified order`);
     console.log('Age groups order:', sortedGroups.map(g => `${g.ageGroup}-${g.gender} (${g.fieldSize})`).join(', '));
+    
+    // DEBUG: Check if field sizes are preserved after sorting
+    const fieldSizeChecks = sortedGroups.filter(g => g.id === 9971 || g.id === 9972);
+    console.log('Target age groups with field sizes after sorting:', fieldSizeChecks.map(g => ({
+      id: g.id, ageGroup: g.ageGroup, gender: g.gender, fieldSize: g.fieldSize
+    })));
     
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     res.json(sortedGroups);

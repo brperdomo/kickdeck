@@ -1,0 +1,799 @@
+Navigated to https://app.matchpro.ai/admin/events/1825427780/edit
+js?libraries=places&v=beta&callback=Function.prototype:1382 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+Tda @ js?libraries=places&v=beta&callback=Function.prototype:1382
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641Understand this warning
+index-DttX83Am.js:897 Google Maps API key length: 0 characters
+index-DttX83Am.js:897 Mapbox API key length: 93 characters
+index-DttX83Am.js:897 Google Maps API already loaded
+index-DttX83Am.js:657 Current route location (Wouter): /admin/events/1825427780/edit
+index-DttX83Am.js:657 Current URL: https://app.matchpro.ai/admin/events/1825427780/edit
+index-DttX83Am.js:657 Current pathname: /admin/events/1825427780/edit
+index-DttX83Am.js:657 Current search: 
+index-DttX83Am.js:657 Fetching user with emulation token: not present
+js?libraries=places&v=beta&callback=Function.prototype:1414 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+_.B.send @ js?libraries=places&v=beta&callback=Function.prototype:1414
+Qda @ js?libraries=places&v=beta&callback=Function.prototype:1391
+Tda @ js?libraries=places&v=beta&callback=Function.prototype:1383
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641
+11Fetch finished loading: GET "<URL>".
+index-DttX83Am.js:657 User data fetched: {id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: '$2b$12$d6n1CBWgsWFm0fh77F1OX.YxDZy7/O3aLSuJOuq4QkvOtFmSit7BC', firstName: 'Bryan', …}
+index-DttX83Am.js:649 Fetch failed loading: GET "https://app.matchpro.ai/api/user".
+queryFn @ index-DttX83Am.js:649
+i @ index-DttX83Am.js:41
+f @ index-DttX83Am.js:41
+start @ index-DttX83Am.js:41
+fetch @ index-DttX83Am.js:41
+og @ index-DttX83Am.js:41
+onSubscribe @ index-DttX83Am.js:41
+subscribe @ index-DttX83Am.js:41
+(anonymous) @ index-DttX83Am.js:41
+oW @ index-DttX83Am.js:39
+SS @ index-DttX83Am.js:41
+nf @ index-DttX83Am.js:41
+BM @ index-DttX83Am.js:41
+iu @ index-DttX83Am.js:39
+she @ index-DttX83Am.js:41
+ku @ index-DttX83Am.js:41
+LW @ index-DttX83Am.js:41
+w @ index-DttX83Am.js:26
+A @ index-DttX83Am.js:26
+shared-6c705e9f1faf5882747fdac8bb6e3a38.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+(anonymous) @ shared-6c705e9f1faf5882747fdac8bb6e3a38.js:1
+e @ shared-6c705e9f1faf5882747fdac8bb6e3a38.js:1
+c @ shared-6c705e9f1faf5882747fdac8bb6e3a38.js:1
+g @ shared-6c705e9f1faf5882747fdac8bb6e3a38.js:1
+value @ shared-6c705e9f1faf5882747fdac8bb6e3a38.js:1
+value @ shared-6c705e9f1faf5882747fdac8bb6e3a38.js:1
+log @ shared-6c705e9f1faf5882747fdac8bb6e3a38.js:1
+log @ controller-with-preconnect-eb1b0b51dfd5aba41ca6d11d61d8f6b4.js:1
+e @ controller-with-preconnect-eb1b0b51dfd5aba41ca6d11d61d8f6b4.js:1
+45244 @ controller-with-preconnect-eb1b0b51dfd5aba41ca6d11d61d8f6b4.js:1
+e @ controller-with-preconnect-eb1b0b51dfd5aba41ca6d11d61d8f6b4.js:1
+(anonymous) @ controller-with-preconnect-eb1b0b51dfd5aba41ca6d11d61d8f6b4.js:1
+e.O @ controller-with-preconnect-eb1b0b51dfd5aba41ca6d11d61d8f6b4.js:1
+(anonymous) @ controller-with-preconnect-eb1b0b51dfd5aba41ca6d11d61d8f6b4.js:1
+(anonymous) @ controller-with-preconnect-eb1b0b51dfd5aba41ca6d11d61d8f6b4.js:1
+shared-6c705e9f1faf5882747fdac8bb6e3a38.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+(anonymous) @ shared-6c705e9f1faf5882747fdac8bb6e3a38.js:1
+e @ shared-6c705e9f1faf5882747fdac8bb6e3a38.js:1
+c @ shared-6c705e9f1faf5882747fdac8bb6e3a38.js:1
+g @ shared-6c705e9f1faf5882747fdac8bb6e3a38.js:1
+value @ shared-6c705e9f1faf5882747fdac8bb6e3a38.js:1
+value @ shared-6c705e9f1faf5882747fdac8bb6e3a38.js:1
+value @ controller-with-preconnect-eb1b0b51dfd5aba41ca6d11d61d8f6b4.js:1
+e @ controller-with-preconnect-eb1b0b51dfd5aba41ca6d11d61d8f6b4.js:1
+value @ controller-with-preconnect-eb1b0b51dfd5aba41ca6d11d61d8f6b4.js:1
+e @ controller-with-preconnect-eb1b0b51dfd5aba41ca6d11d61d8f6b4.js:1
+45244 @ controller-with-preconnect-eb1b0b51dfd5aba41ca6d11d61d8f6b4.js:1
+e @ controller-with-preconnect-eb1b0b51dfd5aba41ca6d11d61d8f6b4.js:1
+(anonymous) @ controller-with-preconnect-eb1b0b51dfd5aba41ca6d11d61d8f6b4.js:1
+e.O @ controller-with-preconnect-eb1b0b51dfd5aba41ca6d11d61d8f6b4.js:1
+(anonymous) @ controller-with-preconnect-eb1b0b51dfd5aba41ca6d11d61d8f6b4.js:1
+(anonymous) @ controller-with-preconnect-eb1b0b51dfd5aba41ca6d11d61d8f6b4.js:1
+index-DttX83Am.js:967 Fetched age groups: (30) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-DttX83Am.js:967 Raw event data from server: {id: 1825427780, name: 'Rise Cup', startDate: '2025-08-23', endDate: '2025-08-24', timezone: 'America/Los_Angeles', …}
+index-DttX83Am.js:967 Has branding data: #007AFF {logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-DttX83Am.js:967 Final branding data for EventForm: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-DttX83Am.js:967 Prepared event data: {id: 1825427780, name: 'Rise Cup', startDate: '2025-08-23', endDate: '2025-08-24', timezone: 'America/Los_Angeles', …}
+index-DttX83Am.js:919 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-DttX83Am.js:919 defaultValues changed, updating branding colors: {primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-DttX83Am.js:919 Fetching event age groups for event: 1825427780
+index-DttX83Am.js:919 Fetching eligibility settings for event: 1825427780
+index-DttX83Am.js:919 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-DttX83Am.js:919 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+7Failed to decode downloaded font: <URL>Understand this warning
+7OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+index-DttX83Am.js:919 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-DttX83Am.js:919 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-DttX83Am.js:919 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-DttX83Am.js:919 Event age groups loaded: (30) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+ EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+ Formatting age groups from source: {mode: 'edit', sourceData: Array(30)}
+ Processing age group: {id: 9969, name: 'U5', gender: 'Boys', flights: Array(3)}
+ DEBUG: Age group U5 (Boys) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+ FALLBACK: Applied calculated field size for U5: 4v4
+ Processing age group: {id: 9970, name: 'U5', gender: 'Girls', flights: Array(0)}
+ DEBUG: Age group U5 (Girls) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+ FALLBACK: Applied calculated field size for U5: 4v4
+ Processing age group: {id: 9986, name: 'U13', gender: 'Girls', flights: Array(0)}
+ DEBUG: Age group U13 (Girls) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+ FALLBACK: Applied calculated field size for U13: 11v11
+ Processing age group: {id: 9987, name: 'U14', gender: 'Boys', flights: Array(0)}
+ DEBUG: Age group U14 (Boys) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+ FALLBACK: Applied calculated field size for U14: 11v11
+ Processing age group: {id: 9988, name: 'U14', gender: 'Girls', flights: Array(0)}
+ DEBUG: Age group U14 (Girls) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+ FALLBACK: Applied calculated field size for U14: 11v11
+ Processing age group: {id: 9972, name: 'U6', gender: 'Girls', flights: Array(0)}
+ DEBUG: Age group U6 (Girls) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+ FALLBACK: Applied calculated field size for U6: 4v4
+index-DttX83Am.js:919 Processing age group: {id: 9971, name: 'U6', gender: 'Boys', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U6 (Boys) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U6: 4v4
+index-DttX83Am.js:919 Processing age group: {id: 9974, name: 'U7', gender: 'Girls', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U7 (Girls) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U7: 4v4
+index-DttX83Am.js:919 Processing age group: {id: 9973, name: 'U7', gender: 'Boys', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U7 (Boys) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U7: 4v4
+index-DttX83Am.js:919 Processing age group: {id: 9976, name: 'U8', gender: 'Girls', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U8 (Girls) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U8: 7v7
+index-DttX83Am.js:919 Processing age group: {id: 9975, name: 'U8', gender: 'Boys', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U8 (Boys) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U8: 7v7
+index-DttX83Am.js:919 Processing age group: {id: 9978, name: 'U9', gender: 'Girls', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U9 (Girls) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U9: 7v7
+index-DttX83Am.js:919 Processing age group: {id: 9977, name: 'U9', gender: 'Boys', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U9 (Boys) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U9: 7v7
+index-DttX83Am.js:919 Processing age group: {id: 9980, name: 'U10', gender: 'Girls', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U10 (Girls) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U10: 7v7
+index-DttX83Am.js:919 Processing age group: {id: 9979, name: 'U10', gender: 'Boys', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U10 (Boys) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U10: 7v7
+index-DttX83Am.js:919 Processing age group: {id: 9982, name: 'U11', gender: 'Girls', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U11 (Girls) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U11: 9v9
+index-DttX83Am.js:919 Processing age group: {id: 9981, name: 'U11', gender: 'Boys', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U11 (Boys) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U11: 9v9
+index-DttX83Am.js:919 Processing age group: {id: 9984, name: 'U12', gender: 'Girls', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U12 (Girls) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U12: 9v9
+index-DttX83Am.js:919 Processing age group: {id: 9983, name: 'U12', gender: 'Boys', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U12 (Boys) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U12: 9v9
+index-DttX83Am.js:919 Processing age group: {id: 9985, name: 'U13', gender: 'Boys', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U13 (Boys) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U13: 11v11
+index-DttX83Am.js:919 Processing age group: {id: 9989, name: 'U15', gender: 'Boys', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U15 (Boys) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U15: 11v11
+index-DttX83Am.js:919 Processing age group: {id: 9990, name: 'U15', gender: 'Girls', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U15 (Girls) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U15: 11v11
+index-DttX83Am.js:919 Processing age group: {id: 9991, name: 'U16', gender: 'Boys', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U16 (Boys) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U16: 11v11
+index-DttX83Am.js:919 Processing age group: {id: 9992, name: 'U16', gender: 'Girls', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U16 (Girls) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U16: 11v11
+index-DttX83Am.js:919 Processing age group: {id: 9993, name: 'U17', gender: 'Boys', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U17 (Boys) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U17: 11v11
+index-DttX83Am.js:919 Processing age group: {id: 9994, name: 'U17', gender: 'Girls', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U17 (Girls) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U17: 11v11
+index-DttX83Am.js:919 Processing age group: {id: 9995, name: 'U19', gender: 'Boys', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U19 (Boys) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U19: 11v11
+index-DttX83Am.js:919 Processing age group: {id: 9996, name: 'U19', gender: 'Girls', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U19 (Girls) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U19: 11v11
+index-DttX83Am.js:919 Processing age group: {id: 9967, name: 'U4', gender: 'Boys', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U4 (Boys) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U4: 4v4
+index-DttX83Am.js:919 Processing age group: {id: 9968, name: 'U4', gender: 'Girls', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U4 (Girls) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U4: 4v4
+index-DttX83Am.js:919 Formatted age groups: (30) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-DttX83Am.js:919 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+tinymce.min.js:16 Failed to load plugin: onboarding from url plugins/onboarding/plugin.min.js
+mE @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+Promise.catch
+n @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+q @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+RO @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+render @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+mt @ tinymce.min.js:16
+s @ tinymce.min.js:16
+executeHandlers @ tinymce.min.js:16
+i @ tinymce.min.js:16
+s @ tinymce.min.js:16
+qa @ tinymce.min.js:16
+bind @ tinymce.min.js:16
+V @ tinymce.min.js:16
+init @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:25
+o.initialise @ index-DttX83Am.js:919
+c @ index-DttX83Am.js:919
+h @ index-DttX83Am.js:919
+r @ index-DttX83Am.js:919
+o @ index-DttX83Am.js:919
+script
+nMe @ index-DttX83Am.js:919
+s @ index-DttX83Am.js:919
+d @ index-DttX83Am.js:919
+r @ index-DttX83Am.js:919
+t.componentDidMount @ index-DttX83Am.js:919
+MM @ index-DttX83Am.js:41
+$W @ index-DttX83Am.js:41
+Zme @ index-DttX83Am.js:41
+she @ index-DttX83Am.js:41
+ku @ index-DttX83Am.js:41
+BM @ index-DttX83Am.js:41
+iu @ index-DttX83Am.js:39
+(anonymous) @ index-DttX83Am.js:41
+setTimeout
+Nhe @ index-DttX83Am.js:41
+o @ index-DttX83Am.js:41
+batch @ index-DttX83Am.js:41
+sc @ index-DttX83Am.js:41
+setData @ index-DttX83Am.js:41
+onSuccess @ index-DttX83Am.js:41
+m @ index-DttX83Am.js:41
+Promise.then
+f @ index-DttX83Am.js:41
+start @ index-DttX83Am.js:41
+fetch @ index-DttX83Am.js:41
+og @ index-DttX83Am.js:41
+onSubscribe @ index-DttX83Am.js:41
+subscribe @ index-DttX83Am.js:41
+(anonymous) @ index-DttX83Am.js:41
+oW @ index-DttX83Am.js:39
+SS @ index-DttX83Am.js:41
+nf @ index-DttX83Am.js:41
+she @ index-DttX83Am.js:41
+ku @ index-DttX83Am.js:41
+BM @ index-DttX83Am.js:41
+iu @ index-DttX83Am.js:39
+(anonymous) @ index-DttX83Am.js:41
+setTimeout
+Nhe @ index-DttX83Am.js:41
+o @ index-DttX83Am.js:41
+batch @ index-DttX83Am.js:41
+sc @ index-DttX83Am.js:41
+setData @ index-DttX83Am.js:41
+onSuccess @ index-DttX83Am.js:41
+m @ index-DttX83Am.js:41
+Promise.then
+f @ index-DttX83Am.js:41
+start @ index-DttX83Am.js:41
+fetch @ index-DttX83Am.js:41
+og @ index-DttX83Am.js:41
+onSubscribe @ index-DttX83Am.js:41
+subscribe @ index-DttX83Am.js:41
+(anonymous) @ index-DttX83Am.js:41
+oW @ index-DttX83Am.js:39
+SS @ index-DttX83Am.js:41
+nf @ index-DttX83Am.js:41
+BM @ index-DttX83Am.js:41
+iu @ index-DttX83Am.js:39
+she @ index-DttX83Am.js:41
+ku @ index-DttX83Am.js:41
+LW @ index-DttX83Am.js:41
+w @ index-DttX83Am.js:26
+A @ index-DttX83Am.js:26Understand this error
+index-DttX83Am.js:919 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+3tinymce.min.js:51 Fetch finished loading: POST "https://cdn.tiny.cloud/1/wysafiugpee0xtyjdnegcq6x43osb81qje582522ekththu8/tinymce/7.9.1-173/cdn-init".
+Vn @ tinymce.min.js:51
+sendInit @ tinymce.min.js:51
+(anonymous) @ tinymce.min.js:51
+dispatch @ tinymce.min.js:16
+dispatch @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+vO @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+Promise.then
+(anonymous) @ tinymce.min.js:16
+fold @ tinymce.min.js:16
+yO @ tinymce.min.js:16
+n @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+8Invalid keyframe value for property filter: blur(-0.08136px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.16063px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.22707px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.28173px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.32564px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.3598px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.38521px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.40278px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.41343px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.41799px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.41726px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.41199px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.40286px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.39052px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.37556px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.35849px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.33982px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.31996px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.2993px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.27819px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.25693px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.23576px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.21492px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.19459px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.17493px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.15606px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.13808px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.12106px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.10507px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.09014px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.07628px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.0635px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.0518px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.04115px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.03153px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.02289px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.01521px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.00842px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.00249px)Understand this warning
+6Fetch finished loading: POST "<URL>".
+index-DttX83Am.js:967 Raw event data from server: {id: 1825427780, name: 'Rise Cup', startDate: '2025-08-23', endDate: '2025-08-24', timezone: 'America/Los_Angeles', …}
+index-DttX83Am.js:967 Has branding data: #007AFF {logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-DttX83Am.js:967 Final branding data for EventForm: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-DttX83Am.js:967 Prepared event data: {id: 1825427780, name: 'Rise Cup', startDate: '2025-08-23', endDate: '2025-08-24', timezone: 'America/Los_Angeles', …}
+index-DttX83Am.js:919 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-DttX83Am.js:919 defaultValues changed, updating branding colors: {primaryColor: '#007AFF', secondaryColor: '#34C759'}
+util.js:33 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+$Aa @ util.js:33
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1384
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1384
+setTimeout
+Tda @ js?libraries=places&v=beta&callback=Function.prototype:1384
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641Understand this warning
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+Promise.then
+S @ out-4.5.44.js:1
+y @ out-4.5.44.js:1
+E @ out-4.5.44.js:1
+e.onload @ inner.html:1
+script
+(anonymous) @ inner.html:1
+(anonymous) @ inner.html:1
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+h @ out-4.5.44.js:1
+e @ inner.html:1
+index-DttX83Am.js:919 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-DttX83Am.js:919 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-DttX83Am.js:919 Successfully saved field size 7v7 for age group 9972
+5Fetch finished loading: PATCH "<URL>".
+index-DttX83Am.js:919 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-DttX83Am.js:919 Successfully saved field size 7v7 for age group 9971
+index-DttX83Am.js:919 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-DttX83Am.js:919 Successfully saved field size 7v7 for age group 9974
+index-DttX83Am.js:919 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-DttX83Am.js:919 Successfully saved field size 7v7 for age group 9973
+index-DttX83Am.js:919 Seasonal scope debug info: {hasExistingAgeGroups: true, selectedSeasonalScopeId: null, data.seasonalScopeId: undefined, defaultValues.seasonalScopeId: null, scopeIdToSubmit: null}
+index-DttX83Am.js:919 Syncing branding settings before submit: {primaryColor: '#007AFF', secondaryColor: '#34C759', logoUrl: null, formLogoUrl: ''}
+index-DttX83Am.js:919 Logo URL being used for submission: null
+index-DttX83Am.js:967 Form data received: {name: 'Rise Cup', startDate: '2025-08-23', endDate: '2025-08-24', timezone: 'America/Los_Angeles', applicationDeadline: '2025-08-16', …}
+index-DttX83Am.js:967 Using seasonalScopeId: null
+index-DttX83Am.js:919 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-DttX83Am.js:967 Submitting event update with data: {name: 'Rise Cup', startDate: '2025-08-23', endDate: '2025-08-24', timezone: 'America/Los_Angeles', applicationDeadline: '2025-08-16', …}
+index-DttX83Am.js:967 Raw event data from server: {id: 1825427780, name: 'Rise Cup', startDate: '2025-08-23', endDate: '2025-08-24', timezone: 'America/Los_Angeles', …}
+index-DttX83Am.js:967 Has branding data: #007AFF {logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-DttX83Am.js:967 Final branding data for EventForm: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-DttX83Am.js:967 Prepared event data: {id: 1825427780, name: 'Rise Cup', startDate: '2025-08-23', endDate: '2025-08-24', timezone: 'America/Los_Angeles', …}
+index-DttX83Am.js:919 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-DttX83Am.js:919 defaultValues changed, updating branding colors: {primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-DttX83Am.js:967 Raw event data from server: {id: 1825427780, name: 'Rise Cup', startDate: '2025-08-23', endDate: '2025-08-24', timezone: 'America/Los_Angeles', …}
+index-DttX83Am.js:967 Has branding data: #007AFF {logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-DttX83Am.js:967 Final branding data for EventForm: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-DttX83Am.js:967 Prepared event data: {id: 1825427780, name: 'Rise Cup', startDate: '2025-08-23', endDate: '2025-08-24', timezone: 'America/Los_Angeles', …}
+index-DttX83Am.js:919 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-DttX83Am.js:919 defaultValues changed, updating branding colors: {primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-DttX83Am.js:919 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-DttX83Am.js:967 Fetched age groups: (30) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-DttX83Am.js:967 Raw event data from server: {id: 1825427780, name: 'Rise Cup', startDate: '2025-08-23', endDate: '2025-08-24', timezone: 'America/Los_Angeles', …}
+index-DttX83Am.js:967 Has branding data: #007AFF {logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-DttX83Am.js:967 Final branding data for EventForm: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-DttX83Am.js:967 Prepared event data: {id: 1825427780, name: 'Rise Cup', startDate: '2025-08-23', endDate: '2025-08-24', timezone: 'America/Los_Angeles', …}
+index-DttX83Am.js:919 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-DttX83Am.js:919 defaultValues changed, updating branding colors: {primaryColor: '#007AFF', secondaryColor: '#34C759'}
+Navigated to https://app.matchpro.ai/admin/events/1825427780/edit
+js?libraries=places&v=beta&callback=Function.prototype:1382 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+Tda @ js?libraries=places&v=beta&callback=Function.prototype:1382
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641Understand this warning
+js?libraries=places&v=beta&callback=Function.prototype:1414 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+_.B.send @ js?libraries=places&v=beta&callback=Function.prototype:1414
+Qda @ js?libraries=places&v=beta&callback=Function.prototype:1391
+Tda @ js?libraries=places&v=beta&callback=Function.prototype:1383
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641
+index-DttX83Am.js:897 Google Maps API key length: 0 characters
+index-DttX83Am.js:897 Mapbox API key length: 93 characters
+index-DttX83Am.js:897 Google Maps API already loaded
+index-DttX83Am.js:657 Current route location (Wouter): /admin/events/1825427780/edit
+index-DttX83Am.js:657 Current URL: https://app.matchpro.ai/admin/events/1825427780/edit
+index-DttX83Am.js:657 Current pathname: /admin/events/1825427780/edit
+index-DttX83Am.js:657 Current search: 
+index-DttX83Am.js:657 Fetching user with emulation token: not present
+9Fetch finished loading: GET "<URL>".
+index-DttX83Am.js:657 User data fetched: {id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: '$2b$12$d6n1CBWgsWFm0fh77F1OX.YxDZy7/O3aLSuJOuq4QkvOtFmSit7BC', firstName: 'Bryan', …}
+index-DttX83Am.js:649 Fetch failed loading: GET "https://app.matchpro.ai/api/user".
+queryFn @ index-DttX83Am.js:649
+i @ index-DttX83Am.js:41
+f @ index-DttX83Am.js:41
+start @ index-DttX83Am.js:41
+fetch @ index-DttX83Am.js:41
+og @ index-DttX83Am.js:41
+onSubscribe @ index-DttX83Am.js:41
+subscribe @ index-DttX83Am.js:41
+(anonymous) @ index-DttX83Am.js:41
+oW @ index-DttX83Am.js:39
+SS @ index-DttX83Am.js:41
+nf @ index-DttX83Am.js:41
+BM @ index-DttX83Am.js:41
+iu @ index-DttX83Am.js:39
+she @ index-DttX83Am.js:41
+ku @ index-DttX83Am.js:41
+LW @ index-DttX83Am.js:41
+w @ index-DttX83Am.js:26
+A @ index-DttX83Am.js:26
+index-DttX83Am.js:967 Fetched age groups: (30) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+shared-6c705e9f1faf5882747fdac8bb6e3a38.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+(anonymous) @ shared-6c705e9f1faf5882747fdac8bb6e3a38.js:1
+e @ shared-6c705e9f1faf5882747fdac8bb6e3a38.js:1
+c @ shared-6c705e9f1faf5882747fdac8bb6e3a38.js:1
+g @ shared-6c705e9f1faf5882747fdac8bb6e3a38.js:1
+value @ shared-6c705e9f1faf5882747fdac8bb6e3a38.js:1
+value @ shared-6c705e9f1faf5882747fdac8bb6e3a38.js:1
+log @ shared-6c705e9f1faf5882747fdac8bb6e3a38.js:1
+log @ controller-with-preconnect-eb1b0b51dfd5aba41ca6d11d61d8f6b4.js:1
+e @ controller-with-preconnect-eb1b0b51dfd5aba41ca6d11d61d8f6b4.js:1
+45244 @ controller-with-preconnect-eb1b0b51dfd5aba41ca6d11d61d8f6b4.js:1
+e @ controller-with-preconnect-eb1b0b51dfd5aba41ca6d11d61d8f6b4.js:1
+(anonymous) @ controller-with-preconnect-eb1b0b51dfd5aba41ca6d11d61d8f6b4.js:1
+e.O @ controller-with-preconnect-eb1b0b51dfd5aba41ca6d11d61d8f6b4.js:1
+(anonymous) @ controller-with-preconnect-eb1b0b51dfd5aba41ca6d11d61d8f6b4.js:1
+(anonymous) @ controller-with-preconnect-eb1b0b51dfd5aba41ca6d11d61d8f6b4.js:1
+shared-6c705e9f1faf5882747fdac8bb6e3a38.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+(anonymous) @ shared-6c705e9f1faf5882747fdac8bb6e3a38.js:1
+e @ shared-6c705e9f1faf5882747fdac8bb6e3a38.js:1
+c @ shared-6c705e9f1faf5882747fdac8bb6e3a38.js:1
+g @ shared-6c705e9f1faf5882747fdac8bb6e3a38.js:1
+value @ shared-6c705e9f1faf5882747fdac8bb6e3a38.js:1
+value @ shared-6c705e9f1faf5882747fdac8bb6e3a38.js:1
+value @ controller-with-preconnect-eb1b0b51dfd5aba41ca6d11d61d8f6b4.js:1
+e @ controller-with-preconnect-eb1b0b51dfd5aba41ca6d11d61d8f6b4.js:1
+value @ controller-with-preconnect-eb1b0b51dfd5aba41ca6d11d61d8f6b4.js:1
+e @ controller-with-preconnect-eb1b0b51dfd5aba41ca6d11d61d8f6b4.js:1
+45244 @ controller-with-preconnect-eb1b0b51dfd5aba41ca6d11d61d8f6b4.js:1
+e @ controller-with-preconnect-eb1b0b51dfd5aba41ca6d11d61d8f6b4.js:1
+(anonymous) @ controller-with-preconnect-eb1b0b51dfd5aba41ca6d11d61d8f6b4.js:1
+e.O @ controller-with-preconnect-eb1b0b51dfd5aba41ca6d11d61d8f6b4.js:1
+(anonymous) @ controller-with-preconnect-eb1b0b51dfd5aba41ca6d11d61d8f6b4.js:1
+(anonymous) @ controller-with-preconnect-eb1b0b51dfd5aba41ca6d11d61d8f6b4.js:1
+index-DttX83Am.js:967 Raw event data from server: {id: 1825427780, name: 'Rise Cup', startDate: '2025-08-23', endDate: '2025-08-24', timezone: 'America/Los_Angeles', …}
+index-DttX83Am.js:967 Has branding data: #007AFF {logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-DttX83Am.js:967 Final branding data for EventForm: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-DttX83Am.js:967 Prepared event data: {id: 1825427780, name: 'Rise Cup', startDate: '2025-08-23', endDate: '2025-08-24', timezone: 'America/Los_Angeles', …}
+index-DttX83Am.js:919 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-DttX83Am.js:919 defaultValues changed, updating branding colors: {primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-DttX83Am.js:919 Fetching event age groups for event: 1825427780
+index-DttX83Am.js:919 Fetching eligibility settings for event: 1825427780
+index-DttX83Am.js:919 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+edit:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+index-DttX83Am.js:919 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-DttX83Am.js:919 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-DttX83Am.js:919 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-DttX83Am.js:919 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-DttX83Am.js:919 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-DttX83Am.js:919 Event age groups loaded: (30) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-DttX83Am.js:919 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-DttX83Am.js:919 Formatting age groups from source: {mode: 'edit', sourceData: Array(30)}
+index-DttX83Am.js:919 Processing age group: {id: 9969, name: 'U5', gender: 'Boys', flights: Array(3)}
+index-DttX83Am.js:919 DEBUG: Age group U5 (Boys) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U5: 4v4
+index-DttX83Am.js:919 Processing age group: {id: 9970, name: 'U5', gender: 'Girls', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U5 (Girls) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U5: 4v4
+index-DttX83Am.js:919 Processing age group: {id: 9986, name: 'U13', gender: 'Girls', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U13 (Girls) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U13: 11v11
+index-DttX83Am.js:919 Processing age group: {id: 9987, name: 'U14', gender: 'Boys', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U14 (Boys) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U14: 11v11
+index-DttX83Am.js:919 Processing age group: {id: 9988, name: 'U14', gender: 'Girls', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U14 (Girls) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U14: 11v11
+index-DttX83Am.js:919 Processing age group: {id: 9972, name: 'U6', gender: 'Girls', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U6 (Girls) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U6: 4v4
+index-DttX83Am.js:919 Processing age group: {id: 9971, name: 'U6', gender: 'Boys', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U6 (Boys) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U6: 4v4
+index-DttX83Am.js:919 Processing age group: {id: 9974, name: 'U7', gender: 'Girls', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U7 (Girls) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U7: 4v4
+index-DttX83Am.js:919 Processing age group: {id: 9973, name: 'U7', gender: 'Boys', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U7 (Boys) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U7: 4v4
+index-DttX83Am.js:919 Processing age group: {id: 9976, name: 'U8', gender: 'Girls', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U8 (Girls) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U8: 7v7
+index-DttX83Am.js:919 Processing age group: {id: 9975, name: 'U8', gender: 'Boys', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U8 (Boys) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U8: 7v7
+index-DttX83Am.js:919 Processing age group: {id: 9978, name: 'U9', gender: 'Girls', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U9 (Girls) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U9: 7v7
+index-DttX83Am.js:919 Processing age group: {id: 9977, name: 'U9', gender: 'Boys', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U9 (Boys) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U9: 7v7
+index-DttX83Am.js:919 Processing age group: {id: 9980, name: 'U10', gender: 'Girls', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U10 (Girls) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U10: 7v7
+index-DttX83Am.js:919 Processing age group: {id: 9979, name: 'U10', gender: 'Boys', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U10 (Boys) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U10: 7v7
+index-DttX83Am.js:919 Processing age group: {id: 9982, name: 'U11', gender: 'Girls', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U11 (Girls) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U11: 9v9
+index-DttX83Am.js:919 Processing age group: {id: 9981, name: 'U11', gender: 'Boys', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U11 (Boys) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U11: 9v9
+index-DttX83Am.js:919 Processing age group: {id: 9984, name: 'U12', gender: 'Girls', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U12 (Girls) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U12: 9v9
+index-DttX83Am.js:919 Processing age group: {id: 9983, name: 'U12', gender: 'Boys', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U12 (Boys) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U12: 9v9
+index-DttX83Am.js:919 Processing age group: {id: 9985, name: 'U13', gender: 'Boys', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U13 (Boys) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U13: 11v11
+index-DttX83Am.js:919 Processing age group: {id: 9989, name: 'U15', gender: 'Boys', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U15 (Boys) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U15: 11v11
+index-DttX83Am.js:919 Processing age group: {id: 9990, name: 'U15', gender: 'Girls', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U15 (Girls) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U15: 11v11
+index-DttX83Am.js:919 Processing age group: {id: 9991, name: 'U16', gender: 'Boys', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U16 (Boys) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U16: 11v11
+index-DttX83Am.js:919 Processing age group: {id: 9992, name: 'U16', gender: 'Girls', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U16 (Girls) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U16: 11v11
+index-DttX83Am.js:919 Processing age group: {id: 9993, name: 'U17', gender: 'Boys', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U17 (Boys) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U17: 11v11
+index-DttX83Am.js:919 Processing age group: {id: 9994, name: 'U17', gender: 'Girls', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U17 (Girls) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U17: 11v11
+index-DttX83Am.js:919 Processing age group: {id: 9995, name: 'U19', gender: 'Boys', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U19 (Boys) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U19: 11v11
+index-DttX83Am.js:919 Processing age group: {id: 9996, name: 'U19', gender: 'Girls', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U19 (Girls) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U19: 11v11
+index-DttX83Am.js:919 Processing age group: {id: 9967, name: 'U4', gender: 'Boys', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U4 (Boys) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U4: 4v4
+index-DttX83Am.js:919 Processing age group: {id: 9968, name: 'U4', gender: 'Girls', flights: Array(0)}
+index-DttX83Am.js:919 DEBUG: Age group U4 (Girls) raw data: {fieldSize: undefined, field_size: undefined, finalFieldSize: undefined}
+index-DttX83Am.js:919 FALLBACK: Applied calculated field size for U4: 4v4
+index-DttX83Am.js:919 Formatted age groups: (30) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-DttX83Am.js:919 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+tinymce.min.js:16 Failed to load plugin: onboarding from url plugins/onboarding/plugin.min.js
+mE @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+Promise.catch
+n @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+q @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+RO @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+render @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+mt @ tinymce.min.js:16
+s @ tinymce.min.js:16
+executeHandlers @ tinymce.min.js:16
+i @ tinymce.min.js:16
+s @ tinymce.min.js:16
+qa @ tinymce.min.js:16
+bind @ tinymce.min.js:16
+V @ tinymce.min.js:16
+init @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:25
+o.initialise @ index-DttX83Am.js:919
+c @ index-DttX83Am.js:919
+h @ index-DttX83Am.js:919
+r @ index-DttX83Am.js:919
+o @ index-DttX83Am.js:919
+script
+nMe @ index-DttX83Am.js:919
+s @ index-DttX83Am.js:919
+d @ index-DttX83Am.js:919
+r @ index-DttX83Am.js:919
+t.componentDidMount @ index-DttX83Am.js:919
+MM @ index-DttX83Am.js:41
+$W @ index-DttX83Am.js:41
+Zme @ index-DttX83Am.js:41
+she @ index-DttX83Am.js:41
+ku @ index-DttX83Am.js:41
+BM @ index-DttX83Am.js:41
+iu @ index-DttX83Am.js:39
+(anonymous) @ index-DttX83Am.js:41
+setTimeout
+Nhe @ index-DttX83Am.js:41
+o @ index-DttX83Am.js:41
+batch @ index-DttX83Am.js:41
+sc @ index-DttX83Am.js:41
+setData @ index-DttX83Am.js:41
+onSuccess @ index-DttX83Am.js:41
+m @ index-DttX83Am.js:41
+Promise.then
+f @ index-DttX83Am.js:41
+start @ index-DttX83Am.js:41
+fetch @ index-DttX83Am.js:41
+og @ index-DttX83Am.js:41
+onSubscribe @ index-DttX83Am.js:41
+subscribe @ index-DttX83Am.js:41
+(anonymous) @ index-DttX83Am.js:41
+oW @ index-DttX83Am.js:39
+SS @ index-DttX83Am.js:41
+nf @ index-DttX83Am.js:41
+she @ index-DttX83Am.js:41
+ku @ index-DttX83Am.js:41
+BM @ index-DttX83Am.js:41
+iu @ index-DttX83Am.js:39
+(anonymous) @ index-DttX83Am.js:41
+setTimeout
+Nhe @ index-DttX83Am.js:41
+o @ index-DttX83Am.js:41
+batch @ index-DttX83Am.js:41
+sc @ index-DttX83Am.js:41
+setData @ index-DttX83Am.js:41
+onSuccess @ index-DttX83Am.js:41
+m @ index-DttX83Am.js:41
+Promise.then
+f @ index-DttX83Am.js:41
+start @ index-DttX83Am.js:41
+fetch @ index-DttX83Am.js:41
+og @ index-DttX83Am.js:41
+onSubscribe @ index-DttX83Am.js:41
+subscribe @ index-DttX83Am.js:41
+(anonymous) @ index-DttX83Am.js:41
+oW @ index-DttX83Am.js:39
+SS @ index-DttX83Am.js:41
+nf @ index-DttX83Am.js:41
+BM @ index-DttX83Am.js:41
+iu @ index-DttX83Am.js:39
+she @ index-DttX83Am.js:41
+ku @ index-DttX83Am.js:41
+LW @ index-DttX83Am.js:41
+w @ index-DttX83Am.js:26
+A @ index-DttX83Am.js:26Understand this error
+3tinymce.min.js:51 Fetch finished loading: POST "https://cdn.tiny.cloud/1/wysafiugpee0xtyjdnegcq6x43osb81qje582522ekththu8/tinymce/7.9.1-173/cdn-init".
+Vn @ tinymce.min.js:51
+sendInit @ tinymce.min.js:51
+(anonymous) @ tinymce.min.js:51
+dispatch @ tinymce.min.js:16
+dispatch @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+vO @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+Promise.then
+(anonymous) @ tinymce.min.js:16
+fold @ tinymce.min.js:16
+yO @ tinymce.min.js:16
+n @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+8Invalid keyframe value for property filter: blur(-0.08136px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.16063px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.22707px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.28173px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.32564px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.3598px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.38521px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.40278px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.41343px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.41799px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.41726px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.41199px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.40286px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.39052px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.37556px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.35849px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.33982px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.31996px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.2993px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.27819px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.25693px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.23576px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.21492px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.19459px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.17493px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.15606px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.13808px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.12106px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.10507px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.09014px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.07628px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.0635px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.0518px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.04115px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.03153px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.02289px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.01521px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.00842px)Understand this warning
+8Invalid keyframe value for property filter: blur(-0.00249px)Understand this warning
+index-DttX83Am.js:967 Raw event data from server: {id: 1825427780, name: 'Rise Cup', startDate: '2025-08-23', endDate: '2025-08-24', timezone: 'America/Los_Angeles', …}
+index-DttX83Am.js:967 Has branding data: #007AFF {logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-DttX83Am.js:967 Final branding data for EventForm: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-DttX83Am.js:967 Prepared event data: {id: 1825427780, name: 'Rise Cup', startDate: '2025-08-23', endDate: '2025-08-24', timezone: 'America/Los_Angeles', …}
+index-DttX83Am.js:919 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-DttX83Am.js:919 defaultValues changed, updating branding colors: {primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-DttX83Am.js:49 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap
+v0 @ index-DttX83Am.js:49
+(anonymous) @ index-DttX83Am.js:49
+SS @ index-DttX83Am.js:41
+nf @ index-DttX83Am.js:41
+she @ index-DttX83Am.js:41
+ku @ index-DttX83Am.js:41
+BM @ index-DttX83Am.js:41
+iu @ index-DttX83Am.js:39
+(anonymous) @ index-DttX83Am.js:41Understand this warning
+index-DttX83Am.js:49 OTS parsing error: invalid sfntVersion: 791289955
+v0 @ index-DttX83Am.js:49
+(anonymous) @ index-DttX83Am.js:49
+SS @ index-DttX83Am.js:41
+nf @ index-DttX83Am.js:41
+she @ index-DttX83Am.js:41
+ku @ index-DttX83Am.js:41
+BM @ index-DttX83Am.js:41
+iu @ index-DttX83Am.js:39
+(anonymous) @ index-DttX83Am.js:41Understand this warning
+util.js:33 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+$Aa @ util.js:33
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1384
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1384
+setTimeout
+Tda @ js?libraries=places&v=beta&callback=Function.prototype:1384
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641Understand this warning
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+Promise.then
+S @ out-4.5.44.js:1
+y @ out-4.5.44.js:1
+E @ out-4.5.44.js:1
+e.onload @ inner.html:1
+script
+(anonymous) @ inner.html:1
+(anonymous) @ inner.html:1
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".

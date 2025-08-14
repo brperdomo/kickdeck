@@ -11,7 +11,7 @@ Preferred communication style: Simple, everyday language.
 - ✅ **Flight Selection Verification**: Confirmed team registration flow working with 337+ teams successfully selecting flights
 - ✅ **Age Groups Display Fixed**: Birth Years and Division Codes now properly display in event settings Age Group tab
 - ✅ **Terminology Conversion COMPLETE**: Renamed all "Brackets" references to "Flights" throughout admin interface
-- ✅ **Field Size Persistence Fix COMPLETE**: Fixed field size updates not persisting on page refresh - EventForm now uses actual database values instead of fallback calculations
+- ✅ **Field Size Persistence BACKEND FIX COMPLETE**: Fixed critical backend API issue where field sizes weren't being returned properly - changed Drizzle query from db.query to direct .select() with explicit fieldSize mapping to ensure proper data retrieval
 - ✅ **System Health Verified**: All events have proper age groups, flight assignments, and team registration functionality
 
 ## System Architecture
