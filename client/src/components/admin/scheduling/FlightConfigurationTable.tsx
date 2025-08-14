@@ -40,14 +40,7 @@ interface EditingState {
   value: string | number;
 }
 
-const formatOptions = [
-  { value: 'group_of_4', label: '4-Team Single Bracket' },
-  { value: 'group_of_6', label: '6-Team Crossover Brackets' },
-  { value: 'group_of_8', label: '8-Team Dual Brackets' },
-  { value: 'round_robin', label: 'Round Robin' },
-  { value: 'single_elimination', label: 'Single Elimination' },
-  { value: 'double_elimination', label: 'Double Elimination' },
-];
+// Format options will be fetched dynamically from Format Settings templates
 
 const fieldSizeOptions = [
   { value: '3v3', label: '3v3' },
@@ -64,6 +57,17 @@ export function FlightConfigurationTable({ eventId }: { eventId: string }) {
   const [showReadyOnly, setShowReadyOnly] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Fetch dynamic format templates from Format Settings
+  const { data: formatTemplates } = useQuery({
+    queryKey: ['format-templates'],
+    queryFn: async () => {
+      const response = await fetch('/api/admin/format-templates');
+      if (!response.ok) throw new Error('Failed to fetch format templates');
+      const data = await response.json();
+      return data.templates || [];
+    },
+  });
 
   const { data: allFlights, isLoading } = useQuery({
     queryKey: ['flight-configurations', eventId],
@@ -104,6 +108,26 @@ export function FlightConfigurationTable({ eventId }: { eventId: string }) {
   const readyFlights = useMemo(() => {
     return allFlights?.filter(flight => (flight.status === 'ready' || flight.status === 'scheduled') && flight.teamCount > 0) || [];
   }, [allFlights]);
+
+  // Create format options from dynamic templates
+  const formatOptions = useMemo(() => {
+    if (!formatTemplates || formatTemplates.length === 0) {
+      // Fallback to basic options if templates not loaded
+      return [
+        { value: 'group_of_4', label: '4-Team Single Bracket' },
+        { value: 'group_of_6', label: '6-Team Crossover Brackets' },
+        { value: 'group_of_8', label: '8-Team Dual Brackets' },
+        { value: 'round_robin', label: 'Round Robin' },
+        { value: 'single_elimination', label: 'Single Elimination' },
+        { value: 'double_elimination', label: 'Double Elimination' },
+      ];
+    }
+    
+    return formatTemplates.map((template: { name: string; id: string }) => ({
+      value: template.name, // Use template name as value
+      label: template.name  // Use template name as label
+    }));
+  }, [formatTemplates]);
 
   const updateFlightMutation = useMutation({
     mutationFn: async ({ flightId, field, value }: { flightId: string; field: string; value: string | number }) => {
