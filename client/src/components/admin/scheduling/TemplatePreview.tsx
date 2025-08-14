@@ -153,20 +153,20 @@ export function TemplatePreview({ template }: TemplatePreviewProps) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="flex-1">
+        <Button variant="outline" size="sm" className="min-w-[75px]">
           <Eye className="h-3 w-3 mr-1" />
           Preview
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-4xl max-h-[80vh] overflow-hidden">
-        <DialogHeader>
+      <DialogContent className="max-w-4xl max-h-[85vh] overflow-hidden flex flex-col">
+        <DialogHeader className="flex-shrink-0">
           <DialogTitle className="flex items-center gap-2">
             {getBracketTypeIcon(template.bracketStructure)}
             {template.name} - Tournament Preview
           </DialogTitle>
         </DialogHeader>
         
-        <div className="space-y-6 overflow-y-auto pr-2">
+        <div className="space-y-6 flex-1 overflow-y-auto pr-2">
           {/* Template Overview */}
           <Card>
             <CardHeader className="pb-3">
@@ -262,7 +262,9 @@ export function TemplatePreview({ template }: TemplatePreviewProps) {
                             variant="secondary" 
                             className={getGameTypeColor(game.gameType, game.isPlayoff)}
                           >
-                            {game.gameType.replace('_', ' ')}
+                            {game.gameType === 'pool_play' ? 'Pool Play' : 
+                             game.gameType === 'third_place' ? 'Third Place' :
+                             game.gameType.charAt(0).toUpperCase() + game.gameType.slice(1)}
                           </Badge>
                         </div>
                         

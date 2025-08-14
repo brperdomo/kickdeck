@@ -137,6 +137,9 @@ function createTeamMapping(teams: Team[], template: MatchupTemplate): Record<str
       
     case 'dual':
       // Dual brackets: A1, A2, A3, A4, B1, B2, B3, B4
+      // CRITICAL: This mapping MUST align with Bracket Management team assignments
+      // Teams assigned to "Bracket A" in UI become A1, A2, A3, A4
+      // Teams assigned to "Bracket B" in UI become B1, B2, B3, B4
       const midpoint = Math.ceil(teams.length / 2);
       const bracketA = teams.slice(0, midpoint);
       const bracketB = teams.slice(midpoint);

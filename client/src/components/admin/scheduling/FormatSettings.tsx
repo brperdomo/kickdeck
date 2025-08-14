@@ -459,13 +459,13 @@ export function FormatSettings({ eventId }: FormatSettingsProps) {
               <Separator />
 
               {/* Actions */}
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-1">
                 <TemplatePreview template={template} />
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => handleEdit(template)}
-                  className="flex-1"
+                  className="min-w-[60px]"
                 >
                   <Edit className="h-3 w-3 mr-1" />
                   Edit
@@ -475,6 +475,7 @@ export function FormatSettings({ eventId }: FormatSettingsProps) {
                   size="sm"
                   onClick={() => cloneTemplateMutation.mutate(template.id)}
                   disabled={cloneTemplateMutation.isPending}
+                  className="min-w-[65px]"
                 >
                   <Copy className="h-3 w-3 mr-1" />
                   Clone
@@ -483,6 +484,7 @@ export function FormatSettings({ eventId }: FormatSettingsProps) {
                   variant="outline"
                   size="sm"
                   onClick={() => exportTemplate(template)}
+                  className="min-w-[70px]"
                 >
                   <Download className="h-3 w-3 mr-1" />
                   Export
