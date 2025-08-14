@@ -299,10 +299,24 @@ export async function findBestTemplate(
     return null;
   }
 
-  // If preferred format specified, try to match
+  // CORRECTED: Proper distinction between dual brackets and crossplay
   if (preferredFormat) {
+    // Map user terms to correct template structures
+    let searchFormat = preferredFormat;
+    
+    // Fix the crossplay/dual bracket confusion
+    if (preferredFormat === 'crossplay' && teamCount === 8) {
+      // 8-team "crossplay" usually means dual brackets with championship
+      searchFormat = 'dual';
+      console.log(`[Template Correction] 8-team crossplay request → searching for dual brackets`);
+    } else if (preferredFormat === 'crossover' && teamCount === 6) {
+      // 6-team crossover is true crossplay
+      searchFormat = 'crossover';
+      console.log(`[Template Correction] 6-team crossover → true crossplay format`);
+    }
+    
     const preferred = templates.find(t => 
-      t.bracketStructure === preferredFormat || 
+      t.bracketStructure === searchFormat || 
       t.name.toLowerCase().includes(preferredFormat.toLowerCase())
     );
     if (preferred) {
