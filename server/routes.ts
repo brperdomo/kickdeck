@@ -42,6 +42,7 @@ import feeAdjustmentsRouter from "./routes/admin/fee-adjustments";
 import gameMetadataRouter from "./routes/admin/game-metadata";
 import gameFormatsRouter from "./routes/admin/game-formats";
 import matchupTemplatesRouter from "./routes/admin/matchup-templates";
+import templateVerificationRouter from "./routes/admin/template-verification";
 import bracketCreationSqlRouter from "./routes/admin/bracket-creation";
 import bracketCreationFixedRouter from "./routes/admin/bracket-creation-fixed";
 import bracketSubdivisionRouter from "./routes/admin/bracket-subdivision";
@@ -5703,6 +5704,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
     
     // Matchup Templates Management
     app.use('/api/admin', isAdmin, matchupTemplatesRouter);
+    app.use('/api/admin', isAdmin, templateVerificationRouter);
     
     // Member team management routes
     app.use('/api/member-teams', memberTeamManagementRouter);

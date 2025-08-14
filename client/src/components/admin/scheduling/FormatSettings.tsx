@@ -47,6 +47,7 @@ import {
   Trophy,
   ArrowRight,
 } from 'lucide-react';
+import { TemplatePreview } from './TemplatePreview';
 
 interface Matchup {
   home: string;
@@ -459,6 +460,7 @@ export function FormatSettings({ eventId }: FormatSettingsProps) {
 
               {/* Actions */}
               <div className="flex items-center gap-2">
+                <TemplatePreview template={template} />
                 <Button
                   variant="outline"
                   size="sm"
