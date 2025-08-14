@@ -69,6 +69,18 @@ export function FlightConfigurationTable({ eventId }: { eventId: string }) {
     },
   });
 
+  // Function to get format options filtered by team count
+  const getFormatOptionsForFlight = (teamCount: number) => {
+    if (!formatTemplates) return [];
+    
+    return formatTemplates
+      .filter((template: any) => template.teamCount === teamCount)
+      .map((template: any) => ({
+        value: template.name,
+        label: template.name
+      }));
+  };
+
   const { data: allFlights, isLoading } = useQuery({
     queryKey: ['flight-configurations', eventId],
     queryFn: async () => {
@@ -109,18 +121,7 @@ export function FlightConfigurationTable({ eventId }: { eventId: string }) {
     return allFlights?.filter(flight => (flight.status === 'ready' || flight.status === 'scheduled') && flight.teamCount > 0) || [];
   }, [allFlights]);
 
-  // Create format options EXCLUSIVELY from dynamic templates - NO HARDCODED FALLBACKS
-  const formatOptions = useMemo(() => {
-    // CRITICAL: Only show templates from Format Settings - no hardcoded options ever
-    if (!formatTemplates || formatTemplates.length === 0) {
-      return []; // Empty array if no templates - forces user to create templates first
-    }
-    
-    return formatTemplates.map((template: { name: string; id: string }) => ({
-      value: template.name, // Use template name as value
-      label: template.name  // Use template name as label
-    }));
-  }, [formatTemplates]);
+  // Format options are now dynamically generated per flight based on team count
 
   const updateFlightMutation = useMutation({
     mutationFn: async ({ flightId, field, value }: { flightId: string; field: string; value: string | number }) => {
@@ -641,7 +642,7 @@ export function FlightConfigurationTable({ eventId }: { eventId: string }) {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            {formatOptions.map((option: { value: string; label: string }) => (
+                            {getFormatOptionsForFlight(flight.teamCount).map((option: { value: string; label: string }) => (
                               <SelectItem key={option.value} value={option.value}>
                                 {option.label}
                               </SelectItem>
