@@ -1,0 +1,264 @@
+
+not available
+﻿
+index-Dc_eIh5D.js:919 EventForm initializing with branding values: 
+{logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+tinymce.min.js:16 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap
+tinymce.min.js:16 OTS parsing error: invalid sfntVersion: 791289955
+index-Dc_eIh5D.js:919 Successfully saved field size 7v7 for age group 9972
+index-Dc_eIh5D.js:919 Fetch finished loading: PATCH "https://app.matchpro.ai/api/admin/age-groups/9972/field-size".
+index-Dc_eIh5D.js:919 EventForm initializing with branding values: 
+{logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+tinymce.min.js:16 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap
+tinymce.min.js:16 OTS parsing error: invalid sfntVersion: 791289955
+index-Dc_eIh5D.js:919 Successfully saved field size 7v7 for age group 9971
+index-Dc_eIh5D.js:919 Fetch finished loading: PATCH "https://app.matchpro.ai/api/admin/age-groups/9971/field-size".
+onValueChange	@	index-Dc_eIh5D.js:919
+(anonymous)	@	index-Dc_eIh5D.js:49
+j	@	index-Dc_eIh5D.js:703
+(anonymous)	@	index-Dc_eIh5D.js:703
+(anonymous)	@	index-Dc_eIh5D.js:49
+Nue	@	index-Dc_eIh5D.js:38
+Cue	@	index-Dc_eIh5D.js:38
+Eue	@	index-Dc_eIh5D.js:38
+dM	@	index-Dc_eIh5D.js:38
+q7	@	index-Dc_eIh5D.js:38
+(anonymous)	@	index-Dc_eIh5D.js:38
+yO	@	index-Dc_eIh5D.js:41
+p7	@	index-Dc_eIh5D.js:38
+N2	@	index-Dc_eIh5D.js:38
+H4	@	index-Dc_eIh5D.js:38
+Uue	@	index-Dc_eIh5D.js:38
+index-Dc_eIh5D.js:919 Seasonal scope debug info: 
+{hasExistingAgeGroups: true, selectedSeasonalScopeId: null, data.seasonalScopeId: undefined, defaultValues.seasonalScopeId: null, scopeIdToSubmit: null}
+index-Dc_eIh5D.js:919 Syncing branding settings before submit: 
+{primaryColor: '#007AFF', secondaryColor: '#34C759', logoUrl: null, formLogoUrl: ''}
+index-Dc_eIh5D.js:919 Logo URL being used for submission: null
+index-Dc_eIh5D.js:967 Form data received: 
+{name: 'Rise Cup', startDate: '2025-08-23', endDate: '2025-08-24', timezone: 'America/Los_Angeles', applicationDeadline: '2025-08-16', …}
+index-Dc_eIh5D.js:967 Using seasonalScopeId: null
+index-Dc_eIh5D.js:919 EventForm initializing with branding values: 
+{logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-Dc_eIh5D.js:967 Submitting event update with data: 
+{name: 'Rise Cup', startDate: '2025-08-23', endDate: '2025-08-24', timezone: 'America/Los_Angeles', applicationDeadline: '2025-08-16', …}
+index-Dc_eIh5D.js:967 Raw event data from server: 
+{id: 1825427780, name: 'Rise Cup', startDate: '2025-08-23', endDate: '2025-08-24', timezone: 'America/Los_Angeles', …}
+index-Dc_eIh5D.js:967 Has branding data: #007AFF 
+{logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-Dc_eIh5D.js:967 Final branding data for EventForm: 
+{logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-Dc_eIh5D.js:967 Prepared event data: 
+{id: 1825427780, name: 'Rise Cup', startDate: '2025-08-23', endDate: '2025-08-24', timezone: 'America/Los_Angeles', …}
+index-Dc_eIh5D.js:919 EventForm initializing with branding values: 
+{logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-Dc_eIh5D.js:919 defaultValues changed, updating branding colors: 
+{primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-Dc_eIh5D.js:967 Fetch finished loading: PATCH "https://app.matchpro.ai/api/admin/events/1825427780".
+index-Dc_eIh5D.js:967 Raw event data from server: 
+{id: 1825427780, name: 'Rise Cup', startDate: '2025-08-23', endDate: '2025-08-24', timezone: 'America/Los_Angeles', …}
+index-Dc_eIh5D.js:967 Has branding data: #007AFF 
+{logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-Dc_eIh5D.js:967 Final branding data for EventForm: 
+{logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-Dc_eIh5D.js:967 Prepared event data: 
+{id: 1825427780, name: 'Rise Cup', startDate: '2025-08-23', endDate: '2025-08-24', timezone: 'America/Los_Angeles', …}
+index-Dc_eIh5D.js:919 EventForm initializing with branding values: 
+{logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-Dc_eIh5D.js:919 defaultValues changed, updating branding colors: 
+{primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-Dc_eIh5D.js:919 EventForm initializing with branding values: 
+{logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-Dc_eIh5D.js:967 Fetch finished loading: GET "https://app.matchpro.ai/api/admin/events/1825427780/age-groups".
+index-Dc_eIh5D.js:967 Fetched age groups: 
+(30) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+0
+: 
+{id: 9969, name: 'U5', gender: 'Boys', flights: Array(3)}
+1
+: 
+{id: 9970, name: 'U5', gender: 'Girls', flights: Array(0)}
+2
+: 
+{id: 9986, name: 'U13', gender: 'Girls', flights: Array(0)}
+3
+: 
+{id: 9987, name: 'U14', gender: 'Boys', flights: Array(0)}
+4
+: 
+{id: 9988, name: 'U14', gender: 'Girls', flights: Array(0)}
+5
+: 
+{id: 9974, name: 'U7', gender: 'Girls', flights: Array(0)}
+6
+: 
+{id: 9973, name: 'U7', gender: 'Boys', flights: Array(0)}
+7
+: 
+{id: 9972, name: 'U6', gender: 'Girls', flights: Array(0)}
+8
+: 
+{id: 9971, name: 'U6', gender: 'Boys', flights: Array(0)}
+9
+: 
+{id: 9976, name: 'U8', gender: 'Girls', flights: Array(0)}
+10
+: 
+{id: 9975, name: 'U8', gender: 'Boys', flights: Array(0)}
+11
+: 
+{id: 9978, name: 'U9', gender: 'Girls', flights: Array(0)}
+12
+: 
+{id: 9977, name: 'U9', gender: 'Boys', flights: Array(0)}
+13
+: 
+flights
+: 
+[]
+gender
+: 
+"Girls"
+id
+: 
+9980
+name
+: 
+"U10"
+[[Prototype]]
+: 
+Object
+14
+: 
+{id: 9979, name: 'U10', gender: 'Boys', flights: Array(0)}
+15
+: 
+{id: 9982, name: 'U11', gender: 'Girls', flights: Array(0)}
+16
+: 
+{id: 9981, name: 'U11', gender: 'Boys', flights: Array(0)}
+17
+: 
+{id: 9984, name: 'U12', gender: 'Girls', flights: Array(0)}
+18
+: 
+{id: 9983, name: 'U12', gender: 'Boys', flights: Array(0)}
+19
+: 
+{id: 9985, name: 'U13', gender: 'Boys', flights: Array(0)}
+20
+: 
+{id: 9989, name: 'U15', gender: 'Boys', flights: Array(0)}
+21
+: 
+{id: 9990, name: 'U15', gender: 'Girls', flights: Array(0)}
+22
+: 
+{id: 9991, name: 'U16', gender: 'Boys', flights: Array(0)}
+23
+: 
+{id: 9992, name: 'U16', gender: 'Girls', flights: Array(0)}
+24
+: 
+{id: 9993, name: 'U17', gender: 'Boys', flights: Array(0)}
+25
+: 
+{id: 9994, name: 'U17', gender: 'Girls', flights: Array(0)}
+26
+: 
+{id: 9995, name: 'U19', gender: 'Boys', flights: Array(0)}
+27
+: 
+{id: 9996, name: 'U19', gender: 'Girls', flights: Array(0)}
+28
+: 
+{id: 9967, name: 'U4', gender: 'Boys', flights: Array(0)}
+29
+: 
+{id: 9968, name: 'U4', gender: 'Girls', flights: Array(0)}
+length
+: 
+30
+[[Prototype]]
+: 
+Array(0)
+index-Dc_eIh5D.js:967 Raw event data from server: 
+{id: 1825427780, name: 'Rise Cup', startDate: '2025-08-23', endDate: '2025-08-24', timezone: 'America/Los_Angeles', …}
+index-Dc_eIh5D.js:967 Has branding data: #007AFF 
+{logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-Dc_eIh5D.js:967 Final branding data for EventForm: 
+{logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-Dc_eIh5D.js:967 Prepared event data: 
+{id: 1825427780, name: 'Rise Cup', startDate: '2025-08-23', endDate: '2025-08-24', timezone: 'America/Los_Angeles', …}
+index-Dc_eIh5D.js:919 EventForm initializing with branding values: 
+{logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-Dc_eIh5D.js:919 defaultValues changed, updating branding colors: 
+{primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-Dc_eIh5D.js:967 Fetch finished loading: GET "https://app.matchpro.ai/api/admin/events/1825427780/edit".
+index-Dc_eIh5D.js:967 Raw event data from server: 
+{id: 1825427780, name: 'Rise Cup', startDate: '2025-08-23', endDate: '2025-08-24', timezone: 'America/Los_Angeles', …}
+index-Dc_eIh5D.js:967 Has branding data: #007AFF 
+{logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-Dc_eIh5D.js:967 Final branding data for EventForm: 
+{logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-Dc_eIh5D.js:967 Prepared event data: 
+{id: 1825427780, name: 'Rise Cup', startDate: '2025-08-23', endDate: '2025-08-24', timezone: 'America/Los_Angeles', …}
+index-Dc_eIh5D.js:919 EventForm initializing with branding values: 
+{logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-Dc_eIh5D.js:919 defaultValues changed, updating branding colors: 
+{primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-Dc_eIh5D.js:919 EventForm initializing with branding values: 
+{logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-Dc_eIh5D.js:967 Raw event data from server: 
+{id: 1825427780, name: 'Rise Cup', startDate: '2025-08-23', endDate: '2025-08-24', timezone: 'America/Los_Angeles', …}
+index-Dc_eIh5D.js:967 Has branding data: #007AFF 
+{logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-Dc_eIh5D.js:967 Final branding data for EventForm: 
+{logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-Dc_eIh5D.js:967 Prepared event data: 
+{id: 1825427780, name: 'Rise Cup', startDate: '2025-08-23', endDate: '2025-08-24', timezone: 'America/Los_Angeles', …}
+index-Dc_eIh5D.js:919 EventForm initializing with branding values: 
+{logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-Dc_eIh5D.js:919 defaultValues changed, updating branding colors: 
+{primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-Dc_eIh5D.js:919 EventForm initializing with branding values: 
+{logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-Dc_eIh5D.js:967 Raw event data from server: 
+{id: 1825427780, name: 'Rise Cup', startDate: '2025-08-23', endDate: '2025-08-24', timezone: 'America/Los_Angeles', …}
+index-Dc_eIh5D.js:967 Has branding data: #007AFF 
+{logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-Dc_eIh5D.js:967 Final branding data for EventForm: 
+{logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-Dc_eIh5D.js:967 Prepared event data: 
+{id: 1825427780, name: 'Rise Cup', startDate: '2025-08-23', endDate: '2025-08-24', timezone: 'America/Los_Angeles', …}
+index-Dc_eIh5D.js:919 EventForm initializing with branding values: 
+{logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-Dc_eIh5D.js:919 defaultValues changed, updating branding colors: 
+{primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-Dc_eIh5D.js:919 EventForm initializing with branding values: 
+{logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-Dc_eIh5D.js:919 Seasonal scope debug info: 
+{hasExistingAgeGroups: true, selectedSeasonalScopeId: null, data.seasonalScopeId: undefined, defaultValues.seasonalScopeId: null, scopeIdToSubmit: null}
+index-Dc_eIh5D.js:919 Syncing branding settings before submit: 
+{primaryColor: '#007AFF', secondaryColor: '#34C759', logoUrl: null, formLogoUrl: ''}
+index-Dc_eIh5D.js:919 Logo URL being used for submission: null
+index-Dc_eIh5D.js:967 Form data received: 
+{name: 'Rise Cup', startDate: '2025-08-23', endDate: '2025-08-24', timezone: 'America/Los_Angeles', applicationDeadline: '2025-08-16', …}
+index-Dc_eIh5D.js:967 Using seasonalScopeId: null
+index-Dc_eIh5D.js:919 EventForm initializing with branding values: 
+{logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-Dc_eIh5D.js:967 Submitting event update with data: 
+{name: 'Rise Cup', startDate: '2025-08-23', endDate: '2025-08-24', timezone: 'America/Los_Angeles', applicationDeadline: '2025-08-16', …}
+index-Dc_eIh5D.js:967 Raw event data from server: 
+{id: 1825427780, name: 'Rise Cup', startDate: '2025-08-23', endDate: '2025-08-24', timezone: 'America/Los_Angeles', …}
+index-Dc_eIh5D.js:967 Has branding data: #007AFF 
+{logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-Dc_eIh5D.js:967 Final branding data for EventForm: 
+{logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-Dc_eIh5D.js:967 Prepared event data: 
+{id: 1825427780, name: 'Rise Cup', startDate: '2025-08-23', endDate: '2025-08-24', timezone: 'America/Los_Angeles', …}
+index-Dc_eIh5D.js:919 EventForm initializing with branding values: 
+{logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-Dc_eIh5D.js:919 defaultValues changed, updating branding colors: 
+{primaryColor: '#007AFF', secondaryColor: '#34C759'}
+index-Dc_eIh5D.js:967 Fetch finished loading: PATCH "https://app.matchpro.ai/api/admin/events/1825427780".
+﻿
