@@ -76,22 +76,18 @@ export function TemplatePreview({ template }: TemplatePreviewProps) {
       let round = 1;
       let isPlayoff = false;
       
-      // Check if this is near the end and could be playoff
+      // Determine if this is the final game based on playoff flag
       const isLastGame = index === template.matchupPattern.length - 1;
-      const isSecondToLastGame = index === template.matchupPattern.length - 2;
       
       if (template.hasPlayoffGame && isLastGame) {
         gameType = 'final';
-        round = Math.ceil(template.matchupPattern.length / (template.teamCount / 2));
+        round = 2; // Final is always round 2
         isPlayoff = true;
-      } else if (template.hasPlayoffGame && isSecondToLastGame && template.matchupPattern.length > template.teamCount) {
-        gameType = 'third_place';
-        round = Math.ceil(template.matchupPattern.length / (template.teamCount / 2));
-        isPlayoff = true;
-      } else if (home.includes('Winner') || away.includes('Winner') || home.includes('Pool') || away.includes('Pool')) {
-        gameType = 'knockout';
-        round = 2;
-        isPlayoff = true;
+      } else {
+        // All other games are pool games
+        gameType = 'pool_play';
+        round = 1;
+        isPlayoff = false;
       }
       
       games.push({
@@ -145,9 +141,8 @@ export function TemplatePreview({ template }: TemplatePreviewProps) {
   };
 
   const getRoundName = (round: number, totalRounds: number) => {
-    if (round === totalRounds && template.hasPlayoffGame) return 'Final Round';
-    if (round === totalRounds - 1 && template.hasPlayoffGame) return 'Semifinals';
-    return `Round ${round}`;
+    if (round === totalRounds && template.hasPlayoffGame) return 'Final';
+    return 'Pool Games';
   };
 
   return (
@@ -262,9 +257,7 @@ export function TemplatePreview({ template }: TemplatePreviewProps) {
                             variant="secondary" 
                             className={getGameTypeColor(game.gameType, game.isPlayoff)}
                           >
-                            {game.gameType === 'pool_play' ? 'Pool Play' : 
-                             game.gameType === 'third_place' ? 'Third Place' :
-                             game.gameType.charAt(0).toUpperCase() + game.gameType.slice(1)}
+                            {game.gameType === 'final' ? 'Final' : 'Pool Play'}
                           </Badge>
                         </div>
                         
