@@ -8893,6 +8893,14 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         console.log(`Applied eligibility settings: ${eligibilityMap.size} custom settings found`);
         console.log(`Age groups order: ${sortedGroups.slice(0, 6).map(g => `${g.ageGroup}-${g.gender}`).join(', ')}...`);
         
+        // DEBUG: Sample age group data being sent to frontend
+        console.log('DEBUG SENDING TO FRONTEND:', sortedGroups.slice(0, 3).map(g => ({
+          id: g.id,
+          ageGroup: g.ageGroup,
+          gender: g.gender,
+          displayAs: `${g.ageGroup} (${g.gender})`
+        })));
+        
         // Age groups properly formatted and ready for frontend
         
         res.json(sortedGroups);
