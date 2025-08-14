@@ -7,7 +7,7 @@ import {
   Pencil, PlusCircle, CalendarRange, UserRoundPlus, ClipboardX, ArrowLeft,
   Upload, Wand2, Sparkles, AlertTriangle, CalendarDays, Loader2,
   Trophy, WandSparkles, CheckCircle2, AlertCircle, CreditCard, MapPin,
-  TrendingUp, BarChart2, HelpCircle
+  TrendingUp, BarChart2, HelpCircle, Eye, Clock
 } from "lucide-react";
 // Removed ClubLogo import as we now display club name as text
 import { ComplexCard } from "@/components/admin/ComplexCard";
@@ -32,6 +32,7 @@ import { FormSubmissionsCard } from "@/components/admin/FormSubmissionsCard";
 import { FeeAdjustmentDialog } from "@/components/admin/FeeAdjustmentDialog";
 import { TeamContactEditDialog } from "@/components/TeamContactEditDialog";
 import { BracketAssignmentModal } from "@/components/BracketAssignmentModal";
+import { PaymentRetryButton } from "@/components/admin/PaymentRetryButton";
 import { ScheduleVisualization } from "@/components/ScheduleVisualization";
 import BracketSelector from "@/components/admin/scheduling/BracketSelector";
 import { SchedulingWorkflow } from "@/components/admin/scheduling/SchedulingWorkflow";
@@ -4513,6 +4514,14 @@ function TeamsView() {
                                 </TableCell>
                                 <TableCell className="text-right">
                                   <div className="flex justify-end gap-2">
+                                    {/* Payment Retry Button - Shows for failed payments */}
+                                    <PaymentRetryButton
+                                      teamId={team.id}
+                                      teamName={team.name}
+                                      paymentStatus={team.paymentStatus}
+                                      onSuccess={() => teamsQuery.refetch()}
+                                    />
+                                    
                                     <Button 
                                       variant="outline" 
                                       size="sm"
