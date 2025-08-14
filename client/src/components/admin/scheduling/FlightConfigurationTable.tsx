@@ -109,18 +109,11 @@ export function FlightConfigurationTable({ eventId }: { eventId: string }) {
     return allFlights?.filter(flight => (flight.status === 'ready' || flight.status === 'scheduled') && flight.teamCount > 0) || [];
   }, [allFlights]);
 
-  // Create format options from dynamic templates
+  // Create format options EXCLUSIVELY from dynamic templates - NO HARDCODED FALLBACKS
   const formatOptions = useMemo(() => {
+    // CRITICAL: Only show templates from Format Settings - no hardcoded options ever
     if (!formatTemplates || formatTemplates.length === 0) {
-      // Fallback to basic options if templates not loaded
-      return [
-        { value: 'group_of_4', label: '4-Team Single Bracket' },
-        { value: 'group_of_6', label: '6-Team Crossover Brackets' },
-        { value: 'group_of_8', label: '8-Team Dual Brackets' },
-        { value: 'round_robin', label: 'Round Robin' },
-        { value: 'single_elimination', label: 'Single Elimination' },
-        { value: 'double_elimination', label: 'Double Elimination' },
-      ];
+      return []; // Empty array if no templates - forces user to create templates first
     }
     
     return formatTemplates.map((template: { name: string; id: string }) => ({
