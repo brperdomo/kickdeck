@@ -8894,12 +8894,15 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         console.log(`Age groups order: ${sortedGroups.slice(0, 6).map(g => `${g.ageGroup}-${g.gender}`).join(', ')}...`);
         
         // DEBUG: Sample age group data being sent to frontend
-        console.log('DEBUG SENDING TO FRONTEND:', sortedGroups.slice(0, 3).map(g => ({
-          id: g.id,
-          ageGroup: g.ageGroup,
-          gender: g.gender,
-          displayAs: `${g.ageGroup} (${g.gender})`
-        })));
+        console.log('=== DEBUG AGE GROUPS RESPONSE ===');
+        console.log('Sample data being sent:', JSON.stringify(sortedGroups.slice(0, 3), null, 2));
+        console.log('First age group details:', {
+          id: sortedGroups[0]?.id,
+          ageGroup: sortedGroups[0]?.ageGroup,
+          gender: sortedGroups[0]?.gender,
+          displayText: `${sortedGroups[0]?.ageGroup} (${sortedGroups[0]?.gender})`
+        });
+        console.log('=== END DEBUG ===');
         
         // Age groups properly formatted and ready for frontend
         

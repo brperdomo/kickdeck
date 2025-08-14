@@ -24,6 +24,15 @@ const formatFlightName = (level: string | undefined | null): string => {
       return 'Bottom Flight';
     case 'other':
       return 'Other';
+    // Handle direct database values
+    case 'Top Flight':
+      return 'Top Flight';
+    case 'Middle Flight':
+      return 'Middle Flight';
+    case 'Bottom Flight':
+      return 'Bottom Flight';
+    case 'middle-flight':
+      return 'Middle Flight';
     default:
       // Handle legacy values
       return level.charAt(0).toUpperCase() + level.slice(1);

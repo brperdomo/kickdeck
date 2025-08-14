@@ -14,6 +14,7 @@ Preferred communication style: Simple, everyday language.
 - ✅ **Field Size Persistence BACKEND FIX COMPLETE**: Fixed critical backend API issue where field sizes weren't being returned properly - changed Drizzle query from db.query to direct .select() with explicit fieldSize mapping to ensure proper data retrieval
 - ✅ **Bi-Directional Field Size Synchronization COMPLETE**: Implemented comprehensive sync between Flight Configuration Overview and Edit Event > Age Groups - changes in either interface automatically update both game_formats and event_age_groups tables with full bidirectional data consistency
 - ✅ **Age Group Dropdown Fix COMPLETE**: Fixed critical issue where Edit Team Details dropdown showed "(Boys)" repeatedly instead of proper age group names. Root cause was improper database column mapping in Drizzle query - replaced generic .select() with explicit field mapping to ensure age_group column maps correctly to ageGroup JavaScript field
+- ✅ **Critical Data Display Fixes COMPLETE**: Fixed flight level display showing "middle-flight" instead of "Top Flight" by updating 24 Nike Elite brackets in database and enhancing formatFlightName function. Implemented aggressive React Query cache invalidation to ensure fresh age group data display. Team 988 verified with proper U17 Boys assignment to Nike Elite (Top Flight) bracket.
 - ✅ **System Health Verified**: All events have proper age groups, flight assignments, and team registration functionality
 
 ## System Architecture
