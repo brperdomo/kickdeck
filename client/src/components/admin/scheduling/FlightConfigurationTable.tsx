@@ -62,10 +62,10 @@ export function FlightConfigurationTable({ eventId }: { eventId: string }) {
   const { data: formatTemplates } = useQuery({
     queryKey: ['format-templates'],
     queryFn: async () => {
-      const response = await fetch('/api/admin/format-templates');
+      const response = await fetch('/api/admin/matchup-templates');
       if (!response.ok) throw new Error('Failed to fetch format templates');
       const data = await response.json();
-      return data.templates || [];
+      return Array.isArray(data) ? data : [];
     },
   });
 
@@ -641,7 +641,7 @@ export function FlightConfigurationTable({ eventId }: { eventId: string }) {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            {formatOptions.map((option) => (
+                            {formatOptions.map((option: { value: string; label: string }) => (
                               <SelectItem key={option.value} value={option.value}>
                                 {option.label}
                               </SelectItem>

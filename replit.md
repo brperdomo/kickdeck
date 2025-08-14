@@ -1,33 +1,10 @@
 # MatchPro AI Event Management System
 
 ## Overview
-MatchPro AI is a comprehensive sports event management platform for tournament organizers and sports clubs. Its primary purpose is to streamline and automate workflows such as team registrations, payment processing, scoring, standings, and administrative tasks. The system aims to provide a professional, low-maintenance, and intelligent solution for managing tournaments from initial setup and scheduling to real-time updates and financial oversight, aspiring to offer predictive insights and eliminate manual configuration.
+MatchPro AI is a comprehensive sports event management platform designed for tournament organizers and sports clubs. Its main purpose is to automate and streamline workflows such as team registrations, payment processing, scoring, standings, and administrative tasks. The system aims to provide a professional, low-maintenance, and intelligent solution for managing tournaments from initial setup and scheduling to real-time updates and financial oversight, with ambitions to offer predictive insights and eliminate manual configuration.
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
-
-## Recent Changes (August 2025)
-
-### ✅ **ZERO HARDCODED MATCHUP LOGIC SYSTEM COMPLETE** (Aug 14, 2025)
-- **Complete Hardcoded Logic Elimination**: All scheduling services (automated-scheduling.ts, tournament-scheduler.ts, openai-service.ts) now use dynamic templates exclusively
-- **Format Settings Interface**: Professional template management system accessible via gear icon in Master Schedule with complete CRUD operations
-- **Dynamic Matchup Engine**: Database-driven game generation using `findBestTemplate()` and `generateGamesFromTemplate()` methods
-- **Template Database**: 6 tournament format templates supporting 4-team, 6-team crossover, 8-team dual, round-robin, Swiss, and single elimination formats
-- **Comprehensive Integration**: All major hardcoded sections replaced with template-driven logic including 4-team, 6-team (both blocks), and 8-team patterns
-- **Intelligent Template Selection**: Automatic template detection based on team count and format hints (single/crossover/dual)
-- **Professional UI**: Visual template builder with matchup pattern editor, template cloning, validation, and JSON export capabilities
-- **Zero Maintenance**: Tournament directors can create unlimited custom formats without developer involvement
-
-### Previous Changes
-- ✅ **Critical Data Integrity Fix COMPLETE**: Fixed seasonal scope linkage system-wide for all events
-- ✅ **Flight Selection Verification**: Confirmed team registration flow working with 337+ teams successfully selecting flights
-- ✅ **Age Groups Display Fixed**: Birth Years and Division Codes now properly display in event settings Age Group tab
-- ✅ **Terminology Conversion COMPLETE**: Renamed all "Brackets" references to "Flights" throughout admin interface
-- ✅ **Field Size Persistence BACKEND FIX COMPLETE**: Fixed critical backend API issue where field sizes weren't being returned properly - changed Drizzle query from db.query to direct .select() with explicit fieldSize mapping to ensure proper data retrieval
-- ✅ **Bi-Directional Field Size Synchronization COMPLETE**: Implemented comprehensive sync between Flight Configuration Overview and Edit Event > Age Groups - changes in either interface automatically update both game_formats and event_age_groups tables with full bidirectional data consistency
-- ✅ **Age Group Dropdown Fix COMPLETE**: Fixed critical issue where Edit Team Details dropdown showed "(Boys)" repeatedly instead of proper age group names. Root cause was improper database column mapping in Drizzle query - replaced generic .select() with explicit field mapping to ensure age_group column maps correctly to ageGroup JavaScript field
-- ✅ **Critical Data Display Fixes COMPLETE**: Fixed flight level display showing "middle-flight" instead of "Top Flight" by updating 24 Nike Elite brackets in database and enhancing formatFlightName function. Implemented aggressive React Query cache invalidation to ensure fresh age group data display. Team 988 verified with proper U17 Boys assignment to Nike Elite (Top Flight) bracket.
-- ✅ **System Health Verified**: All events have proper age groups, flight assignments, and team registration functionality
 
 ## System Architecture
 
@@ -37,7 +14,7 @@ Preferred communication style: Simple, everyday language.
 - **Styling**: Tailwind CSS
 - **State Management**: React hooks and context
 - **Routing**: Wouter
-- **UI/UX Decisions**: Modern, professional design with gradient themes, interactive cards, and consistent MatchPro branding. Emphasis on intuitive workflows, clear visual feedback, and comprehensive dashboards, including an enhanced Schedule Grid with detailed game cards, hover tooltips, and a right-click context menu for moving games.
+- **UI/UX Decisions**: Modern, professional design featuring gradient themes, interactive cards, and consistent MatchPro branding. Emphasis is placed on intuitive workflows, clear visual feedback, and comprehensive dashboards, including an enhanced Schedule Grid with detailed game cards, hover tooltips, and a right-click context menu for game manipulation.
 
 ### Backend
 - **Runtime**: Node.js with TypeScript
@@ -45,39 +22,21 @@ Preferred communication style: Simple, everyday language.
 - **Database ORM**: Drizzle ORM
 - **Authentication**: Session-based with role-based access control (super_admin, tournament_admin, finance_admin, score_admin).
 - **Core Features**:
-    - **Event Management**: Configuration of tournaments, age groups, brackets, and scoring systems.
+    - **Event Management**: Configuration of tournaments, age groups, flights (previously brackets), and scoring systems.
     - **Team Registration**: Multi-step workflow, roster management, and two-step payment processing, including team gender editing with smart age group filtering.
     - **Payment Processing**: Full Stripe integration supporting Connect accounts, two-step payments, refunds, and intelligent payment recovery for complex fee structures and fund routing.
     - **Email Communication**: Dynamic template system for automated notifications.
-    - **Administrative Features**: Role-based access, team approval/rejection, payment tracking, and comprehensive user/team management. Includes silent status changes for teams without triggering emails.
-    - **Enhanced Calendar Interface**: Consolidated drag-and-drop scheduler with operation logging, optimistic updates, conflict detection, and persistent backend synchronization, supporting real-time schedule updates and inline editing.
-    - **Intelligent Gap-Filling System**: Advanced field consolidation that identifies time gaps on priority fields and moves games from outer fields to fill those gaps, with automatic time slot adjustment and comprehensive rest period validation.
+    - **Administrative Features**: Role-based access, team approval/rejection, payment tracking, and comprehensive user/team management, including silent status changes for teams without triggering emails.
+    - **Scheduling Systems**:
+        - **Automated Scheduling Engine**: Dynamic template-driven game generation eliminating hardcoded logic. Supports various formats (round-robin, pool play, single/double elimination, Swiss system, hybrid) with constraint-aware optimization and dynamic rest period enforcement. Includes field size matching, coach conflict detection, and lighting constraints.
+        - **Intelligent Gap-Filling**: Advanced field consolidation to optimize field utilization by moving games from outer fields to fill gaps on priority fields.
+        - **Enhanced Calendar Interface**: Consolidated drag-and-drop scheduler with operation logging, optimistic updates, conflict detection, and persistent backend synchronization for real-time schedule updates and inline editing.
     - **Tournament-Wide Flight Management**: Unified flight category system allowing tournament-level configuration of flight templates (e.g., Nike Classic, Premier, Elite) that propagate to all age groups.
-    - **Flight-Based Schedule Filtering**: Schedule Viewer includes flight filtering dropdown that appears after age group selection, displaying Nike flight categories (Elite, Premier, Classic) with proper sorting and filtering logic.
-    - **Team Replacement System**: Individual team replacement functionality using refresh icons next to team names, allowing replacement with teams from the same flight category while preserving all scheduling details (field, time, date).
-    - **Unified Bracket Management Interface**: Consolidated bracket creation and team assignment system. Users select flights, choose bracket configurations (Group of 4/6/8), and assign teams within brackets. Supports Group of 4 (round-robin), Group of 6 (Pool A vs Pool B crossplay), and Group of 8 (Pool A vs Pool B crossplay) with persistent team assignments for fair pairing. Integrates directly with tournament scheduling engine's matchup rules.
-    - **Tournament-Specific Field Management System**: Comprehensive field configuration system allowing tournament directors to set field sizes per-tournament. Features drag-and-drop field ordering, bulk configuration updates, and field deletion without constraints.
-    - **Field Availability and Bulk Time Assignment System**: Tournament directors can enable/disable fields and bulk assign first game times by field size.
-    - **Intelligent Scheduling Engine**: Advanced multi-tier system with constraint-aware optimization and dynamic rest period enforcement. Supports various scheduling approaches with comprehensive game generation for formats like round-robin, pool play, single/double elimination, Swiss system, and hybrid. Enforces strict Pool A vs Pool B matchups for 6-team crossplay formats. Features automated field assignment with direct fallback system when time slots aren't configured.
-        - **Administrative Team Editing**: Schedule Viewer includes comprehensive team editing functionality with flight-restricted dropdown selections.
-        - **Constraint Validation**: Strict field size filtering, prevention of simultaneous scheduling, and comprehensive pre-scheduling validation (e.g., team rest periods, games per day limits, coach conflict detection, lighting constraints).
-        - **Dynamic Rest Period Enforcement**: Configurable rest periods between games for all teams.
-        - **Granular Time Slots**: 15-minute interval scheduling.
-        - **Intelligent Optimization**: Multi-objective optimization for field utilization, team fairness, travel minimization, and prime time optimization.
-        - **Dynamic Configuration**: Database-driven tournament format configuration.
-        - **Field Assignment**: Intelligent field size matching and assignment.
-    - **Field Intelligence System**: Integration of real field data, flexible time slots, buffer management, and field blackout system with enhanced conflict detection.
-    - **Constraint Validation System**: Coach conflict detection, team rest period validation, field size matching, and travel time constraints.
-    - **Facility Intelligence System**: Lighting constraint validation, parking capacity management, and concession coordination.
-    - **Swiss Tournament System**: Intelligent pairing algorithm, comprehensive tiebreaker system, and color balance management.
-    - **Referee Management System**: Intelligent assignment engine, certification compliance, workload balancing, and payment tracking.
-- **Critical Data Structure**: AGE GROUP → FLIGHTS → BRACKETS → Teams. Tournament formats are assigned to FLIGHTS (represented as event_brackets in database). FLIGHTS are competitive levels within age groups. Each FLIGHT generates its own brackets and matchups based on the assigned tournament_format. Teams have both `bracketId` (flight assignment) and `groupId` (specific bracket within flight) for granular tournament organization.
-- **Group of 8 Format Fix (Aug 2025)**: COMPLETED - Corrected dual bracket system implementation with mandatory admin control for fairplay. Group of 8 now properly generates two separate 4-team round-robin brackets (Bracket A vs Bracket B) with no cross-bracket play except championship final. Fixed TypeScript compilation errors, corrected game generation logic to prevent crossplay matchups, and enforced strict admin control over team placement. System requires tournament admins to manually assign all 8 teams to brackets for fairplay control - no automatic assignments to ensure competitive balance.
-- **Drag-and-Drop Bracket Assignment Fix (Aug 2025)**: COMPLETED - Fixed critical UI issue where teams could only be dropped into Bracket B and not Bracket A. Corrected droppable ID mapping in UnifiedBracketManager to properly map bracket names ("Bracket A"/"Bracket B") to correct droppable zones. Teams now assign correctly to their intended brackets via drag-and-drop interface with immediate real-time updates.
-- **Flight Configuration Parameter Enforcement (Aug 2025)**: COMPLETED - Fixed critical issue where Flight Configuration Overview parameters were cosmetic only. All three scheduling services (OpenAI Service, Simple Scheduler, Tournament Scheduler) and main endpoint now read actual database parameters. Added dynamic parameter mapping system ensuring tournament directors have complete control over game timing, rest periods, and field requirements. Removed Game Formats tab redundancy and enhanced UI consistency with MatchPro branding.
-- **OpenAI Responses API Integration (Aug 2025)**: COMPLETED - Migrated AI scheduling to Overview tab with conversational chat interface. Implemented OpenAI Responses API (not Realtime API) using GPT-4o with tournament scheduling constraint validation. GPT-4o chosen for superior reasoning capabilities, larger context windows, and cost efficiency for complex tournament scheduling with minimal corrections needed. Features "What would you like to do today?" prompt, natural language game scheduling, conflict detection, and real-time database updates. AI assistant validates rest periods, field overlaps, daily game limits, and suggests alternative times when constraints are violated. Chat interface includes quick action buttons and conversation history.
-- **PostgreSQL-Backed AI Conversations (Aug 2025)**: COMPLETED - Enhanced AI system with database-driven conversation persistence using ai_conversation_history table. Implements session-based chat tracking with event-specific context retention. AI assistant now reads directly from games table for real-time conflict detection and writes updates directly to database. Features smart alternative suggestions (up to 5 options) when scheduling conflicts occur, detailed constraint explanations, and comprehensive session management with clear conversation history functionality.
-- **Persistent AI Chatbot Interface (Aug 2025)**: COMPLETED - Replaced tab-based AI interface with floating, persistent chatbot that works across all Master Schedule tabs. Features minimize/maximize functionality, centralized Flight Configuration parameter integration, and cross-tab conversation persistence. AI assistant now reads Flight Configuration Overview parameters directly for constraint validation. Designed as non-disruptive interface with real-time parameter display and quick action buttons for common scheduling tasks.
+    - **Unified Bracket Management Interface**: Consolidated bracket creation and team assignment system. Users select flights, choose bracket configurations (Group of 4/6/8), and assign teams within brackets. Supports Group of 4 (round-robin), Group of 6 (Pool A vs Pool B crossplay), and Group of 8 (two separate 4-team round-robin brackets with no cross-bracket play except championship final).
+    - **Tournament-Specific Field Management**: Comprehensive field configuration system allowing tournament directors to set field sizes per-tournament, featuring drag-and-drop ordering, bulk updates, and deletion. Includes field availability and bulk time assignment.
+    - **Team Replacement System**: Individual team replacement functionality allowing substitution with teams from the same flight category while preserving scheduling details.
+    - **AI Assistant**: Persistent, floating chatbot interface powered by GPT-4o for natural language game scheduling, constraint validation, and real-time database updates. Integrates with Flight Configuration parameters for constraint validation and offers alternative suggestions for conflicts. Conversation history is persistent via a PostgreSQL database.
+- **Critical Data Structure**: AGE GROUP → FLIGHTS → BRACKETS → Teams. Tournament formats are assigned to FLIGHTS (represented as event_brackets). FLIGHTS are competitive levels within age groups, each generating its own brackets and matchups based on the assigned tournament_format. Teams have `bracketId` (flight assignment) and `groupId` (specific bracket within flight).
 
 ### Data Storage
 - **Primary Database**: PostgreSQL for all event, team, player, payment, and scheduling data.
