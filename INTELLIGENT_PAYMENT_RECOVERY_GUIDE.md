@@ -1,73 +1,116 @@
-# Intelligent Payment Recovery System - Team 998 Fix Complete
+# Intelligent Payment Recovery System - COMPLETE
 
-## Issue Resolution Summary
-**Team:** ELI7E FC G-2013 Select (ID: 998)  
-**Problem:** Payment failure due to missing Stripe Customer creation  
-**Solution:** Custom payment fix endpoint with complete recovery workflow  
+## Overview
+Created a comprehensive payment retry system that fixes the "PaymentMethod cannot be attached" error and allows tournament admins to retry failed payments without requiring teams to re-enter payment information.
 
-## Root Cause Analysis
-The payment failed because:
-1. ✅ Setup Intent completed successfully (`seti_1RvVtgP4BpmZARxtnm6QfZYo`)  
-2. ✅ Payment Method attached to Setup Intent  
-3. ❌ **Missing Stripe Customer creation step**  
-4. ❌ Payment Method could not be attached (no customer to attach to)
+## Problem Analysis: B2013 White (SDSC SURF)
+**Team ID**: 783  
+**Issue**: 5 failed payment attempts with "PaymentMethod cannot be attached" error  
+**Root Cause**: Payment methods not properly associated with Stripe Customer objects
 
-## Payment Fix Endpoint Implementation
+## Solution Components
 
-### Endpoint: `POST /api/admin/teams/:teamId/fix-payment`
-**Purpose:** Recover failed payments for teams with completed Setup Intents
+### 1. Backend Payment Retry API ✅
+**File**: `server/routes/admin/retry-payment.ts`
 
-**Process Flow:**
-1. **Validation:** Verify team exists and payment_status = 'payment_failed'
-2. **Setup Intent Check:** Confirm Setup Intent succeeded with payment method  
-3. **Customer Creation:** Create missing Stripe Customer with team email
-4. **Payment Method Attachment:** Attach existing payment method to customer
-5. **Fee Calculation:** Apply correct platform fees (4% + $0.30)
-6. **Payment Processing:** Create and confirm Payment Intent  
-7. **Database Updates:** Update team status and record transaction
+**Features**:
+- **PaymentMethod Attachment Fix**: Automatically creates/attaches customer to payment methods
+- **Intelligent Recovery**: Handles both direct payment methods and setup intent scenarios  
+- **Error Logging**: Comprehensive transaction logging for audit trail
+- **Eligibility Check**: Validates retry conditions before attempting payment
 
-## Fee Structure Verification ✅
-**Platform Fee:** 4% + $0.30 (unchanged)  
-**Team 998 Charges:**
-- Base tournament cost: $1,195.00
-- Platform fee: $48.10 (4% + $0.30)
-- **Total charged: $1,243.10**
-
-## Team 998 Recovery Instructions
-
-### Option 1: Use Payment Fix Endpoint (Recommended)
-```bash
-curl -X POST "/api/admin/teams/998/fix-payment" \
-  -H "Content-Type: application/json"
+**Endpoints**:
+```
+POST /api/admin/retry-payment/retry/:teamId - Retry payment for specific team
+GET /api/admin/retry-payment/eligibility/:teamId - Check if retry is possible
 ```
 
-**Expected Result:**
-- Single charge of $1,243.10 to customer's card
-- Team status: payment_failed → paid  
-- Payment Intent created and recorded
-- No duplicate charges (protected by status checks)
+### 2. Frontend Retry Component ✅  
+**File**: `client/src/components/admin/PaymentRetryButton.tsx`
 
-### Option 2: Manual Admin Panel
-1. Navigate to Team Management
-2. Find Team 998: "ELI7E FC G-2013 Select"
-3. **DO NOT use regular "Approve" button** (will fail again)
-4. Use new "Fix Payment" button (when implemented in UI)
+**Features**:
+- **Smart Eligibility**: Checks if payment can be retried before showing option
+- **Visual Feedback**: Clear status indicators and tooltips
+- **Error Handling**: User-friendly error messages
+- **Success Callback**: Integrates with existing admin workflows
 
-## Safety Guarantees
-✅ **Single Payment Processing:** Team status prevents re-processing  
-✅ **Correct Fee Application:** 4% + $0.30 platform fee maintained  
-✅ **Stripe Customer Creation:** Solves root cause of original failure  
-✅ **Transaction Recording:** Full payment audit trail preserved  
-✅ **No Duplicate Risk:** Multiple validation layers prevent double charges
+### 3. PaymentMethod Attachment Logic ✅
+**Core Function**: `fixPaymentMethodAttachment()`
 
-## Next Steps for Team 998
-1. Call payment fix endpoint for Team 998
-2. Verify $1,243.10 charge appears in Stripe dashboard  
-3. Confirm team status changes to 'paid'
-4. Team can proceed with tournament registration
+**Process**:
+1. Retrieve payment method from Stripe
+2. Check if attached to customer
+3. Create customer if none exists  
+4. Attach payment method to customer
+5. Update team record with customer ID
+6. Proceed with payment
 
-## System Enhancement
-This fix addresses the core payment workflow issue and provides a recovery mechanism for similar future cases where Setup Intents complete but Payment Intent creation fails due to missing customer records.
+## Technical Implementation
 
-**Status:** Ready for Team 998 payment recovery
-**Risk Level:** LOW - All safeguards in place
+### Customer Creation Logic
+```javascript
+// Create customer with team metadata
+const customer = await stripe.customers.create({
+  email: team.managerEmail || team.submitterEmail,
+  name: team.managerName || team.name,
+  metadata: {
+    teamId: teamId.toString(),
+    teamName: team.name,
+    eventId: team.eventId.toString()
+  }
+});
+```
+
+### Payment Method Attachment
+```javascript
+// Attach payment method to customer
+await stripe.paymentMethods.attach(paymentMethodId, {
+  customer: customerId,
+});
+```
+
+### Integration with Existing Systems
+- Uses existing `chargeApprovedTeam()` function for actual payment processing
+- Leverages existing error handling and logging infrastructure
+- Integrates with payment transaction tracking
+
+## Usage Instructions
+
+### For B2013 White Team (SDSC SURF):
+1. Navigate to team management interface
+2. Find B2013 White team (ID: 783)
+3. Click "Retry Payment" button
+4. System will:
+   - Fix PaymentMethod attachment automatically
+   - Retry payment using existing card
+   - Show success/failure status
+   - Log transaction for audit
+
+### For Tournament Admins:
+1. Add PaymentRetryButton component to team management interface
+2. Button appears only for eligible teams (failed payments with valid payment methods)
+3. One-click retry with automatic error resolution
+4. Real-time feedback and status updates
+
+## Error Prevention
+- **Customer Association**: All payment methods now properly linked to customers
+- **Transaction Logging**: Complete audit trail of retry attempts
+- **Eligibility Validation**: Prevents unnecessary retry attempts
+- **Error Recovery**: Handles edge cases like missing customers or invalid payment methods
+
+## Expected Results for B2013 White
+1. **Retry Eligibility**: Team should show as eligible (has payment method, not paid)
+2. **Attachment Fix**: System will create customer and attach payment method  
+3. **Payment Success**: $1,195.00 payment should process successfully
+4. **Status Update**: Team status changes to 'paid'
+5. **Email Notification**: Automatic payment confirmation sent
+
+## Monitoring & Logging
+- All retry attempts logged to `payment_transactions` table
+- Success/failure tracking with detailed error messages  
+- Admin dashboard shows retry history and success rates
+- Stripe webhook integration maintains payment status synchronization
+
+## Status: READY FOR TESTING ✅
+Date: August 14, 2025  
+**Action Required**: Test retry payment for B2013 White team (ID: 783)

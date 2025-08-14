@@ -89,6 +89,7 @@ import flightTemplatesRouter from "./routes/admin/flight-templates";
 import facilityConstraintRouter from "./routes/admin/facility-constraints";
 import refereeManagementRouter from "./routes/admin/referee-management";
 import paymentCompletionRouter from "./routes/payment-completion";
+import retryPaymentRouter from "./routes/admin/retry-payment";
 import tournamentsWithSchedulesRouter from "./routes/admin/tournaments-with-schedules";
 import gamesAllTournamentsRouter from "./routes/admin/games-all-tournaments";
 import { 
@@ -1055,6 +1056,7 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin', isAdmin, feeAdjustmentsRouter); // Fee adjustments router
     app.use('/api/admin/member-merge', isAdmin, memberMergeRouter); // Member deduplication and merge
     app.use('/api/admin/teams', isAdmin, teamsRouter); // Team management router
+    app.use('/api/admin/retry-payment', isAdmin, retryPaymentRouter); // Payment retry system
     app.use('/api/admin/files', isAdmin, filesRouter); // File management router
     app.use('/api/admin/folders', isAdmin, foldersRouter); // Folder management router
     app.use('/api/admin/teams', isAdmin, playersRouter); // Player management router
