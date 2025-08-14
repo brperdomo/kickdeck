@@ -269,13 +269,20 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
               const formattedAgeGroups = ageGroupsData.map((group: any) => {
                 const ageGroupValue = group.ageGroup || group.age_group || group.name || '';
                 
-                let fieldSize = group.fieldSize || group.field_size || '11v11';
-                if (!fieldSize && ageGroupValue && typeof ageGroupValue === 'string' && ageGroupValue.startsWith('U')) {
-                  const ageNumber = parseInt(ageGroupValue.substring(1));
-                  if (!isNaN(ageNumber)) {
-                    fieldSize = ageNumber <= 7 ? '4v4' :
-                               ageNumber <= 10 ? '7v7' :
-                               ageNumber <= 12 ? '9v9' : '11v11';
+                // FIXED: Use database field size directly, only fallback if truly null/undefined
+                let fieldSize = group.fieldSize || group.field_size;
+                
+                // Only calculate fallback if no field size exists in database
+                if (!fieldSize) {
+                  if (ageGroupValue && typeof ageGroupValue === 'string' && ageGroupValue.startsWith('U')) {
+                    const ageNumber = parseInt(ageGroupValue.substring(1));
+                    if (!isNaN(ageNumber)) {
+                      fieldSize = ageNumber <= 7 ? '4v4' :
+                                 ageNumber <= 10 ? '7v7' :
+                                 ageNumber <= 12 ? '9v9' : '11v11';
+                    }
+                  } else {
+                    fieldSize = '11v11';
                   }
                 }
                 
@@ -317,8 +324,8 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
         // Safely get ageGroup field (could be ageGroup, age_group, or similar)
         const ageGroupValue = group.ageGroup || group.age_group || group.name || '';
         
-        // Priority: Use actual field size from database first
-        let fieldSize = group.fieldSize || group.field_size || null;
+        // CRITICAL FIX: Strictly prioritize database field size values
+        let fieldSize = group.fieldSize || group.field_size;
         
         console.log(`DEBUG: Age group ${ageGroupValue} (${group.gender}) raw data:`, {
           fieldSize: group.fieldSize,
@@ -326,8 +333,8 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
           finalFieldSize: fieldSize
         });
         
-        // CRITICAL: Only apply fallback if fieldSize is completely null/undefined
-        if (fieldSize === null || fieldSize === undefined) {
+        // Only apply calculated fallback if no database value exists
+        if (!fieldSize) {
           if (ageGroupValue && typeof ageGroupValue === 'string' && ageGroupValue.startsWith('U')) {
             const ageNumber = parseInt(ageGroupValue.substring(1));
             if (!isNaN(ageNumber)) {
