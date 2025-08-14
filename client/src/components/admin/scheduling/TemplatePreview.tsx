@@ -126,6 +126,17 @@ export function TemplatePreview({ template }: TemplatePreviewProps) {
     }
   };
 
+  const getBracketDescription = (structure: string) => {
+    switch (structure) {
+      case 'single': return 'All teams in one bracket';
+      case 'dual': return 'Two separate pools with championship between winners';
+      case 'crossover': return 'Pool A vs Pool B matchups throughout tournament';
+      case 'round_robin': return 'Everyone plays everyone format';
+      case 'swiss': return 'Performance-based pairing system';
+      default: return 'Tournament bracket format';
+    }
+  };
+
   const getGameTypeColor = (gameType: string, isPlayoff: boolean) => {
     if (isPlayoff) {
       return gameType === 'final' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800';
@@ -191,7 +202,12 @@ export function TemplatePreview({ template }: TemplatePreviewProps) {
                 <Badge variant="secondary" className="mr-2">
                   {template.bracketStructure.replace('_', ' ').toUpperCase()}
                 </Badge>
-                <span className="text-sm text-muted-foreground">{template.description}</span>
+                <span className="text-sm text-muted-foreground">
+                  {getBracketDescription(template.bracketStructure)}
+                </span>
+              </div>
+              <div className="text-xs text-muted-foreground mt-1">
+                {template.description}
               </div>
             </CardContent>
           </Card>

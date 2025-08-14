@@ -619,8 +619,8 @@ function CreateEditTemplateForm({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="single">Single Bracket</SelectItem>
-                <SelectItem value="dual">Dual Brackets</SelectItem>
-                <SelectItem value="crossover">Crossplay</SelectItem>
+                <SelectItem value="dual">Dual Brackets (Separate pools + championship)</SelectItem>
+                <SelectItem value="crossover">Crossplay (Pool A vs Pool B throughout)</SelectItem>
                 <SelectItem value="round_robin">Round Robin</SelectItem>
                 <SelectItem value="swiss">Swiss System</SelectItem>
               </SelectContent>
