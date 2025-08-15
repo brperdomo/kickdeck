@@ -685,12 +685,13 @@ const getTournamentData = async (eventId: string) => {
         matchupTemplates.totalGames
       );
 
-    // Get event brackets configuration
+    // Get event brackets configuration with flight settings including rest periods
     const brackets = await db
       .select({
         id: eventBrackets.id,
         name: eventBrackets.name,
         tournamentFormat: eventBrackets.tournamentFormat,
+        tournamentSettings: eventBrackets.tournamentSettings,
         teamCount: sql<number>`COUNT(${teams.id})`.as('team_count')
       })
       .from(eventBrackets)
@@ -699,7 +700,7 @@ const getTournamentData = async (eventId: string) => {
         eq(teams.status, 'approved')
       ))
       .where(eq(eventBrackets.eventId, eventId))
-      .groupBy(eventBrackets.id)
+      .groupBy(eventBrackets.id, eventBrackets.tournamentSettings)
       .limit(20);
 
     // Get scheduled games count
@@ -774,11 +775,21 @@ const getTournamentData = async (eventId: string) => {
       availableFormats: eventFormatTemplates.map(t => ({ name: t.name, teamCount: t.teamCount, games: t.totalGames })),
       totalBrackets: brackets.length,
       configuredBrackets: brackets.filter(b => b.tournamentFormat).length,
-      bracketDetails: brackets.slice(0, 10).map(b => ({
-        name: b.name,
-        format: b.tournamentFormat,
-        teams: b.teamCount
-      })),
+      bracketDetails: brackets.slice(0, 10).map(b => {
+        let restPeriod = 'Not configured';
+        if (b.tournamentSettings && typeof b.tournamentSettings === 'object') {
+          const settings = b.tournamentSettings as any;
+          if (settings.restPeriodMinutes && typeof settings.restPeriodMinutes === 'number') {
+            restPeriod = `${settings.restPeriodMinutes}`;
+          }
+        }
+        return {
+          name: b.name,
+          format: b.tournamentFormat,
+          teams: b.teamCount,
+          restPeriod: restPeriod
+        };
+      }),
       totalGames: gamesCount.totalGames || 0,
       scheduledGames: gamesCount.scheduledGames || 0,
       totalTeams: teamsCount.totalTeams || 0,
@@ -854,8 +865,8 @@ ${fieldsData.fieldDetails.map(f => `- Field ${f.name}: ${f.fieldSize} (${f.isAct
 TOURNAMENT FORMATS USED IN THIS EVENT:
 ${tournamentData.availableFormats.map(f => `- ${f.name}: ${f.teamCount} teams, ${f.games} games`).join('\n')}
 
-RECENT BRACKET CONFIGURATIONS:
-${tournamentData.bracketDetails.map(b => `- ${b.name}: ${b.format} format, ${b.teams} teams`).join('\n')}
+FLIGHT CONFIGURATIONS WITH REST PERIODS:
+${tournamentData.bracketDetails.map(b => `- ${b.name}: ${b.format} format, ${b.teams} teams, ${b.restPeriod} min rest period`).join('\n')}
 
 FINANCIAL DATA:
 - Total Revenue: $${(financialData.totalRevenue / 100).toFixed(2)}

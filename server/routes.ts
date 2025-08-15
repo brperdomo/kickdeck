@@ -1680,44 +1680,48 @@ export function registerRoutes(app: Express): Server {
             const teamName = row.team_name as string;
             const bracketName = row.bracket_name as string || 'No Bracket';
             
-            let restPeriod = 90; // Default rest period
+            let restPeriod = 120; // Default rest period
             
             if (row.tournament_settings && typeof row.tournament_settings === 'object') {
               const settings = row.tournament_settings as any;
               if (settings.restPeriodMinutes && typeof settings.restPeriodMinutes === 'number') {
                 restPeriod = settings.restPeriodMinutes;
                 console.log(`🎯 Dynamic rest period found: ${teamName} → ${restPeriod}min (${bracketName})`);
+              } else {
+                console.log(`⚠️ No restPeriodMinutes found in settings for ${teamName} (${bracketName}), using default ${restPeriod}min`);
               }
+            } else {
+              console.log(`⚠️ No tournament_settings found for ${teamName} (${bracketName}), using default ${restPeriod}min`);
             }
             
             teamRestPeriods.set(teamId, restPeriod);
             console.log(`🔧 Team ${teamName} (${bracketName}): ${restPeriod}min rest period`);
           });
         } catch (error) {
-          console.error('Error loading team brackets, using default 90min rest period for all teams:', error);
-          // Fall back to hardcoded rest period for all teams - set 90min for all teams
+          console.error('Error loading team brackets, using default 120min rest period for all teams:', error);
+          // Fall back to current flight configuration default - set 120min for all teams
           for (const game of teamGameData) {
-            if (game.homeTeamId) teamRestPeriods.set(game.homeTeamId, 90);
-            if (game.awayTeamId) teamRestPeriods.set(game.awayTeamId, 90);
+            if (game.homeTeamId) teamRestPeriods.set(game.homeTeamId, 120);
+            if (game.awayTeamId) teamRestPeriods.set(game.awayTeamId, 120);
           }
-          console.log('🔧 Using fallback 90min rest period for all teams');
+          console.log('🔧 Using fallback 120min rest period for all teams');
         }
         
         // Ensure we have rest periods set for all teams that appear in games
         for (const game of teamGameData) {
           if (game.homeTeamId && !teamRestPeriods.has(game.homeTeamId)) {
-            teamRestPeriods.set(game.homeTeamId, 90);
-            console.log(`🔧 Setting default 90min rest period for home team ${game.homeTeamId}`);
+            teamRestPeriods.set(game.homeTeamId, 120);
+            console.log(`🔧 Setting default 120min rest period for home team ${game.homeTeamId}`);
           }
           if (game.awayTeamId && !teamRestPeriods.has(game.awayTeamId)) {
-            teamRestPeriods.set(game.awayTeamId, 90);
-            console.log(`🔧 Setting default 90min rest period for away team ${game.awayTeamId}`);
+            teamRestPeriods.set(game.awayTeamId, 120);
+            console.log(`🔧 Setting default 120min rest period for away team ${game.awayTeamId}`);
           }
         }
 
         // Helper function to validate rest periods between games for a team
         const validateRestPeriod = (gameToMove, newTimeSlot, teamId, teamName) => {
-          const minRestMinutes = teamRestPeriods.get(teamId) || 90; // Get team-specific or default rest period
+          const minRestMinutes = teamRestPeriods.get(teamId) || 120; // Get team-specific or default rest period
           const gameLength = 85; // 85-minute game duration
           
           const newGameStart = new Date(`${targetDate}T${newTimeSlot.substring(11)}`);
