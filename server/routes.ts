@@ -138,6 +138,7 @@ import scheduleConflictsRouter from "./routes/admin/schedule-conflicts";
 import managerReportsRouter from "./routes/admin/manager-reports";
 import publishedSchedulesRouter from "./routes/admin/published-schedules";
 import publicSchedulesRouter from "./routes/public/schedules";
+import publicStandingsRouter from "./routes/public/standings";
 import ageGroupScheduleRouter from "./routes/public/age-group-schedule";
 
 import gamesRouter from "./routes/admin/games";
@@ -967,8 +968,9 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin', isAdmin, gamecardsRouter); // Game card generation and printing
     app.use('/api/admin', isAdmin, csvImportRouter);
     
-    // Public routes for QR code score submission
-    app.use('/api/public/games', publicGamesRouter); // CSV game import system
+    // Public routes for QR code score submission and standings
+    app.use('/api/public/games', publicGamesRouter);
+    app.use('/api/public/standings', publicStandingsRouter);
     app.use('/api/admin/events', isAdmin, feesRouter); // Mount fees router under events path - REMOVED authenticateTournamentDirector
     app.use('/api/admin/age-groups', isAdmin, ageGroupsRouter); // Add age groups router
     app.use('/api/admin/age-groups-fix', isAdmin, adminAgeGroupsDataFixRoutes); // Age groups data fix

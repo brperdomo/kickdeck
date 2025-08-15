@@ -271,7 +271,7 @@ router.get('/:eventId', async (req: Request, res: Response) => {
       eventInfo: eventInfo[0],
       ageGroupsByGender: ageGroupsStructure,
       games: processedGames,
-      standings: [] // TODO: Add standings data if needed
+      standings: await calculateLiveStandings(parseInt(eventId), gamesData.filter(g => g.status === 'completed'), teamsData)
     };
 
     res.json(scheduleData);
@@ -459,5 +459,26 @@ router.get('/:eventId/age-group/:ageGroupId', async (req: Request, res: Response
     res.status(500).json({ error: 'Failed to fetch age group schedule' });
   }
 });
+
+// Helper function to get live standings from the dedicated standings API
+async function calculateLiveStandings(eventId: number, completedGames: any[], eventTeams: any[]) {
+  try {
+    // Call the dedicated standings recalculation endpoint to get current standings
+    const standingsResponse = await fetch(`http://localhost:5000/api/public/standings/${eventId}/recalculate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    
+    if (standingsResponse.ok) {
+      const standingsData = await standingsResponse.json();
+      return standingsData.standings || {};
+    }
+    
+    return {};
+  } catch (error) {
+    console.error('[STANDINGS FETCH] Error:', error);
+    return {};
+  }
+}
 
 export default router;

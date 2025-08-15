@@ -129,9 +129,9 @@ router.post('/:gameId/score', async (req, res) => {
       })
       .where(eq(games.id, parseInt(gameId)));
 
-    // Trigger standings recalculation
+    // Trigger standings recalculation via public endpoint
     try {
-      const standingsResponse = await fetch(`http://localhost:5000/api/admin/events/${gameCheck.eventId}/standings/recalculate`, {
+      const standingsResponse = await fetch(`http://localhost:5000/api/public/standings/${gameCheck.eventId}/recalculate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       });
