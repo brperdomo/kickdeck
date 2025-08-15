@@ -12,17 +12,9 @@ router.get('/:eventId', async (req, res) => {
     
     console.log(`[Game Cards] Fetching games for event ${eventId}`);
 
-    // First get all age groups for this event
-    const eventAgeGroups = await db
-      .select({ ageGroupId: eventBrackets.ageGroupId })
-      .from(eventBrackets)
-      .where(eq(eventBrackets.eventId, eventId));
-
-    const ageGroupIds = eventAgeGroups.map(ag => ag.ageGroupId);
-
-    // Get all UNIQUE games for these age groups (avoiding duplicates from multiple brackets)
+    // Get games directly by eventId to ensure we only get games for this specific event
     const allGames = await db
-      .selectDistinct({
+      .select({
         id: games.id,
         gameNumber: games.matchNumber,
         homeTeamId: games.homeTeamId,
@@ -36,7 +28,7 @@ router.get('/:eventId', async (req, res) => {
         ageGroupId: games.ageGroupId
       })
       .from(games)
-      .where(inArray(games.ageGroupId, ageGroupIds));
+      .where(eq(games.eventId, eventId));
 
     // Get team names, field names, etc. separately
     const gamesResults = await Promise.all(
@@ -60,8 +52,7 @@ router.get('/:eventId', async (req, res) => {
       })
     );
 
-    console.log(`[Game Cards] Found ${gamesResults.length} games`);
-    console.log(`[Game Cards] Age Groups: ${ageGroupIds.length}, Raw Games: ${allGames.length}`);
+    console.log(`[Game Cards] Found ${gamesResults.length} games for event ${eventId}`);
 
     // Transform the data for frontend consumption
     const gamesData = gamesResults.map(game => ({
