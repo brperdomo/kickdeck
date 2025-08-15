@@ -140,6 +140,7 @@ import publishedSchedulesRouter from "./routes/admin/published-schedules";
 import publicSchedulesRouter from "./routes/public/schedules";
 import publicStandingsRouter from "./routes/public/standings";
 import ageGroupScheduleRouter from "./routes/public/age-group-schedule";
+import tbdResolverRouter from "./routes/admin/tbd-resolver";
 
 import gamesRouter from "./routes/admin/games";
 import schedulePublicationRouter from "./routes/admin/schedule-publication";
@@ -971,6 +972,7 @@ export function registerRoutes(app: Express): Server {
     // Public routes for QR code score submission and standings
     app.use('/api/public/games', publicGamesRouter);
     app.use('/api/public/standings', publicStandingsRouter);
+    app.use('/api/admin/events', tbdResolverRouter); // TBD game resolution system
     app.use('/api/admin/events', isAdmin, feesRouter); // Mount fees router under events path - REMOVED authenticateTournamentDirector
     app.use('/api/admin/age-groups', isAdmin, ageGroupsRouter); // Add age groups router
     app.use('/api/admin/age-groups-fix', isAdmin, adminAgeGroupsDataFixRoutes); // Age groups data fix

@@ -69,7 +69,8 @@ router.get('/:gameId', async (req, res) => {
         ageGroup: ageGroupResult.rows?.[0]?.age_group || 'Age Group'
       },
       isCompleted: gameData.status === 'completed',
-      isScoreLocked: gameData.isScoreLocked || false
+      isScoreLocked: gameData.isScoreLocked || false,
+      qrCodeUrl: `${req.protocol}://${req.get('host')}/game/${gameData.id}`
     };
 
     res.json(game);
