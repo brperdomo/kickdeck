@@ -791,6 +791,8 @@ export const matchupTemplates = pgTable("matchup_templates", {
   totalGames: integer("total_games").notNull(), // Pre-calculated total games this template generates
   hasPlayoffGame: boolean("has_playoff_game").default(false), // Whether final/playoff game is included
   playoffDescription: text("playoff_description"), // Description of playoff game logic
+  includeChampionship: boolean("include_championship").default(false), // NEW: Championship/Final Game toggle
+  championshipDescription: text("championship_description"), // NEW: How championship game is determined
   isActive: boolean("is_active").default(true),
   createdAt: text("created_at").notNull().default(new Date().toISOString()),
   updatedAt: text("updated_at").notNull().default(new Date().toISOString()),
@@ -830,6 +832,8 @@ export const insertMatchupTemplateSchema = createInsertSchema(matchupTemplates, 
   totalGames: z.number().int().min(1, "Total games must be at least 1"),
   hasPlayoffGame: z.boolean().default(false),
   playoffDescription: z.string().optional(),
+  includeChampionship: z.boolean().default(false),
+  championshipDescription: z.string().optional(),
 });
 
 export const insertGameFormatSchema = createInsertSchema(gameFormats, {
@@ -1009,6 +1013,76 @@ export type SelectTeamStandings = typeof teamStandings.$inferSelect;
 export const selectEventScoringRuleSchema = createSelectSchema(eventScoringRules);
 export type InsertEventScoringRule = typeof eventScoringRules.$inferInsert;
 export type SelectEventScoringRule = typeof eventScoringRules.$inferSelect;
+
+// Dynamic Scoring Rule Templates - Completely customizable scoring rules (NO HARDCODED VALUES)
+export const scoringRuleTemplates = pgTable("scoring_rule_templates", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(), // e.g., "3-Point System", "10-Point System", "Custom Tournament Rules"
+  description: text("description").notNull(),
+  scoringRules: jsonb("scoring_rules").notNull(), // Dynamic JSON: {"win": 3, "draw": 1, "loss": 0, "shutoutBonus": 1, "maxGoalsPerGame": 5}
+  isActive: boolean("is_active").default(true),
+  createdAt: text("created_at").notNull().default(new Date().toISOString()),
+  updatedAt: text("updated_at").notNull().default(new Date().toISOString()),
+});
+
+// Dynamic Standings Criteria Templates - Completely customizable standings calculation
+export const standingsCriteriaTemplates = pgTable("standings_criteria_templates", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(), // e.g., "FIFA Standard", "MLS Rules", "Youth Tournament Rules"
+  description: text("description").notNull(),
+  standingsCriteria: jsonb("standings_criteria").notNull(), // Ordered array: ["points", "goalDifferential", "goalsScored", "headToHead"]
+  isActive: boolean("is_active").default(true),
+  createdAt: text("created_at").notNull().default(new Date().toISOString()),
+  updatedAt: text("updated_at").notNull().default(new Date().toISOString()),
+});
+
+// Event Scoring and Standings Configuration - Links events to their dynamic templates
+export const eventScoringConfiguration = pgTable("event_scoring_configuration", {
+  id: serial("id").primaryKey(),
+  eventId: text("event_id").notNull().references(() => events.id, { onDelete: 'cascade' }),
+  scoringRuleTemplateId: integer("scoring_rule_template_id").references(() => scoringRuleTemplates.id),
+  standingsCriteriaTemplateId: integer("standings_criteria_template_id").references(() => standingsCriteriaTemplates.id),
+  includeChampionship: boolean("include_championship").default(false),
+  championshipFormat: text("championship_format"), // e.g., "1st vs 2nd", "Bracket A Winner vs Bracket B Winner"
+  customScoringRules: jsonb("custom_scoring_rules"), // Event-specific overrides
+  customStandingsCriteria: jsonb("custom_standings_criteria"), // Event-specific overrides
+  isActive: boolean("is_active").default(true),
+  createdAt: text("created_at").notNull().default(new Date().toISOString()),
+  updatedAt: text("updated_at").notNull().default(new Date().toISOString()),
+});
+
+export const insertScoringRuleTemplateSchema = createInsertSchema(scoringRuleTemplates, {
+  name: z.string().min(1, "Template name is required"),
+  description: z.string().min(1, "Description is required"),
+  scoringRules: z.record(z.union([z.number(), z.string()])).refine(
+    (rules) => typeof rules === 'object' && rules !== null,
+    "Scoring rules must be a valid object"
+  ),
+});
+
+export const insertStandingsCriteriaTemplateSchema = createInsertSchema(standingsCriteriaTemplates, {
+  name: z.string().min(1, "Template name is required"),
+  description: z.string().min(1, "Description is required"),
+  standingsCriteria: z.array(z.string()).min(1, "At least one criteria is required"),
+});
+
+export const insertEventScoringConfigurationSchema = createInsertSchema(eventScoringConfiguration, {
+  includeChampionship: z.boolean().default(false),
+  championshipFormat: z.string().optional(),
+  customScoringRules: z.record(z.union([z.number(), z.string()])).optional(),
+  customStandingsCriteria: z.array(z.string()).optional(),
+});
+
+export const selectScoringRuleTemplateSchema = createSelectSchema(scoringRuleTemplates);
+export const selectStandingsCriteriaTemplateSchema = createSelectSchema(standingsCriteriaTemplates);
+export const selectEventScoringConfigurationSchema = createSelectSchema(eventScoringConfiguration);
+
+export type InsertScoringRuleTemplate = typeof scoringRuleTemplates.$inferInsert;
+export type SelectScoringRuleTemplate = typeof scoringRuleTemplates.$inferSelect;
+export type InsertStandingsCriteriaTemplate = typeof standingsCriteriaTemplates.$inferInsert;
+export type SelectStandingsCriteriaTemplate = typeof standingsCriteriaTemplates.$inferSelect;
+export type InsertEventScoringConfiguration = typeof eventScoringConfiguration.$inferInsert;
+export type SelectEventScoringConfiguration = typeof eventScoringConfiguration.$inferSelect;
 
 export const eventAdministrators = pgTable("event_administrators", {
   id: serial("id").primaryKey(),

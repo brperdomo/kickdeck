@@ -27,11 +27,12 @@ import FieldSortingManager from '@/components/admin/FieldSortingManager';
 import FieldManagementDashboard from '@/components/admin/FieldManagementDashboard';
 import PersistentAIChatbot from '@/components/admin/scheduling/PersistentAIChatbot';
 import { FormatSettings } from '@/components/admin/scheduling/FormatSettings';
+import ScoringStandingsSettings from '@/components/admin/scheduling/ScoringStandingsSettings';
 
 export default function MasterSchedulePage() {
   const { eventId } = useParams<{ eventId: string }>();
   const [, setLocation] = useLocation();
-  const [currentView, setCurrentView] = useState<'view' | 'calendar' | 'cards' | 'manage' | 'flights' | 'brackets' | 'overview' | 'workflow' | 'publish' | 'field-sorting' | 'format-settings'>('overview');
+  const [currentView, setCurrentView] = useState<'view' | 'calendar' | 'cards' | 'manage' | 'flights' | 'brackets' | 'overview' | 'workflow' | 'publish' | 'field-sorting' | 'format-settings' | 'scoring-standings'>('overview');
 
   if (!eventId) {
     return <div>Event ID not found</div>;
@@ -219,6 +220,19 @@ export default function MasterSchedulePage() {
           </Button>
 
           <Button
+            variant={currentView === 'scoring-standings' ? 'default' : 'outline'}
+            onClick={() => setCurrentView('scoring-standings')}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 whitespace-nowrap backdrop-blur-sm ${
+              currentView === 'scoring-standings' 
+                ? 'bg-gradient-to-r from-purple-600 to-purple-700 text-white shadow-lg shadow-purple-600/25 hover:from-purple-500 hover:to-purple-600' 
+                : 'bg-black/20 text-purple-100 hover:bg-purple-900/30 border border-purple-400/30 hover:border-purple-300/50'
+            }`}
+          >
+            <Trophy className="h-4 w-4" />
+            Scoring & Standings
+          </Button>
+
+          <Button
             variant={currentView === 'publish' ? 'default' : 'outline'}
             onClick={() => setCurrentView('publish')}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 whitespace-nowrap backdrop-blur-sm ${
@@ -374,6 +388,20 @@ export default function MasterSchedulePage() {
             </Alert>
             <div className="bg-black/20 backdrop-blur-sm border border-purple-400/30 rounded-lg p-6">
               <FormatSettings eventId={eventId} />
+            </div>
+          </div>
+        ) : currentView === 'scoring-standings' ? (
+          <div className="space-y-6">
+            <Alert className="border-yellow-400/30 bg-black/30 backdrop-blur-sm">
+              <Trophy className="h-4 w-4 text-yellow-400" />
+              <AlertDescription className="text-purple-100">
+                <strong>Scoring & Standings:</strong> Define dynamic scoring rules and standings criteria with ZERO hardcoded values. 
+                Create custom point systems, tiebreaker hierarchies, and championship game configurations. All scoring calculations 
+                use these templates - no hardcoded logic anywhere in the system.
+              </AlertDescription>
+            </Alert>
+            <div className="bg-black/20 backdrop-blur-sm border border-purple-400/30 rounded-lg p-6">
+              <ScoringStandingsSettings eventId={eventId} />
             </div>
           </div>
         ) : (

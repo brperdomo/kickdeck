@@ -42,6 +42,7 @@ import feeAdjustmentsRouter from "./routes/admin/fee-adjustments";
 import gameMetadataRouter from "./routes/admin/game-metadata";
 import gameFormatsRouter from "./routes/admin/game-formats";
 import matchupTemplatesRouter from "./routes/admin/matchup-templates";
+import scoringTemplatesRouter from "./routes/admin/scoring-templates";
 import templateVerificationRouter from "./routes/admin/template-verification";
 import bracketCreationSqlRouter from "./routes/admin/bracket-creation";
 import bracketCreationFixedRouter from "./routes/admin/bracket-creation-fixed";
@@ -1118,7 +1119,8 @@ export function registerRoutes(app: Express): Server {
       }
     });
     
-    // app.use('/api/admin/matchup-templates', matchupTemplatesRouter); // Matchup templates router
+    app.use('/api/admin/matchup-templates', isAdmin, matchupTemplatesRouter); // Matchup templates router
+    app.use('/api/admin/scoring-templates', isAdmin, scoringTemplatesRouter); // Scoring & Standings templates router
 
   // Debug endpoint for testing templates without authentication
   app.get('/api/debug/format-templates', async (req, res) => {
