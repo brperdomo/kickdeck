@@ -140,19 +140,15 @@ router.get('/events/:eventId/scheduling-readiness', async (req, res) => {
     const coachTeamMap = new Map<string, any[]>();
     
     tournamentTeams.forEach(team => {
-      if (team.coachNames && team.coachNames.length > 0) {
-        team.coachNames.forEach((coachName: string) => {
-          if (coachName && coachName.trim()) {
-            const cleanCoachName = coachName.trim().toLowerCase();
-            if (!coachTeamMap.has(cleanCoachName)) {
-              coachTeamMap.set(cleanCoachName, []);
-            }
-            const teamList = coachTeamMap.get(cleanCoachName);
-            if (teamList) {
-              teamList.push(team);
-            }
-          }
-        });
+      if (team.coach && team.coach.trim()) {
+        const cleanCoachName = team.coach.trim().toLowerCase();
+        if (!coachTeamMap.has(cleanCoachName)) {
+          coachTeamMap.set(cleanCoachName, []);
+        }
+        const teamList = coachTeamMap.get(cleanCoachName);
+        if (teamList) {
+          teamList.push(team);
+        }
       }
     });
 
@@ -182,7 +178,7 @@ router.get('/events/:eventId/scheduling-readiness', async (req, res) => {
       hasGameFormats: gameFormats.length > 0,
       hasScheduleConstraints: scheduleConstraints.length > 0,
       hasFields: tournamentFields.length > 0,
-      hasCoachInfo: tournamentTeams.some(t => t.coachNames && t.coachNames.length > 0),
+      hasCoachInfo: tournamentTeams.some(t => t.coach && t.coach.trim()),
       hasAgeGroups: ageGroups.length > 0,
 
       // Missing components (will be added when we implement them)
@@ -231,6 +227,36 @@ router.get('/events/:eventId/validate', isAdmin, async (req, res) => {
 
     console.log(`🔍 CONFIGURATION VALIDATION - Event ${eventId}`);
     console.log('==========================================');
+
+    // Import event_brackets for flight counting
+    const { eventBrackets } = await import('@db/schema');
+    
+    // Calculate flight counts for this validation
+    let configuredFlights = 0;
+    let flightsWithTeams = 0;
+    
+    try {
+      // Count flights that actually have teams (meaningful for scheduling)
+      const flightsWithTeamsResult = await db.select({
+        flightName: eventBrackets.name,
+        ageGroupId: eventBrackets.ageGroupId,
+        teamCount: sql<number>`COUNT(${teams.id})`
+      })
+      .from(eventBrackets)
+      .leftJoin(teams, sql`${teams.bracketId} = ${eventBrackets.id} AND ${teams.status} = 'approved'`)
+      .where(sql`${eventBrackets.eventId} = ${eventIdInt} AND ${eventBrackets.tournamentFormat} IS NOT NULL`)
+      .groupBy(eventBrackets.name, eventBrackets.ageGroupId)
+      .having(sql`COUNT(${teams.id}) > 0`);
+      
+      flightsWithTeams = flightsWithTeamsResult.length;
+      configuredFlights = flightsWithTeams; // Only count flights with teams as "configured" for scheduling
+      
+      console.log(`Flight Analysis for validation: ${flightsWithTeams} flights with teams`);
+    } catch (error) {
+      console.error('Error calculating flight counts:', error);
+      configuredFlights = 0;
+      flightsWithTeams = 0;
+    }
 
     // Initialize validation results with enhanced analysis
     const buildingBlocks = [

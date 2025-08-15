@@ -109,27 +109,33 @@ export function UnifiedTournamentControlCenter({ eventId }: TournamentControlCen
       
       console.log('Flight configs loaded:', flightConfigs?.length || 0, 'flights');
       
-      // Count configured flights (flights with saved game formats and isConfigured = true)
-      const configuredFlights = flightConfigs.filter((flight: any) => 
+      // CRITICAL FIX: Only count flights that actually have teams assigned
+      // This fixes the "Schedule All" button showing incorrect flight counts (72 vs actual 2)
+      const flightsWithTeams = flightConfigs.filter((flight: any) => (flight.teamCount || 0) > 0);
+      
+      // Count configured flights (flights with teams AND game formats configured)
+      const configuredFlights = flightsWithTeams.filter((flight: any) => 
         flight.isConfigured === true &&
         flight.formatName && 
         flight.formatName !== 'Not Configured'
       );
       
-      console.log('Configured flights:', configuredFlights.length, 'of', flightConfigs.length);
+      console.log(`FLIGHT COUNTING FIX: ${flightConfigs.length} total flights, ${flightsWithTeams.length} flights with teams, ${configuredFlights.length} configured flights`);
       
       return {
-        totalFlights: flightConfigs.length || 0,
+        totalFlights: flightsWithTeams.length, // Show only flights with teams, not all 72 possible flights
         configuredFlights: configuredFlights.length,
         readyForScheduling: configuredFlights.length > 0,
         error: false,
-        flights: configuredFlights.map((flight: any) => ({
+        flights: flightsWithTeams.map((flight: any) => ({
           id: flight.id,
           flightName: flight.flightName,
           ageGroup: flight.ageGroup,
+          gender: flight.gender,
           formatName: flight.formatName,
           teamCount: flight.teamCount || 0,
-          scheduledGamesCount: flightGameCounts?.[flight.id] || 0
+          scheduledGamesCount: flightGameCounts?.[flight.id] || 0,
+          isConfigured: flight.isConfigured
         }))
       };
     },
