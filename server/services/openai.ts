@@ -699,6 +699,30 @@ const getTournamentData = async (eventId: string) => {
       .from(games)
       .where(eq(games.eventId, eventId));
 
+    // Get detailed games information with field and team details
+    const detailedGames = await db
+      .select({
+        id: games.id,
+        scheduledDate: games.scheduledDate,
+        scheduledTime: games.scheduledTime,
+        homeTeamId: games.homeTeamId,
+        awayTeamId: games.awayTeamId,
+        homeTeamName: sql<string>`COALESCE(home_team.name, 'TBD')`.as('home_team_name'),
+        awayTeamName: sql<string>`COALESCE(away_team.name, 'TBD')`.as('away_team_name'),
+        fieldId: games.fieldId,
+        fieldName: fields.name,
+        round: games.round,
+        matchNumber: games.matchNumber,
+        status: games.status
+      })
+      .from(games)
+      .leftJoin(fields, eq(games.fieldId, fields.id))
+      .leftJoin(teams.as('home_team'), eq(games.homeTeamId, teams.as('home_team').id))
+      .leftJoin(teams.as('away_team'), eq(games.awayTeamId, teams.as('away_team').id))
+      .where(eq(games.eventId, eventId))
+      .orderBy(games.scheduledDate, games.scheduledTime)
+      .limit(50);
+
     // Get approved teams count
     const [teamsCount] = await db
       .select({
@@ -707,6 +731,14 @@ const getTournamentData = async (eventId: string) => {
       })
       .from(teams)
       .where(eq(teams.eventId, eventId));
+
+    // Group games by date for easier analysis
+    const gamesByDate = detailedGames.reduce((acc, game) => {
+      const date = game.scheduledDate?.toString() || 'Unscheduled';
+      if (!acc[date]) acc[date] = [];
+      acc[date].push(game);
+      return acc;
+    }, {} as Record<string, typeof detailedGames>);
 
     return {
       formatTemplates: formatTemplates.length,
@@ -721,7 +753,9 @@ const getTournamentData = async (eventId: string) => {
       totalGames: gamesCount.totalGames || 0,
       scheduledGames: gamesCount.scheduledGames || 0,
       totalTeams: teamsCount.totalTeams || 0,
-      approvedTeams: teamsCount.approvedTeams || 0
+      approvedTeams: teamsCount.approvedTeams || 0,
+      detailedGames,
+      gamesByDate
     };
   } catch (error) {
     console.error('Error fetching tournament data:', error);
@@ -759,6 +793,18 @@ TOURNAMENT STATUS:
 - Configured Brackets: ${tournamentData.configuredBrackets} (${Math.round((tournamentData.configuredBrackets/tournamentData.totalBrackets)*100)}% configured)
 - Teams: ${tournamentData.approvedTeams.toLocaleString()} approved out of ${tournamentData.totalTeams.toLocaleString()} total
 - Games: ${tournamentData.totalGames.toLocaleString()} generated, ${tournamentData.scheduledGames.toLocaleString()} scheduled
+
+SCHEDULED GAMES BY DATE:
+${Object.keys(tournamentData.gamesByDate).map(date => 
+  `${date}: ${tournamentData.gamesByDate[date].length} games scheduled\n${tournamentData.gamesByDate[date].map(game => 
+    `  - ${game.scheduledTime || 'TBD'}: ${game.homeTeamName} vs ${game.awayTeamName} on Field ${game.fieldName || game.fieldId} (Round ${game.round})`
+  ).join('\n')}`
+).join('\n\n')}
+
+RECENT GAMES DETAILS:
+${tournamentData.detailedGames.slice(0, 10).map(game => 
+  `- Game #${game.id}: ${game.homeTeamName} vs ${game.awayTeamName} on ${game.scheduledDate} at ${game.scheduledTime || 'TBD'}, Field ${game.fieldName || game.fieldId} (Round ${game.round})`
+).join('\n')}
 
 FIELD MANAGEMENT:
 - Total Fields Available: ${fieldsData.totalFields}
