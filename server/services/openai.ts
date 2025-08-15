@@ -660,8 +660,8 @@ const getEventFieldsData = async (eventId: string) => {
 // Tournament data access functions for AI assistant
 const getTournamentData = async (eventId: string) => {
   try {
-    // Get tournament format templates
-    const formatTemplates = await db
+    // Get tournament format templates used by this specific event's brackets
+    const eventFormatTemplates = await db
       .select({
         id: matchupTemplates.id,
         name: matchupTemplates.name,
@@ -671,7 +671,19 @@ const getTournamentData = async (eventId: string) => {
         totalGames: matchupTemplates.totalGames
       })
       .from(matchupTemplates)
-      .where(eq(matchupTemplates.isActive, true));
+      .innerJoin(eventBrackets, eq(eventBrackets.tournamentFormat, matchupTemplates.name))
+      .where(and(
+        eq(matchupTemplates.isActive, true),
+        eq(eventBrackets.eventId, eventId)
+      ))
+      .groupBy(
+        matchupTemplates.id,
+        matchupTemplates.name,
+        matchupTemplates.description,
+        matchupTemplates.teamCount,
+        matchupTemplates.bracketStructure,
+        matchupTemplates.totalGames
+      );
 
     // Get event brackets configuration
     const brackets = await db
@@ -758,8 +770,8 @@ const getTournamentData = async (eventId: string) => {
     }, {} as Record<string, typeof detailedGames>);
 
     return {
-      formatTemplates: formatTemplates.length,
-      availableFormats: formatTemplates.map(t => ({ name: t.name, teamCount: t.teamCount, games: t.totalGames })),
+      formatTemplates: eventFormatTemplates.length,
+      availableFormats: eventFormatTemplates.map(t => ({ name: t.name, teamCount: t.teamCount, games: t.totalGames })),
       totalBrackets: brackets.length,
       configuredBrackets: brackets.filter(b => b.tournamentFormat).length,
       bracketDetails: brackets.slice(0, 10).map(b => ({
@@ -800,12 +812,20 @@ const chatWithTournamentContext = async (eventId: string, userMessage: string) =
       return { error: "Unable to access tournament data" };
     }
 
+    // Get the specific event name for more accurate context
+    const [eventData] = await db
+      .select({ name: events.name })
+      .from(events)
+      .where(eq(events.id, eventId));
+
+    const eventName = eventData?.name || 'Current Tournament';
+
     // Build comprehensive context prompt with fields data
     const contextPrompt = `
-You are a tournament management assistant for the Empire Super Cup soccer tournament with full access to field management capabilities.
+You are a tournament management assistant for ${eventName} with full access to field management capabilities.
 
-TOURNAMENT STATUS:
-- Format Templates Available: ${tournamentData.formatTemplates} (including 4-Team Single, 6-Team Crossover, 8-Team Dual, Round Robin, Swiss, Single Elimination)
+THIS TOURNAMENT STATUS (Event ID: ${eventId}):
+- Format Templates Used: ${tournamentData.formatTemplates} specific to this event
 - Total Brackets: ${tournamentData.totalBrackets}
 - Configured Brackets: ${tournamentData.configuredBrackets} (${Math.round((tournamentData.configuredBrackets/tournamentData.totalBrackets)*100)}% configured)
 - Teams: ${tournamentData.approvedTeams.toLocaleString()} approved out of ${tournamentData.totalTeams.toLocaleString()} total
@@ -831,7 +851,7 @@ FIELD MANAGEMENT:
 DETAILED FIELD INVENTORY:
 ${fieldsData.fieldDetails.map(f => `- Field ${f.name}: ${f.fieldSize} (${f.isActive ? 'Active' : 'Inactive'})${f.hasLights ? ' - Lighted' : ''}`).join('\n')}
 
-AVAILABLE TOURNAMENT FORMATS:
+TOURNAMENT FORMATS USED IN THIS EVENT:
 ${tournamentData.availableFormats.map(f => `- ${f.name}: ${f.teamCount} teams, ${f.games} games`).join('\n')}
 
 RECENT BRACKET CONFIGURATIONS:
@@ -842,7 +862,7 @@ FINANCIAL DATA:
 - Paid Teams: ${financialData.paidTeams}
 - Pending Teams: ${financialData.pendingTeams}
 
-You can answer questions about field management, game scheduling, field availability, field sizes, and help move games between fields. When discussing specific fields, reference them by their actual names and sizes shown above.
+You can answer questions about field management, game scheduling, field availability, field sizes, and help move games between fields for THIS SPECIFIC EVENT ONLY. When discussing specific fields, reference them by their actual names and sizes shown above. Only provide information and assistance related to ${eventName} (Event ID: ${eventId}).
 
 User Question: ${userMessage}
 `;
