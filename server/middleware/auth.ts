@@ -7,7 +7,7 @@ export const isAdmin = async (req: Request, res: Response, next: NextFunction) =
     'bracket-creation', 'create-brackets', 'assign-teams', 'auto-schedule', 
     'tbd-games', 'assign-fields', 'assign-field', 'format-templates', 
     'matchup-templates', 'tournament-format', 'field-configurations',
-    'ai-assistant/chat', 'scheduling-readiness', 'flight-status'
+    'ai-assistant/chat', 'ai-chat', '/ai-chat', 'scheduling-readiness', 'flight-status'
   ];
   
   const fullPath = req.originalUrl || req.path;

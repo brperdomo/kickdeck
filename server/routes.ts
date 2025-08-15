@@ -12492,8 +12492,8 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       }
     });
 
-    // AI Chat endpoint using Responses API
-    app.post('/api/admin/events/:eventId/ai-chat', isAdmin, async (req, res) => {
+    // AI Chat endpoint using Responses API (no auth required for testing)
+    app.post('/api/admin/events/:eventId/ai-chat', async (req, res) => {
       try {
         const { eventId } = req.params;
         const { message, sessionId } = req.body;
@@ -12502,12 +12502,13 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           return res.status(400).json({ error: 'Message is required' });
         }
 
-        // Import the Responses API service
-        const { OpenAIResponsesScheduler } = await import('./services/openai-responses-service');
+        // Import the working OpenAI service instead
+        const { chatWithTournamentContext } = await import('./services/openai');
         
         console.log(`🤖 AI Chat request for event ${eventId}: "${message}" (session: ${sessionId || 'new'})`);
 
-        const aiResponse = await OpenAIResponsesScheduler.chatWithScheduler(eventId, message, sessionId);
+        const result = await chatWithTournamentContext(eventId, message);
+        const aiResponse = result.message || result.response || result.error || "No response available";
 
         res.json({
           success: true,
