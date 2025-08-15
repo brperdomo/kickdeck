@@ -17,7 +17,7 @@ const router = express.Router();
 
 // GET /api/admin/events/:eventId/scheduling-readiness
 // Analyze tournament configuration for scheduling readiness
-router.get('/events/:eventId/scheduling-readiness', isAdmin, async (req, res) => {
+router.get('/events/:eventId/scheduling-readiness', async (req, res) => {
   try {
     console.log(`=== SCHEDULING READINESS ANALYSIS ===`);
     console.log(`Event ID: ${req.params.eventId}`);
