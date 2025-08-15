@@ -35,11 +35,11 @@ export default function GameCardsGenerator({ eventId }: GameCardsGeneratorProps)
   const [generatingPDF, setGeneratingPDF] = useState(false);
   const { toast } = useToast();
 
-  // Fetch games data using the schedule-calendar endpoint that works without auth
+  // Fetch games data using the fixed scoring endpoint with proper team names
   const { data: gamesData, isLoading } = useQuery({
-    queryKey: ['/api/schedule-calendar', eventId, 'schedule-calendar'],
+    queryKey: ['games-scores', eventId],
     queryFn: async () => {
-      const response = await fetch(`/api/schedule-calendar/${eventId}/schedule-calendar`);
+      const response = await fetch(`/api/admin/score-management/events/${eventId}/games`);
       if (!response.ok) throw new Error('Failed to fetch games');
       return response.json();
     }
@@ -61,23 +61,30 @@ export default function GameCardsGenerator({ eventId }: GameCardsGeneratorProps)
     }
   });
 
-  // Transform schedule-calendar data to match Game interface
-  const games: Game[] = (gamesData?.games || []).map((game: any) => ({
-    id: game.id,
-    homeTeamId: game.homeTeamId || 0,
-    awayTeamId: game.awayTeamId || 0,
-    homeTeamName: game.homeTeamName,
-    awayTeamName: game.awayTeamName,
-    ageGroupName: game.ageGroup,
-    fieldName: game.fieldName,
-    complexName: 'Galway Downs Soccer Complex',
-    startTime: game.startTime,
-    endTime: game.endTime,
-    gameDate: game.startTime,
-    status: game.status,
-    homeScore: game.homeScore,
-    awayScore: game.awayScore
-  }));
+  // Transform scoring endpoint data to match Game interface
+  const games: Game[] = (gamesData?.games || []).map((game: any) => {
+    // Combine date and time for proper datetime formatting
+    const gameDateTime = game.scheduledDate && game.scheduledTime 
+      ? `${game.scheduledDate}T${game.scheduledTime}`
+      : null;
+    
+    return {
+      id: game.id,
+      homeTeamId: game.homeTeamId || 0,
+      awayTeamId: game.awayTeamId || 0,
+      homeTeamName: game.homeTeamName || 'TBD',
+      awayTeamName: game.awayTeamName || 'TBD',
+      ageGroupName: game.bracketName || 'No Flight', // Use bracketName from scoring endpoint
+      fieldName: game.fieldName || 'TBD',
+      complexName: 'Galway Downs Soccer Complex',
+      startTime: gameDateTime || '',
+      endTime: gameDateTime || '', // For now, use same as start time
+      gameDate: gameDateTime || '',
+      status: game.status,
+      homeScore: game.homeScore,
+      awayScore: game.awayScore
+    };
+  });
   
   const tournament = tournamentData?.event || { name: 'Tournament', startDate: '', endDate: '', location: '' };
 
