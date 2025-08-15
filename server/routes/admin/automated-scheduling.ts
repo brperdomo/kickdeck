@@ -818,7 +818,7 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
             const templateTeams = selectedTeams.map((team, index) => ({
               id: team.id,
               name: team.name,
-              bracketId: team.bracketId,
+              bracketId: team.bracketId?.toString() || '',
               groupId: team.groupId,
               seedRanking: index + 1
             }));
@@ -853,8 +853,8 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
           } else {
             throw new Error('No 4-team template found');
           }
-        } catch (templateError) {
-          console.warn('⚠️ TEMPLATE FALLBACK (4-team): Using legacy round-robin pattern:', templateError.message);
+        } catch (templateError: any) {
+          console.warn('⚠️ TEMPLATE FALLBACK (4-team): Using legacy round-robin pattern:', templateError?.message || 'Unknown error');
           
           // Legacy fallback
           for (let i = 0; i < selectedTeams.length; i++) {
@@ -912,7 +912,7 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
             const templateTeams = selectedTeams.map((team, index) => ({
               id: team.id,
               name: team.name,
-              bracketId: team.bracketId,
+              bracketId: team.bracketId?.toString() || '',
               groupId: team.groupId,
               seedRanking: index + 1,
               poolAssignment: index < 4 ? 'A' : 'B'
@@ -948,8 +948,8 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
           } else {
             throw new Error('No 8-team dual template found');
           }
-        } catch (templateError) {
-          console.warn('⚠️ TEMPLATE FALLBACK (8-team): Using legacy dual bracket pattern:', templateError.message);
+        } catch (templateError: any) {
+          console.warn('⚠️ TEMPLATE FALLBACK (8-team): Using legacy dual bracket pattern:', templateError?.message || 'Unknown error');
           
           // Legacy fallback
           const poolA = selectedTeams.slice(0, 4);
@@ -1076,8 +1076,8 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
           } else {
             throw new Error('No 6-team crossover template found');
           }
-        } catch (templateError) {
-          console.warn('⚠️ TEMPLATE FALLBACK: Using legacy crossplay pattern:', templateError.message);
+        } catch (templateError: any) {
+          console.warn('⚠️ TEMPLATE FALLBACK: Using legacy crossplay pattern:', templateError?.message || 'Unknown error');
           
           // Legacy fallback (temporary until all templates verified)
           const crossplayPairs = [
@@ -1168,8 +1168,8 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
           } else {
             throw new Error('No 6-team crossover template found');
           }
-        } catch (templateError) {
-          console.warn('⚠️ TEMPLATE FALLBACK (Block 2): Using legacy crossplay pattern:', templateError.message);
+        } catch (templateError: any) {
+          console.warn('⚠️ TEMPLATE FALLBACK (Block 2): Using legacy crossplay pattern:', templateError?.message || 'Unknown error');
           
           // Legacy fallback (temporary until all templates verified)
           const crossplayPairs = [
@@ -1556,7 +1556,7 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
           
           // Schedule remaining games on Day 2 using direct database updates
           const eventResult = await db.select({ startDate: events.startDate, endDate: events.endDate })
-            .from(events).where(eq(events.id, eventId)).limit(1);
+            .from(events).where(eq(events.id, parseInt(eventId))).limit(1);
           const event = eventResult[0];
           
           const day2Date = event.endDate; // August 17, 2025
