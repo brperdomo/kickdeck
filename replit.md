@@ -7,6 +7,7 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (August 15, 2025)
+- **OpenAI GPT-4o Integration Updated**: Successfully configured new OpenAI API key with GPT-4o model verification. AI-powered scheduling, optimization, and bracket suggestion services are fully operational.
 - **Authentication System Optimized**: Fixed overly restrictive authentication that was blocking basic admin operations. Admin configuration endpoints now bypass re-authentication when already in admin session, improving user experience significantly.
 - **Database Schema Completed**: Added missing `include_championship` and `championship_description` columns to `matchup_templates` table and resolved JSONB parsing issues.
 - **Backend Reconstruction Phase 2 Complete**: Successfully created and registered tournament format configuration and event field configuration APIs

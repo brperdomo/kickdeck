@@ -62,7 +62,7 @@ router.get('/events/:eventId/format-templates', isAdmin, async (req, res) => {
             matchupPattern = template.matchupPattern.split(',').map(s => s.trim());
           }
         } else if (template.matchupPattern && typeof template.matchupPattern === 'object') {
-          matchupPattern = template.matchupPattern;
+          matchupPattern = Array.isArray(template.matchupPattern) ? template.matchupPattern : [];
         }
         
         processedTemplates.push({
