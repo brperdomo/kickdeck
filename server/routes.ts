@@ -43,6 +43,7 @@ import gameMetadataRouter from "./routes/admin/game-metadata";
 import gameFormatsRouter from "./routes/admin/game-formats";
 import matchupTemplatesRouter from "./routes/admin/matchup-templates";
 import scoringTemplatesRouter from "./routes/admin/scoring-templates";
+import championshipRouter from "./routes/admin/championship";
 import templateVerificationRouter from "./routes/admin/template-verification";
 import bracketCreationSqlRouter from "./routes/admin/bracket-creation";
 import bracketCreationFixedRouter from "./routes/admin/bracket-creation-fixed";
@@ -1121,6 +1122,7 @@ export function registerRoutes(app: Express): Server {
     
     app.use('/api/admin/matchup-templates', isAdmin, matchupTemplatesRouter); // Matchup templates router
     app.use('/api/admin/scoring-templates', isAdmin, scoringTemplatesRouter); // Scoring & Standings templates router
+    app.use('/api/admin/championship', isAdmin, championshipRouter); // Championship team assignment router
 
   // Debug endpoint for testing templates without authentication
   app.get('/api/debug/format-templates', async (req, res) => {

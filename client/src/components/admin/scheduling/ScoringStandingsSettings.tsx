@@ -15,6 +15,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Plus, Edit, Trash2, GripVertical, Settings, Trophy, Calculator } from 'lucide-react';
+import ChampionshipManager from './ChampionshipManager';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 interface ScoringRule {
@@ -109,7 +110,7 @@ const AVAILABLE_STANDINGS_CRITERIA = [
 ];
 
 function ScoringStandingsSettings({ eventId }: ScoringStandingsSettingsProps) {
-  const [activeTab, setActiveTab] = useState<'scoring' | 'standings' | 'event'>('event');
+  const [activeTab, setActiveTab] = useState<'scoring' | 'standings' | 'event' | 'championship'>('event');
   const [isScoringModalOpen, setIsScoringModalOpen] = useState(false);
   const [isStandingsModalOpen, setIsStandingsModalOpen] = useState(false);
   const [editingScoringTemplate, setEditingScoringTemplate] = useState<ScoringRuleTemplate | null>(null);
@@ -356,6 +357,17 @@ function ScoringStandingsSettings({ eventId }: ScoringStandingsSettingsProps) {
           <Trophy className="w-4 h-4 inline mr-2" />
           Standings Templates
         </button>
+        <button
+          onClick={() => setActiveTab('championship')}
+          className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+            activeTab === 'championship'
+              ? 'bg-white text-blue-600 shadow-sm'
+              : 'text-gray-600 hover:text-gray-900'
+          }`}
+        >
+          <Trophy className="w-4 h-4 inline mr-2" />
+          Championship Games
+        </button>
       </div>
 
       {/* Event Configuration Tab */}
@@ -568,6 +580,11 @@ function ScoringStandingsSettings({ eventId }: ScoringStandingsSettingsProps) {
             ))}
           </div>
         </div>
+      )}
+
+      {/* Championship Management Tab */}
+      {activeTab === 'championship' && (
+        <ChampionshipManager eventId={eventId} />
       )}
 
       {/* Scoring Template Modal */}
