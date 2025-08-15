@@ -1,4 +1,4 @@
-import QRCode from "qrcode.react";
+import { QRCodeSVG } from "qrcode.react";
 
 interface GameQRCodeProps {
   gameId: number;
@@ -11,7 +11,7 @@ export default function GameQRCode({ gameId, size = 128 }: GameQRCodeProps) {
   
   return (
     <div className="flex flex-col items-center space-y-2">
-      <QRCode 
+      <QRCodeSVG 
         value={gameUrl} 
         size={size}
         level="M" // Medium error correction
