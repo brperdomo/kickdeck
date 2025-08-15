@@ -6,53 +6,6 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 ## User Preferences
 Preferred communication style: Simple, everyday language.
 
-## Recent Changes (August 15, 2025)
-- **CRITICAL Field Management System Rebuilt**: Fixed completely broken field management by creating missing FieldSortingManager component. Resolved hardcoded field data causing persistence failures in ScheduleViewerFixed component.
-- **Comprehensive Field Order Interface**: Built drag-and-drop field reordering system with field size configuration (7v7, 9v9, 11v11), enable/disable toggles, and real-time persistence to database.
-- **Field Data Integrity Fixed**: Corrected major data mismatch where fields named "13 (9v9)" were configured as "11v11". Implemented intelligent field size correction based on field names.
-- **API Data Structure Resolution**: Fixed critical mismatch between `fields` table and `eventFieldConfigurations` table structures. API now properly joins tables to provide complete field information including names, complex details, and lighting status.
-- **Field Management Persistence Verified**: Successfully tested field configuration updates via API. Field 45 ("13 (9v9)") correctly updated from "11v11" to "9v9" with full persistence confirmation.
-- **Enhanced Tournament Context Integration**: Connected AI assistant to core tournament data including brackets, teams, matchup templates, and scheduled games. Authentication bypass implemented for seamless functionality.
-- **AI Assistant Data Access Fixed**: Resolved critical disconnect where AI assistant reported "no games scheduled" despite 9+ games existing in database. Fixed broken OpenAIResponsesScheduler service by switching to working chatWithTournamentContext function. AI assistant now properly accesses all tournament data including scheduled games, team information, and field configurations with full authentication bypass.
-- **Event-Specific AI Assistant Context**: Enhanced AI assistant to be completely event-specific, only accessing data from the current tournament being managed. Removed global template queries and implemented event-scoped format templates, ensuring responses are relevant only to the active event (e.g., Empire Super Cup) and not other tournaments in the system.
-- **Dynamic Rest Periods Implementation**: Replaced hardcoded 90-minute rest periods with fully dynamic system based on flight configuration settings. Each flight now has configurable rest periods (Nike Elite: 120min, Nike Classic: 30-120min, Nike Premier: 60-120min) stored in tournament_settings.restPeriodMinutes. Updated scheduling system and AI assistant to properly read and apply these flight-specific rest period values.
-- **OpenAI GPT-4o Integration Updated**: Successfully configured new OpenAI API key with GPT-4o model verification. AI-powered scheduling, optimization, and bracket suggestion services are fully operational.
-- **Professional Gamecard System Complete**: Built comprehensive gamecard generation system matching tournament standards. Includes team roster cards with player details, coach information, game schedule cards with score sheets, PDF generation functionality, and printable format for field use. Integrated into admin interface at `/admin/events/:eventId/game-cards`.
-- **Field-Specific Time Controls Complete**: Added OPEN and LAST GAME time controls to Field Order tab allowing tournament directors to set field availability windows. Database enhanced with lastGameTime field, API updated to handle time constraints, and UI provides intuitive time input fields for each field. Enables field-specific scheduling based on lighting, operating hours, and availability constraints.
-- **CRITICAL Scheduling System Fixes (August 15, 2025)**: Fixed multiple critical bugs causing incomplete schedules and incorrect field assignments:
-  - **Fixed Field Availability Bug**: Updated `SimpleScheduler.getRealComplexesForEvent` to use event-specific `eventFieldConfigurations.isActive` instead of deprecated `fields.isOpen`
-  - **Removed Artificial Game Limits**: Eliminated artificial 6-game demonstration limits in true-automated-scheduling that were preventing complete tournament schedules
-  - **Fixed Field Query Restrictions**: Removed hard limit of 10 fields and updated all scheduling services to use proper event-specific field configurations
-  - **Complete Schedule Generation**: Replaced limited game generation with full round-robin pool play plus semifinals, championship, and 3rd place games for all bracket sizes
-  - **Inactive Field Exclusion**: All scheduling buttons now properly respect event-specific field active status, preventing inactive fields from being assigned games
-- **FULLY FUNCTIONAL CSV Game Import System (August 15, 2025)**: Completed comprehensive CSV import functionality allowing tournament directors to import game schedules from external systems with full database integration:
-  - **Corrected CSV Format Parsing**: Fixed schema mismatches to properly handle actual tournament CSV format (Date, Time, Home Team, Away Team, Age Group, Field, Status)
-  - **Intelligent Team/Field Matching**: Implemented fuzzy matching logic to map CSV team names to existing database teams with fallback creation options
-  - **Complete Database Integration**: Fixed all Drizzle ORM schema issues and properly integrated imported games with existing scoring system and standings calculations
-  - **Production-Ready Error Handling**: Added comprehensive validation, conflict detection, and rollback capabilities for failed imports
-  - **Scoring System Compatibility**: All imported games are immediately available for score recording and properly contribute to standings for determining TBD games and winners
-  - **Admin Interface Integration**: Seamless integration with MasterSchedulePage allowing tournament directors to import, preview, and execute CSV imports with real-time feedback
-  - **CSV Template Download**: Added downloadable sample template (game-schedule-template.csv) with proper format examples for easy tournament setup
-- **QR Code Score Submission System Complete (August 15, 2025)**: Implemented comprehensive QR code system for direct mobile score submission enabling anyone with a game link to enter or edit scores:
-  - **GameQRCode Component**: React component using qrcode.react library to generate QR codes linking to /game/:gameId URLs
-  - **Mobile-Friendly Score Interface**: GameScorePage provides responsive, touch-optimized interface for score entry with real-time validation
-  - **Public API Endpoints**: Unauthenticated routes at `/api/public/games/:gameId` and `/api/public/games/:gameId/score` for game data and score updates
-  - **Open Editing Model**: No authentication required - anyone with the QR code link can view game details and submit/edit scores
-  - **Gamecard Integration**: QR codes automatically embedded in printed gamecards with "Scan to enter/edit scores" instructions
-  - **Production-Ready Security**: Score locking capabilities, validation, error handling, and audit logging for tournament oversight
-  - **Real-time Updates**: Score submissions immediately update database and trigger standings recalculation for playoff advancement
-- **New API Endpoints Operational**: 
-  - `/api/admin/events/:eventId/fields` - Complete field configuration management with joins including time controls (✅ Working)
-  - `/api/admin/events/:eventId/fields/:fieldId` - Individual field updates with firstGameTime and lastGameTime support (✅ Working & Tested)
-  - `/api/admin/events/:eventId/fields/reorder` - Drag-and-drop field ordering (✅ Ready)
-  - `/api/admin/ai-assistant/chat` - Enhanced AI assistant with tournament data context (✅ Working)
-  - `/api/admin/events/:eventId/teams/detailed` - Team roster data for gamecard generation (✅ Working)
-  - `/api/admin/events/:eventId/games/detailed` - Game schedule data for gamecard generation (✅ Working)
-  - `/api/admin/events/:eventId/generate-pdf` - Professional PDF gamecard generation (✅ Working)
-  - `/api/admin/csv-import/preview` - CSV file preview with intelligent team/field mapping and validation (✅ Working)
-  - `/api/admin/csv-import/execute` - Complete CSV import with automatic team/age group creation and full database integration (✅ Working)
-  - All CSV import endpoints properly handle authentication, file validation, database transactions, and error recovery
-
 ## System Architecture
 
 ### Frontend
@@ -69,21 +22,21 @@ Preferred communication style: Simple, everyday language.
 - **Database ORM**: Drizzle ORM
 - **Authentication**: Session-based with role-based access control (super_admin, tournament_admin, finance_admin, score_admin).
 - **Core Features**:
-    - **Event Management**: Configuration of tournaments, age groups, flights (previously brackets), and scoring systems.
+    - **Event Management**: Configuration of tournaments, age groups, flights, and scoring systems.
     - **Team Registration**: Multi-step workflow, roster management, and two-step payment processing, including team gender editing with smart age group filtering.
-    - **Payment Processing**: Full Stripe integration supporting Connect accounts, two-step payments, refunds, and intelligent payment recovery for complex fee structures and fund routing.
+    - **Payment Processing**: Full Stripe integration supporting Connect accounts, two-step payments, refunds, and intelligent payment recovery.
     - **Email Communication**: Dynamic template system for automated notifications.
-    - **Administrative Features**: Role-based access, team approval/rejection, payment tracking, and comprehensive user/team management, including silent status changes for teams without triggering emails.
-    - **Scheduling Systems**:
-        - **Automated Scheduling Engine**: Dynamic template-driven game generation eliminating hardcoded logic. Supports various formats (round-robin, pool play, single/double elimination, Swiss system, hybrid) with constraint-aware optimization and dynamic rest period enforcement. Includes field size matching, coach conflict detection, and lighting constraints.
-        - **Intelligent Gap-Filling**: Advanced field consolidation to optimize field utilization by moving games from outer fields to fill gaps on priority fields.
-        - **Enhanced Calendar Interface**: Consolidated drag-and-drop scheduler with operation logging, optimistic updates, conflict detection, and persistent backend synchronization for real-time schedule updates and inline editing.
-    - **Tournament-Wide Flight Management**: Unified flight category system allowing tournament-level configuration of flight templates (e.g., Nike Classic, Premier, Elite) that propagate to all age groups.
-    - **Unified Bracket Management Interface**: Consolidated bracket creation and team assignment system. Users select flights, choose bracket configurations (Group of 4/6/8), and assign teams within brackets. Supports Group of 4 (round-robin), Group of 6 (Pool A vs Pool B crossplay), and Group of 8 (two separate 4-team round-robin brackets with no cross-bracket play except championship final).
-    - **Tournament-Specific Field Management**: Comprehensive field configuration system allowing tournament directors to set field sizes per-tournament, featuring drag-and-drop ordering, bulk updates, and deletion. Includes field availability and bulk time assignment.
-    - **Team Replacement System**: Individual team replacement functionality allowing substitution with teams from the same flight category while preserving scheduling details.
-    - **AI Assistant**: Persistent, floating chatbot interface powered by GPT-4o for natural language game scheduling, constraint validation, and real-time database updates. Integrates with Flight Configuration parameters for constraint validation and offers alternative suggestions for conflicts. Conversation history is persistent via a PostgreSQL database.
-- **Critical Data Structure**: AGE GROUP → FLIGHTS → BRACKETS → Teams. Tournament formats are assigned to FLIGHTS (represented as event_brackets). FLIGHTS are competitive levels within age groups, each generating its own brackets and matchups based on the assigned tournament_format. Teams have `bracketId` (flight assignment) and `groupId` (specific bracket within flight).
+    - **Administrative Features**: Role-based access, team approval/rejection, payment tracking, and comprehensive user/team management, including silent status changes for teams.
+    - **Scheduling Systems**: Automated, template-driven game generation supporting various formats (round-robin, pool play, single/double elimination, Swiss system, hybrid) with constraint-aware optimization, dynamic rest period enforcement, field size matching, coach conflict detection, and lighting constraints. Includes intelligent gap-filling for field utilization and an enhanced calendar interface with drag-and-drop, operation logging, optimistic updates, and conflict detection.
+    - **Tournament-Wide Flight Management**: Unified flight category system allowing tournament-level configuration of flight templates that propagate to all age groups.
+    - **Unified Bracket Management Interface**: Consolidated bracket creation and team assignment system supporting Group of 4, Group of 6, and Group of 8 configurations.
+    - **Tournament-Specific Field Management**: Comprehensive field configuration system allowing tournament directors to set field sizes per-tournament, featuring drag-and-drop ordering, bulk updates, deletion, availability, and bulk time assignment, including specific time controls (OPEN, LAST GAME).
+    - **Team Replacement System**: Individual team replacement functionality preserving scheduling details.
+    - **AI Assistant**: Persistent, floating chatbot interface powered by GPT-4o for natural language game scheduling, constraint validation, and real-time database updates. Integrates with Flight Configuration parameters for constraint validation and offers alternative suggestions for conflicts. Conversation history is persistent via PostgreSQL.
+    - **Professional Gamecard System**: Generates comprehensive gamecards with team rosters, player details, coach information, and game schedules, with PDF generation and printable format.
+    - **CSV Game Import System**: Allows import of game schedules from external systems with intelligent team/field matching, full database integration, error handling, and scoring system compatibility.
+    - **QR Code Score Submission System**: Enables direct mobile score submission via QR codes linking to unauthenticated game score pages, with real-time updates and score locking capabilities.
+- **Critical Data Structure**: AGE GROUP → FLIGHTS → BRACKETS → Teams. Tournament formats are assigned to FLIGHTS (event_brackets). FLIGHTS are competitive levels within age groups, each generating its own brackets and matchups. Teams have `bracketId` (flight assignment) and `groupId` (specific bracket within flight).
 
 ### Data Storage
 - **Primary Database**: PostgreSQL for all event, team, player, payment, and scheduling data.
@@ -95,5 +48,6 @@ Preferred communication style: Simple, everyday language.
 -   **Stripe**: Payment processing.
 -   **SendGrid**: Email delivery.
 -   **Mapbox**: Geographic services.
--   **jsPDF & QRCode libraries**: PDF generation and QR code integration.
+-   **jsPDF & QRCode libraries (e.g., qrcode.react)**: PDF generation and QR code integration.
 -   **react-beautiful-dnd**: Drag-and-drop scheduling interface.
+-   **OpenAI GPT-4o**: AI Assistant.
