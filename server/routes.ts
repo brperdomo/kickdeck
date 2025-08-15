@@ -56,7 +56,7 @@ import adminBracketsRouter from "./routes/admin/brackets";
 import fieldCapacityRouter from "./routes/admin/field-capacity";
 import intelligentSchedulingRouter from "./routes/admin/intelligent-scheduling";
 import adminGamesRouter from "./routes/admin/games-router";
-import gameScoreManagementRouter from "./routes/admin/game-score-management";
+import gameScoreManagementRouter from "./routes/admin/game-score-management-fixed";
 import clubsRouter from "./routes/clubs";
 import adminClubsRouter from "./routes/admin/clubs";
 import eventClubsRouter from "./routes/admin/event-clubs";
