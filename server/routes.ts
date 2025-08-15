@@ -58,6 +58,7 @@ import aiAssistantRouter from "./routes/admin/ai-assistant";
 import gamecardsRouter from "./routes/admin/gamecards-simple";
 import csvImportRouter from "./routes/admin/csv-import-fixed";
 import publicGamesRouter from "./routes/public/games";
+import publicGameCardsRouter from "./routes/public/game-cards";
 // Tournament format validation will be handled directly in brackets router
 import fieldCapacityRouter from "./routes/admin/field-capacity";
 import intelligentSchedulingRouter from "./routes/admin/intelligent-scheduling";
@@ -971,6 +972,7 @@ export function registerRoutes(app: Express): Server {
     
     // Public routes for QR code score submission and standings
     app.use('/api/public/games', publicGamesRouter);
+    app.use('/api/public/game-cards', publicGameCardsRouter);
     app.use('/api/public/standings', publicStandingsRouter);
     app.use('/api/admin/events', tbdResolverRouter); // TBD game resolution system
     app.use('/api/admin/events', isAdmin, feesRouter); // Mount fees router under events path - REMOVED authenticateTournamentDirector
