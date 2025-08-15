@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, Bot, MessageCircle, X, Minimize2, Maximize2, Send, Sparkles } from 'lucide-react';
@@ -22,16 +22,7 @@ export default function PersistentAIChatbot({ eventId }: PersistentAIChatbotProp
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Fetch flight configuration to get centralized parameters
-  const { data: flightConfig } = useQuery({
-    queryKey: ['flight-config', eventId],
-    queryFn: async () => {
-      const response = await fetch(`/api/admin/events/${eventId}/flight-configurations`);
-      if (!response.ok) throw new Error('Failed to fetch flight configuration');
-      return response.json();
-    },
-    enabled: isOpen
-  });
+
 
   const sendMessage = async (message?: string) => {
     const messageToSend = message || userInput.trim();
@@ -109,7 +100,7 @@ export default function PersistentAIChatbot({ eventId }: PersistentAIChatbotProp
       
       setConversation([{
         role: 'assistant',
-        content: 'Hello! I\'m your tournament scheduling assistant powered by AI. I have access to your current flight parameters and can help you with:\n\n• Moving games to different times or fields\n• Checking for scheduling conflicts\n• Finding optimal time slots\n• Swapping teams in games\n• Reviewing upcoming schedules\n\nJust tell me what you need in plain English!'
+        content: 'Hello! I\'m your tournament scheduling assistant powered by AI. I can help you with:\n\n• Moving games to different times or fields\n• Checking for scheduling conflicts\n• Finding optimal time slots\n• Swapping teams in games\n• Reviewing upcoming schedules\n\nJust tell me what you need in plain English!'
       }]);
     }
   };
@@ -235,27 +226,6 @@ export default function PersistentAIChatbot({ eventId }: PersistentAIChatbotProp
               </Button>
             </div>
           </div>
-          
-          {/* Current Flight Parameters */}
-          {flightConfig && flightConfig.length > 0 && (
-            <div className="mt-2 p-2 bg-purple-900/20 rounded-lg border border-purple-500/20">
-              <div className="text-xs text-purple-300 mb-1">Current Flight Parameters:</div>
-              <div className="grid grid-cols-2 gap-2 text-xs">
-                <div className="text-purple-200">
-                  Game Length: <span className="text-white font-medium">{flightConfig[0]?.gameLength || 90}min</span>
-                </div>
-                <div className="text-purple-200">
-                  Rest Period: <span className="text-white font-medium">{flightConfig[0]?.restPeriod || flightConfig[0]?.bufferTime || 90}min</span>
-                </div>
-                <div className="text-purple-200">
-                  Field Size: <span className="text-white font-medium">{flightConfig[0]?.fieldSize || '7v7'}</span>
-                </div>
-                <div className="text-purple-200">
-                  Buffer: <span className="text-white font-medium">{flightConfig[0]?.bufferTime || 15}min</span>
-                </div>
-              </div>
-            </div>
-          )}
         </CardHeader>
         
         <CardContent className="pt-0">
@@ -285,13 +255,19 @@ export default function PersistentAIChatbot({ eventId }: PersistentAIChatbotProp
 
           {/* Input Area */}
           <div className="flex gap-2">
-            <Input
+            <input
+              type="text"
               value={userInput}
               onChange={(e) => setUserInput(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="Ask me about scheduling..."
               disabled={isLoading}
-              className="bg-purple-900/20 border-purple-500/30 text-white placeholder-purple-300 focus:border-purple-400"
+              className="flex h-10 w-full rounded-md border bg-purple-900/30 border-purple-500/50 px-3 py-2 text-sm text-white placeholder-purple-400 focus:border-purple-400 focus:ring-1 focus:ring-purple-400 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+              style={{ 
+                color: 'white !important',
+                backgroundColor: 'rgba(88, 28, 135, 0.3)',
+                borderColor: 'rgba(168, 85, 247, 0.5)'
+              }}
             />
             <Button
               onClick={() => sendMessage()}
