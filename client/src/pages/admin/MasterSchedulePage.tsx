@@ -7,7 +7,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AnimatedBackground } from '@/components/ui/AnimatedBackground';
 import { 
   Calendar, Zap, Eye, Settings, ArrowRight, 
-  CheckCircle, Clock, Users, Trophy, ArrowLeft, Home, FileText, Plane, Globe, Cog 
+  CheckCircle, Clock, Users, Trophy, ArrowLeft, Home, FileText, Plane, Globe, Cog, Calculator 
 } from 'lucide-react';
 import { UnifiedScheduleSetup } from '@/components/admin/scheduling/UnifiedScheduleSetup';
 import { UnifiedTournamentControlCenter } from '@/components/admin/scheduling/UnifiedTournamentControlCenter';
@@ -28,11 +28,12 @@ import FieldManagementDashboard from '@/components/admin/FieldManagementDashboar
 import PersistentAIChatbot from '@/components/admin/scheduling/PersistentAIChatbot';
 import { FormatSettings } from '@/components/admin/scheduling/FormatSettings';
 import ScoringStandingsSettings from '@/components/admin/scheduling/ScoringStandingsSettings';
+import GameScoreManager from '@/components/admin/scoring/GameScoreManager';
 
 export default function MasterSchedulePage() {
   const { eventId } = useParams<{ eventId: string }>();
   const [, setLocation] = useLocation();
-  const [currentView, setCurrentView] = useState<'view' | 'calendar' | 'cards' | 'manage' | 'flights' | 'brackets' | 'overview' | 'workflow' | 'publish' | 'field-sorting' | 'format-settings' | 'scoring-standings'>('overview');
+  const [currentView, setCurrentView] = useState<'view' | 'calendar' | 'cards' | 'manage' | 'flights' | 'brackets' | 'overview' | 'workflow' | 'publish' | 'field-sorting' | 'format-settings' | 'scoring-standings' | 'score-entry'>('overview');
 
   if (!eventId) {
     return <div>Event ID not found</div>;
@@ -229,7 +230,20 @@ export default function MasterSchedulePage() {
             }`}
           >
             <Trophy className="h-4 w-4" />
-            Scoring & Standings
+            Scoring Rules
+          </Button>
+
+          <Button
+            variant={currentView === 'score-entry' ? 'default' : 'outline'}
+            onClick={() => setCurrentView('score-entry')}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 whitespace-nowrap backdrop-blur-sm ${
+              currentView === 'score-entry' 
+                ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg shadow-orange-500/25 hover:from-orange-400 hover:to-orange-500' 
+                : 'bg-black/20 text-purple-100 hover:bg-purple-900/30 border border-purple-400/30 hover:border-purple-300/50'
+            }`}
+          >
+            <Calculator className="h-4 w-4" />
+            Enter Scores
           </Button>
 
           <Button
@@ -395,13 +409,26 @@ export default function MasterSchedulePage() {
             <Alert className="border-yellow-400/30 bg-black/30 backdrop-blur-sm">
               <Trophy className="h-4 w-4 text-yellow-400" />
               <AlertDescription className="text-purple-100">
-                <strong>Scoring & Standings:</strong> Create flexible scoring rules and standings criteria tailored to your tournament format. 
+                <strong>Scoring Rules & Standings:</strong> Create flexible scoring rules and standings criteria tailored to your tournament format. 
                 Set up custom point systems, tiebreaker hierarchies, and championship game configurations. All scoring calculations 
                 use your templates, ensuring consistency across your entire tournament.
               </AlertDescription>
             </Alert>
             <div className="bg-black/20 backdrop-blur-sm border border-purple-400/30 rounded-lg p-6">
               <ScoringStandingsSettings eventId={eventId} />
+            </div>
+          </div>
+        ) : currentView === 'score-entry' ? (
+          <div className="space-y-6">
+            <Alert className="border-orange-400/30 bg-black/30 backdrop-blur-sm">
+              <Calculator className="h-4 w-4 text-orange-400" />
+              <AlertDescription className="text-purple-100">
+                <strong>Score Management:</strong> Enter and manage game scores, track cards (yellow/red), and update game status. 
+                All score changes are logged with timestamps for complete audit trails. Bulk operations available for efficient tournament management.
+              </AlertDescription>
+            </Alert>
+            <div className="bg-black/20 backdrop-blur-sm border border-purple-400/30 rounded-lg p-6">
+              <GameScoreManager eventId={eventId} />
             </div>
           </div>
         ) : (
