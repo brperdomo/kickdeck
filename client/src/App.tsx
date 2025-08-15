@@ -75,6 +75,8 @@ import AgeGroupSchedule from "@/pages/public/AgeGroupSchedule";
 import GameScoreManagement from "@/pages/admin/GameScoreManagement";
 // Game Cards Management  
 import GameCardsPage from "@/pages/admin/GameCards";
+// Game Cards Designer
+import GameCardsDesigner from "@/pages/admin/scheduling/GameCardsDesigner";
 // Public Game Score Page
 import GameScorePage from "@/pages/public/GameScorePage";
 
@@ -330,6 +332,9 @@ function Router() {
           </Route>
           <Route path="/admin/events/:eventId/game-cards">
             {(params) => user.isAdmin ? <GameCardsPage /> : <NotFound />}
+          </Route>
+          <Route path="/admin/events/:eventId/game-cards-designer">
+            {(params) => user.isAdmin ? <GameCardsDesigner /> : <NotFound />}
           </Route>
           <Route path="/admin/complex-locations">
             {user.isAdmin ? <ComplexLocationsMapPage /> : <NotFound />}

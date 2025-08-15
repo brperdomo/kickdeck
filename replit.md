@@ -36,6 +36,7 @@ Preferred communication style: Simple, everyday language.
     - **Professional Gamecard System**: Generates comprehensive gamecards with team rosters, player details, coach information, and game schedules, with PDF generation and printable format.
     - **CSV Game Import System**: Allows import of game schedules from external systems with intelligent team/field matching, full database integration, error handling, and scoring system compatibility.
     - **QR Code Score Submission System**: Enables direct mobile score submission via QR codes linking to unauthenticated game score pages, with real-time updates and score locking capabilities.
+    - **PDF Form Editor for Game Cards**: Comprehensive visual editor for creating custom game card templates with static content, dynamic database placeholders, and professional PDF generation. Features drag-and-drop elements, real-time canvas preview, typography controls, shapes, and full database field integration.
 - **Critical Data Structure**: AGE GROUP → FLIGHTS → BRACKETS → Teams. Tournament formats are assigned to FLIGHTS (event_brackets). FLIGHTS are competitive levels within age groups, each generating its own brackets and matchups. Teams have `bracketId` (flight assignment) and `groupId` (specific bracket within flight).
 
 ### Data Storage

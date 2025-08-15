@@ -572,6 +572,35 @@ export const refunds = pgTable("refunds", {
   updatedAt: timestamp("updated_at").notNull().defaultNow()
 });
 
+// PDF Templates for Game Cards
+export const pdfTemplates = pgTable("pdf_templates", {
+  id: text("id").primaryKey(),
+  eventId: text("event_id").notNull().references(() => events.id, { onDelete: 'cascade' }),
+  name: text("name").notNull(),
+  description: text("description"),
+  pageWidth: integer("page_width").notNull().default(210), // A4 width in mm
+  pageHeight: integer("page_height").notNull().default(297), // A4 height in mm
+  elements: jsonb("elements").notNull().default([]), // JSON array of template elements
+  backgroundColor: text("background_color").notNull().default('#ffffff'),
+  isActive: boolean("is_active").notNull().default(true),
+  createdBy: integer("created_by").references(() => users.id),
+  updatedBy: integer("updated_by").references(() => users.id),
+  createdAt: text("created_at").notNull().default(new Date().toISOString()),
+  updatedAt: text("updated_at").notNull().default(new Date().toISOString()),
+});
+
+export const insertPdfTemplateSchema = createInsertSchema(pdfTemplates, {
+  name: z.string().min(1, "Template name is required"),
+  pageWidth: z.number().min(50).max(500),
+  pageHeight: z.number().min(50).max(500),
+  backgroundColor: z.string().regex(/^#[0-9A-F]{6}$/i, "Invalid color format")
+});
+
+export const selectPdfTemplateSchema = createSelectSchema(pdfTemplates);
+
+export type InsertPdfTemplate = typeof pdfTemplates.$inferInsert;
+export type SelectPdfTemplate = typeof pdfTemplates.$inferSelect;
+
 // Fee revenue tracking table - tracks how much revenue each fee generates
 export const feeRevenue = pgTable("fee_revenue", {
   id: serial("id").primaryKey(),

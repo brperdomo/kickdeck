@@ -59,6 +59,7 @@ import gamecardsRouter from "./routes/admin/gamecards-simple";
 import csvImportRouter from "./routes/admin/csv-import-fixed";
 import publicGamesRouter from "./routes/public/games";
 import publicGameCardsRouter from "./routes/public/game-cards";
+import pdfTemplateRoutes from "./routes/admin/pdf-templates";
 // Tournament format validation will be handled directly in brackets router
 import fieldCapacityRouter from "./routes/admin/field-capacity";
 import intelligentSchedulingRouter from "./routes/admin/intelligent-scheduling";
@@ -969,6 +970,7 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin', isAdmin, aiAuditRoutes); // AI Audit Trail routes
     app.use('/api/admin', isAdmin, gamecardsRouter); // Game card generation and printing
     app.use('/api/admin', isAdmin, csvImportRouter);
+    app.use('/api/admin/events', isAdmin, pdfTemplateRoutes); // PDF template editor for game cards
     
     // Public routes for QR code score submission and standings
     app.use('/api/public/games', publicGamesRouter);
