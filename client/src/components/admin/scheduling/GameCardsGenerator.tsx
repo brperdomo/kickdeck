@@ -4,11 +4,13 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { FileText, Download, QrCode, Users, Calendar, MapPin } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { FileText, Download, QrCode, Users, Calendar, MapPin, Paintbrush, Settings } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import QRCode from 'qrcode';
 import jsPDF from 'jspdf';
 import { generateGameScoreUrl, generateShareableGameMessage } from '@/lib/gameUrls';
+import PDFFormEditor from './PDFFormEditor';
 
 interface Game {
   id: number;
@@ -542,12 +544,27 @@ export default function GameCardsGenerator({ eventId }: GameCardsGeneratorProps)
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-lg">
         <div className="flex items-center gap-3 mb-2">
           <FileText className="w-6 h-6" />
-          <h2 className="text-2xl font-bold">Game Cards Generator</h2>
+          <h2 className="text-2xl font-bold">Game Cards Management</h2>
         </div>
         <p className="text-blue-100">
-          Generate professional PDF game cards with QR codes for score and card reporting
+          Generate professional PDF game cards with QR codes and design custom templates
         </p>
       </div>
+
+      {/* Tabs for Game Cards features */}
+      <Tabs defaultValue="generator" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="generator" className="flex items-center gap-2">
+            <Download className="w-4 h-4" />
+            Generate Cards
+          </TabsTrigger>
+          <TabsTrigger value="designer" className="flex items-center gap-2">
+            <Paintbrush className="w-4 h-4" />
+            Card Designer
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="generator" className="space-y-6 mt-6">
 
       {/* Stats and Filter */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -717,6 +734,12 @@ export default function GameCardsGenerator({ eventId }: GameCardsGeneratorProps)
           </div>
         </CardContent>
       </Card>
+        </TabsContent>
+
+        <TabsContent value="designer" className="mt-6">
+          <PDFFormEditor eventId={eventId} />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
