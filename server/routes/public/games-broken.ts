@@ -14,7 +14,7 @@ router.get('/:gameId', async (req, res) => {
       return res.status(400).json({ error: 'Invalid game ID' });
     }
 
-    // Get game data
+    // Use Drizzle ORM properly
     const gameResult = await db
       .select({
         id: games.id,
@@ -40,7 +40,7 @@ router.get('/:gameId', async (req, res) => {
     
     const gameData = gameResult[0];
 
-    // Get additional data with separate queries
+    // Get additional data with separate queries to avoid join issues
     const [homeTeamResult, awayTeamResult, fieldResult, ageGroupResult] = await Promise.all([
       gameData.homeTeamId ? db.execute(`SELECT name FROM teams WHERE id = ${gameData.homeTeamId}`) : Promise.resolve({ rows: [] }),
       gameData.awayTeamId ? db.execute(`SELECT name FROM teams WHERE id = ${gameData.awayTeamId}`) : Promise.resolve({ rows: [] }),
@@ -48,28 +48,40 @@ router.get('/:gameId', async (req, res) => {
       gameData.ageGroupId ? db.execute(`SELECT age_group FROM event_age_groups WHERE id = ${gameData.ageGroupId}`) : Promise.resolve({ rows: [] })
     ]);
 
+    const result = {
+      rows: [{
+        ...gameData,
+        home_team_name: homeTeamResult.rows?.[0]?.name || 'TBD',
+        away_team_name: awayTeamResult.rows?.[0]?.name || 'TBD', 
+        field_name: fieldResult.rows?.[0]?.name || 'Field TBD',
+        age_group_name: ageGroupResult.rows?.[0]?.age_group || 'Age Group'
+      }]
+    };
+
+    const finalGameData = result.rows[0];
+
     const game = {
       id: gameData.id,
       homeTeam: {
-        id: gameData.homeTeamId,
-        name: homeTeamResult.rows?.[0]?.name || 'TBD'
+        id: gameData.home_team_id,
+        name: gameData.home_team_name || 'TBD'
       },
       awayTeam: {
-        id: gameData.awayTeamId,
-        name: awayTeamResult.rows?.[0]?.name || 'TBD'
+        id: gameData.away_team_id,
+        name: gameData.away_team_name || 'TBD'
       },
-      homeScore: gameData.homeScore,
-      awayScore: gameData.awayScore,
+      homeScore: gameData.home_score,
+      awayScore: gameData.away_score,
       startTime: `${gameData.scheduledDate} ${gameData.scheduledTime}`,
       field: {
-        name: fieldResult.rows?.[0]?.name || 'Field TBD'
+        name: gameData.field_name || 'Field TBD'
       },
       status: gameData.status || 'scheduled',
       ageGroup: {
-        ageGroup: ageGroupResult.rows?.[0]?.age_group || 'Age Group'
+        ageGroup: gameData.age_group_name || 'Age Group'
       },
       isCompleted: gameData.status === 'completed',
-      isScoreLocked: gameData.isScoreLocked || false
+      isScoreLocked: gameData.is_score_locked || false
     };
 
     res.json(game);
@@ -89,13 +101,12 @@ router.post('/:gameId/score', async (req, res) => {
       return res.status(400).json({ error: 'Invalid game ID' });
     }
 
-    // Validate scores
-    if (typeof homeScore !== 'number' || typeof awayScore !== 'number' ||
+    if (typeof homeScore !== 'number' || typeof awayScore !== 'number' || 
         homeScore < 0 || awayScore < 0) {
       return res.status(400).json({ error: 'Invalid scores. Scores must be non-negative numbers.' });
     }
 
-    // Check if game exists and is not locked
+    // Check if game exists and is not locked using Drizzle
     const gameCheckResult = await db
       .select({
         id: games.id,
@@ -118,7 +129,7 @@ router.post('/:gameId/score', async (req, res) => {
       });
     }
 
-    // Update the game score
+    // Update the game score using Drizzle ORM
     await db
       .update(games)
       .set({
@@ -147,13 +158,14 @@ router.post('/:gameId/score', async (req, res) => {
     // Log the score update
     console.log(`[PUBLIC SCORE UPDATE] Game ${gameId}: ${homeScore}-${awayScore} (IP: ${req.ip})`);
 
-    res.json({
-      success: true,
+    res.json({ 
+      success: true, 
       message: 'Score updated successfully',
       gameId: parseInt(gameId),
       homeScore,
       awayScore
     });
+
   } catch (error) {
     console.error('Error updating game score:', error);
     res.status(500).json({ error: 'Failed to update score. Please try again.' });
