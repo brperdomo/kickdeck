@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { db } from '../../../db';
 import { games, teams, fields, eventBrackets, gameTimeSlots } from '@db/schema';
-import { eq } from 'drizzle-orm';
+import { eq, sql, inArray } from 'drizzle-orm';
 
 const router = Router();
 
@@ -12,9 +12,17 @@ router.get('/:eventId', async (req, res) => {
     
     console.log(`[Game Cards] Fetching games for event ${eventId}`);
 
-    // Get all games for this event first
+    // First get all age groups for this event
+    const eventAgeGroups = await db
+      .select({ ageGroupId: eventBrackets.ageGroupId })
+      .from(eventBrackets)
+      .where(eq(eventBrackets.eventId, eventId));
+
+    const ageGroupIds = eventAgeGroups.map(ag => ag.ageGroupId);
+
+    // Get all UNIQUE games for these age groups (avoiding duplicates from multiple brackets)
     const allGames = await db
-      .select({
+      .selectDistinct({
         id: games.id,
         gameNumber: games.matchNumber,
         homeTeamId: games.homeTeamId,
@@ -28,8 +36,7 @@ router.get('/:eventId', async (req, res) => {
         ageGroupId: games.ageGroupId
       })
       .from(games)
-      .innerJoin(eventBrackets, eq(games.ageGroupId, eventBrackets.ageGroupId))
-      .where(eq(eventBrackets.eventId, eventId));
+      .where(inArray(games.ageGroupId, ageGroupIds));
 
     // Get team names, field names, etc. separately
     const gamesResults = await Promise.all(
@@ -54,6 +61,7 @@ router.get('/:eventId', async (req, res) => {
     );
 
     console.log(`[Game Cards] Found ${gamesResults.length} games`);
+    console.log(`[Game Cards] Age Groups: ${ageGroupIds.length}, Raw Games: ${allGames.length}`);
 
     // Transform the data for frontend consumption
     const gamesData = gamesResults.map(game => ({
