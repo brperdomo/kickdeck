@@ -7,7 +7,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AnimatedBackground } from '@/components/ui/AnimatedBackground';
 import { 
   Calendar, Zap, Eye, Settings, ArrowRight, 
-  CheckCircle, Clock, Users, Trophy, ArrowLeft, Home, FileText, Plane, Globe, Cog, Calculator 
+  CheckCircle, Clock, Users, Trophy, ArrowLeft, Home, FileText, Plane, Globe, Cog, Calculator, Upload 
 } from 'lucide-react';
 import { UnifiedScheduleSetup } from '@/components/admin/scheduling/UnifiedScheduleSetup';
 import { UnifiedTournamentControlCenter } from '@/components/admin/scheduling/UnifiedTournamentControlCenter';
@@ -29,11 +29,13 @@ import PersistentAIChatbot from '@/components/admin/scheduling/PersistentAIChatb
 import { FormatSettings } from '@/components/admin/scheduling/FormatSettings';
 import ScoringStandingsSettings from '@/components/admin/scheduling/ScoringStandingsSettings';
 import GameScoreManager from '@/components/admin/scoring/GameScoreManager';
+import { GameImportModal } from '@/components/admin/GameImportModal';
 
 export default function MasterSchedulePage() {
   const { eventId } = useParams<{ eventId: string }>();
   const [, setLocation] = useLocation();
-  const [currentView, setCurrentView] = useState<'view' | 'calendar' | 'cards' | 'manage' | 'flights' | 'brackets' | 'overview' | 'workflow' | 'publish' | 'field-sorting' | 'format-settings' | 'scoring-standings' | 'score-entry'>('overview');
+  const [currentView, setCurrentView] = useState<'view' | 'calendar' | 'cards' | 'manage' | 'flights' | 'brackets' | 'overview' | 'workflow' | 'publish' | 'field-sorting' | 'format-settings' | 'scoring-standings' | 'score-entry' | 'import'>('overview');
+  const [importModalOpen, setImportModalOpen] = useState(false);
 
   if (!eventId) {
     return <div>Event ID not found</div>;
@@ -201,6 +203,19 @@ export default function MasterSchedulePage() {
           >
             <FileText className="h-4 w-4" />
             Game Cards
+          </Button>
+
+          <Button
+            variant={currentView === 'import' ? 'default' : 'outline'}
+            onClick={() => setImportModalOpen(true)}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 whitespace-nowrap backdrop-blur-sm ${
+              currentView === 'import' 
+                ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/25 hover:from-blue-400 hover:to-blue-500' 
+                : 'bg-black/20 text-purple-100 hover:bg-purple-900/30 border border-purple-400/30 hover:border-purple-300/50'
+            }`}
+          >
+            <Upload className="h-4 w-4" />
+            Import Schedule
           </Button>
           
 
@@ -480,6 +495,20 @@ export default function MasterSchedulePage() {
       
       {/* Persistent AI Chatbot - Works across all tabs */}
       <PersistentAIChatbot eventId={eventId} />
+
+      {/* CSV Import Modal */}
+      <GameImportModal 
+        eventId={eventId}
+        isOpen={importModalOpen}
+        onClose={() => setImportModalOpen(false)}
+        onImportComplete={() => {
+          setImportModalOpen(false);
+          // Refresh the current view if needed
+          if (currentView === 'view' || currentView === 'calendar') {
+            window.location.reload(); // Simple refresh for now
+          }
+        }}
+      />
     </div>
   );
 }

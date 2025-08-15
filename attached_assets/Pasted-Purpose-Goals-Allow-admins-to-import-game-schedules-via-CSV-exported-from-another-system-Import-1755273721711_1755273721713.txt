@@ -1,0 +1,111 @@
+Purpose & Goals
+
+Allow admins to import game schedules via CSV exported from another system.
+
+Imported games populate your system’s Games table so they can be:
+
+Managed in the Score & Standings interface.
+
+Connected to Gamecards.
+
+Displayed on Public Endpoints (Schedules & Standings).
+
+Ensure team tracking (via unique Team IDs) so standings remain accurate.
+
+Provide a toggle for schedule conflict checks in the Calendar Interface since imported schedules may not meet system constraints.
+
+📂 Import File Structure (CSV Template)
+
+We’ll need a CSV schema (with headers) to define the minimum required fields.
+
+Minimum Required Columns:
+
+GameID (unique game identifier, from source system or generated if missing)
+
+Date (YYYY-MM-DD format)
+
+Time (HH:mm, 24-hour or AM/PM)
+
+Field (string, matches or creates field in system)
+
+Team1ID (unique ID for team, required for standings tie-in)
+
+Team1Name (string, for display)
+
+Team2ID (unique ID for team, required for standings tie-in)
+
+Team2Name (string, for display)
+
+Flight (e.g., “U14 Boys Gold”)
+
+Bracket (e.g., “A” or “Pool B”)
+
+Round (optional: Group Play, Semi, Final)
+
+Optional but Useful Columns:
+
+RefereeID / RefereeName
+
+Division
+
+Home/Away Flag (if important to standings rules)
+
+Notes
+
+Exported Template Example (CSV):
+
+GameID,Date,Time,Field,Team1ID,Team1Name,Team2ID,Team2Name,Flight,Bracket,Round
+101,2025-09-10,10:00,Field 1,T123,Eagles,T456,Tigers,U14 Boys,Pool A,Group Play
+102,2025-09-10,11:30,Field 2,T789,Sharks,T321,Wolves,U14 Boys,Pool B,Group Play
+
+⚙️ System Requirements & Behavior
+
+Import Workflow
+
+Admin uploads CSV.
+
+System parses and validates (required fields must exist).
+
+Show preview (first 10 rows + validation errors).
+
+Admin confirms → games are stored in DB.
+
+Conflict Handling
+
+Option (toggle in Calendar Interface):
+
+ON → system flags overlapping games for the same team/field.
+
+OFF → import proceeds without warnings.
+
+Even if OFF, conflicts should be tracked in background for reports.
+
+Team Tracking
+
+System must map games to Team IDs.
+
+If unknown Team ID appears → prompt admin to map it to an existing team or create a new one.
+
+Scores and standings must always tie back to Team IDs, not just team names.
+
+Game Editing
+
+Imported games should be editable (change field, time, teams, etc.).
+
+Changes update both internal schedule and public endpoints.
+
+Audit Trail
+
+Store metadata: file name, uploaded by, timestamp.
+
+Each game entry tagged with “Imported” source, later edits logged separately.
+
+🌐 Integration & Public Endpoints
+
+Once imported, games become part of the same Games dataset as manually created games.
+
+Scores entered via admin UI or overrides update standings in real time.
+
+Public APIs (Schedules & Standings) should serve data from the unified dataset (no distinction between imported/manual).
+
+If game conflicts exist (and conflicts toggle is ON), public endpoints should still show the schedule — but admin tools should clearly flag those games.

@@ -25,6 +25,13 @@ Preferred communication style: Simple, everyday language.
   - **Fixed Field Query Restrictions**: Removed hard limit of 10 fields and updated all scheduling services to use proper event-specific field configurations
   - **Complete Schedule Generation**: Replaced limited game generation with full round-robin pool play plus semifinals, championship, and 3rd place games for all bracket sizes
   - **Inactive Field Exclusion**: All scheduling buttons now properly respect event-specific field active status, preventing inactive fields from being assigned games
+- **Complete CSV Game Import System (August 15, 2025)**: Built comprehensive CSV import functionality allowing tournament directors to import game schedules from external systems:
+  - **Backend CSV Processing**: Created server-side validation, parsing, and team mapping with support for unknown team IDs
+  - **Admin UI Integration**: Added "Import Schedule" button to MasterSchedulePage with intuitive GameImportModal component
+  - **Team Mapping Support**: System handles external team names by prompting admins to map or create new teams during import process
+  - **Full System Integration**: Imported games work seamlessly with existing scoring interface, gamecards, PDF generation, and public endpoints
+  - **Audit Trail**: All imports logged with metadata (filename, uploader, timestamp) and games tagged with "Imported" source
+  - **CSV Format Support**: Handles standard tournament CSV format with columns: Date, Time, Home Team, Away Team, Age Group, Field, Status
 - **New API Endpoints Operational**: 
   - `/api/admin/events/:eventId/fields` - Complete field configuration management with joins including time controls (✅ Working)
   - `/api/admin/events/:eventId/fields/:fieldId` - Individual field updates with firstGameTime and lastGameTime support (✅ Working & Tested)
@@ -33,6 +40,9 @@ Preferred communication style: Simple, everyday language.
   - `/api/admin/events/:eventId/teams/detailed` - Team roster data for gamecard generation (✅ Working)
   - `/api/admin/events/:eventId/games/detailed` - Game schedule data for gamecard generation (✅ Working)
   - `/api/admin/events/:eventId/generate-pdf` - Professional PDF gamecard generation (✅ Working)
+  - `/api/admin/csv-import/upload` - CSV file upload and validation for game imports (✅ Working)
+  - `/api/admin/csv-import/preview` - CSV preview with team mapping validation (✅ Working)
+  - `/api/admin/csv-import/import` - Complete CSV import with team resolution and game creation (✅ Working)
 
 ## System Architecture
 
