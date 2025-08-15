@@ -8,6 +8,7 @@ import { FileText, Download, QrCode, Users, Calendar, MapPin } from 'lucide-reac
 import { useToast } from '@/hooks/use-toast';
 import QRCode from 'qrcode';
 import jsPDF from 'jspdf';
+import { generateGameScoreUrl, generateShareableGameMessage } from '@/lib/gameUrls';
 
 interface Game {
   id: number;
@@ -341,6 +342,40 @@ export default function GameCardsGenerator({ eventId }: GameCardsGeneratorProps)
           pdf.text(box.sublabel, xPos + (50 - sublabelWidth) / 2, yPos + 20);
         });
 
+        // QR Code section for score submission
+        yPos += 35;
+        
+        // Generate QR code for this game
+        const gameScoreUrl = generateGameScoreUrl(game.id);
+        const qrCodeDataUrl = await generateQRCode(gameScoreUrl);
+        
+        if (qrCodeDataUrl) {
+          // QR Code section header
+          pdf.setFillColor(240, 253, 244); // Light green background
+          pdf.setDrawColor(34, 197, 94); // Green border
+          pdf.setLineWidth(1);
+          pdf.roundedRect(10, yPos, pageWidth - 20, 35, 3, 3, 'FD');
+          
+          pdf.setFontSize(12);
+          pdf.setFont('helvetica', 'bold');
+          pdf.setTextColor(22, 163, 74); // Green text
+          pdf.text('📱 SCORE SUBMISSION', 15, yPos + 8);
+          
+          // Add QR code
+          const qrSize = 25;
+          pdf.addImage(qrCodeDataUrl, 'PNG', pageWidth - qrSize - 15, yPos + 5, qrSize, qrSize);
+          
+          // Instructions
+          pdf.setFontSize(9);
+          pdf.setFont('helvetica', 'normal');
+          pdf.setTextColor(75, 85, 99);
+          pdf.text('Scan QR code to submit game scores', 15, yPos + 18);
+          pdf.text('Or visit: ' + gameScoreUrl.replace(window.location.origin, ''), 15, yPos + 25);
+          pdf.text('Mobile-friendly • Real-time updates • No login required', 15, yPos + 30);
+          
+          yPos += 40;
+        }
+
         // Disciplinary section with modern table styling
         yPos += 40;
         pdf.setTextColor(0, 0, 0);
@@ -388,64 +423,31 @@ export default function GameCardsGenerator({ eventId }: GameCardsGeneratorProps)
           pdf.line(133, yPos, 133, yPos + 8); // After min
         }
 
-        // Generate QR codes
-        const baseUrl = window.location.origin;
-        const scoreReportUrl = `${baseUrl}/score-report/${game.id}`;
-        const cardReportUrl = `${baseUrl}/card-report/${game.id}`;
-        
-        const scoreQR = await generateQRCode(scoreReportUrl);
-        const cardQR = await generateQRCode(cardReportUrl);
-
-        // QR Codes section with modern card styling
+        // Notes section for referees
         yPos += 25;
         pdf.setTextColor(0, 0, 0);
         pdf.setFontSize(12);
         pdf.setFont('helvetica', 'bold');
-        pdf.text('DIGITAL REPORTING', 10, yPos);
+        pdf.text('MATCH NOTES', 10, yPos);
         
         yPos += 10;
         
-        // Score reporting QR card
-        if (scoreQR) {
-          pdf.setFillColor(239, 246, 255); // Light blue
-          pdf.setDrawColor(59, 130, 246);
-          pdf.setLineWidth(1);
-          pdf.roundedRect(10, yPos, 80, 35, 3, 3, 'FD');
-          
-          pdf.addImage(scoreQR, 'PNG', 15, yPos + 3, 25, 25);
-          
-          pdf.setFontSize(10);
-          pdf.setFont('helvetica', 'bold');
-          pdf.setTextColor(30, 64, 175);
-          pdf.text('Score Reporting', 45, yPos + 12);
-          pdf.setFontSize(8);
-          pdf.setFont('helvetica', 'normal');
-          pdf.setTextColor(75, 85, 99);
-          pdf.text('Team Managers', 45, yPos + 18);
-          pdf.text('& Coaches', 45, yPos + 23);
-        }
+        // Notes box
+        pdf.setFillColor(249, 250, 251);
+        pdf.setDrawColor(209, 213, 219);
+        pdf.setLineWidth(0.5);
+        pdf.roundedRect(10, yPos, pageWidth - 20, 25, 2, 2, 'FD');
         
-        // Card reporting QR card
-        if (cardQR) {
-          pdf.setFillColor(254, 242, 242); // Light red
-          pdf.setDrawColor(239, 68, 68);
-          pdf.setLineWidth(1);
-          pdf.roundedRect(100, yPos, 80, 35, 3, 3, 'FD');
-          
-          pdf.addImage(cardQR, 'PNG', 105, yPos + 3, 25, 25);
-          
-          pdf.setFontSize(10);
-          pdf.setFont('helvetica', 'bold');
-          pdf.setTextColor(185, 28, 28);
-          pdf.text('Card Reporting', 135, yPos + 12);
-          pdf.setFontSize(8);
-          pdf.setFont('helvetica', 'normal');
-          pdf.setTextColor(75, 85, 99);
-          pdf.text('Referees Only', 135, yPos + 18);
+        // Add lines for writing
+        pdf.setDrawColor(229, 231, 235);
+        pdf.setLineWidth(0.3);
+        for (let i = 0; i < 4; i++) {
+          const lineY = yPos + 5 + (i * 5);
+          pdf.line(12, lineY, pageWidth - 12, lineY);
         }
 
         // Signatures section with modern styling
-        yPos += 50;
+        yPos += 40;
         pdf.setTextColor(0, 0, 0);
         pdf.setFontSize(12);
         pdf.setFont('helvetica', 'bold');
