@@ -7,14 +7,15 @@
  */
 
 import { db } from "../../db";
-import { eq, and, or, between, gte, lte, isNull, inArray, ne } from "drizzle-orm";
+import { eq, and, or, between, gte, lte, isNull, inArray, ne, sql } from "drizzle-orm";
 import { 
   fields, 
   complexes, 
   gameTimeSlots, 
   games, 
   eventComplexes,
-  events
+  events,
+  eventFieldConfigurations
 } from "../../db/schema";
 
 export interface FieldInfo {
@@ -75,7 +76,7 @@ export class FieldAvailabilityService {
   static async getAvailableFields(eventId: string): Promise<FieldInfo[]> {
     console.log(`🏟️ Getting available fields for event ${eventId}`);
     
-    // First try to get complexes assigned to this event
+    // Get fields with event-specific configurations
     let eventComplexesData = await db
       .select({
         complexId: eventComplexes.complexId,
@@ -84,26 +85,34 @@ export class FieldAvailabilityService {
         complexCloseTime: complexes.closeTime,
         fieldId: fields.id,
         fieldName: fields.name,
-        fieldSize: fields.fieldSize,
+        fieldSize: sql`COALESCE(${eventFieldConfigurations.fieldSize}, ${fields.fieldSize})`.as('fieldSize'),
         fieldOpenTime: fields.openTime,
         fieldCloseTime: fields.closeTime,
         hasLights: fields.hasLights,
-        isOpen: fields.isOpen
+        isOpen: fields.isOpen,
+        isActive: sql`COALESCE(${eventFieldConfigurations.isActive}, true)`.as('isActive'),
+        firstGameTime: eventFieldConfigurations.firstGameTime,
+        lastGameTime: eventFieldConfigurations.lastGameTime
       })
       .from(eventComplexes)
       .innerJoin(complexes, eq(complexes.id, eventComplexes.complexId))
       .innerJoin(fields, eq(fields.complexId, complexes.id))
+      .leftJoin(eventFieldConfigurations, and(
+        eq(eventFieldConfigurations.fieldId, fields.id),
+        eq(eventFieldConfigurations.eventId, parseInt(eventId))
+      ))
       .where(
         and(
           eq(eventComplexes.eventId, eventId),
           eq(complexes.isOpen, true),
-          eq(fields.isOpen, true)
+          eq(fields.isOpen, true),
+          sql`COALESCE(${eventFieldConfigurations.isActive}, true) = true`
         )
       );
 
-    // If no event-complex associations exist, fallback to all available fields
+    // If no event-complex associations exist, fallback to all available fields with event configurations
     if (eventComplexesData.length === 0) {
-      console.log(`⚠️ No event-complex associations found for event ${eventId}, using all available fields`);
+      console.log(`⚠️ No event-complex associations found for event ${eventId}, using all available fields with event configurations`);
       eventComplexesData = await db
         .select({
           complexId: complexes.id,
@@ -112,18 +121,26 @@ export class FieldAvailabilityService {
           complexCloseTime: complexes.closeTime,
           fieldId: fields.id,
           fieldName: fields.name,
-          fieldSize: fields.fieldSize,
+          fieldSize: sql`COALESCE(${eventFieldConfigurations.fieldSize}, ${fields.fieldSize})`.as('fieldSize'),
           fieldOpenTime: fields.openTime,
           fieldCloseTime: fields.closeTime,
           hasLights: fields.hasLights,
-          isOpen: fields.isOpen
+          isOpen: fields.isOpen,
+          isActive: sql`COALESCE(${eventFieldConfigurations.isActive}, true)`.as('isActive'),
+          firstGameTime: eventFieldConfigurations.firstGameTime,
+          lastGameTime: eventFieldConfigurations.lastGameTime
         })
         .from(complexes)
         .innerJoin(fields, eq(fields.complexId, complexes.id))
+        .leftJoin(eventFieldConfigurations, and(
+          eq(eventFieldConfigurations.fieldId, fields.id),
+          eq(eventFieldConfigurations.eventId, parseInt(eventId))
+        ))
         .where(
           and(
             eq(complexes.isOpen, true),
-            eq(fields.isOpen, true)
+            eq(fields.isOpen, true),
+            sql`COALESCE(${eventFieldConfigurations.isActive}, true) = true`
           )
         );
     }
@@ -134,10 +151,10 @@ export class FieldAvailabilityService {
       fieldSize: row.fieldSize,
       complexId: row.complexId,
       complexName: row.complexName,
-      openTime: row.fieldOpenTime || row.complexOpenTime,
-      closeTime: row.fieldCloseTime || row.complexCloseTime,
+      openTime: row.firstGameTime || row.fieldOpenTime || row.complexOpenTime,
+      closeTime: row.lastGameTime || row.fieldCloseTime || row.complexCloseTime,
       hasLights: row.hasLights,
-      isOpen: row.isOpen
+      isOpen: row.isActive && row.isOpen
     }));
 
     console.log(`🏟️ Found ${fieldsInfo.length} available fields across ${new Set(fieldsInfo.map(f => f.complexId)).size} complexes`);

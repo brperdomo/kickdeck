@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { db } from '../../../db';
-import { events, teams, fields, complexes, gameTimeSlots, games, eventBrackets, eventAgeGroups } from '../../../db/schema';
+import { events, teams, fields, complexes, gameTimeSlots, games, eventBrackets, eventAgeGroups, eventFieldConfigurations } from '../../../db/schema';
 import { eq, and, sql, countDistinct } from 'drizzle-orm';
 import { isAdmin } from '../../middleware/auth';
 
@@ -206,110 +206,143 @@ router.post('/:eventId/generate-complete-schedule', isAdmin, async (req, res) =>
 
       // Generate games based on bracket team count using configured format
       let gamesForBracket = 0;
-      
-      console.log(`Processing flight: ${flightKey} with ${flightTeams.length} teams`);
 
-      // Create bracket entry (simplified to match schema)
-      const bracketResult = await db
-        .insert(eventBrackets)
-        .values({
-          eventId: eventId.toString(),
-          ageGroupId: flightTeams[0].ageGroupId, // Use the age group ID from first team
-          name: `${ageGroup} ${gender} Flight`,
-          description: `Auto-generated flight for ${ageGroup} ${gender}`,
-          sortOrder: createdFlights.length
-        })
-        .returning({ id: eventBrackets.id });
-
-      const bracketId = bracketResult[0].id;
-      createdFlights.push(flightKey);
-
-      // Generate games based on flight size
-      let gamesForFlight = 0;
-
-      if (flightTeams.length === 2) {
+      if (bracketTeams.length === 2) {
         // Best of 3 for 2 teams
         for (let gameNum = 1; gameNum <= 3; gameNum++) {
           await db.insert(games).values({
             eventId: eventId.toString(),
-            ageGroupId: flightTeams[0].ageGroupId,
-            homeTeamId: flightTeams[0].id,
-            awayTeamId: flightTeams[1].id,
+            ageGroupId: bracketTeams[0].ageGroupId,
+            homeTeamId: bracketTeams[0].id,
+            awayTeamId: bracketTeams[1].id,
             round: gameNum,
             matchNumber: totalGamesCreated + gameNum,
             duration: 90, // Default 90 minutes
             status: 'scheduled'
           });
-          gamesForFlight++;
+          gamesForBracket++;
         }
-      } else if (flightTeams.length <= 4) {
+      } else if (bracketTeams.length <= 4) {
         // Round robin for small flights
-        for (let i = 0; i < flightTeams.length; i++) {
-          for (let j = i + 1; j < flightTeams.length; j++) {
+        for (let i = 0; i < bracketTeams.length; i++) {
+          for (let j = i + 1; j < bracketTeams.length; j++) {
             await db.insert(games).values({
               eventId: eventId.toString(),
-              ageGroupId: flightTeams[i].ageGroupId,
-              homeTeamId: flightTeams[i].id,
-              awayTeamId: flightTeams[j].id,
+              ageGroupId: bracketTeams[i].ageGroupId,
+              homeTeamId: bracketTeams[i].id,
+              awayTeamId: bracketTeams[j].id,
               round: 1, // Pool play round
-              matchNumber: totalGamesCreated + gamesForFlight + 1,
+              matchNumber: totalGamesCreated + gamesForBracket + 1,
               duration: 90,
               status: 'scheduled'
             });
-            gamesForFlight++;
+            gamesForBracket++;
           }
         }
       } else {
-        // Larger flights: pool play + playoffs
-        const poolGames = Math.min(flightTeams.length, 6); // Limit pool games
+        // Larger flights: Generate complete round-robin schedule
+        console.log(`Generating complete round-robin schedule for ${bracketTeams.length} teams`);
         
-        // Create some pool games
-        for (let i = 0; i < poolGames && i < flightTeams.length - 1; i++) {
+        // Create ALL round-robin pool games (every team plays every other team)
+        for (let i = 0; i < bracketTeams.length; i++) {
+          for (let j = i + 1; j < bracketTeams.length; j++) {
+            await db.insert(games).values({
+              eventId: eventId.toString(),
+              ageGroupId: bracketTeams[i].ageGroupId,
+              homeTeamId: bracketTeams[i].id,
+              awayTeamId: bracketTeams[j].id,
+              round: 1, // Pool play round
+              matchNumber: totalGamesCreated + gamesForBracket + 1,
+              duration: 90,
+              status: 'scheduled'
+            });
+            gamesForBracket++;
+          }
+        }
+
+        // Generate playoff/knockout games for top teams
+        if (bracketTeams.length >= 4) {
+          // Semifinals (top 4 teams based on seeding)
+          const topTeams = bracketTeams.slice(0, 4);
+          
+          // Semifinal 1: 1st seed vs 4th seed
           await db.insert(games).values({
             eventId: eventId.toString(),
-            ageGroupId: flightTeams[i].ageGroupId,
-            homeTeamId: flightTeams[i].id,
-            awayTeamId: flightTeams[i + 1].id,
-            round: 1, // Pool play
-            matchNumber: totalGamesCreated + gamesForFlight + 1,
+            ageGroupId: topTeams[0].ageGroupId,
+            homeTeamId: topTeams[0].id,
+            awayTeamId: topTeams[3].id,
+            round: 2, // Semifinal round
+            matchNumber: totalGamesCreated + gamesForBracket + 1,
             duration: 90,
             status: 'scheduled'
           });
-          gamesForFlight++;
+          gamesForBracket++;
+
+          // Semifinal 2: 2nd seed vs 3rd seed  
+          await db.insert(games).values({
+            eventId: eventId.toString(),
+            ageGroupId: topTeams[1].ageGroupId,
+            homeTeamId: topTeams[1].id,
+            awayTeamId: topTeams[2].id,
+            round: 2, // Semifinal round
+            matchNumber: totalGamesCreated + gamesForBracket + 1,
+            duration: 90,
+            status: 'scheduled'
+          });
+          gamesForBracket++;
+
+          // Championship final (TBD teams from semifinals)
+          await db.insert(games).values({
+            eventId: eventId.toString(),
+            ageGroupId: topTeams[0].ageGroupId,
+            homeTeamId: null, // TBD - winner of semifinal 1
+            awayTeamId: null, // TBD - winner of semifinal 2
+            round: 3, // Championship round
+            matchNumber: totalGamesCreated + gamesForBracket + 1,
+            duration: 90,
+            status: 'scheduled'
+          });
+          gamesForBracket++;
+
+          // 3rd place game (TBD teams from semifinals)
+          await db.insert(games).values({
+            eventId: eventId.toString(),
+            ageGroupId: topTeams[0].ageGroupId,
+            homeTeamId: null, // TBD - loser of semifinal 1
+            awayTeamId: null, // TBD - loser of semifinal 2
+            round: 3, // 3rd place round
+            matchNumber: totalGamesCreated + gamesForBracket + 1,
+            duration: 90,
+            status: 'scheduled'
+          });
+          gamesForBracket++;
         }
 
-        // Add championship game
-        await db.insert(games).values({
-          eventId: eventId.toString(),
-          ageGroupId: flightTeams[0].ageGroupId,
-          homeTeamId: flightTeams[0].id,
-          awayTeamId: flightTeams[1].id,
-          round: 2, // Championship round
-          matchNumber: totalGamesCreated + gamesForFlight + 1,
-          duration: 90,
-          status: 'scheduled'
-        });
-        gamesForFlight++;
-
-        if (flightTeams.length > 6) {
-          warnings.push(`${flightKey}: Large flight (${flightTeams.length} teams) - generated limited games for demonstration`);
-        }
+        console.log(`Generated complete schedule: ${gamesForBracket} games for ${bracketTeams.length} teams`);
       }
 
-      totalGamesCreated += gamesForFlight;
-      console.log(`Created ${gamesForFlight} games for flight ${flightKey}`);
+      totalGamesCreated += gamesForBracket;
+      console.log(`Created ${gamesForBracket} games for bracket ${bracket.name}`);
     }
 
-    // Step 4: Auto-assign time slots and fields (simplified)
+    // Step 4: Auto-assign time slots and fields using event-specific field configurations
     const availableFields = await db
       .select({
         id: fields.id,
         name: fields.name,
-        fieldSize: fields.fieldSize
+        fieldSize: sql`COALESCE(${eventFieldConfigurations.fieldSize}, ${fields.fieldSize})`.as('fieldSize'),
+        sortOrder: sql`COALESCE(${eventFieldConfigurations.sortOrder}, 999)`.as('sortOrder')
       })
       .from(fields)
-      .where(eq(fields.isOpen, true))
-      .limit(10); // Reasonable limit
+      .leftJoin(eventFieldConfigurations, and(
+        eq(eventFieldConfigurations.fieldId, fields.id),
+        eq(eventFieldConfigurations.eventId, eventId)
+      ))
+      .where(and(
+        eq(fields.isOpen, true),
+        sql`COALESCE(${eventFieldConfigurations.isActive}, true) = true`
+      ))
+      .orderBy(sql`COALESCE(${eventFieldConfigurations.sortOrder}, 999)`);
 
     if (availableFields.length === 0) {
       conflicts.push('No available fields found - games created but not scheduled');

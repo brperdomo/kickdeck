@@ -6,8 +6,8 @@
  */
 
 import { db } from "../../db";
-import { eq, inArray } from "drizzle-orm";
-import { games, eventBrackets, complexes, fields, teams, events, gameTimeSlots, eventGameFormats, gameFormats } from "../../db/schema";
+import { eq, inArray, sql, and } from "drizzle-orm";
+import { games, eventBrackets, complexes, fields, teams, events, gameTimeSlots, eventGameFormats, gameFormats, eventFieldConfigurations } from "../../db/schema";
 
 export class SimpleScheduler {
   static async generateSchedule(eventId: string, workflowData: any, options: {
@@ -450,16 +450,26 @@ export class SimpleScheduler {
           fields: {
             id: fields.id,
             name: fields.name,
-            fieldSize: fields.fieldSize,
+            fieldSize: sql`COALESCE(${eventFieldConfigurations.fieldSize}, ${fields.fieldSize})`.as('fieldSize'),
             hasLights: fields.hasLights,
             isOpen: fields.isOpen,
-            openTime: fields.openTime,
-            closeTime: fields.closeTime,
+            isActive: sql`COALESCE(${eventFieldConfigurations.isActive}, true)`.as('isActive'),
+            openTime: sql`COALESCE(${eventFieldConfigurations.firstGameTime}, ${fields.openTime})`.as('openTime'),
+            closeTime: sql`COALESCE(${eventFieldConfigurations.lastGameTime}, ${fields.closeTime})`.as('closeTime'),
+            sortOrder: sql`COALESCE(${eventFieldConfigurations.sortOrder}, 999)`.as('sortOrder')
           }
         })
         .from(complexes)
         .leftJoin(fields, eq(complexes.id, fields.complexId))
-        .where(eq(fields.isOpen, true));
+        .leftJoin(eventFieldConfigurations, and(
+          eq(eventFieldConfigurations.fieldId, fields.id),
+          eq(eventFieldConfigurations.eventId, parseInt(eventId))
+        ))
+        .where(and(
+          eq(fields.isOpen, true),
+          sql`COALESCE(${eventFieldConfigurations.isActive}, true) = true`
+        ))
+        .orderBy(sql`COALESCE(${eventFieldConfigurations.sortOrder}, 999)`);
 
       // Group fields by complex
       const complexMap = new Map();
@@ -475,7 +485,7 @@ export class SimpleScheduler {
             fields: []
           });
         }
-        if (row.fields && row.fields.id) {
+        if (row.fields && row.fields.id && row.fields.isActive) {
           complexMap.get(row.id).fields.push(row.fields);
         }
       });

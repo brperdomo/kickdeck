@@ -19,6 +19,12 @@ Preferred communication style: Simple, everyday language.
 - **OpenAI GPT-4o Integration Updated**: Successfully configured new OpenAI API key with GPT-4o model verification. AI-powered scheduling, optimization, and bracket suggestion services are fully operational.
 - **Professional Gamecard System Complete**: Built comprehensive gamecard generation system matching tournament standards. Includes team roster cards with player details, coach information, game schedule cards with score sheets, PDF generation functionality, and printable format for field use. Integrated into admin interface at `/admin/events/:eventId/game-cards`.
 - **Field-Specific Time Controls Complete**: Added OPEN and LAST GAME time controls to Field Order tab allowing tournament directors to set field availability windows. Database enhanced with lastGameTime field, API updated to handle time constraints, and UI provides intuitive time input fields for each field. Enables field-specific scheduling based on lighting, operating hours, and availability constraints.
+- **CRITICAL Scheduling System Fixes (August 15, 2025)**: Fixed multiple critical bugs causing incomplete schedules and incorrect field assignments:
+  - **Fixed Field Availability Bug**: Updated `SimpleScheduler.getRealComplexesForEvent` to use event-specific `eventFieldConfigurations.isActive` instead of deprecated `fields.isOpen`
+  - **Removed Artificial Game Limits**: Eliminated artificial 6-game demonstration limits in true-automated-scheduling that were preventing complete tournament schedules
+  - **Fixed Field Query Restrictions**: Removed hard limit of 10 fields and updated all scheduling services to use proper event-specific field configurations
+  - **Complete Schedule Generation**: Replaced limited game generation with full round-robin pool play plus semifinals, championship, and 3rd place games for all bracket sizes
+  - **Inactive Field Exclusion**: All scheduling buttons now properly respect event-specific field active status, preventing inactive fields from being assigned games
 - **New API Endpoints Operational**: 
   - `/api/admin/events/:eventId/fields` - Complete field configuration management with joins including time controls (✅ Working)
   - `/api/admin/events/:eventId/fields/:fieldId` - Individual field updates with firstGameTime and lastGameTime support (✅ Working & Tested)
