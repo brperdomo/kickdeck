@@ -712,7 +712,7 @@ FINANCIAL DATA:
 - Paid Teams: ${financialData.paidTeams}
 - Pending Teams: ${financialData.pendingTeams}
 
-The tournament has extensive setup with millions of teams and comprehensive format configurations. Answer questions about tournament setup, scheduling, formats, teams, and provide guidance on tournament management.
+Answer questions about tournament setup, scheduling, formats, teams, and provide guidance on tournament management based on the current data provided above.
 
 User Question: ${userMessage}
 `;
