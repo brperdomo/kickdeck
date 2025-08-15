@@ -29,7 +29,7 @@ import PersistentAIChatbot from '@/components/admin/scheduling/PersistentAIChatb
 import { FormatSettings } from '@/components/admin/scheduling/FormatSettings';
 import ScoringStandingsSettings from '@/components/admin/scheduling/ScoringStandingsSettings';
 import GameScoreManager from '@/components/admin/scoring/GameScoreManager';
-import { GameImportModal } from '@/components/admin/GameImportModal';
+import { GameImportModal } from '@/components/admin/GameImportModalFixed';
 
 export default function MasterSchedulePage() {
   const { eventId } = useParams<{ eventId: string }>();

@@ -56,7 +56,7 @@ import conflictDetectionRouter from "./routes/admin/conflict-detection";
 import adminBracketsRouter from "./routes/admin/brackets-fixed";
 import aiAssistantRouter from "./routes/admin/ai-assistant";
 import gamecardsRouter from "./routes/admin/gamecards-simple";
-import csvImportRouter from "./routes/admin/csv-import";
+import csvImportRouter from "./routes/admin/csv-import-fixed";
 // Tournament format validation will be handled directly in brackets router
 import fieldCapacityRouter from "./routes/admin/field-capacity";
 import intelligentSchedulingRouter from "./routes/admin/intelligent-scheduling";
