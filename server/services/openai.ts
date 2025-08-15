@@ -732,6 +732,8 @@ const getTournamentData = async (eventId: string) => {
       .orderBy(games.scheduledDate, games.scheduledTime)
       .limit(50);
 
+    console.log(`[AI Assistant] Found ${gamesWithFields.length} games for event ${eventId}`);
+
     // Get all teams for this event to create a lookup map
     const eventTeams = await db
       .select({
@@ -746,12 +748,29 @@ const getTournamentData = async (eventId: string) => {
       teamsMap.set(team.id, team.name);
     });
 
-    // Combine games with team names
+    // Build detailed games list with team names
     const detailedGames = gamesWithFields.map(game => ({
-      ...game,
-      homeTeamName: game.homeTeamId ? teamsMap.get(game.homeTeamId) || 'TBD' : 'TBD',
-      awayTeamName: game.awayTeamId ? teamsMap.get(game.awayTeamId) || 'TBD' : 'TBD'
+      id: game.id,
+      scheduledDate: game.scheduledDate || 'TBD',
+      scheduledTime: game.scheduledTime || 'TBD',
+      homeTeamName: teamsMap.get(game.homeTeamId) || `Team ${game.homeTeamId}`,
+      awayTeamName: teamsMap.get(game.awayTeamId) || `Team ${game.awayTeamId}`,
+      fieldId: game.fieldId,
+      fieldName: game.fieldName || `Field ${game.fieldId}`,
+      round: game.round || 1,
+      matchNumber: game.matchNumber || 0,
+      status: game.status
     }));
+
+    // Group games by date for better organization
+    const gamesByDate: { [key: string]: any[] } = {};
+    detailedGames.forEach(game => {
+      const dateKey = game.scheduledDate || 'Unscheduled';
+      if (!gamesByDate[dateKey]) {
+        gamesByDate[dateKey] = [];
+      }
+      gamesByDate[dateKey].push(game);
+    });
 
     // Get approved teams count
     const [teamsCount] = await db
@@ -761,14 +780,6 @@ const getTournamentData = async (eventId: string) => {
       })
       .from(teams)
       .where(eq(teams.eventId, eventId));
-
-    // Group games by date for easier analysis
-    const gamesByDate = detailedGames.reduce((acc, game) => {
-      const date = game.scheduledDate?.toString() || 'Unscheduled';
-      if (!acc[date]) acc[date] = [];
-      acc[date].push(game);
-      return acc;
-    }, {} as Record<string, typeof detailedGames>);
 
     return {
       formatTemplates: eventFormatTemplates.length,
