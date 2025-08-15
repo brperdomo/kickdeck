@@ -8,7 +8,7 @@
 import OpenAI from "openai";
 import { db } from "@db";
 import { users, events, teams, eventFees, paymentTransactions, matchupTemplates, eventBrackets, games, eventFieldConfigurations, fields } from "@db/schema";
-import { eq, and, gte, lte, desc, sql, sum, count, avg } from "drizzle-orm";
+import { eq, and, gte, lte, desc, sql, sum, count, avg, inArray } from "drizzle-orm";
 // Simple console.log replacement for now
 const log = (message: string, category?: string) => console.log(`[${category || 'OpenAI'}]`, message);
 
@@ -699,16 +699,14 @@ const getTournamentData = async (eventId: string) => {
       .from(games)
       .where(eq(games.eventId, eventId));
 
-    // Get detailed games information with field and team details
-    const detailedGames = await db
+    // Get detailed games information with field details first
+    const gamesWithFields = await db
       .select({
         id: games.id,
         scheduledDate: games.scheduledDate,
         scheduledTime: games.scheduledTime,
         homeTeamId: games.homeTeamId,
         awayTeamId: games.awayTeamId,
-        homeTeamName: sql<string>`COALESCE(home_team.name, 'TBD')`.as('home_team_name'),
-        awayTeamName: sql<string>`COALESCE(away_team.name, 'TBD')`.as('away_team_name'),
         fieldId: games.fieldId,
         fieldName: fields.name,
         round: games.round,
@@ -717,11 +715,30 @@ const getTournamentData = async (eventId: string) => {
       })
       .from(games)
       .leftJoin(fields, eq(games.fieldId, fields.id))
-      .leftJoin(teams.as('home_team'), eq(games.homeTeamId, teams.as('home_team').id))
-      .leftJoin(teams.as('away_team'), eq(games.awayTeamId, teams.as('away_team').id))
       .where(eq(games.eventId, eventId))
       .orderBy(games.scheduledDate, games.scheduledTime)
       .limit(50);
+
+    // Get all teams for this event to create a lookup map
+    const eventTeams = await db
+      .select({
+        id: teams.id,
+        name: teams.name
+      })
+      .from(teams)
+      .where(eq(teams.eventId, eventId));
+
+    const teamsMap = new Map<number, string>();
+    eventTeams.forEach(team => {
+      teamsMap.set(team.id, team.name);
+    });
+
+    // Combine games with team names
+    const detailedGames = gamesWithFields.map(game => ({
+      ...game,
+      homeTeamName: game.homeTeamId ? teamsMap.get(game.homeTeamId) || 'TBD' : 'TBD',
+      awayTeamName: game.awayTeamId ? teamsMap.get(game.awayTeamId) || 'TBD' : 'TBD'
+    }));
 
     // Get approved teams count
     const [teamsCount] = await db
