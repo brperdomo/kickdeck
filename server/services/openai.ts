@@ -781,11 +781,29 @@ const getTournamentData = async (eventId: string) => {
       .from(teams)
       .where(eq(teams.eventId, eventId));
 
+    // Get flight-level team counts (aggregated by flight name) 
+    const flightTeamCounts = await db
+      .select({
+        flightName: eventBrackets.name,
+        totalTeams: count(teams.id).as('total_teams')
+      })
+      .from(eventBrackets)
+      .leftJoin(teams, and(
+        eq(teams.bracketId, eventBrackets.id),
+        eq(teams.status, 'approved')
+      ))
+      .where(eq(eventBrackets.eventId, eventId))
+      .groupBy(eventBrackets.name)
+      .having(sql`COUNT(${teams.id}) > 0`);
+
+    console.log('Flight Team Counts Debug:', flightTeamCounts);
+
     return {
       formatTemplates: eventFormatTemplates.length,
       availableFormats: eventFormatTemplates.map(t => ({ name: t.name, teamCount: t.teamCount, games: t.totalGames })),
       totalBrackets: brackets.length,
       configuredBrackets: brackets.filter(b => b.tournamentFormat).length,
+      flightTeamCounts, // Add flight-level team counts
       bracketDetails: brackets.slice(0, 10).map(b => {
         let restPeriod = 'Not configured';
         if (b.tournamentSettings && typeof b.tournamentSettings === 'object') {
@@ -876,8 +894,11 @@ ${fieldsData.fieldDetails.map(f => `- Field ${f.name}: ${f.fieldSize} (${f.isAct
 TOURNAMENT FORMATS USED IN THIS EVENT:
 ${tournamentData.availableFormats.map(f => `- ${f.name}: ${f.teamCount} teams, ${f.games} games`).join('\n')}
 
-FLIGHT CONFIGURATIONS WITH REST PERIODS:
-${tournamentData.bracketDetails.map(b => `- ${b.name}: ${b.format} format, ${b.teams} teams, ${b.restPeriod} min rest period`).join('\n')}
+FLIGHT CONFIGURATIONS WITH TEAM COUNTS:
+${tournamentData.flightTeamCounts.map(f => `- ${f.flightName}: ${f.totalTeams} teams assigned`).join('\n')}
+
+BRACKET DETAILS WITH REST PERIODS:
+${tournamentData.bracketDetails.map(b => `- ${b.name}: ${b.format} format, ${b.teams} teams per bracket, ${b.restPeriod} min rest period`).join('\n')}
 
 FINANCIAL DATA:
 - Total Revenue: $${(financialData.totalRevenue / 100).toFixed(2)}
