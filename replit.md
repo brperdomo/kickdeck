@@ -18,9 +18,10 @@ Preferred communication style: Simple, everyday language.
 - **Dynamic Rest Periods Implementation**: Replaced hardcoded 90-minute rest periods with fully dynamic system based on flight configuration settings. Each flight now has configurable rest periods (Nike Elite: 120min, Nike Classic: 30-120min, Nike Premier: 60-120min) stored in tournament_settings.restPeriodMinutes. Updated scheduling system and AI assistant to properly read and apply these flight-specific rest period values.
 - **OpenAI GPT-4o Integration Updated**: Successfully configured new OpenAI API key with GPT-4o model verification. AI-powered scheduling, optimization, and bracket suggestion services are fully operational.
 - **Professional Gamecard System Complete**: Built comprehensive gamecard generation system matching tournament standards. Includes team roster cards with player details, coach information, game schedule cards with score sheets, PDF generation functionality, and printable format for field use. Integrated into admin interface at `/admin/events/:eventId/game-cards`.
+- **Field-Specific Time Controls Complete**: Added OPEN and LAST GAME time controls to Field Order tab allowing tournament directors to set field availability windows. Database enhanced with lastGameTime field, API updated to handle time constraints, and UI provides intuitive time input fields for each field. Enables field-specific scheduling based on lighting, operating hours, and availability constraints.
 - **New API Endpoints Operational**: 
-  - `/api/admin/events/:eventId/fields` - Complete field configuration management with joins (✅ Working)
-  - `/api/admin/events/:eventId/fields/:fieldId` - Individual field updates (✅ Working & Tested)
+  - `/api/admin/events/:eventId/fields` - Complete field configuration management with joins including time controls (✅ Working)
+  - `/api/admin/events/:eventId/fields/:fieldId` - Individual field updates with firstGameTime and lastGameTime support (✅ Working & Tested)
   - `/api/admin/events/:eventId/fields/reorder` - Drag-and-drop field ordering (✅ Ready)
   - `/api/admin/ai-assistant/chat` - Enhanced AI assistant with tournament data context (✅ Working)
   - `/api/admin/events/:eventId/teams/detailed` - Team roster data for gamecard generation (✅ Working)

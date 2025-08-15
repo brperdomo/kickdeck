@@ -39,6 +39,7 @@ router.get('/events/:eventId/fields', isAdmin, async (req, res) => {
         sortOrder: eventFieldConfigurations.sortOrder,
         isActive: eventFieldConfigurations.isActive,
         firstGameTime: eventFieldConfigurations.firstGameTime,
+        lastGameTime: eventFieldConfigurations.lastGameTime,
         eventId: eventFieldConfigurations.eventId,
         createdAt: eventFieldConfigurations.createdAt,
         updatedAt: eventFieldConfigurations.updatedAt,
@@ -67,6 +68,7 @@ router.get('/events/:eventId/fields', isAdmin, async (req, res) => {
         hasLights: field.hasLights || false,
         isOpen: field.isOpen || false,
         firstGameTime: field.firstGameTime,
+        lastGameTime: field.lastGameTime,
         complexName: field.complexName,
         eventFieldConfigId: field.id, // Keep reference to event config
         eventId: field.eventId,
@@ -167,11 +169,12 @@ router.put('/events/:eventId/fields/:fieldId', isAdmin, async (req, res) => {
       fieldSize, 
       sortOrder, 
       isActive, 
-      firstGameTime 
+      firstGameTime,
+      lastGameTime
     } = req.body;
     
     console.log(`[EVENT FIELDS] Updating field configuration for field ${fieldId} in event: ${eventId}`);
-    console.log(`[EVENT FIELDS] Update data:`, { fieldSize, sortOrder, isActive, firstGameTime });
+    console.log(`[EVENT FIELDS] Update data:`, { fieldSize, sortOrder, isActive, firstGameTime, lastGameTime });
     
     // Find the event field configuration by actual field ID (not config ID)
     const existingField = await db
@@ -200,6 +203,7 @@ router.put('/events/:eventId/fields/:fieldId', isAdmin, async (req, res) => {
         sortOrder: sortOrder !== undefined ? sortOrder : existingField[0].sortOrder,
         isActive: isActive !== undefined ? isActive : existingField[0].isActive,
         firstGameTime: firstGameTime !== undefined ? firstGameTime : existingField[0].firstGameTime,
+        lastGameTime: lastGameTime !== undefined ? lastGameTime : existingField[0].lastGameTime,
         updatedAt: new Date().toISOString()
       })
       .where(eq(eventFieldConfigurations.id, existingField[0].id))
@@ -216,6 +220,7 @@ router.put('/events/:eventId/fields/:fieldId', isAdmin, async (req, res) => {
         sortOrder: updatedField.sortOrder,
         isActive: updatedField.isActive,
         firstGameTime: updatedField.firstGameTime,
+        lastGameTime: updatedField.lastGameTime,
         eventId: updatedField.eventId,
         createdAt: updatedField.createdAt,
         updatedAt: updatedField.updatedAt

@@ -16,8 +16,11 @@ import {
   Save, 
   RotateCcw,
   CheckCircle,
-  AlertTriangle
+  AlertTriangle,
+  Timer
 } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 interface Field {
   id: number;
@@ -28,6 +31,7 @@ interface Field {
   isOpen: boolean;
   isActive?: boolean;
   firstGameTime?: string;
+  lastGameTime?: string;
   complexName?: string;
 }
 
@@ -56,12 +60,14 @@ export default function FieldSortingManager({
     mutationFn: async (updatedFields: Field[]) => {
       console.log('🔄 FIELD UPDATE: Submitting field changes to API');
       
-      // Update field sizes and active status
+      // Update field sizes, active status, and time controls
       const fieldUpdates = updatedFields.map(field => ({
         id: field.id,
         fieldSize: field.fieldSize,
         isActive: field.isActive ?? field.isOpen,
-        sortOrder: field.sortOrder
+        sortOrder: field.sortOrder,
+        firstGameTime: field.firstGameTime,
+        lastGameTime: field.lastGameTime
       }));
 
       // First update individual field properties
@@ -73,7 +79,9 @@ export default function FieldSortingManager({
           body: JSON.stringify({
             fieldSize: fieldUpdate.fieldSize,
             isActive: fieldUpdate.isActive,
-            sortOrder: fieldUpdate.sortOrder
+            sortOrder: fieldUpdate.sortOrder,
+            firstGameTime: fieldUpdate.firstGameTime,
+            lastGameTime: fieldUpdate.lastGameTime
           })
         });
         
@@ -144,6 +152,16 @@ export default function FieldSortingManager({
   const handleFieldActiveChange = (fieldId: number, isActive: boolean) => {
     const updatedFields = fields.map(field =>
       field.id === fieldId ? { ...field, isActive, isOpen: isActive } : field
+    );
+    setFields(updatedFields);
+    setHasChanges(true);
+  };
+
+  const handleTimeChange = (fieldId: number, timeType: 'firstGameTime' | 'lastGameTime', value: string) => {
+    const updatedFields = fields.map(field =>
+      field.id === fieldId 
+        ? { ...field, [timeType]: value }
+        : field
     );
     setFields(updatedFields);
     setHasChanges(true);
@@ -287,6 +305,30 @@ export default function FieldSortingManager({
                                   ))}
                                 </SelectContent>
                               </Select>
+                            </div>
+
+                            {/* Time Controls */}
+                            <div className="flex items-center gap-3">
+                              <div className="flex flex-col gap-1">
+                                <Label className="text-xs text-slate-400">OPEN</Label>
+                                <Input
+                                  type="time"
+                                  value={field.firstGameTime || ''}
+                                  onChange={(e) => handleTimeChange(field.id, 'firstGameTime', e.target.value)}
+                                  className="w-20 h-8 bg-slate-700 border-slate-600 text-slate-200 text-xs"
+                                  placeholder="08:00"
+                                />
+                              </div>
+                              <div className="flex flex-col gap-1">
+                                <Label className="text-xs text-slate-400">LAST GAME</Label>
+                                <Input
+                                  type="time"
+                                  value={field.lastGameTime || ''}
+                                  onChange={(e) => handleTimeChange(field.id, 'lastGameTime', e.target.value)}
+                                  className="w-20 h-8 bg-slate-700 border-slate-600 text-slate-200 text-xs"
+                                  placeholder="20:00"
+                                />
+                              </div>
                             </div>
 
                             {/* Active/Inactive Toggle */}
