@@ -30,8 +30,8 @@ router.get('/:eventId/games', isAdmin, async (req, res) => {
         requiredFieldSize: sql<string>`COALESCE(home_team.field_size, '11v11')`
       })
       .from(games)
-      .leftJoin(teams.as('home_team'), eq(games.homeTeamId, teams.as('home_team').id))
-      .leftJoin(teams.as('away_team'), eq(games.awayTeamId, teams.as('away_team').id))
+      .leftJoin(teams, eq(games.homeTeamId, teams.id))
+      .leftJoin(teams, eq(games.awayTeamId, teams.id))
       .leftJoin(gameTimeSlots, eq(games.timeSlotId, gameTimeSlots.id))
       .leftJoin(fields, eq(games.fieldId, fields.id))
       .innerJoin(eventBrackets, eq(games.bracketId, sql`${eventBrackets.id}::text`))
