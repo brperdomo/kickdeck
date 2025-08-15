@@ -44,9 +44,11 @@ import gameFormatsRouter from "./routes/admin/game-formats";
 import matchupTemplatesRouter from "./routes/admin/matchup-templates";
 import scoringTemplatesRouter from "./routes/admin/scoring-templates";
 import championshipRouter from "./routes/admin/championship";
+import championshipAiRouter from "./routes/admin/championship-ai-integration";
 import templateVerificationRouter from "./routes/admin/template-verification";
 import bracketCreationSqlRouter from "./routes/admin/bracket-creation";
 import bracketCreationFixedRouter from "./routes/admin/bracket-creation-fixed";
+import enhancedBracketCreationRouter from "./routes/admin/enhanced-bracket-creation";
 import bracketSubdivisionRouter from "./routes/admin/bracket-subdivision";
 import conflictDetectionRouter from "./routes/admin/conflict-detection";
 import adminBracketsRouter from "./routes/admin/brackets";
@@ -1123,6 +1125,7 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/matchup-templates', isAdmin, matchupTemplatesRouter); // Matchup templates router
     app.use('/api/admin/scoring-templates', isAdmin, scoringTemplatesRouter); // Scoring & Standings templates router
     app.use('/api/admin/championship', isAdmin, championshipRouter); // Championship team assignment router
+    app.use('/api/admin/championship-ai', isAdmin, championshipAiRouter); // Championship AI integration for chatbot queries
 
   // Debug endpoint for testing templates without authentication
   app.get('/api/debug/format-templates', async (req, res) => {
@@ -1203,6 +1206,7 @@ export function registerRoutes(app: Express): Server {
   });
     app.use('/api/admin/events', bracketCreationSqlRouter); // Bracket creation and team assignment router - NO AUTH REQUIRED
     app.use('/api/admin/events', bracketCreationFixedRouter); // Enhanced bracket creation with placeholder support - NO AUTH REQUIRED
+    app.use('/api/admin/enhanced-bracket', isAdmin, enhancedBracketCreationRouter); // Enhanced bracket creation with team count options
     app.use('/api/admin/events', isAdmin, bracketSubdivisionRouter); // Multiple brackets per flight support
     app.use('/api/admin/games', isAdmin, gamesRouter); // Game management router
     app.use('/api/admin/schedule', isAdmin, scheduleManagementRouter); // Schedule management with drag-and-drop

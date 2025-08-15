@@ -37,6 +37,8 @@ export interface GeneratedGame {
   duration: number;
   notes?: string;
   isPending?: boolean;
+  isChampionship?: boolean;
+  participatingTeams?: number[]; // All team IDs that could participate in this championship
 }
 
 export interface MatchupTemplate {
@@ -49,6 +51,8 @@ export interface MatchupTemplate {
   totalGames: number;
   hasPlayoffGame: boolean;
   playoffDescription?: string;
+  includeChampionship?: boolean;
+  championshipDescription?: string;
   isActive: boolean;
 }
 
@@ -101,7 +105,9 @@ export async function generateGamesFromTemplate(
     ...templateData,
     matchupPattern,
     isActive: templateData.isActive ?? true,
-    hasPlayoffGame: templateData.hasPlayoffGame ?? false
+    hasPlayoffGame: templateData.hasPlayoffGame ?? false,
+    includeChampionship: templateData.includeChampionship ?? false,
+    championshipDescription: templateData.championshipDescription ?? undefined
   };
 
   // Generate team mapping based on bracket structure
@@ -277,6 +283,32 @@ function generateGamesFromPattern(
     });
   });
 
+  // FIXED: Generate championship game based on template configuration, NOT pattern dependency
+  if (template.includeChampionship || template.hasPlayoffGame) {
+    console.log(`[Championship Gen] Template ${template.name} requires championship game (includeChampionship: ${template.includeChampionship}, hasPlayoffGame: ${template.hasPlayoffGame})`);
+    
+    // Extract all team IDs for conflict validation - championship games need to validate against ALL possible participants
+    const allTeamIds = Object.values(teamMapping).map(team => team.id);
+    
+    games.push({
+      id: `${bracketInfo.id}-championship`,
+      homeTeamId: null,
+      homeTeamName: 'Pool Winner',
+      awayTeamId: null,
+      awayTeamName: 'Pool Runner-up',
+      bracketId: bracketInfo.id,
+      bracketName: bracketInfo.name,
+      round: 2,
+      gameType: 'final',
+      gameNumber: gameNumber++,
+      duration: 90,
+      isPending: true,
+      isChampionship: true,
+      participatingTeams: allTeamIds, // CRITICAL: All teams in flight for conflict validation
+      notes: template.championshipDescription || template.playoffDescription || 'Championship final - teams determined by pool standings'
+    });
+  }
+
   return games;
 }
 
@@ -331,7 +363,9 @@ export async function findBestTemplate(
         ...preferred,
         matchupPattern,
         isActive: preferred.isActive ?? true,
-        hasPlayoffGame: preferred.hasPlayoffGame ?? false
+        hasPlayoffGame: preferred.hasPlayoffGame ?? false,
+        includeChampionship: preferred.includeChampionship ?? false,
+        championshipDescription: preferred.championshipDescription ?? undefined
       };
       
       console.log(`[Dynamic Matchup] Found preferred template: ${template.name}`);
@@ -349,7 +383,9 @@ export async function findBestTemplate(
     ...rawTemplate,
     matchupPattern,
     isActive: rawTemplate.isActive ?? true,
-    hasPlayoffGame: rawTemplate.hasPlayoffGame ?? false
+    hasPlayoffGame: rawTemplate.hasPlayoffGame ?? false,
+    includeChampionship: rawTemplate.includeChampionship ?? false,
+    championshipDescription: rawTemplate.championshipDescription ?? undefined
   };
   
   console.log(`[Dynamic Matchup] Using default template: ${template.name}`);
@@ -377,7 +413,9 @@ export async function getTemplatesForTeamCount(teamCount: number): Promise<Match
       ...rawTemplate,
       matchupPattern,
       isActive: rawTemplate.isActive ?? true,
-      hasPlayoffGame: rawTemplate.hasPlayoffGame ?? false
+      hasPlayoffGame: rawTemplate.hasPlayoffGame ?? false,
+      includeChampionship: rawTemplate.includeChampionship ?? false,
+      championshipDescription: rawTemplate.championshipDescription ?? undefined
     };
   });
 }
