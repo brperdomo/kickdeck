@@ -1,0 +1,96 @@
+🎯 Goals
+Give admins a way to view all scheduled games, enter scores, and override previously submitted scores.
+
+Ensure auditability (so overrides don’t silently replace history).
+
+Connect seamlessly into your standings engine (the rules model you already set per event).
+
+🖼️ Suggested UI Layout
+1. Game List / Table View
+Display all scheduled games for the tournament/flight.
+
+Columns:
+
+Match ID (or Game #)
+
+Date/Time
+
+Field
+
+Team 1
+
+Team 2
+
+Score (editable input fields)
+
+Status (Pending / Final / Overridden)
+
+Actions (Edit / Override)
+
+Example:
+
+Game #	Field	Team 1	Team 2	Score	Status	Actions
+101	Field 1	Eagles	Tigers	2 – 1	Final	Edit
+102	Field 2	Sharks	Wolves	–	Pending	Enter Score
+
+2. Score Entry / Edit Form
+Modal or inline form with:
+
+Team 1 Score input (number)
+
+Team 2 Score input (number)
+
+“Save Score” button
+
+Validation: numbers only, must allow 0–20 range (configurable).
+
+3. Override Mechanism
+If a score already exists:
+
+Show original score + who entered it + timestamp.
+
+Allow admin to override with new score.
+
+Store both old and new values for history/audit.
+
+Audit JSON example:
+
+json
+Copy
+Edit
+{
+  "gameId": 101,
+  "history": [
+    { "enteredBy": "Ref1", "score": "2-1", "timestamp": "2025-08-14T10:00:00Z" },
+    { "enteredBy": "AdminBryan", "score": "3-1", "timestamp": "2025-08-14T12:00:00Z", "override": true }
+  ],
+  "finalScore": "3-1"
+}
+4. Filtering & Bulk Actions
+Filters by flight, bracket, date, status (Pending / Final / Overridden).
+
+Bulk options: mark multiple games as “Forfeit,” clear scores, or import/export via CSV/JSON.
+
+5. Integration with Standings
+Once scores are saved/overridden → trigger recalculation of standings based on the Scoring Rules Model defined for that event.
+
+Live preview: standings update in real time.
+
+⚡ Implementation Notes
+Frontend:
+
+React Data Table for game list (sortable, filterable).
+
+Score entry via modal or inline edit.
+
+Backend:
+
+Store full audit trail (don’t just overwrite).
+
+API endpoints: POST /scores, PUT /scores/:gameId, GET /scores/history/:gameId.
+
+Nice-to-have:
+
+Role-based permissions (refs can submit, admins can override).
+
+Lock scores after championship unless explicitly reopened.

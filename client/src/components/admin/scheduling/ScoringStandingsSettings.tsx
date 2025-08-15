@@ -317,8 +317,8 @@ function ScoringStandingsSettings({ eventId }: ScoringStandingsSettingsProps) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Scoring & Standings</h2>
-          <p className="text-gray-600">Configure dynamic scoring rules and standings criteria - NO hardcoded values</p>
+          <h2 className="text-2xl font-bold text-white drop-shadow-md">Scoring & Standings</h2>
+          <p className="text-gray-100 text-lg font-medium drop-shadow-sm">Set up custom scoring rules and standings criteria for your tournament</p>
         </div>
       </div>
 
@@ -595,7 +595,7 @@ function ScoringStandingsSettings({ eventId }: ScoringStandingsSettingsProps) {
               {editingScoringTemplate ? 'Edit Scoring Template' : 'Create Scoring Template'}
             </DialogTitle>
             <DialogDescription>
-              Define custom scoring rules for wins, draws, losses, and bonuses. No hardcoded values!
+              Define custom scoring rules for wins, draws, losses, and bonuses. Fully customizable for your tournament needs.
             </DialogDescription>
           </DialogHeader>
 

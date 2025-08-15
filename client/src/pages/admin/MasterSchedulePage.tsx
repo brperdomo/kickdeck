@@ -382,8 +382,8 @@ export default function MasterSchedulePage() {
               <Cog className="h-4 w-4 text-orange-400" />
               <AlertDescription className="text-purple-100">
                 <strong>Format Settings:</strong> Define and manage matchup templates for tournament scheduling. 
-                Create custom bracket patterns, crossplay formats, and elimination structures with zero hardcoded logic. 
-                All tournament formats use dynamic templates accessible through this interface.
+                Create custom bracket patterns, crossplay formats, and elimination structures that adapt to your specific tournament needs. 
+                All tournament formats use flexible templates accessible through this interface.
               </AlertDescription>
             </Alert>
             <div className="bg-black/20 backdrop-blur-sm border border-purple-400/30 rounded-lg p-6">
@@ -395,9 +395,9 @@ export default function MasterSchedulePage() {
             <Alert className="border-yellow-400/30 bg-black/30 backdrop-blur-sm">
               <Trophy className="h-4 w-4 text-yellow-400" />
               <AlertDescription className="text-purple-100">
-                <strong>Scoring & Standings:</strong> Define dynamic scoring rules and standings criteria with ZERO hardcoded values. 
-                Create custom point systems, tiebreaker hierarchies, and championship game configurations. All scoring calculations 
-                use these templates - no hardcoded logic anywhere in the system.
+                <strong>Scoring & Standings:</strong> Create flexible scoring rules and standings criteria tailored to your tournament format. 
+                Set up custom point systems, tiebreaker hierarchies, and championship game configurations. All scoring calculations 
+                use your templates, ensuring consistency across your entire tournament.
               </AlertDescription>
             </Alert>
             <div className="bg-black/20 backdrop-blur-sm border border-purple-400/30 rounded-lg p-6">
