@@ -108,10 +108,11 @@ router.delete('/:eventId/brackets/:bracketId', isAdmin, async (req, res) => {
       .from(teams)
       .where(eq(teams.bracketId, parseInt(bracketId)));
 
-    if (teamsInBracket[0]?.count > 0) {
+    const teamCount = parseInt(teamsInBracket[0]?.count as string) || 0;
+    if (teamCount > 0) {
       return res.status(400).json({ 
         error: 'Cannot delete bracket with assigned teams',
-        teamsCount: teamsInBracket[0].count 
+        teamsCount: teamCount 
       });
     }
 
@@ -164,8 +165,7 @@ router.post('/:eventId/brackets/:bracketId/assign-teams', isAdmin, async (req, r
     await db
       .update(teams)
       .set({ 
-        bracketId: parseInt(bracketId),
-        updatedAt: new Date().toISOString()
+        bracketId: parseInt(bracketId)
       })
       .where(sql`${teams.id} = ANY(${teamIds})`);
 

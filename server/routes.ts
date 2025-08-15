@@ -43,6 +43,8 @@ import gameMetadataRouter from "./routes/admin/game-metadata";
 import gameFormatsRouter from "./routes/admin/game-formats";
 import matchupTemplatesRouter from "./routes/admin/matchup-templates";
 import scoringTemplatesRouter from "./routes/admin/scoring-templates";
+import tournamentFormatConfigurationRouter from "./routes/admin/tournament-format-configuration";
+import eventFieldConfigurationsRouter from "./routes/admin/event-field-configurations";
 import championshipRouter from "./routes/admin/championship";
 import championshipAiRouter from "./routes/admin/championship-ai-integration";
 import templateVerificationRouter from "./routes/admin/template-verification";
@@ -1127,6 +1129,8 @@ export function registerRoutes(app: Express): Server {
     
     app.use('/api/admin/matchup-templates', isAdmin, matchupTemplatesRouter); // Matchup templates router
     app.use('/api/admin/scoring-templates', isAdmin, scoringTemplatesRouter); // Scoring & Standings templates router
+    app.use('/api/admin', isAdmin, tournamentFormatConfigurationRouter); // Tournament format configuration
+    app.use('/api/admin', isAdmin, eventFieldConfigurationsRouter); // Event field configurations
     app.use('/api/admin/championship', isAdmin, championshipRouter); // Championship team assignment router
     app.use('/api/admin/championship-ai', isAdmin, championshipAiRouter); // Championship AI integration for chatbot queries
 

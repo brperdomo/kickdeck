@@ -18,7 +18,7 @@ router.get('/events/:eventId/flight-configurations', isAdmin, async (req, res) =
         endDate: events.endDate,
       })
       .from(events)
-      .where(eq(events.id, eventId))
+      .where(eq(events.id, parseInt(eventId)))
       .limit(1);
 
     console.log(`[FLIGHT CONFIG] Event ${eventId} details:`, eventDetails);

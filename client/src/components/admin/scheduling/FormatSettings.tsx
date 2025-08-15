@@ -92,15 +92,16 @@ export function FormatSettings({ eventId }: FormatSettingsProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Fetch all matchup templates
+  // Fetch all format templates for this event
   const templatesQuery = useQuery({
-    queryKey: ['matchup-templates'],
+    queryKey: ['format-templates', eventId],
     queryFn: async () => {
-      const response = await fetch('/api/admin/matchup-templates');
+      const response = await fetch(`/api/admin/events/${eventId}/format-templates`);
       if (!response.ok) {
-        throw new Error('Failed to fetch templates');
+        throw new Error('Failed to fetch format templates');
       }
-      return response.json() as Promise<MatchupTemplate[]>;
+      const data = await response.json();
+      return data.templates as MatchupTemplate[];
     },
   });
 

@@ -819,7 +819,7 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
               id: team.id,
               name: team.name,
               bracketId: team.bracketId?.toString() || '',
-              groupId: team.groupId,
+              groupId: team.groupId || undefined,
               seedRanking: index + 1
             }));
             
@@ -913,7 +913,7 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
               id: team.id,
               name: team.name,
               bracketId: team.bracketId?.toString() || '',
-              groupId: team.groupId,
+              groupId: team.groupId || undefined,
               seedRanking: index + 1,
               poolAssignment: index < 4 ? 'A' : 'B'
             }));
@@ -1040,8 +1040,8 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
             const templateTeams = selectedTeams.map((team, index) => ({
               id: team.id,
               name: team.name,
-              bracketId: team.bracketId,
-              groupId: team.groupId,
+              bracketId: team.bracketId?.toString() || '',
+              groupId: team.groupId || undefined,
               seedRanking: index + 1,
               poolAssignment: index < 3 ? 'A' : 'B'
             }));
@@ -1132,8 +1132,8 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
             const templateTeams = selectedTeams.map((team, index) => ({
               id: team.id,
               name: team.name,
-              bracketId: team.bracketId,
-              groupId: team.groupId,
+              bracketId: team.bracketId?.toString() || '',
+              groupId: team.groupId || undefined,
               seedRanking: index + 1,
               poolAssignment: index < 3 ? 'A' : 'B'
             }));
