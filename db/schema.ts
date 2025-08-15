@@ -43,6 +43,7 @@ export const users = pgTable("users", {
   phone: text("phone"),
   isParent: boolean("isParent").default(false).notNull(),
   isAdmin: boolean("isAdmin").default(false).notNull(),
+  role: text("role").default("user"), // Add role field for user role tracking
   createdAt: text("createdAt").notNull().default(new Date().toISOString()),
   householdId: serial("householdId").references(() => households.id),
   lastLogin: timestamp("last_login"), // Track last login time
@@ -493,7 +494,7 @@ export const games = pgTable("games", {
   updatedAt: text("updated_at").notNull().default(new Date().toISOString()),
 });
 
-// Game Score Audit Trail - Full history of all score changes
+// Game Score Audit Trail Table
 export const gameScoreAudit = pgTable("game_score_audit", {
   id: serial("id").primaryKey(),
   gameId: integer("game_id").notNull().references(() => games.id, { onDelete: 'cascade' }),
@@ -503,17 +504,18 @@ export const gameScoreAudit = pgTable("game_score_audit", {
   awayYellowCards: integer("away_yellow_cards").notNull().default(0),
   homeRedCards: integer("home_red_cards").notNull().default(0),
   awayRedCards: integer("away_red_cards").notNull().default(0),
-  enteredBy: integer("entered_by").notNull().references(() => users.id), // Who made this change
-  enteredAt: timestamp("entered_at").notNull().defaultNow(), // When this change was made
-  changeType: text("change_type").notNull(), // 'initial_entry', 'score_update', 'override', 'admin_correction'
-  notes: text("notes"), // Why this change was made
-  isOverride: boolean("is_override").notNull().default(false), // True if this was an override of existing score
-  previousValues: jsonb("previous_values"), // JSON of what the values were before this change
-  userRole: text("user_role").notNull(), // Role of person making change (ref, score_admin, tournament_admin, etc.)
-  ipAddress: text("ip_address"), // For additional audit trail
-  userAgent: text("user_agent"), // Browser/device information
-  createdAt: timestamp("created_at").notNull().defaultNow(),
+  changeType: text("change_type").notNull(), // 'initial', 'update', 'override', 'correction'
+  notes: text("notes"),
+  isOverride: boolean("is_override").notNull().default(false),
+  previousValues: jsonb("previous_values"), // Store previous score values as JSON
+  userRole: text("user_role"), // Role of user making the change
+  enteredAt: timestamp("entered_at").notNull().defaultNow(),
+  enteredBy: integer("entered_by").references(() => users.id),
+  enteredByName: text("entered_by_name"),
+  enteredByEmail: text("entered_by_email"),
 });
+
+
 
 // Payment transactions table for recording all payment-related activity
 export const paymentTransactions = pgTable("payment_transactions", {

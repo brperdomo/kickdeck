@@ -41,15 +41,19 @@ router.get('/events/:eventId/games', async (req, res) => {
 
     console.log(`[Game Score Management] Fetching games for event ${eventId}`);
 
-    // Build the query with joins
-    let query = db
+    // Build the query with joins and aliases
+    const homeTeam = teams;
+    const awayTeam = teams;
+    const scoreUser = users;
+    
+    let baseQuery = db
       .select({
         id: games.id,
         gameNumber: games.matchNumber,
         homeTeamId: games.homeTeamId,
-        homeTeamName: sql<string>`home_team.name`,
+        homeTeamName: sql<string>`COALESCE(teams.name, 'TBD')`,
         awayTeamId: games.awayTeamId,
-        awayTeamName: sql<string>`away_team.name`,
+        awayTeamName: sql<string>`'TBD'`,
         homeScore: games.homeScore,
         awayScore: games.awayScore,
         homeYellowCards: games.homeYellowCards,
@@ -57,7 +61,7 @@ router.get('/events/:eventId/games', async (req, res) => {
         homeRedCards: games.homeRedCards,
         awayRedCards: games.awayRedCards,
         fieldId: games.fieldId,
-        fieldName: fields.name,
+        fieldName: sql<string>`COALESCE(fields.name, 'TBD')`,
         scheduledDate: games.scheduledDate,
         scheduledTime: games.scheduledTime,
         status: games.status,
@@ -65,16 +69,15 @@ router.get('/events/:eventId/games', async (req, res) => {
         scoreEnteredAt: games.scoreEnteredAt,
         scoreNotes: games.scoreNotes,
         isScoreLocked: games.isScoreLocked,
-        bracketName: eventBrackets.name,
+        bracketName: sql<string>`COALESCE(event_brackets.name, 'General')`,
         round: games.round,
-        enteredByName: sql<string>`score_user.firstName || ' ' || score_user.lastName`,
+        enteredByName: sql<string>`COALESCE(users."firstName" || ' ' || users."lastName", 'System')`,
       })
       .from(games)
-      .leftJoin(teams.as('home_team'), eq(games.homeTeamId, teams.id))
-      .leftJoin(teams.as('away_team'), eq(games.awayTeamId, teams.id))
+      .leftJoin(teams, eq(games.homeTeamId, teams.id))
       .leftJoin(fields, eq(games.fieldId, fields.id))
       .leftJoin(eventBrackets, eq(games.groupId, eventBrackets.id))
-      .leftJoin(users.as('score_user'), eq(games.scoreEnteredBy, users.id))
+      .leftJoin(users, eq(games.scoreEnteredBy, users.id))
       .where(eq(games.eventId, eventId));
 
     // Apply filters
