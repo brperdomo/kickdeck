@@ -36,11 +36,11 @@ export default function GameCardsGenerator({ eventId }: GameCardsGeneratorProps)
   const [generatingPDF, setGeneratingPDF] = useState(false);
   const { toast } = useToast();
 
-  // Fetch games data using the fixed scoring endpoint with proper team names
+  // Fetch games data using the public game-cards endpoint (no auth required)
   const { data: gamesData, isLoading } = useQuery({
-    queryKey: ['games-scores', eventId],
+    queryKey: ['public-game-cards', eventId],
     queryFn: async () => {
-      const response = await fetch(`/api/admin/score-management/events/${eventId}/games`);
+      const response = await fetch(`/api/public/game-cards/${eventId}`);
       if (!response.ok) throw new Error('Failed to fetch games');
       return response.json();
     }
@@ -62,12 +62,10 @@ export default function GameCardsGenerator({ eventId }: GameCardsGeneratorProps)
     }
   });
 
-  // Transform scoring endpoint data to match Game interface
-  const games: Game[] = (gamesData?.games || []).map((game: any) => {
-    // Combine date and time for proper datetime formatting
-    const gameDateTime = game.scheduledDate && game.scheduledTime 
-      ? `${game.scheduledDate}T${game.scheduledTime}`
-      : null;
+  // Transform public game-cards endpoint data to match Game interface
+  const games: Game[] = (gamesData || []).map((game: any) => {
+    // The public endpoint returns direct game data
+    const gameDateTime = game.scheduledTime || '';
     
     return {
       id: game.id,
@@ -75,13 +73,13 @@ export default function GameCardsGenerator({ eventId }: GameCardsGeneratorProps)
       awayTeamId: game.awayTeamId || 0,
       homeTeamName: game.homeTeamName || 'TBD',
       awayTeamName: game.awayTeamName || 'TBD',
-      ageGroupName: game.bracketName || 'No Flight', // Use bracketName from scoring endpoint
+      ageGroupName: game.bracketName || `Game ${game.gameNumber}`,
       fieldName: game.fieldName || 'TBD',
-      complexName: 'Galway Downs Soccer Complex',
-      startTime: gameDateTime || '',
-      endTime: gameDateTime || '', // For now, use same as start time
-      gameDate: gameDateTime || '',
-      status: game.status,
+      complexName: 'Tournament Complex',
+      startTime: gameDateTime,
+      endTime: gameDateTime,
+      gameDate: gameDateTime,
+      status: game.status || 'scheduled',
       homeScore: game.homeScore,
       awayScore: game.awayScore
     };
