@@ -1,7 +1,7 @@
 import express from 'express';
 import { db } from '@db';
 import { games, gameScoreAudit, teams, fields, eventBrackets, users } from '@db/schema';
-import { eq, and, desc, sql } from 'drizzle-orm';
+import { eq, and, desc, sql, inArray } from 'drizzle-orm';
 import { requirePermission } from '../../middleware/permissions';
 
 const router = express.Router();
@@ -39,42 +39,122 @@ router.get('/events/:eventId/games', async (req, res) => {
     const { eventId } = req.params;
     console.log(`[Game Score Management] Fetching games for event ${eventId}`);
 
-    // Simple query without complex joins for now
+    // Complex query with proper joins to get team names, field names, and bracket names
     const gameResults = await db
-      .select()
+      .select({
+        id: games.id,
+        matchNumber: games.matchNumber,
+        homeTeamId: games.homeTeamId,
+        awayTeamId: games.awayTeamId,
+        homeScore: games.homeScore,
+        awayScore: games.awayScore,
+        homeYellowCards: games.homeYellowCards,
+        awayYellowCards: games.awayYellowCards,
+        homeRedCards: games.homeRedCards,
+        awayRedCards: games.awayRedCards,
+        fieldId: games.fieldId,
+        fieldName: fields.name,
+        scheduledDate: games.scheduledDate,
+        scheduledTime: games.scheduledTime,
+        status: games.status,
+        scoreEnteredBy: games.scoreEnteredBy,
+        scoreEnteredAt: games.scoreEnteredAt,
+        scoreNotes: games.scoreNotes,
+        isScoreLocked: games.isScoreLocked,
+        round: games.round,
+        groupId: games.groupId
+      })
       .from(games)
+      .leftJoin(fields, eq(games.fieldId, fields.id))
       .where(eq(games.eventId, eventId))
       .orderBy(games.scheduledDate, games.scheduledTime);
 
-    // Transform results to match interface
-    const gamesWithDetails: GameWithDetails[] = gameResults.map(game => ({
-      id: game.id,
-      gameNumber: game.matchNumber,
-      homeTeamId: game.homeTeamId,
-      homeTeamName: 'TBD', // Will be populated by separate queries
-      awayTeamId: game.awayTeamId,
-      awayTeamName: 'TBD',
-      homeScore: game.homeScore,
-      awayScore: game.awayScore,
-      homeYellowCards: game.homeYellowCards,
-      awayYellowCards: game.awayYellowCards,
-      homeRedCards: game.homeRedCards,
-      awayRedCards: game.awayRedCards,
-      fieldId: game.fieldId,
-      fieldName: null,
-      scheduledDate: game.scheduledDate ? game.scheduledDate.toString() : null,
-      scheduledTime: game.scheduledTime ? game.scheduledTime.toString() : null,
-      status: game.status,
-      scoreEnteredBy: game.scoreEnteredBy,
-      scoreEnteredAt: game.scoreEnteredAt,
-      scoreNotes: game.scoreNotes,
-      isScoreLocked: game.isScoreLocked,
-      bracketName: null,
-      round: game.round,
-      enteredByName: null,
-    }));
+    // Get team names and bracket information separately to handle home and away teams
+    const gameIds = gameResults.map(g => g.id);
+    const teamLookup = new Map();
+    const bracketLookup = new Map();
+    
+    if (gameIds.length > 0) {
+      // Get all teams with their bracket information
+      const allTeams = await db
+        .select({
+          id: teams.id,
+          name: teams.name,
+          bracketId: teams.bracketId
+        })
+        .from(teams)
+        .where(eq(teams.eventId, eventId));
+      
+      allTeams.forEach(team => {
+        teamLookup.set(team.id, team.name);
+        if (team.bracketId) {
+          bracketLookup.set(team.id, team.bracketId);
+        }
+      });
 
-    console.log(`[Game Score Management] Found ${gamesWithDetails.length} games`);
+      // Get bracket names
+      const bracketIds = Array.from(new Set(bracketLookup.values()));
+      const bracketNameMap = new Map();
+      
+      if (bracketIds.length > 0) {
+        const brackets = await db
+          .select({
+            id: eventBrackets.id,
+            name: eventBrackets.name
+          })
+          .from(eventBrackets)
+          .where(inArray(eventBrackets.id, bracketIds));
+        
+        brackets.forEach(bracket => {
+          bracketNameMap.set(bracket.id, bracket.name);
+        });
+      }
+
+      // Update bracketLookup to map teamId -> bracketName
+      for (const [teamId, bracketId] of bracketLookup.entries()) {
+        bracketLookup.set(teamId, bracketNameMap.get(bracketId) || 'No Flight');
+      }
+    }
+
+    // Transform results to match interface
+    const gamesWithDetails: GameWithDetails[] = gameResults.map(game => {
+      // Determine bracket name from either home or away team (they should be in the same bracket)
+      let bracketName = 'No Flight';
+      if (game.homeTeamId && bracketLookup.has(game.homeTeamId)) {
+        bracketName = bracketLookup.get(game.homeTeamId);
+      } else if (game.awayTeamId && bracketLookup.has(game.awayTeamId)) {
+        bracketName = bracketLookup.get(game.awayTeamId);
+      }
+
+      return {
+        id: game.id,
+        gameNumber: game.matchNumber,
+        homeTeamId: game.homeTeamId,
+        homeTeamName: game.homeTeamId ? teamLookup.get(game.homeTeamId) || 'TBD' : 'TBD',
+        awayTeamId: game.awayTeamId,
+        awayTeamName: game.awayTeamId ? teamLookup.get(game.awayTeamId) || 'TBD' : 'TBD',
+        homeScore: game.homeScore,
+        awayScore: game.awayScore,
+        homeYellowCards: game.homeYellowCards,
+        awayYellowCards: game.awayYellowCards,
+        homeRedCards: game.homeRedCards,
+        awayRedCards: game.awayRedCards,
+        fieldId: game.fieldId,
+        fieldName: game.fieldName || (game.fieldId ? `Field ${game.fieldId}` : 'TBD'),
+        scheduledDate: game.scheduledDate ? game.scheduledDate.toString() : null,
+        scheduledTime: game.scheduledTime ? game.scheduledTime.toString() : null,
+        status: game.status,
+        scoreEnteredBy: game.scoreEnteredBy,
+        scoreEnteredAt: game.scoreEnteredAt,
+        scoreNotes: game.scoreNotes,
+        isScoreLocked: game.isScoreLocked,
+        bracketName: bracketName,
+        round: game.round,
+        enteredByName: null,
+      };
+    });
+
+    console.log(`[Game Score Management] Found ${gamesWithDetails.length} games with team data`);
     res.json({ success: true, games: gamesWithDetails });
 
   } catch (error) {
