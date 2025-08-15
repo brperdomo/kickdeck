@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { db } from '@db';
 import { isAdmin } from '../../middleware';
-import { eventFieldConfigurations, events } from '@db/schema';
+import { eventFieldConfigurations, events, fields, complexes } from '@db/schema';
 import { eq, and, desc, sql } from 'drizzle-orm';
 
 const router = Router();
@@ -30,24 +30,45 @@ router.get('/events/:eventId/fields', isAdmin, async (req, res) => {
       });
     }
     
-    // Fetch all fields for the event
-    const fields = await db
-      .select()
+    // Fetch all fields for the event with complete field information
+    const fieldsData = await db
+      .select({
+        id: eventFieldConfigurations.id,
+        fieldId: eventFieldConfigurations.fieldId,
+        fieldSize: eventFieldConfigurations.fieldSize,
+        sortOrder: eventFieldConfigurations.sortOrder,
+        isActive: eventFieldConfigurations.isActive,
+        firstGameTime: eventFieldConfigurations.firstGameTime,
+        eventId: eventFieldConfigurations.eventId,
+        createdAt: eventFieldConfigurations.createdAt,
+        updatedAt: eventFieldConfigurations.updatedAt,
+        // Get field details from the fields table
+        name: fields.name,
+        hasLights: fields.hasLights,
+        isOpen: fields.isOpen,
+        complexName: complexes.name
+      })
       .from(eventFieldConfigurations)
+      .leftJoin(fields, eq(eventFieldConfigurations.fieldId, fields.id))
+      .leftJoin(complexes, eq(fields.complexId, complexes.id))
       .where(eq(eventFieldConfigurations.eventId, parseInt(eventId)))
       .orderBy(eventFieldConfigurations.sortOrder);
     
-    console.log(`[EVENT FIELDS] Found ${fields.length} fields for event ${eventId}`);
+    console.log(`[EVENT FIELDS] Found ${fieldsData.length} fields for event ${eventId}`);
     
     res.json({
       success: true,
-      fields: fields.map(field => ({
-        id: field.id,
-        fieldId: field.fieldId,
+      fields: fieldsData.map(field => ({
+        id: field.fieldId, // Use actual field ID for field operations
+        name: field.name || `Field ${field.fieldId}`,
         fieldSize: field.fieldSize,
         sortOrder: field.sortOrder,
         isActive: field.isActive,
+        hasLights: field.hasLights || false,
+        isOpen: field.isOpen || false,
         firstGameTime: field.firstGameTime,
+        complexName: field.complexName,
+        eventFieldConfigId: field.id, // Keep reference to event config
         eventId: field.eventId,
         createdAt: field.createdAt,
         updatedAt: field.updatedAt
@@ -149,15 +170,16 @@ router.put('/events/:eventId/fields/:fieldId', isAdmin, async (req, res) => {
       firstGameTime 
     } = req.body;
     
-    console.log(`[EVENT FIELDS] Updating field configuration ${fieldId} for event: ${eventId}`);
+    console.log(`[EVENT FIELDS] Updating field configuration for field ${fieldId} in event: ${eventId}`);
+    console.log(`[EVENT FIELDS] Update data:`, { fieldSize, sortOrder, isActive, firstGameTime });
     
-    // Check if field configuration exists and belongs to the event
+    // Find the event field configuration by actual field ID (not config ID)
     const existingField = await db
       .select()
       .from(eventFieldConfigurations)
       .where(
         and(
-          eq(eventFieldConfigurations.id, parseInt(fieldId)),
+          eq(eventFieldConfigurations.fieldId, parseInt(fieldId)),
           eq(eventFieldConfigurations.eventId, parseInt(eventId))
         )
       )
@@ -166,7 +188,7 @@ router.put('/events/:eventId/fields/:fieldId', isAdmin, async (req, res) => {
     if (existingField.length === 0) {
       return res.status(404).json({
         success: false,
-        error: 'Field configuration not found or does not belong to this event'
+        error: 'Field configuration not found for this event'
       });
     }
     
@@ -180,7 +202,7 @@ router.put('/events/:eventId/fields/:fieldId', isAdmin, async (req, res) => {
         firstGameTime: firstGameTime !== undefined ? firstGameTime : existingField[0].firstGameTime,
         updatedAt: new Date().toISOString()
       })
-      .where(eq(eventFieldConfigurations.id, parseInt(fieldId)))
+      .where(eq(eventFieldConfigurations.id, existingField[0].id))
       .returning();
     
     console.log(`[EVENT FIELDS] Updated field ${fieldId} successfully`);

@@ -1,15 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { useToast } from '@/hooks/use-toast';
-import { GripVertical, Save, RotateCcw, Settings, Clock, Power, PowerOff } from 'lucide-react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { toast } from '@/hooks/use-toast';
+import { 
+  GripVertical, 
+  MapPin, 
+  Clock, 
+  Lightbulb, 
+  Save, 
+  RotateCcw,
+  CheckCircle,
+  AlertTriangle
+} from 'lucide-react';
 
 interface Field {
   id: number;
@@ -26,586 +34,337 @@ interface Field {
 interface FieldSortingManagerProps {
   fields: Field[];
   onFieldsReordered: (fields: Field[]) => void;
-  eventId?: string;
+  eventId: string;
 }
 
-export default function FieldSortingManager({ fields, onFieldsReordered, eventId }: FieldSortingManagerProps) {
-  const [sortableFields, setSortableFields] = useState<Field[]>([]);
-  const [hasChanges, setHasChanges] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const [bulkTimeSettings, setBulkTimeSettings] = useState({
-    '7v7': '',
-    '9v9': '',
-    '11v11': ''
-  });
-  const { toast } = useToast();
+const FIELD_SIZE_OPTIONS = [
+  { value: '7v7', label: '7v7 (Small Field)' },
+  { value: '9v9', label: '9v9 (Medium Field)' },
+  { value: '11v11', label: '11v11 (Full Field)' }
+];
 
-  useEffect(() => {
-    // Sort fields by their current sortOrder, then by name
-    const sorted = [...fields].sort((a, b) => {
-      if (a.sortOrder !== b.sortOrder) {
-        return a.sortOrder - b.sortOrder;
-      }
-      return a.name.localeCompare(b.name);
-    });
-    setSortableFields(sorted);
-    setHasChanges(false);
-  }, [fields]);
+export default function FieldSortingManager({ 
+  fields: initialFields, 
+  onFieldsReordered, 
+  eventId 
+}: FieldSortingManagerProps) {
+  const [fields, setFields] = useState<Field[]>(initialFields);
+  const [hasChanges, setHasChanges] = useState(false);
+
+  // Bulk update field configurations
+  const updateFieldsMutation = useMutation({
+    mutationFn: async (updatedFields: Field[]) => {
+      console.log('🔄 FIELD UPDATE: Submitting field changes to API');
+      
+      // Update field sizes and active status
+      const fieldUpdates = updatedFields.map(field => ({
+        id: field.id,
+        fieldSize: field.fieldSize,
+        isActive: field.isActive ?? field.isOpen,
+        sortOrder: field.sortOrder
+      }));
+
+      // First update individual field properties
+      const updatePromises = fieldUpdates.map(async (fieldUpdate) => {
+        const response = await fetch(`/api/admin/events/${eventId}/fields/${fieldUpdate.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            fieldSize: fieldUpdate.fieldSize,
+            isActive: fieldUpdate.isActive,
+            sortOrder: fieldUpdate.sortOrder
+          })
+        });
+        
+        if (!response.ok) {
+          // Fallback to global fields API if event-specific fails
+          const globalResponse = await fetch(`/api/admin/fields/sort-order`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+              fieldUpdates: [{ id: fieldUpdate.id, sortOrder: fieldUpdate.sortOrder }]
+            })
+          });
+          
+          if (!globalResponse.ok) {
+            throw new Error(`Failed to update field ${fieldUpdate.id}`);
+          }
+          return globalResponse.json();
+        }
+        return response.json();
+      });
+
+      await Promise.all(updatePromises);
+      return { success: true };
+    },
+    onSuccess: () => {
+      toast({
+        title: "Field Configuration Updated",
+        description: "Field sizes, order, and availability have been saved successfully."
+      });
+      setHasChanges(false);
+      onFieldsReordered(fields);
+    },
+    onError: (error) => {
+      toast({
+        title: "Update Failed",
+        description: error instanceof Error ? error.message : "Failed to update field configuration",
+        variant: "destructive"
+      });
+    }
+  });
 
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return;
 
-    const sourceIndex = result.source.index;
-    const destinationIndex = result.destination.index;
+    const newFields = Array.from(fields);
+    const [reorderedField] = newFields.splice(result.source.index, 1);
+    newFields.splice(result.destination.index, 0, reorderedField);
 
-    if (sourceIndex === destinationIndex) return;
-
-    const reorderedFields = Array.from(sortableFields);
-    const [reorderedField] = reorderedFields.splice(sourceIndex, 1);
-    reorderedFields.splice(destinationIndex, 0, reorderedField);
-
-    // Update sort order for all fields
-    const updatedFields = reorderedFields.map((field, index) => ({
+    // Update sort orders based on new positions
+    const updatedFields = newFields.map((field, index) => ({
       ...field,
       sortOrder: index
     }));
 
-    setSortableFields(updatedFields);
+    setFields(updatedFields);
     setHasChanges(true);
   };
 
-  const resetOrder = () => {
-    const sorted = [...fields].sort((a, b) => a.name.localeCompare(b.name));
-    setSortableFields(sorted);
+  const handleFieldSizeChange = (fieldId: number, newFieldSize: string) => {
+    const updatedFields = fields.map(field =>
+      field.id === fieldId ? { ...field, fieldSize: newFieldSize } : field
+    );
+    setFields(updatedFields);
+    setHasChanges(true);
+  };
+
+  const handleFieldActiveChange = (fieldId: number, isActive: boolean) => {
+    const updatedFields = fields.map(field =>
+      field.id === fieldId ? { ...field, isActive, isOpen: isActive } : field
+    );
+    setFields(updatedFields);
+    setHasChanges(true);
+  };
+
+  const handleSaveChanges = () => {
+    updateFieldsMutation.mutate(fields);
+  };
+
+  const handleResetChanges = () => {
+    setFields(initialFields);
     setHasChanges(false);
   };
 
-  const handleFieldSizeChange = async (fieldId: number, newSize: string) => {
-    if (!eventId) return;
-    
-    try {
-      const response = await fetch(`/api/admin/events/${eventId}/field-configurations`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          fieldId, 
-          fieldSize: newSize 
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update field size');
-      }
-
-      // Update local state
-      const updatedFields = sortableFields.map(field => 
-        field.id === fieldId ? { ...field, fieldSize: newSize } : field
-      );
-      setSortableFields(updatedFields);
-      setHasChanges(true);
-
-      toast({
-        title: "Field Size Updated",
-        description: `Field size changed to ${newSize}`,
-      });
-    } catch (error) {
-      console.error('Error updating field size:', error);
-      toast({
-        title: "Error",
-        description: "Failed to update field size. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleFieldActiveChange = async (fieldId: number, isActive: boolean) => {
-    if (!eventId) return;
-    
-    try {
-      const response = await fetch(`/api/admin/events/${eventId}/field-configurations`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          fieldId, 
-          isActive 
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update field availability');
-      }
-
-      // Update local state
-      const updatedFields = sortableFields.map(field => 
-        field.id === fieldId ? { ...field, isActive } : field
-      );
-      setSortableFields(updatedFields);
-      setHasChanges(true);
-
-      // Notify parent component to refresh data
-      if (onFieldsReordered) {
-        onFieldsReordered(updatedFields);
-      }
-
-      toast({
-        title: isActive ? "Field Enabled" : "Field Disabled",
-        description: `Field ${isActive ? 'enabled for' : 'disabled from'} tournament use`,
-      });
-    } catch (error) {
-      console.error('Error updating field availability:', error);
-      toast({
-        title: "Error",
-        description: "Failed to update field availability. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleFirstGameTimeChange = async (fieldId: number, time: string) => {
-    if (!eventId) return;
-    
-    try {
-      const response = await fetch(`/api/admin/events/${eventId}/field-configurations`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          fieldId, 
-          firstGameTime: time 
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update first game time');
-      }
-
-      // Update local state
-      const updatedFields = sortableFields.map(field => 
-        field.id === fieldId ? { ...field, firstGameTime: time } : field
-      );
-      setSortableFields(updatedFields);
-      setHasChanges(true);
-
-      // Notify parent component to refresh data
-      if (onFieldsReordered) {
-        onFieldsReordered(updatedFields);
-      }
-
-      toast({
-        title: "First Game Time Updated",
-        description: `First game time set to ${time}`,
-      });
-    } catch (error) {
-      console.error('Error updating first game time:', error);
-      toast({
-        title: "Error",
-        description: "Failed to update first game time. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleBulkTimeAssignment = async () => {
-    if (!eventId) return;
-    
-    const fieldsToUpdate = sortableFields.filter(field => 
-      bulkTimeSettings[field.fieldSize as keyof typeof bulkTimeSettings]
-    );
-
-    if (fieldsToUpdate.length === 0) {
-      toast({
-        title: "No Fields to Update",
-        description: "Please set times for at least one field size",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    console.log('🔧 BULK TIME ASSIGNMENT: Starting bulk update for', fieldsToUpdate.length, 'fields');
-    console.log('🔧 BULK TIME ASSIGNMENT: Time settings:', bulkTimeSettings);
-
-    try {
-      const responses = await Promise.allSettled(
-        fieldsToUpdate.map(async (field) => {
-          const timeToSet = bulkTimeSettings[field.fieldSize as keyof typeof bulkTimeSettings];
-          console.log(`🔧 BULK TIME ASSIGNMENT: Setting field ${field.id} (${field.name}, ${field.fieldSize}) to ${timeToSet}`);
-          
-          const response = await fetch(`/api/admin/events/${eventId}/field-configurations`, {
-            method: 'PATCH',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            credentials: 'include',
-            body: JSON.stringify({ 
-              fieldId: field.id, 
-              firstGameTime: timeToSet
-            }),
-          });
-          
-          if (!response.ok) {
-            const errorText = await response.text();
-            console.error(`🔧 BULK TIME ASSIGNMENT ERROR: Field ${field.id} failed:`, errorText);
-            throw new Error(`Field ${field.name}: ${errorText}`);
-          }
-          
-          const result = await response.json();
-          console.log(`🔧 BULK TIME ASSIGNMENT SUCCESS: Field ${field.id} updated:`, result);
-          return { field, success: true, result };
-        })
-      );
-
-      // Process results and identify failures
-      const successful = responses.filter(r => r.status === 'fulfilled').map(r => (r as any).value);
-      const failed = responses.filter(r => r.status === 'rejected').map(r => (r as any).reason);
-
-      if (failed.length > 0) {
-        console.error('🔧 BULK TIME ASSIGNMENT: Some fields failed:', failed);
-        toast({
-          title: "Partial Update",
-          description: `Updated ${successful.length}/${fieldsToUpdate.length} fields. Some failed - check console.`,
-          variant: "destructive",
-        });
-      } else {
-        console.log('🔧 BULK TIME ASSIGNMENT: All fields updated successfully');
-      }
-
-      // Update local state for successful updates only
-      const updatedFields = sortableFields.map(field => {
-        const wasUpdated = successful.some(s => s.field.id === field.id);
-        if (wasUpdated) {
-          const newTime = bulkTimeSettings[field.fieldSize as keyof typeof bulkTimeSettings];
-          console.log(`🔧 BULK TIME ASSIGNMENT: Updating local state for field ${field.id} to ${newTime}`);
-          return { ...field, firstGameTime: newTime };
-        }
-        return field;
-      });
-      
-      setSortableFields(updatedFields);
-      setHasChanges(true);
-
-      // Trigger parent component refresh to ensure persistence
-      onFieldsReordered(updatedFields);
-
-      toast({
-        title: "Bulk Time Assignment Complete",
-        description: `Successfully updated ${successful.length} fields with new start times`,
-      });
-    } catch (error) {
-      console.error('🔧 BULK TIME ASSIGNMENT: Critical error:', error);
-      toast({
-        title: "Error",
-        description: `Failed to update bulk times: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        variant: "destructive",
-      });
-    }
-  };
-
-  const saveOrder = async () => {
-    setIsSaving(true);
-    try {
-      const fieldUpdates = sortableFields.map((field, index) => ({
-        id: field.id,
-        sortOrder: index,
-        fieldSize: field.fieldSize
-      }));
-
-      const endpoint = eventId 
-        ? `/api/admin/events/${eventId}/field-configurations/bulk` 
-        : '/api/admin/fields/sort-order';
-
-      const response = await fetch(endpoint, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ fieldUpdates }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to save field order');
-      }
-
-      onFieldsReordered(sortableFields);
-      setHasChanges(false);
-      toast({
-        title: "Field Configuration Saved",
-        description: `Updated ${fieldUpdates.length} fields with order and sizes.`,
-      });
-    } catch (error) {
-      console.error('Error saving field order:', error);
-      toast({
-        title: "Error",
-        description: "Failed to save field configuration. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
   return (
-    <div className="space-y-6">
-      {/* Bulk Time Assignment Section */}
-      <Card className="bg-slate-800 border-slate-600">
-        <CardHeader>
-          <CardTitle className="text-slate-200 flex items-center gap-2">
-            <Clock className="h-5 w-5 text-blue-400" />
-            Bulk First Game Time Assignment
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-            <div className="space-y-2">
-              <Label htmlFor="time-7v7" className="text-slate-300">7v7 Fields Start Time</Label>
-              <Input
-                id="time-7v7"
-                type="time"
-                value={bulkTimeSettings['7v7']}
-                onChange={(e) => setBulkTimeSettings(prev => ({ ...prev, '7v7': e.target.value }))}
-                className="bg-slate-800 border-slate-600 text-white [color-scheme:dark] !text-white !bg-slate-800"
-                style={{ 
-                  backgroundColor: '#1e293b', 
-                  color: '#ffffff',
-                  colorScheme: 'dark'
-                }}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="time-9v9" className="text-slate-300">9v9 Fields Start Time</Label>
-              <Input
-                id="time-9v9"
-                type="time"
-                value={bulkTimeSettings['9v9']}
-                onChange={(e) => setBulkTimeSettings(prev => ({ ...prev, '9v9': e.target.value }))}
-                className="bg-slate-800 border-slate-600 text-white [color-scheme:dark] !text-white !bg-slate-800"
-                style={{ 
-                  backgroundColor: '#1e293b', 
-                  color: '#ffffff',
-                  colorScheme: 'dark'
-                }}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="time-11v11" className="text-slate-300">11v11 Fields Start Time</Label>
-              <Input
-                id="time-11v11"
-                type="time"
-                value={bulkTimeSettings['11v11']}
-                onChange={(e) => setBulkTimeSettings(prev => ({ ...prev, '11v11': e.target.value }))}
-                className="bg-slate-800 border-slate-600 text-white [color-scheme:dark] !text-white !bg-slate-800"
-                style={{ 
-                  backgroundColor: '#1e293b', 
-                  color: '#ffffff',
-                  colorScheme: 'dark'
-                }}
-              />
-            </div>
-            <Button
-              onClick={handleBulkTimeAssignment}
-              className="bg-blue-600 hover:bg-blue-700"
-            >
-              <Clock className="h-4 w-4 mr-2" />
-              Apply Bulk Times
-            </Button>
-          </div>
-          <p className="text-slate-400 text-xs mt-2">
-            Set start times for first games by field size. This will apply to all fields of the selected sizes.
-          </p>
-        </CardContent>
-      </Card>
-
-      <Card className="bg-slate-800 border-slate-600">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-slate-200 flex items-center gap-2">
-              <Settings className="h-5 w-5 text-purple-400" />
-              Field Display Order & Configuration
-            </CardTitle>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={resetOrder}
-                disabled={!hasChanges}
-                className="border-slate-600 text-slate-300 hover:bg-slate-700"
+    <div className="space-y-4">
+      {/* Action Bar */}
+      {hasChanges && (
+        <Alert className="border-yellow-600 bg-yellow-900/20">
+          <AlertTriangle className="h-4 w-4 text-yellow-400" />
+          <AlertDescription className="flex items-center justify-between">
+            <span className="text-yellow-200">
+              You have unsaved changes to field configuration.
+            </span>
+            <div className="flex gap-2">
+              <Button 
+                size="sm" 
+                variant="outline" 
+                onClick={handleResetChanges}
+                className="border-slate-600 text-slate-200 hover:bg-slate-700"
               >
-                <RotateCcw className="h-4 w-4 mr-1" />
+                <RotateCcw className="h-3 w-3 mr-1" />
                 Reset
               </Button>
-              <Button
-                onClick={saveOrder}
-                disabled={!hasChanges || isSaving}
+              <Button 
                 size="sm"
-                className="bg-purple-600 hover:bg-purple-700"
+                onClick={handleSaveChanges}
+                disabled={updateFieldsMutation.isPending}
+                className="bg-green-600 hover:bg-green-500 text-white"
               >
-                <Save className="h-4 w-4 mr-1" />
-                {isSaving ? 'Saving...' : 'Save Order'}
+                <Save className="h-3 w-3 mr-1" />
+                {updateFieldsMutation.isPending ? 'Saving...' : 'Save Changes'}
               </Button>
             </div>
-          </div>
-          <p className="text-sm text-slate-300">
-            Drag fields to reorder them and configure field sizes for this tournament. 
-            This order and field sizes will be used in the Master Scheduler's Calendar Grid.
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {/* Field Order Management */}
+      <Card className="border-slate-600 bg-slate-800">
+        <CardHeader>
+          <CardTitle className="text-white flex items-center gap-2">
+            <MapPin className="h-5 w-5 text-blue-400" />
+            Field Order & Configuration
+          </CardTitle>
+          <p className="text-slate-300 text-sm">
+            Drag fields to reorder them for the Master Scheduler. Configure field sizes and availability for this tournament.
           </p>
         </CardHeader>
-      <CardContent>
-        <DragDropContext onDragEnd={handleDragEnd}>
-          <Droppable droppableId="field-list">
-            {(provided, snapshot) => (
-              <div
-                {...provided.droppableProps}
-                ref={provided.innerRef}
-                className={`space-y-2 ${snapshot.isDraggingOver ? 'bg-muted/50 rounded-lg p-2' : ''}`}
-              >
-                {sortableFields.map((field, index) => (
-                  <Draggable key={field.id} draggableId={field.id.toString()} index={index}>
-                    {(provided, snapshot) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        className={`flex items-center gap-4 p-4 border rounded-lg transition-all duration-200 ${
-                          snapshot.isDragging 
-                            ? 'shadow-xl rotate-1 bg-slate-700 border-blue-400' 
-                            : 'bg-slate-800 border-slate-600 hover:border-slate-500 hover:bg-slate-750'
-                        } ${hasChanges ? 'border-orange-400 bg-orange-900/20' : ''}`}
-                      >
+        <CardContent>
+          <DragDropContext onDragEnd={handleDragEnd}>
+            <Droppable droppableId="fields">
+              {(provided) => (
+                <div
+                  {...provided.droppableProps}
+                  ref={provided.innerRef}
+                  className="space-y-2"
+                >
+                  {fields.map((field, index) => (
+                    <Draggable
+                      key={field.id}
+                      draggableId={field.id.toString()}
+                      index={index}
+                    >
+                      {(provided, snapshot) => (
                         <div
-                          {...provided.dragHandleProps}
-                          className="text-slate-400 hover:text-blue-400 cursor-grab active:cursor-grabbing transition-colors p-2 rounded hover:bg-slate-700"
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          className={`border rounded-lg p-4 transition-colors ${
+                            snapshot.isDragging
+                              ? 'bg-slate-700 border-blue-500 shadow-lg'
+                              : 'bg-slate-750 border-slate-600 hover:bg-slate-700'
+                          }`}
                         >
-                          <GripVertical className="h-5 w-5" />
-                        </div>
-                        
-                        <div className="flex-1">
-                          <div className="flex items-center justify-between">
-                            <div className="flex flex-col min-w-0 flex-1">
-                              <div className="font-semibold text-slate-100 text-base">
-                                #{index + 1} {field.name}
+                          <div className="flex items-center gap-4">
+                            {/* Drag Handle */}
+                            <div
+                              {...provided.dragHandleProps}
+                              className="cursor-grab active:cursor-grabbing"
+                            >
+                              <GripVertical className="h-5 w-5 text-slate-400" />
+                            </div>
+
+                            {/* Field Info */}
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="font-medium text-white">
+                                  {field.name}
+                                </span>
+                                <Badge 
+                                  variant="outline" 
+                                  className="text-xs border-slate-600 text-slate-300"
+                                >
+                                  Position {index + 1}
+                                </Badge>
+                                {field.hasLights && (
+                                  <Badge 
+                                    variant="outline" 
+                                    className="text-xs border-yellow-600 text-yellow-300"
+                                  >
+                                    <Lightbulb className="h-3 w-3 mr-1" />
+                                    Lights
+                                  </Badge>
+                                )}
                               </div>
                               {field.complexName && (
-                                <div className="text-sm text-slate-400 truncate">{field.complexName}</div>
+                                <p className="text-xs text-slate-400">
+                                  {field.complexName}
+                                </p>
                               )}
                             </div>
-                            
-                            <div className="flex items-center gap-6 bg-slate-750 p-3 rounded-lg border border-slate-600">
-                              {/* Field Size Selection */}
-                              {eventId && (
-                                <div className="flex flex-col gap-2">
-                                  <Label className="text-sm font-medium text-slate-300">Size</Label>
-                                  <Select
-                                    value={field.fieldSize}
-                                    onValueChange={(value) => handleFieldSizeChange(field.id, value)}
-                                  >
-                                    <SelectTrigger className="w-24 h-9 text-sm bg-slate-700 border-slate-500 text-slate-100 hover:bg-slate-600">
-                                      <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent className="bg-slate-700 border-slate-500">
-                                      {['3v3', '4v4', '5v5', '6v6', '7v7', '8v8', '9v9', '10v10', '11v11', 'N/A'].map((size) => (
-                                        <SelectItem key={size} value={size} className="text-sm text-slate-200 hover:bg-slate-600">
-                                          {size}
-                                        </SelectItem>
-                                      ))}
-                                    </SelectContent>
-                                  </Select>
-                                </div>
-                              )}
 
-                              {/* First Game Time */}
-                              {eventId && (
-                                <div className="flex flex-col gap-2">
-                                  <Label className="text-sm font-medium text-slate-300">First Game</Label>
-                                  <Input
-                                    type="time"
-                                    value={field.firstGameTime || ''}
-                                    onChange={(e) => handleFirstGameTimeChange(field.id, e.target.value)}
-                                    className="w-32 h-9 text-sm bg-slate-800 border-slate-500 text-white hover:bg-slate-700 focus:border-blue-400 focus:bg-slate-700 [color-scheme:dark] !text-white !bg-slate-800"
-                                    style={{ 
-                                      backgroundColor: '#1e293b', 
-                                      color: '#ffffff',
-                                      colorScheme: 'dark'
-                                    }}
-                                    placeholder="08:00"
-                                  />
-                                </div>
-                              )}
+                            {/* Field Size Selector */}
+                            <div className="w-40">
+                              <Select
+                                value={field.fieldSize}
+                                onValueChange={(value) => handleFieldSizeChange(field.id, value)}
+                              >
+                                <SelectTrigger className="bg-slate-700 border-slate-600 text-slate-200">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent className="bg-slate-700 border-slate-600">
+                                  {FIELD_SIZE_OPTIONS.map((option) => (
+                                    <SelectItem 
+                                      key={option.value} 
+                                      value={option.value}
+                                      className="text-slate-200 focus:bg-slate-600"
+                                    >
+                                      {option.label}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
 
-                              {/* Field Availability Toggle */}
-                              {eventId && (
-                                <div className="flex flex-col gap-2 items-center">
-                                  <Label className="text-sm font-medium text-slate-300">Available</Label>
-                                  <div className="flex items-center gap-3 bg-slate-700 p-2 rounded border">
-                                    <Switch
-                                      checked={field.isActive !== false}
-                                      onCheckedChange={(checked) => handleFieldActiveChange(field.id, checked)}
-                                      className="data-[state=checked]:bg-green-600 data-[state=unchecked]:bg-red-600"
-                                    />
-                                    {field.isActive !== false ? (
-                                      <div className="flex items-center gap-1">
-                                        <Power className="h-4 w-4 text-green-400" />
-                                        <span className="text-xs text-green-400 font-medium">ON</span>
-                                      </div>
-                                    ) : (
-                                      <div className="flex items-center gap-1">
-                                        <PowerOff className="h-4 w-4 text-red-400" />
-                                        <span className="text-xs text-red-400 font-medium">OFF</span>
-                                      </div>
-                                    )}
-                                  </div>
-                                </div>
-                              )}
+                            {/* Active/Inactive Toggle */}
+                            <div className="flex items-center gap-2">
+                              <Switch
+                                checked={field.isActive ?? field.isOpen}
+                                onCheckedChange={(checked) => handleFieldActiveChange(field.id, checked)}
+                                className="data-[state=checked]:bg-green-600"
+                              />
+                              <span className="text-xs text-slate-300 w-12">
+                                {field.isActive ?? field.isOpen ? 'Active' : 'Inactive'}
+                              </span>
+                            </div>
 
-                              {/* Status Badges */}
-                              <div className="flex flex-col gap-2">
-                                <Label className="text-sm font-medium text-slate-300">Status</Label>
-                                <div className="flex flex-col gap-1">
-                                  {field.hasLights && (
-                                    <Badge className="text-xs px-2 py-1 bg-amber-600 text-amber-100 border-amber-500">
-                                      ⚡ Lights
-                                    </Badge>
-                                  )}
-                                  {field.isOpen ? (
-                                    <Badge className="text-xs px-2 py-1 bg-emerald-600 text-emerald-100 border-emerald-500">
-                                      🟢 Complex Open
-                                    </Badge>
-                                  ) : (
-                                    <Badge className="text-xs px-2 py-1 bg-red-600 text-red-100 border-red-500">
-                                      🔴 Complex Closed
-                                    </Badge>
-                                  )}
-                                </div>
-                                <div className="text-sm text-slate-400 font-medium bg-slate-700 px-2 py-1 rounded">
-                                  Sort: {index + 1}
-                                </div>
-                              </div>
+                            {/* Status Indicator */}
+                            <div className="w-6 flex justify-center">
+                              {field.isActive ?? field.isOpen ? (
+                                <CheckCircle className="h-4 w-4 text-green-400" />
+                              ) : (
+                                <AlertTriangle className="h-4 w-4 text-red-400" />
+                              )}
                             </div>
                           </div>
                         </div>
-                        
+                      )}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
 
-                      </div>
-                    )}
-                  </Draggable>
-                ))}
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
-        </DragDropContext>
+          {fields.length === 0 && (
+            <div className="text-center py-8 text-slate-400">
+              <MapPin className="h-8 w-8 mx-auto mb-2 opacity-50" />
+              <p>No fields configured for this event.</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Summary */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card className="border-slate-600 bg-slate-800">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-2">
+              <MapPin className="h-4 w-4 text-blue-400" />
+              <span className="text-slate-300 text-sm">Total Fields</span>
+            </div>
+            <p className="text-2xl font-bold text-white mt-1">{fields.length}</p>
+          </CardContent>
+        </Card>
         
-        {hasChanges && (
-          <div className="mt-4 p-3 bg-orange-900/30 border border-orange-500 rounded-lg">
-            <p className="text-sm text-orange-200">
-              <strong>Unsaved Changes:</strong> Field order has been modified. Click "Save Order" to apply changes to the Calendar Grid.
+        <Card className="border-slate-600 bg-slate-800">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-2">
+              <CheckCircle className="h-4 w-4 text-green-400" />
+              <span className="text-slate-300 text-sm">Active Fields</span>
+            </div>
+            <p className="text-2xl font-bold text-white mt-1">
+              {fields.filter(f => f.isActive ?? f.isOpen).length}
             </p>
-          </div>
-        )}
-      </CardContent>
-    </Card>
-  </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="border-slate-600 bg-slate-800">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-2">
+              <Lightbulb className="h-4 w-4 text-yellow-400" />
+              <span className="text-slate-300 text-sm">Lighted Fields</span>
+            </div>
+            <p className="text-2xl font-bold text-white mt-1">
+              {fields.filter(f => f.hasLights).length}
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
   );
 }
