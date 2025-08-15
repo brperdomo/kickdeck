@@ -2,6 +2,7 @@ import { Router } from 'express';
 import multer from 'multer';
 import { parse } from 'csv-parse';
 import { db } from '../../../db';
+import { findBestTeamMatch, generateMatchWarnings } from '../../utils/teamMatching';
 import { games, teams, fields, complexes, eventAgeGroups, eventBrackets, gameTimeSlots } from '../../../db/schema';
 import { eq, and, sql, ilike } from 'drizzle-orm';
 import { isAdmin } from '../../middleware/auth';
@@ -173,38 +174,70 @@ router.post('/csv-import/preview', isAdmin, upload.single('csvFile'), async (req
     ]);
     const uniqueTeamNames = Array.from(uniqueTeamNamesSet);
 
+    // Enhanced team matching with fuzzy logic and validation warnings
+    const teamMatches: any[] = [];
+    const matchingWarnings: string[] = [];
+    
     uniqueTeamNames.forEach(teamName => {
-      const existingTeam = existingTeams.find(t => 
-        t.name?.toLowerCase() === teamName.toLowerCase() ||
-        t.name?.toLowerCase().includes(teamName.toLowerCase()) ||
-        teamName.toLowerCase().includes(t.name?.toLowerCase() || '')
-      );
-      
-      if (existingTeam) {
-        teamMappings[teamName] = {
-          exists: true,
-          teamId: existingTeam.id,
-          name: teamName
-        };
-      } else {
+      try {
+        const matches = findBestTeamMatch(teamName, existingTeams, 0.6);
+        const warnings = generateMatchWarnings(teamName, matches);
+        
+        teamMatches.push({
+          csvName: teamName,
+          matches: matches.map(m => ({
+            teamId: m.team.id,
+            teamName: m.team.name,
+            confidence: m.confidence,
+            matchType: m.matchType,
+            suggestion: m.suggestion
+          })),
+          warnings,
+          selected: matches.length > 0 ? matches[0].team.id : undefined
+        });
+        
+        // Add warnings to global collection
+        warnings.forEach(warning => matchingWarnings.push(warning));
+        
+        // Traditional mapping for backward compatibility
+        const bestMatch = matches[0];
+        if (bestMatch && bestMatch.confidence > 0.7) {
+          teamMappings[teamName] = {
+            exists: true,
+            teamId: bestMatch.team.id,
+            name: teamName
+          };
+        } else {
+          teamMappings[teamName] = {
+            exists: false,
+            name: teamName
+          };
+          missingTeams.push(teamName);
+        }
+        
+      } catch (error) {
+        console.error(`Error matching team "${teamName}":`, error);
         teamMappings[teamName] = {
           exists: false,
           name: teamName
         };
         missingTeams.push(teamName);
+        matchingWarnings.push(`Failed to process team name: ${teamName}`);
       }
     });
 
-    // Create preview response
-    const preview: ImportPreview = {
+    // Create preview response with enhanced team matching
+    const preview: any = {
       totalRows: csvData.length,
       validRows: csvData.length - errors.length,
       errors,
       preview: csvData.slice(0, 10), // First 10 rows for preview
       fieldMappings,
       teamMappings,
+      teamMatches,
       missingFields,
-      missingTeams
+      missingTeams,
+      matchingWarnings
     };
 
     console.log(`✅ Import Preview: ${preview.validRows}/${preview.totalRows} valid rows, ${errors.length} errors, ${missingFields.length} missing fields, ${missingTeams.length} missing teams`);

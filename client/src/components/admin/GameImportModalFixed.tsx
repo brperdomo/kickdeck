@@ -23,8 +23,21 @@ interface ImportPreview {
   preview: Array<any>;
   fieldMappings: { [key: string]: { exists: boolean; fieldId?: number } };
   teamMappings: { [key: string]: { exists: boolean; teamId?: number; name: string } };
+  teamMatches?: Array<{
+    csvName: string;
+    matches: Array<{
+      teamId: number;
+      teamName: string;
+      confidence: number;
+      matchType: string;
+      suggestion: string;
+    }>;
+    warnings: string[];
+    selected?: number;
+  }>;
   missingFields: string[];
   missingTeams: string[];
+  matchingWarnings?: string[];
 }
 
 interface GameImportModalProps {
@@ -357,6 +370,82 @@ export function GameImportModal({ isOpen, onClose, eventId, onImportComplete }: 
                       Create missing teams automatically
                     </Label>
                   </div>
+                </div>
+              )}
+
+              {/* Enhanced Team Matching Validation */}
+              {preview.matchingWarnings && preview.matchingWarnings.length > 0 && (
+                <Alert variant="destructive">
+                  <AlertTriangle className="h-4 w-4" />
+                  <AlertDescription>
+                    <div className="space-y-2">
+                      <strong>Team Matching Warnings ({preview.matchingWarnings.length}):</strong>
+                      <ScrollArea className="h-32">
+                        <div className="space-y-1">
+                          {preview.matchingWarnings.map((warning, index) => (
+                            <div key={index} className="text-xs bg-red-50 p-2 rounded border border-red-200">
+                              {warning}
+                            </div>
+                          ))}
+                        </div>
+                      </ScrollArea>
+                    </div>
+                  </AlertDescription>
+                </Alert>
+              )}
+
+              {/* Detailed Team Match Analysis */}
+              {preview.teamMatches && preview.teamMatches.length > 0 && (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Users className="h-4 w-4 text-blue-500" />
+                    <span className="font-medium">Team Matching Analysis</span>
+                  </div>
+                  <ScrollArea className="h-64 border rounded-lg p-3">
+                    <div className="space-y-3">
+                      {preview.teamMatches.map((teamMatch, index) => (
+                        <div key={index} className="border-b pb-2 last:border-b-0">
+                          <div className="font-medium text-sm mb-1">"{teamMatch.csvName}"</div>
+                          {teamMatch.matches.length > 0 ? (
+                            <div className="space-y-1">
+                              {teamMatch.matches.slice(0, 3).map((match, matchIndex) => (
+                                <div key={matchIndex} className="flex items-center justify-between text-xs">
+                                  <span className="flex-1">→ {match.teamName}</span>
+                                  <div className="flex items-center gap-2">
+                                    <Badge 
+                                      variant={match.confidence > 0.9 ? "default" : match.confidence > 0.7 ? "secondary" : "destructive"}
+                                      className="text-xs"
+                                    >
+                                      {Math.round(match.confidence * 100)}%
+                                    </Badge>
+                                    <Badge variant="outline" className="text-xs">
+                                      {match.matchType}
+                                    </Badge>
+                                  </div>
+                                </div>
+                              ))}
+                              {teamMatch.matches.length > 3 && (
+                                <div className="text-xs text-gray-500">
+                                  +{teamMatch.matches.length - 3} more matches
+                                </div>
+                              )}
+                            </div>
+                          ) : (
+                            <div className="text-xs text-red-600">No matches found</div>
+                          )}
+                          {teamMatch.warnings.length > 0 && (
+                            <div className="mt-1">
+                              {teamMatch.warnings.map((warning, warnIndex) => (
+                                <div key={warnIndex} className="text-xs text-orange-600 bg-orange-50 px-2 py-1 rounded">
+                                  ⚠️ {warning}
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </ScrollArea>
                 </div>
               )}
 
