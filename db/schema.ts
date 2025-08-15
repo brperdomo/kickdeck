@@ -364,6 +364,8 @@ export const eventBrackets = pgTable("event_brackets", {
   level: text("level").notNull().default("middle_flight"), // Flight level: top_flight, middle_flight, bottom_flight, other
   eligibility: text("eligibility"), // Optional eligibility requirements
   sortOrder: integer("sort_order").notNull().default(0), // For ordering brackets in the UI
+  maxTeams: integer("max_teams"),
+  isActive: boolean("is_active").notNull().default(true),
   // Configurable tournament format for game generation
   tournamentFormat: text("tournament_format").notNull().default("round_robin"), // round_robin, round_robin_final, single_elimination, double_elimination, pool_play, etc.
   // Tournament settings JSON for format-specific configuration

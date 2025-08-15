@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { requirePermission } from '../../middleware/auth.js';
 import { db } from '../../../db/index.js';
 import { teams, events, eventGameFormats, complexes, fields, games, eventBrackets, matchupTemplates } from '../../../db/schema.js';
-import { eq, and, inArray, sql, isNotNull } from 'drizzle-orm';
+import { eq, and, inArray, sql, isNotNull, isNull } from 'drizzle-orm';
 import { validateSchedulingSafety, validateFieldCapacity, validateNoDuplicateGames } from '../../middleware/scheduling-safety.js';
 import { TournamentScheduler } from '../../services/tournament-scheduler.js';
 
@@ -1419,7 +1419,7 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
       // Fetch the games back from database to get their actual IDs
       // Since groupId is null, we'll fetch games by eventId and homeTeamId/awayTeamId pattern
       const dbGamesWithIds = await db.query.games.findMany({
-        where: eq(games.eventId, parseInt(eventId)),
+        where: eq(games.eventId, eventId),
         orderBy: [games.id]
       });
       
@@ -1543,7 +1543,7 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
             homeTeamId: games.homeTeamId,
             awayTeamId: games.awayTeamId,
             round: games.round,
-            gameType: games.gameType,
+            status: games.status,
             duration: games.duration
           })
           .from(games)
@@ -1555,8 +1555,9 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
           console.log(`[MULTI-DAY SCHEDULING] Found ${unscheduledDbGames.length} unscheduled games in database`);
           
           // Schedule remaining games on Day 2 using direct database updates
-          const event = await db.select({ startDate: events.startDate, endDate: events.endDate })
-            .from(events).where(eq(events.id, eventId)).then(rows => rows[0]);
+          const eventResult = await db.select({ startDate: events.startDate, endDate: events.endDate })
+            .from(events).where(eq(events.id, eventId)).limit(1);
+          const event = eventResult[0];
           
           const day2Date = event.endDate; // August 17, 2025
           const availableFields = await db.select().from(fields);

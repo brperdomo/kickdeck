@@ -18,7 +18,7 @@ router.get('/events/:eventId/flight-configurations', isAdmin, async (req, res) =
         endDate: events.endDate,
       })
       .from(events)
-      .where(eq(events.id, parseInt(eventId)))
+      .where(eq(events.id, eventId))
       .limit(1);
 
     console.log(`[FLIGHT CONFIG] Event ${eventId} details:`, eventDetails);
@@ -48,7 +48,7 @@ router.get('/events/:eventId/flight-configurations', isAdmin, async (req, res) =
       .from(eventBrackets)
       .innerJoin(eventAgeGroups, eq(eventBrackets.ageGroupId, eventAgeGroups.id))
       .leftJoin(gameFormats, eq(gameFormats.bracketId, eventBrackets.id))
-      .where(eq(eventBrackets.eventId, parseInt(eventId)));
+      .where(eq(eventBrackets.eventId, eventId));
 
     console.log(`Found ${flightsWithFormats.length} brackets/flights for event ${eventId}`);
     console.log(`[FLIGHT CONFIG DEBUG] First few raw flights:`, flightsWithFormats.slice(0, 3).map(f => ({ 
