@@ -71,6 +71,8 @@ import ComplexLocationsMapPage from "@/pages/complex-locations-map";
 // Public schedules (no auth required)
 import PublicSchedules from "@/pages/public/PublicSchedules";
 import AgeGroupSchedule from "@/pages/public/AgeGroupSchedule";
+// Game Score Management
+import GameScoreManagement from "@/pages/admin/GameScoreManagement";
 
 // Create placeholder components for missing pages
 const ScoreReportPage = () => <NotFound />;
@@ -346,6 +348,9 @@ function Router() {
           </Route>
           <Route path="/admin/sendgrid-setup">
             {user.isAdmin ? <AdminSendGridSetup /> : <NotFound />}
+          </Route>
+          <Route path="/admin/game-score-management">
+            {user.isAdmin ? <GameScoreManagement /> : <NotFound />}
           </Route>
           <Route path="/admin/form-templates/create">
             {user.isAdmin ? <FormTemplateCreatePage /> : <NotFound />}

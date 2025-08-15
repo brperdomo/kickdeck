@@ -56,6 +56,7 @@ import adminBracketsRouter from "./routes/admin/brackets";
 import fieldCapacityRouter from "./routes/admin/field-capacity";
 import intelligentSchedulingRouter from "./routes/admin/intelligent-scheduling";
 import adminGamesRouter from "./routes/admin/games-router";
+import gameScoreManagementRouter from "./routes/admin/game-score-management";
 import clubsRouter from "./routes/clubs";
 import adminClubsRouter from "./routes/admin/clubs";
 import eventClubsRouter from "./routes/admin/event-clubs";
@@ -2015,7 +2016,8 @@ export function registerRoutes(app: Express): Server {
       }
     });
     
-    app.use('/api/admin/games', isAdmin, adminGamesRouter); // Game scheduling and management
+    app.use('/api/admin/games', isAdmin, adminGamesRouter);
+    app.use('/api/admin/score-management', isAdmin, gameScoreManagementRouter); // Game scheduling and management
     app.use('/api/admin/events', isAdmin, gamesRouter); // Game creation and event-specific game management (includes create-tbd)
     app.use('/api/admin/events', isAdmin, fillEmptySlotsRouter); // Fill empty slots functionality
     app.use('/api/admin/events', isAdmin, fieldsRouter); // Field assignment and management

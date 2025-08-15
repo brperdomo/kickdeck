@@ -477,15 +477,42 @@ export const games = pgTable("games", {
   awayYellowCards: integer("away_yellow_cards").notNull().default(0),
   homeRedCards: integer("home_red_cards").notNull().default(0),
   awayRedCards: integer("away_red_cards").notNull().default(0),
-  status: text("status").notNull().default('scheduled'),
+  status: text("status").notNull().default('scheduled'), // scheduled, in_progress, completed, overridden
   round: integer("round").notNull(),
   matchNumber: integer("match_number").notNull(),
   duration: integer("duration").notNull(),
   breakTime: integer("break_time").notNull().default(5),
   scheduledDate: date("scheduled_date"), // Date for the scheduled game
   scheduledTime: time("scheduled_time"), // Time for the scheduled game
+  // Score audit trail fields
+  scoreEnteredBy: integer("score_entered_by").references(() => users.id), // Who entered/last modified the score
+  scoreEnteredAt: timestamp("score_entered_at"), // When score was entered/last modified
+  scoreNotes: text("score_notes"), // Optional notes about the score (forfeit, penalty shootout, etc.)
+  isScoreLocked: boolean("is_score_locked").notNull().default(false), // Prevent further score changes
   createdAt: text("created_at").notNull().default(new Date().toISOString()),
   updatedAt: text("updated_at").notNull().default(new Date().toISOString()),
+});
+
+// Game Score Audit Trail - Full history of all score changes
+export const gameScoreAudit = pgTable("game_score_audit", {
+  id: serial("id").primaryKey(),
+  gameId: integer("game_id").notNull().references(() => games.id, { onDelete: 'cascade' }),
+  homeScore: integer("home_score"),
+  awayScore: integer("away_score"),
+  homeYellowCards: integer("home_yellow_cards").notNull().default(0),
+  awayYellowCards: integer("away_yellow_cards").notNull().default(0),
+  homeRedCards: integer("home_red_cards").notNull().default(0),
+  awayRedCards: integer("away_red_cards").notNull().default(0),
+  enteredBy: integer("entered_by").notNull().references(() => users.id), // Who made this change
+  enteredAt: timestamp("entered_at").notNull().defaultNow(), // When this change was made
+  changeType: text("change_type").notNull(), // 'initial_entry', 'score_update', 'override', 'admin_correction'
+  notes: text("notes"), // Why this change was made
+  isOverride: boolean("is_override").notNull().default(false), // True if this was an override of existing score
+  previousValues: jsonb("previous_values"), // JSON of what the values were before this change
+  userRole: text("user_role").notNull(), // Role of person making change (ref, score_admin, tournament_admin, etc.)
+  ipAddress: text("ip_address"), // For additional audit trail
+  userAgent: text("user_agent"), // Browser/device information
+  createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
 // Payment transactions table for recording all payment-related activity
@@ -685,10 +712,24 @@ export type SelectEventGameFormat = typeof eventGameFormats.$inferSelect;
 export type InsertEventScheduleConstraints = typeof eventScheduleConstraints.$inferInsert;
 export type SelectEventScheduleConstraints = typeof eventScheduleConstraints.$inferSelect;
 export const insertGameSchema = createInsertSchema(games, {
-  status: z.enum(['scheduled', 'in_progress', 'completed', 'cancelled']),
+  status: z.enum(['scheduled', 'in_progress', 'completed', 'overridden']),
   duration: z.number().min(20).max(120),
   breakTime: z.number().min(0).max(30),
+  homeScore: z.number().min(0).max(20).nullable(),
+  awayScore: z.number().min(0).max(20).nullable(),
 });
+
+export const insertGameScoreAuditSchema = createInsertSchema(gameScoreAudit, {
+  homeScore: z.number().min(0).max(20).nullable(),
+  awayScore: z.number().min(0).max(20).nullable(),
+  changeType: z.enum(['initial_entry', 'score_update', 'override', 'admin_correction']),
+  userRole: z.string().min(1, "User role is required"),
+  notes: z.string().optional(),
+});
+
+export const selectGameScoreAuditSchema = createSelectSchema(gameScoreAudit);
+export type InsertGameScoreAudit = typeof gameScoreAudit.$inferInsert;
+export type SelectGameScoreAudit = typeof gameScoreAudit.$inferSelect;
 
 export const selectGameTimeSlotSchema = createSelectSchema(gameTimeSlots);
 export const selectTournamentGroupSchema = createSelectSchema(tournamentGroups);
