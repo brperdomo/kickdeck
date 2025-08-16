@@ -2,7 +2,7 @@ import { Router, Request, Response } from 'express';
 import { db } from '../../../db';
 import { games, teams, events, eventAgeGroups, eventBrackets, fields } from '../../../db/schema';
 import { alias } from 'drizzle-orm/pg-core';
-import { eq, and, isNotNull } from 'drizzle-orm';
+import { eq, and, isNotNull, sql } from 'drizzle-orm';
 import fs from 'fs';
 import path from 'path';
 import { parse } from 'csv-parse/sync';
@@ -19,7 +19,7 @@ router.get('/:eventId', async (req: Request, res: Response) => {
     const { eventId } = req.params;
     const eventIdNum = parseInt(eventId);
     
-    console.log(`[Public Schedules Fixed] Fetching data for event ${eventId}`);
+    console.log(`[Public Schedules Fixed] UPDATED VERSION 2.0 - Fetching data for event ${eventId}`);
     
     // Get event info
     const eventInfo = await db
@@ -43,7 +43,8 @@ router.get('/:eventId', async (req: Request, res: Response) => {
 
     console.log(`[Public Schedules Fixed] Found event: ${eventInfo[0].name}`);
 
-    // Get all games for this event with team and field details
+    // CRITICAL FIX: Handle Drizzle text/integer type mismatch for event_id
+    // The games table stores event_id as integer but schema defines it as text
     const gamesData = await db
       .select({
         id: games.id,
@@ -67,10 +68,26 @@ router.get('/:eventId', async (req: Request, res: Response) => {
       .leftJoin(fields, eq(games.fieldId, fields.id))
       .leftJoin(homeTeamTable, eq(games.homeTeamId, homeTeamTable.id))
       .leftJoin(awayTeamTable, eq(games.awayTeamId, awayTeamTable.id))
-      .where(eq(games.eventId, String(eventIdNum)))
+      .where(eq(games.eventId, eventIdNum))
       .orderBy(games.scheduledDate, games.scheduledTime);
 
-    console.log(`[Public Schedules Fixed] Found ${gamesData.length} games`);
+    console.log(`[Public Schedules Fixed] Event ${eventId}: Found ${gamesData.length} games`);
+    
+    if (eventIdNum === 1844329078) {
+      console.log(`[Empire Debug] Empire Super Cup query - eventIdNum: ${eventIdNum}, String(eventIdNum): "${String(eventIdNum)}"`);
+      console.log(`[Empire Debug] Sample games for Empire Super Cup:`, gamesData.slice(0, 3).map(g => ({
+        id: g.id,
+        matchNumber: g.matchNumber,
+        ageGroupId: g.ageGroupId,
+        homeTeamId: g.homeTeamId,
+        awayTeamId: g.awayTeamId
+      })));
+      console.log(`[Empire Debug] Total games found: ${gamesData.length}`);
+      
+      if (gamesData.length === 0) {
+        console.log(`[Empire Debug] CRITICAL: 0 games found but database has 471 games - query issue detected`);
+      }
+    }
 
     // Get age groups
     const ageGroupsData = await db
@@ -145,39 +162,79 @@ router.get('/:eventId', async (req: Request, res: Response) => {
     });
 
     // Create CSV flight data lookup using authentic Column 5 data
+    // Try event-specific CSV files based on event name/ID
     const csvFlightLookup = new Map<number, string>();
     
-    try {
-      const csvPath = path.join(process.cwd(), 'attached_assets', 'Scheduler (9)_1755367316008.csv');
-      const csvContent = fs.readFileSync(csvPath, 'utf-8');
-      const records = parse(csvContent, {
-        columns: true,
-        skip_empty_lines: true
-      });
-      
-      // Build flight lookup from CSV Column 5 (Flight)
-      records.forEach((record: any) => {
-        const gameNumber = record['GM#'];
-        const csvFlight = record['Flight'];
+    // Map event IDs/names to their CSV files
+    const eventCsvMapping: { [key: string]: string } = {
+      '1656618593': 'Scheduler (9)_1755367316008.csv', // SCHEDULING TEAMS
+      '1844329078': '2025 Empire Super Cup Brackets - Bracketing_1754861504416.csv' // Empire Super Cup
+    };
+    
+    const csvFileName = eventCsvMapping[eventId] || eventCsvMapping[eventInfo[0]?.name] || null;
+    
+    if (csvFileName) {
+      try {
+        const csvPath = path.join(process.cwd(), 'attached_assets', csvFileName);
+        const csvContent = fs.readFileSync(csvPath, 'utf-8');
+        const records = parse(csvContent, {
+          columns: true,
+          skip_empty_lines: true
+        });
         
-        if (gameNumber && csvFlight) {
-          csvFlightLookup.set(parseInt(gameNumber), csvFlight);
-        }
-      });
-      
-      console.log(`[Flight Assignment] Loaded ${csvFlightLookup.size} CSV flight assignments from authentic data`);
-      console.log(`[Flight Assignment] Sample CSV flights:`, Array.from(csvFlightLookup.entries()).slice(0, 5));
-      
-    } catch (error) {
-      console.error('[Flight Assignment] Error loading CSV flight data:', error);
+        // Build flight lookup from CSV Column 5 (Flight)
+        records.forEach((record: any) => {
+          const gameNumber = record['GM#'];
+          const csvFlight = record['Flight'];
+          
+          if (gameNumber && csvFlight) {
+            csvFlightLookup.set(parseInt(gameNumber), csvFlight);
+          }
+        });
+        
+        console.log(`[Flight Assignment] Loaded ${csvFlightLookup.size} CSV flight assignments from ${csvFileName}`);
+        console.log(`[Flight Assignment] Sample CSV flights:`, Array.from(csvFlightLookup.entries()).slice(0, 5));
+        
+      } catch (error) {
+        console.log(`[Flight Assignment] Could not load CSV file ${csvFileName}:`, error.message);
+        console.log(`[Flight Assignment] Will use fallback flight assignment logic`);
+      }
+    } else {
+      console.log(`[Flight Assignment] No CSV mapping found for event ${eventId}, using fallback logic`);
     }
 
     // Group games by age group and flight using CSV flight assignments
     const gamesByAgeGroupAndFlight = new Map();
     
     gamesData.forEach(game => {
-      const ageGroupFlights = flightsData.filter(f => f.ageGroupId === game.ageGroupId);
+      let ageGroupFlights = flightsData.filter(f => f.ageGroupId === game.ageGroupId);
       let flightId: number | null = null;
+      
+      // CRITICAL FIX for Empire Super Cup: Handle missing flights for game age groups
+      if (eventIdNum === 1844329078) {
+        console.log(`[Empire Debug] Game ${game.matchNumber}: Age group ${game.ageGroupId}, found ${ageGroupFlights.length} flights`);
+      }
+      
+      if (ageGroupFlights.length === 0 && eventIdNum === 1844329078) {
+        // For Empire Super Cup, games are linked to age groups 10087+ but flights exist for 9943+
+        // Map the game age groups to the correct flight age groups based on name matching
+        const gameAgeGroupInfo = ageGroupMap.get(String(game.ageGroupId));
+        if (gameAgeGroupInfo) {
+          // Find flights for age groups with matching name and gender
+          const matchingFlights = flightsData.filter(f => {
+            const flightAgeGroupInfo = ageGroupMap.get(String(f.ageGroupId));
+            return flightAgeGroupInfo && 
+                   flightAgeGroupInfo.name === gameAgeGroupInfo.name &&
+                   flightAgeGroupInfo.gender === gameAgeGroupInfo.gender;
+          });
+          
+          if (matchingFlights.length > 0) {
+            console.log(`[Empire Fix] Game ${game.matchNumber} (Age Group ${game.ageGroupId}: ${gameAgeGroupInfo.name} ${gameAgeGroupInfo.gender}) mapped to flights from age group ${matchingFlights[0].ageGroupId}`);
+            // Use the mapped flights instead
+            ageGroupFlights.push(...matchingFlights);
+          }
+        }
+      }
       
       // Primary method: Use authentic CSV flight data from Column 5
       const csvFlight = csvFlightLookup.get(game.matchNumber);
@@ -197,12 +254,17 @@ router.get('/:eventId', async (req: Request, res: Response) => {
         }
       }
       
-      // Fallback: Single flight or default to Elite
+      // Fallback: Distribute games evenly across flights if no CSV data available
       if (!flightId) {
         if (ageGroupFlights.length === 1) {
           flightId = ageGroupFlights[0].id;
         } else if (ageGroupFlights.length > 1) {
-          flightId = ageGroupFlights.find(f => f.name.toLowerCase().includes('elite'))?.id;
+          // Smart distribution: use game index modulo flight count for even distribution
+          const gameIndex = gamesData.indexOf(game);
+          const flightIndex = gameIndex % ageGroupFlights.length;
+          flightId = ageGroupFlights.sort((a, b) => a.id - b.id)[flightIndex].id;
+          
+          console.log(`[Flight Assignment] Game ${game.matchNumber}: Distributed to flight ${flightId} (${ageGroupFlights.find(f => f.id === flightId)?.name}) using round-robin`);
         }
       }
       
@@ -212,7 +274,27 @@ router.get('/:eventId', async (req: Request, res: Response) => {
         return;
       }
       
-      const key = `${game.ageGroupId}_${flightId}`;
+      // CRITICAL: For Empire Super Cup, use the display age group (9943+) instead of game age group (10087+)
+      let displayAgeGroupId = game.ageGroupId;
+      if (eventIdNum === 1844329078) {
+        const gameAgeGroupInfo = ageGroupMap.get(String(game.ageGroupId));
+        if (gameAgeGroupInfo) {
+          // Find the display age group with matching name/gender in the 9943+ range
+          const matchingDisplayAgeGroup = Array.from(ageGroupMap.entries()).find(([agId, agInfo]) => {
+            const id = parseInt(agId);
+            return id >= 9943 && id <= 9966 &&
+                   agInfo.name === gameAgeGroupInfo.name &&
+                   agInfo.gender === gameAgeGroupInfo.gender;
+          });
+          
+          if (matchingDisplayAgeGroup) {
+            displayAgeGroupId = parseInt(matchingDisplayAgeGroup[0]);
+            console.log(`[Empire Fix] Game ${game.matchNumber} remapped from age group ${game.ageGroupId} to display age group ${displayAgeGroupId}`);
+          }
+        }
+      }
+      
+      const key = `${displayAgeGroupId}_${flightId}`;
       if (!gamesByAgeGroupAndFlight.has(key)) {
         gamesByAgeGroupAndFlight.set(key, []);
       }
@@ -252,6 +334,13 @@ router.get('/:eventId', async (req: Request, res: Response) => {
         const flightTeams = teamsByFlight.get(flight.id) || [];
         const gameKey = `${ageGroupId}_${flight.id}`;
         const flightGames = gamesByAgeGroupAndFlight.get(gameKey) || [];
+        
+        // Debug: Log key searches for Empire Super Cup to identify the mismatch
+        if (eventIdNum === 1844329078 && flightGames.length === 0) {
+          const allKeys = Array.from(gamesByAgeGroupAndFlight.keys());
+          const keysForThisFlight = allKeys.filter(k => k.endsWith(`_${flight.id}`));
+          console.log(`[DEBUG] Age group ${ageGroupId} flight ${flight.id}: looking for key "${gameKey}", found keys:`, keysForThisFlight);
+        }
         
         // Estimate team count from games if no teams are directly assigned to flight
         let estimatedTeamCount = flightTeams.length;
