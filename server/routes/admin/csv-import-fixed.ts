@@ -15,6 +15,17 @@ router.get('/test', (req, res) => {
   res.json({ message: 'CSV Import router is working!', timestamp: new Date().toISOString() });
 });
 
+// Test endpoint to debug transformation function
+router.post('/test-transform', (req, res) => {
+  const { divisions } = req.body;
+  const results = divisions.map(div => ({
+    division: div,
+    transformed: transformDivisionToAgeGroup(div),
+    parsed: parseDivisionCode(div)
+  }));
+  res.json({ results });
+});
+
 // Helper function to parse division codes like G2014, B2012, etc.
 function parseDivisionCode(division: string): { gender: string, birthYear: number, ageGroup: string, divisionCode: string } {
   const match = division.match(/^([GB])(\d{4})$/i);
@@ -1059,32 +1070,55 @@ router.post('/execute', upload.single('csvFile'), async (req, res) => {
 
         // Get age group ID - handle both Division and Age Group formats
         let ageGroupName = row['Age Group']?.trim();
-        let ageGroupId = ageGroupIdMap[ageGroupName];
+        let ageGroupId = null;
         
         // If no Age Group, try using Division for tournament format
         if (!ageGroupName && row.Division) {
-          ageGroupName = row.Division.trim();
-          ageGroupId = ageGroupIdMap[ageGroupName];
+          ageGroupName = transformDivisionToAgeGroup(row.Division.trim());
         }
         
-        // Try database lookup if not in cache
-        if (!ageGroupId && ageGroupName) {
-          const existingAgeGroup = await db.query.eventAgeGroups.findFirst({
-            where: eq(eventAgeGroups.ageGroup, ageGroupName)
-          });
-          ageGroupId = existingAgeGroup?.id;
+        // Look up age group ID using the transformed name
+        if (ageGroupName) {
+          // First try the map cache
+          ageGroupId = ageGroupIdMap[ageGroupName];
+          
+
+          
+          // If not in cache, try database lookup
+          if (!ageGroupId) {
+            const existingAgeGroup = await db.query.eventAgeGroups.findFirst({
+              where: and(
+                eq(eventAgeGroups.eventId, eventId.toString()),
+                eq(eventAgeGroups.ageGroup, ageGroupName)
+              )
+            });
+            ageGroupId = existingAgeGroup?.id;
+            
+
+            
+            // Update the cache for future lookups
+            if (ageGroupId) {
+              ageGroupIdMap[ageGroupName] = ageGroupId;
+            }
+          }
         }
 
         if (!ageGroupId) {
-          importResults.errors.push(`Row ${index + 1}: Age group '${ageGroupName}' not found`);
+          importResults.errors.push(`Row ${index + 1}: Age group '${ageGroupName}' not found (from Division: '${row.Division}')`);
           continue;
         }
 
-        // Parse date and time
+        // Parse date and time with error handling
         const normalizedDate = normalizeDate(row.Date.trim());
         const normalizedTime = normalizeTime(row.Time.trim());
         const gameDateTime = new Date(`${normalizedDate}T${normalizedTime}:00`);
         const gameEndTime = new Date(gameDateTime.getTime() + 90 * 60000); // 90 minutes default
+
+        // Validate date parsing
+        if (isNaN(gameDateTime.getTime())) {
+          importResults.errors.push(`Row ${index + 1}: Invalid date/time format - Date: '${row.Date}', Time: '${row.Time}'`);
+          continue;
+        }
 
         // Calculate day index (0-based from tournament start)
         const tournamentStartDate = new Date('2025-08-16'); // Tournament start date
@@ -1095,10 +1129,10 @@ router.post('/execute', upload.single('csvFile'), async (req, res) => {
         const [timeSlot] = await db.insert(gameTimeSlots).values({
           eventId: eventId.toString(),
           fieldId: fieldId!,
-          startDateTime: gameDateTime,
-          endDateTime: gameEndTime,
+          startTime: gameDateTime.toISOString(),
+          endTime: gameEndTime.toISOString(),
           dayIndex: dayIndex >= 0 ? dayIndex : 0, // Ensure non-negative day index
-          isOccupied: false
+          isAvailable: false
         }).returning();
 
         // Extract enhanced game metadata from tournament format
@@ -1129,7 +1163,7 @@ router.post('/execute', upload.single('csvFile'), async (req, res) => {
         // Create game with enhanced tournament data
         const [newGame] = await db.insert(games).values({
           eventId: eventId.toString(),
-          ageGroup: ageGroupId!,
+          ageGroupId: ageGroupId!,
           homeTeamId,
           awayTeamId,
           fieldId: fieldId!,
