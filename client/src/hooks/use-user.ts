@@ -81,7 +81,7 @@ async function fetchUser(): Promise<SelectUser | null> {
   }
 }
 
-export function useUser() {
+export function useUser(skipAuth: boolean = false) {
   const queryClient = useQueryClient();
   
   // Get emulation token to include in query key for proper cache invalidation
@@ -97,7 +97,8 @@ export function useUser() {
     refetchOnWindowFocus: false, // Disabled to prevent refresh when window regains focus
     refetchOnMount: true, // Still refresh when components mount
     // Prevent actual refetches from causing UI refreshes if the data hasn't changed
-    structuralSharing: true
+    structuralSharing: true,
+    enabled: !skipAuth // Skip the query entirely for public routes
   });
 
   const loginMutation = useMutation<RequestResult, Error, InsertUser>({

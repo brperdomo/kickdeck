@@ -125,7 +125,20 @@ import TournamentParametersPage from "@/pages/admin/TournamentParametersPage";
 // Score and card report pages moved to lazy loading above
 
 function Router() {
-  const { user, isLoading } = useUser();
+  const [location] = useLocation();
+  
+  // Check if current route is public (doesn't need auth)
+  const isPublicRoute = location.startsWith('/public/') || 
+                       location.startsWith('/game/') ||
+                       location.startsWith('/register/') ||
+                       location.startsWith('/event/') ||
+                       location === '/score-report' ||
+                       location === '/card-report' ||
+                       location.startsWith('/complete-payment');
+
+  // Only fetch user data for non-public routes
+  const { user, isLoading } = useUser(isPublicRoute);
+  
   // Check if we're on the main domain (matchpro.ai)
   const showLandingPage = isMainDomain();
 
