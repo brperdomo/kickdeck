@@ -209,6 +209,51 @@ router.delete('/:eventId/games/bulk', hasEventAccess, async (req, res) => {
 });
 
 /**
+ * Delete games by age group
+ * 
+ * DELETE /api/admin/events/:eventId/age-groups/:ageGroupId/games
+ */
+router.delete('/:eventId/age-groups/:ageGroupId/games', hasEventAccess, async (req, res) => {
+  try {
+    const { eventId, ageGroupId } = req.params;
+    
+    console.log(`🗑️ AGE GROUP DELETE: Deleting games for age group ${ageGroupId} in event ${eventId}`);
+    
+    if (!eventId || !ageGroupId) {
+      return res.status(400).json({ message: "Event ID and Age Group ID are required" });
+    }
+    
+    // Delete games for this specific age group and event
+    const result = await db
+      .delete(games)
+      .where(
+        and(
+          eq(games.eventId, String(eventId)),
+          eq(games.ageGroupId, parseInt(ageGroupId))
+        )
+      );
+    
+    console.log(`✅ AGE GROUP DELETE: Successfully deleted games for age group ${ageGroupId}`, result);
+    
+    return res.json({ 
+      success: true,
+      message: `Successfully deleted games for age group`,
+      eventId: eventId,
+      ageGroupId: ageGroupId,
+      deletedCount: result.rowCount || 0
+    });
+  } catch (error) {
+    console.error("❌ AGE GROUP DELETE ERROR:", error);
+    return res.status(500).json({ 
+      message: "Failed to delete age group games",
+      error: error instanceof Error ? error.message : String(error),
+      eventId: req.params.eventId,
+      ageGroupId: req.params.ageGroupId
+    });
+  }
+});
+
+/**
  * Reschedule a game (update field and time)
  * 
  * PUT /api/admin/games/:gameId/reschedule
