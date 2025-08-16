@@ -52,8 +52,8 @@ export function GameImportModal({ isOpen, onClose, eventId, onImportComplete }: 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<ImportPreview | null>(null);
   const [importResult, setImportResult] = useState<any>(null);
-  const [createMissingFields, setCreateMissingFields] = useState(false);
-  const [createMissingTeams, setCreateMissingTeams] = useState(false);
+  const [createMissingFields, setCreateMissingFields] = useState(true);
+  const [createMissingTeams, setCreateMissingTeams] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
