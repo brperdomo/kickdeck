@@ -26,10 +26,7 @@ router.get('/:eventId/age-group/:ageGroupId', async (req: Request, res: Response
       .where(eq(events.id, eventIdNum))
       .limit(1);
 
-    // Override with the specific tournament logo for this event
-    if (eventInfo.length > 0) {
-      eventInfo[0].logoUrl = 'https://app.matchpro.ai/uploads/2025-EmpireSurf-SuperCup-logo_badge_blue_1748622426612_i7ic0i.jpg';
-    }
+    // Use the event's actual logo from settings - no hardcoded overrides
 
     if (!eventInfo.length) {
       console.log(`[Age Group Schedule] Event ${eventId} not found`);
@@ -39,13 +36,14 @@ router.get('/:eventId/age-group/:ageGroupId', async (req: Request, res: Response
       });
     }
 
-    // Get age group info
+    // Get age group info with proper division mapping
     const ageGroupInfo = await db
       .select({
         ageGroup: eventAgeGroups.ageGroup,
         gender: eventAgeGroups.gender,
         birthYear: eventAgeGroups.birthYear,
-        divisionCode: eventAgeGroups.divisionCode
+        divisionCode: eventAgeGroups.divisionCode,
+        fieldSize: eventAgeGroups.fieldSize
       })
       .from(eventAgeGroups)
       .where(and(

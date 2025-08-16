@@ -131,40 +131,30 @@ export default function GameCardsGenerator({ eventId }: GameCardsGeneratorProps)
       const pageHeight = pdf.internal.pageSize.getHeight();
       let currentPage = 1;
 
-      // Load tournament/MatchPro logo
+      // Load tournament logo from event settings
       const loadLogoImage = async (): Promise<string | null> => {
         try {
-          // First try to load tournament-specific logo if available
-          const tournamentLogoUrl = `/api/events/${eventId}/logo`;
-          const tournamentResponse = await fetch(tournamentLogoUrl);
-          
-          if (tournamentResponse.ok) {
-            const blob = await tournamentResponse.blob();
-            return new Promise((resolve) => {
-              const reader = new FileReader();
-              reader.onload = () => resolve(reader.result as string);
-              reader.readAsDataURL(blob);
-            });
+          // Try to fetch event logo from API
+          const eventResponse = await fetch(`/api/admin/events/${eventId}`);
+          if (eventResponse.ok) {
+            const eventData = await eventResponse.json();
+            if (eventData.logoUrl) {
+              const logoResponse = await fetch(eventData.logoUrl);
+              if (logoResponse.ok) {
+                const blob = await logoResponse.blob();
+                return new Promise((resolve) => {
+                  const reader = new FileReader();
+                  reader.onload = () => resolve(reader.result as string);
+                  reader.readAsDataURL(blob);
+                });
+              }
+            }
           }
         } catch (error) {
-          console.log('Tournament logo not available, using MatchPro branding');
+          console.log('Tournament logo not available:', error);
         }
         
-        // Fallback to MatchPro logo
-        try {
-          const matchProResponse = await fetch('/MatchPro.ai_Stacked_Color.png');
-          if (matchProResponse.ok) {
-            const blob = await matchProResponse.blob();
-            return new Promise((resolve) => {
-              const reader = new FileReader();
-              reader.onload = () => resolve(reader.result as string);
-              reader.readAsDataURL(blob);
-            });
-          }
-        } catch (error) {
-          console.log('MatchPro logo not available');
-        }
-        
+        // No fallback - use tournament branding only
         return null;
       };
 
