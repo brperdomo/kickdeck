@@ -142,6 +142,7 @@ import managerReportsRouter from "./routes/admin/manager-reports";
 import publishedSchedulesRouter from "./routes/admin/published-schedules";
 import publicSchedulesRouter from "./routes/public/schedules";
 import publicStandingsRouter from "./routes/public/standings";
+import divisionSchedulesRouter from "./routes/public/division-schedules";
 import ageGroupScheduleRouter from "./routes/public/age-group-schedule";
 import tbdResolverRouter from "./routes/admin/tbd-resolver";
 
@@ -978,6 +979,7 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/public/games', publicGamesRouter);
     app.use('/api/public/game-cards', publicGameCardsRouter);
     app.use('/api/public/standings', publicStandingsRouter);
+    app.use('/api/public/schedules', divisionSchedulesRouter);
     app.use('/api/admin/events', tbdResolverRouter); // TBD game resolution system
     app.use('/api/admin/events', isAdmin, feesRouter); // Mount fees router under events path - REMOVED authenticateTournamentDirector
     app.use('/api/admin/age-groups', isAdmin, ageGroupsRouter); // Add age groups router
