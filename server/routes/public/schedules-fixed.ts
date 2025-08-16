@@ -19,58 +19,7 @@ router.get('/:eventId', async (req: Request, res: Response) => {
     const { eventId } = req.params;
     const eventIdNum = parseInt(eventId);
     
-    console.log(`[Public Schedules Fixed] Processing event ${eventId} - EMPIRE CRITICAL FIX ACTIVE`);
-    
-    // EMPIRE SUPER CUP CRITICAL FIX - Force new execution path
-    if (eventIdNum === 1844329078) {
-      console.log(`[EMPIRE CRITICAL FIX] *** PROCESSING EMPIRE SUPER CUP WITH DIRECT SQL ***`);
-      
-      // Direct SQL retrieval of all games - bypassing Drizzle type issues
-      const directGamesResult = await db.execute(sql`
-        SELECT 
-          g.id,
-          g.home_team_id as "homeTeamId",
-          g.away_team_id as "awayTeamId", 
-          ht.name as "homeTeamName",
-          at.name as "awayTeamName",
-          g.scheduled_date as "scheduledDate",
-          g.scheduled_time as "scheduledTime",
-          g.field_id as "fieldId",
-          f.name as "fieldName",
-          g.duration,
-          g.status,
-          g.age_group_id as "ageGroupId",
-          g.match_number as "matchNumber",
-          g.home_score as "homeScore",
-          g.away_score as "awayScore",
-          g.round,
-          ag.name as "ageGroupName",
-          ag.gender,
-          ag.division_code as "divisionCode"
-        FROM games g
-        LEFT JOIN fields f ON g.field_id = f.id
-        LEFT JOIN teams ht ON g.home_team_id = ht.id  
-        LEFT JOIN teams at ON g.away_team_id = at.id
-        LEFT JOIN event_age_groups ag ON g.age_group_id = ag.id
-        WHERE g.event_id = 1844329078
-        ORDER BY g.scheduled_date, g.scheduled_time
-      `);
-      
-      const directGames = directGamesResult.rows as any[];
-      console.log(`[EMPIRE CRITICAL FIX] Retrieved ${directGames.length} games via direct SQL`);
-      
-      if (directGames.length > 0) {
-        // Successfully bypass the type issues - return minimal successful response
-        return res.json({
-          success: true,
-          eventInfo: eventInfo[0],
-          games: directGames,
-          totalGames: directGames.length,
-          message: 'Empire Super Cup Critical Fix Applied - Games Retrieved Successfully',
-          lastUpdated: new Date().toISOString()
-        });
-      }
-    }
+    console.log(`[Public Schedules Fixed] Processing event ${eventId} with CSV import compatibility`);
     
     // Get event info
     const eventInfo = await db
@@ -94,43 +43,12 @@ router.get('/:eventId', async (req: Request, res: Response) => {
 
     console.log(`[Public Schedules Fixed] Found event: ${eventInfo[0].name}`);
 
-    // EMPIRE SUPER CUP CRITICAL FIX: Direct SQL bypass for Drizzle type mismatch
+    // INTELLIGENT CSV IMPORT FIX: Auto-detect and handle eventId type mismatches
     let gamesData: any[] = [];
+    let usedDirectSQL = false;
     
-    if (eventIdNum === 1844329078) {
-      console.log(`[EMPIRE CRITICAL FIX] Using direct SQL for Empire Super Cup to bypass Drizzle issues`);
-      
-      const gamesQueryResult = await db.execute(sql`
-        SELECT 
-          g.id,
-          g.home_team_id as "homeTeamId",
-          g.away_team_id as "awayTeamId", 
-          ht.name as "homeTeamName",
-          at.name as "awayTeamName",
-          g.scheduled_date as "scheduledDate",
-          g.scheduled_time as "scheduledTime",
-          g.field_id as "fieldId",
-          f.name as "fieldName",
-          g.duration,
-          g.status,
-          g.age_group_id as "ageGroupId",
-          g.match_number as "matchNumber",
-          g.home_score as "homeScore",
-          g.away_score as "awayScore",
-          g.round
-        FROM games g
-        LEFT JOIN fields f ON g.field_id = f.id
-        LEFT JOIN teams ht ON g.home_team_id = ht.id  
-        LEFT JOIN teams at ON g.away_team_id = at.id
-        WHERE g.event_id = 1844329078
-        ORDER BY g.scheduled_date, g.scheduled_time
-      `);
-      
-      gamesData = gamesQueryResult.rows as any[];
-      console.log(`[EMPIRE CRITICAL FIX] Successfully retrieved ${gamesData.length} games via direct SQL`);
-      
-    } else {
-      // Use regular Drizzle query for all other events  
+    try {
+      // First attempt: Use native Drizzle ORM (built-in scheduling system)
       gamesData = await db
         .select({
           id: games.id,
@@ -156,6 +74,49 @@ router.get('/:eventId', async (req: Request, res: Response) => {
         .leftJoin(awayTeamTable, eq(games.awayTeamId, awayTeamTable.id))
         .where(eq(games.eventId, String(eventIdNum)))
         .orderBy(games.scheduledDate, games.scheduledTime);
+        
+      console.log(`[CSV Import Compatibility] Drizzle ORM: Found ${gamesData.length} games for event ${eventId}`);
+      
+    } catch (drizzleError) {
+      console.log(`[CSV Import Compatibility] Drizzle query failed, attempting direct SQL fallback`);
+      usedDirectSQL = true;
+      
+      // Fallback: Direct SQL for CSV imported data with type mismatches
+      const gamesQueryResult = await db.execute(sql`
+        SELECT 
+          g.id,
+          g.home_team_id as "homeTeamId",
+          g.away_team_id as "awayTeamId", 
+          ht.name as "homeTeamName",
+          at.name as "awayTeamName",
+          g.scheduled_date as "scheduledDate",
+          g.scheduled_time as "scheduledTime",
+          g.field_id as "fieldId",
+          f.name as "fieldName",
+          g.duration,
+          g.status,
+          g.age_group_id as "ageGroupId",
+          g.match_number as "matchNumber",
+          g.home_score as "homeScore",
+          g.away_score as "awayScore",
+          g.round
+        FROM games g
+        LEFT JOIN fields f ON g.field_id = f.id
+        LEFT JOIN teams ht ON g.home_team_id = ht.id  
+        LEFT JOIN teams at ON g.away_team_id = at.id
+        WHERE g.event_id = ${eventIdNum}
+        ORDER BY g.scheduled_date, g.scheduled_time
+      `);
+      
+      gamesData = gamesQueryResult.rows as any[];
+      console.log(`[CSV Import Compatibility] Direct SQL fallback: Retrieved ${gamesData.length} games for event ${eventId}`);
+    }
+    
+    // If still no games found with either method, the event may not have games
+    if (gamesData.length === 0) {
+      console.log(`[CSV Import Compatibility] No games found for event ${eventId} using either method`);
+    } else if (usedDirectSQL) {
+      console.log(`[CSV Import Compatibility] SUCCESS: Used direct SQL fallback for CSV imported data`);
     }
 
     console.log(`[Public Schedules Fixed] Event ${eventId}: Found ${gamesData.length} games`);
