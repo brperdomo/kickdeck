@@ -44,86 +44,7 @@ function parseDivisionCode(division: string): { gender: string, birthYear: numbe
   };
 }
 
-// Helper function to extract coach information from CSV data
-function extractCoachInformation(csvData: CSVRow[]) {
-  const coaches = new Map();
-  
-  csvData.forEach((row, index) => {
-    // Extract home coach info
-    const homeCoachId = row['Home Team Coach ID'] || row['Home Coach ID'];
-    const homeCoachName = row['Home Head Coach'] || row['Home Coach'];
-    if (homeCoachId && homeCoachName) {
-      coaches.set(homeCoachId, {
-        id: homeCoachId,
-        name: homeCoachName,
-        type: 'coach'
-      });
-    }
-    
-    // Extract away coach info  
-    const awayCoachId = row['Away Team Coach ID'] || row['Away Coach ID'];
-    const awayCoachName = row['Away Head Coach'] || row['Away Coach'];
-    if (awayCoachId && awayCoachName) {
-      coaches.set(awayCoachId, {
-        id: awayCoachId,
-        name: awayCoachName,
-        type: 'coach'
-      });
-    }
-  });
-  
-  return {
-    totalCoaches: coaches.size,
-    coaches: Array.from(coaches.values()),
-    hasCoachData: coaches.size > 0
-  };
-}
 
-// Enhanced helper function to analyze age group structure with division parsing
-async function analyzeAgeGroupStructure(csvData: CSVRow[], eventId: number) {
-  const divisions = new Set();
-  const flights = new Set();
-  const ageGroupPattern = new Set();
-  const parsedDivisions = new Map();
-  
-  csvData.forEach(row => {
-    if (row.Division) {
-      divisions.add(row.Division);
-      // Parse each division to extract age group info
-      const parsed = parseDivisionCode(row.Division);
-      parsedDivisions.set(row.Division, parsed);
-      ageGroupPattern.add(parsed.ageGroup);
-    }
-    if (row.Flight) flights.add(row.Flight);
-  });
-  
-  // Get existing age groups for this event
-  const existingAgeGroups = await db
-    .select({ 
-      id: eventAgeGroups.id,
-      name: eventAgeGroups.ageGroup, 
-      divisionCode: eventAgeGroups.divisionCode,
-      gender: eventAgeGroups.gender,
-      birthYear: eventAgeGroups.birthYear 
-    })
-    .from(eventAgeGroups);
-  
-  return {
-    csvDivisions: Array.from(divisions),
-    csvFlights: Array.from(flights), 
-    csvAgePatterns: Array.from(ageGroupPattern),
-    parsedDivisions: Object.fromEntries(parsedDivisions),
-    existingAgeGroups: existingAgeGroups.map(ag => ({ 
-      id: ag.id,
-      name: ag.name, 
-      code: ag.divisionCode,
-      gender: ag.gender,
-      birthYear: ag.birthYear
-    })),
-    needsAgeGroupMapping: divisions.size > 0,
-    hasStandardDivisionCodes: Array.from(divisions).some(div => /^[GB]\d{4}$/i.test(div as string))
-  };
-}
 
 // Configure multer for file uploads
 const upload = multer({ 
@@ -352,6 +273,69 @@ const generateMatchWarnings = (csvTeamName: string, matches: any[]) => {
   }
   
   return warnings;
+};
+
+// Extract coach information from CSV data
+const extractCoachInformation = (csvData: any[]) => {
+  const coaches = new Map();
+  
+  csvData.forEach((row) => {
+    // Extract home coach info
+    const homeCoachId = row['Home Team Coach ID'] || row['Home Coach ID'];
+    const homeCoachName = row['Home Head Coach'] || row['Home Coach'];
+    if (homeCoachId && homeCoachName) {
+      coaches.set(homeCoachId, {
+        id: homeCoachId,
+        name: homeCoachName,
+        type: 'coach'
+      });
+    }
+    
+    // Extract away coach info  
+    const awayCoachId = row['Away Team Coach ID'] || row['Away Coach ID'];
+    const awayCoachName = row['Away Head Coach'] || row['Away Coach'];
+    if (awayCoachId && awayCoachName) {
+      coaches.set(awayCoachId, {
+        id: awayCoachId,
+        name: awayCoachName,
+        type: 'coach'
+      });
+    }
+  });
+  
+  return {
+    totalCoaches: coaches.size,
+    coaches: Array.from(coaches.values()),
+    hasCoachData: coaches.size > 0
+  };
+};
+
+// Analyze age group structure with division parsing
+const analyzeAgeGroupStructure = async (csvData: any[], eventId: number) => {
+  const divisions = new Set();
+  const flights = new Set();
+  const ageGroupPattern = new Set();
+  const parsedDivisions = new Map();
+  
+  csvData.forEach(row => {
+    if (row.Division) {
+      divisions.add(row.Division);
+      // Parse each division to extract age group info
+      const parsed = parseDivisionCode(row.Division);
+      parsedDivisions.set(row.Division, parsed);
+      ageGroupPattern.add(parsed.ageGroup);
+    }
+    if (row.Flight) flights.add(row.Flight);
+  });
+  
+  return {
+    csvDivisions: Array.from(divisions),
+    csvFlights: Array.from(flights), 
+    csvAgePatterns: Array.from(ageGroupPattern),
+    parsedDivisions: Object.fromEntries(parsedDivisions),
+    needsAgeGroupMapping: divisions.size > 0,
+    hasStandardDivisionCodes: Array.from(divisions).some(div => /^[GB]\d{4}$/i.test(div as string))
+  };
 };
 
 
