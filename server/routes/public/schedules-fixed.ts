@@ -157,7 +157,31 @@ router.get('/:eventId', async (req: Request, res: Response) => {
         flightId = awayTeam.bracketId;
       }
       
-      // If no bracket assignment, try to assign to Elite flight for this age group as fallback
+      // If no team records exist (cross-event contamination), use team names from games to determine flight
+      if (!flightId && !homeTeam && !awayTeam) {
+        const homeTeamName = game.homeTeamName || '';
+        const awayTeamName = game.awayTeamName || '';
+        
+        // Determine flight based on team name patterns from CSV
+        const ageGroupFlights = flightsData.filter(f => f.ageGroupId === game.ageGroupId);
+        
+        // Premier indicators: Force, Albion, Pro Alliance, FC Premier
+        if (homeTeamName.match(/force|albion|pro alliance|fc premier/i) || 
+            awayTeamName.match(/force|albion|pro alliance|fc premier/i)) {
+          flightId = ageGroupFlights.find(f => f.name.toLowerCase().includes('premier'))?.id;
+        }
+        // Classic indicators: Surf, Rebels, Desert, City SC, Future FC
+        else if (homeTeamName.match(/surf|rebels|desert|city sc|future fc/i) || 
+                 awayTeamName.match(/surf|rebels|desert|city sc|future fc/i)) {
+          flightId = ageGroupFlights.find(f => f.name.toLowerCase().includes('classic'))?.id;
+        }
+        // Default to Elite
+        if (!flightId) {
+          flightId = ageGroupFlights.find(f => f.name.toLowerCase().includes('elite'))?.id;
+        }
+      }
+      
+      // If still no bracket assignment, try to assign to Elite flight for this age group as fallback
       if (!flightId) {
         const eliteFlight = flightsData.find(f => 
           f.ageGroupId === game.ageGroupId && f.name.toLowerCase().includes('elite')
@@ -536,12 +560,14 @@ router.get('/:eventId/age-group/:ageGroupId', async (req: Request, res: Response
 
     console.log(`[Age Group Schedule] Found event: ${eventInfo[0].name}, age group: ${ageGroupInfo[0].ageGroup} ${ageGroupInfo[0].gender}`);
 
-    // Get all games for this age group
+    // Get all games for this age group with team names  
     const gamesData = await db
       .select({
         id: games.id,
         homeTeamId: games.homeTeamId,
         awayTeamId: games.awayTeamId,
+        homeTeamName: homeTeamTable.name,
+        awayTeamName: awayTeamTable.name,
         scheduledDate: games.scheduledDate,
         scheduledTime: games.scheduledTime,
         fieldId: games.fieldId,
@@ -552,6 +578,8 @@ router.get('/:eventId/age-group/:ageGroupId', async (req: Request, res: Response
       })
       .from(games)
       .leftJoin(fields, eq(games.fieldId, fields.id))
+      .leftJoin(homeTeamTable, eq(games.homeTeamId, homeTeamTable.id))
+      .leftJoin(awayTeamTable, eq(games.awayTeamId, awayTeamTable.id))
       .where(and(
         eq(games.eventId, eventId),
         eq(games.ageGroupId, ageGroupIdNum)
@@ -611,11 +639,46 @@ router.get('/:eventId/age-group/:ageGroupId', async (req: Request, res: Response
       teamsByFlight.get(flightId).push(team);
     });
 
-    // Group games by flight for this age group
+    // Group games by flight for this age group using the same logic as main route
     const gamesByFlight = new Map();
     gamesData.forEach(game => {
       const homeTeam = teamsData.find(t => t.id === game.homeTeamId);
-      const flightId = homeTeam?.bracketId || 'unassigned';
+      const awayTeam = teamsData.find(t => t.id === game.awayTeamId);
+      
+      // Use team bracket assignment to determine flight
+      let flightId = null;
+      if (homeTeam?.bracketId) {
+        flightId = homeTeam.bracketId;
+      } else if (awayTeam?.bracketId) {
+        flightId = awayTeam.bracketId;
+      }
+      
+      // If no team records exist (cross-event contamination), use team names from games to determine flight
+      if (!flightId && !homeTeam && !awayTeam) {
+        const homeTeamName = game.homeTeamName || '';
+        const awayTeamName = game.awayTeamName || '';
+        
+        // Premier indicators: Force, Albion, Pro Alliance, FC Premier
+        if (homeTeamName.match(/force|albion|pro alliance|fc premier/i) || 
+            awayTeamName.match(/force|albion|pro alliance|fc premier/i)) {
+          flightId = flightsData.find(f => f.name.toLowerCase().includes('premier'))?.id;
+        }
+        // Classic indicators: Surf, Rebels, Desert, City SC, Future FC
+        else if (homeTeamName.match(/surf|rebels|desert|city sc|future fc/i) || 
+                 awayTeamName.match(/surf|rebels|desert|city sc|future fc/i)) {
+          flightId = flightsData.find(f => f.name.toLowerCase().includes('classic'))?.id;
+        }
+        // Default to Elite
+        if (!flightId) {
+          flightId = flightsData.find(f => f.name.toLowerCase().includes('elite'))?.id;
+        }
+      }
+      
+      // If still no flight assignment, use Elite as fallback
+      if (!flightId) {
+        flightId = flightsData.find(f => f.name.toLowerCase().includes('elite'))?.id || 'unassigned';
+      }
+      
       if (!gamesByFlight.has(flightId)) {
         gamesByFlight.set(flightId, []);
       }
