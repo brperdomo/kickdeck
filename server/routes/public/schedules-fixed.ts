@@ -141,29 +141,53 @@ router.get('/:eventId', async (req: Request, res: Response) => {
       teamsByFlight.get(flightId).push(team);
     });
 
-    // Group games by age group and flight
+    // Group games by age group and flight - distribute evenly across Premier/Classic/Elite
     const gamesByAgeGroupAndFlight = new Map();
+    
+    // Group games by age group first
+    const gamesByAgeGroup = new Map();
     gamesData.forEach(game => {
-      // For this tournament, team assignments in games don't match teams table
-      // So we'll assign all games for an age group to the first available flight
-      const ageGroupFlights = flightsData.filter(f => f.ageGroupId === game.ageGroupId);
+      if (!gamesByAgeGroup.has(game.ageGroupId)) {
+        gamesByAgeGroup.set(game.ageGroupId, []);
+      }
+      gamesByAgeGroup.get(game.ageGroupId).push(game);
+    });
+    
+    // Distribute games across flights for each age group
+    gamesByAgeGroup.forEach((games, ageGroupId) => {
+      const ageGroupFlights = flightsData.filter(f => f.ageGroupId === ageGroupId);
       
-      // Use the first flight for this age group, preferring ones with teams
-      let flightId: string | number = 'unassigned';
-      if (ageGroupFlights.length > 0) {
-        // Try to find a flight with teams first
-        const flightWithTeams = ageGroupFlights.find(flight => {
-          const teams = teamsData.filter(t => t.bracketId === flight.id);
-          return teams.length > 0;
-        });
-        flightId = String(flightWithTeams?.id || ageGroupFlights[0]?.id || 'unassigned');
+      if (ageGroupFlights.length === 0) {
+        // No flights, assign to unassigned
+        const key = `${ageGroupId}_unassigned`;
+        gamesByAgeGroupAndFlight.set(key, games);
+        return;
       }
       
-      const key = `${game.ageGroupId}_${flightId}`;
-      if (!gamesByAgeGroupAndFlight.has(key)) {
-        gamesByAgeGroupAndFlight.set(key, []);
-      }
-      gamesByAgeGroupAndFlight.get(key).push(game);
+      // Sort flights consistently (Premier, Classic, Elite)
+      ageGroupFlights.sort((a, b) => {
+        const order: { [key: string]: number } = { 'Premier': 1, 'Classic': 2, 'Elite': 3 };
+        const aOrder = order[a.name.split(' ')[1]] || 4;
+        const bOrder = order[b.name.split(' ')[1]] || 4;
+        return aOrder - bOrder;
+      });
+      
+
+      
+      // Distribute games evenly across flights
+      const gamesPerFlight = Math.ceil(games.length / ageGroupFlights.length);
+      
+      ageGroupFlights.forEach((flight, index) => {
+        const startIndex = index * gamesPerFlight;
+        const endIndex = Math.min(startIndex + gamesPerFlight, games.length);
+        const flightGames = games.slice(startIndex, endIndex);
+        
+        if (flightGames.length > 0) {
+          const key = `${ageGroupId}_${flight.id}`;
+          gamesByAgeGroupAndFlight.set(key, flightGames);
+
+        }
+      });
     });
     
     console.log(`[Public Schedules Fixed] Games grouped by age group+flight: ${gamesByAgeGroupAndFlight.size} combinations`);
@@ -200,10 +224,21 @@ router.get('/:eventId', async (req: Request, res: Response) => {
         const gameKey = `${ageGroupId}_${flight.id}`;
         const flightGames = gamesByAgeGroupAndFlight.get(gameKey) || [];
         
+        // Estimate team count from games if no teams are directly assigned to flight
+        let estimatedTeamCount = flightTeams.length;
+        if (estimatedTeamCount === 0 && flightGames.length > 0) {
+          const uniqueTeams = new Set();
+          flightGames.forEach((game: any) => {
+            if (game.homeTeamId) uniqueTeams.add(game.homeTeamId);
+            if (game.awayTeamId) uniqueTeams.add(game.awayTeamId);
+          });
+          estimatedTeamCount = uniqueTeams.size;
+        }
+        
         return {
           flightId: flight.id,
           flightName: flight.name,
-          teamCount: flightTeams.length,
+          teamCount: estimatedTeamCount,
           teams: flightTeams.map((team: any) => ({
             id: team.id,
             name: team.name,
@@ -213,8 +248,6 @@ router.get('/:eventId', async (req: Request, res: Response) => {
             // Use team names directly from games query result
             const homeTeamName = game.homeTeamName || 'TBD';
             const awayTeamName = game.awayTeamName || 'TBD';
-            
-
             
             return {
               id: game.id,
