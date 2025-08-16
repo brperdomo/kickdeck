@@ -68,6 +68,8 @@ import adminGamesRouter from "./routes/admin/games-router";
 import gameScoreManagementRouter from "./routes/admin/game-score-management-fixed";
 import gameScoreManagementSimpleRouter from './routes/admin/game-score-management-simple';
 import publicSchedulesFixedRouter from './routes/public/schedules-fixed';
+import publicStandingsRouter from './routes/public/standings';
+import adminScoringRulesRouter from './routes/admin/scoring-rules';
 import clubsRouter from "./routes/clubs";
 import adminClubsRouter from "./routes/admin/clubs";
 import eventClubsRouter from "./routes/admin/event-clubs";
@@ -983,7 +985,7 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/public/games', publicGamesRouter);
     app.use('/api/public/game-cards', publicGameCardsRouter);
     app.use('/api/public/standings', publicStandingsRouter);
-    app.use('/api/public/schedules', divisionSchedulesRouter);
+    app.use('/api/public/schedules', publicSchedulesFixedRouter);
     app.use('/api/admin/events', tbdResolverRouter); // TBD game resolution system
     app.use('/api/admin/events', isAdmin, feesRouter); // Mount fees router under events path - REMOVED authenticateTournamentDirector
     app.use('/api/admin/age-groups', isAdmin, ageGroupsRouter); // Add age groups router
@@ -1153,6 +1155,7 @@ export function registerRoutes(app: Express): Server {
     
     app.use('/api/admin/matchup-templates', matchupTemplatesRouter); // Matchup templates router - NO AUTH for basic admin operations
     app.use('/api/admin/scoring-templates', scoringTemplatesRouter); // Scoring & Standings templates router - NO AUTH for basic admin operations
+    app.use('/api/admin/scoring-rules', adminScoringRulesRouter); // Enhanced tiebreaker and scoring rules management
     app.use('/api/admin', tournamentFormatConfigurationRouter); // Tournament format configuration - NO AUTH for basic admin operations
     app.use('/api/admin', eventFieldConfigurationsRouter); // Event field configurations - NO AUTH for basic admin operations
     app.use('/api/admin/championship', championshipRouter); // Championship team assignment router - NO AUTH for basic admin operations

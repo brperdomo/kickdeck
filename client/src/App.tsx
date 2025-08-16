@@ -71,6 +71,7 @@ import ComplexLocationsMapPage from "@/pages/complex-locations-map";
 // Public schedules (no auth required)
 import PublicSchedules from "@/pages/public/PublicSchedules";
 import AgeGroupSchedule from "@/pages/public/AgeGroupSchedule";
+import PublicStandings from "@/pages/public/PublicStandings";
 // Game Score Management
 import GameScoreManagement from "@/pages/admin/GameScoreManagement";
 // Game Cards Management  
@@ -233,6 +234,11 @@ function Router() {
       </Route>
       <Route path="/public/schedules/:eventId/age-group/:ageGroupId">
         {(params) => <AgeGroupSchedule />}
+      </Route>
+      
+      {/* Public standings - no auth required */}
+      <Route path="/public/standings/:eventId">
+        {(params) => <PublicStandings />}
       </Route>
       
       {/* Age group specific schedules - no auth required */}

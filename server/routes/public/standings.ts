@@ -1,138 +1,437 @@
-import { Router } from 'express';
-import { db } from '@db';
+import { Router, Request, Response } from 'express';
+import { db } from '../../../db';
+import { games, teams, teamStandings, eventScoringRules, eventAgeGroups, events } from '../../../db/schema';
+import { eq, and, sql } from 'drizzle-orm';
+import { alias } from 'drizzle-orm/pg-core';
+import { StandingsCalculator } from '../../utils/standingsCalculator';
 
 const router = Router();
 
-// POST /api/public/standings/:eventId/recalculate - Recalculate standings after score submission
-router.post('/:eventId/recalculate', async (req, res) => {
+// Create table aliases for joining teams table twice
+const homeTeamTable = alias(teams, 'homeTeam');
+const awayTeamTable = alias(teams, 'awayTeam');
+
+// Get live standings for public viewing (no authentication required)
+router.get('/:eventId', async (req: Request, res: Response) => {
   try {
     const { eventId } = req.params;
+    const eventIdNum = parseInt(eventId);
+    
+    console.log(`[Public Standings] Fetching standings for event ${eventId}`);
+    
+    // Get event info
+    const eventInfo = await db
+      .select({
+        name: events.name,
+        startDate: events.startDate,
+        endDate: events.endDate,
+        logoUrl: events.logoUrl
+      })
+      .from(events)
+      .where(eq(events.id, eventIdNum))
+      .limit(1);
 
-    if (!eventId || isNaN(parseInt(eventId))) {
-      return res.status(400).json({ error: 'Invalid event ID' });
+    if (!eventInfo.length) {
+      console.log(`[Public Standings] Event ${eventId} not found`);
+      return res.status(404).json({ 
+        error: 'Event not found',
+        message: 'The requested tournament does not exist.'
+      });
     }
 
-    console.log(`[PUBLIC STANDINGS] Recalculating standings for event ${eventId}`);
+    console.log(`[Public Standings] Found event: ${eventInfo[0].name}`);
 
-    // Get all completed games for this event - using string interpolation for now
-    const completedGamesQuery = `
-      SELECT 
-        id, home_team_id, away_team_id, home_score, away_score, 
-        group_id as bracket_id, age_group_id
-      FROM games 
-      WHERE event_id = '${eventId}' AND status = 'completed'
-    `;
-    
-    const completedGamesResult = await db.execute(completedGamesQuery);
-    const completedGames = completedGamesResult.rows;
+    // Get scoring rules to understand the point system
+    const scoringRules = await db
+      .select()
+      .from(eventScoringRules)
+      .where(and(
+        eq(eventScoringRules.eventId, eventId),
+        eq(eventScoringRules.isActive, true)
+      ))
+      .limit(1);
 
-    console.log(`[PUBLIC STANDINGS] Found ${completedGames.length} completed games`);
+    // Get all age groups for this event
+    const ageGroups = await db
+      .select({
+        id: eventAgeGroups.id,
+        ageGroup: eventAgeGroups.ageGroup,
+        gender: eventAgeGroups.gender,
+        birthYear: eventAgeGroups.birthYear,
+        divisionCode: eventAgeGroups.divisionCode
+      })
+      .from(eventAgeGroups)
+      .where(eq(eventAgeGroups.eventId, eventId));
 
-    // Get all teams in this event
-    const eventTeamsQuery = `
-      SELECT id, name, bracket_id, age_group_id
-      FROM teams 
-      WHERE event_id = '${eventId}'
-    `;
-    
-    const eventTeamsResult = await db.execute(eventTeamsQuery);
-    const eventTeams = eventTeamsResult.rows;
+    console.log(`[Public Standings] Found ${ageGroups.length} age groups`);
 
-    console.log(`[PUBLIC STANDINGS] Found ${eventTeams.length} teams in event`);
+    // Get standings for each age group
+    const standingsByAgeGroup = await Promise.all(
+      ageGroups.map(async (ageGroup) => {
+        try {
+          // First try to get pre-calculated standings from database
+          let standings = await db
+            .select({
+              teamId: teamStandings.teamId,
+              teamName: sql<string>`teams.name`,
+              position: teamStandings.position,
+              gamesPlayed: teamStandings.gamesPlayed,
+              wins: teamStandings.wins,
+              losses: teamStandings.losses,
+              ties: teamStandings.ties,
+              goalsScored: teamStandings.goalsScored,
+              goalsAllowed: teamStandings.goalsAllowed,
+              goalDifferential: teamStandings.goalDifferential,
+              shutouts: teamStandings.shutouts,
+              yellowCards: teamStandings.yellowCards,
+              redCards: teamStandings.redCards,
+              fairPlayPoints: teamStandings.fairPlayPoints,
+              totalPoints: teamStandings.totalPoints,
+              winPoints: teamStandings.winPoints,
+              tiePoints: teamStandings.tiePoints,
+              goalPoints: teamStandings.goalPoints,
+              shutoutPoints: teamStandings.shutoutPoints,
+              cardPenaltyPoints: teamStandings.cardPenaltyPoints
+            })
+            .from(teamStandings)
+            .leftJoin(teams, eq(teamStandings.teamId, teams.id))
+            .where(and(
+              eq(teamStandings.eventId, eventId),
+              eq(teamStandings.ageGroupId, ageGroup.id)
+            ))
+            .orderBy(teamStandings.position);
 
-    // Calculate standings by bracket
-    const standingsByBracket = new Map();
+          // If no pre-calculated standings exist, calculate them dynamically
+          if (standings.length === 0) {
+            console.log(`[Public Standings] No pre-calculated standings found for age group ${ageGroup.id}, calculating dynamically`);
+            
+            // Get games data for dynamic calculation
+            const gamesData = await db
+              .select({
+                id: games.id,
+                homeTeamId: games.homeTeamId,
+                awayTeamId: games.awayTeamId,
+                homeTeamName: homeTeamTable.name,
+                awayTeamName: awayTeamTable.name,
+                homeScore: games.homeScore,
+                awayScore: games.awayScore,
+                status: games.status,
+                homeYellowCards: games.homeYellowCards,
+                awayYellowCards: games.awayYellowCards,
+                homeRedCards: games.homeRedCards,
+                awayRedCards: games.awayRedCards
+              })
+              .from(games)
+              .leftJoin(homeTeamTable, eq(games.homeTeamId, homeTeamTable.id))
+              .leftJoin(awayTeamTable, eq(games.awayTeamId, awayTeamTable.id))
+              .where(and(
+                eq(games.eventId, eventId),
+                eq(games.ageGroupId, ageGroup.id)
+              ));
 
-    // Initialize team stats
-    eventTeams.forEach((team: any) => {
-      const bracketId = team.bracket_id;
-      if (bracketId && !standingsByBracket.has(bracketId)) {
-        standingsByBracket.set(bracketId, new Map());
-      }
-      
-      if (bracketId) {
-        standingsByBracket.get(bracketId).set(team.id, {
-          teamId: team.id,
-          teamName: team.name,
-          bracketId: bracketId,
-          ageGroupId: team.age_group_id,
-          gamesPlayed: 0,
-          wins: 0,
-          losses: 0,
-          draws: 0,
-          goalsFor: 0,
-          goalsAgainst: 0,
-          goalDifference: 0,
-          points: 0
-        });
-      }
-    });
+            if (gamesData.length > 0) {
+              const calculator = new StandingsCalculator(eventId, ageGroup.id);
+              const calculatedStandings = await calculator.calculateStandings(gamesData);
+              
+              // Convert to expected format
+              standings = calculatedStandings.map(team => ({
+                teamId: team.teamId,
+                teamName: team.teamName,
+                position: team.position || 0,
+                gamesPlayed: team.gamesPlayed,
+                wins: team.wins,
+                losses: team.losses,
+                ties: team.ties,
+                goalsScored: team.goalsScored,
+                goalsAllowed: team.goalsAllowed,
+                goalDifferential: team.goalDifferential,
+                shutouts: team.shutouts,
+                yellowCards: team.yellowCards,
+                redCards: team.redCards,
+                fairPlayPoints: team.fairPlayPoints,
+                totalPoints: team.totalPoints,
+                winPoints: team.winPoints,
+                tiePoints: team.tiePoints,
+                goalPoints: team.goalPoints,
+                shutoutPoints: team.shutoutPoints,
+                cardPenaltyPoints: team.cardPenaltyPoints
+              }));
+            }
+          }
 
-    // Process completed games
-    completedGames.forEach((game: any) => {
-      const bracketId = game.bracket_id;
-      const homeStats = standingsByBracket.get(bracketId)?.get(game.home_team_id);
-      const awayStats = standingsByBracket.get(bracketId)?.get(game.away_team_id);
-
-      if (homeStats && awayStats && game.home_score !== null && game.away_score !== null) {
-        // Update games played
-        homeStats.gamesPlayed++;
-        awayStats.gamesPlayed++;
-
-        // Update goals
-        homeStats.goalsFor += parseInt(game.home_score);
-        homeStats.goalsAgainst += parseInt(game.away_score);
-        awayStats.goalsFor += parseInt(game.away_score);
-        awayStats.goalsAgainst += parseInt(game.home_score);
-
-        // Update goal difference
-        homeStats.goalDifference = homeStats.goalsFor - homeStats.goalsAgainst;
-        awayStats.goalDifference = awayStats.goalsFor - awayStats.goalsAgainst;
-
-        // Update wins/losses/draws and points (using standard 3-1-0 system)
-        if (parseInt(game.home_score) > parseInt(game.away_score)) {
-          homeStats.wins++;
-          homeStats.points += 3;
-          awayStats.losses++;
-        } else if (parseInt(game.away_score) > parseInt(game.home_score)) {
-          awayStats.wins++;
-          awayStats.points += 3;
-          homeStats.losses++;
-        } else {
-          homeStats.draws++;
-          awayStats.draws++;
-          homeStats.points += 1;
-          awayStats.points += 1;
+          return {
+            ageGroupId: ageGroup.id,
+            ageGroup: ageGroup.ageGroup,
+            gender: ageGroup.gender,
+            birthYear: ageGroup.birthYear,
+            divisionCode: ageGroup.divisionCode,
+            displayName: `${ageGroup.ageGroup} ${ageGroup.gender}`,
+            teamCount: standings.length,
+            standings: standings
+          };
+        } catch (error) {
+          console.error(`[Public Standings] Error calculating standings for age group ${ageGroup.id}:`, error);
+          return {
+            ageGroupId: ageGroup.id,
+            ageGroup: ageGroup.ageGroup,
+            gender: ageGroup.gender,
+            birthYear: ageGroup.birthYear,
+            divisionCode: ageGroup.divisionCode,
+            displayName: `${ageGroup.ageGroup} ${ageGroup.gender}`,
+            teamCount: 0,
+            standings: []
+          };
         }
-      }
-    });
+      })
+    );
 
-    // Convert to sorted arrays for each bracket
-    const finalStandings: any = {};
-    standingsByBracket.forEach((teams, bracketId) => {
-      const standings = Array.from(teams.values()).sort((a: any, b: any) => {
-        // Sort by: 1) Points desc, 2) Goal difference desc, 3) Goals for desc
-        if (b.points !== a.points) return b.points - a.points;
-        if (b.goalDifference !== a.goalDifference) return b.goalDifference - a.goalDifference;
-        return b.goalsFor - a.goalsFor;
-      });
+    // Filter out age groups with no teams
+    const ageGroupsWithStandings = standingsByAgeGroup.filter(ag => ag.teamCount > 0);
 
-      finalStandings[bracketId] = standings;
-    });
+    // Group by gender for frontend display
+    const standingsByGender = {
+      boys: ageGroupsWithStandings.filter(ag => ag.gender?.toLowerCase() === 'boys'),
+      girls: ageGroupsWithStandings.filter(ag => ag.gender?.toLowerCase() === 'girls'),
+      coed: ageGroupsWithStandings.filter(ag => ag.gender?.toLowerCase() === 'coed')
+    };
 
-    console.log(`[PUBLIC STANDINGS] Calculated standings for ${Object.keys(finalStandings).length} brackets`);
+    const totalTeams = ageGroupsWithStandings.reduce((sum, ag) => sum + ag.teamCount, 0);
+
+    console.log(`[Public Standings] Calculated standings for ${ageGroupsWithStandings.length} age groups with ${totalTeams} total teams`);
 
     res.json({
       success: true,
-      message: 'Standings recalculated successfully',
-      standingsCount: Object.keys(finalStandings).length,
-      gamesProcessed: completedGames.length,
-      standings: finalStandings
+      eventInfo: eventInfo[0],
+      scoringRules: scoringRules.length > 0 ? {
+        title: scoringRules[0].title,
+        systemType: scoringRules[0].systemType,
+        scoring: {
+          win: scoringRules[0].win,
+          loss: scoringRules[0].loss,
+          tie: scoringRules[0].tie,
+          shutout: scoringRules[0].shutout,
+          goalScored: scoringRules[0].goalScored,
+          goalCap: scoringRules[0].goalCap,
+          redCard: scoringRules[0].redCard,
+          yellowCard: scoringRules[0].yellowCard
+        },
+        tiebreakers: [
+          scoringRules[0].tiebreaker1,
+          scoringRules[0].tiebreaker2,
+          scoringRules[0].tiebreaker3,
+          scoringRules[0].tiebreaker4,
+          scoringRules[0].tiebreaker5,
+          scoringRules[0].tiebreaker6,
+          scoringRules[0].tiebreaker7,
+          scoringRules[0].tiebreaker8
+        ]
+      } : null,
+      standingsByGender,
+      totalAgeGroups: ageGroupsWithStandings.length,
+      totalTeams,
+      lastUpdated: new Date().toISOString()
     });
 
   } catch (error) {
-    console.error('[PUBLIC STANDINGS] Error recalculating standings:', error);
-    res.status(500).json({ error: 'Failed to recalculate standings', details: error.message });
+    console.error('[Public Standings] Error:', error);
+    res.status(500).json({ 
+      error: 'Failed to fetch standings data',
+      message: error instanceof Error ? error.message : 'Unknown error occurred'
+    });
+  }
+});
+
+// Get standings for a specific age group
+router.get('/:eventId/age-group/:ageGroupId', async (req: Request, res: Response) => {
+  try {
+    const { eventId, ageGroupId } = req.params;
+    const ageGroupIdNum = parseInt(ageGroupId);
+    
+    console.log(`[Public Standings] Fetching standings for event ${eventId}, age group ${ageGroupId}`);
+    
+    // Get event info
+    const eventInfo = await db
+      .select({
+        name: events.name,
+        startDate: events.startDate,
+        endDate: events.endDate,
+        logoUrl: events.logoUrl
+      })
+      .from(events)
+      .where(eq(events.id, parseInt(eventId)))
+      .limit(1);
+
+    if (!eventInfo.length) {
+      return res.status(404).json({ 
+        error: 'Event not found',
+        message: 'The requested tournament does not exist.'
+      });
+    }
+
+    // Get age group info
+    const ageGroupInfo = await db
+      .select({
+        ageGroup: eventAgeGroups.ageGroup,
+        gender: eventAgeGroups.gender,
+        birthYear: eventAgeGroups.birthYear,
+        divisionCode: eventAgeGroups.divisionCode
+      })
+      .from(eventAgeGroups)
+      .where(and(
+        eq(eventAgeGroups.eventId, eventId),
+        eq(eventAgeGroups.id, ageGroupIdNum)
+      ))
+      .limit(1);
+
+    if (!ageGroupInfo.length) {
+      return res.status(404).json({ 
+        error: 'Age group not found',
+        message: 'The requested age group does not exist.'
+      });
+    }
+
+    // Get scoring rules
+    const scoringRules = await db
+      .select()
+      .from(eventScoringRules)
+      .where(and(
+        eq(eventScoringRules.eventId, eventId),
+        eq(eventScoringRules.isActive, true)
+      ))
+      .limit(1);
+
+    // Get standings for this age group
+    let standings = await db
+      .select({
+        teamId: teamStandings.teamId,
+        teamName: sql<string>`teams.name`,
+        position: teamStandings.position,
+        gamesPlayed: teamStandings.gamesPlayed,
+        wins: teamStandings.wins,
+        losses: teamStandings.losses,
+        ties: teamStandings.ties,
+        goalsScored: teamStandings.goalsScored,
+        goalsAllowed: teamStandings.goalsAllowed,
+        goalDifferential: teamStandings.goalDifferential,
+        shutouts: teamStandings.shutouts,
+        yellowCards: teamStandings.yellowCards,
+        redCards: teamStandings.redCards,
+        fairPlayPoints: teamStandings.fairPlayPoints,
+        totalPoints: teamStandings.totalPoints,
+        winPoints: teamStandings.winPoints,
+        tiePoints: teamStandings.tiePoints,
+        goalPoints: teamStandings.goalPoints,
+        shutoutPoints: teamStandings.shutoutPoints,
+        cardPenaltyPoints: teamStandings.cardPenaltyPoints
+      })
+      .from(teamStandings)
+      .leftJoin(teams, eq(teamStandings.teamId, teams.id))
+      .where(and(
+        eq(teamStandings.eventId, eventId),
+        eq(teamStandings.ageGroupId, ageGroupIdNum)
+      ))
+      .orderBy(teamStandings.position);
+
+    // If no pre-calculated standings, calculate dynamically
+    if (standings.length === 0) {
+      const gamesData = await db
+        .select({
+          id: games.id,
+          homeTeamId: games.homeTeamId,
+          awayTeamId: games.awayTeamId,
+          homeTeamName: homeTeamTable.name,
+          awayTeamName: awayTeamTable.name,
+          homeScore: games.homeScore,
+          awayScore: games.awayScore,
+          status: games.status,
+          homeYellowCards: games.homeYellowCards,
+          awayYellowCards: games.awayYellowCards,
+          homeRedCards: games.homeRedCards,
+          awayRedCards: games.awayRedCards
+        })
+        .from(games)
+        .leftJoin(homeTeamTable, eq(games.homeTeamId, homeTeamTable.id))
+        .leftJoin(awayTeamTable, eq(games.awayTeamId, awayTeamTable.id))
+        .where(and(
+          eq(games.eventId, eventId),
+          eq(games.ageGroupId, ageGroupIdNum)
+        ));
+
+      if (gamesData.length > 0) {
+        const calculator = new StandingsCalculator(eventId, ageGroupIdNum);
+        const calculatedStandings = await calculator.calculateStandings(gamesData);
+        
+        standings = calculatedStandings.map(team => ({
+          teamId: team.teamId,
+          teamName: team.teamName,
+          position: team.position || 0,
+          gamesPlayed: team.gamesPlayed,
+          wins: team.wins,
+          losses: team.losses,
+          ties: team.ties,
+          goalsScored: team.goalsScored,
+          goalsAllowed: team.goalsAllowed,
+          goalDifferential: team.goalDifferential,
+          shutouts: team.shutouts,
+          yellowCards: team.yellowCards,
+          redCards: team.redCards,
+          fairPlayPoints: team.fairPlayPoints,
+          totalPoints: team.totalPoints,
+          winPoints: team.winPoints,
+          tiePoints: team.tiePoints,
+          goalPoints: team.goalPoints,
+          shutoutPoints: team.shutoutPoints,
+          cardPenaltyPoints: team.cardPenaltyPoints
+        }));
+      }
+    }
+
+    console.log(`[Public Standings] Retrieved ${standings.length} team standings for age group ${ageGroupId}`);
+
+    res.json({
+      success: true,
+      eventInfo: eventInfo[0],
+      ageGroupInfo: {
+        ageGroup: ageGroupInfo[0].ageGroup,
+        gender: ageGroupInfo[0].gender,
+        birthYear: ageGroupInfo[0].birthYear,
+        divisionCode: ageGroupInfo[0].divisionCode,
+        displayName: `${ageGroupInfo[0].ageGroup} ${ageGroupInfo[0].gender}`
+      },
+      scoringRules: scoringRules.length > 0 ? {
+        title: scoringRules[0].title,
+        systemType: scoringRules[0].systemType,
+        scoring: {
+          win: scoringRules[0].win,
+          loss: scoringRules[0].loss,
+          tie: scoringRules[0].tie,
+          shutout: scoringRules[0].shutout,
+          goalScored: scoringRules[0].goalScored,
+          goalCap: scoringRules[0].goalCap,
+          redCard: scoringRules[0].redCard,
+          yellowCard: scoringRules[0].yellowCard
+        },
+        tiebreakers: [
+          scoringRules[0].tiebreaker1,
+          scoringRules[0].tiebreaker2,
+          scoringRules[0].tiebreaker3,
+          scoringRules[0].tiebreaker4,
+          scoringRules[0].tiebreaker5,
+          scoringRules[0].tiebreaker6,
+          scoringRules[0].tiebreaker7,
+          scoringRules[0].tiebreaker8
+        ]
+      } : null,
+      standings,
+      teamCount: standings.length
+    });
+
+  } catch (error) {
+    console.error('[Public Standings] Error:', error);
+    res.status(500).json({ 
+      error: 'Failed to fetch age group standings',
+      message: error instanceof Error ? error.message : 'Unknown error occurred'
+    });
   }
 });
 
