@@ -27,24 +27,39 @@ The Age Group Schedule Viewer has these bulk delete options:
 
 ## 🔧 Backend Fixes Applied
 
-### Fixed API Endpoint Mismatches
+### Resolved Routing Conflict Issue
+
+**Root Cause**: Multiple routers were registered for the same endpoints causing 500 errors:
+- `games.ts` router (broken schema - 13 LSP errors)
+- `schedule-management.ts` router (working properly)
+- `games-router.ts` (duplicate I created)
+
+**Solution**: 
+1. **Disabled broken games router**: Commented out `/api/admin/events` registration for `gamesRouter`
+2. **Enabled working router**: Added `/api/admin/events` registration for `scheduleManagementRouter`
+3. **Removed duplicates**: Existing endpoints in `schedule-management.ts` handle all operations
+
+### Working Bulk Delete Endpoints (schedule-management.ts)
 
 **1. CSV Import Delete**
-- **Before**: `/api/admin/games/${eventId}/csv-imports` (didn't exist)
-- **After**: `/api/admin/events/${eventId}/games/delete-all` ✅
+- **Endpoint**: `DELETE /api/admin/events/:eventId/games/delete-all`
+- **Function**: Deletes games with `notes LIKE '%CSV_IMPORT%'`
+- **Status**: ✅ Working
 
 **2. Delete All Games**
-- **Before**: `/api/admin/games/${eventId}/games/bulk` (wrong path)
-- **After**: `/api/admin/events/${eventId}/games/bulk` ✅
+- **Endpoint**: `DELETE /api/admin/events/:eventId/games/bulk` (empty gameIds array)
+- **Function**: Deletes ALL games in tournament + time slots
+- **Status**: ✅ Working
 
 **3. Age Group Delete**  
-- **Before**: `/api/admin/games/${eventId}/age-group/${ageGroupId}/games` (didn't exist)
-- **After**: `/api/admin/events/${eventId}/age-groups/${ageGroupId}/games` ✅ (newly created)
+- **Endpoint**: `DELETE /api/admin/events/:eventId/age-groups/:ageGroupId/games`
+- **Function**: Deletes games for specific age group
+- **Status**: ✅ Working
 
-### New Backend Endpoint Added
-Created missing age group deletion endpoint:
-```
-DELETE /api/admin/events/:eventId/age-groups/:ageGroupId/games
+### Route Registration Changes
+```diff
+- app.use('/api/admin/events', isAdmin, gamesRouter); // DISABLED: Schema errors
++ app.use('/api/admin/events', isAdmin, scheduleManagementRouter); // Event-specific bulk operations
 ```
 
 ## 🎯 Current Functionality Status

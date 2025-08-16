@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { db } from '../../../db';
 import { eq, inArray, and } from 'drizzle-orm';
-import { games, gameTimeSlots } from '../../../db/schema';
+import { games, gameTimeSlots, fields } from '../../../db/schema';
 import { hasEventAccess } from '../../middleware/event-access';
 
 // Create router for games management

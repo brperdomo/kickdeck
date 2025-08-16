@@ -1906,6 +1906,7 @@ export function registerRoutes(app: Express): Server {
     
     // Register schedule management router
     app.use('/api/admin', isAdmin, scheduleManagementRouter); // Schedule management (delete games)
+    app.use('/api/admin/events', isAdmin, scheduleManagementRouter); // Event-specific bulk delete operations
     app.use('/api/admin/game-reports', gameReportsRouter); // Game reporting (score/card reporting)
     // Enhanced test routes without authentication for calendar interface
     app.get('/api/test-fields', async (req, res) => {
@@ -2050,7 +2051,7 @@ export function registerRoutes(app: Express): Server {
     
     app.use('/api/admin/games', isAdmin, adminGamesRouter);
     app.use('/api/admin/score-management', isAdmin, gameScoreManagementRouter); // Game scheduling and management
-    app.use('/api/admin/events', isAdmin, gamesRouter); // Game creation and event-specific game management (includes create-tbd)
+    // app.use('/api/admin/events', isAdmin, gamesRouter); // DISABLED: Schema errors - using scheduleManagementRouter for bulk operations instead
     app.use('/api/admin/events', isAdmin, fillEmptySlotsRouter); // Fill empty slots functionality
     app.use('/api/admin/events', isAdmin, fieldsRouter); // Field assignment and management
     app.use('/api/admin', isAdmin, gameTeamsRouter); // Game team editing functionality
