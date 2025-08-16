@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import multer from 'multer';
 import { parse } from 'csv-parse';
+import fs from 'fs';
 import { db } from '../../../db';
 import { findBestTeamMatch, generateMatchWarnings } from '../../utils/teamMatching';
 import { games, teams, fields, complexes, eventAgeGroups, eventBrackets, gameTimeSlots } from '../../../db/schema';
@@ -8,6 +9,11 @@ import { eq, and, sql, ilike } from 'drizzle-orm';
 // Removed isAdmin import - CSV import should work with existing admin session
 
 const router = Router();
+
+// Test endpoint to verify router is working
+router.get('/test', (req, res) => {
+  res.json({ message: 'CSV Import router is working!', timestamp: new Date().toISOString() });
+});
 
 // Helper function to parse division codes like G2014, B2012, etc.
 function parseDivisionCode(division: string): { gender: string, birthYear: number, ageGroup: string, divisionCode: string } {
@@ -188,7 +194,7 @@ interface ImportPreview {
 }
 
 // CSV Import Preview Endpoint - No additional auth needed if already accessing admin panel
-router.post('/csv-import/preview', upload.single('csvFile'), async (req, res) => {
+router.post('/preview', upload.single('csvFile'), async (req, res) => {
   try {
     const eventId = parseInt(req.body.eventId);
     
@@ -206,7 +212,6 @@ router.post('/csv-import/preview', upload.single('csvFile'), async (req, res) =>
     const csvData: CSVRow[] = [];
     const errors: ValidationError[] = [];
     
-    const fs = require('fs');
     const fileContent = fs.readFileSync(req.file.path, 'utf-8');
     
     await new Promise<void>((resolve, reject) => {
@@ -472,7 +477,6 @@ router.post('/csv-import/preview', upload.single('csvFile'), async (req, res) =>
     
     // Clean up uploaded file if it exists
     if (req.file) {
-      const fs = require('fs');
       try { fs.unlinkSync(req.file.path); } catch {}
     }
     
@@ -484,7 +488,7 @@ router.post('/csv-import/preview', upload.single('csvFile'), async (req, res) =>
 });
 
 // CSV Import Execution Endpoint - No additional auth needed if already accessing admin panel
-router.post('/csv-import/execute', upload.single('csvFile'), async (req, res) => {
+router.post('/execute', upload.single('csvFile'), async (req, res) => {
   try {
     const eventId = parseInt(req.body.eventId);
     const { 
@@ -507,7 +511,6 @@ router.post('/csv-import/execute', upload.single('csvFile'), async (req, res) =>
 
     // Parse CSV file
     const csvData: CSVRow[] = [];
-    const fs = require('fs');
     const fileContent = fs.readFileSync(req.file.path, 'utf-8');
     
     await new Promise<void>((resolve, reject) => {
@@ -837,7 +840,6 @@ router.post('/csv-import/execute', upload.single('csvFile'), async (req, res) =>
     
     // Clean up uploaded file if it exists
     if (req.file) {
-      const fs = require('fs');
       try { fs.unlinkSync(req.file.path); } catch {}
     }
     

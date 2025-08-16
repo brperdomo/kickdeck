@@ -963,10 +963,10 @@ export function registerRoutes(app: Express): Server {
     // Register SendGrid webhook route (no auth required for webhook)
     app.use('/api', sendgridWebhookRouter);
     
-    // Safe registration fees middleware temporarily disabled to fix server startup
-
-    // CSV Import routes - No auth required since accessed from authenticated admin panel
+    // CSV Import routes - Register very early to avoid Vite catch-all interference
     app.use('/api/admin/csv-import', csvImportRouter);
+    
+    // Safe registration fees middleware temporarily disabled to fix server startup
     
     // Register admin routes
     app.use('/api/admin/accounting-codes', isAdmin, accountingCodesRouter);
