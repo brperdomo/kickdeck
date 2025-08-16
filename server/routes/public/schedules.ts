@@ -1,9 +1,14 @@
 import { Router, Request, Response } from 'express';
 import { db } from '../../../db';
 import { publishedSchedules, games, teams, events, eventAgeGroups, eventBrackets, fields, complexes } from '../../../db/schema';
+import { alias } from 'drizzle-orm/pg-core';
 import { eq, and, desc, isNull, isNotNull, inArray, or } from 'drizzle-orm';
 
 const router = Router();
+
+// Create table aliases for joining teams table twice
+const homeTeamTable = alias(teams, 'homeTeam');
+const awayTeamTable = alias(teams, 'awayTeam');
 
 // Get live schedule data for public viewing (no authentication required)
 router.get('/:eventId', async (req: Request, res: Response) => {
@@ -43,6 +48,8 @@ router.get('/:eventId', async (req: Request, res: Response) => {
         id: games.id,
         homeTeamId: games.homeTeamId,
         awayTeamId: games.awayTeamId,
+        homeTeamName: homeTeamTable.name,
+        awayTeamName: awayTeamTable.name,
         scheduledDate: games.scheduledDate,
         scheduledTime: games.scheduledTime,
         fieldId: games.fieldId,
@@ -50,12 +57,16 @@ router.get('/:eventId', async (req: Request, res: Response) => {
         duration: games.duration,
         status: games.status,
         ageGroupId: games.ageGroupId,
-        matchNumber: games.matchNumber
+        matchNumber: games.matchNumber,
+        ageGroupName: eventAgeGroups.ageGroup
       })
       .from(games)
       .leftJoin(fields, eq(games.fieldId, fields.id))
+      .leftJoin(homeTeamTable, eq(games.homeTeamId, homeTeamTable.id))
+      .leftJoin(awayTeamTable, eq(games.awayTeamId, awayTeamTable.id))
+      .leftJoin(eventAgeGroups, eq(games.ageGroupId, eventAgeGroups.id))
       .where(and(
-        eq(games.eventId, eventIdNum)
+        eq(games.eventId, eventId)
       ));
 
     console.log(`[Public Schedules] Found ${gamesData.length} games`);
@@ -71,7 +82,7 @@ router.get('/:eventId', async (req: Request, res: Response) => {
       })
       .from(teams)
       .where(and(
-        eq(teams.eventId, eventIdNum),
+        eq(teams.eventId, eventId),
         isNotNull(teams.bracketId) // Only teams assigned to flights
       ));
 
@@ -87,7 +98,7 @@ router.get('/:eventId', async (req: Request, res: Response) => {
         divisionCode: eventAgeGroups.divisionCode
       })
       .from(eventAgeGroups)
-      .where(eq(eventAgeGroups.eventId, eventIdNum));
+      .where(eq(eventAgeGroups.eventId, eventId));
 
     // Get flights separately to avoid join issues
     const flightsData = await db
@@ -97,7 +108,7 @@ router.get('/:eventId', async (req: Request, res: Response) => {
         ageGroupId: eventBrackets.ageGroupId
       })
       .from(eventBrackets)
-      .where(eq(eventBrackets.eventId, eventIdNum));
+      .where(eq(eventBrackets.eventId, eventId));
 
     console.log(`[Public Schedules] Found ${ageGroupsData.length} age groups`);
     console.log(`[Public Schedules] Found ${flightsData.length} flights`);
@@ -215,33 +226,28 @@ router.get('/:eventId', async (req: Request, res: Response) => {
 
     // Process games data with team names and flight info
     const processedGames = gamesData.map(game => {
-      const homeTeam = teamsMap.get(game.homeTeamId);
-      const awayTeam = teamsMap.get(game.awayTeamId);
+      // Use team names directly from the join, with fallback to map lookup
+      let homeTeamName = game.homeTeamName;
+      let awayTeamName = game.awayTeamName;
       
-
-      
-      // Find flight info for this game
-      let ageGroupName = 'Unknown';
-      let flightName = 'Unknown';
-      
-      if (homeTeam || awayTeam) {
-        const teamForAgeGroup = homeTeam || awayTeam;
-        const ageGroupData = ageGroupsData.find(ag => ag.ageGroupId === teamForAgeGroup.ageGroupId);
-        if (ageGroupData) {
-          ageGroupName = `${ageGroupData.gender} ${ageGroupData.birthYear}`;
-          const flightData = flightsData.find(f => f.flightId === teamForAgeGroup.bracketId);
-          if (flightData) {
-            flightName = flightData.flightName;
-          }
-        }
+      if (!homeTeamName && game.homeTeamId) {
+        const homeTeam = teamsMap.get(game.homeTeamId);
+        homeTeamName = homeTeam?.name || `Team ${game.homeTeamId}`;
       }
+      
+      if (!awayTeamName && game.awayTeamId) {
+        const awayTeam = teamsMap.get(game.awayTeamId);
+        awayTeamName = awayTeam?.name || `Team ${game.awayTeamId}`;
+      }
+      
+      // Find age group info for this game
+      let ageGroupName = game.ageGroupName || 'Unknown';
       
       return {
         id: game.id,
-        homeTeam: homeTeam?.name || (game.homeTeamId ? `Team ${game.homeTeamId}` : 'TBD'),
-        awayTeam: awayTeam?.name || (game.awayTeamId ? `Team ${game.awayTeamId}` : 'TBD'),
+        homeTeam: homeTeamName || 'TBD',
+        awayTeam: awayTeamName || 'TBD',
         ageGroup: ageGroupName,
-        flightName: flightName,
         field: game.fieldName || `Field ${game.fieldId}`,
         date: game.scheduledDate || new Date().toISOString().split('T')[0],
         time: game.scheduledTime || '08:00',
@@ -268,7 +274,7 @@ router.get('/:eventId', async (req: Request, res: Response) => {
       eventInfo: eventInfo[0],
       ageGroupsByGender: ageGroupsStructure,
       games: processedGames,
-      standings: await calculateLiveStandings(parseInt(eventId), gamesData.filter(g => g.status === 'completed'), teamsData)
+      standings: await calculateLiveStandings(eventIdNum, gamesData.filter(g => g.status === 'completed'), teamsData)
     };
 
     res.json(scheduleData);
@@ -306,8 +312,7 @@ router.get('/:eventId/age-group/:ageGroupId', async (req: Request, res: Response
       });
     }
 
-    // Override with the specific tournament logo for this event
-    eventInfo[0].logoUrl = 'https://app.matchpro.ai/uploads/2025-EmpireSurf-SuperCup-logo_badge_blue_1748622426612_i7ic0i.jpg';
+    // Use the event's actual logo from settings - no hardcoded overrides
 
     // Get age group info
     const ageGroupInfo = await db
@@ -319,8 +324,8 @@ router.get('/:eventId/age-group/:ageGroupId', async (req: Request, res: Response
       })
       .from(eventAgeGroups)
       .where(and(
-        eq(eventAgeGroups.eventId, eventIdNum),
-        eq(eventAgeGroups.id, ageGroupIdNum)
+        eq(eventAgeGroups.eventId, eventId),
+        eq(eventAgeGroups.id, ageGroupId)
       ))
       .limit(1);
 
@@ -342,8 +347,8 @@ router.get('/:eventId/age-group/:ageGroupId', async (req: Request, res: Response
       })
       .from(eventBrackets)
       .where(and(
-        eq(eventBrackets.eventId, eventIdNum),
-        eq(eventBrackets.ageGroupId, ageGroupIdNum)
+        eq(eventBrackets.eventId, eventId),
+        eq(eventBrackets.ageGroupId, ageGroupId)
       ));
 
     // Get teams for this age group
@@ -356,8 +361,8 @@ router.get('/:eventId/age-group/:ageGroupId', async (req: Request, res: Response
       })
       .from(teams)
       .where(and(
-        eq(teams.eventId, eventIdNum),
-        eq(teams.ageGroupId, ageGroupIdNum),
+        eq(teams.eventId, eventId),
+        eq(teams.ageGroupId, ageGroupId),
         isNotNull(teams.bracketId)
       ));
 
@@ -381,7 +386,7 @@ router.get('/:eventId/age-group/:ageGroupId', async (req: Request, res: Response
       .from(games)
       .leftJoin(fields, eq(games.fieldId, fields.id))
       .where(and(
-        eq(games.eventId, eventIdNum),
+        eq(games.eventId, eventId),
         or(
           inArray(games.homeTeamId, teamIds),
           inArray(games.awayTeamId, teamIds)

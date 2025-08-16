@@ -31,7 +31,7 @@ router.get('/:eventId/schedule-calendar-debug', async (req, res) => {
       })
       .from(games)
       .leftJoin(eventAgeGroups, eq(games.ageGroupId, eventAgeGroups.id))
-      .where(eq(games.eventId, Number(eventId)));
+      .where(eq(games.eventId, eventId));
 
     console.log(`[BYPASS DEBUG] SUCCESS: Found ${gamesWithDetails.length} games`);
     
@@ -94,7 +94,7 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
       .from(games)
       .leftJoin(eventAgeGroups, eq(games.ageGroupId, eventAgeGroups.id))
       .leftJoin(eventBrackets, eq(games.groupId, eventBrackets.id))
-      .where(eq(games.eventId, Number(eventId)));
+      .where(eq(games.eventId, eventId));
 
     console.log(`[Schedule Calendar] Found ${gamesWithDetails.length} total games with age group data`);
     console.log(`[Schedule Calendar] Sample game:`, gamesWithDetails[0]);
@@ -190,7 +190,7 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
     
     // Get all teams for this event at once to avoid N+1 query problem
     const allTeams = await db.query.teams.findMany({
-      where: eq(teams.eventId, Number(eventId))
+      where: eq(teams.eventId, eventId)
     });
     
     // Create a map for fast team lookups
