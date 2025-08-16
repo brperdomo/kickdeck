@@ -588,12 +588,30 @@ router.post('/preview', upload.single('csvFile'), async (req, res) => {
     // Analyze age group/division mappings  
     const ageGroupAnalysis = analyzeAgeGroupStructure(csvData, eventId);
     
+    // Transform preview data to include parsed Age Group and Field information
+    const transformedPreview = csvData.slice(0, 10).map(row => {
+      const transformed = { ...row };
+      
+      // Parse Division into Age Group if not already present
+      if (row.Division && !row['Age Group']) {
+        const parsed = parseDivisionCode(row.Division);
+        transformed['Age Group'] = parsed.ageGroup;
+      }
+      
+      // Map Venue to Field if not already present
+      if (row.Venue && !row.Field) {
+        transformed.Field = row.Venue;
+      }
+      
+      return transformed;
+    });
+
     // Create preview response with enhanced tournament data
     const preview: any = {
       totalRows: csvData.length,
       validRows: csvData.length - errors.length,
       errors,
-      preview: csvData.slice(0, 10), // First 10 rows for preview
+      preview: transformedPreview, // Use transformed data for preview
       fieldMappings,
       teamMappings,
       teamMatches,
