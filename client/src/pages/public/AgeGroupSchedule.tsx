@@ -52,15 +52,55 @@ export default function AgeGroupSchedule() {
   const { eventId, ageGroupId } = useParams();
   const [activeTab, setActiveTab] = useState('schedule');
 
-  // Fetch age group specific data
+  // Fetch age group specific data from the working endpoint
   const { data: scheduleData, isLoading, error } = useQuery({
     queryKey: ['age-group-schedule', eventId, ageGroupId],
     queryFn: async () => {
-      const response = await fetch(`/api/public/schedules/${eventId}/age-group/${ageGroupId}`);
+      const response = await fetch(`/api/public/schedules/${eventId}`);
       if (!response.ok) {
-        throw new Error('Failed to fetch age group schedule');
+        throw new Error('Failed to fetch schedule data');
       }
-      return response.json();
+      const data = await response.json();
+      
+      // Find the specific age group from the data
+      const allAgeGroups = [...(data.ageGroupsByGender?.boys || []), ...(data.ageGroupsByGender?.girls || [])];
+      const targetAgeGroup = allAgeGroups.find(ag => ag.ageGroupId === parseInt(ageGroupId));
+      
+      if (!targetAgeGroup) {
+        throw new Error('Age group not found');
+      }
+      
+      // Filter games for this specific age group
+      const ageGroupGames = data.games?.filter(game => game.ageGroup === targetAgeGroup.ageGroup) || [];
+      
+      // Transform data to match expected interface
+      return {
+        eventInfo: data.eventInfo,
+        ageGroupInfo: {
+          ageGroup: targetAgeGroup.ageGroup,
+          gender: targetAgeGroup.gender,
+          birthYear: targetAgeGroup.birthYear,
+          divisionCode: targetAgeGroup.divisionCode,
+          displayName: targetAgeGroup.displayName,
+        },
+        flights: [{
+          flightId: 1,
+          flightName: 'Main',
+          teamCount: targetAgeGroup.totalTeams,
+          teams: [], // Will be populated if needed
+          games: ageGroupGames.map(game => ({
+            id: game.id,
+            homeTeam: game.homeTeam,
+            awayTeam: game.awayTeam,
+            date: game.date,
+            time: game.time,
+            field: game.field,
+            status: game.status,
+            homeScore: game.homeScore,
+            awayScore: game.awayScore,
+          }))
+        }]
+      };
     },
     enabled: !!eventId && !!ageGroupId
   });
