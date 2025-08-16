@@ -122,8 +122,9 @@ router.get('/:eventId', async (req: Request, res: Response) => {
     const processedAgeGroups = Array.from(ageGroupMap.entries()).map(([ageGroupId, ageGroupInfo]) => {
       const ageGroupGames = gamesByAgeGroup.get(ageGroupId) || [];
       
+
       return {
-        ageGroupId,
+        ageGroupId: parseInt(ageGroupId), // Ensure ageGroupId is a number
         ageGroup: ageGroupInfo.name,
         gender: ageGroupInfo.gender,
         divisionCode: ageGroupInfo.divisionCode,
@@ -267,6 +268,7 @@ router.get('/:eventId', async (req: Request, res: Response) => {
 
           
           return {
+            ageGroupId: ag.ageGroupId, // Add the missing ageGroupId for navigation
             ageGroup: ag.ageGroup,
             gender: ag.gender,
             birthYear: 2024, // Will be enhanced with real birth year data
@@ -292,6 +294,7 @@ router.get('/:eventId', async (req: Request, res: Response) => {
           const teamCount = uniqueTeamIds.size;
           
           return {
+            ageGroupId: ag.ageGroupId, // Add the missing ageGroupId for navigation
             ageGroup: ag.ageGroup,
             gender: ag.gender,
             birthYear: 2024, // Will be enhanced with real birth year data
