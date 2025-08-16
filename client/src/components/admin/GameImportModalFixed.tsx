@@ -95,7 +95,13 @@ export function GameImportModal({ isOpen, onClose, eventId, onImportComplete }: 
     formData.append('eventId', eventId);
 
     try {
-      const response = await fetch('/api/admin/csv-import/preview', {
+      // Force local development server for CSV import
+      const baseUrl = window.location.hostname === 'localhost' || window.location.hostname.includes('replit.dev') 
+        ? window.location.origin 
+        : '/';
+      const apiUrl = baseUrl === '/' ? '/api/admin/csv-import/preview' : `${baseUrl}/api/admin/csv-import/preview`;
+      
+      const response = await fetch(apiUrl, {
         method: 'POST',
         body: formData,
         credentials: 'include'
@@ -140,7 +146,13 @@ export function GameImportModal({ isOpen, onClose, eventId, onImportComplete }: 
     formData.append('createMissingTeams', createMissingTeams.toString());
 
     try {
-      const response = await fetch('/api/admin/csv-import/execute', {
+      // Force local development server for CSV import
+      const baseUrl = window.location.hostname === 'localhost' || window.location.hostname.includes('replit.dev') 
+        ? window.location.origin 
+        : '/';
+      const apiUrl = baseUrl === '/' ? '/api/admin/csv-import/execute' : `${baseUrl}/api/admin/csv-import/execute`;
+      
+      const response = await fetch(apiUrl, {
         method: 'POST',
         body: formData,
         credentials: 'include'
