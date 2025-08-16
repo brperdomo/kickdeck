@@ -218,6 +218,7 @@ router.get('/:eventId', async (req: Request, res: Response) => {
     });
 
     console.log(`[Public Schedules Fixed] Processed ${processedAgeGroups.length} age groups with games`);
+    console.log(`[Public Schedules Fixed] Sample age groups:`, processedAgeGroups.slice(0, 3).map(ag => ({ageGroup: ag.ageGroup, gender: ag.gender, games: ag.games.length})));
 
     // Flatten all games from all age groups for the games array
     const allGames = processedAgeGroups.flatMap(ageGroup => 
@@ -254,7 +255,7 @@ router.get('/:eventId', async (req: Request, res: Response) => {
     // Group age groups by gender for the frontend
     const ageGroupsByGender = {
       boys: processedAgeGroups
-        .filter(ag => ag.gender === 'boys')
+        .filter(ag => ag.gender?.toLowerCase() === 'boys')
         .map(ag => ({
           ageGroup: ag.ageGroup,
           gender: ag.gender,
@@ -280,7 +281,7 @@ router.get('/:eventId', async (req: Request, res: Response) => {
           }]
         })),
       girls: processedAgeGroups
-        .filter(ag => ag.gender === 'girls')
+        .filter(ag => ag.gender?.toLowerCase() === 'girls')
         .map(ag => ({
           ageGroup: ag.ageGroup,
           gender: ag.gender,
