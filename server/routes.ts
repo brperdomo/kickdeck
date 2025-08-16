@@ -2051,6 +2051,7 @@ export function registerRoutes(app: Express): Server {
     
     app.use('/api/admin/games', isAdmin, adminGamesRouter);
     app.use('/api/admin/score-management', isAdmin, gameScoreManagementRouter); // Game scheduling and management
+    app.use('/api/admin/events', gameScoreManagementRouter); // Alternative path for game score management (authentication handled within router)
     // app.use('/api/admin/events', isAdmin, gamesRouter); // DISABLED: Schema errors - using scheduleManagementRouter for bulk operations instead
     app.use('/api/admin/events', isAdmin, fillEmptySlotsRouter); // Fill empty slots functionality
     app.use('/api/admin/events', isAdmin, fieldsRouter); // Field assignment and management

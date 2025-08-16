@@ -33,7 +33,7 @@ interface GameWithDetails {
   enteredByName: string | null;
 }
 
-// Get all games for an event with scoring information
+// Get all games for an event with scoring information - NO AUTH REQUIRED FOR TESTING
 router.get('/events/:eventId/games', async (req, res) => {
   try {
     const { eventId } = req.params;

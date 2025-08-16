@@ -104,7 +104,7 @@ export default function GameScoreManager({ eventId }: GameScoreManagerProps) {
   const { data: games = [], isLoading } = useQuery({
     queryKey: ['games-scores', eventId],
     queryFn: async () => {
-      const response = await fetch(`/api/admin/score-management/events/${eventId}/games`);
+      const response = await fetch(`/api/admin/events/${eventId}/games`);
       if (!response.ok) throw new Error('Failed to fetch games');
       const data = await response.json();
       return data.games as Game[];
