@@ -9,6 +9,70 @@ import { isAdmin } from '../../middleware/auth';
 
 const router = Router();
 
+// Helper function to extract coach information from CSV data
+function extractCoachInformation(csvData: CSVRow[]) {
+  const coaches = new Map();
+  
+  csvData.forEach((row, index) => {
+    // Extract home coach info
+    const homeCoachId = row['Home Team Coach ID'] || row['Home Coach ID'];
+    const homeCoachName = row['Home Head Coach'] || row['Home Coach'];
+    if (homeCoachId && homeCoachName) {
+      coaches.set(homeCoachId, {
+        id: homeCoachId,
+        name: homeCoachName,
+        type: 'coach'
+      });
+    }
+    
+    // Extract away coach info  
+    const awayCoachId = row['Away Team Coach ID'] || row['Away Coach ID'];
+    const awayCoachName = row['Away Head Coach'] || row['Away Coach'];
+    if (awayCoachId && awayCoachName) {
+      coaches.set(awayCoachId, {
+        id: awayCoachId,
+        name: awayCoachName,
+        type: 'coach'
+      });
+    }
+  });
+  
+  return {
+    totalCoaches: coaches.size,
+    coaches: Array.from(coaches.values()),
+    hasCoachData: coaches.size > 0
+  };
+}
+
+// Helper function to analyze age group structure
+async function analyzeAgeGroupStructure(csvData: CSVRow[], eventId: number) {
+  const divisions = new Set();
+  const flights = new Set();
+  const ageGroupPattern = new Set();
+  
+  csvData.forEach(row => {
+    if (row.Division) divisions.add(row.Division);
+    if (row.Flight) flights.add(row.Flight);
+    // Extract age pattern from division (B2015, G2014, etc.)
+    const ageMatch = row.Division?.match(/[BG]\d{4}/);
+    if (ageMatch) ageGroupPattern.add(ageMatch[0]);
+  });
+  
+  // Get existing age groups for this event
+  const existingAgeGroups = await db
+    .select({ name: eventAgeGroups.name, divisionCode: eventAgeGroups.divisionCode })
+    .from(eventAgeGroups)
+    .where(eq(eventAgeGroups.eventId, eventId.toString()));
+  
+  return {
+    csvDivisions: Array.from(divisions),
+    csvFlights: Array.from(flights), 
+    csvAgePatterns: Array.from(ageGroupPattern),
+    existingAgeGroups: existingAgeGroups.map(ag => ({ name: ag.name, code: ag.divisionCode })),
+    needsAgeGroupMapping: divisions.size > 0 && existingAgeGroups.length > 0
+  };
+}
+
 // Configure multer for file uploads
 const upload = multer({ 
   dest: 'uploads/',
@@ -25,6 +89,7 @@ const upload = multer({
 });
 
 interface CSVRow {
+  // Basic game fields (legacy support)
   Date: string;
   Time: string;
   'Home Team': string;
@@ -32,6 +97,30 @@ interface CSVRow {
   'Age Group': string;
   Field: string;
   Status: string;
+  
+  // Enhanced tournament fields
+  'GM#'?: string;
+  Division?: string;
+  Flight?: string;
+  'Home Team Coach ID'?: string;
+  'Home Head Coach'?: string;
+  'Away Team Coach ID'?: string;
+  'Away Head Coach'?: string;
+  'Away Conflict'?: string;
+  'Home Conflict'?: string;
+  Type?: string;
+  Complex?: string;
+  Venue?: string;
+  
+  // Alternative field mappings for flexibility
+  'Game Number'?: string;
+  'Game #'?: string;
+  'Home Coach ID'?: string;
+  'Away Coach ID'?: string;
+  'Home Coach'?: string;
+  'Away Coach'?: string;
+  'Game Type'?: string;
+  'Match Type'?: string;
 }
 
 interface ValidationError {
@@ -90,8 +179,37 @@ router.post('/csv-import/preview', isAdmin, upload.single('csvFile'), async (req
 
     console.log(`📊 Parsed ${csvData.length} rows from CSV`);
 
-    // Validate required fields
-    const requiredFields = ['Date', 'Time', 'Home Team', 'Away Team', 'Age Group', 'Field'];
+    // Validate required fields - flexible field detection
+    const requiredFields = ['Date', 'Time', 'Home Team', 'Away Team'];
+    
+    // Detect CSV format and adjust required fields
+    const csvHeaders = Object.keys(csvData[0] || {});
+    console.log(`📋 Detected CSV Headers:`, csvHeaders);
+    
+    // Enhanced tournament format detection
+    const hasTournamentFormat = csvHeaders.some(h => 
+      ['GM#', 'Game Number', 'Division', 'Flight', 'Complex', 'Venue'].includes(h)
+    );
+    
+    // Flexible field requirements based on format
+    if (hasTournamentFormat) {
+      console.log(`🏆 Detected Tournament Format CSV with enhanced fields`);
+      // Tournament format can use Division instead of Age Group, Venue instead of Field
+      if (!csvHeaders.includes('Age Group') && csvHeaders.includes('Division')) {
+        requiredFields.push('Division');
+      } else {
+        requiredFields.push('Age Group');
+      }
+      
+      if (!csvHeaders.includes('Field') && (csvHeaders.includes('Venue') || csvHeaders.includes('Complex'))) {
+        requiredFields.push('Venue');
+      } else {
+        requiredFields.push('Field');
+      }
+    } else {
+      console.log(`📊 Detected Basic Format CSV`);
+      requiredFields.push('Age Group', 'Field');
+    }
     
     csvData.forEach((row, index) => {
       requiredFields.forEach(field => {
@@ -132,27 +250,65 @@ router.post('/csv-import/preview', isAdmin, upload.single('csvFile'), async (req
       }
     });
 
-    // Get existing field mappings
+    // Get existing field mappings with enhanced venue/complex support
     const existingFields = await db
-      .select({ id: fields.id, name: fields.name })
+      .select({ 
+        id: fields.id, 
+        name: fields.name, 
+        complexName: complexes.name,
+        fieldSize: fields.fieldSize 
+      })
       .from(fields)
       .leftJoin(complexes, eq(fields.complexId, complexes.id));
     
-    const fieldMappings: { [key: string]: { exists: boolean; fieldId?: number } } = {};
+    const fieldMappings: { [key: string]: { exists: boolean; fieldId?: number; complexName?: string } } = {};
     const missingFields: string[] = [];
-    const uniqueFieldsSet = new Set(csvData.map(row => row.Field?.trim()).filter(Boolean));
-    const uniqueFields = Array.from(uniqueFieldsSet);
+    
+    // Extract field/venue information from CSV - handle both formats
+    const uniqueFieldsSet = new Set();
+    csvData.forEach(row => {
+      // Try multiple field extraction strategies
+      const fieldIdentifiers = [
+        row.Field?.trim(),
+        row.Venue?.trim(), 
+        row['Venue']?.trim(),
+        // Extract field from venue strings like "Field 9B 9v9"
+        row.Venue?.includes('Field') ? row.Venue?.trim() : null
+      ].filter(Boolean);
+      
+      fieldIdentifiers.forEach(field => {
+        if (field) uniqueFieldsSet.add(field);
+      });
+    });
+    
+    const uniqueFields = Array.from(uniqueFieldsSet) as string[];
+    console.log(`🏟️ Processing ${uniqueFields.length} unique field/venue identifiers:`, uniqueFields.slice(0, 5));
     
     uniqueFields.forEach(fieldName => {
-      const existingField = existingFields.find(f => 
-        f.name?.toLowerCase().includes(fieldName.toLowerCase()) ||
-        fieldName.toLowerCase().includes(f.name?.toLowerCase() || '')
-      );
+      // Enhanced field matching - handle complex venue names like "Field 9B 9v9"
+      const existingField = existingFields.find(f => {
+        const fieldFullName = f.complexName ? `${f.complexName} ${f.name}` : f.name;
+        const lowerFieldName = fieldName.toLowerCase();
+        const lowerDbName = f.name?.toLowerCase() || '';
+        const lowerFullName = fieldFullName?.toLowerCase() || '';
+        
+        return (
+          lowerDbName.includes(lowerFieldName) ||
+          lowerFieldName.includes(lowerDbName) ||
+          lowerFullName.includes(lowerFieldName) ||
+          lowerFieldName.includes(lowerFullName) ||
+          // Handle cases like "Field 9B" matching "Field 9B 9v9"
+          lowerFieldName.includes(lowerDbName.replace(/\s+/g, '')) ||
+          // Handle field size extraction
+          (f.fieldSize && lowerFieldName.includes(f.fieldSize.toLowerCase()))
+        );
+      });
       
       if (existingField) {
         fieldMappings[fieldName] = {
           exists: true,
-          fieldId: existingField.id
+          fieldId: existingField.id,
+          complexName: existingField.complexName || undefined
         };
       } else {
         fieldMappings[fieldName] = { exists: false };
@@ -226,7 +382,13 @@ router.post('/csv-import/preview', isAdmin, upload.single('csvFile'), async (req
       }
     });
 
-    // Create preview response with enhanced team matching
+    // Extract coach information for preview
+    const coachInfo = extractCoachInformation(csvData);
+    
+    // Analyze age group/division mappings  
+    const ageGroupAnalysis = analyzeAgeGroupStructure(csvData, eventId);
+    
+    // Create preview response with enhanced tournament data
     const preview: any = {
       totalRows: csvData.length,
       validRows: csvData.length - errors.length,
@@ -237,7 +399,19 @@ router.post('/csv-import/preview', isAdmin, upload.single('csvFile'), async (req
       teamMatches,
       missingFields,
       missingTeams,
-      matchingWarnings
+      matchingWarnings,
+      csvFormat: hasTournamentFormat ? 'tournament' : 'basic',
+      csvHeaders,
+      coachInfo,
+      ageGroupAnalysis: await ageGroupAnalysis,
+      gameMetadata: {
+        totalGames: csvData.length,
+        gameTypes: [...new Set(csvData.map(r => r.Type || 'Unknown').filter(Boolean))],
+        statuses: [...new Set(csvData.map(r => r.Status).filter(Boolean))],
+        complexes: [...new Set(csvData.map(r => r.Complex).filter(Boolean))],
+        flights: [...new Set(csvData.map(r => r.Flight).filter(Boolean))],
+        divisions: [...new Set(csvData.map(r => r.Division).filter(Boolean))]
+      }
     };
 
     console.log(`✅ Import Preview: ${preview.validRows}/${preview.totalRows} valid rows, ${errors.length} errors, ${missingFields.length} missing fields, ${missingTeams.length} missing teams`);
@@ -454,12 +628,29 @@ router.post('/csv-import/execute', isAdmin, upload.single('csvFile'), async (req
       const row = csvData[index];
       
       try {
-        // Get field ID
-        const fieldName = row.Field?.trim();
-        const fieldId = fieldIdMap[fieldName] || 
-          (await db.query.fields.findFirst({
+        // Get field ID - enhanced venue/field matching
+        const fieldName = row.Field?.trim() || row.Venue?.trim() || row['Venue']?.trim();
+        let fieldId = fieldIdMap[fieldName];
+        
+        if (!fieldId) {
+          // Try enhanced field matching for tournament format
+          const existingField = await db.query.fields.findFirst({
             where: ilike(fields.name, `%${fieldName}%`)
-          }))?.id;
+          });
+          fieldId = existingField?.id;
+          
+          // If still not found, try extracting field name from venue string
+          if (!fieldId && fieldName?.includes('Field')) {
+            const fieldMatch = fieldName.match(/Field\s*(\w+)/i);
+            if (fieldMatch) {
+              const extractedFieldName = `Field ${fieldMatch[1]}`;
+              const extractedField = await db.query.fields.findFirst({
+                where: ilike(fields.name, `%${extractedFieldName}%`)
+              });
+              fieldId = extractedField?.id;
+            }
+          }
+        }
 
         if (!fieldId) {
           importResults.errors.push(`Row ${index + 1}: Field '${fieldName}' not found and not created`);
@@ -496,15 +687,26 @@ router.post('/csv-import/execute', isAdmin, upload.single('csvFile'), async (req
           continue;
         }
 
-        // Get age group ID
-        const ageGroupName = row['Age Group']?.trim();
-        const ageGroupId = ageGroupIdMap[ageGroupName] ||
-          (await db.query.eventAgeGroups.findFirst({
+        // Get age group ID - handle both Division and Age Group formats
+        let ageGroupName = row['Age Group']?.trim();
+        let ageGroupId = ageGroupIdMap[ageGroupName];
+        
+        // If no Age Group, try using Division for tournament format
+        if (!ageGroupName && row.Division) {
+          ageGroupName = row.Division.trim();
+          ageGroupId = ageGroupIdMap[ageGroupName];
+        }
+        
+        // Try database lookup if not in cache
+        if (!ageGroupId && ageGroupName) {
+          const existingAgeGroup = await db.query.eventAgeGroups.findFirst({
             where: and(
               eq(eventAgeGroups.eventId, eventId.toString()),
               eq(eventAgeGroups.ageGroup, ageGroupName)
             )
-          }))?.id;
+          });
+          ageGroupId = existingAgeGroup?.id;
+        }
 
         if (!ageGroupId) {
           importResults.errors.push(`Row ${index + 1}: Age group '${ageGroupName}' not found`);
@@ -526,7 +728,32 @@ router.post('/csv-import/execute', isAdmin, upload.single('csvFile'), async (req
           isAvailable: false
         }).returning();
 
-        // Create game with proper scoring setup
+        // Extract enhanced game metadata from tournament format
+        const gameNumber = row['GM#'] || row['Game Number'] || row['Game #'] || (index + 1).toString();
+        const gameType = row.Type || row['Game Type'] || row['Match Type'] || 'Pool Play';
+        const gameStatus = row.Status || 'Scheduled';
+        const flight = row.Flight || 'Default';
+        
+        // Extract field size from venue if available
+        let fieldSize = '11v11'; // default
+        if (row.Venue?.includes('9v9')) fieldSize = '9v9';
+        else if (row.Venue?.includes('7v7')) fieldSize = '7v7';
+        else if (row.Venue?.includes('11v11')) fieldSize = '11v11';
+        
+        // Build comprehensive notes with all tournament data
+        const tournamentNotes = [
+          row.Status && `Status: ${row.Status}`,
+          row.Flight && `Flight: ${row.Flight}`,
+          row.Complex && `Complex: ${row.Complex}`,
+          row.Type && `Type: ${row.Type}`,
+          row['Home Conflict'] === 'yes' && 'Home team has conflict',
+          row['Away Conflict'] === 'yes' && 'Away team has conflict',
+          row['Home Head Coach'] && `Home Coach: ${row['Home Head Coach']}`,
+          row['Away Head Coach'] && `Away Coach: ${row['Away Head Coach']}`,
+          `Imported from CSV: ${req.file?.originalname}`
+        ].filter(Boolean).join(' | ');
+        
+        // Create game with enhanced tournament data
         const [newGame] = await db.insert(games).values({
           eventId: eventId.toString(),
           ageGroupId,
@@ -534,17 +761,20 @@ router.post('/csv-import/execute', isAdmin, upload.single('csvFile'), async (req
           awayTeamId,
           fieldId,
           timeSlotId: timeSlot.id,
-          status: 'scheduled',
+          status: gameStatus.toLowerCase() === 'on time' ? 'scheduled' : 'postponed',
           round: 1,
-          matchNumber: index + 1,
-          duration: 90,
+          matchNumber: parseInt(gameNumber) || (index + 1),
+          duration: fieldSize === '7v7' ? 60 : (fieldSize === '9v9' ? 80 : 90),
           breakTime: 15,
           scheduledDate: normalizedDate,
           scheduledTime: normalizedTime,
-          scoreNotes: `Imported from CSV: ${req.file?.originalname}`,
+          scoreNotes: '',
           homeScore: null, // Ready for scoring
           awayScore: null, // Ready for scoring
-          notes: row.Status || 'Imported game'
+          notes: tournamentNotes,
+          // Store coach IDs in notes for now (could add dedicated fields later)
+          homeTeamRefId: row['Home Team Coach ID'] || undefined,
+          awayTeamRefId: row['Away Team Coach ID'] || undefined
         }).returning();
 
         importResults.gamesImported++;
