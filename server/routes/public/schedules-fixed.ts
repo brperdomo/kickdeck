@@ -3,6 +3,9 @@ import { db } from '../../../db';
 import { games, teams, events, eventAgeGroups, eventBrackets, fields } from '../../../db/schema';
 import { alias } from 'drizzle-orm/pg-core';
 import { eq, and, isNotNull } from 'drizzle-orm';
+import fs from 'fs';
+import path from 'path';
+import { parse } from 'csv-parse/sync';
 
 const router = Router();
 
@@ -141,58 +144,73 @@ router.get('/:eventId', async (req: Request, res: Response) => {
       teamsByFlight.get(flightId).push(team);
     });
 
-    // Group games by age group and flight using team bracket assignments
+    // Create CSV flight data lookup using authentic Column 5 data
+    const csvFlightLookup = new Map<number, string>();
+    
+    try {
+      const csvPath = path.join(process.cwd(), 'attached_assets', 'Scheduler (9)_1755367316008.csv');
+      const csvContent = fs.readFileSync(csvPath, 'utf-8');
+      const records = parse(csvContent, {
+        columns: true,
+        skip_empty_lines: true
+      });
+      
+      // Build flight lookup from CSV Column 5 (Flight)
+      records.forEach((record: any) => {
+        const gameNumber = record['GM#'];
+        const csvFlight = record['Flight'];
+        
+        if (gameNumber && csvFlight) {
+          csvFlightLookup.set(parseInt(gameNumber), csvFlight);
+        }
+      });
+      
+      console.log(`[Flight Assignment] Loaded ${csvFlightLookup.size} CSV flight assignments from authentic data`);
+      console.log(`[Flight Assignment] Sample CSV flights:`, Array.from(csvFlightLookup.entries()).slice(0, 5));
+      
+    } catch (error) {
+      console.error('[Flight Assignment] Error loading CSV flight data:', error);
+    }
+
+    // Group games by age group and flight using CSV flight assignments
     const gamesByAgeGroupAndFlight = new Map();
     
     gamesData.forEach(game => {
-      // Find teams for this game
-      const homeTeam = teamsData.find(t => t.id === game.homeTeamId);
-      const awayTeam = teamsData.find(t => t.id === game.awayTeamId);
+      const ageGroupFlights = flightsData.filter(f => f.ageGroupId === game.ageGroupId);
+      let flightId: number | null = null;
       
-      // Use team bracket assignment to determine flight
-      let flightId = null;
-      if (homeTeam?.bracketId) {
-        flightId = homeTeam.bracketId;
-      } else if (awayTeam?.bracketId) {
-        flightId = awayTeam.bracketId;
+      // Primary method: Use authentic CSV flight data from Column 5
+      const csvFlight = csvFlightLookup.get(game.matchNumber);
+      
+      if (csvFlight && ageGroupFlights.length > 0) {
+        // Map CSV flight names to database flight IDs using authentic patterns
+        if (csvFlight.includes('CLASSIC')) {
+          flightId = ageGroupFlights.find(f => f.name.toLowerCase().includes('classic'))?.id;
+        } else if (csvFlight.includes('PREMIER')) {
+          flightId = ageGroupFlights.find(f => f.name.toLowerCase().includes('premier'))?.id;
+        } else if (csvFlight.includes('ELITE')) {
+          flightId = ageGroupFlights.find(f => f.name.toLowerCase().includes('elite'))?.id;
+        }
+        
+        if (flightId) {
+          console.log(`[Flight Assignment] Game ${game.matchNumber}: "${csvFlight}" → ${ageGroupFlights.find(f => f.id === flightId)?.name} (ID: ${flightId})`);
+        }
       }
       
-      // If no team records exist (cross-event contamination), use team names from games to determine flight
-      if (!flightId && !homeTeam && !awayTeam) {
-        const homeTeamName = game.homeTeamName || '';
-        const awayTeamName = game.awayTeamName || '';
-        
-        // Determine flight based on team name patterns from CSV
-        const ageGroupFlights = flightsData.filter(f => f.ageGroupId === game.ageGroupId);
-        
-        // Premier indicators: Force, Albion, Pro Alliance, FC Premier
-        if (homeTeamName.match(/force|albion|pro alliance|fc premier/i) || 
-            awayTeamName.match(/force|albion|pro alliance|fc premier/i)) {
-          flightId = ageGroupFlights.find(f => f.name.toLowerCase().includes('premier'))?.id;
-        }
-        // Classic indicators: Surf, Rebels, Desert, City SC, Future FC
-        else if (homeTeamName.match(/surf|rebels|desert|city sc|future fc/i) || 
-                 awayTeamName.match(/surf|rebels|desert|city sc|future fc/i)) {
-          flightId = ageGroupFlights.find(f => f.name.toLowerCase().includes('classic'))?.id;
-        }
-        // Default to Elite
-        if (!flightId) {
+      // Fallback: Single flight or default to Elite
+      if (!flightId) {
+        if (ageGroupFlights.length === 1) {
+          flightId = ageGroupFlights[0].id;
+        } else if (ageGroupFlights.length > 1) {
           flightId = ageGroupFlights.find(f => f.name.toLowerCase().includes('elite'))?.id;
         }
       }
       
-      // If still no bracket assignment, try to assign to Elite flight for this age group as fallback
+      // Skip games without valid flight assignment
       if (!flightId) {
-        const eliteFlight = flightsData.find(f => 
-          f.ageGroupId === game.ageGroupId && f.name.toLowerCase().includes('elite')
-        );
-        if (eliteFlight) {
-          flightId = eliteFlight.id;
-        }
+        console.warn(`[Flight Assignment] No flight found for game ${game.matchNumber} in age group ${game.ageGroupId}`);
+        return;
       }
-      
-      // Skip games that can't be assigned to any flight
-      if (!flightId) return;
       
       const key = `${game.ageGroupId}_${flightId}`;
       if (!gamesByAgeGroupAndFlight.has(key)) {
