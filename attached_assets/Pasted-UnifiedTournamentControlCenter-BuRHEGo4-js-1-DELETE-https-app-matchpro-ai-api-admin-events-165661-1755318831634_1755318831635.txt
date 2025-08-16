@@ -1,0 +1,145 @@
+UnifiedTournamentControlCenter-BuRHEGo4.js:1  DELETE https://app.matchpro.ai/api/admin/events/1656618593/games/bulk 500 (Internal Server Error)
+mutationFn @ UnifiedTournamentControlCenter-BuRHEGo4.js:1
+fn @ index-Dte5WmbX.js:41
+p @ index-Dte5WmbX.js:41
+start @ index-Dte5WmbX.js:41
+execute @ index-Dte5WmbX.js:41
+await in execute
+mutate @ index-Dte5WmbX.js:41
+(anonymous) @ index-Dte5WmbX.js:41
+Q @ UnifiedTournamentControlCenter-BuRHEGo4.js:1
+Hve @ index-Dte5WmbX.js:38
+Kve @ index-Dte5WmbX.js:38
+Yve @ index-Dte5WmbX.js:38
+s8 @ index-Dte5WmbX.js:38
+dJ @ index-Dte5WmbX.js:38
+(anonymous) @ index-Dte5WmbX.js:38
+CD @ index-Dte5WmbX.js:41
+IX @ index-Dte5WmbX.js:38
+aE @ index-Dte5WmbX.js:38
+ZI @ index-Dte5WmbX.js:38
+uye @ index-Dte5WmbX.js:38Understand this error
+ScheduleViewerFixed-DcdFmMWH.js:11  DELETE https://app.matchpro.ai/api/admin/events/1656618593/games/bulk 500 (Internal Server Error)
+mutationFn @ ScheduleViewerFixed-DcdFmMWH.js:11
+fn @ index-Dte5WmbX.js:41
+p @ index-Dte5WmbX.js:41
+start @ index-Dte5WmbX.js:41
+execute @ index-Dte5WmbX.js:41
+await in execute
+mutate @ index-Dte5WmbX.js:41
+(anonymous) @ index-Dte5WmbX.js:41
+fs @ ScheduleViewerFixed-DcdFmMWH.js:31
+Hve @ index-Dte5WmbX.js:38
+Kve @ index-Dte5WmbX.js:38
+Yve @ index-Dte5WmbX.js:38
+s8 @ index-Dte5WmbX.js:38
+dJ @ index-Dte5WmbX.js:38
+(anonymous) @ index-Dte5WmbX.js:38
+CD @ index-Dte5WmbX.js:41
+IX @ index-Dte5WmbX.js:38
+aE @ index-Dte5WmbX.js:38
+ZI @ index-Dte5WmbX.js:38
+uye @ index-Dte5WmbX.js:38Understand this error
+ScheduleViewerFixed-DcdFmMWH.js:11 Delete all games failed: 500 {"error":"Failed to delete game","details":"update or delete on table \"games\" violates foreign key constraint \"game_score_audit_game_id_fkey\" on table \"game_score_audit\""}
+mutationFn @ ScheduleViewerFixed-DcdFmMWH.js:11
+await in mutationFn
+fn @ index-Dte5WmbX.js:41
+p @ index-Dte5WmbX.js:41
+start @ index-Dte5WmbX.js:41
+execute @ index-Dte5WmbX.js:41
+await in execute
+mutate @ index-Dte5WmbX.js:41
+(anonymous) @ index-Dte5WmbX.js:41
+fs @ ScheduleViewerFixed-DcdFmMWH.js:31
+Hve @ index-Dte5WmbX.js:38
+Kve @ index-Dte5WmbX.js:38
+Yve @ index-Dte5WmbX.js:38
+s8 @ index-Dte5WmbX.js:38
+dJ @ index-Dte5WmbX.js:38
+(anonymous) @ index-Dte5WmbX.js:38
+CD @ index-Dte5WmbX.js:41
+IX @ index-Dte5WmbX.js:38
+aE @ index-Dte5WmbX.js:38
+ZI @ index-Dte5WmbX.js:38
+uye @ index-Dte5WmbX.js:38Understand this error
+ScheduleViewerFixed-DcdFmMWH.js:11 Delete all games mutation error: Error: Failed to delete all games: 500
+    at Object.mutationFn (ScheduleViewerFixed-DcdFmMWH.js:11:8453)
+onError @ ScheduleViewerFixed-DcdFmMWH.js:11
+execute @ index-Dte5WmbX.js:41
+await in execute
+mutate @ index-Dte5WmbX.js:41
+(anonymous) @ index-Dte5WmbX.js:41
+fs @ ScheduleViewerFixed-DcdFmMWH.js:31
+Hve @ index-Dte5WmbX.js:38
+Kve @ index-Dte5WmbX.js:38
+Yve @ index-Dte5WmbX.js:38
+s8 @ index-Dte5WmbX.js:38
+dJ @ index-Dte5WmbX.js:38
+(anonymous) @ index-Dte5WmbX.js:38
+CD @ index-Dte5WmbX.js:41
+IX @ index-Dte5WmbX.js:38
+aE @ index-Dte5WmbX.js:38
+ZI @ index-Dte5WmbX.js:38
+uye @ index-Dte5WmbX.js:38Understand this error
+ScheduleViewerFixed-DcdFmMWH.js:11  DELETE https://app.matchpro.ai/api/admin/events/1656618593/games/bulk 500 (Internal Server Error)
+mutationFn @ ScheduleViewerFixed-DcdFmMWH.js:11
+fn @ index-Dte5WmbX.js:41
+p @ index-Dte5WmbX.js:41
+start @ index-Dte5WmbX.js:41
+execute @ index-Dte5WmbX.js:41
+await in execute
+mutate @ index-Dte5WmbX.js:41
+(anonymous) @ index-Dte5WmbX.js:41
+fs @ ScheduleViewerFixed-DcdFmMWH.js:31
+Hve @ index-Dte5WmbX.js:38
+Kve @ index-Dte5WmbX.js:38
+Yve @ index-Dte5WmbX.js:38
+s8 @ index-Dte5WmbX.js:38
+dJ @ index-Dte5WmbX.js:38
+(anonymous) @ index-Dte5WmbX.js:38
+CD @ index-Dte5WmbX.js:41
+IX @ index-Dte5WmbX.js:38
+aE @ index-Dte5WmbX.js:38
+ZI @ index-Dte5WmbX.js:38
+uye @ index-Dte5WmbX.js:38Understand this error
+ScheduleViewerFixed-DcdFmMWH.js:11 Bulk delete games failed: 500 {"error":"Failed to delete game","details":"update or delete on table \"games\" violates foreign key constraint \"game_score_audit_game_id_fkey\" on table \"game_score_audit\""}
+mutationFn @ ScheduleViewerFixed-DcdFmMWH.js:11
+await in mutationFn
+fn @ index-Dte5WmbX.js:41
+p @ index-Dte5WmbX.js:41
+start @ index-Dte5WmbX.js:41
+execute @ index-Dte5WmbX.js:41
+await in execute
+mutate @ index-Dte5WmbX.js:41
+(anonymous) @ index-Dte5WmbX.js:41
+fs @ ScheduleViewerFixed-DcdFmMWH.js:31
+Hve @ index-Dte5WmbX.js:38
+Kve @ index-Dte5WmbX.js:38
+Yve @ index-Dte5WmbX.js:38
+s8 @ index-Dte5WmbX.js:38
+dJ @ index-Dte5WmbX.js:38
+(anonymous) @ index-Dte5WmbX.js:38
+CD @ index-Dte5WmbX.js:41
+IX @ index-Dte5WmbX.js:38
+aE @ index-Dte5WmbX.js:38
+ZI @ index-Dte5WmbX.js:38
+uye @ index-Dte5WmbX.js:38Understand this error
+ScheduleViewerFixed-DcdFmMWH.js:11 Bulk delete games mutation error: Error: Failed to delete games: 500
+    at Object.mutationFn (ScheduleViewerFixed-DcdFmMWH.js:11:7825)
+onError @ ScheduleViewerFixed-DcdFmMWH.js:11
+execute @ index-Dte5WmbX.js:41
+await in execute
+mutate @ index-Dte5WmbX.js:41
+(anonymous) @ index-Dte5WmbX.js:41
+fs @ ScheduleViewerFixed-DcdFmMWH.js:31
+Hve @ index-Dte5WmbX.js:38
+Kve @ index-Dte5WmbX.js:38
+Yve @ index-Dte5WmbX.js:38
+s8 @ index-Dte5WmbX.js:38
+dJ @ index-Dte5WmbX.js:38
+(anonymous) @ index-Dte5WmbX.js:38
+CD @ index-Dte5WmbX.js:41
+IX @ index-Dte5WmbX.js:38
+aE @ index-Dte5WmbX.js:38
+ZI @ index-Dte5WmbX.js:38
+uye @ index-Dte5WmbX.js:38Understand this error

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { db } from '@db';
-import { games, gameTimeSlots } from '@db/schema';
+import { games, gameTimeSlots, gameScoreAudit } from '@db/schema';
 import { eq, and, inArray } from 'drizzle-orm';
 
 const router = Router();
@@ -30,7 +30,17 @@ router.delete('/events/:eventId/games/bulk', async (req, res) => {
         });
       }
       
-      // Delete games first (to avoid foreign key constraint violations)
+      // Get all game IDs first for cascading deletions
+      const gameIdsToDelete = existingGames.map(g => g.id);
+      
+      // Delete game score audit records first (to avoid foreign key constraint violations)
+      if (gameIdsToDelete.length > 0) {
+        const auditDeleteResult = await db.delete(gameScoreAudit)
+          .where(inArray(gameScoreAudit.gameId, gameIdsToDelete));
+        console.log(`[Schedule Management] Deleted ${auditDeleteResult} game score audit records`);
+      }
+      
+      // Then delete games
       await db.delete(games).where(eq(games.eventId, eventId));
       
       // Then delete associated time slots (eventId is text field)
@@ -49,11 +59,18 @@ router.delete('/events/:eventId/games/bulk', async (req, res) => {
     // If specific gameIds provided, delete only those games
     console.log(`[Schedule Management] Bulk deleting ${gameIds.length} specific games from event ${eventId}`);
     
-    // Delete the games first (to avoid foreign key constraint violations)
+    const gameIdsAsInts = gameIds.map(id => parseInt(id));
+    
+    // Delete game score audit records first (to avoid foreign key constraint violations)
+    const auditDeleteResult = await db.delete(gameScoreAudit)
+      .where(inArray(gameScoreAudit.gameId, gameIdsAsInts));
+    console.log(`[Schedule Management] Deleted ${auditDeleteResult} game score audit records for specific games`);
+    
+    // Then delete the games
     const deletedGames = await db.delete(games).where(
       and(
         eq(games.eventId, eventId),
-        inArray(games.id, gameIds.map(id => parseInt(id)))
+        inArray(games.id, gameIdsAsInts)
       )
     ).returning();
     
