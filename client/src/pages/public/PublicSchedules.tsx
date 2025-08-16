@@ -93,6 +93,8 @@ export default function PublicSchedules() {
   });
 
   console.log('Frontend Debug - Schedule Data:', scheduleData);
+  console.log('Frontend Debug - Boys Age Groups:', scheduleData?.ageGroupsByGender?.boys?.length, scheduleData?.ageGroupsByGender?.boys);
+  console.log('Frontend Debug - Girls Age Groups:', scheduleData?.ageGroupsByGender?.girls?.length, scheduleData?.ageGroupsByGender?.girls);
 
   if (isLoading) {
     return (
