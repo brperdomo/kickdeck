@@ -71,6 +71,7 @@ import gameScoreManagementSimpleRouter from './routes/admin/game-score-managemen
 import publicSchedulesFixedRouter from './routes/public/schedules-fixed';
 import publicStandingsRouter from './routes/public/standings';
 import empireFixRouter from './routes/public/empire-fix';
+import empireScheduleFixRouter from './routes/public/empire-schedule-fix';
 import adminScoringRulesRouter from './routes/admin/scoring-rules';
 import clubsRouter from "./routes/clubs";
 import adminClubsRouter from "./routes/admin/clubs";
@@ -992,6 +993,7 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/public/standings', publicStandingsRouter);
     app.use('/api/public/schedules', publicSchedulesFixedRouter);
     app.use('/api/public', empireFixRouter); // Empire Super Cup dedicated fix
+    app.use('/api/public', empireScheduleFixRouter); // Empire Super Cup schedule fix
     app.use('/api/admin/events', tbdResolverRouter); // TBD game resolution system
     app.use('/api/admin/events', isAdmin, feesRouter); // Mount fees router under events path - REMOVED authenticateTournamentDirector
     app.use('/api/admin/age-groups', isAdmin, ageGroupsRouter); // Add age groups router
