@@ -675,6 +675,11 @@ router.post('/execute', upload.single('csvFile'), async (req, res) => {
 
     console.log(`🚀 CSV Import Execute: Processing file ${req.file.originalname} for event ${eventId}`);
     console.log(`⚙️ Options: fields=${createMissingFields}, teams=${createMissingTeams}`);
+    console.log(`📋 Request body parameters:`, { 
+      createMissingFields: req.body.createMissingFields, 
+      createMissingTeams: req.body.createMissingTeams,
+      eventId: req.body.eventId 
+    });
 
     // Parse CSV file
     const csvData: CSVRow[] = [];
@@ -688,11 +693,29 @@ router.post('/execute', upload.single('csvFile'), async (req, res) => {
       }, (err, records) => {
         if (err) reject(err);
         else {
-          records.forEach((record: any) => csvData.push(record));
+          // Transform CSV data to include parsed Age Group and Field information (same as preview)
+          records.forEach((record: any) => {
+            const transformed = { ...record };
+            
+            // Parse Division into Age Group if not already present
+            if (record.Division && !record['Age Group']) {
+              const parsed = parseDivisionCode(record.Division);
+              transformed['Age Group'] = parsed.ageGroup;
+            }
+            
+            // Map Venue to Field if not already present
+            if (record.Venue && !record.Field) {
+              transformed.Field = record.Venue;
+            }
+            
+            csvData.push(transformed);
+          });
           resolve();
         }
       });
     });
+    
+    console.log(`📊 Transformed CSV data - sample row:`, csvData[0]);
 
     const importResults = {
       gamesImported: 0,
@@ -769,8 +792,21 @@ router.post('/execute', upload.single('csvFile'), async (req, res) => {
     // Create missing fields if enabled
     const fieldIdMap: { [key: string]: number } = {};
     if (createMissingFields) {
-      const uniqueFieldsSet = new Set(csvData.map(row => row.Field?.trim()).filter(Boolean));
-      const uniqueFields = Array.from(uniqueFieldsSet);
+      // Extract fields from both Field and Venue columns (tournament format compatibility)
+      const uniqueFieldsSet = new Set();
+      csvData.forEach(row => {
+        const fieldIdentifiers = [
+          row.Field?.trim(),
+          row.Venue?.trim(), 
+          row['Venue']?.trim()
+        ].filter(Boolean);
+        
+        fieldIdentifiers.forEach(field => {
+          if (field) uniqueFieldsSet.add(field);
+        });
+      });
+      const uniqueFields = Array.from(uniqueFieldsSet) as string[];
+      console.log(`🏟️ FIELD CREATION: Found ${uniqueFields.length} unique fields to process:`, uniqueFields);
       
       for (const fieldName of uniqueFields) {
         const existingField = await db.query.fields.findFirst({
@@ -779,18 +815,32 @@ router.post('/execute', upload.single('csvFile'), async (req, res) => {
         
         if (existingField) {
           fieldIdMap[fieldName] = existingField.id;
+          console.log(`🏟️ Found existing field: ${fieldName} (ID: ${existingField.id})`);
         } else {
           // Create new field (requires a complex)
+          console.log(`🏗️ Creating new field: ${fieldName}`);
           const firstComplex = await db.query.complexes.findFirst();
           if (!firstComplex) {
+            console.error(`❌ Cannot create field '${fieldName}' - no complexes available`);
             importResults.errors.push(`Cannot create field '${fieldName}' - no complexes available`);
             continue;
+          }
+          console.log(`🏢 Using complex: ${firstComplex.name} (ID: ${firstComplex.id})`);
+
+          // Determine field size based on field name
+          let fieldSize = '11v11'; // Default
+          if (fieldName.includes('9v9')) {
+            fieldSize = '9v9';
+          } else if (fieldName.includes('7v7')) {
+            fieldSize = '7v7';
+          } else if (fieldName.includes('5v5')) {
+            fieldSize = '5v5';
           }
 
           const [newField] = await db.insert(fields).values({
             name: fieldName,
             complexId: firstComplex.id,
-            fieldSize: '11v11', // Default size
+            fieldSize: fieldSize,
             isOpen: true,
             hasLights: false
           }).returning();
@@ -806,9 +856,19 @@ router.post('/execute', upload.single('csvFile'), async (req, res) => {
     const teamIdMap: { [key: string]: number } = {};
     const ageGroupIdMap: { [key: string]: number } = {};
     
-    // Get or create age groups first
-    const uniqueAgeGroupsSet = new Set(csvData.map(row => row['Age Group']?.trim()).filter(Boolean));
-    const uniqueAgeGroups = Array.from(uniqueAgeGroupsSet);
+    // Get or create age groups first - transform division codes to age groups
+    const uniqueAgeGroupsSet = new Set();
+    csvData.forEach(row => {
+      // Get age group from existing field or parse from Division
+      let ageGroup = row['Age Group']?.trim();
+      if (!ageGroup && row.Division) {
+        const parsed = parseDivisionCode(row.Division);
+        ageGroup = parsed.ageGroup;
+      }
+      if (ageGroup) uniqueAgeGroupsSet.add(ageGroup);
+    });
+    const uniqueAgeGroups = Array.from(uniqueAgeGroupsSet) as string[];
+    console.log(`🏆 AGE GROUP CREATION: Found ${uniqueAgeGroups.length} unique age groups:`, uniqueAgeGroups);
     
     for (const ageGroupName of uniqueAgeGroups) {
       const existingAgeGroup = await db.query.eventAgeGroups.findFirst({
@@ -819,18 +879,56 @@ router.post('/execute', upload.single('csvFile'), async (req, res) => {
         ageGroupIdMap[ageGroupName] = existingAgeGroup.id;
       } else {
         // Parse division code if it follows the standard format (G2014, B2012, etc.)
-        const parsedDivision = parseDivisionCode(ageGroupName);
+        // The ageGroupName is already processed (e.g., "U11 Boys"), but we need original division data
+        // Find a row with this age group to get the original division code
+        const sampleRow = csvData.find(row => {
+          let ageGroup = row['Age Group']?.trim();
+          if (!ageGroup && row.Division) {
+            const parsed = parseDivisionCode(row.Division);
+            ageGroup = parsed.ageGroup;
+          }
+          return ageGroup === ageGroupName;
+        });
         
-        const [newAgeGroup] = await db.insert(eventAgeGroups).values({
+        let parsedDivision;
+        if (sampleRow && sampleRow.Division) {
+          parsedDivision = parseDivisionCode(sampleRow.Division);
+        } else {
+          // Fallback: parse from age group name itself
+          const match = ageGroupName.match(/^U(\d+)\s+(Boys|Girls)$/i);
+          if (match) {
+            const age = parseInt(match[1]);
+            const gender = match[2];
+            const birthYear = new Date().getFullYear() - age + 1;
+            parsedDivision = {
+              gender: gender,
+              birthYear: birthYear,
+              ageGroup: ageGroupName,
+              divisionCode: ageGroupName
+            };
+          } else {
+            parsedDivision = {
+              gender: 'Boys', // Default fallback
+              birthYear: 2010,
+              ageGroup: ageGroupName,
+              divisionCode: ageGroupName
+            };
+          }
+        }
+        
+        const insertData = {
           eventId: eventId.toString(),
           ageGroup: parsedDivision.ageGroup,
-          gender: parsedDivision.gender,
+          gender: parsedDivision.gender === 'Mixed' ? 'Boys' : parsedDivision.gender, // Fix Mixed gender issue
           birthYear: parsedDivision.birthYear,
+          fieldSize: parsedDivision.birthYear >= 2012 ? '9v9' : '11v11',
+          projectedTeams: 8,
           divisionCode: parsedDivision.divisionCode,
-          fieldSize: parsedDivision.birthYear >= 2012 ? '9v9' : '11v11', // Younger teams typically play smaller fields
-          minAge: new Date().getFullYear() - parsedDivision.birthYear,
-          maxAge: new Date().getFullYear() - parsedDivision.birthYear + 1
-        }).returning();
+          isEligible: true,
+          createdAt: new Date().toISOString() // Add required created_at field
+        };
+        console.log(`🏆 Creating age group with data:`, insertData);
+        const [newAgeGroup] = await db.insert(eventAgeGroups).values(insertData).returning();
         
         ageGroupIdMap[ageGroupName] = newAgeGroup.id;
         importResults.ageGroupsCreated++;
@@ -845,6 +943,7 @@ router.post('/execute', upload.single('csvFile'), async (req, res) => {
         ...csvData.map(row => row['Away Team']?.trim()).filter(Boolean)
       ]);
       const uniqueTeamNames = Array.from(uniqueTeamNamesSet);
+      console.log(`👥 TEAM CREATION: Found ${uniqueTeamNames.length} unique teams to process`);
 
       for (const teamName of uniqueTeamNames) {
         const existingTeam = await db.query.teams.findFirst({
@@ -859,13 +958,21 @@ router.post('/execute', upload.single('csvFile'), async (req, res) => {
             row['Home Team']?.trim() === teamName || row['Away Team']?.trim() === teamName
           );
           
-          if (gameWithTeam && gameWithTeam['Age Group']) {
-            const ageGroupId = ageGroupIdMap[gameWithTeam['Age Group'].trim()];
+          if (gameWithTeam) {
+            // Get age group from existing field or parse from Division
+            let ageGroup = gameWithTeam['Age Group']?.trim();
+            if (!ageGroup && gameWithTeam.Division) {
+              const parsed = parseDivisionCode(gameWithTeam.Division);
+              ageGroup = parsed.ageGroup;
+            }
+            
+            const ageGroupId = ageGroup ? ageGroupIdMap[ageGroup] : null;
             
             if (ageGroupId) {
+              console.log(`👥 Creating team: ${teamName} (Age Group: ${ageGroup}, ID: ${ageGroupId})`);
               const [newTeam] = await db.insert(teams).values({
                 eventId: eventId.toString(),
-                teamName: teamName,
+                name: teamName, // Use 'name' field instead of 'teamName'
                 ageGroupId,
                 status: 'approved',
                 paymentStatus: 'paid',
@@ -878,6 +985,8 @@ router.post('/execute', upload.single('csvFile'), async (req, res) => {
               teamIdMap[teamName] = newTeam.id;
               importResults.teamsCreated++;
               console.log(`✅ Created new team: ${teamName} (ID: ${newTeam.id})`);
+            } else {
+              console.log(`❌ Cannot create team ${teamName}: Age group ${ageGroup} not found`);
             }
           }
         }
@@ -889,8 +998,14 @@ router.post('/execute', upload.single('csvFile'), async (req, res) => {
       const row = csvData[index];
       
       try {
-        // Get field ID - enhanced venue/field matching
-        const fieldName = row.Field?.trim() || row.Venue?.trim() || row['Venue']?.trim();
+        // Get field ID - enhanced venue/field matching (same logic as creation)
+        const fieldIdentifiers = [
+          row.Field?.trim(),
+          row.Venue?.trim(), 
+          row['Venue']?.trim()
+        ].filter(Boolean);
+        
+        const fieldName = fieldIdentifiers[0]; // Use first available field identifier
         let fieldId = fieldIdMap[fieldName];
         
         if (!fieldId) {
@@ -971,13 +1086,19 @@ router.post('/execute', upload.single('csvFile'), async (req, res) => {
         const gameDateTime = new Date(`${normalizedDate}T${normalizedTime}:00`);
         const gameEndTime = new Date(gameDateTime.getTime() + 90 * 60000); // 90 minutes default
 
+        // Calculate day index (0-based from tournament start)
+        const tournamentStartDate = new Date('2025-08-16'); // Tournament start date
+        const gameDate = new Date(gameDateTime);
+        const dayIndex = Math.floor((gameDate.getTime() - tournamentStartDate.getTime()) / (1000 * 60 * 60 * 24));
+
         // Create time slot
         const [timeSlot] = await db.insert(gameTimeSlots).values({
           eventId: eventId.toString(),
           fieldId: fieldId!,
-          startTime: gameDateTime.toISOString(),
-          endTime: gameEndTime.toISOString(),
-          isAvailable: false
+          startDateTime: gameDateTime,
+          endDateTime: gameEndTime,
+          dayIndex: dayIndex >= 0 ? dayIndex : 0, // Ensure non-negative day index
+          isOccupied: false
         }).returning();
 
         // Extract enhanced game metadata from tournament format
