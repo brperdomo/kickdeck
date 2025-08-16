@@ -30,11 +30,12 @@ import { FormatSettings } from '@/components/admin/scheduling/FormatSettings';
 import ScoringStandingsSettings from '@/components/admin/scheduling/ScoringStandingsSettings';
 import GameScoreManager from '@/components/admin/scoring/GameScoreManager';
 import { GameImportModal } from '@/components/admin/GameImportModalFixed';
+import AgeGroupScheduleViewer from '@/components/admin/scheduling/AgeGroupScheduleViewer';
 
 export default function MasterSchedulePage() {
   const { eventId } = useParams<{ eventId: string }>();
   const [, setLocation] = useLocation();
-  const [currentView, setCurrentView] = useState<'view' | 'calendar' | 'cards' | 'manage' | 'flights' | 'brackets' | 'overview' | 'workflow' | 'publish' | 'field-sorting' | 'format-settings' | 'scoring-standings' | 'score-entry' | 'import'>('overview');
+  const [currentView, setCurrentView] = useState<'view' | 'calendar' | 'cards' | 'manage' | 'flights' | 'brackets' | 'overview' | 'workflow' | 'publish' | 'field-sorting' | 'format-settings' | 'scoring-standings' | 'score-entry' | 'import' | 'game-management'>('overview');
   const [importModalOpen, setImportModalOpen] = useState(false);
 
   if (!eventId) {
@@ -216,6 +217,19 @@ export default function MasterSchedulePage() {
           >
             <Upload className="h-4 w-4" />
             Import Schedule
+          </Button>
+
+          <Button
+            variant={currentView === 'game-management' ? 'default' : 'outline'}
+            onClick={() => setCurrentView('game-management')}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 whitespace-nowrap backdrop-blur-sm ${
+              currentView === 'game-management' 
+                ? 'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg shadow-red-500/25 hover:from-red-400 hover:to-red-500' 
+                : 'bg-black/20 text-purple-100 hover:bg-purple-900/30 border border-purple-400/30 hover:border-purple-300/50'
+            }`}
+          >
+            <Users className="h-4 w-4" />
+            Manage Games
           </Button>
           
 
@@ -444,6 +458,19 @@ export default function MasterSchedulePage() {
             </Alert>
             <div className="bg-black/20 backdrop-blur-sm border border-purple-400/30 rounded-lg p-6">
               <GameScoreManager eventId={eventId} />
+            </div>
+          </div>
+        ) : currentView === 'game-management' ? (
+          <div className="space-y-6">
+            <Alert className="border-red-400/30 bg-black/30 backdrop-blur-sm">
+              <Users className="h-4 w-4 text-red-400" />
+              <AlertDescription className="text-purple-100">
+                <strong>Game Management:</strong> View all tournament games, manage by age group, and access bulk delete operations. 
+                Delete CSV imported games, clear all games, or remove games by specific age group. Perfect for cleaning up imports or resetting schedules.
+              </AlertDescription>
+            </Alert>
+            <div className="bg-black/20 backdrop-blur-sm border border-purple-400/30 rounded-lg p-6">
+              <AgeGroupScheduleViewer eventId={parseInt(eventId)} />
             </div>
           </div>
         ) : (

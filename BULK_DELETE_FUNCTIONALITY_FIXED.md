@@ -90,10 +90,11 @@ All bulk delete operations now work correctly:
 
 ### For CSV Import Cleanup (Your Current Need)
 1. Go to **Master Schedule** page
-2. Click the orange **"Delete CSV Imports"** button in the toolbar
-3. Confirm deletion in the dialog
-4. All 471 imported games will be removed
-5. Re-import CSV with team creation enabled
+2. Click the **"Manage Games"** tab (red button with Users icon)
+3. Click the orange **"Delete CSV Imports"** button in the toolbar
+4. Confirm deletion in the dialog
+5. All 471 imported games will be removed
+6. Re-import CSV with team creation enabled
 
 ### For Selective Cleanup
 1. Expand any age group (e.g., "U11 Boys")
