@@ -256,56 +256,56 @@ router.get('/:eventId', async (req: Request, res: Response) => {
     const ageGroupsByGender = {
       boys: processedAgeGroups
         .filter(ag => ag.gender?.toLowerCase() === 'boys')
-        .map(ag => ({
-          ageGroup: ag.ageGroup,
-          gender: ag.gender,
-          birthYear: 2024, // Will be enhanced with real birth year data
-          divisionCode: ag.divisionCode || ag.ageGroup,
-          displayName: ag.displayName || ag.ageGroup,
-          totalFlights: 1, // Will be enhanced with flight data
-          totalTeams: ag.games.reduce((teams, game) => {
-            const teamIds = new Set();
-            if (game.homeTeamId) teamIds.add(game.homeTeamId);
-            if (game.awayTeamId) teamIds.add(game.awayTeamId);
-            return Math.max(teams, teamIds.size);
-          }, 0),
-          flights: [{
-            flightName: 'Main',
-            teamCount: ag.games.reduce((teams, game) => {
-              const teamIds = new Set();
-              if (game.homeTeamId) teamIds.add(game.homeTeamId);
-              if (game.awayTeamId) teamIds.add(game.awayTeamId);
-              return Math.max(teams, teamIds.size);
-            }, 0),
-            gameCount: ag.games.length
-          }]
-        })),
+        .map(ag => {
+          const uniqueTeamIds = new Set();
+          ag.games.forEach((game: any) => {
+            if (game.homeTeamId) uniqueTeamIds.add(game.homeTeamId);
+            if (game.awayTeamId) uniqueTeamIds.add(game.awayTeamId);
+          });
+          const teamCount = uniqueTeamIds.size;
+          
+
+          
+          return {
+            ageGroup: ag.ageGroup,
+            gender: ag.gender,
+            birthYear: 2024, // Will be enhanced with real birth year data
+            divisionCode: ag.divisionCode || ag.ageGroup,
+            displayName: ag.displayName || ag.ageGroup,
+            totalFlights: 1, // Will be enhanced with flight data
+            totalTeams: teamCount,
+            flights: [{
+              flightName: 'Main',
+              teamCount: teamCount,
+              gameCount: ag.games.length
+            }]
+          };
+        }),
       girls: processedAgeGroups
         .filter(ag => ag.gender?.toLowerCase() === 'girls')
-        .map(ag => ({
-          ageGroup: ag.ageGroup,
-          gender: ag.gender,
-          birthYear: 2024, // Will be enhanced with real birth year data
-          divisionCode: ag.divisionCode || ag.ageGroup,
-          displayName: ag.displayName || ag.ageGroup,
-          totalFlights: 1, // Will be enhanced with flight data
-          totalTeams: ag.games.reduce((teams, game) => {
-            const teamIds = new Set();
-            if (game.homeTeamId) teamIds.add(game.homeTeamId);
-            if (game.awayTeamId) teamIds.add(game.awayTeamId);
-            return Math.max(teams, teamIds.size);
-          }, 0),
-          flights: [{
-            flightName: 'Main',
-            teamCount: ag.games.reduce((teams, game) => {
-              const teamIds = new Set();
-              if (game.homeTeamId) teamIds.add(game.homeTeamId);
-              if (game.awayTeamId) teamIds.add(game.awayTeamId);
-              return Math.max(teams, teamIds.size);
-            }, 0),
-            gameCount: ag.games.length
-          }]
-        }))
+        .map(ag => {
+          const uniqueTeamIds = new Set();
+          ag.games.forEach((game: any) => {
+            if (game.homeTeamId) uniqueTeamIds.add(game.homeTeamId);
+            if (game.awayTeamId) uniqueTeamIds.add(game.awayTeamId);
+          });
+          const teamCount = uniqueTeamIds.size;
+          
+          return {
+            ageGroup: ag.ageGroup,
+            gender: ag.gender,
+            birthYear: 2024, // Will be enhanced with real birth year data
+            divisionCode: ag.divisionCode || ag.ageGroup,
+            displayName: ag.displayName || ag.ageGroup,
+            totalFlights: 1, // Will be enhanced with flight data
+            totalTeams: teamCount,
+            flights: [{
+              flightName: 'Main',
+              teamCount: teamCount,
+              gameCount: ag.games.length
+            }]
+          };
+        })
     };
 
     res.json({
