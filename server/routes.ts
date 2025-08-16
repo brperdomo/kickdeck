@@ -972,6 +972,8 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/csv-import', csvImportRouter);
     app.use('/api/admin/fix-flight-assignments', isAdmin, fixFlightAssignmentsRouter);
     
+
+    
     // Safe registration fees middleware temporarily disabled to fix server startup
     
     // Register admin routes

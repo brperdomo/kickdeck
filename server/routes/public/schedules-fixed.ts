@@ -141,53 +141,40 @@ router.get('/:eventId', async (req: Request, res: Response) => {
       teamsByFlight.get(flightId).push(team);
     });
 
-    // Group games by age group and flight - distribute evenly across Premier/Classic/Elite
+    // Group games by age group and flight using team bracket assignments
     const gamesByAgeGroupAndFlight = new Map();
     
-    // Group games by age group first
-    const gamesByAgeGroup = new Map();
     gamesData.forEach(game => {
-      if (!gamesByAgeGroup.has(game.ageGroupId)) {
-        gamesByAgeGroup.set(game.ageGroupId, []);
-      }
-      gamesByAgeGroup.get(game.ageGroupId).push(game);
-    });
-    
-    // Distribute games across flights for each age group
-    gamesByAgeGroup.forEach((games, ageGroupId) => {
-      const ageGroupFlights = flightsData.filter(f => f.ageGroupId === ageGroupId);
+      // Find teams for this game
+      const homeTeam = teamsData.find(t => t.id === game.homeTeamId);
+      const awayTeam = teamsData.find(t => t.id === game.awayTeamId);
       
-      if (ageGroupFlights.length === 0) {
-        // No flights, assign to unassigned
-        const key = `${ageGroupId}_unassigned`;
-        gamesByAgeGroupAndFlight.set(key, games);
-        return;
+      // Use team bracket assignment to determine flight
+      let flightId = null;
+      if (homeTeam?.bracketId) {
+        flightId = homeTeam.bracketId;
+      } else if (awayTeam?.bracketId) {
+        flightId = awayTeam.bracketId;
       }
       
-      // Sort flights consistently (Premier, Classic, Elite)
-      ageGroupFlights.sort((a, b) => {
-        const order: { [key: string]: number } = { 'Premier': 1, 'Classic': 2, 'Elite': 3 };
-        const aOrder = order[a.name.split(' ')[1]] || 4;
-        const bOrder = order[b.name.split(' ')[1]] || 4;
-        return aOrder - bOrder;
-      });
-      
-
-      
-      // Distribute games evenly across flights
-      const gamesPerFlight = Math.ceil(games.length / ageGroupFlights.length);
-      
-      ageGroupFlights.forEach((flight, index) => {
-        const startIndex = index * gamesPerFlight;
-        const endIndex = Math.min(startIndex + gamesPerFlight, games.length);
-        const flightGames = games.slice(startIndex, endIndex);
-        
-        if (flightGames.length > 0) {
-          const key = `${ageGroupId}_${flight.id}`;
-          gamesByAgeGroupAndFlight.set(key, flightGames);
-
+      // If no bracket assignment, try to assign to Elite flight for this age group as fallback
+      if (!flightId) {
+        const eliteFlight = flightsData.find(f => 
+          f.ageGroupId === game.ageGroupId && f.name.toLowerCase().includes('elite')
+        );
+        if (eliteFlight) {
+          flightId = eliteFlight.id;
         }
-      });
+      }
+      
+      // Skip games that can't be assigned to any flight
+      if (!flightId) return;
+      
+      const key = `${game.ageGroupId}_${flightId}`;
+      if (!gamesByAgeGroupAndFlight.has(key)) {
+        gamesByAgeGroupAndFlight.set(key, []);
+      }
+      gamesByAgeGroupAndFlight.get(key).push(game);
     });
     
     console.log(`[Public Schedules Fixed] Games grouped by age group+flight: ${gamesByAgeGroupAndFlight.size} combinations`);
@@ -269,6 +256,11 @@ router.get('/:eventId', async (req: Request, res: Response) => {
       });
       
       const allAgeGroupGames = flights.flatMap(flight => flight.games || []);
+      
+      // Debug: Log age groups that have no games
+      if (allAgeGroupGames.length === 0) {
+        console.log(`[DEBUG] Age group ${ageGroupId} (${ageGroupInfo.name}) has no games. Flights:`, flights.map(f => `${f.flightName} (${f.games?.length || 0} games)`));
+      }
 
       return {
         ageGroupId: parseInt(ageGroupId), // Ensure ageGroupId is a number
@@ -280,7 +272,16 @@ router.get('/:eventId', async (req: Request, res: Response) => {
         games: allAgeGroupGames, // For backward compatibility
         totalGames: allAgeGroupGames.length
       };
-    }).filter(ag => ag.totalGames > 0); // Only include age groups with games
+    }); 
+    
+    // Filter out age groups with no games - but log what we're filtering
+    const ageGroupsWithGames = processedAgeGroups.filter(group => {
+      const hasGames = group.totalGames > 0;
+      if (!hasGames) {
+        console.log(`[DEBUG] Filtering out age group ${group.ageGroup} - no games found`);
+      }
+      return hasGames;
+    });
 
     // Create standings calculation
     const calculateStandings = (ageGroupGames: any[]) => {
@@ -367,8 +368,8 @@ router.get('/:eventId', async (req: Request, res: Response) => {
     });
 
     console.log(`[Public Schedules Fixed] Total age groups found: ${Array.from(ageGroupMap.entries()).length}`);
-    console.log(`[Public Schedules Fixed] Age groups with games: ${processedAgeGroups.length}`);
-    console.log(`[Public Schedules Fixed] Sample processed age groups:`, processedAgeGroups.slice(0, 3).map(ag => ({
+    console.log(`[Public Schedules Fixed] Age groups with games: ${ageGroupsWithGames.length}`);
+    console.log(`[Public Schedules Fixed] Sample processed age groups:`, ageGroupsWithGames.slice(0, 3).map(ag => ({
       ageGroupId: ag.ageGroupId,
       ageGroup: ag.ageGroup,
       gender: ag.gender,
@@ -411,7 +412,7 @@ router.get('/:eventId', async (req: Request, res: Response) => {
 
     // Group age groups by gender for the frontend
     const ageGroupsByGender = {
-      boys: processedAgeGroups
+      boys: ageGroupsWithGames
         .filter(ag => ag.gender?.toLowerCase() === 'boys')
         .map(ag => {
           return {
@@ -432,7 +433,7 @@ router.get('/:eventId', async (req: Request, res: Response) => {
             }))
           };
         }),
-      girls: processedAgeGroups
+      girls: ageGroupsWithGames
         .filter(ag => ag.gender?.toLowerCase() === 'girls')
         .map(ag => {
           return {
