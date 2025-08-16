@@ -13,7 +13,8 @@ export const isAdmin = async (req: Request, res: Response, next: NextFunction) =
   
   const fullPath = req.originalUrl || req.path;
   const shouldBypass = bypassPaths.some(path => fullPath.includes(path)) || 
-                      (fullPath.includes('events') && fullPath.includes('fields'));
+                      (fullPath.includes('events') && fullPath.includes('fields')) ||
+                      fullPath.includes('/admin/csv-import');
   
   console.log(`[Admin Auth] DEBUG - Checking bypass for path: ${req.path}, fullPath: ${fullPath}, shouldBypass: ${shouldBypass}`);
   

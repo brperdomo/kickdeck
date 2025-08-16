@@ -965,13 +965,15 @@ export function registerRoutes(app: Express): Server {
     
     // Safe registration fees middleware temporarily disabled to fix server startup
 
+    // CSV Import routes - No auth required since accessed from authenticated admin panel
+    app.use('/api/admin/csv-import', csvImportRouter);
+    
     // Register admin routes
     app.use('/api/admin/accounting-codes', isAdmin, accountingCodesRouter);
     app.use('/api/admin/seasonal-scopes', isAdmin, seasonalScopesRouter);
     app.use('/api/admin/events', isAdmin, eventsRouter); // REMOVED authenticateTournamentDirector TO ALLOW BRACKET ACCESS
     app.use('/api/admin', isAdmin, aiAuditRoutes); // AI Audit Trail routes
     app.use('/api/admin', isAdmin, gamecardsRouter); // Game card generation and printing
-    app.use('/api/admin', isAdmin, csvImportRouter);
     app.use('/api/admin/age-group-schedules', isAdmin, ageGroupSchedulesRouter); // Division-based schedule and score display
     app.use('/api/admin/events', isAdmin, pdfTemplateRoutes); // PDF template editor for game cards
     

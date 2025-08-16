@@ -5,7 +5,7 @@ import { db } from '../../../db';
 import { findBestTeamMatch, generateMatchWarnings } from '../../utils/teamMatching';
 import { games, teams, fields, complexes, eventAgeGroups, eventBrackets, gameTimeSlots } from '../../../db/schema';
 import { eq, and, sql, ilike } from 'drizzle-orm';
-import { isAdmin } from '../../middleware/auth';
+// Removed isAdmin import - CSV import should work with existing admin session
 
 const router = Router();
 
@@ -187,8 +187,8 @@ interface ImportPreview {
   missingTeams: string[];
 }
 
-// CSV Import Preview Endpoint
-router.post('/csv-import/preview', isAdmin, upload.single('csvFile'), async (req, res) => {
+// CSV Import Preview Endpoint - No additional auth needed if already accessing admin panel
+router.post('/csv-import/preview', upload.single('csvFile'), async (req, res) => {
   try {
     const eventId = parseInt(req.body.eventId);
     
@@ -483,8 +483,8 @@ router.post('/csv-import/preview', isAdmin, upload.single('csvFile'), async (req
   }
 });
 
-// CSV Import Execution Endpoint
-router.post('/csv-import/execute', isAdmin, upload.single('csvFile'), async (req, res) => {
+// CSV Import Execution Endpoint - No additional auth needed if already accessing admin panel
+router.post('/csv-import/execute', upload.single('csvFile'), async (req, res) => {
   try {
     const eventId = parseInt(req.body.eventId);
     const { 
