@@ -100,11 +100,11 @@ export default function GameScoreManager({ eventId }: GameScoreManagerProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Fetch all games for the event
+  // Fetch all games for the event using the working API endpoint
   const { data: games = [], isLoading } = useQuery({
     queryKey: ['games-scores', eventId],
     queryFn: async () => {
-      const response = await fetch(`/api/admin/events/${eventId}/games`);
+      const response = await fetch(`/api/admin/game-score-simple/events/${eventId}/games`);
       if (!response.ok) throw new Error('Failed to fetch games');
       const data = await response.json();
       return data.games as Game[];
@@ -137,8 +137,8 @@ export default function GameScoreManager({ eventId }: GameScoreManagerProps) {
   // Submit or update score
   const submitScore = useMutation({
     mutationFn: async (scoreData: ScoreEntry) => {
-      const response = await fetch(`/api/admin/score-management/games/${scoreData.gameId}/score`, {
-        method: 'POST',
+      const response = await fetch(`/api/admin/game-score-simple/games/${scoreData.gameId}/score`, {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           homeScore: scoreData.homeScore,

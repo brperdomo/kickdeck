@@ -83,7 +83,7 @@ export default function PublicSchedules() {
   const { data: scheduleData, isLoading, error } = useQuery({
     queryKey: ['public-schedules', eventId],
     queryFn: async () => {
-      const response = await fetch(`/api/public/schedules/${eventId}`);
+      const response = await fetch(`/api/public/schedules-fixed/${eventId}`);
       if (!response.ok) {
         throw new Error('Failed to fetch tournament schedules');
       }

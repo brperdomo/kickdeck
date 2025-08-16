@@ -66,6 +66,8 @@ import fieldCapacityRouter from "./routes/admin/field-capacity";
 import intelligentSchedulingRouter from "./routes/admin/intelligent-scheduling";
 import adminGamesRouter from "./routes/admin/games-router";
 import gameScoreManagementRouter from "./routes/admin/game-score-management-fixed";
+import gameScoreManagementSimpleRouter from './routes/admin/game-score-management-simple';
+import publicSchedulesFixedRouter from './routes/public/schedules-fixed';
 import clubsRouter from "./routes/clubs";
 import adminClubsRouter from "./routes/admin/clubs";
 import eventClubsRouter from "./routes/admin/event-clubs";
@@ -3631,6 +3633,8 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin', publishedSchedulesRouter); // Published schedules router
     app.use('/api/public/schedules', publicSchedulesRouter); // Public schedules (no auth required)
     app.use('/api/public/schedules', ageGroupScheduleRouter); // Age group schedules (no auth required)
+    app.use('/api/public/schedules-fixed', publicSchedulesFixedRouter); // Fixed public schedules (no auth required)
+    app.use('/api/admin/game-score-simple', gameScoreManagementSimpleRouter); // Simplified game score management
 
     // Endpoint to clone an event
     app.post('/api/admin/events/:id/clone', isAdmin, async (req, res) => {
