@@ -9,6 +9,35 @@ import { isAdmin } from '../../middleware/auth';
 
 const router = Router();
 
+// Helper function to parse division codes like G2014, B2012, etc.
+function parseDivisionCode(division: string): { gender: string, birthYear: number, ageGroup: string, divisionCode: string } {
+  const match = division.match(/^([GB])(\d{4})$/i);
+  if (!match) {
+    // Handle non-standard division codes
+    return { 
+      gender: 'Mixed', 
+      birthYear: 2010, 
+      ageGroup: division,
+      divisionCode: division
+    };
+  }
+  
+  const genderCode = match[1].toUpperCase();
+  const birthYear = parseInt(match[2]);
+  const currentYear = new Date().getFullYear();
+  const age = currentYear - birthYear;
+  
+  const gender = genderCode === 'G' ? 'Girls' : 'Boys';
+  const ageGroup = `U${age + 1} ${gender}`; // U15 Boys, U12 Girls, etc.
+  
+  return { 
+    gender, 
+    birthYear, 
+    ageGroup, 
+    divisionCode: division 
+  };
+}
+
 // Helper function to extract coach information from CSV data
 function extractCoachInformation(csvData: CSVRow[]) {
   const coaches = new Map();
@@ -44,32 +73,49 @@ function extractCoachInformation(csvData: CSVRow[]) {
   };
 }
 
-// Helper function to analyze age group structure
+// Enhanced helper function to analyze age group structure with division parsing
 async function analyzeAgeGroupStructure(csvData: CSVRow[], eventId: number) {
   const divisions = new Set();
   const flights = new Set();
   const ageGroupPattern = new Set();
+  const parsedDivisions = new Map();
   
   csvData.forEach(row => {
-    if (row.Division) divisions.add(row.Division);
+    if (row.Division) {
+      divisions.add(row.Division);
+      // Parse each division to extract age group info
+      const parsed = parseDivisionCode(row.Division);
+      parsedDivisions.set(row.Division, parsed);
+      ageGroupPattern.add(parsed.ageGroup);
+    }
     if (row.Flight) flights.add(row.Flight);
-    // Extract age pattern from division (B2015, G2014, etc.)
-    const ageMatch = row.Division?.match(/[BG]\d{4}/);
-    if (ageMatch) ageGroupPattern.add(ageMatch[0]);
   });
   
   // Get existing age groups for this event
   const existingAgeGroups = await db
-    .select({ name: eventAgeGroups.name, divisionCode: eventAgeGroups.divisionCode })
-    .from(eventAgeGroups)
-    .where(eq(eventAgeGroups.eventId, eventId.toString()));
+    .select({ 
+      id: eventAgeGroups.id,
+      name: eventAgeGroups.ageGroup, 
+      divisionCode: eventAgeGroups.divisionCode,
+      gender: eventAgeGroups.gender,
+      birthYear: eventAgeGroups.birthYear 
+    })
+    .from(eventAgeGroups);
   
   return {
     csvDivisions: Array.from(divisions),
     csvFlights: Array.from(flights), 
     csvAgePatterns: Array.from(ageGroupPattern),
-    existingAgeGroups: existingAgeGroups.map(ag => ({ name: ag.name, code: ag.divisionCode })),
-    needsAgeGroupMapping: divisions.size > 0 && existingAgeGroups.length > 0
+    parsedDivisions: Object.fromEntries(parsedDivisions),
+    existingAgeGroups: existingAgeGroups.map(ag => ({ 
+      id: ag.id,
+      name: ag.name, 
+      code: ag.divisionCode,
+      gender: ag.gender,
+      birthYear: ag.birthYear
+    })),
+    needsAgeGroupMapping: divisions.size > 0,
+    hasStandardDivisionCodes: Array.from(divisions).some(div => /^[GB]\d{4}$/i.test(div as string))
   };
 }
 
@@ -555,13 +601,17 @@ router.post('/csv-import/execute', isAdmin, upload.single('csvFile'), async (req
       if (existingAgeGroup) {
         ageGroupIdMap[ageGroupName] = existingAgeGroup.id;
       } else {
+        // Parse division code if it follows the standard format (G2014, B2012, etc.)
+        const parsedDivision = parseDivisionCode(ageGroupName);
+        
         const [newAgeGroup] = await db.insert(eventAgeGroups).values({
-          ageGroup: ageGroupName,
-          gender: 'Mixed',
-          minAge: 10,
-          maxAge: 18,
-          divisionCode: ageGroupName.replace(/\s+/g, ''),
-          fieldSize: '11v11'
+          ageGroup: parsedDivision.ageGroup,
+          gender: parsedDivision.gender,
+          birthYear: parsedDivision.birthYear,
+          divisionCode: parsedDivision.divisionCode,
+          fieldSize: parsedDivision.birthYear >= 2012 ? '9v9' : '11v11', // Younger teams typically play smaller fields
+          minAge: new Date().getFullYear() - parsedDivision.birthYear,
+          maxAge: new Date().getFullYear() - parsedDivision.birthYear + 1
         }).returning();
         
         ageGroupIdMap[ageGroupName] = newAgeGroup.id;

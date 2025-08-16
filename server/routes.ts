@@ -57,6 +57,7 @@ import adminBracketsRouter from "./routes/admin/brackets-fixed";
 import aiAssistantRouter from "./routes/admin/ai-assistant";
 import gamecardsRouter from "./routes/admin/gamecards-simple";
 import csvImportRouter from "./routes/admin/csv-import-fixed";
+import ageGroupSchedulesRouter from "./routes/admin/age-group-schedules";
 import publicGamesRouter from "./routes/public/games";
 import publicGameCardsRouter from "./routes/public/game-cards";
 import pdfTemplateRoutes from "./routes/admin/pdf-templates";
@@ -970,6 +971,7 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin', isAdmin, aiAuditRoutes); // AI Audit Trail routes
     app.use('/api/admin', isAdmin, gamecardsRouter); // Game card generation and printing
     app.use('/api/admin', isAdmin, csvImportRouter);
+    app.use('/api/admin/age-group-schedules', isAdmin, ageGroupSchedulesRouter); // Division-based schedule and score display
     app.use('/api/admin/events', isAdmin, pdfTemplateRoutes); // PDF template editor for game cards
     
     // Public routes for QR code score submission and standings
