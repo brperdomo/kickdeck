@@ -354,31 +354,7 @@ const generateMatchWarnings = (csvTeamName: string, matches: any[]) => {
   return warnings;
 };
 
-const extractCoachInformation = (csvData: any[]) => {
-  const coaches = new Set();
-  csvData.forEach(row => {
-    if (row['Home Head Coach']?.trim()) coaches.add(row['Home Head Coach'].trim());
-    if (row['Away Head Coach']?.trim()) coaches.add(row['Away Head Coach'].trim());
-  });
-  return Array.from(coaches);
-};
 
-const analyzeAgeGroupStructure = async (csvData: any[], eventId: number) => {
-  const divisions = new Set();
-  const flights = new Set();
-  
-  csvData.forEach(row => {
-    if (row.Division?.trim()) divisions.add(row.Division.trim());
-    if (row.Flight?.trim()) flights.add(row.Flight.trim());
-  });
-  
-  return {
-    divisions: Array.from(divisions),
-    flights: Array.from(flights),
-    totalDivisions: divisions.size,
-    totalFlights: flights.size
-  };
-};
 
 // CSV Import Preview Endpoint - No additional auth needed if already accessing admin panel
 router.post('/preview', upload.single('csvFile'), async (req, res) => {
