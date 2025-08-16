@@ -193,6 +193,39 @@ interface ImportPreview {
   missingTeams: string[];
 }
 
+// Enhanced date/time validation functions
+const isValidDateFormat = (dateStr: string): boolean => {
+  if (!dateStr) return false;
+  const cleaned = dateStr.trim();
+  
+  // Support multiple date formats
+  const dateFormats = [
+    /^\d{4}-\d{2}-\d{2}$/,           // YYYY-MM-DD
+    /^\d{1,2}\/\d{1,2}\/\d{4}$/,     // M/D/YYYY or MM/DD/YYYY
+    /^\d{2}-\d{2}-\d{4}$/,           // MM-DD-YYYY (like 08-16-2025)
+    /^\d{1,2}-\d{1,2}-\d{4}$/,       // M-D-YYYY
+    /^\d{1,2}\/\d{1,2}\/\d{2}$/,     // M/D/YY
+    /^\d{2}\/\d{2}\/\d{4}$/,         // MM/DD/YYYY
+  ];
+  
+  return dateFormats.some(format => format.test(cleaned));
+};
+
+const isValidTimeFormat = (timeStr: string): boolean => {
+  if (!timeStr) return false;
+  const cleaned = timeStr.trim().toUpperCase();
+  
+  // Support multiple time formats
+  const timeFormats = [
+    /^\d{1,2}:\d{2}$/,                    // H:MM or HH:MM
+    /^\d{1,2}:\d{2}\s?(AM|PM)$/,          // H:MM AM/PM
+    /^\d{1,2}:\d{2}:\d{2}$/,              // H:MM:SS
+    /^\d{1,2}:\d{2}:\d{2}\s?(AM|PM)$/,    // H:MM:SS AM/PM
+  ];
+  
+  return timeFormats.some(format => format.test(cleaned));
+};
+
 // CSV Import Preview Endpoint - No additional auth needed if already accessing admin panel
 router.post('/preview', upload.single('csvFile'), async (req, res) => {
   try {
@@ -274,28 +307,30 @@ router.post('/preview', upload.single('csvFile'), async (req, res) => {
         }
       });
 
-      // Validate date format (accept various formats)
+      // Enhanced date validation - accept multiple formats
       if (row.Date) {
         const dateStr = row.Date.trim();
-        if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr) && !/^\d{2}\/\d{2}\/\d{4}$/.test(dateStr) && !/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateStr)) {
+        const isValidDate = isValidDateFormat(dateStr);
+        if (!isValidDate) {
           errors.push({
             row: index + 1,
             field: 'Date',
             value: dateStr,
-            message: 'Date must be in YYYY-MM-DD or MM/DD/YYYY format'
+            message: 'Date format not recognized. Accepted: YYYY-MM-DD, MM/DD/YYYY, MM-DD-YYYY'
           });
         }
       }
 
-      // Validate time format
+      // Enhanced time validation - accept multiple formats including AM/PM
       if (row.Time) {
         const timeStr = row.Time.trim();
-        if (!/^\d{1,2}:\d{2}$/.test(timeStr)) {
+        const isValidTime = isValidTimeFormat(timeStr);
+        if (!isValidTime) {
           errors.push({
             row: index + 1,
             field: 'Time',
             value: timeStr,
-            message: 'Time must be in HH:MM format'
+            message: 'Time format not recognized. Accepted: HH:MM, H:MM AM/PM'
           });
         }
       }
@@ -535,21 +570,68 @@ router.post('/execute', upload.single('csvFile'), async (req, res) => {
       errors: [] as string[]
     };
 
-    // Helper functions
+    // Enhanced helper functions for flexible date/time parsing
     const normalizeDate = (dateStr: string): string => {
-      if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
-        return dateStr; // Already in correct format
+      if (!dateStr) return '';
+      
+      const cleaned = dateStr.trim();
+      
+      // Already in YYYY-MM-DD format
+      if (/^\d{4}-\d{2}-\d{2}$/.test(cleaned)) {
+        return cleaned;
       }
-      if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateStr)) {
-        const [month, day, year] = dateStr.split('/');
+      
+      // Handle MM/DD/YYYY or M/D/YYYY format
+      if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(cleaned)) {
+        const [month, day, year] = cleaned.split('/');
         return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
       }
-      throw new Error(`Invalid date format: ${dateStr}`);
+      
+      // Handle MM-DD-YYYY or M-D-YYYY format
+      if (/^\d{1,2}-\d{1,2}-\d{4}$/.test(cleaned)) {
+        const [month, day, year] = cleaned.split('-');
+        return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+      }
+      
+      // Handle MM/DD/YY format
+      if (/^\d{1,2}\/\d{1,2}\/\d{2}$/.test(cleaned)) {
+        const [month, day, year] = cleaned.split('/');
+        const fullYear = parseInt(year) < 50 ? `20${year}` : `19${year}`;
+        return `${fullYear}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+      }
+      
+      return cleaned; // Return as-is if can't parse
     };
 
     const normalizeTime = (timeStr: string): string => {
-      const [hours, minutes] = timeStr.split(':');
-      return `${hours.padStart(2, '0')}:${minutes}`;
+      if (!timeStr) return '';
+      
+      const cleaned = timeStr.trim().toUpperCase();
+      
+      // Already in HH:MM format
+      if (/^\d{1,2}:\d{2}$/.test(cleaned)) {
+        const [hours, minutes] = cleaned.split(':');
+        return `${hours.padStart(2, '0')}:${minutes}`;
+      }
+      
+      // Handle AM/PM format
+      if (/^\d{1,2}:\d{2}\s?(AM|PM)$/.test(cleaned)) {
+        const match = cleaned.match(/^(\d{1,2}):(\d{2})\s?(AM|PM)$/);
+        if (match) {
+          let [, hours, minutes, period] = match;
+          let hour24 = parseInt(hours);
+          
+          if (period === 'PM' && hour24 !== 12) {
+            hour24 += 12;
+          } else if (period === 'AM' && hour24 === 12) {
+            hour24 = 0;
+          }
+          
+          return `${hour24.toString().padStart(2, '0')}:${minutes}`;
+        }
+      }
+      
+      return cleaned; // Return as-is if can't parse
     };
 
     // Create missing fields if enabled
