@@ -226,6 +226,160 @@ const isValidTimeFormat = (timeStr: string): boolean => {
   return timeFormats.some(format => format.test(cleaned));
 };
 
+// Enhanced team name parsing functions
+const parseTeamName = (fullTeamName: string) => {
+  const trimmed = fullTeamName.trim();
+  
+  // Handle "Club Name - Team Name" format
+  const dashIndex = trimmed.indexOf(' - ');
+  if (dashIndex > 0) {
+    const clubName = trimmed.substring(0, dashIndex).trim();
+    const teamName = trimmed.substring(dashIndex + 3).trim();
+    return { clubName, teamName, fullName: trimmed };
+  }
+  
+  // Fallback: treat entire string as team name
+  return { clubName: '', teamName: trimmed, fullName: trimmed };
+};
+
+const calculateTeamMatchConfidence = (csvTeam: string, dbTeam: { id: number; name: string | null; clubName?: string | null }) => {
+  const parsed = parseTeamName(csvTeam);
+  const dbName = dbTeam.name?.toLowerCase() || '';
+  const dbClubName = dbTeam.clubName?.toLowerCase() || '';
+  
+  // Exact full name match - highest confidence
+  if (parsed.fullName.toLowerCase() === dbName) {
+    return { confidence: 1.0, matchType: 'exact_full' };
+  }
+  
+  // Exact team name match
+  if (parsed.teamName.toLowerCase() === dbName) {
+    return { confidence: 0.95, matchType: 'exact_team' };
+  }
+  
+  // Club name match + partial team match
+  if (parsed.clubName && dbClubName && parsed.clubName.toLowerCase() === dbClubName) {
+    const teamSimilarity = getStringSimilarity(parsed.teamName.toLowerCase(), dbName);
+    return { confidence: 0.8 + (teamSimilarity * 0.15), matchType: 'club_plus_team' };
+  }
+  
+  // Strong partial matching (contains significant words)
+  const csvWords = parsed.teamName.toLowerCase().split(/\s+/).filter(w => w.length > 2);
+  const dbWords = dbName.split(/\s+/).filter(w => w.length > 2);
+  
+  if (csvWords.length > 0 && dbWords.length > 0) {
+    const matchingWords = csvWords.filter(csvWord => 
+      dbWords.some(dbWord => 
+        dbWord.includes(csvWord) || csvWord.includes(dbWord) ||
+        getStringSimilarity(csvWord, dbWord) > 0.8
+      )
+    );
+    
+    const wordMatchRatio = matchingWords.length / Math.max(csvWords.length, dbWords.length);
+    if (wordMatchRatio > 0.6) {
+      return { confidence: 0.6 + (wordMatchRatio * 0.3), matchType: 'partial_words' };
+    }
+  }
+  
+  // Fuzzy string similarity
+  const similarity = getStringSimilarity(parsed.teamName.toLowerCase(), dbName);
+  if (similarity > 0.7) {
+    return { confidence: similarity * 0.8, matchType: 'fuzzy' };
+  }
+  
+  return { confidence: 0, matchType: 'no_match' };
+};
+
+const getStringSimilarity = (str1: string, str2: string): number => {
+  if (str1 === str2) return 1.0;
+  if (str1.length === 0 || str2.length === 0) return 0.0;
+  
+  // Simple Levenshtein-based similarity
+  const longer = str1.length > str2.length ? str1 : str2;
+  const shorter = str1.length > str2.length ? str2 : str1;
+  
+  if (longer.length === 0) return 1.0;
+  
+  const editDistance = levenshteinDistance(longer, shorter);
+  return (longer.length - editDistance) / longer.length;
+};
+
+const levenshteinDistance = (str1: string, str2: string): number => {
+  const matrix = Array(str2.length + 1).fill(null).map(() => Array(str1.length + 1).fill(null));
+  
+  for (let i = 0; i <= str1.length; i++) matrix[0][i] = i;
+  for (let j = 0; j <= str2.length; j++) matrix[j][0] = j;
+  
+  for (let j = 1; j <= str2.length; j++) {
+    for (let i = 1; i <= str1.length; i++) {
+      const indicator = str1[i - 1] === str2[j - 1] ? 0 : 1;
+      matrix[j][i] = Math.min(
+        matrix[j][i - 1] + 1,     // deletion
+        matrix[j - 1][i] + 1,     // insertion
+        matrix[j - 1][i - 1] + indicator   // substitution
+      );
+    }
+  }
+  
+  return matrix[str2.length][str1.length];
+};
+
+const findBestTeamMatch = (csvTeamName: string, existingTeams: any[], minConfidence = 0.6) => {
+  const matches = existingTeams.map(team => {
+    const result = calculateTeamMatchConfidence(csvTeamName, team);
+    return {
+      team,
+      confidence: result.confidence,
+      matchType: result.matchType,
+      suggestion: result.confidence > 0.8 ? 'auto_match' : result.confidence > 0.6 ? 'review_match' : 'manual_match'
+    };
+  })
+  .filter(match => match.confidence >= minConfidence)
+  .sort((a, b) => b.confidence - a.confidence);
+  
+  return matches;
+};
+
+const generateMatchWarnings = (csvTeamName: string, matches: any[]) => {
+  const warnings: string[] = [];
+  
+  if (matches.length === 0) {
+    warnings.push(`No matching team found for "${csvTeamName}"`);
+  } else if (matches.length === 1 && matches[0].confidence < 0.8) {
+    warnings.push(`Low confidence match for "${csvTeamName}" -> "${matches[0].team.name}" (${(matches[0].confidence * 100).toFixed(0)}%)`);
+  } else if (matches.length > 1 && matches[0].confidence - matches[1].confidence < 0.1) {
+    warnings.push(`Ambiguous match for "${csvTeamName}" - multiple similar teams found`);
+  }
+  
+  return warnings;
+};
+
+const extractCoachInformation = (csvData: any[]) => {
+  const coaches = new Set();
+  csvData.forEach(row => {
+    if (row['Home Head Coach']?.trim()) coaches.add(row['Home Head Coach'].trim());
+    if (row['Away Head Coach']?.trim()) coaches.add(row['Away Head Coach'].trim());
+  });
+  return Array.from(coaches);
+};
+
+const analyzeAgeGroupStructure = async (csvData: any[], eventId: number) => {
+  const divisions = new Set();
+  const flights = new Set();
+  
+  csvData.forEach(row => {
+    if (row.Division?.trim()) divisions.add(row.Division.trim());
+    if (row.Flight?.trim()) flights.add(row.Flight.trim());
+  });
+  
+  return {
+    divisions: Array.from(divisions),
+    flights: Array.from(flights),
+    totalDivisions: divisions.size,
+    totalFlights: flights.size
+  };
+};
+
 // CSV Import Preview Endpoint - No additional auth needed if already accessing admin panel
 router.post('/preview', upload.single('csvFile'), async (req, res) => {
   try {
@@ -402,9 +556,9 @@ router.post('/preview', upload.single('csvFile'), async (req, res) => {
       }
     });
 
-    // Get existing team mappings
+    // Get existing team mappings with club information
     const existingTeams = await db
-      .select({ id: teams.id, name: teams.name })
+      .select({ id: teams.id, name: teams.name, clubName: teams.clubName })
       .from(teams)
       .where(eq(teams.eventId, eventId.toString()));
     
