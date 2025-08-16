@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { eq } from 'drizzle-orm';
 import { db } from '@db';
-import { games } from '@db/schema';
+import { games, teams, fields, eventAgeGroups } from '@db/schema';
 
 const router = Router();
 
@@ -40,33 +40,33 @@ router.get('/:gameId', async (req, res) => {
     
     const gameData = gameResult[0];
 
-    // Get additional data with separate queries
-    const [homeTeamResult, awayTeamResult, fieldResult, ageGroupResult] = await Promise.all([
-      gameData.homeTeamId ? db.execute(`SELECT name FROM teams WHERE id = ${gameData.homeTeamId}`) : Promise.resolve({ rows: [] }),
-      gameData.awayTeamId ? db.execute(`SELECT name FROM teams WHERE id = ${gameData.awayTeamId}`) : Promise.resolve({ rows: [] }),
-      gameData.fieldId ? db.execute(`SELECT f.name FROM fields f JOIN event_field_configurations efc ON f.id = efc.field_id WHERE efc.field_id = ${gameData.fieldId} AND efc.event_id = ${gameData.eventId}`) : Promise.resolve({ rows: [] }),
-      gameData.ageGroupId ? db.execute(`SELECT age_group FROM event_age_groups WHERE id = ${gameData.ageGroupId}`) : Promise.resolve({ rows: [] })
+    // Get additional data with proper Drizzle ORM queries
+    const [homeTeamData, awayTeamData, fieldData, ageGroupData] = await Promise.all([
+      gameData.homeTeamId ? db.select({ name: teams.name }).from(teams).where(eq(teams.id, gameData.homeTeamId)).limit(1) : Promise.resolve([]),
+      gameData.awayTeamId ? db.select({ name: teams.name }).from(teams).where(eq(teams.id, gameData.awayTeamId)).limit(1) : Promise.resolve([]),
+      gameData.fieldId ? db.select({ name: fields.name }).from(fields).where(eq(fields.id, gameData.fieldId)).limit(1) : Promise.resolve([]),
+      gameData.ageGroupId ? db.select({ ageGroup: eventAgeGroups.ageGroup }).from(eventAgeGroups).where(eq(eventAgeGroups.id, gameData.ageGroupId)).limit(1) : Promise.resolve([])
     ]);
 
     const game = {
       id: gameData.id,
       homeTeam: {
         id: gameData.homeTeamId,
-        name: homeTeamResult.rows?.[0]?.name || 'TBD'
+        name: homeTeamData[0]?.name || 'TBD'
       },
       awayTeam: {
         id: gameData.awayTeamId,
-        name: awayTeamResult.rows?.[0]?.name || 'TBD'
+        name: awayTeamData[0]?.name || 'TBD'
       },
       homeScore: gameData.homeScore,
       awayScore: gameData.awayScore,
       startTime: `${gameData.scheduledDate} ${gameData.scheduledTime}`,
       field: {
-        name: fieldResult.rows?.[0]?.name || 'Field TBD'
+        name: fieldData[0]?.name || 'Field TBD'
       },
       status: gameData.status || 'scheduled',
       ageGroup: {
-        ageGroup: ageGroupResult.rows?.[0]?.age_group || 'Age Group'
+        ageGroup: ageGroupData[0]?.ageGroup || 'Age Group'
       },
       isCompleted: gameData.status === 'completed',
       isScoreLocked: gameData.isScoreLocked || false,
