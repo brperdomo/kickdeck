@@ -822,16 +822,16 @@ export default function PDFFormEditor({ eventId }: PDFFormEditorProps) {
                 <CardContent className="pt-2">
                   <div 
                     className={`border rounded-md p-4 bg-gray-50 overflow-auto transition-all duration-300 ${
-                      isCanvasMaximized ? 'h-[600px]' : 'h-[400px]'
+                      isCanvasMaximized ? 'h-[700px]' : 'h-[500px]'
                     }`}
                   >
                     <div
                       className="relative bg-white border shadow-sm cursor-crosshair"
                       style={{
-                        width: isCanvasMaximized ? selectedTemplate.pageWidth * 2.5 : selectedTemplate.pageWidth * 1.5,
-                        height: isCanvasMaximized ? selectedTemplate.pageHeight * 2.5 : selectedTemplate.pageHeight * 1.5,
-                        minWidth: '400px',
-                        minHeight: '500px',
+                        width: isCanvasMaximized ? selectedTemplate.pageWidth * 3.5 : selectedTemplate.pageWidth * 2.8,
+                        height: isCanvasMaximized ? selectedTemplate.pageHeight * 3.5 : selectedTemplate.pageHeight * 2.8,
+                        minWidth: '800px',
+                        minHeight: '600px',
                         backgroundImage: selectedTemplate.backgroundImage ? `url(${selectedTemplate.backgroundImage})` : 'none',
                         backgroundSize: selectedTemplate.backgroundImageScale === 'stretch' ? '100% 100%' : 
                                        selectedTemplate.backgroundImageScale === 'fill' ? 'cover' : 'contain',
@@ -844,8 +844,8 @@ export default function PDFFormEditor({ eventId }: PDFFormEditorProps) {
                     >
                       <canvas
                         ref={canvasRef}
-                        width={selectedTemplate.pageWidth * (isCanvasMaximized ? 2.5 : 1.5)}
-                        height={selectedTemplate.pageHeight * (isCanvasMaximized ? 2.5 : 1.5)}
+                        width={selectedTemplate.pageWidth * (isCanvasMaximized ? 3.5 : 2.8)}
+                        height={selectedTemplate.pageHeight * (isCanvasMaximized ? 3.5 : 2.8)}
                         className="absolute inset-0"
                       />
                       
@@ -859,10 +859,10 @@ export default function PDFFormEditor({ eventId }: PDFFormEditorProps) {
                               : 'border-transparent hover:border-gray-300'
                           }`}
                           style={{
-                            left: element.x * (isCanvasMaximized ? 2.5 : 1.5),
-                            top: element.y * (isCanvasMaximized ? 2.5 : 1.5),
-                            width: element.width * (isCanvasMaximized ? 2.5 : 1.5),
-                            height: element.height * (isCanvasMaximized ? 2.5 : 1.5),
+                            left: element.x * (isCanvasMaximized ? 3.5 : 2.8),
+                            top: element.y * (isCanvasMaximized ? 3.5 : 2.8),
+                            width: element.width * (isCanvasMaximized ? 3.5 : 2.8),
+                            height: element.height * (isCanvasMaximized ? 3.5 : 2.8),
                             cursor: isDragging ? 'grabbing' : 'grab'
                           }}
                           onClick={(e) => {
@@ -885,7 +885,7 @@ export default function PDFFormEditor({ eventId }: PDFFormEditorProps) {
                           )}
                           
                           {/* Element content preview */}
-                          <div className="w-full h-full flex items-center justify-center text-xs text-gray-600 bg-white bg-opacity-75 rounded">
+                          <div className="w-full h-full flex items-center justify-center text-xs text-gray-700 bg-blue-50 bg-opacity-40 rounded border border-blue-200 border-opacity-50">
                             {element.type === 'text' && element.content}
                             {element.type === 'placeholder' && `{${element.placeholder}}`}
                             {element.type === 'qr-code' && 'QR'}
@@ -1208,18 +1208,6 @@ export default function PDFFormEditor({ eventId }: PDFFormEditorProps) {
                       Delete Element
                     </Button>
                   </div>
-                  
-                  {/* Delete Button */}
-                  <Separator />
-                  <Button
-                    onClick={() => deleteElement(selectedElement.id)}
-                    variant="destructive"
-                    size="sm"
-                    className="w-full"
-                  >
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Delete Element
-                  </Button>
                 </TabsContent>
               </Tabs>
             ) : (
