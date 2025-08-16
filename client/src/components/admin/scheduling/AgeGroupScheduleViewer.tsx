@@ -146,7 +146,7 @@ const AgeGroupScheduleViewer = ({ eventId }: { eventId: number }) => {
   // Bulk delete mutations
   const deleteCsvGamesMutation = useMutation({
     mutationFn: async () => {
-      const response = await fetch(`/api/admin/games/${eventId}/csv-imports`, {
+      const response = await fetch(`/api/admin/events/${eventId}/games/delete-all`, {
         method: 'DELETE',
       });
       if (!response.ok) {
@@ -173,8 +173,12 @@ const AgeGroupScheduleViewer = ({ eventId }: { eventId: number }) => {
 
   const deleteAllGamesMutation = useMutation({
     mutationFn: async () => {
-      const response = await fetch(`/api/admin/games/${eventId}/games/bulk`, {
+      const response = await fetch(`/api/admin/events/${eventId}/games/bulk`, {
         method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ gameIds: [] }), // Empty array = delete all
       });
       if (!response.ok) {
         throw new Error('Failed to delete all games');
@@ -200,7 +204,7 @@ const AgeGroupScheduleViewer = ({ eventId }: { eventId: number }) => {
 
   const deleteAgeGroupGamesMutation = useMutation({
     mutationFn: async (ageGroupId: number) => {
-      const response = await fetch(`/api/admin/games/${eventId}/age-group/${ageGroupId}/games`, {
+      const response = await fetch(`/api/admin/events/${eventId}/age-groups/${ageGroupId}/games`, {
         method: 'DELETE',
       });
       if (!response.ok) {
