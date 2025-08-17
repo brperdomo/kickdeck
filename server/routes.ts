@@ -9086,14 +9086,38 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
 
     app.get('/api/admin/teams', isAdmin, async (req, res) => {
       try {
-        const eventId = parseInt(req.query.eventId as string);
+        const eventId = req.query.eventId ? parseInt(req.query.eventId as string) : null;
         const ageGroupId = req.query.ageGroupId ? parseInt(req.query.ageGroupId as string) : null;
         const status = req.query.status as string;
+
+        console.log('Teams API called with:', { eventId, ageGroupId, status });
+
+        // Import required schemas
+        const { teams, eventAgeGroups, clubs, events, players } = await import('@db/schema');
+        const { eq, and, sql } = await import('drizzle-orm');
+
+        let whereConditions = [];
+
+        // Add event filter if specified
+        if (eventId && !isNaN(eventId)) {
+          whereConditions.push(eq(teams.eventId, eventId));
+        }
+
+        // Add age group filter if specified
+        if (ageGroupId && !isNaN(ageGroupId)) {
+          whereConditions.push(eq(teams.ageGroupId, ageGroupId));
+        }
+
+        // Add status filter if specified
+        if (status && status !== 'all') {
+          whereConditions.push(eq(teams.status, status));
+        }
 
         let query = db
           .select({
             team: teams,
             ageGroup: eventAgeGroups,
+            event: events,  // Include event data
             club: {
               name: clubs.name,
               logoUrl: clubs.logoUrl
@@ -9101,25 +9125,21 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           })
           .from(teams)
           .leftJoin(eventAgeGroups, eq(teams.ageGroupId, eventAgeGroups.id))
-          // Add a join with the clubs table based on clubId
-          .leftJoin(clubs, eq(teams.clubId, clubs.id))
-          .where(eq(teams.eventId, eventId));
+          .leftJoin(events, eq(teams.eventId, events.id))  // Join with events table
+          .leftJoin(clubs, eq(teams.clubId, clubs.id));
 
-        // Add age group filter if specified
-        if (ageGroupId) {
-          query = query.where(eq(teams.ageGroupId, ageGroupId));
-        }
-
-        // Add status filter if specified
-        if (status && status !== 'all') {
-          query = query.where(eq(teams.status, status));
+        // Apply where conditions if any
+        if (whereConditions.length > 0) {
+          query = query.where(whereConditions.length === 1 ? whereConditions[0] : and(...whereConditions));
         }
 
         const results = await query.orderBy(teams.name);
 
+        console.log(`Found ${results.length} teams`);
+
         // For each team, fetch player count
         const teamsWithPlayerCounts = await Promise.all(
-          results.map(async ({ team, ageGroup, club }) => {
+          results.map(async ({ team, ageGroup, event, club }) => {
             // Count players for this team
             const playerCountResult = await db
               .select({ count: sql<number>`count(*)`.mapWith(Number) })
@@ -9130,7 +9150,8 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
             
             return {
               ...team,
-              ageGroup: ageGroup?.ageGroup || 'Unknown',
+              ageGroup: ageGroup,  // Return full ageGroup object
+              event: event,       // Return full event object  
               clubLogoUrl: club?.logoUrl || null,
               clubName: club?.name || null,
               playerCount: playerCount
@@ -9138,10 +9159,10 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           })
         );
 
+        console.log('Teams with relationship data prepared for frontend');
         res.json(teamsWithPlayerCounts);
       } catch (error) {
         console.error('Error fetching teams:', error);
-        // Added basic error logging for white screen debugging.
         console.error("Error details:", error);
         res.status(500).send("Failed to fetch teams");
       }
