@@ -149,7 +149,6 @@ import scheduleConflictsRouter from "./routes/admin/schedule-conflicts";
 import managerReportsRouter from "./routes/admin/manager-reports";
 import publishedSchedulesRouter from "./routes/admin/published-schedules";
 import publicSchedulesRouter from "./routes/public/schedules";
-import publicStandingsRouter from "./routes/public/standings";
 import divisionSchedulesRouter from "./routes/public/division-schedules";
 import ageGroupScheduleRouter from "./routes/public/age-group-schedule";
 import tbdResolverRouter from "./routes/admin/tbd-resolver";
@@ -3644,6 +3643,11 @@ export function registerRoutes(app: Express): Server {
     app.get('/api/admin/events/:eventId/visibility-settings', isAdmin, async (req, res) => {
       try {
         const { eventId } = req.params;
+        const eventIdNum = parseInt(eventId);
+        
+        if (isNaN(eventIdNum)) {
+          return res.status(400).json({ error: 'Invalid event ID' });
+        }
         
         const result = await db
           .select({
@@ -3651,7 +3655,7 @@ export function registerRoutes(app: Express): Server {
             showPublicStandings: events.showPublicStandings,
           })
           .from(events)
-          .where(eq(events.id, eventId))
+          .where(eq(events.id, eventIdNum))
           .limit(1);
         
         if (result.length === 0) {
@@ -3669,6 +3673,13 @@ export function registerRoutes(app: Express): Server {
       try {
         const { eventId } = req.params;
         const { showPublicSchedules, showPublicStandings } = req.body;
+        const eventIdNum = parseInt(eventId);
+        
+        if (isNaN(eventIdNum)) {
+          return res.status(400).json({ error: 'Invalid event ID' });
+        }
+        
+        console.log(`[Visibility Settings] Updating event ${eventIdNum}:`, { showPublicSchedules, showPublicStandings });
         
         const updateData: any = {
           updatedAt: new Date().toISOString(),
@@ -3685,7 +3696,7 @@ export function registerRoutes(app: Express): Server {
         const result = await db
           .update(events)
           .set(updateData)
-          .where(eq(events.id, eventId))
+          .where(eq(events.id, eventIdNum))
           .returning({
             showPublicSchedules: events.showPublicSchedules,
             showPublicStandings: events.showPublicStandings,
