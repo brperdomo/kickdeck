@@ -107,7 +107,7 @@ export function TeamModal({ isOpen, onClose, team }: TeamModalProps) {
     },
     enabled: !!team?.eventId,
     staleTime: 0, // Always fetch fresh
-    cacheTime: 0, // Don't cache
+    gcTime: 0, // Don't cache
   });
   
   // State to track the selected age group for brackets query
@@ -167,8 +167,8 @@ export function TeamModal({ isOpen, onClose, team }: TeamModalProps) {
       clubName: team?.clubName || "",
       ageGroupId: team?.ageGroupId ? String(team.ageGroupId) : "",
       bracketId: team?.bracketId || null,
-      gender: "",
-      status: team?.status || "registered",
+      gender: (team?.ageGroup?.gender as "Boys" | "Girls") || undefined,
+      status: (team?.status as any) || "registered",
     },
   });
 
@@ -179,7 +179,7 @@ export function TeamModal({ isOpen, onClose, team }: TeamModalProps) {
       
       // Find the current team's gender from age groups
       const currentAgeGroup = ageGroupsQuery.data.find((ag: any) => ag.id === team.ageGroupId);
-      const currentGender = currentAgeGroup?.gender || "";
+      const currentGender = currentAgeGroup?.gender || team?.ageGroup?.gender || "";
       
       form.reset({
         name: team.name || "",
@@ -195,8 +195,8 @@ export function TeamModal({ isOpen, onClose, team }: TeamModalProps) {
         clubName: team.clubName || "",
         ageGroupId: team.ageGroupId ? String(team.ageGroupId) : "",
         bracketId: team.bracketId || null,
-        gender: currentGender,
-        status: team.status || "registered",
+        gender: currentGender as "Boys" | "Girls",
+        status: team.status as any || "registered",
       });
       
       // Initialize the age group ID and gender for bracket fetching
@@ -499,6 +499,31 @@ export function TeamModal({ isOpen, onClose, team }: TeamModalProps) {
               
               <div className="space-y-4">
                 <h3 className="text-lg font-medium">Team Organization</h3>
+                
+                {/* Current Registration Information - Read Only Display */}
+                {team && (
+                  <div className="bg-muted/30 rounded-md p-4 border">
+                    <h4 className="font-medium mb-3">Current Registration Information</h4>
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <span className="font-medium text-muted-foreground">Event:</span>
+                        <div>{team.event?.name || 'N/A'}</div>
+                      </div>
+                      <div>
+                        <span className="font-medium text-muted-foreground">Age Group:</span>
+                        <div>{team.ageGroup?.ageGroup || 'N/A'}</div>
+                      </div>
+                      <div>
+                        <span className="font-medium text-muted-foreground">Division:</span>
+                        <div>{team.ageGroup?.divisionCode || 'N/A'}</div>
+                      </div>
+                      <div>
+                        <span className="font-medium text-muted-foreground">Gender:</span>
+                        <div>{team.ageGroup?.gender || 'N/A'}</div>
+                      </div>
+                    </div>
+                  </div>
+                )}
                 <FormField
                   control={form.control}
                   name="clubName"
