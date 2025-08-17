@@ -55,7 +55,19 @@ interface TeamModalProps {
     clubName?: string;
     eventId?: string;
     ageGroupId?: number;
-    ageGroup?: string;
+    ageGroup?: {
+      id: number;
+      ageGroup: string;
+      gender: string;
+      fieldSize?: string;
+      divisionCode?: string;
+    };
+    event?: {
+      id: number;
+      name: string;
+      startDate?: string;
+      endDate?: string;
+    };
     bracketId?: number | null;
     status?: string;
   };

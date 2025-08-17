@@ -9166,6 +9166,8 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
             
             return {
               ...team,
+              eventId: team.eventId ? String(team.eventId) : null, // Ensure eventId is available as string for TeamModal
+              ageGroupId: team.ageGroupId, // Ensure ageGroupId is available for TeamModal
               ageGroup: ageGroup ? {
                 id: ageGroup.id,
                 ageGroup: ageGroup.ageGroup,  // Map age_group to ageGroup for frontend
