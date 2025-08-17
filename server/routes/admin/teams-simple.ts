@@ -323,9 +323,140 @@ export async function processTeamPaymentAfterSetup(req: Request, res: Response) 
 }
 
 export async function generatePaymentCompletionUrl(req: Request, res: Response) {
-  res.json({ success: true, url: 'https://app.matchpro.ai/payment/complete' });
+  try {
+    const teamId = parseInt(req.params.teamId);
+    
+    if (isNaN(teamId)) {
+      return res.status(400).json({ error: 'Invalid team ID' });
+    }
+    
+    console.log(`PAYMENT URL: Generating completion URL for team ${teamId}`);
+    
+    // Get team information
+    const [team] = await db
+      .select()
+      .from(teams)
+      .where(eq(teams.id, teamId))
+      .limit(1);
+    
+    if (!team) {
+      return res.status(404).json({ error: 'Team not found' });
+    }
+    
+    console.log(`PAYMENT URL: Team ${teamId} status:`, {
+      paymentStatus: team.paymentStatus,
+      paymentMethodId: team.paymentMethodId,
+      setupIntentId: team.setupIntentId,
+      totalAmount: team.totalAmount
+    });
+    
+    // Check if team has failed payments but existing payment methods
+    if (team.paymentStatus === 'payment_failed' && (team.paymentMethodId || team.setupIntentId)) {
+      console.log(`PAYMENT URL: Team ${teamId} has failed payment but existing payment setup - redirecting to retry`);
+      
+      // For teams with failed payments but existing payment setup, 
+      // generate a URL that will trigger the payment retry system
+      const retryUrl = `${req.protocol}://${req.get('host')}/payment/retry/${teamId}?source=admin_generated`;
+      
+      return res.json({ 
+        success: true, 
+        completionUrl: retryUrl,
+        message: 'Payment retry URL generated for team with existing payment method',
+        isRetryUrl: true
+      });
+    }
+    
+    // For teams that need new payment setup
+    if (team.paymentStatus !== 'paid' && team.totalAmount && team.totalAmount > 0) {
+      // Generate a new payment setup URL
+      const setupUrl = `${req.protocol}://${req.get('host')}/payment/setup/${teamId}?source=admin_generated`;
+      
+      return res.json({ 
+        success: true, 
+        completionUrl: setupUrl,
+        message: 'Payment setup URL generated for team',
+        isSetupUrl: true
+      });
+    }
+    
+    // Team doesn't need payment
+    if (team.paymentStatus === 'paid') {
+      return res.status(400).json({ 
+        error: 'Team payment already completed',
+        guidance: 'This team has already completed payment successfully.'
+      });
+    }
+    
+    if (!team.totalAmount || team.totalAmount === 0) {
+      return res.status(400).json({ 
+        error: 'No payment required',
+        guidance: 'This team has no fees and does not require payment.'
+      });
+    }
+    
+    return res.status(400).json({ 
+      error: 'Unable to generate payment URL',
+      guidance: 'Team status or payment configuration prevents URL generation.'
+    });
+    
+  } catch (error) {
+    console.error('Error generating payment completion URL:', error);
+    res.status(500).json({ 
+      error: 'Failed to generate payment completion URL',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
 }
 
 export async function generatePaymentIntentCompletionUrl(req: Request, res: Response) {
-  res.json({ success: true, url: 'https://app.matchpro.ai/payment-intent/complete' });
+  try {
+    const teamId = parseInt(req.params.id);
+    
+    if (isNaN(teamId)) {
+      return res.status(400).json({ error: 'Invalid team ID' });
+    }
+    
+    console.log(`PAYMENT INTENT URL: Generating completion URL for team ${teamId}`);
+    
+    // Get team information
+    const [team] = await db
+      .select()
+      .from(teams)
+      .where(eq(teams.id, teamId))
+      .limit(1);
+    
+    if (!team) {
+      return res.status(404).json({ error: 'Team not found' });
+    }
+    
+    console.log(`PAYMENT INTENT URL: Team ${teamId} status:`, {
+      paymentStatus: team.paymentStatus,
+      paymentIntentId: team.paymentIntentId,
+      totalAmount: team.totalAmount
+    });
+    
+    // For teams with PaymentIntents that need completion
+    if (team.paymentIntentId) {
+      const intentCompletionUrl = `${req.protocol}://${req.get('host')}/payment/intent/${teamId}?source=admin_generated`;
+      
+      return res.json({ 
+        success: true, 
+        completionUrl: intentCompletionUrl,
+        message: 'Payment intent completion URL generated',
+        isIntentUrl: true
+      });
+    }
+    
+    return res.status(400).json({ 
+      error: 'No payment intent found',
+      guidance: 'This team does not have a payment intent that requires completion.'
+    });
+    
+  } catch (error) {
+    console.error('Error generating payment intent completion URL:', error);
+    res.status(500).json({ 
+      error: 'Failed to generate payment intent completion URL',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
 }

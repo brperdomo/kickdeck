@@ -1121,6 +1121,172 @@ export function registerRoutes(app: Express): Server {
     });
     
     app.use('/api/admin/retry-payment', isAdmin, retryPaymentRouter); // Payment retry system
+    
+    // Public payment retry routes for admin-generated URLs
+    app.get('/payment/retry/:teamId', async (req, res) => {
+      try {
+        const teamId = parseInt(req.params.teamId);
+        const source = req.query.source || 'direct';
+        
+        if (isNaN(teamId)) {
+          return res.status(400).send('Invalid team ID');
+        }
+        
+        console.log(`PAYMENT RETRY URL: Team ${teamId} accessed retry page (source: ${source})`);
+        
+        // Get team information for display
+        const [team] = await db
+          .select({
+            id: teams.id,
+            name: teams.name,
+            paymentStatus: teams.paymentStatus,
+            totalAmount: teams.totalAmount,
+            managerEmail: teams.managerEmail
+          })
+          .from(teams)
+          .where(eq(teams.id, teamId))
+          .limit(1);
+        
+        if (!team) {
+          return res.status(404).send('Team not found');
+        }
+        
+        // Generate HTML page for payment retry
+        const html = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Retry - ${team.name}</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
+        .card { border: 1px solid #ddd; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .error { color: #e74c3c; }
+        .warning { color: #f39c12; background: #fef9e7; padding: 10px; border-radius: 4px; margin: 10px 0; }
+        .button { background: #3498db; color: white; padding: 12px 24px; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; display: inline-block; }
+        .button:hover { background: #2980b9; }
+        .amount { font-size: 1.2em; font-weight: bold; color: #27ae60; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Payment Retry Required</h1>
+        <h2>Team: ${team.name}</h2>
+        
+        <div class="warning">
+            <strong>Payment Status:</strong> ${team.paymentStatus}<br>
+            <strong>Amount Due:</strong> <span class="amount">$${(team.totalAmount / 100).toFixed(2)}</span>
+        </div>
+        
+        <p>Your team's payment needs to be completed. This may be due to:</p>
+        <ul>
+            <li>Insufficient funds on the payment method</li>
+            <li>Payment method attachment issues</li>
+            <li>Technical payment processing errors</li>
+        </ul>
+        
+        <p><strong>Next Steps:</strong></p>
+        <ol>
+            <li>Contact the tournament administrator to resolve payment issues</li>
+            <li>Ensure your payment method has sufficient funds</li>
+            <li>If needed, provide a new payment method</li>
+        </ol>
+        
+        <p>For assistance, please contact: <strong>${team.managerEmail}</strong></p>
+        
+        <p><em>Generated ${source === 'admin_generated' ? 'by tournament admin' : 'automatically'} for payment resolution.</em></p>
+    </div>
+</body>
+</html>`;
+        
+        res.send(html);
+        
+      } catch (error) {
+        console.error('Error serving payment retry page:', error);
+        res.status(500).send('Error loading payment retry page');
+      }
+    });
+    
+    // Public payment setup routes for teams that need new payment methods
+    app.get('/payment/setup/:teamId', async (req, res) => {
+      try {
+        const teamId = parseInt(req.params.teamId);
+        const source = req.query.source || 'direct';
+        
+        if (isNaN(teamId)) {
+          return res.status(400).send('Invalid team ID');
+        }
+        
+        console.log(`PAYMENT SETUP URL: Team ${teamId} accessed setup page (source: ${source})`);
+        
+        // Get team information
+        const [team] = await db
+          .select({
+            id: teams.id,
+            name: teams.name,
+            paymentStatus: teams.paymentStatus,
+            totalAmount: teams.totalAmount,
+            managerEmail: teams.managerEmail
+          })
+          .from(teams)
+          .where(eq(teams.id, teamId))
+          .limit(1);
+        
+        if (!team) {
+          return res.status(404).send('Team not found');
+        }
+        
+        // Generate HTML page for payment setup
+        const html = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Setup - ${team.name}</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
+        .card { border: 1px solid #ddd; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .info { color: #2980b9; background: #ebf3fd; padding: 10px; border-radius: 4px; margin: 10px 0; }
+        .button { background: #27ae60; color: white; padding: 12px 24px; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; display: inline-block; }
+        .button:hover { background: #229954; }
+        .amount { font-size: 1.2em; font-weight: bold; color: #27ae60; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Payment Setup Required</h1>
+        <h2>Team: ${team.name}</h2>
+        
+        <div class="info">
+            <strong>Amount Due:</strong> <span class="amount">$${(team.totalAmount / 100).toFixed(2)}</span><br>
+            <strong>Status:</strong> Payment setup needed
+        </div>
+        
+        <p>Your team registration requires payment to complete the process.</p>
+        
+        <p><strong>To complete payment:</strong></p>
+        <ol>
+            <li>Contact the tournament administrator</li>
+            <li>Provide your preferred payment method</li>
+            <li>Complete the secure payment process</li>
+        </ol>
+        
+        <p>For payment assistance, please contact: <strong>${team.managerEmail}</strong></p>
+        
+        <p><em>Payment setup link generated ${source === 'admin_generated' ? 'by tournament admin' : 'automatically'}.</em></p>
+    </div>
+</body>
+</html>`;
+        
+        res.send(html);
+        
+      } catch (error) {
+        console.error('Error serving payment setup page:', error);
+        res.status(500).send('Error loading payment setup page');
+      }
+    });
     app.use('/api/admin/files', isAdmin, filesRouter); // File management router
     app.use('/api/admin/folders', isAdmin, foldersRouter); // Folder management router
     app.use('/api/admin/teams', isAdmin, playersRouter); // Player management router
