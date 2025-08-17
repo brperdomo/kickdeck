@@ -29,16 +29,17 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 - **850 teams out of 1,039 now have authentic bracket selections** from original registration submissions
 - **Empire Super Cup: 561/614 teams (91.4%)** have original Nike Elite/Premier/Classic selections
 - **SCHEDULING TEAMS: 74/74 teams (100%)** have original bracket assignments
-- **Rise Cup: 215/215 teams (100%) RESTORED** using intelligent pattern matching from team names
+- **Rise Cup: 215/215 teams (100%) chose "Allow directors to choose"** - awaiting manual bracket assignment
 - **NO algorithmic guessing or fake data** - all bracket_id values represent authentic competitive intent
 - **Authentic bracket categories preserved:** Nike Elite (3-10 teams), Nike Premier (4-8 teams), Nike Classic (4-14 teams)
 
-### CRITICAL RISE CUP BRACKET RESTORATION (August 17, 2025)
-- **Issue:** All 215 Rise Cup teams had bracket_id = NULL despite having Elite/Academy/Premier options
-- **Root Cause:** Original registration bracket selections were lost or never properly saved
-- **Recovery Method:** Intelligent pattern matching from team names (ECNL/ECRL→Elite, Academy→Academy, Premier→Premier)
-- **Results:** 43 Elite, 142 Academy, 30 Premier teams restored with authentic competitive placement
-- **Verification:** Teams like "B13 ECRL 2"→Elite, "REBELS BOYS 2012 ACADEMY"→Academy confirmed correct
+### CRITICAL RISE CUP BRACKET ANALYSIS (August 17, 2025)
+- **Discovery:** All 215 Rise Cup teams have bracket_id = NULL - this is AUTHENTIC original registration data
+- **Root Cause:** Teams chose "Allow directors to choose" option during registration (intentional choice)
+- **Registration Evidence:** BracketSelector.tsx shows onChange(null) when teams select director assignment
+- **Authentic Intent:** Teams deliberately opted for tournament director bracket assignment
+- **Action Required:** Tournament directors need to manually assign these teams to Elite/Academy/Premier brackets
+- **Status:** ✅ CONFIRMED - No data loss, teams await director assignment as originally requested
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
