@@ -11,6 +11,8 @@ import {
   processPaymentForApprovedTeam,
   attachTestPaymentMethodToSetupIntent
 } from '../services/stripeService';
+import { recoverFailedPayments, syncTeamPaymentStatus } from '../services/paymentRecoveryService';
+import { getTeamPaymentStatus, monitorPaymentStatuses, verifyWebhookStatus } from '../services/paymentStatusMonitor';
 
 if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
@@ -402,6 +404,93 @@ router.post('/resend-receipt', async (req, res) => {
     
   } catch (error: any) {
     console.error('Error resending receipt:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Payment Recovery and Status Sync Endpoints
+router.post('/recover-failed', async (req, res) => {
+  try {
+    const result = await recoverFailedPayments();
+    res.json({ 
+      success: true, 
+      ...result,
+      message: `Recovery completed: ${result.recovered} teams recovered, ${result.stillFailed} still failed`
+    });
+  } catch (error: any) {
+    console.error('Error in payment recovery:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Sync specific team payment status
+router.post('/sync-status/:teamId', async (req, res) => {
+  try {
+    const teamId = parseInt(req.params.teamId);
+    if (isNaN(teamId)) {
+      return res.status(400).json({ error: 'Invalid team ID' });
+    }
+
+    const result = await syncTeamPaymentStatus(teamId);
+    res.json({ success: true, ...result });
+  } catch (error: any) {
+    console.error(`Error syncing payment status for team ${req.params.teamId}:`, error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Test webhook connectivity
+router.get('/test-webhook', (req, res) => {
+  res.json({ 
+    success: true, 
+    message: 'Webhook endpoint is accessible',
+    webhookSecret: process.env.STRIPE_WEBHOOK_SECRET ? 'configured' : 'missing',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Get detailed payment status for a specific team
+router.get('/status/:teamId', async (req, res) => {
+  try {
+    const teamId = parseInt(req.params.teamId);
+    if (isNaN(teamId)) {
+      return res.status(400).json({ error: 'Invalid team ID' });
+    }
+
+    const statusInfo = await getTeamPaymentStatus(teamId);
+    res.json({ success: true, ...statusInfo });
+  } catch (error: any) {
+    console.error(`Error getting payment status for team ${req.params.teamId}:`, error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Monitor all payment statuses and auto-recover where possible
+router.get('/monitor', async (req, res) => {
+  try {
+    const monitoringResult = await monitorPaymentStatuses();
+    res.json({ 
+      success: true, 
+      ...monitoringResult,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error: any) {
+    console.error('Error monitoring payment statuses:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Verify webhook configuration and status
+router.get('/webhook-status', async (req, res) => {
+  try {
+    const webhookStatus = await verifyWebhookStatus();
+    res.json({ 
+      success: true, 
+      ...webhookStatus,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error: any) {
+    console.error('Error verifying webhook status:', error);
     res.status(500).json({ error: error.message });
   }
 });
