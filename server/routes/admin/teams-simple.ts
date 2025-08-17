@@ -45,34 +45,32 @@ export async function updateGameScore(req: Request, res: Response) {
 // Get teams overview for event - simplified version
 export async function getTeamsOverview(req: Request, res: Response) {
   try {
-    const eventId = req.params.eventId;
+    const eventId = parseInt(req.params.eventId);
     
-    if (!eventId) {
+    if (!eventId || isNaN(eventId)) {
       return res.status(400).json({ error: 'Invalid event ID' });
     }
 
-    // Get all teams for the event
-    const teamsData = await db
-      .select({
-        id: teams.id,
-        name: teams.name,
-        status: teams.status,
-        bracketId: teams.bracketId,
-        ageGroupId: teams.ageGroupId,
-        coach: teams.coach,
-      })
-      .from(teams)
-      .where(eq(teams.eventId, eventId))
-      .orderBy(asc(teams.name));
+    console.log(`Fetching teams for event ID: ${eventId}`);
+
+    // Get all teams for the event using raw SQL to avoid type issues
+    const teamsData = await db.execute(sql`
+      SELECT id, name, status, bracket_id, age_group_id, coach
+      FROM teams 
+      WHERE event_id = ${eventId}
+      ORDER BY name ASC
+    `);
+
+    console.log(`Found ${teamsData.rows.length} teams for event ${eventId}`);
 
     // Get basic stats for each team
-    const teamsWithStats = teamsData.map(team => ({
+    const teamsWithStats = teamsData.rows.map(team => ({
       id: team.id,
       name: team.name,
       ageGroup: 'TBD', // Will be populated from age group join
       status: team.status,
       coach: team.coach,
-      bracketId: team.bracketId,
+      bracketId: team.bracket_id,
       flightName: 'TBD', // Will be populated from bracket join
       gamesPlayed: 0,
       wins: 0,
