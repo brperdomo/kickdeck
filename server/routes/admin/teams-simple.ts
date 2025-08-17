@@ -53,25 +53,38 @@ export async function getTeamsOverview(req: Request, res: Response) {
 
     console.log(`Fetching teams for event ID: ${eventId}`);
 
-    // Get all teams for the event using raw SQL to avoid type issues
+    // Get all teams for the event with proper type casting and joins
     const teamsData = await db.execute(sql`
-      SELECT id, name, status, bracket_id, age_group_id, coach
-      FROM teams 
-      WHERE event_id = ${eventId}
-      ORDER BY name ASC
+      SELECT 
+        t.id,
+        t.name,
+        t.status,
+        t.bracket_id,
+        t.age_group_id,
+        t.coach,
+        ag.age_group,
+        eb.name as flight_name,
+        e.name as event_name
+      FROM teams t
+      LEFT JOIN event_age_groups ag ON t.age_group_id = ag.id
+      LEFT JOIN event_brackets eb ON t.bracket_id = eb.id
+      LEFT JOIN events e ON CAST(t.event_id AS INTEGER) = e.id
+      WHERE CAST(t.event_id AS INTEGER) = ${eventId}
+      ORDER BY t.name ASC
     `);
 
-    console.log(`Found ${teamsData.rows.length} teams for event ${eventId}`);
+    console.log(`Found ${teamsData.rows?.length || 0} teams for event ${eventId}`);
 
-    // Get basic stats for each team
-    const teamsWithStats = teamsData.rows.map(team => ({
+    // Get basic stats for each team with actual data
+    const teamsWithStats = (teamsData.rows || teamsData).map((team: any) => ({
       id: team.id,
       name: team.name,
-      ageGroup: 'TBD', // Will be populated from age group join
+      ageGroup: team.age_group || 'Unknown',
       status: team.status,
       coach: team.coach,
       bracketId: team.bracket_id,
-      flightName: 'TBD', // Will be populated from bracket join
+      flightName: team.flight_name || 'No Flight',
+      eventName: team.event_name,
       gamesPlayed: 0,
       wins: 0,
       losses: 0,

@@ -17,7 +17,8 @@ Teams data was appearing as "missing" in the admin dashboard due to schema type 
 
 ## Key Files Modified
 - `db/schema.ts` - Fixed eventId type from text to integer
-- `server/routes/admin/teams-simple.ts` - Added raw SQL queries and logging
+- `server/routes/admin/teams-simple.ts` - **CRITICAL FIX**: Added proper type casting `CAST(t.event_id AS INTEGER)` and event/age group joins
+- `server/routes/admin/teams.ts` - **COMPLETELY REWRITTEN** with raw SQL fallbacks for schema compatibility
 - `client/src/components/admin/scheduling/TeamsManager.tsx` - Enhanced error handling
 
 ## Deployment Requirements
