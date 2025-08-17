@@ -413,7 +413,7 @@ export const tournamentGroups = pgTable("tournament_groups", {
 
 export const teams = pgTable("teams", {
   id: serial("id").primaryKey(),
-  eventId: text("event_id").notNull().references(() => events.id, { onDelete: 'cascade' }),
+  eventId: integer("event_id").notNull(),
   ageGroupId: integer("age_group_id").notNull().references(() => eventAgeGroups.id),
   groupId: integer("group_id").references(() => tournamentGroups.id),
   bracketId: integer("bracket_id").references(() => eventBrackets.id), // Reference to selected bracket
