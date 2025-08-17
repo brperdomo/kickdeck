@@ -38,7 +38,16 @@ export default function PaymentForm({
     if (clientSecret || paymentIntentId) return;
     
     const createIntent = async () => {
-      if (amount <= 0) return;
+      if (amount <= 0) {
+        console.log('PaymentForm: Skipping payment intent creation - amount is 0 or negative:', amount);
+        return;
+      }
+      
+      if (!teamId) {
+        console.log('PaymentForm: Skipping payment intent creation - teamId is missing:', teamId);
+        setError('Team ID is required for payment processing');
+        return;
+      }
 
       try {
         const metadata: Record<string, string> = {};
@@ -47,18 +56,22 @@ export default function PaymentForm({
         if (eventId) metadata.eventId = String(eventId);
         if (ageGroupId) metadata.ageGroupId = String(ageGroupId);
         
+        const requestBody = {
+          amount,
+          currency: 'usd',
+          description,
+          metadata,
+          eventId,
+          ageGroupId,
+          teamId // Include teamId directly in the request body for duplicate payment prevention
+        };
+        
+        console.log('PaymentForm: Creating payment intent with request:', requestBody);
+        
         const response = await fetch('/api/payments/create-intent', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            amount,
-            currency: 'usd',
-            description,
-            metadata,
-            eventId,
-            ageGroupId,
-            teamId // Include teamId directly in the request body for duplicate payment prevention
-          })
+          body: JSON.stringify(requestBody)
         });
 
         if (!response.ok) {
