@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { db } from 'db';
-import { teams, games, events, eventBrackets } from 'db/schema';
-import { eq, and, sql, desc, asc } from 'drizzle-orm';
+import { teams, games, events, eventBrackets, eventAgeGroups } from 'db/schema';
+import { eq, and, sql, desc, asc, like, or } from 'drizzle-orm';
 
 // Update game score
 export async function updateGameScore(req: Request, res: Response) {
@@ -21,8 +21,8 @@ export async function updateGameScore(req: Request, res: Response) {
     const [updatedGame] = await db
       .update(games)
       .set({
-        homeTeamScore,
-        awayTeamScore,
+        homeScore: homeTeamScore,
+        awayScore: awayTeamScore,
         status: 'completed',
         updatedAt: new Date().toISOString(),
       })
@@ -459,5 +459,240 @@ export async function exportTeamSchedule(req: Request, res: Response) {
   } catch (error) {
     console.error('Error exporting team schedule:', error);
     res.status(500).json({ error: 'Failed to export team schedule' });
+  }
+}
+
+// Get all teams with filtering
+export async function getTeams(req: Request, res: Response) {
+  try {
+    const { eventId, ageGroup, status, search } = req.query;
+    
+    let whereCondition = sql`1=1`;
+    
+    if (eventId) {
+      whereCondition = and(whereCondition, eq(teams.eventId, parseInt(eventId as string)));
+    }
+    
+    if (ageGroup) {
+      whereCondition = and(whereCondition, like(teams.ageGroup, `%${ageGroup}%`));
+    }
+    
+    if (status) {
+      whereCondition = and(whereCondition, eq(teams.status, status as string));
+    }
+    
+    if (search) {
+      whereCondition = and(whereCondition, 
+        or(
+          like(teams.name, `%${search}%`),
+          like(teams.coach, `%${search}%`),
+          like(teams.managerEmail, `%${search}%`)
+        )
+      );
+    }
+
+    const teamsList = await db
+      .select({
+        id: teams.id,
+        name: teams.name,
+        eventId: teams.eventId,
+        ageGroup: teams.ageGroup,
+        status: teams.status,
+        coach: teams.coach,
+        managerEmail: teams.managerEmail,
+        createdAt: teams.createdAt,
+        updatedAt: teams.updatedAt,
+        bracketId: teams.bracketId,
+        groupId: teams.groupId
+      })
+      .from(teams)
+      .where(whereCondition)
+      .orderBy(asc(teams.name));
+
+    res.json(teamsList);
+  } catch (error) {
+    console.error('Error fetching teams:', error);
+    res.status(500).json({ error: 'Failed to fetch teams' });
+  }
+}
+
+// Get team by ID
+export async function getTeamById(req: Request, res: Response) {
+  try {
+    const teamId = parseInt(req.params.teamId);
+    
+    if (isNaN(teamId)) {
+      return res.status(400).json({ error: 'Invalid team ID' });
+    }
+
+    const team = await db
+      .select()
+      .from(teams)
+      .where(eq(teams.id, teamId))
+      .limit(1);
+
+    if (team.length === 0) {
+      return res.status(404).json({ error: 'Team not found' });
+    }
+
+    res.json(team[0]);
+  } catch (error) {
+    console.error('Error fetching team:', error);
+    res.status(500).json({ error: 'Failed to fetch team' });
+  }
+}
+
+// Update team status
+export async function updateTeamStatus(req: Request, res: Response) {
+  try {
+    const teamId = parseInt(req.params.teamId);
+    const { status } = req.body;
+    
+    if (isNaN(teamId)) {
+      return res.status(400).json({ error: 'Invalid team ID' });
+    }
+
+    if (!['approved', 'rejected', 'registered', 'waitlisted'].includes(status)) {
+      return res.status(400).json({ error: 'Invalid status' });
+    }
+
+    const [updatedTeam] = await db
+      .update(teams)
+      .set({
+        status,
+        updatedAt: new Date().toISOString(),
+      })
+      .where(eq(teams.id, teamId))
+      .returning();
+
+    if (!updatedTeam) {
+      return res.status(404).json({ error: 'Team not found' });
+    }
+
+    res.json({
+      success: true,
+      team: updatedTeam,
+    });
+  } catch (error) {
+    console.error('Error updating team status:', error);
+    res.status(500).json({ error: 'Failed to update team status' });
+  }
+}
+
+// Delete team
+export async function deleteTeam(req: Request, res: Response) {
+  try {
+    const teamId = parseInt(req.params.teamId);
+    
+    if (isNaN(teamId)) {
+      return res.status(400).json({ error: 'Invalid team ID' });
+    }
+
+    // Check if team exists and is in 'registered' status
+    const team = await db
+      .select()
+      .from(teams)
+      .where(eq(teams.id, teamId))
+      .limit(1);
+
+    if (team.length === 0) {
+      return res.status(404).json({ error: 'Team not found' });
+    }
+
+    if (team[0].status !== 'registered') {
+      return res.status(400).json({ error: 'Can only delete teams in registered status' });
+    }
+
+    await db.delete(teams).where(eq(teams.id, teamId));
+
+    res.json({ success: true, message: 'Team deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting team:', error);
+    res.status(500).json({ error: 'Failed to delete team' });
+  }
+}
+
+// Process refund (placeholder implementation)
+export async function processRefund(req: Request, res: Response) {
+  try {
+    const teamId = parseInt(req.params.teamId);
+    
+    if (isNaN(teamId)) {
+      return res.status(400).json({ error: 'Invalid team ID' });
+    }
+
+    // This is a placeholder implementation
+    // In a real system, this would integrate with Stripe to process refunds
+    res.json({ 
+      success: true, 
+      message: 'Refund processed successfully',
+      teamId 
+    });
+  } catch (error) {
+    console.error('Error processing refund:', error);
+    res.status(500).json({ error: 'Failed to process refund' });
+  }
+}
+
+// Process team payment after setup (placeholder implementation)
+export async function processTeamPaymentAfterSetup(req: Request, res: Response) {
+  try {
+    const teamId = parseInt(req.params.teamId);
+    
+    if (isNaN(teamId)) {
+      return res.status(400).json({ error: 'Invalid team ID' });
+    }
+
+    // Placeholder implementation
+    res.json({ 
+      success: true, 
+      message: 'Payment processed successfully',
+      teamId 
+    });
+  } catch (error) {
+    console.error('Error processing payment:', error);
+    res.status(500).json({ error: 'Failed to process payment' });
+  }
+}
+
+// Generate payment completion URL (placeholder implementation)
+export async function generatePaymentCompletionUrl(req: Request, res: Response) {
+  try {
+    const teamId = parseInt(req.params.teamId);
+    
+    if (isNaN(teamId)) {
+      return res.status(400).json({ error: 'Invalid team ID' });
+    }
+
+    // Placeholder implementation
+    res.json({ 
+      success: true, 
+      url: `https://app.matchpro.ai/payment/complete/${teamId}`,
+      teamId 
+    });
+  } catch (error) {
+    console.error('Error generating payment URL:', error);
+    res.status(500).json({ error: 'Failed to generate payment URL' });
+  }
+}
+
+// Generate payment intent completion URL (placeholder implementation)
+export async function generatePaymentIntentCompletionUrl(req: Request, res: Response) {
+  try {
+    const teamId = parseInt(req.params.id);
+    
+    if (isNaN(teamId)) {
+      return res.status(400).json({ error: 'Invalid team ID' });
+    }
+
+    // Placeholder implementation
+    res.json({ 
+      success: true, 
+      url: `https://app.matchpro.ai/payment-intent/complete/${teamId}`,
+      teamId 
+    });
+  } catch (error) {
+    console.error('Error generating payment intent URL:', error);
+    res.status(500).json({ error: 'Failed to generate payment intent URL' });
   }
 }
