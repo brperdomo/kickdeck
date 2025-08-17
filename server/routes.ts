@@ -9091,6 +9091,8 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         const status = req.query.status as string;
 
         console.log('Teams API called with:', { eventId, ageGroupId, status });
+        console.log('selectedEvent value received:', req.query.eventId);
+        console.log('selectedStatus value received:', req.query.status);
 
         // Import required schemas
         const { teams, eventAgeGroups, clubs, events, players } = await import('@db/schema');
@@ -9098,19 +9100,26 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
 
         let whereConditions = [];
 
-        // Add event filter if specified
-        if (eventId && !isNaN(eventId)) {
+        // Add event filter if specified - only add if NOT 'all'
+        if (eventId && !isNaN(eventId) && eventId !== 'all') {
+          console.log('Adding event filter for eventId:', eventId);
           whereConditions.push(eq(teams.eventId, eventId));
+        } else {
+          console.log('NOT filtering by event - will return teams from ALL events');
         }
 
         // Add age group filter if specified
         if (ageGroupId && !isNaN(ageGroupId)) {
+          console.log('Adding age group filter for ageGroupId:', ageGroupId);
           whereConditions.push(eq(teams.ageGroupId, ageGroupId));
         }
 
         // Add status filter if specified
         if (status && status !== 'all') {
+          console.log('Adding status filter for status:', status);
           whereConditions.push(eq(teams.status, status));
+        } else {
+          console.log('NOT filtering by status - will return teams with ALL statuses');
         }
 
         let query = db
@@ -9136,6 +9145,13 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         const results = await query.orderBy(teams.name);
 
         console.log(`Found ${results.length} teams`);
+        
+        // Log breakdown by status to help with debugging
+        const statusBreakdown = results.reduce((acc: any, { team }) => {
+          acc[team.status] = (acc[team.status] || 0) + 1;
+          return acc;
+        }, {});
+        console.log('Teams breakdown by status:', statusBreakdown);
 
         // For each team, fetch player count
         const teamsWithPlayerCounts = await Promise.all(
@@ -9160,6 +9176,12 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         );
 
         console.log('Teams with relationship data prepared for frontend');
+        console.log(`Sending ${teamsWithPlayerCounts.length} teams to frontend`);
+        console.log('Final status breakdown being sent:', teamsWithPlayerCounts.reduce((acc: any, team) => {
+          acc[team.status] = (acc[team.status] || 0) + 1;
+          return acc;
+        }, {}));
+        
         res.json(teamsWithPlayerCounts);
       } catch (error) {
         console.error('Error fetching teams:', error);
