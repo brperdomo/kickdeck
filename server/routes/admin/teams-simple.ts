@@ -176,7 +176,10 @@ export async function exportTeamSchedule(req: Request, res: Response) {
 // Basic placeholder functions for team management
 export async function getTeams(req: Request, res: Response) {
   try {
-    const teamsList = await db.select().from(teams).limit(100);
+    // FIXED: Remove the hardcoded limit(100) that was limiting results to 100 teams
+    // Now returns all teams instead of just 100
+    const teamsList = await db.select().from(teams);
+    console.log(`getTeams function returning ${teamsList.length} teams (limit removed)`);
     res.json(teamsList);
   } catch (error) {
     console.error('Error fetching teams:', error);

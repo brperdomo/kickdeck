@@ -1,0 +1,144 @@
+index-B74BBIlR.js:942 Google Maps API key length: 0 characters
+index-B74BBIlR.js:942 Mapbox API key length: 93 characters
+index-B74BBIlR.js:942 Google Maps API already loaded
+chunk-FLCULYKI.js:31 orchestration: Initializing config store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing feature flag store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state {pill-player: {…}}
+chunk-FLCULYKI.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+index-B74BBIlR.js:702 Current route location (Wouter): /admin/teams
+index-B74BBIlR.js:702 Current URL: https://app.matchpro.ai/admin/teams
+index-B74BBIlR.js:702 Current pathname: /admin/teams
+index-B74BBIlR.js:702 Current search: 
+index-B74BBIlR.js:702 Fetching user with emulation token: not present
+9Fetch finished loading: GET "<URL>".
+index-B74BBIlR.js:702 User data fetched: {id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: '$2b$12$d6n1CBWgsWFm0fh77F1OX.YxDZy7/O3aLSuJOuq4QkvOtFmSit7BC', firstName: 'Bryan', …}
+shared-88e2024c579612ba59497b4319d9898f.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+(anonymous) @ shared-88e2024c579612ba59497b4319d9898f.js:1
+e @ shared-88e2024c579612ba59497b4319d9898f.js:1
+c @ shared-88e2024c579612ba59497b4319d9898f.js:1
+k @ shared-88e2024c579612ba59497b4319d9898f.js:1
+value @ shared-88e2024c579612ba59497b4319d9898f.js:1
+value @ shared-88e2024c579612ba59497b4319d9898f.js:1
+value @ controller-with-preconnect-9d9f4aedd81d76a313332a1c3d13e3ec.js:1
+e @ controller-with-preconnect-9d9f4aedd81d76a313332a1c3d13e3ec.js:1
+value @ controller-with-preconnect-9d9f4aedd81d76a313332a1c3d13e3ec.js:1
+e @ controller-with-preconnect-9d9f4aedd81d76a313332a1c3d13e3ec.js:1
+96452 @ controller-with-preconnect-9d9f4aedd81d76a313332a1c3d13e3ec.js:1
+e @ controller-with-preconnect-9d9f4aedd81d76a313332a1c3d13e3ec.js:1
+(anonymous) @ controller-with-preconnect-9d9f4aedd81d76a313332a1c3d13e3ec.js:1
+e.O @ controller-with-preconnect-9d9f4aedd81d76a313332a1c3d13e3ec.js:1
+(anonymous) @ controller-with-preconnect-9d9f4aedd81d76a313332a1c3d13e3ec.js:1
+(anonymous) @ controller-with-preconnect-9d9f4aedd81d76a313332a1c3d13e3ec.js:1
+shared-88e2024c579612ba59497b4319d9898f.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+(anonymous) @ shared-88e2024c579612ba59497b4319d9898f.js:1
+e @ shared-88e2024c579612ba59497b4319d9898f.js:1
+c @ shared-88e2024c579612ba59497b4319d9898f.js:1
+k @ shared-88e2024c579612ba59497b4319d9898f.js:1
+value @ shared-88e2024c579612ba59497b4319d9898f.js:1
+value @ shared-88e2024c579612ba59497b4319d9898f.js:1
+log @ shared-88e2024c579612ba59497b4319d9898f.js:1
+log @ controller-with-preconnect-9d9f4aedd81d76a313332a1c3d13e3ec.js:1
+e @ controller-with-preconnect-9d9f4aedd81d76a313332a1c3d13e3ec.js:1
+96452 @ controller-with-preconnect-9d9f4aedd81d76a313332a1c3d13e3ec.js:1
+e @ controller-with-preconnect-9d9f4aedd81d76a313332a1c3d13e3ec.js:1
+(anonymous) @ controller-with-preconnect-9d9f4aedd81d76a313332a1c3d13e3ec.js:1
+e.O @ controller-with-preconnect-9d9f4aedd81d76a313332a1c3d13e3ec.js:1
+(anonymous) @ controller-with-preconnect-9d9f4aedd81d76a313332a1c3d13e3ec.js:1
+(anonymous) @ controller-with-preconnect-9d9f4aedd81d76a313332a1c3d13e3ec.js:1
+13Invalid keyframe value for property filter: blur(-0.08136px)Understand this warning
+13Invalid keyframe value for property filter: blur(-0.16063px)Understand this warning
+13Invalid keyframe value for property filter: blur(-0.22707px)Understand this warning
+13Invalid keyframe value for property filter: blur(-0.28173px)Understand this warning
+13Invalid keyframe value for property filter: blur(-0.32564px)Understand this warning
+13Invalid keyframe value for property filter: blur(-0.3598px)Understand this warning
+13Invalid keyframe value for property filter: blur(-0.38521px)Understand this warning
+13Invalid keyframe value for property filter: blur(-0.40278px)Understand this warning
+13Invalid keyframe value for property filter: blur(-0.41343px)Understand this warning
+13Invalid keyframe value for property filter: blur(-0.41799px)Understand this warning
+13Invalid keyframe value for property filter: blur(-0.41726px)Understand this warning
+13Invalid keyframe value for property filter: blur(-0.41199px)Understand this warning
+13Invalid keyframe value for property filter: blur(-0.40286px)Understand this warning
+13Invalid keyframe value for property filter: blur(-0.39052px)Understand this warning
+13Invalid keyframe value for property filter: blur(-0.37556px)Understand this warning
+13Invalid keyframe value for property filter: blur(-0.35849px)Understand this warning
+13Invalid keyframe value for property filter: blur(-0.33982px)Understand this warning
+13Invalid keyframe value for property filter: blur(-0.31996px)Understand this warning
+13Invalid keyframe value for property filter: blur(-0.2993px)Understand this warning
+13Invalid keyframe value for property filter: blur(-0.27819px)Understand this warning
+13Invalid keyframe value for property filter: blur(-0.25693px)Understand this warning
+13Invalid keyframe value for property filter: blur(-0.23576px)Understand this warning
+13Invalid keyframe value for property filter: blur(-0.21492px)Understand this warning
+13Invalid keyframe value for property filter: blur(-0.19459px)Understand this warning
+13Invalid keyframe value for property filter: blur(-0.17493px)Understand this warning
+13Invalid keyframe value for property filter: blur(-0.15606px)Understand this warning
+13Invalid keyframe value for property filter: blur(-0.13808px)Understand this warning
+13Invalid keyframe value for property filter: blur(-0.12106px)Understand this warning
+13Invalid keyframe value for property filter: blur(-0.10507px)Understand this warning
+13Invalid keyframe value for property filter: blur(-0.09014px)Understand this warning
+13Invalid keyframe value for property filter: blur(-0.07628px)Understand this warning
+13Invalid keyframe value for property filter: blur(-0.0635px)Understand this warning
+13Invalid keyframe value for property filter: blur(-0.0518px)Understand this warning
+13Invalid keyframe value for property filter: blur(-0.04115px)Understand this warning
+13Invalid keyframe value for property filter: blur(-0.03153px)Understand this warning
+13Invalid keyframe value for property filter: blur(-0.02289px)Understand this warning
+13Invalid keyframe value for property filter: blur(-0.01521px)Understand this warning
+13Invalid keyframe value for property filter: blur(-0.00842px)Understand this warning
+13Invalid keyframe value for property filter: blur(-0.00249px)Understand this warning
+index-B74BBIlR.js:694 Fetch failed loading: GET "https://app.matchpro.ai/api/user".
+queryFn @ index-B74BBIlR.js:694
+i @ index-B74BBIlR.js:41
+p @ index-B74BBIlR.js:41
+start @ index-B74BBIlR.js:41
+fetch @ index-B74BBIlR.js:41
+Hj @ index-B74BBIlR.js:41
+onSubscribe @ index-B74BBIlR.js:41
+subscribe @ index-B74BBIlR.js:41
+(anonymous) @ index-B74BBIlR.js:41
+kJ @ index-B74BBIlR.js:39
+G4 @ index-B74BBIlR.js:41
+Sv @ index-B74BBIlR.js:41
+D8 @ index-B74BBIlR.js:41
+Cf @ index-B74BBIlR.js:39
+k0e @ index-B74BBIlR.js:41
+dp @ index-B74BBIlR.js:41
+aZ @ index-B74BBIlR.js:41
+N @ index-B74BBIlR.js:26
+E @ index-B74BBIlR.js:26
+index-B74BBIlR.js:956 Teams data received: (100) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-B74BBIlR.js:956 Teams data from API: (100) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-B74BBIlR.js:956 Normalized teams data: (100) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-B74BBIlR.js:956 Import eligible events: (5) [{…}, {…}, {…}, {…}, {…}]0: {id: 1844329078, name: 'Empire Super Cup', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}1: {id: 1825427780, name: 'Rise Cup', startDate: '2025-08-23', endDate: '2025-08-24', timezone: 'America/Los_Angeles', …}2: {id: 1755746106, name: 'Stripe API Connect', startDate: '2025-08-25', endDate: '2025-08-28', timezone: 'America/New_York', …}3: {id: 1656618593, name: 'SCHEDULING TEAMS', startDate: '2025-09-30', endDate: '2025-10-01', timezone: 'America/New_York', …}4: {id: 1565253869, name: 'Cardiff Sockers Cup', startDate: '2025-12-13', endDate: '2025-12-14', timezone: 'America/Los_Angeles', …}length: 5[[Prototype]]: Array(0)
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+Promise.then
+S @ out-4.5.44.js:1
+y @ out-4.5.44.js:1
+E @ out-4.5.44.js:1
+e.onload @ inner.html:1
+script
+(anonymous) @ inner.html:1
+(anonymous) @ inner.html:1
+2shared-88e2024c579612ba59497b4319d9898f.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-88e2024c579612ba59497b4319d9898f.js:1
+e @ shared-88e2024c579612ba59497b4319d9898f.js:1
+c @ shared-88e2024c579612ba59497b4319d9898f.js:1
+value @ shared-88e2024c579612ba59497b4319d9898f.js:1
+value @ shared-88e2024c579612ba59497b4319d9898f.js:1
+value @ shared-88e2024c579612ba59497b4319d9898f.js:1
+value @ shared-88e2024c579612ba59497b4319d9898f.js:1
+value @ shared-88e2024c579612ba59497b4319d9898f.js:1
+(anonymous) @ shared-88e2024c579612ba59497b4319d9898f.js:1
+util.js:33 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+$Aa @ util.js:33
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1384
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1384
+setTimeout
+Tda @ js?libraries=places&v=beta&callback=Function.prototype:1384
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1641Understand this warning
