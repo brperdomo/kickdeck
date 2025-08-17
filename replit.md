@@ -20,8 +20,9 @@ MatchPro AI is a comprehensive sports event management platform designed for tou
 ### Issue 3: Teams missing relationship data (Event and Age Group showing "N/A")
 - Root cause: `teams-simple.ts` only returned basic team data without JOIN queries
 - Fix: Updated getTeams function to include proper LEFT JOIN operations for events, age groups, and clubs
+- **FINAL FIX**: Updated data structure mapping to match frontend expectations (`ageGroup.ageGroup` and `event.name`)
 - Impact: Teams now display complete Event name, Age Group, and Gender information from registration
-- Status: ✅ RESOLVED - Server restarted with comprehensive relationship data fix
+- Status: ✅ RESOLVED - Server restarted with comprehensive relationship data fix and proper data structure mapping
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.

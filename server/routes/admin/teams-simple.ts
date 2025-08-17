@@ -241,8 +241,19 @@ export async function getTeams(req: Request, res: Response) {
         
         return {
           ...team,
-          ageGroup: ageGroup,  // Return full ageGroup object with age_group and gender
-          event: event,       // Return full event object with name
+          ageGroup: ageGroup ? {
+            id: ageGroup.id,
+            ageGroup: ageGroup.ageGroup,  // Map age_group to ageGroup for frontend
+            gender: ageGroup.gender,
+            fieldSize: ageGroup.fieldSize,
+            divisionCode: ageGroup.divisionCode
+          } : null,
+          event: event ? {
+            id: event.id,
+            name: event.name,  // Ensure event name is properly mapped
+            startDate: event.startDate,
+            endDate: event.endDate
+          } : null,
           clubLogoUrl: club?.logoUrl || null,
           clubName: club?.name || null,
           playerCount: playerCount

@@ -9166,8 +9166,19 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
             
             return {
               ...team,
-              ageGroup: ageGroup,  // Return full ageGroup object
-              event: event,       // Return full event object  
+              ageGroup: ageGroup ? {
+                id: ageGroup.id,
+                ageGroup: ageGroup.ageGroup,  // Map age_group to ageGroup for frontend
+                gender: ageGroup.gender,
+                fieldSize: ageGroup.fieldSize,
+                divisionCode: ageGroup.divisionCode
+              } : null,
+              event: event ? {
+                id: event.id,
+                name: event.name,  // Ensure event name is properly mapped
+                startDate: event.startDate,
+                endDate: event.endDate
+              } : null,
               clubLogoUrl: club?.logoUrl || null,
               clubName: club?.name || null,
               playerCount: playerCount
