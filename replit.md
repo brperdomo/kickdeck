@@ -4,11 +4,18 @@
 MatchPro AI is a comprehensive sports event management platform designed for tournament organizers and sports clubs. Its main purpose is to automate and streamline workflows such as team registrations, payment processing, scoring, standings, and administrative tasks. The system aims to provide a professional, low-maintenance, and intelligent solution for managing tournaments from initial setup and scheduling to real-time updates and financial oversight, with ambitions to offer predictive insights and eliminate manual configuration.
 
 ## Recent Changes (August 17, 2025)
-**CRITICAL PRODUCTION FIX COMPLETED:** Resolved teams data display issue where Event and Age Group columns showed "N/A" instead of actual data:
-- Root cause: `/api/admin/teams` endpoint in server/routes.ts was missing JOIN queries for events and age groups tables
-- Fix: Updated route at line 9087 to include proper LEFT JOIN operations with events and eventAgeGroups tables
-- Impact: Teams table in admin dashboard now displays complete event and age group information
-- Status: Fix deployed and server running successfully on production
+**CRITICAL PRODUCTION FIX COMPLETED:** Resolved multiple teams data display issues:
+
+### Issue 1: Event and Age Group columns showing "N/A" 
+- Root cause: `/api/admin/teams` endpoint missing JOIN queries for events and age groups tables
+- Fix: Updated route at line 9087 to include proper LEFT JOIN operations
+- Status: ✅ RESOLVED
+
+### Issue 2: Teams API limiting results to 100 instead of all 880 teams
+- Root cause: `teams-simple.ts` getTeams function had hardcoded `.limit(100)`
+- Fix: Removed limit clause from teams-simple.ts line 184 to return all teams
+- Impact: Admin dashboard now shows all 880 approved teams instead of just 100
+- Status: ✅ RESOLVED - Server restarted with fix applied
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
