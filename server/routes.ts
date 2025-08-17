@@ -1101,15 +1101,23 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/member-merge', isAdmin, memberMergeRouter); // Member deduplication and merge
     app.use('/api/admin/teams', isAdmin, teamsRouter); // Team management router
     
-    // Import and register team management routes for Master Schedule
-    import('./routes/admin/teams-simple.js').then(({ getTeamsOverview, getTeamDetail, exportTeamSchedule, updateGameScore }) => {
-      app.get('/api/admin/events/:eventId/teams/overview', isAdmin, getTeamsOverview);
-      app.get('/api/admin/teams/:teamId/detail', isAdmin, getTeamDetail);
-      app.get('/api/admin/teams/:teamId/export', isAdmin, exportTeamSchedule);
-      app.put('/api/admin/games/:gameId/score', isAdmin, updateGameScore);
-      log('Team management routes registered', 'express');
+    // EMERGENCY: Register emergency teams routes to fix production issue
+    import('./routes/admin/teams-emergency.js').then(({ getTeamsOverviewEmergency, getAllTeamsEmergency }) => {
+      app.get('/api/admin/events/:eventId/teams/overview', isAdmin, getTeamsOverviewEmergency);
+      app.get('/api/admin/teams/emergency/all', isAdmin, getAllTeamsEmergency);
+      log('EMERGENCY team management routes registered', 'express');
     }).catch(err => {
-      log(`Error loading team management routes: ${err}`, 'express');
+      log(`Error loading emergency team routes: ${err}`, 'express');
+      // Fallback: Import and register original team management routes
+      import('./routes/admin/teams-simple.js').then(({ getTeamsOverview, getTeamDetail, exportTeamSchedule, updateGameScore }) => {
+        app.get('/api/admin/events/:eventId/teams/overview', isAdmin, getTeamsOverview);
+        app.get('/api/admin/teams/:teamId/detail', isAdmin, getTeamDetail);
+        app.get('/api/admin/teams/:teamId/export', isAdmin, exportTeamSchedule);
+        app.put('/api/admin/games/:gameId/score', isAdmin, updateGameScore);
+        log('Fallback team management routes registered', 'express');
+      }).catch(fallbackErr => {
+        log(`Error loading fallback team routes: ${fallbackErr}`, 'express');
+      });
     });
     
     app.use('/api/admin/retry-payment', isAdmin, retryPaymentRouter); // Payment retry system
