@@ -1100,6 +1100,18 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin', isAdmin, feeAdjustmentsRouter); // Fee adjustments router
     app.use('/api/admin/member-merge', isAdmin, memberMergeRouter); // Member deduplication and merge
     app.use('/api/admin/teams', isAdmin, teamsRouter); // Team management router
+    
+    // Import and register team management routes for Master Schedule
+    import('./routes/admin/teams.js').then(({ getTeamsOverview, getTeamDetail, exportTeamSchedule, updateGameScore }) => {
+      app.get('/api/admin/events/:eventId/teams/overview', isAdmin, getTeamsOverview);
+      app.get('/api/admin/teams/:teamId/detail', isAdmin, getTeamDetail);
+      app.get('/api/admin/teams/:teamId/export', isAdmin, exportTeamSchedule);
+      app.put('/api/admin/games/:gameId/score', isAdmin, updateGameScore);
+      log('Team management routes registered', 'express');
+    }).catch(err => {
+      log(`Error loading team management routes: ${err}`, 'express');
+    });
+    
     app.use('/api/admin/retry-payment', isAdmin, retryPaymentRouter); // Payment retry system
     app.use('/api/admin/files', isAdmin, filesRouter); // File management router
     app.use('/api/admin/folders', isAdmin, foldersRouter); // Folder management router

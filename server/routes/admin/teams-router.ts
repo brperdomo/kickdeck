@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { getTeams, getTeamById, updateTeamStatus, processRefund, processTeamPaymentAfterSetup, generatePaymentCompletionUrl, deleteTeam, bulkApproveTeams, bulkRejectTeams, generatePaymentIntentCompletionUrl } from './teams';
+import { getTeams, getTeamById, updateTeamStatus, processRefund, processTeamPaymentAfterSetup, generatePaymentCompletionUrl, deleteTeam, generatePaymentIntentCompletionUrl } from './teams';
 import { db } from '@db';
 import { eventFees, teams } from '@db/schema';
 import { eq, inArray } from 'drizzle-orm';
@@ -196,10 +196,8 @@ router.post('/:id/generate-payment-intent-completion-url', extractEventIdFromTea
 // Delete team registration (only for teams in 'registered' status)
 router.delete('/:teamId', extractEventIdFromTeam, hasEventAccess, deleteTeam);
 
-// Bulk approve multiple teams
-router.post('/bulk-approve', bulkApproveTeams);
-
-// Bulk reject multiple teams
-router.post('/bulk-reject', bulkRejectTeams);
+// Bulk operations commented out - functions not implemented
+// router.post('/bulk-approve', bulkApproveTeams);
+// router.post('/bulk-reject', bulkRejectTeams);
 
 export default router;
