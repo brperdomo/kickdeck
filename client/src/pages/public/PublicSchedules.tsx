@@ -250,9 +250,12 @@ export default function PublicSchedules() {
                             Schedules
                           </a>
                           <span className="text-gray-400">|</span>
-                          <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                          <a 
+                            href={`/public/standings/${eventId}`}
+                            className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                          >
                             Standings
-                          </button>
+                          </a>
                         </div>
                       </td>
                     </tr>
@@ -298,9 +301,12 @@ export default function PublicSchedules() {
                             Schedules
                           </a>
                           <span className="text-gray-400">|</span>
-                          <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                          <a 
+                            href={`/public/standings/${eventId}`}
+                            className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                          >
                             Standings
-                          </button>
+                          </a>
                         </div>
                       </td>
                     </tr>
