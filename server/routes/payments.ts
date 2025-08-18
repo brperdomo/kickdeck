@@ -13,6 +13,10 @@ import {
 } from '../services/stripeService';
 import { recoverFailedPayments, syncTeamPaymentStatus } from '../services/paymentRecoveryService';
 import { getTeamPaymentStatus, monitorPaymentStatuses, verifyWebhookStatus } from '../services/paymentStatusMonitor';
+import { createCheckoutSession, handleCheckoutSuccess, getPlatformFeeBreakdown } from '../services/stripeCheckoutService';
+import { db } from 'db';
+import { teams } from '@db/schema';
+import { eq } from 'drizzle-orm';
 
 if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
@@ -491,6 +495,75 @@ router.get('/webhook-status', async (req, res) => {
     });
   } catch (error: any) {
     console.error('Error verifying webhook status:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Create Stripe Checkout session for payment retry (BETTER SOLUTION)
+router.post('/create-checkout/:teamId', async (req, res) => {
+  try {
+    const teamId = parseInt(req.params.teamId);
+    if (isNaN(teamId)) {
+      return res.status(400).json({ error: 'Invalid team ID' });
+    }
+
+    const checkoutInfo = await createCheckoutSession(teamId);
+    res.json({ 
+      success: true,
+      ...checkoutInfo
+    });
+  } catch (error: any) {
+    console.error(`Error creating checkout session for team ${req.params.teamId}:`, error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Handle successful Stripe Checkout completion
+router.post('/checkout-success', async (req, res) => {
+  try {
+    const { sessionId } = req.body;
+    
+    if (!sessionId) {
+      return res.status(400).json({ error: 'Session ID is required' });
+    }
+
+    const result = await handleCheckoutSuccess(sessionId);
+    res.json({ 
+      success: true,
+      message: 'Payment processed successfully',
+      ...result
+    });
+  } catch (error: any) {
+    console.error('Error handling checkout success:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get platform fee breakdown for a team
+router.get('/fees/:teamId', async (req, res) => {
+  try {
+    const teamId = parseInt(req.params.teamId);
+    if (isNaN(teamId)) {
+      return res.status(400).json({ error: 'Invalid team ID' });
+    }
+
+    // Get team's total amount
+    const team = await db.query.teams.findFirst({
+      where: eq(teams.id, teamId),
+      columns: { totalAmount: true }
+    });
+
+    if (!team || !team.totalAmount) {
+      return res.status(404).json({ error: 'Team not found or amount not set' });
+    }
+
+    const feeBreakdown = getPlatformFeeBreakdown(team.totalAmount);
+    res.json({ 
+      success: true,
+      ...feeBreakdown
+    });
+  } catch (error: any) {
+    console.error(`Error getting fee breakdown for team ${req.params.teamId}:`, error);
     res.status(500).json({ error: error.message });
   }
 });

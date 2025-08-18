@@ -3,13 +3,14 @@
 ## Overview
 MatchPro AI is a comprehensive sports event management platform designed for tournament organizers and sports clubs. Its main purpose is to automate and streamline workflows such as team registrations, payment processing, scoring, standings, and administrative tasks. The system aims to provide a professional, low-maintenance, and intelligent solution for managing tournaments from initial setup and scheduling to real-time updates and financial oversight, with ambitions to offer predictive insights and eliminate manual configuration.
 
-## Recent Changes (August 17, 2025)
-**CRITICAL PAYMENT SYSTEM FIXES COMPLETED (Evening):**
-- **Fixed infinite API loop**: Payment forms were creating payment intents on every render causing 429 rate limit errors
-- **Added professional MatchPro branding**: Professional header, gradient designs, color-coded status indicators  
-- **Enhanced payment flow**: Teams with payment_failed status get functional retry forms, not informational pages
-- **Improved user experience**: Clear error explanations, payment receipts, secure processing indicators
-- **Status**: ✅ RESOLVED - Payment forms now functional with professional appearance
+## Recent Changes (August 18, 2025)
+**MAJOR PAYMENT OVERHAUL COMPLETED:**
+- **Replaced custom payment forms with Stripe Checkout**: Eliminated "Team ID required" errors by using official Stripe hosted payment pages
+- **Fixed platform fee calculation**: Now correctly calculating 4% + $0.30 platform fees instead of previous inconsistent rates
+- **Streamlined payment retry flow**: Teams redirected to secure Stripe checkout pages for payment processing
+- **Added PaymentSuccess page**: Proper completion handling with payment confirmation and team status updates
+- **Backend improvements**: New `stripeCheckoutService.ts` with comprehensive checkout session management
+- **Status**: ✅ COMPLETED - Payment system fully operational with Stripe's native interface
 
 **CRITICAL PRODUCTION FIX COMPLETED (Earlier):** Resolved multiple teams data display issues and GUARANTEED original registration data integrity:
 

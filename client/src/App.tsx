@@ -53,6 +53,7 @@ import PaymentSetupConfirmation from "@/pages/payment-setup-confirmation";
 import CompletePayment from "@/pages/CompletePayment";
 import PaymentRecoveryDashboard from "@/pages/PaymentRecoveryDashboard";
 import PaymentRetry from "@/pages/PaymentRetry";
+import PaymentSuccess from "@/pages/PaymentSuccess";
 import PaymentSetup from "@/pages/PaymentSetup";
 import SendGridSettingsPage from "@/pages/sendgrid-settings";
 import AdminSendGridSetup from "@/pages/admin-sendgrid-setup";
@@ -133,6 +134,7 @@ function Router() {
   const isPublicRoute = location.startsWith('/public/') || 
                        location.startsWith('/game/') ||
                        location.startsWith('/register/') ||
+                       location.startsWith('/payment/') ||
                        location.startsWith('/event/') ||
                        location === '/score-report' ||
                        location === '/card-report' ||
@@ -240,6 +242,7 @@ function Router() {
       {/* Payment retry routes for teams with failed payments */}
       <Route path="/payment/retry/:teamId" component={PaymentRetry} />
       <Route path="/payment/setup/:teamId" component={PaymentSetup} />
+      <Route path="/payment/success" component={PaymentSuccess} />
       
       {/* QR Code accessible score and card reporting - no auth required */}
       <Route path="/score-report/:gameId">
