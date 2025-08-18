@@ -177,11 +177,9 @@ export default function PaymentRetry() {
       <div className="w-full max-w-2xl space-y-6">
         {/* Header */}
         <div className="text-center">
-          <img 
-            src="/api/placeholder/120/40" 
-            alt="MatchPro"
-            className="mx-auto mb-4 h-10"
-          />
+          <div className="mx-auto mb-4 h-10 flex items-center justify-center">
+            <span className="text-2xl font-bold text-blue-600">MatchPro</span>
+          </div>
           <h1 className="text-2xl font-bold text-gray-900">Complete Your Payment</h1>
           <p className="text-gray-600 mt-2">Secure tournament registration payment</p>
         </div>
@@ -228,12 +226,8 @@ export default function PaymentRetry() {
                     <span>${(feeBreakdown.baseAmount / 100).toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Platform Fee (4%):</span>
-                    <span>${(feeBreakdown.platformFeePercentage / 100).toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Processing Fee:</span>
-                    <span>${(feeBreakdown.platformFeeFixed / 100).toFixed(2)}</span>
+                    <span className="text-gray-600">Platform Fee:</span>
+                    <span>${(feeBreakdown.totalPlatformFees / 100).toFixed(2)}</span>
                   </div>
                   <hr className="my-2" />
                   <div className="flex justify-between font-semibold text-lg">
