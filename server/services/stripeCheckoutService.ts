@@ -61,7 +61,13 @@ export async function createCheckoutSession(teamId: number): Promise<{
     // Calculate total amount including platform fees
     const totalAmountWithFees = calculateWithPlatformFees(teamData.totalAmount);
 
-    // Create checkout session
+    // Create checkout session - DIRECTLY on Connect account for guaranteed refund coverage
+    const connectAccountId = teamData.stripeConnectAccountId;
+    
+    if (!connectAccountId) {
+      throw new Error(`Tournament must have Stripe Connect account configured for payments`);
+    }
+    
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
@@ -99,11 +105,13 @@ export async function createCheckoutSession(teamId: number): Promise<{
         metadata: {
           teamId: teamId.toString(),
           retryPayment: 'true',
-          // CRITICAL: Include Connect account ID in payment intent metadata for refunds
-          connectAccountId: teamData.stripeConnectAccountId || '',
+          connectAccountId: connectAccountId,
           eventId: teamData.eventId?.toString() || '',
         },
       },
+    }, {
+      // CRITICAL: Create session on Connect account - charges go directly there
+      stripeAccount: connectAccountId
     });
 
     // Update team with new payment session info
@@ -136,9 +144,37 @@ export async function handleCheckoutSuccess(sessionId: string): Promise<{
   amount: number;
 }> {
   try {
-    const session = await stripe.checkout.sessions.retrieve(sessionId, {
-      expand: ['payment_intent'],
-    });
+    // First try to retrieve session from main account (for backward compatibility)
+    let session;
+    try {
+      session = await stripe.checkout.sessions.retrieve(sessionId, {
+        expand: ['payment_intent'],
+      });
+    } catch (mainAccountError) {
+      // If not found in main account, try Connect accounts
+      // This requires the Connect account ID - we'll get it from team data
+      const teamId = parseInt(sessionId.split('_')[1] || '0');
+      if (teamId > 0) {
+        const team = await db
+          .select({ stripeConnectAccountId: events.stripeConnectAccountId })
+          .from(teams)
+          .leftJoin(events, eq(teams.eventId, events.id))
+          .where(eq(teams.id, teamId))
+          .limit(1);
+          
+        if (team[0]?.stripeConnectAccountId) {
+          session = await stripe.checkout.sessions.retrieve(sessionId, {
+            expand: ['payment_intent'],
+          }, {
+            stripeAccount: team[0].stripeConnectAccountId
+          });
+        } else {
+          throw mainAccountError;
+        }
+      } else {
+        throw mainAccountError;
+      }
+    }
 
     if (!session.metadata?.teamId) {
       throw new Error('Team ID not found in session metadata');
