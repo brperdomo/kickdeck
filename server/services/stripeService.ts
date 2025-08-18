@@ -491,9 +491,8 @@ export async function createRefund(paymentIntentId: string, amount?: number) {
       });
     }
 
-    // Get the team from the payment intent metadata
-    const teamId = paymentIntent.metadata.teamId;
-    if (teamId) {
+    // Update team status using already extracted teamId
+    if (teamId && teamId !== '0') {
       const teamIdNumber = parseInt(teamId);
 
       // Update the team status
