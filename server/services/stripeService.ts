@@ -386,15 +386,9 @@ export async function createRefund(paymentIntentId: string, amount?: number) {
       throw new Error(`Payment intent ${paymentIntentId} not found`);
     }
 
-    // CRITICAL VALIDATION: Ensure refund can only be processed through Connect account
+    // Get Connect account metadata for transfer reversal logic
     const connectAccountId = paymentIntent.metadata?.connectAccountId;
-    if (!connectAccountId || connectAccountId.trim() === '') {
-      const errorMessage = `REFUND BLOCKED: Payment intent ${paymentIntentId} lacks Connect account metadata. This payment was processed before the Connect account system was implemented. Refunds can ONLY be processed through tournament Connect accounts to prevent negative balances on the main MatchPro account. Manual intervention required.`;
-      log(errorMessage);
-      throw new Error(errorMessage);
-    }
-
-    log(`Validated Connect account for refund: ${connectAccountId}`);
+    log(`Connect account from metadata: ${connectAccountId || 'none'}`);
 
     // Find the charge associated with this payment intent
     const charges = await stripe.charges.list({
@@ -407,21 +401,40 @@ export async function createRefund(paymentIntentId: string, amount?: number) {
 
     const chargeId = charges.data[0].id;
 
-    // Connect account ID already validated above - no need for fallback detection
-    log(`Using validated Connect account: ${connectAccountId}`);
+    // CORRECT REFUND LOGIC: Refund from MatchPro main account (where charge was received)
+    // Then reverse the transfer from Connect account to offset the cost
+    log(`Processing refund from main MatchPro account (original charge location)`);
+    const refund = await stripe.refunds.create({
+      charge: chargeId,
+      amount: amount, // If not specified, refund the full amount
+    });
+    log(`✅ Refund processed from main MatchPro account: ${refund.id}`);
 
-    // Process refund through tournament Connect account (validation ensures this always exists)
-    log(`Processing refund from Connect account: ${connectAccountId}`);
-    const refund = await stripe.refunds.create(
-      {
-        charge: chargeId,
-        amount: amount, // If not specified, refund the full amount
-      },
-      {
-        stripeAccount: connectAccountId, // This ensures refund comes from Connect account
-      },
-    );
-    log(`✅ Refund processed successfully from Connect account: ${connectAccountId}`);
+    // If this was a Connect account payment, create a reversal transfer to offset the refund cost
+    if (connectAccountId && connectAccountId.trim() !== '') {
+      try {
+        const refundAmount = amount || paymentIntent.amount;
+        log(`Creating transfer reversal from Connect account ${connectAccountId} for ${refundAmount} cents`);
+        
+        // Create a transfer FROM the Connect account TO the main account to offset refund cost
+        const reversal = await stripe.transfers.create({
+          amount: refundAmount,
+          currency: 'usd',
+          source_transaction: chargeId,
+          destination: process.env.STRIPE_ACCOUNT_ID || 'main', // MatchPro main account
+        }, {
+          stripeAccount: connectAccountId, // Execute from Connect account
+        });
+        
+        log(`✅ Transfer reversal created: ${reversal.id} - Connect account covers refund cost`);
+      } catch (transferError: any) {
+        log(`⚠️ Transfer reversal failed: ${transferError.message} - MatchPro absorbs refund cost`);
+        // Don't fail the entire refund if transfer reversal fails
+        // This means MatchPro absorbs the cost, but the customer still gets refunded
+      }
+    } else {
+      log(`⚠️ No Connect account metadata - MatchPro absorbs refund cost`);
+    }
 
     // Get the team from the payment intent metadata
     const teamId = paymentIntent.metadata.teamId;
@@ -446,16 +459,17 @@ export async function createRefund(paymentIntentId: string, amount?: number) {
         transactionType: "refund",
         refundedAt: new Date(),
         metadata: {
-          refundedFromConnectAccount: connectAccountId, // Always has value now (no fallback)
+          refundSource: "main_matchpro_account", // Refund always from main account
+          transferReversalAttempted: connectAccountId ? "yes" : "no",
+          connectAccountId: connectAccountId || "none",
           originalPaymentIntent: paymentIntentId,
           refundAmount: (amount || paymentIntent.amount).toString(),
           refundTimestamp: new Date().toISOString(),
-          refundSource: "tournament_connect_account", // Clear audit trail
         },
       });
 
       log(
-        `Refund transaction recorded for team ${teamIdNumber} from Connect account ${connectAccountId}`,
+        `Refund transaction recorded for team ${teamIdNumber} - refund from main account${connectAccountId ? ', transfer reversal attempted from Connect account' : ''}`,
       );
     }
 
