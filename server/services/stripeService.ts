@@ -873,9 +873,7 @@ export async function processPaymentForApprovedTeam(
       eventId: team.eventId,
       teamId: teamId,
       cardBrand: team.cardBrand,
-      cardLast4: team.cardLast4,
-      // Note: paymentDate field was removed as it's not in the schema
-      // We have createdAt which is automatically set
+      cardLastFour: team.cardLast4,
     });
 
     return {
@@ -892,8 +890,8 @@ export async function processPaymentForApprovedTeam(
       .update(teams)
       .set({
         paymentStatus: "failed",
-        errorCode: error.code || null,
-        errorMessage: error.message || "Payment processing failed",
+        paymentErrorCode: error.code || null,
+        paymentErrorMessage: error.message || "Payment processing failed",
       })
       .where(eq(teams.id, teamId));
 
