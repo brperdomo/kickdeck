@@ -45,6 +45,7 @@ import matchupTemplatesRouter from "./routes/admin/matchup-templates";
 import scoringTemplatesRouter from "./routes/admin/scoring-templates";
 import tournamentFormatConfigurationRouter from "./routes/admin/tournament-format-configuration";
 import eventFieldConfigurationsRouter from "./routes/admin/event-field-configurations";
+import autoFieldConfigRouter from "./routes/admin/auto-field-config";
 import championshipRouter from "./routes/admin/championship";
 import championshipAiRouter from "./routes/admin/championship-ai-integration";
 import templateVerificationRouter from "./routes/admin/template-verification";
@@ -1289,6 +1290,7 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/scoring-rules', adminScoringRulesRouter); // Enhanced tiebreaker and scoring rules management
     app.use('/api/admin', tournamentFormatConfigurationRouter); // Tournament format configuration - NO AUTH for basic admin operations
     app.use('/api/admin', eventFieldConfigurationsRouter); // Event field configurations - NO AUTH for basic admin operations
+    app.use('/api/admin', autoFieldConfigRouter); // Automatic field configuration creation - NO AUTH for basic admin operations
     app.use('/api/admin/championship', championshipRouter); // Championship team assignment router - NO AUTH for basic admin operations
     app.use('/api/admin/championship-ai', isAdmin, championshipAiRouter); // Championship AI integration for chatbot queries
 

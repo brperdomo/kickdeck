@@ -1,72 +1,7 @@
 # MatchPro AI Event Management System
 
 ## Overview
-MatchPro AI is a comprehensive sports event management platform designed for tournament organizers and sports clubs. Its main purpose is to automate and streamline workflows such as team registrations, payment processing, scoring, standings, and administrative tasks. The system aims to provide a professional, low-maintenance, and intelligent solution for managing tournaments from initial setup and scheduling to real-time updates and financial oversight, with ambitions to offer predictive insights and eliminate manual configuration.
-
-## Recent Changes (August 19, 2025)
-**COMPLETE CONNECT ACCOUNT PAYMENT ARCHITECTURE IMPLEMENTATION:**
-- **Payment Identification Crisis SOLVED**: Discovered database had wrong Connect account IDs - payments were actually on main account with complete metadata
-- **ENHANCED CUSTOMER CREATION**: All new customers created directly on tournament Connect accounts with comprehensive metadata (team ID, name, event details, manager info)
-- **ZERO MATCHPRO REFUND RISK**: Implemented complete Connect account refund system - all refunds processed directly on tournament accounts
-- **COMPREHENSIVE METADATA SYSTEM**: Every payment now includes descriptive names, full metadata, and internal references for easy identification
-- **CONNECT ACCOUNT REFUND SERVICE**: New `connectAccountRefundService.ts` handles all refunds on tournament accounts with full audit trails
-- **ADMIN REFUND API**: Complete refund management endpoints (`/api/admin/connect-refunds/*`) for controlled refund processing
-- **RETROACTIVE METADATA SUCCESS**: 612 teams with payments already have complete metadata - no unidentifiable payments remain
-- **ARCHITECTURAL ENFORCEMENT**: All payment operations now require Connect accounts and create customers with full metadata
-- **Status**: ✅ OPERATIONAL - Complete zero-risk payment architecture with guaranteed refund coverage by tournament organizers
-
-**CRITICAL ARCHITECTURAL DISCOVERY:**
-- **Database Issue Found**: Connect account IDs in database were incorrect - payments existed on different accounts than stored
-- **Payment Location Verified**: Main account payments already have complete metadata from retroactive script
-- **Inaccessible Accounts**: Some payments on Connect accounts system cannot access (separate tournament management)
-- **Solution Focus**: Enhanced all new payment flows to guarantee proper Connect account architecture moving forward
-
-**PREVIOUS PAYMENT OVERHAUL (Completed Earlier):**
-- **Replaced custom payment forms with Stripe Checkout**: Eliminated "Team ID required" errors by using official Stripe hosted payment pages
-- **Fixed platform fee calculation**: Now correctly calculating 4% + $0.30 platform fees instead of previous inconsistent rates
-- **Streamlined payment retry flow**: Teams redirected to secure Stripe checkout pages for payment processing
-- **Added PaymentSuccess page**: Proper completion handling with payment confirmation and team status updates
-- **Backend improvements**: New `stripeCheckoutService.ts` with comprehensive checkout session management
-- **Fixed Stripe webhook handling**: Configured Express to handle raw request bodies for webhook signature verification
-- **Combined fee display**: Platform fee and processing fee now shown as single "Platform Fee" line item
-- **Fixed logo display**: Replaced broken image with proper MatchPro text branding
-
-**CRITICAL PRODUCTION FIX COMPLETED (Earlier):** Resolved multiple teams data display issues and GUARANTEED original registration data integrity:
-
-### Issue 1: Event and Age Group columns showing "N/A" 
-- Root cause: `/api/admin/teams` endpoint missing JOIN queries for events and age groups tables
-- Fix: Updated route at line 9087 to include proper LEFT JOIN operations
-- Status: ✅ RESOLVED
-
-### Issue 2: Teams API limiting results to 100 instead of all 880 teams
-- Root cause: `teams-simple.ts` getTeams function had hardcoded `.limit(100)`
-- Fix: Removed limit clause from teams-simple.ts line 184 to return all teams
-- Impact: Admin dashboard now shows all 880 approved teams instead of just 100
-- Status: ✅ RESOLVED - Server restarted with fix applied
-
-### Issue 3: Teams missing relationship data (Event and Age Group showing "N/A")
-- Root cause: `teams-simple.ts` only returned basic team data without JOIN queries
-- Fix: Updated getTeams function to include proper LEFT JOIN operations for events, age groups, and clubs
-- **CRITICAL FIX**: Updated data structure mapping to match frontend expectations (`ageGroup.ageGroup` and `event.name`)
-- **FINAL FIX**: Ensured `eventId` (string) and `ageGroupId` (number) are properly passed to TeamModal for dropdown population
-- Impact: Teams now display complete Event name, Age Group, and Gender information from registration
-- Status: ✅ RESOLVED - All team relationship data restored for flighting and bracketing functionality
-
-### GUARANTEE: Original Registration Data Integrity Confirmed
-- **850 teams out of 1,039 now have authentic bracket selections** from original registration submissions
-- **Empire Super Cup: 561/614 teams (91.4%)** have original Nike Elite/Premier/Classic selections
-- **SCHEDULING TEAMS: 74/74 teams (100%)** have original bracket assignments
-- **Rise Cup: 215/215 teams (100%) chose "Allow directors to choose"** - awaiting manual bracket assignment
-- **NO algorithmic guessing or fake data** - all bracket_id values represent authentic competitive intent
-- **Authentic bracket categories preserved:** Nike Elite (3-10 teams), Nike Premier (4-8 teams), Nike Classic (4-14 teams)
-
-### CRITICAL RISE CUP BRACKET ANALYSIS (August 17, 2025)
-- **Discovery:** All 215 Rise Cup teams have bracket_id = NULL - this is AUTHENTIC original registration data
-- **Root Cause:** Teams chose "Allow directors to choose" option during registration (intentional choice)
-- **Registration Evidence:** BracketSelector.tsx shows onChange(null) when teams select director assignment
-- **Authentic Intent:** Teams deliberately opted for tournament director bracket assignment
-- **Action Required:** Tournament directors need to manually assign these teams to Elite/Academy/Premier brackets
-- **Status:** ✅ CONFIRMED - No data loss, teams await director assignment as originally requested
+MatchPro AI is a comprehensive sports event management platform for tournament organizers and sports clubs. Its main purpose is to automate and streamline workflows such as team registrations, payment processing, scoring, standings, and administrative tasks. The system aims to provide a professional, low-maintenance, and intelligent solution for managing tournaments from initial setup and scheduling to real-time updates and financial oversight, with ambitions to offer predictive insights and eliminate manual configuration.
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
@@ -100,11 +35,11 @@ Preferred communication style: Simple, everyday language.
     - **AI Assistant**: Persistent, floating chatbot interface powered by GPT-4o for natural language game scheduling, constraint validation, and real-time database updates. Integrates with Flight Configuration parameters for constraint validation and offers alternative suggestions for conflicts. Conversation history is persistent via PostgreSQL.
     - **Professional Gamecard System**: Generates comprehensive gamecards with team rosters, player details, coach information, and game schedules, with PDF generation and printable format.
     - **Enhanced CSV Game Import System**: Comprehensive import system supporting both basic and tournament formats with advanced field/venue matching, coach information processing, conflict detection, game metadata preservation, and intelligent team matching. Handles complex tournament schedules with 17+ data columns including coach IDs, flight assignments, venue details, and game conflicts.
-    - **CSV Import Compatibility Layer**: Intelligent fallback system that preserves native Drizzle ORM functionality while automatically handling CSV imported data type mismatches. Uses try-catch approach with direct SQL fallback for events with schema incompatibilities (e.g., eventId string vs integer conflicts).
+    - **CSV Import Compatibility Layer**: Intelligent fallback system that preserves native Drizzle ORM functionality while automatically handling CSV imported data type mismatches. Uses try-catch approach with direct SQL fallback for events with schema incompatibilities.
     - **CSV-Based Flight Assignment System**: Intelligent flight distribution system using Column 5 CSV data patterns (Nike Premier, Classic, Elite) with name-based team matching and cross-event contamination handling. Resolves team assignment conflicts by analyzing authentic team names for proper flight categorization.
     - **Flight-Aware Public Standings System**: Advanced standings calculation system that properly groups teams by age group + flight level for accurate championship determination in CSV-imported tournaments. Automatically detects flight-based tournaments and displays competitive groupings (NIKE CLASSIC, NIKE ELITE A/B, NIKE PREMIER) with fallback to regular age-group standings. Processes 80+ flight groups with 350+ teams for comprehensive championship tracking.
     - **QR Code Score Submission System**: Enables direct mobile score submission via QR codes linking to unauthenticated game score pages, with real-time updates and score locking capabilities.
-    - **Enhanced PDF Form Editor for Game Cards**: Professional visual editor for creating custom game card templates with drag-and-drop functionality, resizable canvas, element deletion, line drawing tools, image upload capabilities, and resize handles. Features real-time interactive canvas preview, comprehensive typography controls, shapes, lines, images, QR codes, and complete database field integration with 13+ dynamic placeholders. **NEW: Background Image Upload** - Supports custom background images with automatic orientation detection (horizontal/vertical), template auto-adjustment (A4 landscape vs portrait), and three scaling modes (fit, fill, stretch). Placeholder elements display as semi-transparent overlays on background images. Integrated directly within Master Schedule Game Cards tab for seamless workflow.
+    - **Enhanced PDF Form Editor for Game Cards**: Professional visual editor for creating custom game card templates with drag-and-drop functionality, resizable canvas, element deletion, line drawing tools, image upload capabilities, and resize handles. Features real-time interactive canvas preview, comprehensive typography controls, shapes, lines, images, QR codes, and complete database field integration with 13+ dynamic placeholders. Supports custom background images with automatic orientation detection (horizontal/vertical), template auto-adjustment (A4 landscape vs portrait), and three scaling modes (fit, fill, stretch). Placeholder elements display as semi-transparent overlays on background images. Integrated directly within Master Schedule Game Cards tab for seamless workflow.
 - **Critical Data Structure**: AGE GROUP → FLIGHTS → BRACKETS → Teams. Tournament formats are assigned to FLIGHTS (event_brackets). FLIGHTS are competitive levels within age groups, each generating its own brackets and matchups. Teams have `bracketId` (flight assignment) and `groupId` (specific bracket within flight).
 
 ### Data Storage
@@ -117,6 +52,6 @@ Preferred communication style: Simple, everyday language.
 -   **Stripe**: Payment processing.
 -   **SendGrid**: Email delivery.
 -   **Mapbox**: Geographic services.
--   **jsPDF & QRCode libraries (e.g., qrcode.react)**: PDF generation and QR code integration.
+-   **jsPDF & QRCode libraries**: PDF generation and QR code integration.
 -   **react-beautiful-dnd**: Drag-and-drop scheduling interface.
 -   **OpenAI GPT-4o**: AI Assistant.
