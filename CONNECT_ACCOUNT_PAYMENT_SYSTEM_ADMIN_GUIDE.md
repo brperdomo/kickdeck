@@ -1,31 +1,37 @@
 # MatchPro Payment System: Connect Account Direct Processing
-## Admin Guide - Effective Immediately
+## Admin Guide - Critical Update
 
 ---
 
-## 🎯 EXECUTIVE SUMMARY
+## 🎯 WHAT WE DISCOVERED
 
-**What Changed:** We've implemented Stripe's recommended Connect Account Direct Processing system to eliminate any possibility of MatchPro absorbing refund costs.
+**The Problem:** We learned that Stripe customers created in MatchPro's main account cannot have their refunds processed through tournament Connect accounts - refunds must come from the same account that created the customer.
 
-**Financial Impact:** Tournament organizers now handle 100% of their payment processing and refunds directly through their Stripe Connect accounts.
+**The Risk:** This meant all refunds had to come from MatchPro's main account, with only hope of cost recovery from tournaments via transfers.
 
-**Customer Impact:** Zero change to customer experience - same checkout forms, same payment flow, same confirmation process.
+**The Solution:** Stripe's recommended approach is to create customers directly on Connect accounts using the `stripeAccount` parameter, ensuring refunds can be processed from tournament accounts.
 
 ---
 
 ## 💰 NEW PAYMENT FLOW
 
-### Current System (Effective Now)
+### Previous Flow (Risky)
 ```
-Customer Payment → Tournament Connect Account → Tournament Receives Money
-Customer Refund  ← Tournament Connect Account ← Tournament Covers Refund
+Customer created in MatchPro account → Payment to MatchPro → Transfer to Tournament
+Refund request → Must refund from MatchPro → Hope tournament covers via transfer
+```
+
+### New Flow (Safe)
+```
+Customer created in Tournament Connect account → Payment to Tournament directly
+Refund request → Processed from Tournament Connect account → Zero MatchPro involvement
 ```
 
 ### Key Financial Changes
-- **Payments:** Go directly to tournament Connect accounts (not MatchPro main account)
-- **Refunds:** Processed directly from tournament Connect accounts (not MatchPro)
-- **Platform Fees:** Still collected as part of payment processing (4% + $0.30)
-- **MatchPro Risk:** **ZERO** - No possibility of absorbing refund costs
+- **Customer Ownership:** Created directly on tournament Connect accounts using `stripeAccount` parameter
+- **Payment Routing:** Goes directly to tournament accounts (bypasses MatchPro entirely)
+- **Refund Source:** Processed from tournament's own Stripe balance
+- **MatchPro Risk:** **ZERO** - We're completely removed from refund processing
 
 ---
 
@@ -61,18 +67,19 @@ Customer Refund  ← Tournament Connect Account ← Tournament Covers Refund
 
 ---
 
-## 🛡️ FINANCIAL PROTECTION MEASURES
+## 🛡️ BEST PRACTICES FOR ZERO OVERDRAFT RISK
 
 ### Tournament Requirements
 **Before Accepting Payments:**
-- Tournament MUST have active Stripe Connect account
-- Connect account must be properly configured and verified
-- No payments accepted without valid Connect account setup
+- Tournament MUST have active, verified Stripe Connect account
+- Connect account must be properly configured for direct payments
+- System validates Connect account before allowing customer creation
 
-### Refund Guarantees
-- **New payments:** 100% covered by tournament Connect account balance
-- **Legacy payments:** Best effort recovery from tournament, MatchPro fallback exists
-- **Failed refunds:** System prevents refund processing if tournament account insufficient
+### Refund Safety Measures
+- **New payments:** Refunds can ONLY be processed if tournament has sufficient Stripe balance
+- **Failed refunds:** Customer must wait until tournament funds their Stripe account
+- **No MatchPro fallback:** We cannot and will not process refunds from our account
+- **Legacy payments:** Still use old risky system until fully transitioned
 
 ---
 
@@ -151,16 +158,16 @@ Customer Refund  ← Tournament Connect Account ← Tournament Covers Refund
 ## ❓ FAQ FOR ADMINS
 
 **Q: What happens if a tournament Connect account has insufficient funds for a refund?**
-A: For new payments, the refund will fail until tournament adds funds. For legacy payments, MatchPro may still absorb the cost.
+A: The refund will fail completely. Customer must wait until tournament adds funds to their Stripe account. We cannot process it from MatchPro.
 
 **Q: How do we handle customer complaints about failed refunds?**
-A: Direct tournament organizers to fund their Stripe Connect account. Explain that refunds come from their account, not MatchPro.
+A: Explain that tournament organizers control refunds from their own Stripe balance. Direct customers to contact tournament organizers to fund their accounts.
 
-**Q: Will this affect our revenue reporting?**
-A: Platform fees are still collected. Revenue timing may shift slightly as payments go directly to tournaments.
+**Q: What's the difference between new and legacy payments?**
+A: New payments use Connect accounts directly (safe). Legacy payments were created in MatchPro account (risky - we may absorb costs).
 
-**Q: What about tournaments without Connect accounts?**
-A: They cannot accept new payments. Existing legacy payments can still be refunded using the old system.
+**Q: How do we avoid MatchPro overdrafts completely?**
+A: Only process refunds for payments made through the new Connect account system. For legacy payments, ensure tournament has funds before processing.
 
 ---
 
