@@ -80,7 +80,7 @@ function generateTeamMetadata(team: TeamPaymentData): Record<string, string> {
     eventName: team.eventName || "",
     managerEmail: team.managerEmail || "",
     managerName: team.managerName || "Team Manager",
-    registrationDate: team.createdAt?.toISOString() || "",
+    registrationDate: team.createdAt ? (typeof team.createdAt === 'string' ? team.createdAt : team.createdAt.toISOString()) : new Date().toISOString(),
     internalReference: `TEAM-${team.teamId}-${team.eventId}`,
     systemSource: "MatchPro",
     updateType: "RetroactiveMetadata",
