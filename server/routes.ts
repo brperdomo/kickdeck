@@ -176,6 +176,7 @@ import { fixCardDetails } from "./routes/fix-card-details";
 import gameTeamsRouter from "./routes/admin/game-teams";
 import { processDestinationCharge } from "./routes/stripe-connect-payments";
 import aiAuditRoutes from "./routes/ai-audit-routes";
+import retroactiveMetadataRoutes from "./routes/retroactiveMetadata.js";
 // Email service for registration emails - create placeholder service to fix build
 const sendTemplatedEmail = async (template: string, data: any) => console.log('Email service not configured');
 const sendRegistrationReceiptEmail = async (data: any) => console.log('Registration receipt email not configured');
@@ -983,6 +984,7 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/seasonal-scopes', isAdmin, seasonalScopesRouter);
     app.use('/api/admin/events', isAdmin, eventsRouter); // REMOVED authenticateTournamentDirector TO ALLOW BRACKET ACCESS
     app.use('/api/admin', isAdmin, aiAuditRoutes); // AI Audit Trail routes
+    app.use('/api/admin/metadata', retroactiveMetadataRoutes); // Retroactive payment metadata updates
     app.use('/api/admin', isAdmin, gamecardsRouter); // Game card generation and printing
     app.use('/api/admin/age-group-schedules', isAdmin, ageGroupSchedulesRouter); // Division-based schedule and score display
     app.use('/api/admin/events', isAdmin, pdfTemplateRoutes); // PDF template editor for game cards
