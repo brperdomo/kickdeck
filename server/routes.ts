@@ -536,9 +536,11 @@ export function registerRoutes(app: Express): Server {
             metadata: {
               teamId: team.id.toString(),
               teamName: team.name,
-              source: 'payment_completion'
+              source: 'payment_completion',
+              systemSource: 'MatchPro',
+              createdFor: 'manual_payment_completion'
             }
-          });
+          }, team.event?.stripeConnectAccountId ? { stripeAccount: team.event.stripeConnectAccountId } : {});
 
           // Only attach if it's not a Link payment method
           if (paymentMethod.type === 'link') {
@@ -8190,9 +8192,11 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
             metadata: {
               teamId: team.id.toString(),
               teamName: team.name,
-              eventName: team.event?.name || ''
+              eventName: team.event?.name || '',
+              systemSource: 'MatchPro',
+              createdFor: 'legacy_processing'
             }
-          });
+          }, team.event?.stripeConnectAccountId ? { stripeAccount: team.event.stripeConnectAccountId } : {});
           console.log(`Created customer: ${customer.id}`);
         }
 

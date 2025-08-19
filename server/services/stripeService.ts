@@ -793,15 +793,30 @@ export async function processPaymentForApprovedTeam(
     } else {
       // For regular payment methods, create/use customer and attach as usual
       if (!customerId) {
-        log(`Creating Stripe customer for team: ${teamId}`);
+        // Get Connect account for this team's event
+        const teamWithEvent = await db
+          .select({
+            event: { stripeConnectAccountId: events.stripeConnectAccountId }
+          })
+          .from(teams)
+          .leftJoin(events, eq(teams.eventId, events.id))
+          .where(eq(teams.id, teamId))
+          .limit(1);
+        
+        const connectAccountId = teamWithEvent[0]?.event?.stripeConnectAccountId;
+        
+        log(`Creating Stripe customer for team: ${teamId} on Connect account: ${connectAccountId || 'main account'}`);
         const customer = await stripe.customers.create({
           name: team.name || `Team ${teamId}`,
           email: team.submitterEmail || `team-${teamId}@example.com`,
           metadata: {
             teamId: teamId.toString(),
             eventId: team.eventId?.toString() || "",
+            teamName: team.name || "Unknown Team",
+            systemSource: "MatchPro",
+            createdFor: "payment_retry"
           },
-        });
+        }, connectAccountId ? { stripeAccount: connectAccountId } : {});
         customerId = customer.id;
 
         // Save the customer ID to the team record
@@ -1073,15 +1088,30 @@ export async function handleSetupIntentSuccess(
     let customerId = existingTeam.stripeCustomerId;
 
     if (!customerId) {
-      // Create a new customer
+      // Get Connect account for this team's event
+      const teamWithEvent = await db
+        .select({
+          event: { stripeConnectAccountId: events.stripeConnectAccountId }
+        })
+        .from(teams)
+        .leftJoin(events, eq(teams.eventId, events.id))
+        .where(eq(teams.id, teamIdNumber))
+        .limit(1);
+      
+      const connectAccountId = teamWithEvent[0]?.event?.stripeConnectAccountId;
+      
+      // Create a new customer on Connect account
       const customer = await stripe.customers.create({
         name: existingTeam.name || `Team ${teamId}`,
         email: existingTeam.submitterEmail || `team-${teamId}@example.com`,
         metadata: {
           teamId: teamId.toString(),
           eventId: existingTeam.eventId?.toString() || "",
+          teamName: existingTeam.name || "Unknown Team",
+          systemSource: "MatchPro",
+          createdFor: "setup_intent_success"
         },
-      });
+      }, connectAccountId ? { stripeAccount: connectAccountId } : {});
       customerId = customer.id;
 
       // Attach the payment method to the customer
