@@ -49,7 +49,7 @@ async function fixPaymentMethodAttachment(teamId: number, paymentMethodId: strin
     // If payment method is not attached to any customer, create one
     if (!paymentMethod.customer) {
       if (!customerId) {
-        console.log(`RETRY PAYMENT: Creating new customer for team ${teamId}`);
+        console.log(`RETRY PAYMENT: Creating new customer for team ${teamId} on Connect account: ${event.stripeConnectAccountId || 'main account'}`);
         const customer = await stripe.customers.create({
           email: team.managerEmail || team.submitterEmail || undefined,
           name: team.managerName || team.name || undefined,
@@ -57,9 +57,11 @@ async function fixPaymentMethodAttachment(teamId: number, paymentMethodId: strin
             teamId: teamId.toString(),
             teamName: team.name || "Unknown Team",
             eventId: team.eventId?.toString() || "",
-            eventName: event.name || "Unknown Event"
+            eventName: event.name || "Unknown Event",
+            systemSource: "MatchPro",
+            createdFor: "payment_retry_admin"
           }
-        });
+        }, event.stripeConnectAccountId ? { stripeAccount: event.stripeConnectAccountId } : {});
         customerId = customer.id;
         
         // Update team with new customer ID
