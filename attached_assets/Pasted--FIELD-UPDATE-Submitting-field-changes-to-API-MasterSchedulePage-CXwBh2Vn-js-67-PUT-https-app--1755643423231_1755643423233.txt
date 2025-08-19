@@ -1,0 +1,879 @@
+🔄 FIELD UPDATE: Submitting field changes to API
+MasterSchedulePage-CXwBh2Vn.js:67  PUT https://app.matchpro.ai/api/admin/events/1656618593/fields/50 404 (Not Found)
+(anonymous) @ MasterSchedulePage-CXwBh2Vn.js:67
+mutationFn @ MasterSchedulePage-CXwBh2Vn.js:67
+fn @ index-ClE96Kjt.js:41
+p @ index-ClE96Kjt.js:41
+start @ index-ClE96Kjt.js:41
+execute @ index-ClE96Kjt.js:41
+await in execute
+mutate @ index-ClE96Kjt.js:41
+(anonymous) @ index-ClE96Kjt.js:41
+k @ MasterSchedulePage-CXwBh2Vn.js:67
+Kve @ index-ClE96Kjt.js:38
+Qve @ index-ClE96Kjt.js:38
+Xve @ index-ClE96Kjt.js:38
+l8 @ index-ClE96Kjt.js:38
+hJ @ index-ClE96Kjt.js:38
+(anonymous) @ index-ClE96Kjt.js:38
+kD @ index-ClE96Kjt.js:41
+MX @ index-ClE96Kjt.js:38
+aE @ index-ClE96Kjt.js:38
+tD @ index-ClE96Kjt.js:38
+hye @ index-ClE96Kjt.js:38Understand this error
+MasterSchedulePage-CXwBh2Vn.js:67  PUT https://app.matchpro.ai/api/admin/events/1656618593/fields/46 404 (Not Found)
+(anonymous) @ MasterSchedulePage-CXwBh2Vn.js:67
+mutationFn @ MasterSchedulePage-CXwBh2Vn.js:67
+fn @ index-ClE96Kjt.js:41
+p @ index-ClE96Kjt.js:41
+start @ index-ClE96Kjt.js:41
+execute @ index-ClE96Kjt.js:41
+await in execute
+mutate @ index-ClE96Kjt.js:41
+(anonymous) @ index-ClE96Kjt.js:41
+k @ MasterSchedulePage-CXwBh2Vn.js:67
+Kve @ index-ClE96Kjt.js:38
+Qve @ index-ClE96Kjt.js:38
+Xve @ index-ClE96Kjt.js:38
+l8 @ index-ClE96Kjt.js:38
+hJ @ index-ClE96Kjt.js:38
+(anonymous) @ index-ClE96Kjt.js:38
+kD @ index-ClE96Kjt.js:41
+MX @ index-ClE96Kjt.js:38
+aE @ index-ClE96Kjt.js:38
+tD @ index-ClE96Kjt.js:38
+hye @ index-ClE96Kjt.js:38Understand this error
+MasterSchedulePage-CXwBh2Vn.js:67  PUT https://app.matchpro.ai/api/admin/events/1656618593/fields/41 404 (Not Found)
+(anonymous) @ MasterSchedulePage-CXwBh2Vn.js:67
+mutationFn @ MasterSchedulePage-CXwBh2Vn.js:67
+fn @ index-ClE96Kjt.js:41
+p @ index-ClE96Kjt.js:41
+start @ index-ClE96Kjt.js:41
+execute @ index-ClE96Kjt.js:41
+await in execute
+mutate @ index-ClE96Kjt.js:41
+(anonymous) @ index-ClE96Kjt.js:41
+k @ MasterSchedulePage-CXwBh2Vn.js:67
+Kve @ index-ClE96Kjt.js:38
+Qve @ index-ClE96Kjt.js:38
+Xve @ index-ClE96Kjt.js:38
+l8 @ index-ClE96Kjt.js:38
+hJ @ index-ClE96Kjt.js:38
+(anonymous) @ index-ClE96Kjt.js:38
+kD @ index-ClE96Kjt.js:41
+MX @ index-ClE96Kjt.js:38
+aE @ index-ClE96Kjt.js:38
+tD @ index-ClE96Kjt.js:38
+hye @ index-ClE96Kjt.js:38Understand this error
+MasterSchedulePage-CXwBh2Vn.js:67  PUT https://app.matchpro.ai/api/admin/events/1656618593/fields/29 404 (Not Found)
+(anonymous) @ MasterSchedulePage-CXwBh2Vn.js:67
+mutationFn @ MasterSchedulePage-CXwBh2Vn.js:67
+fn @ index-ClE96Kjt.js:41
+p @ index-ClE96Kjt.js:41
+start @ index-ClE96Kjt.js:41
+execute @ index-ClE96Kjt.js:41
+await in execute
+mutate @ index-ClE96Kjt.js:41
+(anonymous) @ index-ClE96Kjt.js:41
+k @ MasterSchedulePage-CXwBh2Vn.js:67
+Kve @ index-ClE96Kjt.js:38
+Qve @ index-ClE96Kjt.js:38
+Xve @ index-ClE96Kjt.js:38
+l8 @ index-ClE96Kjt.js:38
+hJ @ index-ClE96Kjt.js:38
+(anonymous) @ index-ClE96Kjt.js:38
+kD @ index-ClE96Kjt.js:41
+MX @ index-ClE96Kjt.js:38
+aE @ index-ClE96Kjt.js:38
+tD @ index-ClE96Kjt.js:38
+hye @ index-ClE96Kjt.js:38Understand this error
+MasterSchedulePage-CXwBh2Vn.js:67  PUT https://app.matchpro.ai/api/admin/events/1656618593/fields/23 404 (Not Found)
+(anonymous) @ MasterSchedulePage-CXwBh2Vn.js:67
+mutationFn @ MasterSchedulePage-CXwBh2Vn.js:67
+fn @ index-ClE96Kjt.js:41
+p @ index-ClE96Kjt.js:41
+start @ index-ClE96Kjt.js:41
+execute @ index-ClE96Kjt.js:41
+await in execute
+mutate @ index-ClE96Kjt.js:41
+(anonymous) @ index-ClE96Kjt.js:41
+k @ MasterSchedulePage-CXwBh2Vn.js:67
+Kve @ index-ClE96Kjt.js:38
+Qve @ index-ClE96Kjt.js:38
+Xve @ index-ClE96Kjt.js:38
+l8 @ index-ClE96Kjt.js:38
+hJ @ index-ClE96Kjt.js:38
+(anonymous) @ index-ClE96Kjt.js:38
+kD @ index-ClE96Kjt.js:41
+MX @ index-ClE96Kjt.js:38
+aE @ index-ClE96Kjt.js:38
+tD @ index-ClE96Kjt.js:38
+hye @ index-ClE96Kjt.js:38Understand this error
+MasterSchedulePage-CXwBh2Vn.js:67  PUT https://app.matchpro.ai/api/admin/events/1656618593/fields/33 404 (Not Found)
+(anonymous) @ MasterSchedulePage-CXwBh2Vn.js:67
+mutationFn @ MasterSchedulePage-CXwBh2Vn.js:67
+fn @ index-ClE96Kjt.js:41
+p @ index-ClE96Kjt.js:41
+start @ index-ClE96Kjt.js:41
+execute @ index-ClE96Kjt.js:41
+await in execute
+mutate @ index-ClE96Kjt.js:41
+(anonymous) @ index-ClE96Kjt.js:41
+k @ MasterSchedulePage-CXwBh2Vn.js:67
+Kve @ index-ClE96Kjt.js:38
+Qve @ index-ClE96Kjt.js:38
+Xve @ index-ClE96Kjt.js:38
+l8 @ index-ClE96Kjt.js:38
+hJ @ index-ClE96Kjt.js:38
+(anonymous) @ index-ClE96Kjt.js:38
+kD @ index-ClE96Kjt.js:41
+MX @ index-ClE96Kjt.js:38
+aE @ index-ClE96Kjt.js:38
+tD @ index-ClE96Kjt.js:38
+hye @ index-ClE96Kjt.js:38Understand this error
+MasterSchedulePage-CXwBh2Vn.js:67  PUT https://app.matchpro.ai/api/admin/events/1656618593/fields/25 404 (Not Found)
+(anonymous) @ MasterSchedulePage-CXwBh2Vn.js:67
+mutationFn @ MasterSchedulePage-CXwBh2Vn.js:67
+fn @ index-ClE96Kjt.js:41
+p @ index-ClE96Kjt.js:41
+start @ index-ClE96Kjt.js:41
+execute @ index-ClE96Kjt.js:41
+await in execute
+mutate @ index-ClE96Kjt.js:41
+(anonymous) @ index-ClE96Kjt.js:41
+k @ MasterSchedulePage-CXwBh2Vn.js:67
+Kve @ index-ClE96Kjt.js:38
+Qve @ index-ClE96Kjt.js:38
+Xve @ index-ClE96Kjt.js:38
+l8 @ index-ClE96Kjt.js:38
+hJ @ index-ClE96Kjt.js:38
+(anonymous) @ index-ClE96Kjt.js:38
+kD @ index-ClE96Kjt.js:41
+MX @ index-ClE96Kjt.js:38
+aE @ index-ClE96Kjt.js:38
+tD @ index-ClE96Kjt.js:38
+hye @ index-ClE96Kjt.js:38Understand this error
+MasterSchedulePage-CXwBh2Vn.js:67  PUT https://app.matchpro.ai/api/admin/events/1656618593/fields/8 404 (Not Found)
+(anonymous) @ MasterSchedulePage-CXwBh2Vn.js:67
+mutationFn @ MasterSchedulePage-CXwBh2Vn.js:67
+fn @ index-ClE96Kjt.js:41
+p @ index-ClE96Kjt.js:41
+start @ index-ClE96Kjt.js:41
+execute @ index-ClE96Kjt.js:41
+await in execute
+mutate @ index-ClE96Kjt.js:41
+(anonymous) @ index-ClE96Kjt.js:41
+k @ MasterSchedulePage-CXwBh2Vn.js:67
+Kve @ index-ClE96Kjt.js:38
+Qve @ index-ClE96Kjt.js:38
+Xve @ index-ClE96Kjt.js:38
+l8 @ index-ClE96Kjt.js:38
+hJ @ index-ClE96Kjt.js:38
+(anonymous) @ index-ClE96Kjt.js:38
+kD @ index-ClE96Kjt.js:41
+MX @ index-ClE96Kjt.js:38
+aE @ index-ClE96Kjt.js:38
+tD @ index-ClE96Kjt.js:38
+hye @ index-ClE96Kjt.js:38Understand this error
+MasterSchedulePage-CXwBh2Vn.js:67  PUT https://app.matchpro.ai/api/admin/events/1656618593/fields/51 404 (Not Found)
+(anonymous) @ MasterSchedulePage-CXwBh2Vn.js:67
+mutationFn @ MasterSchedulePage-CXwBh2Vn.js:67
+fn @ index-ClE96Kjt.js:41
+p @ index-ClE96Kjt.js:41
+start @ index-ClE96Kjt.js:41
+execute @ index-ClE96Kjt.js:41
+await in execute
+mutate @ index-ClE96Kjt.js:41
+(anonymous) @ index-ClE96Kjt.js:41
+k @ MasterSchedulePage-CXwBh2Vn.js:67
+Kve @ index-ClE96Kjt.js:38
+Qve @ index-ClE96Kjt.js:38
+Xve @ index-ClE96Kjt.js:38
+l8 @ index-ClE96Kjt.js:38
+hJ @ index-ClE96Kjt.js:38
+(anonymous) @ index-ClE96Kjt.js:38
+kD @ index-ClE96Kjt.js:41
+MX @ index-ClE96Kjt.js:38
+aE @ index-ClE96Kjt.js:38
+tD @ index-ClE96Kjt.js:38
+hye @ index-ClE96Kjt.js:38Understand this error
+MasterSchedulePage-CXwBh2Vn.js:67  PUT https://app.matchpro.ai/api/admin/events/1656618593/fields/19 404 (Not Found)
+(anonymous) @ MasterSchedulePage-CXwBh2Vn.js:67
+mutationFn @ MasterSchedulePage-CXwBh2Vn.js:67
+fn @ index-ClE96Kjt.js:41
+p @ index-ClE96Kjt.js:41
+start @ index-ClE96Kjt.js:41
+execute @ index-ClE96Kjt.js:41
+await in execute
+mutate @ index-ClE96Kjt.js:41
+(anonymous) @ index-ClE96Kjt.js:41
+k @ MasterSchedulePage-CXwBh2Vn.js:67
+Kve @ index-ClE96Kjt.js:38
+Qve @ index-ClE96Kjt.js:38
+Xve @ index-ClE96Kjt.js:38
+l8 @ index-ClE96Kjt.js:38
+hJ @ index-ClE96Kjt.js:38
+(anonymous) @ index-ClE96Kjt.js:38
+kD @ index-ClE96Kjt.js:41
+MX @ index-ClE96Kjt.js:38
+aE @ index-ClE96Kjt.js:38
+tD @ index-ClE96Kjt.js:38
+hye @ index-ClE96Kjt.js:38Understand this error
+MasterSchedulePage-CXwBh2Vn.js:67  PUT https://app.matchpro.ai/api/admin/events/1656618593/fields/54 404 (Not Found)
+(anonymous) @ MasterSchedulePage-CXwBh2Vn.js:67
+mutationFn @ MasterSchedulePage-CXwBh2Vn.js:67
+fn @ index-ClE96Kjt.js:41
+p @ index-ClE96Kjt.js:41
+start @ index-ClE96Kjt.js:41
+execute @ index-ClE96Kjt.js:41
+await in execute
+mutate @ index-ClE96Kjt.js:41
+(anonymous) @ index-ClE96Kjt.js:41
+k @ MasterSchedulePage-CXwBh2Vn.js:67
+Kve @ index-ClE96Kjt.js:38
+Qve @ index-ClE96Kjt.js:38
+Xve @ index-ClE96Kjt.js:38
+l8 @ index-ClE96Kjt.js:38
+hJ @ index-ClE96Kjt.js:38
+(anonymous) @ index-ClE96Kjt.js:38
+kD @ index-ClE96Kjt.js:41
+MX @ index-ClE96Kjt.js:38
+aE @ index-ClE96Kjt.js:38
+tD @ index-ClE96Kjt.js:38
+hye @ index-ClE96Kjt.js:38Understand this error
+MasterSchedulePage-CXwBh2Vn.js:67  PUT https://app.matchpro.ai/api/admin/events/1656618593/fields/14 404 (Not Found)
+(anonymous) @ MasterSchedulePage-CXwBh2Vn.js:67
+mutationFn @ MasterSchedulePage-CXwBh2Vn.js:67
+fn @ index-ClE96Kjt.js:41
+p @ index-ClE96Kjt.js:41
+start @ index-ClE96Kjt.js:41
+execute @ index-ClE96Kjt.js:41
+await in execute
+mutate @ index-ClE96Kjt.js:41
+(anonymous) @ index-ClE96Kjt.js:41
+k @ MasterSchedulePage-CXwBh2Vn.js:67
+Kve @ index-ClE96Kjt.js:38
+Qve @ index-ClE96Kjt.js:38
+Xve @ index-ClE96Kjt.js:38
+l8 @ index-ClE96Kjt.js:38
+hJ @ index-ClE96Kjt.js:38
+(anonymous) @ index-ClE96Kjt.js:38
+kD @ index-ClE96Kjt.js:41
+MX @ index-ClE96Kjt.js:38
+aE @ index-ClE96Kjt.js:38
+tD @ index-ClE96Kjt.js:38
+hye @ index-ClE96Kjt.js:38Understand this error
+MasterSchedulePage-CXwBh2Vn.js:67  PUT https://app.matchpro.ai/api/admin/events/1656618593/fields/55 404 (Not Found)
+(anonymous) @ MasterSchedulePage-CXwBh2Vn.js:67
+mutationFn @ MasterSchedulePage-CXwBh2Vn.js:67
+fn @ index-ClE96Kjt.js:41
+p @ index-ClE96Kjt.js:41
+start @ index-ClE96Kjt.js:41
+execute @ index-ClE96Kjt.js:41
+await in execute
+mutate @ index-ClE96Kjt.js:41
+(anonymous) @ index-ClE96Kjt.js:41
+k @ MasterSchedulePage-CXwBh2Vn.js:67
+Kve @ index-ClE96Kjt.js:38
+Qve @ index-ClE96Kjt.js:38
+Xve @ index-ClE96Kjt.js:38
+l8 @ index-ClE96Kjt.js:38
+hJ @ index-ClE96Kjt.js:38
+(anonymous) @ index-ClE96Kjt.js:38
+kD @ index-ClE96Kjt.js:41
+MX @ index-ClE96Kjt.js:38
+aE @ index-ClE96Kjt.js:38
+tD @ index-ClE96Kjt.js:38
+hye @ index-ClE96Kjt.js:38Understand this error
+MasterSchedulePage-CXwBh2Vn.js:67  PUT https://app.matchpro.ai/api/admin/events/1656618593/fields/24 404 (Not Found)
+(anonymous) @ MasterSchedulePage-CXwBh2Vn.js:67
+mutationFn @ MasterSchedulePage-CXwBh2Vn.js:67
+fn @ index-ClE96Kjt.js:41
+p @ index-ClE96Kjt.js:41
+start @ index-ClE96Kjt.js:41
+execute @ index-ClE96Kjt.js:41
+await in execute
+mutate @ index-ClE96Kjt.js:41
+(anonymous) @ index-ClE96Kjt.js:41
+k @ MasterSchedulePage-CXwBh2Vn.js:67
+Kve @ index-ClE96Kjt.js:38
+Qve @ index-ClE96Kjt.js:38
+Xve @ index-ClE96Kjt.js:38
+l8 @ index-ClE96Kjt.js:38
+hJ @ index-ClE96Kjt.js:38
+(anonymous) @ index-ClE96Kjt.js:38
+kD @ index-ClE96Kjt.js:41
+MX @ index-ClE96Kjt.js:38
+aE @ index-ClE96Kjt.js:38
+tD @ index-ClE96Kjt.js:38
+hye @ index-ClE96Kjt.js:38Understand this error
+MasterSchedulePage-CXwBh2Vn.js:67  PUT https://app.matchpro.ai/api/admin/events/1656618593/fields/17 404 (Not Found)
+(anonymous) @ MasterSchedulePage-CXwBh2Vn.js:67
+mutationFn @ MasterSchedulePage-CXwBh2Vn.js:67
+fn @ index-ClE96Kjt.js:41
+p @ index-ClE96Kjt.js:41
+start @ index-ClE96Kjt.js:41
+execute @ index-ClE96Kjt.js:41
+await in execute
+mutate @ index-ClE96Kjt.js:41
+(anonymous) @ index-ClE96Kjt.js:41
+k @ MasterSchedulePage-CXwBh2Vn.js:67
+Kve @ index-ClE96Kjt.js:38
+Qve @ index-ClE96Kjt.js:38
+Xve @ index-ClE96Kjt.js:38
+l8 @ index-ClE96Kjt.js:38
+hJ @ index-ClE96Kjt.js:38
+(anonymous) @ index-ClE96Kjt.js:38
+kD @ index-ClE96Kjt.js:41
+MX @ index-ClE96Kjt.js:38
+aE @ index-ClE96Kjt.js:38
+tD @ index-ClE96Kjt.js:38
+hye @ index-ClE96Kjt.js:38Understand this error
+MasterSchedulePage-CXwBh2Vn.js:67  PUT https://app.matchpro.ai/api/admin/events/1656618593/fields/27 404 (Not Found)
+(anonymous) @ MasterSchedulePage-CXwBh2Vn.js:67
+mutationFn @ MasterSchedulePage-CXwBh2Vn.js:67
+fn @ index-ClE96Kjt.js:41
+p @ index-ClE96Kjt.js:41
+start @ index-ClE96Kjt.js:41
+execute @ index-ClE96Kjt.js:41
+await in execute
+mutate @ index-ClE96Kjt.js:41
+(anonymous) @ index-ClE96Kjt.js:41
+k @ MasterSchedulePage-CXwBh2Vn.js:67
+Kve @ index-ClE96Kjt.js:38
+Qve @ index-ClE96Kjt.js:38
+Xve @ index-ClE96Kjt.js:38
+l8 @ index-ClE96Kjt.js:38
+hJ @ index-ClE96Kjt.js:38
+(anonymous) @ index-ClE96Kjt.js:38
+kD @ index-ClE96Kjt.js:41
+MX @ index-ClE96Kjt.js:38
+aE @ index-ClE96Kjt.js:38
+tD @ index-ClE96Kjt.js:38
+hye @ index-ClE96Kjt.js:38Understand this error
+38Fetch failed loading: PUT "<URL>".
+MasterSchedulePage-CXwBh2Vn.js:67  PUT https://app.matchpro.ai/api/admin/events/1656618593/fields/32 404 (Not Found)
+(anonymous) @ MasterSchedulePage-CXwBh2Vn.js:67
+mutationFn @ MasterSchedulePage-CXwBh2Vn.js:67
+fn @ index-ClE96Kjt.js:41
+p @ index-ClE96Kjt.js:41
+start @ index-ClE96Kjt.js:41
+execute @ index-ClE96Kjt.js:41
+await in execute
+mutate @ index-ClE96Kjt.js:41
+(anonymous) @ index-ClE96Kjt.js:41
+k @ MasterSchedulePage-CXwBh2Vn.js:67
+Kve @ index-ClE96Kjt.js:38
+Qve @ index-ClE96Kjt.js:38
+Xve @ index-ClE96Kjt.js:38
+l8 @ index-ClE96Kjt.js:38
+hJ @ index-ClE96Kjt.js:38
+(anonymous) @ index-ClE96Kjt.js:38
+kD @ index-ClE96Kjt.js:41
+MX @ index-ClE96Kjt.js:38
+aE @ index-ClE96Kjt.js:38
+tD @ index-ClE96Kjt.js:38
+hye @ index-ClE96Kjt.js:38Understand this error
+MasterSchedulePage-CXwBh2Vn.js:67  PUT https://app.matchpro.ai/api/admin/events/1656618593/fields/47 404 (Not Found)
+(anonymous) @ MasterSchedulePage-CXwBh2Vn.js:67
+mutationFn @ MasterSchedulePage-CXwBh2Vn.js:67
+fn @ index-ClE96Kjt.js:41
+p @ index-ClE96Kjt.js:41
+start @ index-ClE96Kjt.js:41
+execute @ index-ClE96Kjt.js:41
+await in execute
+mutate @ index-ClE96Kjt.js:41
+(anonymous) @ index-ClE96Kjt.js:41
+k @ MasterSchedulePage-CXwBh2Vn.js:67
+Kve @ index-ClE96Kjt.js:38
+Qve @ index-ClE96Kjt.js:38
+Xve @ index-ClE96Kjt.js:38
+l8 @ index-ClE96Kjt.js:38
+hJ @ index-ClE96Kjt.js:38
+(anonymous) @ index-ClE96Kjt.js:38
+kD @ index-ClE96Kjt.js:41
+MX @ index-ClE96Kjt.js:38
+aE @ index-ClE96Kjt.js:38
+tD @ index-ClE96Kjt.js:38
+hye @ index-ClE96Kjt.js:38Understand this error
+MasterSchedulePage-CXwBh2Vn.js:67  PUT https://app.matchpro.ai/api/admin/events/1656618593/fields/48 404 (Not Found)
+(anonymous) @ MasterSchedulePage-CXwBh2Vn.js:67
+mutationFn @ MasterSchedulePage-CXwBh2Vn.js:67
+fn @ index-ClE96Kjt.js:41
+p @ index-ClE96Kjt.js:41
+start @ index-ClE96Kjt.js:41
+execute @ index-ClE96Kjt.js:41
+await in execute
+mutate @ index-ClE96Kjt.js:41
+(anonymous) @ index-ClE96Kjt.js:41
+k @ MasterSchedulePage-CXwBh2Vn.js:67
+Kve @ index-ClE96Kjt.js:38
+Qve @ index-ClE96Kjt.js:38
+Xve @ index-ClE96Kjt.js:38
+l8 @ index-ClE96Kjt.js:38
+hJ @ index-ClE96Kjt.js:38
+(anonymous) @ index-ClE96Kjt.js:38
+kD @ index-ClE96Kjt.js:41
+MX @ index-ClE96Kjt.js:38
+aE @ index-ClE96Kjt.js:38
+tD @ index-ClE96Kjt.js:38
+hye @ index-ClE96Kjt.js:38Understand this error
+MasterSchedulePage-CXwBh2Vn.js:67  PUT https://app.matchpro.ai/api/admin/events/1656618593/fields/28 404 (Not Found)
+(anonymous) @ MasterSchedulePage-CXwBh2Vn.js:67
+mutationFn @ MasterSchedulePage-CXwBh2Vn.js:67
+fn @ index-ClE96Kjt.js:41
+p @ index-ClE96Kjt.js:41
+start @ index-ClE96Kjt.js:41
+execute @ index-ClE96Kjt.js:41
+await in execute
+mutate @ index-ClE96Kjt.js:41
+(anonymous) @ index-ClE96Kjt.js:41
+k @ MasterSchedulePage-CXwBh2Vn.js:67
+Kve @ index-ClE96Kjt.js:38
+Qve @ index-ClE96Kjt.js:38
+Xve @ index-ClE96Kjt.js:38
+l8 @ index-ClE96Kjt.js:38
+hJ @ index-ClE96Kjt.js:38
+(anonymous) @ index-ClE96Kjt.js:38
+kD @ index-ClE96Kjt.js:41
+MX @ index-ClE96Kjt.js:38
+aE @ index-ClE96Kjt.js:38
+tD @ index-ClE96Kjt.js:38
+hye @ index-ClE96Kjt.js:38Understand this error
+MasterSchedulePage-CXwBh2Vn.js:67  PUT https://app.matchpro.ai/api/admin/events/1656618593/fields/30 404 (Not Found)
+(anonymous) @ MasterSchedulePage-CXwBh2Vn.js:67
+mutationFn @ MasterSchedulePage-CXwBh2Vn.js:67
+fn @ index-ClE96Kjt.js:41
+p @ index-ClE96Kjt.js:41
+start @ index-ClE96Kjt.js:41
+execute @ index-ClE96Kjt.js:41
+await in execute
+mutate @ index-ClE96Kjt.js:41
+(anonymous) @ index-ClE96Kjt.js:41
+k @ MasterSchedulePage-CXwBh2Vn.js:67
+Kve @ index-ClE96Kjt.js:38
+Qve @ index-ClE96Kjt.js:38
+Xve @ index-ClE96Kjt.js:38
+l8 @ index-ClE96Kjt.js:38
+hJ @ index-ClE96Kjt.js:38
+(anonymous) @ index-ClE96Kjt.js:38
+kD @ index-ClE96Kjt.js:41
+MX @ index-ClE96Kjt.js:38
+aE @ index-ClE96Kjt.js:38
+tD @ index-ClE96Kjt.js:38
+hye @ index-ClE96Kjt.js:38Understand this error
+MasterSchedulePage-CXwBh2Vn.js:67  PUT https://app.matchpro.ai/api/admin/events/1656618593/fields/43 404 (Not Found)
+(anonymous) @ MasterSchedulePage-CXwBh2Vn.js:67
+mutationFn @ MasterSchedulePage-CXwBh2Vn.js:67
+fn @ index-ClE96Kjt.js:41
+p @ index-ClE96Kjt.js:41
+start @ index-ClE96Kjt.js:41
+execute @ index-ClE96Kjt.js:41
+await in execute
+mutate @ index-ClE96Kjt.js:41
+(anonymous) @ index-ClE96Kjt.js:41
+k @ MasterSchedulePage-CXwBh2Vn.js:67
+Kve @ index-ClE96Kjt.js:38
+Qve @ index-ClE96Kjt.js:38
+Xve @ index-ClE96Kjt.js:38
+l8 @ index-ClE96Kjt.js:38
+hJ @ index-ClE96Kjt.js:38
+(anonymous) @ index-ClE96Kjt.js:38
+kD @ index-ClE96Kjt.js:41
+MX @ index-ClE96Kjt.js:38
+aE @ index-ClE96Kjt.js:38
+tD @ index-ClE96Kjt.js:38
+hye @ index-ClE96Kjt.js:38Understand this error
+MasterSchedulePage-CXwBh2Vn.js:67  PUT https://app.matchpro.ai/api/admin/events/1656618593/fields/49 404 (Not Found)
+(anonymous) @ MasterSchedulePage-CXwBh2Vn.js:67
+mutationFn @ MasterSchedulePage-CXwBh2Vn.js:67
+fn @ index-ClE96Kjt.js:41
+p @ index-ClE96Kjt.js:41
+start @ index-ClE96Kjt.js:41
+execute @ index-ClE96Kjt.js:41
+await in execute
+mutate @ index-ClE96Kjt.js:41
+(anonymous) @ index-ClE96Kjt.js:41
+k @ MasterSchedulePage-CXwBh2Vn.js:67
+Kve @ index-ClE96Kjt.js:38
+Qve @ index-ClE96Kjt.js:38
+Xve @ index-ClE96Kjt.js:38
+l8 @ index-ClE96Kjt.js:38
+hJ @ index-ClE96Kjt.js:38
+(anonymous) @ index-ClE96Kjt.js:38
+kD @ index-ClE96Kjt.js:41
+MX @ index-ClE96Kjt.js:38
+aE @ index-ClE96Kjt.js:38
+tD @ index-ClE96Kjt.js:38
+hye @ index-ClE96Kjt.js:38Understand this error
+MasterSchedulePage-CXwBh2Vn.js:67  PUT https://app.matchpro.ai/api/admin/events/1656618593/fields/42 404 (Not Found)
+(anonymous) @ MasterSchedulePage-CXwBh2Vn.js:67
+mutationFn @ MasterSchedulePage-CXwBh2Vn.js:67
+fn @ index-ClE96Kjt.js:41
+p @ index-ClE96Kjt.js:41
+start @ index-ClE96Kjt.js:41
+execute @ index-ClE96Kjt.js:41
+await in execute
+mutate @ index-ClE96Kjt.js:41
+(anonymous) @ index-ClE96Kjt.js:41
+k @ MasterSchedulePage-CXwBh2Vn.js:67
+Kve @ index-ClE96Kjt.js:38
+Qve @ index-ClE96Kjt.js:38
+Xve @ index-ClE96Kjt.js:38
+l8 @ index-ClE96Kjt.js:38
+hJ @ index-ClE96Kjt.js:38
+(anonymous) @ index-ClE96Kjt.js:38
+kD @ index-ClE96Kjt.js:41
+MX @ index-ClE96Kjt.js:38
+aE @ index-ClE96Kjt.js:38
+tD @ index-ClE96Kjt.js:38
+hye @ index-ClE96Kjt.js:38Understand this error
+MasterSchedulePage-CXwBh2Vn.js:67  PUT https://app.matchpro.ai/api/admin/events/1656618593/fields/20 404 (Not Found)
+(anonymous) @ MasterSchedulePage-CXwBh2Vn.js:67
+mutationFn @ MasterSchedulePage-CXwBh2Vn.js:67
+fn @ index-ClE96Kjt.js:41
+p @ index-ClE96Kjt.js:41
+start @ index-ClE96Kjt.js:41
+execute @ index-ClE96Kjt.js:41
+await in execute
+mutate @ index-ClE96Kjt.js:41
+(anonymous) @ index-ClE96Kjt.js:41
+k @ MasterSchedulePage-CXwBh2Vn.js:67
+Kve @ index-ClE96Kjt.js:38
+Qve @ index-ClE96Kjt.js:38
+Xve @ index-ClE96Kjt.js:38
+l8 @ index-ClE96Kjt.js:38
+hJ @ index-ClE96Kjt.js:38
+(anonymous) @ index-ClE96Kjt.js:38
+kD @ index-ClE96Kjt.js:41
+MX @ index-ClE96Kjt.js:38
+aE @ index-ClE96Kjt.js:38
+tD @ index-ClE96Kjt.js:38
+hye @ index-ClE96Kjt.js:38Understand this error
+MasterSchedulePage-CXwBh2Vn.js:67  PUT https://app.matchpro.ai/api/admin/events/1656618593/fields/53 404 (Not Found)
+(anonymous) @ MasterSchedulePage-CXwBh2Vn.js:67
+mutationFn @ MasterSchedulePage-CXwBh2Vn.js:67
+fn @ index-ClE96Kjt.js:41
+p @ index-ClE96Kjt.js:41
+start @ index-ClE96Kjt.js:41
+execute @ index-ClE96Kjt.js:41
+await in execute
+mutate @ index-ClE96Kjt.js:41
+(anonymous) @ index-ClE96Kjt.js:41
+k @ MasterSchedulePage-CXwBh2Vn.js:67
+Kve @ index-ClE96Kjt.js:38
+Qve @ index-ClE96Kjt.js:38
+Xve @ index-ClE96Kjt.js:38
+l8 @ index-ClE96Kjt.js:38
+hJ @ index-ClE96Kjt.js:38
+(anonymous) @ index-ClE96Kjt.js:38
+kD @ index-ClE96Kjt.js:41
+MX @ index-ClE96Kjt.js:38
+aE @ index-ClE96Kjt.js:38
+tD @ index-ClE96Kjt.js:38
+hye @ index-ClE96Kjt.js:38Understand this error
+MasterSchedulePage-CXwBh2Vn.js:67  PUT https://app.matchpro.ai/api/admin/events/1656618593/fields/31 404 (Not Found)
+(anonymous) @ MasterSchedulePage-CXwBh2Vn.js:67
+mutationFn @ MasterSchedulePage-CXwBh2Vn.js:67
+fn @ index-ClE96Kjt.js:41
+p @ index-ClE96Kjt.js:41
+start @ index-ClE96Kjt.js:41
+execute @ index-ClE96Kjt.js:41
+await in execute
+mutate @ index-ClE96Kjt.js:41
+(anonymous) @ index-ClE96Kjt.js:41
+k @ MasterSchedulePage-CXwBh2Vn.js:67
+Kve @ index-ClE96Kjt.js:38
+Qve @ index-ClE96Kjt.js:38
+Xve @ index-ClE96Kjt.js:38
+l8 @ index-ClE96Kjt.js:38
+hJ @ index-ClE96Kjt.js:38
+(anonymous) @ index-ClE96Kjt.js:38
+kD @ index-ClE96Kjt.js:41
+MX @ index-ClE96Kjt.js:38
+aE @ index-ClE96Kjt.js:38
+tD @ index-ClE96Kjt.js:38
+hye @ index-ClE96Kjt.js:38Understand this error
+MasterSchedulePage-CXwBh2Vn.js:67  PUT https://app.matchpro.ai/api/admin/events/1656618593/fields/9 404 (Not Found)
+(anonymous) @ MasterSchedulePage-CXwBh2Vn.js:67
+mutationFn @ MasterSchedulePage-CXwBh2Vn.js:67
+fn @ index-ClE96Kjt.js:41
+p @ index-ClE96Kjt.js:41
+start @ index-ClE96Kjt.js:41
+execute @ index-ClE96Kjt.js:41
+await in execute
+mutate @ index-ClE96Kjt.js:41
+(anonymous) @ index-ClE96Kjt.js:41
+k @ MasterSchedulePage-CXwBh2Vn.js:67
+Kve @ index-ClE96Kjt.js:38
+Qve @ index-ClE96Kjt.js:38
+Xve @ index-ClE96Kjt.js:38
+l8 @ index-ClE96Kjt.js:38
+hJ @ index-ClE96Kjt.js:38
+(anonymous) @ index-ClE96Kjt.js:38
+kD @ index-ClE96Kjt.js:41
+MX @ index-ClE96Kjt.js:38
+aE @ index-ClE96Kjt.js:38
+tD @ index-ClE96Kjt.js:38
+hye @ index-ClE96Kjt.js:38Understand this error
+MasterSchedulePage-CXwBh2Vn.js:67  PUT https://app.matchpro.ai/api/admin/events/1656618593/fields/21 404 (Not Found)
+(anonymous) @ MasterSchedulePage-CXwBh2Vn.js:67
+mutationFn @ MasterSchedulePage-CXwBh2Vn.js:67
+fn @ index-ClE96Kjt.js:41
+p @ index-ClE96Kjt.js:41
+start @ index-ClE96Kjt.js:41
+execute @ index-ClE96Kjt.js:41
+await in execute
+mutate @ index-ClE96Kjt.js:41
+(anonymous) @ index-ClE96Kjt.js:41
+k @ MasterSchedulePage-CXwBh2Vn.js:67
+Kve @ index-ClE96Kjt.js:38
+Qve @ index-ClE96Kjt.js:38
+Xve @ index-ClE96Kjt.js:38
+l8 @ index-ClE96Kjt.js:38
+hJ @ index-ClE96Kjt.js:38
+(anonymous) @ index-ClE96Kjt.js:38
+kD @ index-ClE96Kjt.js:41
+MX @ index-ClE96Kjt.js:38
+aE @ index-ClE96Kjt.js:38
+tD @ index-ClE96Kjt.js:38
+hye @ index-ClE96Kjt.js:38Understand this error
+MasterSchedulePage-CXwBh2Vn.js:67  PUT https://app.matchpro.ai/api/admin/events/1656618593/fields/26 404 (Not Found)
+(anonymous) @ MasterSchedulePage-CXwBh2Vn.js:67
+mutationFn @ MasterSchedulePage-CXwBh2Vn.js:67
+fn @ index-ClE96Kjt.js:41
+p @ index-ClE96Kjt.js:41
+start @ index-ClE96Kjt.js:41
+execute @ index-ClE96Kjt.js:41
+await in execute
+mutate @ index-ClE96Kjt.js:41
+(anonymous) @ index-ClE96Kjt.js:41
+k @ MasterSchedulePage-CXwBh2Vn.js:67
+Kve @ index-ClE96Kjt.js:38
+Qve @ index-ClE96Kjt.js:38
+Xve @ index-ClE96Kjt.js:38
+l8 @ index-ClE96Kjt.js:38
+hJ @ index-ClE96Kjt.js:38
+(anonymous) @ index-ClE96Kjt.js:38
+kD @ index-ClE96Kjt.js:41
+MX @ index-ClE96Kjt.js:38
+aE @ index-ClE96Kjt.js:38
+tD @ index-ClE96Kjt.js:38
+hye @ index-ClE96Kjt.js:38Understand this error
+MasterSchedulePage-CXwBh2Vn.js:67  PUT https://app.matchpro.ai/api/admin/events/1656618593/fields/52 404 (Not Found)
+(anonymous) @ MasterSchedulePage-CXwBh2Vn.js:67
+mutationFn @ MasterSchedulePage-CXwBh2Vn.js:67
+fn @ index-ClE96Kjt.js:41
+p @ index-ClE96Kjt.js:41
+start @ index-ClE96Kjt.js:41
+execute @ index-ClE96Kjt.js:41
+await in execute
+mutate @ index-ClE96Kjt.js:41
+(anonymous) @ index-ClE96Kjt.js:41
+k @ MasterSchedulePage-CXwBh2Vn.js:67
+Kve @ index-ClE96Kjt.js:38
+Qve @ index-ClE96Kjt.js:38
+Xve @ index-ClE96Kjt.js:38
+l8 @ index-ClE96Kjt.js:38
+hJ @ index-ClE96Kjt.js:38
+(anonymous) @ index-ClE96Kjt.js:38
+kD @ index-ClE96Kjt.js:41
+MX @ index-ClE96Kjt.js:38
+aE @ index-ClE96Kjt.js:38
+tD @ index-ClE96Kjt.js:38
+hye @ index-ClE96Kjt.js:38Understand this error
+MasterSchedulePage-CXwBh2Vn.js:67  PUT https://app.matchpro.ai/api/admin/events/1656618593/fields/18 404 (Not Found)
+(anonymous) @ MasterSchedulePage-CXwBh2Vn.js:67
+mutationFn @ MasterSchedulePage-CXwBh2Vn.js:67
+fn @ index-ClE96Kjt.js:41
+p @ index-ClE96Kjt.js:41
+start @ index-ClE96Kjt.js:41
+execute @ index-ClE96Kjt.js:41
+await in execute
+mutate @ index-ClE96Kjt.js:41
+(anonymous) @ index-ClE96Kjt.js:41
+k @ MasterSchedulePage-CXwBh2Vn.js:67
+Kve @ index-ClE96Kjt.js:38
+Qve @ index-ClE96Kjt.js:38
+Xve @ index-ClE96Kjt.js:38
+l8 @ index-ClE96Kjt.js:38
+hJ @ index-ClE96Kjt.js:38
+(anonymous) @ index-ClE96Kjt.js:38
+kD @ index-ClE96Kjt.js:41
+MX @ index-ClE96Kjt.js:38
+aE @ index-ClE96Kjt.js:38
+tD @ index-ClE96Kjt.js:38
+hye @ index-ClE96Kjt.js:38Understand this error
+MasterSchedulePage-CXwBh2Vn.js:67  PUT https://app.matchpro.ai/api/admin/events/1656618593/fields/16 404 (Not Found)
+(anonymous) @ MasterSchedulePage-CXwBh2Vn.js:67
+mutationFn @ MasterSchedulePage-CXwBh2Vn.js:67
+fn @ index-ClE96Kjt.js:41
+p @ index-ClE96Kjt.js:41
+start @ index-ClE96Kjt.js:41
+execute @ index-ClE96Kjt.js:41
+await in execute
+mutate @ index-ClE96Kjt.js:41
+(anonymous) @ index-ClE96Kjt.js:41
+k @ MasterSchedulePage-CXwBh2Vn.js:67
+Kve @ index-ClE96Kjt.js:38
+Qve @ index-ClE96Kjt.js:38
+Xve @ index-ClE96Kjt.js:38
+l8 @ index-ClE96Kjt.js:38
+hJ @ index-ClE96Kjt.js:38
+(anonymous) @ index-ClE96Kjt.js:38
+kD @ index-ClE96Kjt.js:41
+MX @ index-ClE96Kjt.js:38
+aE @ index-ClE96Kjt.js:38
+tD @ index-ClE96Kjt.js:38
+hye @ index-ClE96Kjt.js:38Understand this error
+MasterSchedulePage-CXwBh2Vn.js:67  PUT https://app.matchpro.ai/api/admin/events/1656618593/fields/45 404 (Not Found)
+(anonymous) @ MasterSchedulePage-CXwBh2Vn.js:67
+mutationFn @ MasterSchedulePage-CXwBh2Vn.js:67
+fn @ index-ClE96Kjt.js:41
+p @ index-ClE96Kjt.js:41
+start @ index-ClE96Kjt.js:41
+execute @ index-ClE96Kjt.js:41
+await in execute
+mutate @ index-ClE96Kjt.js:41
+(anonymous) @ index-ClE96Kjt.js:41
+k @ MasterSchedulePage-CXwBh2Vn.js:67
+Kve @ index-ClE96Kjt.js:38
+Qve @ index-ClE96Kjt.js:38
+Xve @ index-ClE96Kjt.js:38
+l8 @ index-ClE96Kjt.js:38
+hJ @ index-ClE96Kjt.js:38
+(anonymous) @ index-ClE96Kjt.js:38
+kD @ index-ClE96Kjt.js:41
+MX @ index-ClE96Kjt.js:38
+aE @ index-ClE96Kjt.js:38
+tD @ index-ClE96Kjt.js:38
+hye @ index-ClE96Kjt.js:38Understand this error
+MasterSchedulePage-CXwBh2Vn.js:67  PUT https://app.matchpro.ai/api/admin/events/1656618593/fields/22 404 (Not Found)
+(anonymous) @ MasterSchedulePage-CXwBh2Vn.js:67
+mutationFn @ MasterSchedulePage-CXwBh2Vn.js:67
+fn @ index-ClE96Kjt.js:41
+p @ index-ClE96Kjt.js:41
+start @ index-ClE96Kjt.js:41
+execute @ index-ClE96Kjt.js:41
+await in execute
+mutate @ index-ClE96Kjt.js:41
+(anonymous) @ index-ClE96Kjt.js:41
+k @ MasterSchedulePage-CXwBh2Vn.js:67
+Kve @ index-ClE96Kjt.js:38
+Qve @ index-ClE96Kjt.js:38
+Xve @ index-ClE96Kjt.js:38
+l8 @ index-ClE96Kjt.js:38
+hJ @ index-ClE96Kjt.js:38
+(anonymous) @ index-ClE96Kjt.js:38
+kD @ index-ClE96Kjt.js:41
+MX @ index-ClE96Kjt.js:38
+aE @ index-ClE96Kjt.js:38
+tD @ index-ClE96Kjt.js:38
+hye @ index-ClE96Kjt.js:38Understand this error
+MasterSchedulePage-CXwBh2Vn.js:67  PUT https://app.matchpro.ai/api/admin/events/1656618593/fields/34 404 (Not Found)
+(anonymous) @ MasterSchedulePage-CXwBh2Vn.js:67
+mutationFn @ MasterSchedulePage-CXwBh2Vn.js:67
+fn @ index-ClE96Kjt.js:41
+p @ index-ClE96Kjt.js:41
+start @ index-ClE96Kjt.js:41
+execute @ index-ClE96Kjt.js:41
+await in execute
+mutate @ index-ClE96Kjt.js:41
+(anonymous) @ index-ClE96Kjt.js:41
+k @ MasterSchedulePage-CXwBh2Vn.js:67
+Kve @ index-ClE96Kjt.js:38
+Qve @ index-ClE96Kjt.js:38
+Xve @ index-ClE96Kjt.js:38
+l8 @ index-ClE96Kjt.js:38
+hJ @ index-ClE96Kjt.js:38
+(anonymous) @ index-ClE96Kjt.js:38
+kD @ index-ClE96Kjt.js:41
+MX @ index-ClE96Kjt.js:38
+aE @ index-ClE96Kjt.js:38
+tD @ index-ClE96Kjt.js:38
+hye @ index-ClE96Kjt.js:38Understand this error
+MasterSchedulePage-CXwBh2Vn.js:67  PUT https://app.matchpro.ai/api/admin/events/1656618593/fields/35 404 (Not Found)
+(anonymous) @ MasterSchedulePage-CXwBh2Vn.js:67
+mutationFn @ MasterSchedulePage-CXwBh2Vn.js:67
+fn @ index-ClE96Kjt.js:41
+p @ index-ClE96Kjt.js:41
+start @ index-ClE96Kjt.js:41
+execute @ index-ClE96Kjt.js:41
+await in execute
+mutate @ index-ClE96Kjt.js:41
+(anonymous) @ index-ClE96Kjt.js:41
+k @ MasterSchedulePage-CXwBh2Vn.js:67
+Kve @ index-ClE96Kjt.js:38
+Qve @ index-ClE96Kjt.js:38
+Xve @ index-ClE96Kjt.js:38
+l8 @ index-ClE96Kjt.js:38
+hJ @ index-ClE96Kjt.js:38
+(anonymous) @ index-ClE96Kjt.js:38
+kD @ index-ClE96Kjt.js:41
+MX @ index-ClE96Kjt.js:38
+aE @ index-ClE96Kjt.js:38
+tD @ index-ClE96Kjt.js:38
+hye @ index-ClE96Kjt.js:38Understand this error
+MasterSchedulePage-CXwBh2Vn.js:67  PUT https://app.matchpro.ai/api/admin/events/1656618593/fields/15 404 (Not Found)
+(anonymous) @ MasterSchedulePage-CXwBh2Vn.js:67
+mutationFn @ MasterSchedulePage-CXwBh2Vn.js:67
+fn @ index-ClE96Kjt.js:41
+p @ index-ClE96Kjt.js:41
+start @ index-ClE96Kjt.js:41
+execute @ index-ClE96Kjt.js:41
+await in execute
+mutate @ index-ClE96Kjt.js:41
+(anonymous) @ index-ClE96Kjt.js:41
+k @ MasterSchedulePage-CXwBh2Vn.js:67
+Kve @ index-ClE96Kjt.js:38
+Qve @ index-ClE96Kjt.js:38
+Xve @ index-ClE96Kjt.js:38
+l8 @ index-ClE96Kjt.js:38
+hJ @ index-ClE96Kjt.js:38
+(anonymous) @ index-ClE96Kjt.js:38
+kD @ index-ClE96Kjt.js:41
+MX @ index-ClE96Kjt.js:38
+aE @ index-ClE96Kjt.js:38
+tD @ index-ClE96Kjt.js:38
+hye @ index-ClE96Kjt.js:38Understand this error
+38Fetch finished loading: PATCH "<URL>".
+MasterSchedulePage-CXwBh2Vn.js:67 🔄 FIELD REFRESH: Parent component received field update notification
+MasterSchedulePage-CXwBh2Vn.js:67 🔄 FIELD REFRESH: Triggering data refetch to ensure persistence...
+MasterSchedulePage-CXwBh2Vn.js:67 [DEBUG] Fetching fields for event: 1656618593
+MasterSchedulePage-CXwBh2Vn.js:67 [DEBUG] Making authenticated request with credentials
+MasterSchedulePage-CXwBh2Vn.js:67 [DEBUG] Response status: 200
+MasterSchedulePage-CXwBh2Vn.js:67 [DEBUG] Response headers: {alt-svc: 'h3=":443"; ma=2592000,h3-29=":443"; ma=2592000', cache-control: 'private', content-length: '1987', content-type: 'application/json; charset=utf-8', date: 'Tue, 19 Aug 2025 22:43:24 GMT', …}
+MasterSchedulePage-CXwBh2Vn.js:67 [DEBUG] Fields response: (38) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+MasterSchedulePage-CXwBh2Vn.js:67 [DEBUG] Fields array length: 38
+MasterSchedulePage-CXwBh2Vn.js:67 [DEBUG] Fields data: (38) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+MasterSchedulePage-CXwBh2Vn.js:67 [DEBUG] Fields array: (38) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+MasterSchedulePage-CXwBh2Vn.js:67 [DEBUG] Fields length: 38
+MasterSchedulePage-CXwBh2Vn.js:67 [DEBUG] Is fieldsData an array?: true
+MasterSchedulePage-CXwBh2Vn.js:67 [DEBUG] fieldsData.fields exists?: false
+MasterSchedulePage-CXwBh2Vn.js:67 Fetch finished loading: GET "https://app.matchpro.ai/api/admin/events/1656618593/fields".
+queryFn @ MasterSchedulePage-CXwBh2Vn.js:67
+i @ index-ClE96Kjt.js:41
+p @ index-ClE96Kjt.js:41
+start @ index-ClE96Kjt.js:41
+fetch @ index-ClE96Kjt.js:41
+Kj @ index-ClE96Kjt.js:41
+fetch @ index-ClE96Kjt.js:41
+refetch @ index-ClE96Kjt.js:41
+i @ MasterSchedulePage-CXwBh2Vn.js:67
+onSuccess @ MasterSchedulePage-CXwBh2Vn.js:67
+execute @ index-ClE96Kjt.js:41
+await in execute
+mutate @ index-ClE96Kjt.js:41
+(anonymous) @ index-ClE96Kjt.js:41
+k @ MasterSchedulePage-CXwBh2Vn.js:67
+Kve @ index-ClE96Kjt.js:38
+Qve @ index-ClE96Kjt.js:38
+Xve @ index-ClE96Kjt.js:38
+l8 @ index-ClE96Kjt.js:38
+hJ @ index-ClE96Kjt.js:38
+(anonymous) @ index-ClE96Kjt.js:38
+kD @ index-ClE96Kjt.js:41
+MX @ index-ClE96Kjt.js:38
+aE @ index-ClE96Kjt.js:38
+tD @ index-ClE96Kjt.js:38
+hye @ index-ClE96Kjt.js:38
