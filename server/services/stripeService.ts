@@ -1,6 +1,6 @@
 import Stripe from "stripe";
 import { db } from "../../db";
-import { teams, paymentTransactions, events, refunds, users, ageGroups } from "../../db/schema";
+import { teams, paymentTransactions, events, refunds, users } from "../../db/schema";
 import { eq } from "drizzle-orm";
 import { log } from "../vite";
 import { sendRegistrationReceiptEmail } from "./emailService";
