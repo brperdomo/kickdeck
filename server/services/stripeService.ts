@@ -593,15 +593,22 @@ export async function createSetupIntent(
           customerId = team.stripeCustomerId;
           log(`Using existing customer ID: ${customerId} for team ${teamId}`);
         } else if (team.submitterEmail) {
-          // Create new customer DIRECTLY on tournament Connect account
+          // Create new customer DIRECTLY on tournament Connect account with COMPREHENSIVE metadata
           const customer = await stripe.customers.create({
             email: team.submitterEmail,
-            name: team.submitterName || "Team Manager",
+            name: `${team.name} - ${team.submitterName || "Team Manager"}`,
+            description: `Team: ${team.name} | Event: ${event?.name} | TeamID: ${teamId}`,
             metadata: {
               teamId: teamId.toString(),
               teamName: team.name || "Unknown Team",
               eventId: team.eventId?.toString() || "",
               eventName: event?.name || "",
+              managerEmail: team.submitterEmail,
+              managerName: team.submitterName || "Team Manager",
+              registrationDate: new Date().toISOString(),
+              internalReference: `TEAM-${teamId}-${team.eventId}`,
+              systemSource: "MatchPro",
+              customerType: "ConnectAccount"
             },
           }, {
             // CRITICAL: Create customer on Connect account using stripeAccount parameter
@@ -669,13 +676,28 @@ export async function createSetupIntent(
       }
     }
 
-    // STEP 3: Create Setup Intent on Connect account
+    // STEP 3: Create Setup Intent on Connect account with enhanced metadata
     const setupIntentData: any = {
       payment_method_types: ["card"],
       usage: "off_session", // Allows for future charging without customer present
       metadata: {
         teamId: teamId.toString(),
+        teamName: (typeof teamId === "number" || !teamId.toString().startsWith("temp-")) 
+          ? team?.name || "Unknown Team" 
+          : metadata?.teamName || "Temp Team",
+        eventId: (typeof teamId === "number" || !teamId.toString().startsWith("temp-"))
+          ? team?.eventId?.toString() || ""
+          : metadata?.eventId || "",
+        eventName: (typeof teamId === "number" || !teamId.toString().startsWith("temp-"))
+          ? event?.name || ""
+          : metadata?.eventName || "",
+        managerEmail: (typeof teamId === "number" || !teamId.toString().startsWith("temp-"))
+          ? team?.submitterEmail || ""
+          : metadata?.userEmail || "",
+        internalReference: `TEAM-${teamId}-${(typeof teamId === "number" || !teamId.toString().startsWith("temp-")) ? team?.eventId : metadata?.eventId}`,
         connectAccountId: connectAccountId,
+        systemSource: "MatchPro",
+        operationType: "SetupIntent",
         ...metadata,
       },
     };
