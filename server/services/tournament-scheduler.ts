@@ -323,9 +323,9 @@ export class TournamentScheduler {
         // Convert template games to tournament scheduler format
         const games: Game[] = templateGames.map((game, index) => ({
           id: game.id || `${bracket.id}-${startingGameNumber + index}`,
-          homeTeamId: game.homeTeamId,
+          homeTeamId: game.homeTeamId || 0,
           homeTeamName: game.homeTeamName,
-          awayTeamId: game.awayTeamId,
+          awayTeamId: game.awayTeamId || 0,
           awayTeamName: game.awayTeamName,
           bracketId: bracket.id,
           bracketName: bracket.name,
@@ -344,9 +344,9 @@ export class TournamentScheduler {
         throw new Error(`No template found for ${teams.length} teams with type '${templateType}'`);
       }
       
-    } catch (templateError) {
-      console.error(`❌ TEMPLATE SYSTEM FAILURE: ${templateError.message}`);
-      throw new Error(`Dynamic template system failed: ${templateError.message}. Configure templates in Format Settings.`);
+    } catch (templateError: any) {
+      console.error(`❌ TEMPLATE SYSTEM FAILURE: ${templateError?.message || 'Unknown error'}`);
+      throw new Error(`Dynamic template system failed: ${templateError?.message || 'Unknown error'}. Configure templates in Format Settings.`);
     }
   }
 
@@ -421,18 +421,32 @@ export class TournamentScheduler {
     let gameCounter = startingGameNumber;
     
     console.log(`🚨 CROSSPLAY ENFORCEMENT: Processing ${teamCount}-team bracket for proper Pool A vs Pool B matchups`);
+    console.log(`🔍 CROSSPLAY DEBUG: Received teams:`, teams.map(t => `${t.name} (groupId: ${t.groupId})`));
     
     // ONLY GROUP OF 6 USES CROSSPLAY - Split teams by group_id for Pool A/B assignment
     if (teamCount === 6) {
-      // Sort teams by group_id to ensure consistent Pool A/B assignment
-      const sortedTeams = [...teams].sort((a, b) => (a.groupId || 0) - (b.groupId || 0));
+      // CRITICAL FIX: Group teams by actual group_id for proper Pool A/B separation
+      const teamsByGroupId = teams.reduce((acc, team) => {
+        const groupId = team.groupId || 0;
+        if (!acc[groupId]) acc[groupId] = [];
+        acc[groupId].push(team);
+        return acc;
+      }, {} as Record<number, Team[]>);
       
-      // Split teams: first 3 teams (by group_id) go to Pool A, remaining 3 to Pool B
-      const poolA = sortedTeams.slice(0, 3);
-      const poolB = sortedTeams.slice(3, 6);
+      const groupIds = Object.keys(teamsByGroupId).map(Number).sort();
+      console.log(`🔍 CROSSPLAY GROUPS FOUND: ${groupIds.length} groups -`, groupIds);
       
-      console.log(`📊 CROSSPLAY POOL ASSIGNMENT - Pool A teams (${poolA.length}):`, poolA.map(t => `${t.name} (groupId: ${t.groupId})`));
-      console.log(`📊 CROSSPLAY POOL ASSIGNMENT - Pool B teams (${poolB.length}):`, poolB.map(t => `${t.name} (groupId: ${t.groupId})`));
+      if (groupIds.length !== 2) {
+        console.error(`❌ CROSSPLAY ERROR: Expected exactly 2 groups for crossplay, found ${groupIds.length} groups: ${groupIds}`);
+        throw new Error(`Crossplay format requires exactly 2 groups (Pool A & Pool B), found ${groupIds.length} groups`);
+      }
+      
+      // Assign Pool A and Pool B based on group_id order
+      const poolA = teamsByGroupId[groupIds[0]]; // Lower group_id = Pool A
+      const poolB = teamsByGroupId[groupIds[1]]; // Higher group_id = Pool B
+      
+      console.log(`📊 CROSSPLAY POOL ASSIGNMENT - Pool A teams (Group ID ${groupIds[0]}):`, poolA.map(t => `${t.name} (groupId: ${t.groupId})`));
+      console.log(`📊 CROSSPLAY POOL ASSIGNMENT - Pool B teams (Group ID ${groupIds[1]}):`, poolB.map(t => `${t.name} (groupId: ${t.groupId})`));
       
       // 6-team crossplay: Pool A (3 teams) vs Pool B (3 teams) = 9 crossplay games
       if (poolA.length !== 3 || poolB.length !== 3) {
@@ -440,10 +454,10 @@ export class TournamentScheduler {
         throw new Error(`6-team crossplay requires 3 teams in each pool, got ${poolA.length}v${poolB.length}`);
       }
       
-      // Generate all Pool A vs Pool B matchups ONLY (3x3 = 9 crossplay games)
+      // Generate ONLY Pool A vs Pool B matchups (3x3 = 9 crossplay games)
       poolA.forEach((teamA, idxA) => {
         poolB.forEach((teamB, idxB) => {
-          console.log(`🔄 Creating crossplay matchup: Pool A ${teamA.name} vs Pool B ${teamB.name}`);
+          console.log(`🔄 Creating crossplay matchup: Pool A ${teamA.name} (Group ${teamA.groupId}) vs Pool B ${teamB.name} (Group ${teamB.groupId})`);
           games.push({
             id: `${bracket.bracketId}_cross_${gameCounter}`,
             homeTeamId: teamA.id,
@@ -460,13 +474,16 @@ export class TournamentScheduler {
         });
       });
       
-      console.log(`✅ Generated 9 crossplay games (Pool A vs Pool B) for 6-team bracket`);
+      console.log(`✅ Generated 9 crossplay games (Pool A vs Pool B ONLY) for 6-team bracket`);
       
       // Add championship TBD final game (1st in Points vs 2nd in Points across both pools)
       const championshipGame = this.generateChampionshipGame(bracket, gameCounter);
-      games.push(championshipGame);
+      if (championshipGame) {
+        games.push(championshipGame);
+        console.log(`🏆 Added TBD championship final game`);
+      }
       
-      console.log(`🏆 6-Team Crossplay Complete: Generated ${games.length - 1} crossplay pool games + 1 TBD championship final (1st vs 2nd in Points) = ${games.length} total games`);
+      console.log(`🏆 6-Team Crossplay Complete: Generated ${games.length - (championshipGame ? 1 : 0)} crossplay pool games + ${championshipGame ? 1 : 0} TBD championship final = ${games.length} total games`);
       return games;
     }
     
@@ -931,27 +948,28 @@ export class TournamentScheduler {
    */
   private static async getFlightConfigurations(eventId: string) {
     try {
-      const eventGameFormats = await db.query.eventGameFormats.findMany({
+      const { eventGameFormats, gameFormats } = await import('@db/schema');
+      const { eq } = await import('drizzle-orm');
+      
+      const eventGameFormatsData = await db.query.eventGameFormats.findMany({
         where: eq(eventGameFormats.eventId, parseInt(eventId))
       });
 
-      if (eventGameFormats.length > 0) {
-        return eventGameFormats.map(format => ({
+      if (eventGameFormatsData.length > 0) {
+        return eventGameFormatsData.map(format => ({
           gameLength: format.gameLength || 90,
-          restPeriod: format.restPeriod || 90,
           bufferTime: format.bufferTime || 15,
           fieldSize: format.fieldSize || '7v7'
         }));
       }
 
       // Fallback to game_formats table
-      const gameFormats = await db.query.gameFormats.findMany({
+      const gameFormatsData = await db.query.gameFormats.findMany({
         where: eq(gameFormats.eventId, parseInt(eventId))
       });
 
-      return gameFormats.map(format => ({
+      return gameFormatsData.map(format => ({
         gameLength: format.gameLength || 90,
-        restPeriod: format.restPeriod || 90,
         bufferTime: format.bufferTime || 15,
         fieldSize: format.fieldSize || '7v7'
       }));
@@ -959,7 +977,6 @@ export class TournamentScheduler {
       console.warn('Failed to load flight configurations, using defaults:', error);
       return [{
         gameLength: 90,
-        restPeriod: 90,
         bufferTime: 15,
         fieldSize: '7v7'
       }];

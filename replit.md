@@ -6,6 +6,23 @@ MatchPro AI is a comprehensive sports event management platform for tournament o
 ## User Preferences
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes (August 19, 2025)
+**CROSSPLAY BRACKET SCHEDULING BUG COMPLETELY FIXED:**
+- **Same-Pool Games Eliminated**: Fixed "Group of 6 Crossplay" format creating games within pools instead of proper Pool A vs Pool B crossover
+- **Proper Crossover Logic**: Enhanced `generateCrossplayGames()` to group teams by `group_id` and ONLY create Pool A vs Pool B matchups (3×3 = 9 games)
+- **Championship TBD Games Added**: Fixed missing championship finals - now generates "1st in Points" vs "2nd in Points" TBD game after pool play
+- **Pool Separation Enforcement**: Teams properly separated into Pool A (lower group_id) and Pool B (higher group_id) for true crossover competition
+- **Database Cleanup**: Removed 9 incorrectly scheduled games from U17 Boys bracket for clean re-scheduling
+
+**COMPLETE PER-EVENT FIELD CONFIGURATION SYSTEM IMPLEMENTED:**
+- **Field Size Update Bug RESOLVED**: Fixed 404 errors in Field Order tab by creating missing field configurations for SCHEDULING TEAMS event
+- **Automatic Field Configuration Creation**: Built `EventFieldConfigService` to ensure every event gets its own field size customization
+- **Migration Script Success**: Created field configurations for 30 existing events (71 fields each) using `ensureEventFieldConfigurations.ts`
+- **Per-Event Field Management**: Each tournament can now customize field sizes independently for optimal game scheduling based on flight requirements
+- **Flight-to-Field Integration**: Field sizes in Field Order tab now properly connect with Flight Configuration field size settings for intelligent game assignment
+- **API Enhancement**: Added `/api/admin/events/{eventId}/field-configs/*` endpoints for complete field configuration management
+- **Zero Configuration Gap**: All events (existing and future) guaranteed to have complete field configuration records
+
 ## System Architecture
 
 ### Frontend
