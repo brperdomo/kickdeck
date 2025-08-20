@@ -1,0 +1,419 @@
+Google Maps API key length: 0 characters
+index-ClE96Kjt.js:942 Mapbox API key length: 93 characters
+index-ClE96Kjt.js:942 Google Maps API already loaded
+index-ClE96Kjt.js:702 Current route location (Wouter): /admin/events/1656618593/master-schedule
+index-ClE96Kjt.js:702 Current URL: https://app.matchpro.ai/admin/events/1656618593/master-schedule
+index-ClE96Kjt.js:702 Current pathname: /admin/events/1656618593/master-schedule
+index-ClE96Kjt.js:702 Current search: 
+index-ClE96Kjt.js:702 Fetching user with emulation token: not present
+chunk-FLCULYKI.js:31 orchestration: Initializing config store with state Object
+chunk-FLCULYKI.js:31 orchestration: Initializing feature flag store with state Object
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state Object
+chunk-FLCULYKI.js:31 orchestration: Updating combined state Object
+index-ClE96Kjt.js:702 User data fetched: Object
+index-ClE96Kjt.js:694 AnimatedBackground initialized with type: particles
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+UnifiedTournamentControlCenter-CykDusX7.js:1 Flight configs loaded: 72 flights
+UnifiedTournamentControlCenter-CykDusX7.js:1 FLIGHT COUNTING FIX: 72 total flights, 11 flights with teams, 3 configured flights
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+ScheduleViewerFixed-CFMXR8SH.js:11 [ScheduleViewer] Clearing cache to prevent data multiplication
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Fetching flight configurations for event 1656618593
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Flight config API response status: 200
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Flight config data received: Object
+ScheduleViewerFixed-CFMXR8SH.js:11 [ScheduleViewer] API returned 0 games
+ScheduleViewerFixed-CFMXR8SH.js:40 FLIGHT FILTER DEBUG: All flight names from games: Array(0)
+ScheduleViewerFixed-CFMXR8SH.js:40 FLIGHT FILTER DEBUG: Unique flights for dropdown: Array(0)
+util.js:33 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+$Aa @ util.js:33Understand this warning
+MasterSchedulePage-CXwBh2Vn.js:67 UnifiedBracketManager Debug: Object
+MasterSchedulePage-CXwBh2Vn.js:67 UnifiedBracketManager Debug: Object
+MasterSchedulePage-CXwBh2Vn.js:67 UnifiedBracketManager Debug: Object
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+UnifiedTournamentControlCenter-CykDusX7.js:1 Flight configs loaded: 72 flights
+UnifiedTournamentControlCenter-CykDusX7.js:1 FLIGHT COUNTING FIX: 72 total flights, 11 flights with teams, 3 configured flights
+UnifiedTournamentControlCenter-CykDusX7.js:1 Flight configs loaded: 72 flights
+UnifiedTournamentControlCenter-CykDusX7.js:1 FLIGHT COUNTING FIX: 72 total flights, 11 flights with teams, 3 configured flights
+index-ClE96Kjt.js:869 🎯 [FIELD DEBUG] All available fields: Array(0)
+index-ClE96Kjt.js:869 🎯 [FIELD DEBUG] Fields with games assigned: Array(0)
+index-ClE96Kjt.js:869 🎯 [ENHANCED DRAG DROP] Debug Info: Object
+index-ClE96Kjt.js:868 [EnhancedDragDropScheduler] Clearing cache to prevent data multiplication
+index-ClE96Kjt.js:868 🔍 [CONFLICT DETECTION] Starting enhanced overlap detection for 0 games
+index-ClE96Kjt.js:868 🚗 [TRAVEL DEBUG] scheduleData available: true, fields count: 0
+index-ClE96Kjt.js:868 🚗 [TRAVEL DEBUG] Sample field data: Array(0)
+index-ClE96Kjt.js:868 🔍 [CONFLICT DETECTION] Starting legacy slot-based detection for 0 games
+index-ClE96Kjt.js:868 🔍 [CONFLICT DETECTION] Time slots: 50
+index-ClE96Kjt.js:868 🔍 [CONFLICT DETECTION] Sample games: Array(0)
+index-ClE96Kjt.js:868 🚗 [TRAVEL DEBUG] Starting travel conflict detection for 0 teams on 
+index-ClE96Kjt.js:869 🎯 [FIELD DEBUG] All available fields: Array(0)
+index-ClE96Kjt.js:869 🎯 [FIELD DEBUG] Fields with games assigned: Array(0)
+index-ClE96Kjt.js:869 🎯 [ENHANCED DRAG DROP] Debug Info: Object
+index-ClE96Kjt.js:869 🎯 [FIELD DEBUG] All available fields: Array(0)
+index-ClE96Kjt.js:869 🎯 [FIELD DEBUG] Fields with games assigned: Array(0)
+index-ClE96Kjt.js:869 🎯 [ENHANCED DRAG DROP] Debug Info: Object
+index-ClE96Kjt.js:868 [EnhancedDragDropScheduler] Loaded 9 games for event 1656618593
+index-ClE96Kjt.js:868 [EnhancedDragDropScheduler] API returned 9 raw games before transformation
+index-ClE96Kjt.js:869 🎯 [FIELD DEBUG] All available fields: Array(63)
+index-ClE96Kjt.js:869 🎯 [FIELD DEBUG] Fields with games assigned: Array(2)
+index-ClE96Kjt.js:869 🎯 [FIELD DEBUG] Field 23 (Galway Downs Field 4) has 8 games
+index-ClE96Kjt.js:869 🎯 [FIELD DEBUG] Field 25 (Galway Downs Field 6) has 1 games
+index-ClE96Kjt.js:869 🎯 [ENHANCED DRAG DROP] Debug Info: Object
+index-ClE96Kjt.js:868 🔍 [CONFLICT DETECTION] Starting enhanced overlap detection for 9 games
+index-ClE96Kjt.js:868 🚗 [TRAVEL DEBUG] scheduleData available: true, fields count: 0
+index-ClE96Kjt.js:868 🚗 [TRAVEL DEBUG] Sample field data: Array(0)
+index-ClE96Kjt.js:868 🔍 [CONFLICT DETECTION] Starting legacy slot-based detection for 9 games
+index-ClE96Kjt.js:868 🔍 [CONFLICT DETECTION] Time slots: 50
+index-ClE96Kjt.js:868 🔍 [CONFLICT DETECTION] Sample games: Array(3)
+index-ClE96Kjt.js:868 🚗 [TRAVEL DEBUG] Starting travel conflict detection for 0 teams on 
+index-ClE96Kjt.js:869 🎯 [FIELD DEBUG] All available fields: Array(63)
+index-ClE96Kjt.js:869 🎯 [FIELD DEBUG] Fields with games assigned: Array(2)
+index-ClE96Kjt.js:869 🎯 [FIELD DEBUG] Field 23 (Galway Downs Field 4) has 8 games
+index-ClE96Kjt.js:869 🎯 [FIELD DEBUG] Field 25 (Galway Downs Field 6) has 1 games
+index-ClE96Kjt.js:869 🎯 [ENHANCED DRAG DROP] Debug Info: Object
+index-ClE96Kjt.js:869 🎯 [FIELD DEBUG] All available fields: Array(63)
+index-ClE96Kjt.js:869 🎯 [FIELD DEBUG] Fields with games assigned: Array(2)
+index-ClE96Kjt.js:869 🎯 [FIELD DEBUG] Field 23 (Galway Downs Field 4) has 8 games
+index-ClE96Kjt.js:869 🎯 [FIELD DEBUG] Field 25 (Galway Downs Field 6) has 1 games
+index-ClE96Kjt.js:869 🎯 [ENHANCED DRAG DROP] Debug Info: Object
+index-ClE96Kjt.js:869 🎯 [FIELD DEBUG] All available fields: Array(63)
+index-ClE96Kjt.js:869 🎯 [FIELD DEBUG] Fields with games assigned: Array(2)
+index-ClE96Kjt.js:869 🎯 [FIELD DEBUG] Field 23 (Galway Downs Field 4) has 8 games
+index-ClE96Kjt.js:869 🎯 [FIELD DEBUG] Field 25 (Galway Downs Field 6) has 1 games
+index-ClE96Kjt.js:869 🎯 [ENHANCED DRAG DROP] Debug Info: Object
+index-ClE96Kjt.js:868 🔍 [CONFLICT DETECTION] Starting enhanced overlap detection for 9 games
+index-ClE96Kjt.js:868 🚗 [TRAVEL DEBUG] scheduleData available: true, fields count: 63
+index-ClE96Kjt.js:868 🚗 [TRAVEL DEBUG] Sample field data: Array(3)
+index-ClE96Kjt.js:868 [REST PERIOD] Using age group logic: 120min for U17 Boys Boys
+index-ClE96Kjt.js:868 ⚠️ [REST PERIOD] Rest period violation between games 14873 and 14870: Array(1) Gap: 65min, Required: 120min
+5index-ClE96Kjt.js:868 [REST PERIOD] Using age group logic: 120min for U17 Boys Boys
+index-ClE96Kjt.js:868 🔍 [CONFLICT DETECTION] Starting legacy slot-based detection for 9 games
+index-ClE96Kjt.js:868 🔍 [CONFLICT DETECTION] Time slots: 50
+index-ClE96Kjt.js:868 🔍 [CONFLICT DETECTION] Sample games: Array(3)
+index-ClE96Kjt.js:868 🚗 [TRAVEL DEBUG] Starting travel conflict detection for 6 teams on 2025-09-30
+index-ClE96Kjt.js:868 🚗 [TRAVEL DEBUG] Checking team U17 Boys Team 190 with 2 games
+index-ClE96Kjt.js:868 🚗 [TRAVEL DEBUG] Game 14873: field 25 -> complex "Galway Downs Soccer Complex"
+index-ClE96Kjt.js:868 🚗 [TRAVEL DEBUG] Game 14870: field 23 -> complex "Galway Downs Soccer Complex"
+index-ClE96Kjt.js:868 🚗 [TRAVEL DEBUG] Team U17 Boys Team 190 complexes: Galway Downs Soccer Complex
+index-ClE96Kjt.js:868 🚗 [TRAVEL DEBUG] Checking team U17 Boys Team 187 with 2 games
+index-ClE96Kjt.js:868 🚗 [TRAVEL DEBUG] Game 14873: field 25 -> complex "Galway Downs Soccer Complex"
+index-ClE96Kjt.js:868 🚗 [TRAVEL DEBUG] Game 14868: field 23 -> complex "Galway Downs Soccer Complex"
+index-ClE96Kjt.js:868 🚗 [TRAVEL DEBUG] Team U17 Boys Team 187 complexes: Galway Downs Soccer Complex
+index-ClE96Kjt.js:868 🚗 [TRAVEL DEBUG] Checking team U17 Boys Team 188 with 2 games
+index-ClE96Kjt.js:868 🚗 [TRAVEL DEBUG] Game 14872: field 23 -> complex "Galway Downs Soccer Complex"
+index-ClE96Kjt.js:868 🚗 [TRAVEL DEBUG] Game 14869: field 23 -> complex "Galway Downs Soccer Complex"
+index-ClE96Kjt.js:868 🚗 [TRAVEL DEBUG] Team U17 Boys Team 188 complexes: Galway Downs Soccer Complex
+index-ClE96Kjt.js:868 🚗 [TRAVEL DEBUG] Checking team U17 Boys Team 189 with 2 games
+index-ClE96Kjt.js:868 🚗 [TRAVEL DEBUG] Game 14872: field 23 -> complex "Galway Downs Soccer Complex"
+index-ClE96Kjt.js:868 🚗 [TRAVEL DEBUG] Game 14870: field 23 -> complex "Galway Downs Soccer Complex"
+index-ClE96Kjt.js:868 🚗 [TRAVEL DEBUG] Team U17 Boys Team 189 complexes: Galway Downs Soccer Complex
+index-ClE96Kjt.js:868 🚗 [TRAVEL DEBUG] Checking team U17 Boys Team 185 with 2 games
+index-ClE96Kjt.js:868 🚗 [TRAVEL DEBUG] Game 14871: field 23 -> complex "Galway Downs Soccer Complex"
+index-ClE96Kjt.js:868 🚗 [TRAVEL DEBUG] Game 14868: field 23 -> complex "Galway Downs Soccer Complex"
+index-ClE96Kjt.js:868 🚗 [TRAVEL DEBUG] Team U17 Boys Team 185 complexes: Galway Downs Soccer Complex
+index-ClE96Kjt.js:868 🚗 [TRAVEL DEBUG] Checking team U17 Boys Team 186 with 2 games
+index-ClE96Kjt.js:868 🚗 [TRAVEL DEBUG] Game 14871: field 23 -> complex "Galway Downs Soccer Complex"
+index-ClE96Kjt.js:868 🚗 [TRAVEL DEBUG] Game 14869: field 23 -> complex "Galway Downs Soccer Complex"
+index-ClE96Kjt.js:868 🚗 [TRAVEL DEBUG] Team U17 Boys Team 186 complexes: Galway Downs Soccer Complex
+index-ClE96Kjt.js:869 🎯 [FIELD DEBUG] All available fields: Array(63)
+index-ClE96Kjt.js:869 🎯 [FIELD DEBUG] Fields with games assigned: Array(2)
+index-ClE96Kjt.js:869 🎯 [FIELD DEBUG] Field 23 (Galway Downs Field 4) has 8 games
+index-ClE96Kjt.js:869 🎯 [FIELD DEBUG] Field 25 (Galway Downs Field 6) has 1 games
+index-ClE96Kjt.js:869 🎯 [ENHANCED DRAG DROP] Debug Info: Object
+injected.js:5 [USO] Button detection aborting due to timeout.
+ScheduleViewerFixed-CFMXR8SH.js:40 FLIGHT FILTER DEBUG: All flight names from games: Array(9)
+ScheduleViewerFixed-CFMXR8SH.js:40 FLIGHT FILTER DEBUG: Unique flights for dropdown: Array(0)
+ScheduleViewerFixed-CFMXR8SH.js:11 [ScheduleViewer] Clearing cache to prevent data multiplication
+ScheduleViewerFixed-CFMXR8SH.js:11 [ScheduleViewer] API returned 9 games
+ScheduleViewerFixed-CFMXR8SH.js:11 [ScheduleViewer] Processing 9 games for event 1656618593
+ScheduleViewerFixed-CFMXR8SH.js:40 FLIGHT FILTER DEBUG: All flight names from games: Array(9)
+ScheduleViewerFixed-CFMXR8SH.js:40 FLIGHT FILTER DEBUG: Unique flights for dropdown: Array(1)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14876: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14876: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14875: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14875: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14874: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14874: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14873: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14873: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14872: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14872: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14871: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14871: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14870: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14870: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14869: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14869: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14868: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14868: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:40 FLIGHT FILTER DEBUG: All flight names from games: Array(9)
+ScheduleViewerFixed-CFMXR8SH.js:40 FLIGHT FILTER DEBUG: Unique flights for dropdown: Array(1)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14876: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14876: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14875: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14875: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14874: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14874: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14873: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14873: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14872: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14872: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14871: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14871: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14870: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14870: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14869: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14869: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14868: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14868: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:40 FLIGHT FILTER DEBUG: All flight names from games: Array(9)
+ScheduleViewerFixed-CFMXR8SH.js:40 FLIGHT FILTER DEBUG: Unique flights for dropdown: Array(1)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14876: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14876: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14875: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14875: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14874: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14874: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14873: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14873: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14872: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14872: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14871: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14871: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14870: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14870: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14869: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14869: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14868: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] About to check rest period for game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Checking game: Object
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] First few flights: Array(3)
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Found flight config for bracket 561: 60 minutes
+ScheduleViewerFixed-CFMXR8SH.js:21 [REST PERIOD DEBUG] Final rest period for game 14868: 60 minutes
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state Object
+ScheduleViewerFixed-CFMXR8SH.js:11 [ScheduleViewer] API returned 9 games
+ScheduleViewerFixed-CFMXR8SH.js:11 [ScheduleViewer] Processing 9 games for event 1656618593
+chunk-FLCULYKI.js:31 orchestration: Updating combined state Object
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state Object
+ScheduleViewerFixed-CFMXR8SH.js:11 [ScheduleViewer] API returned 9 games
+ScheduleViewerFixed-CFMXR8SH.js:11 [ScheduleViewer] Processing 9 games for event 1656618593
+chunk-FLCULYKI.js:31 orchestration: Updating combined state Object
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state Object
+ScheduleViewerFixed-CFMXR8SH.js:11 [ScheduleViewer] API returned 9 games
+ScheduleViewerFixed-CFMXR8SH.js:11 [ScheduleViewer] Processing 9 games for event 1656618593
+chunk-FLCULYKI.js:31 orchestration: Updating combined state Object
+master-schedule:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+master-schedule:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
