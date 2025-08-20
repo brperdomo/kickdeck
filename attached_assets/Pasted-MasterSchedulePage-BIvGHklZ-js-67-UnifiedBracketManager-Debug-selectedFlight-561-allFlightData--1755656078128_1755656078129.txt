@@ -1,0 +1,45 @@
+MasterSchedulePage-BIvGHklZ.js:67 UnifiedBracketManager Debug: {selectedFlight: 561, allFlightData: Array(72), selectedFlightData: {…}, apiResponse: {…}}
+MasterSchedulePage-BIvGHklZ.js:67 UnifiedBracketManager Debug: {selectedFlight: 561, allFlightData: Array(72), selectedFlightData: {…}, apiResponse: {…}}
+MasterSchedulePage-BIvGHklZ.js:67 Fetch finished loading: POST "https://app.matchpro.ai/api/admin/events/1656618593/bracket-creation/generate-games".
+mutationFn @ MasterSchedulePage-BIvGHklZ.js:67
+fn @ index-CmhzP2ar.js:41
+p @ index-CmhzP2ar.js:41
+start @ index-CmhzP2ar.js:41
+execute @ index-CmhzP2ar.js:41
+await in execute
+mutate @ index-CmhzP2ar.js:41
+(anonymous) @ index-CmhzP2ar.js:41
+j @ MasterSchedulePage-BIvGHklZ.js:67
+Kve @ index-CmhzP2ar.js:38
+Qve @ index-CmhzP2ar.js:38
+Xve @ index-CmhzP2ar.js:38
+l8 @ index-CmhzP2ar.js:38
+hJ @ index-CmhzP2ar.js:38
+(anonymous) @ index-CmhzP2ar.js:38
+kD @ index-CmhzP2ar.js:41
+MX @ index-CmhzP2ar.js:38
+aE @ index-CmhzP2ar.js:38
+tD @ index-CmhzP2ar.js:38
+hye @ index-CmhzP2ar.js:38
+chunk-FLCULYKI.js:31 orchestration: Initializing user store with state {pill-player: {…}}
+chunk-FLCULYKI.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+shared-caccf892d15a25ce4a698d324cbed544.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous) @ shared-caccf892d15a25ce4a698d324cbed544.js:1
+e @ shared-caccf892d15a25ce4a698d324cbed544.js:1
+c @ shared-caccf892d15a25ce4a698d324cbed544.js:1
+value @ shared-caccf892d15a25ce4a698d324cbed544.js:1
+value @ shared-caccf892d15a25ce4a698d324cbed544.js:1
+value @ shared-caccf892d15a25ce4a698d324cbed544.js:1
+value @ shared-caccf892d15a25ce4a698d324cbed544.js:1
+value @ shared-caccf892d15a25ce4a698d324cbed544.js:1
+(anonymous) @ shared-caccf892d15a25ce4a698d324cbed544.js:1
+setTimeout
+value @ shared-caccf892d15a25ce4a698d324cbed544.js:1
+value @ shared-caccf892d15a25ce4a698d324cbed544.js:1
+value @ shared-caccf892d15a25ce4a698d324cbed544.js:1
+(anonymous) @ shared-caccf892d15a25ce4a698d324cbed544.js:1
+value @ shared-caccf892d15a25ce4a698d324cbed544.js:1
+log @ shared-caccf892d15a25ce4a698d324cbed544.js:1
+log @ controller-with-preconnect-136408373db0d97896c7c8d7f83a58de.js:1
+ke @ controller-with-preconnect-136408373db0d97896c7c8d7f83a58de.js:1
+(anonymous) @ controller-with-preconnect-136408373db0d97896c7c8d7f83a58de.js:1
