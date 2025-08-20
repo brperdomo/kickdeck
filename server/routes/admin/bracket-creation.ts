@@ -711,11 +711,11 @@ router.post('/:eventId/bracket-creation/generate-games', async (req, res) => {
     console.log(`🔍 [DEBUG] Request body:`, req.body);
     console.log(`🔍 [DEBUG] Extracted flightId:`, flightId, `(type: ${typeof flightId})`);
     
-    if (flightId) {
+    if (flightId && flightId !== 'all') {
       console.log(`🚀 [API] Manual game generation requested for event ${eventId}, flight ${flightId}`);
       console.log(`🚀 [API] Starting generateGamesForFlight function...`);
       
-      await generateGamesForFlight(eventId, flightId);
+      await generateGamesForFlight(eventId, parseInt(flightId));
       
       console.log(`✅ [API] Game generation completed successfully for flight ${flightId} in event ${eventId}`);
       res.json({ 
