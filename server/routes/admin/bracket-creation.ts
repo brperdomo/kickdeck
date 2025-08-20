@@ -379,10 +379,11 @@ router.get('/:eventId/bracket-creation', async (req, res) => {
 router.post('/:eventId/bracket-creation/assign-teams', async (req, res) => {
   try {
     const eventId = req.params.eventId;
-    const { assignments, flightId } = req.body; // { teamId: bracketId, ... }, flightId
+    const { assignments, flightId, seedingPositions } = req.body; // { teamId: bracketId, ... }, flightId, seedingPositions
 
     console.log(`[Bracket Creation] POST /${eventId}/bracket-creation/assign-teams`);
     console.log('[Team Assignment] Assignments received:', assignments);
+    console.log('[Team Assignment] Seeding positions received:', seedingPositions);
     console.log('[Team Assignment] Flight ID:', flightId);
 
     if (!assignments || Object.keys(assignments).length === 0) {
@@ -471,7 +472,7 @@ router.post('/:eventId/bracket-creation/assign-teams', async (req, res) => {
       2: poolBGroup[0].id  // Pool B
     };
 
-    // Update each team's groupId based on assignments
+    // Update each team's groupId and seeding position based on assignments
     for (const [teamIdStr, uiBracketId] of Object.entries(assignments)) {
       const teamId = parseInt(teamIdStr);
       const actualGroupId = uiBracketId === 0 ? null : bracketMapping[uiBracketId as keyof typeof bracketMapping];
@@ -481,12 +482,23 @@ router.post('/:eventId/bracket-creation/assign-teams', async (req, res) => {
         continue;
       }
 
+      // Get seeding position for this team (if provided)
+      const seedingInfo = seedingPositions?.[teamId];
+      const seedRanking = seedingInfo?.position || null;
+
       await db
         .update(teams)
-        .set({ groupId: actualGroupId })
+        .set({ 
+          groupId: actualGroupId,
+          seedRanking: seedRanking
+        })
         .where(eq(teams.id, teamId));
 
-      console.log(`[Team Assignment] Team ${teamId} assigned to bracket ${actualGroupId} (UI bracket ${uiBracketId})`);
+      if (seedingInfo) {
+        console.log(`[Team Assignment] Team ${teamId} assigned to bracket ${actualGroupId} (UI bracket ${uiBracketId}) with seed ${seedingInfo.seed} (position ${seedingInfo.position})`);
+      } else {
+        console.log(`[Team Assignment] Team ${teamId} assigned to bracket ${actualGroupId} (UI bracket ${uiBracketId})`);
+      }
     }
 
     res.json({ 

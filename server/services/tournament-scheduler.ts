@@ -441,12 +441,12 @@ export class TournamentScheduler {
         throw new Error(`Crossplay format requires exactly 2 groups (Pool A & Pool B), found ${groupIds.length} groups`);
       }
       
-      // Assign Pool A and Pool B based on group_id order
-      const poolA = teamsByGroupId[groupIds[0]]; // Lower group_id = Pool A
-      const poolB = teamsByGroupId[groupIds[1]]; // Higher group_id = Pool B
+      // Assign Pool A and Pool B based on group_id order and SORT BY SEED RANKING for proper A1-A3, B1-B3 seeding
+      const poolA = teamsByGroupId[groupIds[0]].sort((a, b) => (a.seedRanking || 99) - (b.seedRanking || 99)); // Lower group_id = Pool A, sorted by seed
+      const poolB = teamsByGroupId[groupIds[1]].sort((a, b) => (a.seedRanking || 99) - (b.seedRanking || 99)); // Higher group_id = Pool B, sorted by seed
       
-      console.log(`📊 CROSSPLAY POOL ASSIGNMENT - Pool A teams (Group ID ${groupIds[0]}):`, poolA.map(t => `${t.name} (groupId: ${t.groupId})`));
-      console.log(`📊 CROSSPLAY POOL ASSIGNMENT - Pool B teams (Group ID ${groupIds[1]}):`, poolB.map(t => `${t.name} (groupId: ${t.groupId})`));
+      console.log(`📊 CROSSPLAY POOL ASSIGNMENT - Pool A teams (Group ID ${groupIds[0]}):`, poolA.map((t, idx) => `A${idx + 1}: ${t.name} (seed: ${t.seedRanking || 'unranked'})`));
+      console.log(`📊 CROSSPLAY POOL ASSIGNMENT - Pool B teams (Group ID ${groupIds[1]}):`, poolB.map((t, idx) => `B${idx + 1}: ${t.name} (seed: ${t.seedRanking || 'unranked'})`));
       
       // 6-team crossplay: Pool A (3 teams) vs Pool B (3 teams) = 9 crossplay games
       if (poolA.length !== 3 || poolB.length !== 3) {

@@ -210,12 +210,16 @@ export function UnifiedBracketManager({ eventId }: UnifiedBracketManagerProps) {
 
   // Assign teams to brackets mutation
   const assignTeamsMutation = useMutation({
-    mutationFn: async ({ assignments, flightId }: { assignments: { [teamId: number]: number }, flightId: number }) => {
+    mutationFn: async ({ assignments, flightId, seedingPositions }: { 
+      assignments: { [teamId: number]: number }, 
+      flightId: number,
+      seedingPositions?: { [teamId: number]: { pool: string, position: number, seed: string } }
+    }) => {
       const response = await fetch(`/api/admin/events/${eventId}/bracket-creation/assign-teams`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ assignments, flightId })
+        body: JSON.stringify({ assignments, flightId, seedingPositions })
       });
       if (!response.ok) throw new Error('Failed to assign teams to brackets');
       return response.json();
@@ -293,7 +297,7 @@ export function UnifiedBracketManager({ eventId }: UnifiedBracketManagerProps) {
     assignTeamsMutation.mutate({ assignments: teamAssignments, flightId: selectedFlight! });
   };
 
-  // Handle drag and drop
+  // Handle drag and drop with seeding position capture
   const onDragEnd = (result: DropResult) => {
     const { destination, source, draggableId } = result;
 
@@ -307,41 +311,61 @@ export function UnifiedBracketManager({ eventId }: UnifiedBracketManagerProps) {
 
     const teamId = parseInt(draggableId);
 
-    // Determine the target bracket/pool
+    // Determine the target bracket/pool and capture drop position for seeding
     let targetBracketId = 0;
+    let seedPosition = destination.index + 1; // 1-based seeding (A1, A2, A3, B1, B2, B3)
+    
     if (destination.droppableId === 'pool-a') {
       targetBracketId = 1;
+      console.log(`🎯 SEEDING ASSIGNMENT: Team ${teamId} assigned to Pool A position ${seedPosition} (A${seedPosition})`);
     } else if (destination.droppableId === 'pool-b') {
-      targetBracketId = 2;
+      targetBracketId = 2;  
+      console.log(`🎯 SEEDING ASSIGNMENT: Team ${teamId} assigned to Pool B position ${seedPosition} (B${seedPosition})`);
     }
     // If dropped on 'unassigned', targetBracketId remains 0 (unassigned)
 
-    // Update the team assignments
+    // Update team assignments with seeding position
     setTeamAssignments(prev => {
       const updated = { ...prev };
       if (targetBracketId === 0) {
         // Remove from assignments (unassign)
         delete updated[teamId];
       } else {
-        // Assign to bracket
+        // Assign to bracket with seeding position embedded
+        // Store as: bracketId for compatibility, but track position for seeding
         updated[teamId] = targetBracketId;
       }
       return updated;
     });
 
-    // Auto-save after drag and drop with immediate UI feedback
+    // Enhanced assignment data with seeding position
     setTimeout(() => {
       const assignments = { ...teamAssignments };
+      const assignmentData: any = { assignments: {}, seedingPositions: {} };
+      
       if (targetBracketId === 0) {
         delete assignments[teamId];
+        assignmentData.assignments = assignments;
       } else {
         assignments[teamId] = targetBracketId;
+        assignmentData.assignments = assignments;
+        // NEW: Capture seeding positions for proper A1-B1 matchup generation
+        assignmentData.seedingPositions = {
+          ...assignmentData.seedingPositions,
+          [teamId]: {
+            pool: targetBracketId === 1 ? 'A' : 'B',
+            position: seedPosition,
+            seed: targetBracketId === 1 ? `A${seedPosition}` : `B${seedPosition}`
+          }
+        };
       }
       
       if (Object.keys(assignments).length > 0 || targetBracketId === 0) {
-        // Always save, even for unassignments
+        console.log(`🔄 SAVING ENHANCED ASSIGNMENT: Team ${teamId} → ${assignmentData.seedingPositions[teamId]?.seed || 'Unassigned'}`);
+        // Save with enhanced seeding data
         assignTeamsMutation.mutate({ 
-          assignments: Object.keys(assignments).length > 0 ? assignments : { [teamId]: 0 }, 
+          assignments: assignmentData.assignments,
+          seedingPositions: assignmentData.seedingPositions,
           flightId: selectedFlight! 
         });
       }
