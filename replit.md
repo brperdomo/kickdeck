@@ -17,7 +17,15 @@ Preferred communication style: Simple, everyday language.
 - **Bypass Solution**: Created standalone game generation system (`server/api/generate-games.ts`, `server/standalone-game-generation.ts`) that bypasses problematic routes file
 - **Server Integration**: Added standalone router to main server index to ensure availability in production
 
-**DEPLOYMENT STATUS**: ✅ **IMPLEMENTATION COMPLETE AND FULLY FUNCTIONAL**. Game generation workflow successfully resolved with raw SQL database integration to bypass Drizzle ORM schema type mismatches. Frontend integration verified working with successful API responses.
+**FLIGHT-SPECIFIC GAME GENERATION TARGETING FIX:**
+- **Issue Resolved**: Generate Games button was creating games for ALL brackets in the event instead of just the selected flight
+- **Flight-Specific Function**: Created `generateGamesForFlight()` function to target individual flight/bracket IDs
+- **Frontend Parameter Passing**: Modified UnifiedBracketManager to send selected flight ID in API request body
+- **Backend Flight Filtering**: Enhanced both bracket-creation route and standalone API to accept and process flight ID parameter
+- **Targeted Generation Validation**: Successfully tested with flight 561 generating exactly 10 games (9 crossplay + 1 championship) without affecting other flights
+- **API Response Update**: Modified success message to indicate flight-specific generation vs. full event generation
+
+**DEPLOYMENT STATUS**: ✅ **IMPLEMENTATION COMPLETE AND FULLY FUNCTIONAL**. Game generation workflow successfully resolved with raw SQL database integration to bypass Drizzle ORM schema type mismatches. Frontend integration verified working with successful API responses. Flight-specific targeting ensures precise game generation without unwanted mass creation.
 
 ## Previous Changes (August 19, 2025)
 **CROSSPLAY BRACKET SCHEDULING BUG COMPLETELY FIXED:**

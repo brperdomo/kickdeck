@@ -248,11 +248,12 @@ export function UnifiedBracketManager({ eventId }: UnifiedBracketManagerProps) {
 
   // Generate games mutation
   const generateGamesMutation = useMutation({
-    mutationFn: async () => {
+    mutationFn: async (flightId: number) => {
       const response = await fetch(`/api/admin/events/${eventId}/bracket-creation/generate-games`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'include'
+        credentials: 'include',
+        body: JSON.stringify({ flightId })
       });
       if (!response.ok) {
         const errorData = await response.json();
@@ -330,7 +331,15 @@ export function UnifiedBracketManager({ eventId }: UnifiedBracketManagerProps) {
   };
 
   const handleGenerateGames = () => {
-    generateGamesMutation.mutate();
+    if (!selectedFlight) {
+      toast({
+        title: "No Flight Selected",
+        description: "Please select a flight first",
+        variant: "destructive"
+      });
+      return;
+    }
+    generateGamesMutation.mutate(selectedFlight);
   };
 
   // Handle drag and drop with seeding position capture

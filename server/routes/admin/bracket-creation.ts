@@ -703,16 +703,34 @@ router.post('/:eventId/generate-games', async (req, res) => {
   
   try {
     const eventId = req.params.eventId;
-    console.log(`🚀 [API] Manual game generation requested for event ${eventId}`);
-    console.log(`🚀 [API] Starting generateGamesForEvent function...`);
+    const { flightId } = req.body;
     
-    await generateGamesForEvent(eventId);
+    console.log(`🔍 [DEBUG] Request body:`, req.body);
+    console.log(`🔍 [DEBUG] Extracted flightId:`, flightId, `(type: ${typeof flightId})`);
     
-    console.log(`✅ [API] Game generation completed successfully for event ${eventId}`);
-    res.json({ 
-      success: true, 
-      message: 'Games generated successfully for all brackets in the event' 
-    });
+    if (flightId) {
+      console.log(`🚀 [API] Manual game generation requested for event ${eventId}, flight ${flightId}`);
+      console.log(`🚀 [API] Starting generateGamesForFlight function...`);
+      
+      await generateGamesForFlight(eventId, flightId);
+      
+      console.log(`✅ [API] Game generation completed successfully for flight ${flightId} in event ${eventId}`);
+      res.json({ 
+        success: true, 
+        message: `Games generated successfully for the selected flight` 
+      });
+    } else {
+      console.log(`🚀 [API] Manual game generation requested for ALL brackets in event ${eventId}`);
+      console.log(`🚀 [API] Starting generateGamesForEvent function...`);
+      
+      await generateGamesForEvent(eventId);
+      
+      console.log(`✅ [API] Game generation completed successfully for event ${eventId}`);
+      res.json({ 
+        success: true, 
+        message: 'Games generated successfully for all brackets in the event' 
+      });
+    }
   } catch (error) {
     console.error(`❌ [API] Failed to generate games for event ${req.params.eventId}:`, error);
     res.status(500).json({ 
@@ -722,6 +740,114 @@ router.post('/:eventId/generate-games', async (req, res) => {
     });
   }
 });
+
+// CRITICAL FUNCTION: Generate games for a specific flight
+export async function generateGamesForFlight(eventId: string, flightId: number) {
+  console.log(`[Game Generation] Starting game generation for flight ${flightId} in event ${eventId}`);
+  
+  // Get brackets for the specific flight only
+  const brackets = await db
+    .select({
+      bracketId: eventBrackets.id,
+      bracketName: eventBrackets.name,
+      ageGroupId: eventBrackets.ageGroupId,
+      format: eventBrackets.tournamentFormat,
+      teamCount: sql<number>`COUNT(${teams.id})`.as('teamCount')
+    })
+    .from(eventBrackets)
+    .innerJoin(eventAgeGroups, eq(eventBrackets.ageGroupId, eventAgeGroups.id))
+    .leftJoin(teams, and(
+      eq(teams.bracketId, eventBrackets.id),
+      eq(teams.status, 'approved')
+    ))
+    .where(and(
+      eq(eventAgeGroups.eventId, eventId),
+      eq(eventBrackets.id, flightId)  // Filter by specific flight/bracket ID
+    ))
+    .groupBy(eventBrackets.id, eventBrackets.name, eventBrackets.ageGroupId, eventBrackets.tournamentFormat);
+
+  console.log(`[Game Generation] Found ${brackets.length} brackets to process for flight ${flightId}`);
+
+  for (const bracket of brackets) {
+    if (bracket.teamCount === 0) {
+      console.log(`[Game Generation] Skipping bracket ${bracket.bracketName} - no approved teams`);
+      continue;
+    }
+
+    console.log(`[Game Generation] Processing bracket ${bracket.bracketName} with ${bracket.teamCount} teams`);
+
+    // Get teams for this bracket
+    const bracketTeams = await db
+      .select()
+      .from(teams)
+      .where(and(
+        eq(teams.bracketId, bracket.bracketId),
+        eq(teams.status, 'approved')
+      ))
+      .orderBy(teams.seedRanking);
+
+    // Prepare bracket data for tournament scheduler
+    const bracketData = {
+      bracketId: bracket.bracketId,
+      bracketName: bracket.bracketName,
+      format: bracket.format,
+      tournamentFormat: bracket.format,
+      teams: bracketTeams,
+      id: bracket.bracketId,
+      name: bracket.bracketName
+    };
+
+    console.log(`[Game Generation] Generating games for bracket ${bracket.bracketName} using format '${bracket.format}'`);
+
+    try {
+      // Generate games using the TournamentScheduler
+      const { TournamentScheduler } = await import('../../services/tournament-scheduler');
+      const generatedGames = await TournamentScheduler.generateBracketGames(bracketData, 1);
+      
+      console.log(`[Game Generation] Generated ${generatedGames.length} games for bracket ${bracket.bracketName}`);
+
+      // Save games to database using raw SQL to bypass schema type mismatch
+      for (const game of generatedGames) {
+        console.log(`[Game Generation] Inserting game with eventId: "${eventId}" (type: ${typeof eventId})`);
+        
+        // Use raw SQL insert to bypass Drizzle type issues
+        await db.execute(sql`
+          INSERT INTO games (
+            event_id, age_group_id, group_id, home_team_id, away_team_id,
+            round, status, duration, match_number, break_time, field_id,
+            scheduled_date, scheduled_time, created_at, updated_at,
+            home_yellow_cards, away_yellow_cards, home_red_cards, away_red_cards
+          ) VALUES (
+            ${parseInt(eventId)}, 
+            ${bracket.ageGroupId},
+            ${game.poolId ? parseInt(game.poolId) : null},
+            ${game.homeTeamId || null},
+            ${game.awayTeamId || null},
+            ${game.round === 'Pool Play' ? 1 : 2},
+            'scheduled',
+            ${game.duration || 90},
+            ${game.gameNumber || 1},
+            5,
+            ${game.fieldId || null},
+            ${game.date || null},
+            ${game.startTime || null},
+            NOW(),
+            NOW(),
+            0, 0, 0, 0
+          )
+        `);
+      }
+
+      console.log(`[Game Generation] Successfully saved ${generatedGames.length} games for bracket ${bracket.bracketName}`);
+
+    } catch (error) {
+      console.error(`[Game Generation] Failed to generate games for bracket ${bracket.bracketName}:`, error);
+      throw error;
+    }
+  }
+
+  console.log(`[Game Generation] Completed game generation for flight ${flightId} in event ${eventId}`);
+}
 
 // CRITICAL FUNCTION: Generate games for all brackets in an event
 async function generateGamesForEvent(eventId: string) {
