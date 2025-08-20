@@ -206,8 +206,9 @@ router.patch('/:id', async (req, res) => {
   }
 });
 
-// Get event age groups endpoint
+// Get event age groups endpoint  
 router.get('/:id/age-groups', async (req, res) => {
+  try {
   const eventId = req.params.id; // Keep as string since eventId is text in eventAgeGroups
   console.log(`Fetching age groups for event: ${eventId}`);
 
@@ -642,7 +643,7 @@ router.get('/:id/edit', async (req, res) => {
       LIMIT 1
     `);
 
-    const seasonalScopeId = scopeSetting.length > 0 ? parseInt(scopeSetting[0].setting_value) : null;
+    const seasonalScopeId = scopeSetting.rows.length > 0 ? parseInt(scopeSetting.rows[0].setting_value) : null;
     console.log(`Found seasonal scope ID for event: ${seasonalScopeId}`);
 
     // Also fetch the age groups count for verification

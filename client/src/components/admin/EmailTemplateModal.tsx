@@ -205,7 +205,7 @@ export function EmailTemplateModal({ open, onOpenChange, template }: EmailTempla
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {providers?.map((provider) => (
+                        {providers?.map((provider: any) => (
                           <SelectItem 
                             key={provider.id} 
                             value={provider.id.toString()}
@@ -270,6 +270,7 @@ export function EmailTemplateModal({ open, onOpenChange, template }: EmailTempla
                     <Textarea
                       placeholder="Brief description of this email template's purpose"
                       {...field}
+                      value={field.value || ''}
                     />
                   </FormControl>
                   <FormMessage />
@@ -367,7 +368,7 @@ export function EmailTemplateModal({ open, onOpenChange, template }: EmailTempla
                               let url = prompt('Enter URL', 'https://');
                               if (url) callback(url);
                             },
-                          setup: (editor) => {
+                            setup: (editor) => {
                             const openMergeFieldsDialog = () => {
                               // Create a custom DOM element for the dialog
                               const dialogElement = document.createElement('div');
@@ -487,7 +488,7 @@ export function EmailTemplateModal({ open, onOpenChange, template }: EmailTempla
                   </div>
                   <FormControl>
                     <Switch
-                      checked={field.value}
+                      checked={field.value || false}
                       onCheckedChange={field.onChange}
                     />
                   </FormControl>
