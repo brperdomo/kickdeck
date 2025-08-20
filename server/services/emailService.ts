@@ -197,7 +197,7 @@ function generateTextFromHtml(html: string, context: TemplateContext): string {
   if (context.resetUrl && context.username) {
     return `Hello ${context.username},
 
-We HITESTreceived a request to reset your password for your MatchPro account.
+We HITEST received a request to reset your password for your MatchPro account.
 
 To reset your password, please visit this link:
 ${context.resetUrl}
