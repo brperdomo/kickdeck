@@ -7,7 +7,10 @@ import {
   teams,
   gameFormats,
   tournamentGroups,
-  games
+  games,
+  fields,
+  eventComplexes,
+  gameTimeSlots
 } from '@db/schema';
 import { eq, and, isNull, like, sql } from 'drizzle-orm';
 import { isAdmin } from '../../middleware/auth.js';
@@ -698,7 +701,7 @@ router.post('/:eventId/bracket-creation/lock', async (req, res) => {
 });
 
 // NEW API ENDPOINT: Manual game generation
-router.post('/:eventId/generate-games', async (req, res) => {
+router.post('/:eventId/bracket-creation/generate-games', async (req, res) => {
   console.log(`🚀🚀🚀 [GAME-GENERATION-API] Endpoint hit for event ${req.params.eventId} 🚀🚀🚀`);
   
   try {
@@ -806,9 +809,66 @@ export async function generateGamesForFlight(eventId: string, flightId: number) 
       
       console.log(`[Game Generation] Generated ${generatedGames.length} games for bracket ${bracket.bracketName}`);
 
-      // Save games to database using raw SQL to bypass schema type mismatch
-      for (const game of generatedGames) {
-        console.log(`[Game Generation] Inserting game with eventId: "${eventId}" (type: ${typeof eventId})`);
+      // Now schedule the games with dates, times, and fields
+      console.log(`[Game Scheduling] Starting field and time assignment for ${generatedGames.length} games...`);
+      
+      // Get available fields for this event
+      const fieldsData = await db
+        .select({
+          id: fields.id,
+          name: fields.name,
+          complexId: fields.complexId
+        })
+        .from(fields)
+        .innerJoin(eventComplexes, eq(fields.complexId, eventComplexes.complexId))
+        .where(eq(eventComplexes.eventId, eventId));
+
+      console.log(`[Game Scheduling] Found ${fieldsData.length} available fields`);
+
+      // Get available time slots for this event
+      const timeSlotsData = await db
+        .select()
+        .from(gameTimeSlots)
+        .where(eq(gameTimeSlots.eventId, eventId));
+
+      console.log(`[Game Scheduling] Found ${timeSlotsData.length} time slots configured`);
+
+      let scheduledGames = generatedGames;
+
+      // Apply basic field assignment if fields are available
+      if (fieldsData.length > 0) {
+        console.log(`[Game Scheduling] Assigning fields to ${generatedGames.length} games`);
+        
+        scheduledGames = generatedGames.map((game, index) => {
+          const fieldIndex = index % fieldsData.length;
+          const assignedField = fieldsData[fieldIndex];
+          
+          // Basic time slot assignment (8 AM start, 90 min games + 15 min break)
+          const gameStartTime = 8 * 60 + (Math.floor(index / fieldsData.length) * 105); // 105 min = 90 game + 15 break
+          const startHours = Math.floor(gameStartTime / 60);
+          const startMinutes = gameStartTime % 60;
+          const startTime = `${startHours.toString().padStart(2, '0')}:${startMinutes.toString().padStart(2, '0')}`;
+          
+          const endTime = `${Math.floor((gameStartTime + 90) / 60).toString().padStart(2, '0')}:${((gameStartTime + 90) % 60).toString().padStart(2, '0')}`;
+          
+          return {
+            ...game,
+            fieldId: assignedField.id,
+            fieldName: assignedField.name,
+            startTime,
+            endTime,
+            date: new Date().toISOString().split('T')[0] // Today's date
+          };
+        });
+        
+        console.log(`[Game Scheduling] Successfully assigned fields to all ${scheduledGames.length} games`);
+      } else {
+        console.log(`[Game Scheduling] No fields available - games will be unscheduled`);
+      }
+
+      // Save games to database with scheduling information
+      for (const game of scheduledGames) {
+        console.log(`[Game Generation] Inserting scheduled game ${game.id} - Field: ${game.fieldId || 'TBD'}, Time: ${game.startTime || 'TBD'}`);
         
         // Use raw SQL insert to bypass Drizzle type issues
         await db.execute(sql`

@@ -8,7 +8,7 @@
  */
 
 import express from 'express';
-import { handleGenerateGames } from './api/generate-games';
+import { handleGenerateGames } from './api/simple-generate-games';
 
 const router = express.Router();
 
