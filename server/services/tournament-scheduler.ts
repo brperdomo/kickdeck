@@ -329,7 +329,7 @@ export class TournamentScheduler {
           awayTeamName: game.awayTeamName,
           bracketId: bracket.id,
           bracketName: bracket.name,
-          round: game.round,
+          round: typeof game.round === 'string' ? game.round : 'Pool Play',
           gameType: game.gameType,
           duration: game.duration || 90,
           gameNumber: startingGameNumber + index,
@@ -454,23 +454,41 @@ export class TournamentScheduler {
         throw new Error(`6-team crossplay requires 3 teams in each pool, got ${poolA.length}v${poolB.length}`);
       }
       
-      // Generate ONLY Pool A vs Pool B matchups (3x3 = 9 crossplay games)
-      poolA.forEach((teamA, idxA) => {
-        poolB.forEach((teamB, idxB) => {
-          console.log(`🔄 Creating crossplay matchup: Pool A ${teamA.name} (Group ${teamA.groupId}) vs Pool B ${teamB.name} (Group ${teamB.groupId})`);
-          games.push({
-            id: `${bracket.bracketId}_cross_${gameCounter}`,
-            homeTeamId: teamA.id,
-            homeTeamName: teamA.name,
-            awayTeamId: teamB.id,
-            awayTeamName: teamB.name,
-            bracketId: bracket.bracketId,
-            bracketName: bracket.bracketName,
-            round: 'Pool Play',
-            gameType: 'pool_play',
-            gameNumber: gameCounter++,
-            duration: 90
-          });
+      // Generate EXACT crossplay matchup pattern: A1-B1, A2-B2, A3-B3, A1-B2, A2-B3, A3-B1, A1-B3, A2-B1, A3-B2
+      // Assign team seeds for proper matchup pattern
+      const A1 = poolA[0], A2 = poolA[1], A3 = poolA[2];
+      const B1 = poolB[0], B2 = poolB[1], B3 = poolB[2];
+      
+      console.log(`🎯 CROSSPLAY SEEDING - Pool A: A1=${A1.name}, A2=${A2.name}, A3=${A3.name}`);
+      console.log(`🎯 CROSSPLAY SEEDING - Pool B: B1=${B1.name}, B2=${B2.name}, B3=${B3.name}`);
+      
+      // EXACT 6-team crossplay pattern as shown in preview:
+      const crossplayMatchups = [
+        { home: A1, away: B1, label: 'A1 vs B1' },  // Game 1
+        { home: A2, away: B2, label: 'A2 vs B2' },  // Game 2
+        { home: A3, away: B3, label: 'A3 vs B3' },  // Game 3
+        { home: A1, away: B2, label: 'A1 vs B2' },  // Game 4
+        { home: A2, away: B3, label: 'A2 vs B3' },  // Game 5
+        { home: A3, away: B1, label: 'A3 vs B1' },  // Game 6
+        { home: A1, away: B3, label: 'A1 vs B3' },  // Game 7
+        { home: A2, away: B1, label: 'A2 vs B1' },  // Game 8
+        { home: A3, away: B2, label: 'A3 vs B2' }   // Game 9
+      ];
+      
+      crossplayMatchups.forEach((matchup, idx) => {
+        console.log(`🔄 Creating crossplay Game ${idx + 1}: ${matchup.label} (${matchup.home.name} vs ${matchup.away.name})`);
+        games.push({
+          id: `${bracket.bracketId}_cross_${gameCounter}`,
+          homeTeamId: matchup.home.id,
+          homeTeamName: matchup.home.name,
+          awayTeamId: matchup.away.id,
+          awayTeamName: matchup.away.name,
+          bracketId: bracket.bracketId,
+          bracketName: bracket.bracketName,
+          round: 'Pool Play',
+          gameType: 'pool_play',
+          gameNumber: gameCounter++,
+          duration: 90
         });
       });
       
@@ -963,10 +981,8 @@ export class TournamentScheduler {
         }));
       }
 
-      // Fallback to game_formats table
-      const gameFormatsData = await db.query.gameFormats.findMany({
-        where: eq(gameFormats.eventId, parseInt(eventId))
-      });
+      // Fallback to game_formats table (if it has eventId column)
+      const gameFormatsData = await db.query.gameFormats.findMany({});
 
       return gameFormatsData.map(format => ({
         gameLength: format.gameLength || 90,
