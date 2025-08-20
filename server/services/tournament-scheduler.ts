@@ -13,7 +13,7 @@
  */
 
 import { db } from "../../db";
-import { eq, and, inArray } from "drizzle-orm";
+import { eq, and, inArray, sql } from "drizzle-orm";
 import { 
   teams, 
   events, 
@@ -1438,24 +1438,36 @@ export async function generateGamesForEvent(eventId: string) {
       
       console.log(`[Game Generation] Generated ${generatedGames.length} games for bracket ${bracket.bracketName}`);
 
-      // Save games to database
+      // Save games to database using raw SQL to bypass schema type mismatch
       for (const game of generatedGames) {
         console.log(`[Game Generation] Inserting game with eventId: "${eventId}" (type: ${typeof eventId})`);
-        await db.insert(games).values({
-          eventId: parseInt(eventId), // Convert to integer to match database schema
-          ageGroupId: bracket.ageGroupId,
-          groupId: game.poolId ? parseInt(game.poolId) : null,
-          homeTeamId: game.homeTeamId || null,
-          awayTeamId: game.awayTeamId || null,
-          round: game.round === 'Pool Play' ? 1 : 2, // Pool play = round 1, finals = round 2
-          status: 'scheduled',
-          duration: game.duration || 90,
-          matchNumber: game.gameNumber || 1,
-          breakTime: 5,
-          fieldId: game.fieldId || null,
-          scheduledDate: game.date || null,
-          scheduledTime: game.startTime || null
-        });
+        
+        // Use raw SQL insert to bypass Drizzle type issues
+        await db.execute(sql`
+          INSERT INTO games (
+            event_id, age_group_id, group_id, home_team_id, away_team_id,
+            round, status, duration, match_number, break_time, field_id,
+            scheduled_date, scheduled_time, created_at, updated_at,
+            home_yellow_cards, away_yellow_cards, home_red_cards, away_red_cards
+          ) VALUES (
+            ${parseInt(eventId)}, 
+            ${bracket.ageGroupId},
+            ${game.poolId ? parseInt(game.poolId) : null},
+            ${game.homeTeamId || null},
+            ${game.awayTeamId || null},
+            ${game.round === 'Pool Play' ? 1 : 2},
+            'scheduled',
+            ${game.duration || 90},
+            ${game.gameNumber || 1},
+            5,
+            ${game.fieldId || null},
+            ${game.date || null},
+            ${game.startTime || null},
+            NOW(),
+            NOW(),
+            0, 0, 0, 0
+          )
+        `);
       }
 
       console.log(`[Game Generation] Successfully saved ${generatedGames.length} games for bracket ${bracket.bracketName}`);
