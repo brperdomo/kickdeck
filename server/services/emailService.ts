@@ -197,7 +197,7 @@ function generateTextFromHtml(html: string, context: TemplateContext): string {
   if (context.resetUrl && context.username) {
     return `Hello ${context.username},
 
-We received a request to reset your password for your MatchPro account.
+We HITESTreceived a request to reset your password for your MatchPro account.
 
 To reset your password, please visit this link:
 ${context.resetUrl}
@@ -299,6 +299,7 @@ export async function sendEmail(options: EmailOptions): Promise<void> {
  * If the template has a SendGrid template ID, it will use SendGrid dynamic templates.
  * Otherwise, it will render the template locally and send it as a regular email.
  */
+
 export async function sendTemplatedEmail(
   to: string,
   templateType: string,
@@ -349,6 +350,7 @@ export async function sendTemplatedEmail(
 
         if (result) {
           console.log(
+            `the actual env is : ${isDevelopment}`,
             `✅ TEMPLATE EMAIL SENT: ${templateType} → ${to} (SendGrid ID: ${emailTemplate.sendgridTemplateId})`,
           );
         } else {
