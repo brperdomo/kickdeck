@@ -1,13 +1,27 @@
 import { MailService } from "@sendgrid/mail";
 
-if (!process.env.SENDGRID_API_KEY) {
-  console.warn("SendGrid API key not found in environment variables");
-}
+// Don't initialize the mail service globally - create it fresh each time
+let mailService: MailService | null = null;
 
-// Initialize the mail service with the API key
-const mailService = new MailService();
-if (process.env.SENDGRID_API_KEY) {
-  mailService.setApiKey(process.env.SENDGRID_API_KEY);
+/**
+ * Gets or creates a properly configured MailService instance
+ */
+function getMailService(): MailService {
+  // Always create a fresh instance to avoid caching issues
+  const service = new MailService();
+
+  // Get API key from environment
+  const apiKey = process.env.SENDGRID_API_KEY;
+
+  if (!apiKey) {
+    throw new Error("SENDGRID_API_KEY environment variable is not set");
+  }
+
+  // Set the API key
+  service.setApiKey(apiKey);
+
+  console.log("SendGrid service initialized with API key");
+  return service;
 }
 
 export interface SendGridEmailParams {
@@ -28,12 +42,12 @@ export interface SendGridDynamicTemplateParams {
 }
 
 /**
- * Set the SendGrid API key
+ * Set the SendGrid API key (legacy function for compatibility)
  * @param apiKey The SendGrid API key
  */
 export function setApiKey(apiKey: string): void {
-  mailService.setApiKey(apiKey);
-  console.log("SendGrid API key configured");
+  // This function is kept for compatibility but not used
+  console.log("SendGrid API key configured (legacy method)");
 }
 
 /**
@@ -43,11 +57,8 @@ export function setApiKey(apiKey: string): void {
  */
 export async function sendEmail(params: SendGridEmailParams): Promise<boolean> {
   try {
-    // Check if API key is set
-    if (!process.env.SENDGRID_API_KEY) {
-      console.error("SendGrid API key not configured");
-      return false;
-    }
+    // Get a fresh mail service instance
+    const service = getMailService();
 
     // Determine if we're using a template or regular email
     const message: any = {
@@ -68,7 +79,8 @@ export async function sendEmail(params: SendGridEmailParams): Promise<boolean> {
         "<p>Please view this email in a compatible email client.</p>";
     }
 
-    const response = await mailService.send(message);
+    console.log(`Sending email to ${params.to} via SendGrid...`);
+    const response = await service.send(message);
     console.log(
       `SendGrid: Email sent to ${params.to}, status: ${response[0].statusCode}`,
     );
@@ -96,11 +108,8 @@ export async function sendDynamicTemplateEmail(
   params: SendGridDynamicTemplateParams,
 ): Promise<boolean> {
   try {
-    // Check if API key is set
-    if (!process.env.SENDGRID_API_KEY) {
-      console.error("SendGrid API key not configured");
-      return false;
-    }
+    // Get a fresh mail service instance
+    const service = getMailService();
 
     if (!params.templateId) {
       console.error("SendGrid template ID is required");
@@ -124,10 +133,11 @@ export async function sendDynamicTemplateEmail(
         JSON.stringify(params.dynamicTemplateData, null, 2),
       );
     }
-    console.log("Setting API key !!!!!!!!!!!!!!!!!!");
-    mailService.setApiKey(process.env.SENDGRID_API_KEY);
 
-    const response = await mailService.send(message);
+    console.log(
+      `Sending dynamic template email to ${params.to} via SendGrid...`,
+    );
+    const response = await service.send(message);
     console.log(
       `SendGrid: Dynamic template email sent to ${params.to}, status: ${response[0].statusCode}`,
     );
@@ -153,9 +163,8 @@ export async function sendDynamicTemplateEmail(
  */
 export async function verifyConfiguration(testEmail: string): Promise<boolean> {
   try {
-    if (!process.env.SENDGRID_API_KEY) {
-      throw new Error("SendGrid API key not configured");
-    }
+    // Get a fresh mail service instance (this will validate API key)
+    const service = getMailService();
 
     if (!testEmail) {
       throw new Error("Test email address required");
@@ -175,7 +184,7 @@ export async function verifyConfiguration(testEmail: string): Promise<boolean> {
       `,
     };
 
-    const response = await mailService.send(message);
+    const response = await service.send(message);
     console.log(
       `SendGrid configuration verified, status: ${response[0].statusCode}`,
     );
@@ -207,9 +216,8 @@ export async function testDynamicTemplate(
   sampleData: Record<string, any>,
 ): Promise<boolean> {
   try {
-    if (!process.env.SENDGRID_API_KEY) {
-      throw new Error("SendGrid API key not configured");
-    }
+    // Get a fresh mail service instance (this will validate API key)
+    const service = getMailService();
 
     if (!testEmail) {
       throw new Error("Test email address required");
