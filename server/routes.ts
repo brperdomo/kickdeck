@@ -6109,6 +6109,91 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       }
     });
 
+    // Financial export endpoint for approved teams
+    app.get('/api/admin/teams/financial-export', isAdmin, async (req, res) => {
+      try {
+        const { eventId } = req.query;
+        
+        // Build the query for approved teams with all necessary financial data
+        let query = db
+          .select({
+            teamName: teams.name,
+            clubName: teams.clubName,
+            submitterName: teams.submitterName,
+            submitterEmail: teams.submitterEmail,
+            managerName: teams.managerName,
+            managerEmail: teams.managerEmail,
+            registrationFee: teams.registrationFee,
+            totalAmount: teams.totalAmount,
+            paymentStatus: teams.paymentStatus,
+            paymentDate: teams.paymentDate,
+            cardBrand: teams.cardBrand,
+            cardLast4: teams.cardLast4,
+            eventName: events.name,
+            ageGroup: eventAgeGroups.ageGroup,
+            gender: eventAgeGroups.gender
+          })
+          .from(teams)
+          .innerJoin(events, eq(teams.eventId, events.id))
+          .innerJoin(eventAgeGroups, eq(teams.ageGroupId, eventAgeGroups.id))
+          .where(eq(teams.status, 'approved'));
+
+        // Filter by event if specified
+        if (eventId && eventId !== 'all') {
+          query = query.where(eq(teams.eventId, parseInt(eventId as string)));
+        }
+
+        const approvedTeams = await query.orderBy(teams.name);
+
+        // Format for CSV
+        const csvData = approvedTeams.map(team => ({
+          'Team Name': team.teamName,
+          'Club': team.clubName || '',
+          'Submitter Name': team.submitterName || '',
+          'Submitter Email': team.submitterEmail || '',
+          'Manager Name': team.managerName || '',
+          'Manager Email': team.managerEmail || '',
+          'Registration Fee': team.registrationFee ? `$${(team.registrationFee / 100).toFixed(2)}` : '$0.00',
+          'Total Amount': team.totalAmount ? `$${(team.totalAmount / 100).toFixed(2)}` : '$0.00',
+          'Payment Status': team.paymentStatus,
+          'Payment Date': team.paymentDate ? new Date(team.paymentDate).toLocaleDateString() : '',
+          'Card Brand': team.cardBrand || '',
+          'Card Last 4': team.cardLast4 || '',
+          'Event': team.eventName,
+          'Age Group': `${team.gender} ${team.ageGroup}`
+        }));
+
+        // Convert to CSV
+        const csv = [
+          // Header row
+          Object.keys(csvData[0] || {}).join(','),
+          // Data rows
+          ...csvData.map(row => 
+            Object.values(row).map(value => 
+              typeof value === 'string' && value.includes(',') 
+                ? `"${value}"` 
+                : value
+            ).join(',')
+          )
+        ].join('\n');
+
+        // Set response headers for CSV download
+        const timestamp = new Date().toISOString().split('T')[0];
+        const filename = `financial_report_approved_teams_${timestamp}.csv`;
+        
+        res.setHeader('Content-Type', 'text/csv');
+        res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+        res.send(csv);
+
+      } catch (error) {
+        console.error('Error generating financial export:', error);
+        res.status(500).json({ 
+          error: 'Failed to generate financial export',
+          details: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    });
+
     // Theme update endpoint
     app.post('/api/theme', async (req, res) => {
       try {

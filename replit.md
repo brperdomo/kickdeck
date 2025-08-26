@@ -6,7 +6,17 @@ MatchPro AI is a comprehensive sports event management platform for tournament o
 ## User Preferences
 Preferred communication style: Simple, everyday language.
 
-## Recent Changes (August 20, 2025)
+## Recent Changes (August 26, 2025)
+**FINANCIAL EXPORT FUNCTIONALITY FOR APPROVED TEAMS IMPLEMENTED:**
+- **Backend API Endpoint**: Created `/api/admin/teams/financial-export` endpoint that generates CSV exports of approved teams' financial data
+- **Comprehensive Data Export**: Includes team name, club, submitter info, manager info, registration fee, total amount, payment status, payment date, card details, event name, and age group
+- **Frontend Integration**: Added "Export Financial Report" button to the Teams Component > Approved tab in admin dashboard
+- **Event Filtering**: Export respects event selection to generate reports for specific tournaments or all events
+- **CSV Formatting**: Proper CSV formatting with headers, currency formatting ($X.XX), and data sanitization for commas
+- **Error Handling**: Includes proper error handling and user feedback via toast notifications
+- **Authentication Protected**: Endpoint requires admin authentication to ensure secure access to financial data
+
+**PREVIOUS CHANGES (August 20, 2025)
 **CRITICAL GAME SCHEDULING DATE FIX IMPLEMENTED:**
 - **Root Cause Resolved**: Fixed hardcoded August dates in Generate Games functionality that was overriding correct event configuration
 - **Event Date Integration**: Added proper event.startDate retrieval in both `generateGamesForFlight()` and `generateGamesForEvent()` functions

@@ -7,7 +7,7 @@ import {
   Pencil, PlusCircle, CalendarRange, UserRoundPlus, ClipboardX, ArrowLeft,
   Upload, Wand2, Sparkles, AlertTriangle, CalendarDays, Loader2,
   Trophy, WandSparkles, CheckCircle2, AlertCircle, CreditCard, MapPin,
-  TrendingUp, BarChart2, HelpCircle, Eye, Clock
+  TrendingUp, BarChart2, HelpCircle, Eye, Clock, Download
 } from "lucide-react";
 // Removed ClubLogo import as we now display club name as text
 import { ComplexCard } from "@/components/admin/ComplexCard";
@@ -3867,6 +3867,39 @@ function TeamsView() {
     });
   };
 
+  // Handle financial export for approved teams
+  const handleFinancialExport = async () => {
+    try {
+      const url = new URL('/api/admin/teams/financial-export', window.location.origin);
+      
+      // Add event filter if one is selected
+      if (selectedEvent && selectedEvent !== 'all') {
+        url.searchParams.set('eventId', selectedEvent);
+      }
+      
+      // Create a temporary link element to trigger download
+      const link = document.createElement('a');
+      link.href = url.toString();
+      link.download = ''; // Let the server set the filename
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      toast({
+        title: "Export Started",
+        description: "Financial report will download shortly",
+        variant: "default"
+      });
+    } catch (error) {
+      console.error('Export error:', error);
+      toast({
+        title: "Export Failed",
+        description: "Unable to generate financial report",
+        variant: "destructive"
+      });
+    }
+  };
+
   // Handle team status update
   const handleStatusUpdate = (team: any, status: 'registered' | 'approved' | 'rejected' | 'withdrawn' | 'refunded' | 'waitlisted', notes?: string, skipPayment?: boolean, skipEmail?: boolean) => {
     const statusDisplayMap = {
@@ -4659,6 +4692,18 @@ function TeamsView() {
                 </TabsContent>
                 
                 <TabsContent value="approved">
+                  <div className="mb-4 flex justify-between items-center">
+                    <h4 className="font-semibold text-lg">Approved Teams</h4>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleFinancialExport}
+                      className="flex items-center gap-2"
+                    >
+                      <Download className="h-4 w-4" />
+                      Export Financial Report
+                    </Button>
+                  </div>
                   <div className="shadow-md rounded-xl overflow-hidden border border-gray-200">
                     <Table className="team-list">
                       <TableHeader>
