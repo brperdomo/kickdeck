@@ -15,6 +15,7 @@ Preferred communication style: Simple, everyday language.
 - **CSV Formatting**: Proper CSV formatting with headers, currency formatting ($X.XX), and data sanitization for commas
 - **Error Handling**: Includes proper error handling and user feedback via toast notifications
 - **Authentication Protected**: Endpoint requires admin authentication to ensure secure access to financial data
+- **Production Fix**: Fixed authentication issue where frontend wasn't sending session cookies - now uses authenticated fetch with blob download
 
 **PREVIOUS CHANGES (August 20, 2025)
 **CRITICAL GAME SCHEDULING DATE FIX IMPLEMENTED:**

@@ -3877,24 +3877,52 @@ function TeamsView() {
         url.searchParams.set('eventId', selectedEvent);
       }
       
-      // Create a temporary link element to trigger download
+      // Use fetch to make authenticated request
+      const response = await fetch(url.toString(), {
+        method: 'GET',
+        credentials: 'include', // Include session cookies for authentication
+        headers: {
+          'Accept': 'text/csv'
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Export failed: ${response.status} ${response.statusText}`);
+      }
+      
+      // Get the CSV data as blob
+      const blob = await response.blob();
+      
+      // Get filename from response headers or use default
+      const contentDisposition = response.headers.get('Content-Disposition');
+      let filename = 'financial_report.csv';
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename="([^"]+)"/);
+        if (filenameMatch) {
+          filename = filenameMatch[1];
+        }
+      }
+      
+      // Create download link
+      const downloadUrl = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
-      link.href = url.toString();
-      link.download = ''; // Let the server set the filename
+      link.href = downloadUrl;
+      link.download = filename;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+      window.URL.revokeObjectURL(downloadUrl);
       
       toast({
-        title: "Export Started",
-        description: "Financial report will download shortly",
+        title: "Export Complete",
+        description: "Financial report downloaded successfully",
         variant: "default"
       });
     } catch (error) {
       console.error('Export error:', error);
       toast({
         title: "Export Failed",
-        description: "Unable to generate financial report",
+        description: error instanceof Error ? error.message : "Unable to generate financial report",
         variant: "destructive"
       });
     }
