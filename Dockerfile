@@ -16,12 +16,12 @@ COPY server ./server
 COPY db ./db
 COPY templates ./templates
 COPY uploads ./uploads
-COPY vite.config.ts tsconfig.json theme.json .env.production ./
+COPY vite.config.ts tsconfig.json drizzle.config.ts theme.json .env.production ./
 
 # Build client assets to dist/public/
 RUN npx vite build
 
 ENV NODE_ENV=production
 
-# Run server with tsx (matches Replit deployment — resolves @db path aliases)
-CMD ["npx", "tsx", "server/index.ts"]
+# At startup: push Drizzle schema to create core tables, then start the server
+CMD ["sh", "-c", "npx drizzle-kit push --force && npx tsx server/index.ts"]

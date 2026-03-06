@@ -145,33 +145,21 @@ async function testDbConnection() {
       }
     }
 
-    // Run database migrations - but don't block startup in production
-    if (nodeEnv === "production") {
-      // In production, run migrations in background to speed up startup
-      createTables().then(result => {
-        if (result.success) {
-          log("Database migrations completed successfully");
-        } else {
-          log("Migration failed in production: " + result.error);
-        }
-      }).catch(error => {
-        log("Migration error in production: " + error.message);
-      });
-    } else {
+    // Run database migrations - always await to ensure tables exist before proceeding
+    try {
       const migrationsResult = await createTables();
-      if (!migrationsResult.success) {
-        log(
-          "Migration failed: " +
-            migrationsResult.error +
-            " - retrying in 5 seconds...",
-        );
-        setTimeout(() => createTables(), 5000);
-        return;
+      if (migrationsResult.success) {
+        log("Database migrations completed successfully");
+      } else {
+        log("Migration warning: " + migrationsResult.error);
+        // Continue anyway - drizzle-kit push already created core tables
       }
-      log("Database migrations completed successfully");
+    } catch (error) {
+      log("Migration error: " + (error as Error).message);
+      // Continue anyway - drizzle-kit push already created core tables
     }
 
-    // Create admin user if it doesn't exist
+    // Create admin user if it doesn't exist (must run AFTER migrations)
     await createAdmin();
     log("Admin user setup completed");
 
