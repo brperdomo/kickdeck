@@ -59,8 +59,8 @@ export default function UserDashboard() {
         transition={{ duration: 0.5 }}
         className="space-y-8 mx-auto responsive-container"
       >
-        {/* Welcome Card with gradient border effect */}
-        <Card className="member-card overflow-hidden border border-primary/20">
+        {/* Welcome Card with neon glass-morphism */}
+        <Card className="member-card overflow-hidden neon-glass neon-border-animated">
           <CardHeader className="member-card-header">
             <motion.div
               initial={{ opacity: 0, y: -10 }}
@@ -90,7 +90,7 @@ export default function UserDashboard() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 * index, duration: 0.5 }}
                 >
-                  <Card className="member-card h-full flex flex-col items-center justify-center py-4 px-2">
+                  <Card className="member-card neon-glass h-full flex flex-col items-center justify-center py-4 px-2">
                     <a href={link.href} className="flex flex-col items-center text-center">
                       <div className="mb-2">{link.icon}</div>
                       <CardTitle className="text-sm">{link.title}</CardTitle>
@@ -109,7 +109,7 @@ export default function UserDashboard() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 * index, duration: 0.5 }}
                 >
-                  <Card className="member-card h-full">
+                  <Card className="member-card neon-glass h-full">
                     <CardHeader className="pb-2">
                       <div className="flex items-center justify-between">
                         {link.icon}
@@ -145,7 +145,7 @@ export default function UserDashboard() {
         {/* User Registrations Section */}
         <div>
           <h2 className="text-lg sm:text-xl font-semibold mb-4 section-header">My Registrations</h2>
-          <Card className="member-card">
+          <Card className="member-card neon-glass">
             <CardContent className={isMobile ? "p-2 sm:p-4 pt-4" : "pt-6"}>
               <UserRegistrationsView />
             </CardContent>

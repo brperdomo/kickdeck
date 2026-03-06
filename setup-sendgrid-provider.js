@@ -28,8 +28,8 @@ async function setupSendGridProvider() {
       .where(eq(db.schema.emailProviders.type, 'sendgrid'))
       .limit(1);
 
-    const senderEmail = 'noreply@matchpro.ai'; // Replace with your verified sender
-    const senderName = 'MatchPro'; // Replace with your organization name
+    const senderEmail = 'noreply@kickdeck.io'; // Replace with your verified sender
+    const senderName = 'KickDeck'; // Replace with your organization name
 
     if (providers && providers.length > 0) {
       // Update existing SendGrid provider

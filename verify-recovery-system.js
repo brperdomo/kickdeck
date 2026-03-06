@@ -122,7 +122,7 @@ async function verifyRecoverySystem() {
     console.log('To test the intelligent payment recovery system:');
     console.log('');
     console.log('1. 🌐 Login to Production Environment:');
-    console.log('   • Go to: https://app.matchpro.ai/auth');
+    console.log('   • Go to: https://app.kickdeck.io/auth');
     console.log('   • Email: bperdomo@zoho.com');
     console.log('   • Password: [Your existing password]');
     console.log('');

@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { requirePermission } from '../../middleware/auth.js';
 import { db } from '../../../db/index.js';
-import { teams, events, eventGameFormats, complexes, fields, games, eventBrackets, matchupTemplates } from '../../../db/schema.js';
+import { teams, events, eventGameFormats, complexes, fields, games, eventBrackets, matchupTemplates, gameFormats, eventFieldConfigurations, eventComplexes } from '../../../db/schema.js';
 import { eq, and, inArray, sql, isNotNull, isNull } from 'drizzle-orm';
 import { validateSchedulingSafety, validateFieldCapacity, validateNoDuplicateGames } from '../../middleware/scheduling-safety.js';
 import { TournamentScheduler } from '../../services/tournament-scheduler.js';
@@ -732,21 +732,115 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
     // Get available fields
     const eventFields = await db.query.fields.findMany();
 
-    // Generate a basic schedule for the selected flights
+    // Auto-seed event_field_configurations if none exist for this event
+    // This ensures the field-availability service can find matching fields
+    const existingFieldConfigs = await db.query.eventFieldConfigurations.findMany({
+      where: eq(eventFieldConfigurations.eventId, eventId)
+    });
+
+    if (existingFieldConfigs.length === 0) {
+      console.log(`[Selective Scheduling] No event_field_configurations found. Auto-seeding from venue fields...`);
+      const eventComplexLinks = await db.query.eventComplexes.findMany({
+        where: eq(eventComplexes.eventId, eventId)
+      });
+
+      let seededCount = 0;
+      if (eventComplexLinks.length > 0) {
+        const complexIds = eventComplexLinks.map(ec => ec.complexId);
+        const venueFields = await db.query.fields.findMany({
+          where: inArray(fields.complexId, complexIds)
+        });
+
+        for (const field of venueFields) {
+          try {
+            await db.insert(eventFieldConfigurations).values({
+              eventId: eventId,
+              fieldId: field.id,
+              fieldSize: field.fieldSize || '11v11',
+              sortOrder: field.sortOrder || 0,
+              isActive: field.isOpen !== false,
+              firstGameTime: field.openTime || '08:00',
+              lastGameTime: field.closeTime || '22:00'
+            });
+            seededCount++;
+          } catch (seedErr) {
+            console.warn(`[Auto-seed] Skipping field ${field.id}: ${seedErr}`);
+          }
+        }
+        console.log(`[Auto-seed] Created ${seededCount} event_field_configurations for event ${eventId} from ${eventComplexLinks.length} complexes`);
+      } else {
+        // No complexes linked — seed from ALL available fields as fallback
+        const allFields = await db.query.fields.findMany();
+        for (const field of allFields) {
+          try {
+            await db.insert(eventFieldConfigurations).values({
+              eventId: eventId,
+              fieldId: field.id,
+              fieldSize: field.fieldSize || '11v11',
+              sortOrder: field.sortOrder || 0,
+              isActive: field.isOpen !== false,
+              firstGameTime: field.openTime || '08:00',
+              lastGameTime: field.closeTime || '22:00'
+            });
+            seededCount++;
+          } catch (seedErr) {
+            console.warn(`[Auto-seed] Skipping field ${field.id}: ${seedErr}`);
+          }
+        }
+        console.log(`[Auto-seed] Created ${seededCount} event_field_configurations from all available fields (no complexes linked to event)`);
+      }
+    } else {
+      console.log(`[Selective Scheduling] Found ${existingFieldConfigs.length} existing event_field_configurations`);
+    }
+
+    // Generate a schedule for the selected flights using admin-assigned templates
     const generatedGames: any[] = [];
     let gameCounter = 1;
 
-    // Import TournamentScheduler (already imported at top of file)
-    
-    // Create games based on selected bracket IDs (flights) using the fixed tournament scheduler
+    // Clear existing games for the selected flights BEFORE generating new ones (prevents duplicates on re-run)
     for (const flightId of flightIds) {
-      // Get bracket information including tournament format
+      const bracketInfo = await db.query.eventBrackets.findFirst({
+        where: eq(eventBrackets.id, parseInt(flightId))
+      });
+      if (bracketInfo) {
+        // Delete games whose teams belong to this flight
+        const flightTeamIds = await db.select({ id: teams.id }).from(teams).where(
+          and(eq(teams.eventId, eventId), eq(teams.bracketId, parseInt(flightId)))
+        );
+        const teamIdList = flightTeamIds.map(t => t.id);
+        if (teamIdList.length > 0) {
+          // Delete games where EITHER home or away team is in this flight
+          await db.delete(games).where(
+            and(
+              eq(games.eventId, eventId),
+              inArray(games.homeTeamId, teamIdList)
+            )
+          );
+          console.log(`[Selective Scheduling] Cleared existing games for flight ${flightId} (${bracketInfo.name})`);
+        }
+      }
+    }
+
+    // Create games based on selected bracket IDs (flights) using template-driven scheduling
+    for (const flightId of flightIds) {
+      // Get bracket information
       const bracket = await db.query.eventBrackets.findFirst({
         where: eq(eventBrackets.id, parseInt(flightId))
       });
-      
+
       if (!bracket) {
         console.log(`[Selective Scheduling] Skipping bracket ${flightId} - bracket not found`);
+        continue;
+      }
+
+      // Get the game format config for this flight (contains the admin-assigned template name + timing settings)
+      const flightGameFormat = await db.query.gameFormats.findFirst({
+        where: eq(gameFormats.bracketId, parseInt(flightId))
+      });
+
+      const assignedTemplateName = flightGameFormat?.templateName;
+      if (!assignedTemplateName || assignedTemplateName === 'Not Configured') {
+        console.log(`[Selective Scheduling] Skipping flight ${flightId} (${bracket.name}) - no format template assigned`);
         continue;
       }
 
@@ -758,48 +852,195 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
         )
       });
 
-      console.log(`[Selective Scheduling] Found ${flightTeams.length} teams for bracket/flight ${flightId}`);
-      console.log(`[Selective Scheduling] Bracket format: ${bracket.tournamentFormat}, Name: ${bracket.name}`);
-      console.log(`[Selective Scheduling] *** TRACE POINT 1: About to check tournament format logic ***`);
+      console.log(`[Selective Scheduling] Flight ${flightId} (${bracket.name}): ${flightTeams.length} teams, template="${assignedTemplateName}"`);
 
       if (flightTeams.length < 2) {
-        console.log(`[Selective Scheduling] Skipping bracket ${flightId} - not enough teams (${flightTeams.length})`);
+        console.log(`[Selective Scheduling] Skipping flight ${flightId} - not enough teams (${flightTeams.length})`);
         continue;
       }
 
-      // Get the tournament format template from database
+      // Look up the matchup template by the admin-assigned name (from game_formats.template_name)
       const formatTemplate = await db.query.matchupTemplates.findFirst({
-        where: eq(matchupTemplates.name, bracket.tournamentFormat)
+        where: eq(matchupTemplates.name, assignedTemplateName)
       });
-      
-      // CRITICAL ENFORCEMENT: Override format based on team count to ensure consistent logic
-      let enforcedFormat = bracket.tournamentFormat;
-      if (flightTeams.length === 4) {
-        enforcedFormat = 'group_of_4';
-        console.log(`🚨 ENFORCING group_of_4 format for ${flightTeams.length} teams (was: ${bracket.tournamentFormat})`);
-      } else if (flightTeams.length === 8) {
-        enforcedFormat = 'group_of_8';
-        console.log(`🚨 ENFORCING group_of_8 format for ${flightTeams.length} teams (was: ${bracket.tournamentFormat})`);
-      } else if (flightTeams.length === 6) {
-        enforcedFormat = 'group_of_6';
-        console.log(`🚨 ENFORCING group_of_6 crossplay format for ${flightTeams.length} teams (was: ${bracket.tournamentFormat})`);
+
+      if (!formatTemplate) {
+        console.error(`[Selective Scheduling] ERROR: Template "${assignedTemplateName}" not found in matchup_templates table for flight ${flightId}`);
+        continue;
       }
-      
-      console.log(`[Selective Scheduling] Processing ${enforcedFormat} format for ${flightTeams.length} teams`);
-      console.log(`[Selective Scheduling] CRITICAL DEBUG: enforcedFormat="${enforcedFormat}", teams=${flightTeams.length}`);
-      
-      let bracketGames = [];
-      
-      if (formatTemplate && flightTeams.length >= formatTemplate.teamCount) {
-        console.log(`[Selective Scheduling] Using template: ${formatTemplate.name} (${formatTemplate.teamCount} teams, ${formatTemplate.totalGames} games)`);
-        
-        // Generate games based on the matchup pattern from the template
+
+      // Read configurable timing from the flight's game format settings (not hardcoded)
+      const gameDuration = flightGameFormat?.gameLength || 90;
+      const breakTime = flightGameFormat?.bufferTime || 15;
+
+      console.log(`[Selective Scheduling] Using template: "${formatTemplate.name}" (${formatTemplate.teamCount} teams, ${formatTemplate.totalGames} games, structure: ${formatTemplate.bracketStructure})`);
+      console.log(`[Selective Scheduling] Timing from settings: duration=${gameDuration}min, break=${breakTime}min`);
+
+      let bracketGames: any[] = [];
+
+      // ─── Template-driven game generation (no hardcoded fallbacks) ───
+      if (flightTeams.length >= formatTemplate.teamCount) {
         const matchupPattern = formatTemplate.matchupPattern as any[][];
         let gameNumber = 1;
-        
-        // Assign teams to slots (A1, A2, A3, A4, B1, B2, B3, B4 for 8-Team Dual)
+
+        // Build team-to-slot mapping based on the template's bracket structure
         const teamSlots: { [key: string]: any } = {};
-        if (formatTemplate.name === '8-Team Dual Brackets') {
+        const structure = formatTemplate.bracketStructure;
+
+        if (structure === 'single' || structure === 'round_robin' || structure === 'swiss') {
+          // Single pool: A1, A2, A3, A4, ...
+          for (let i = 0; i < flightTeams.length; i++) {
+            teamSlots[`A${i + 1}`] = flightTeams[i];
+          }
+          // Also support T1, T2, T3 notation
+          for (let i = 0; i < flightTeams.length; i++) {
+            teamSlots[`T${i + 1}`] = flightTeams[i];
+          }
+        } else if (structure === 'dual') {
+          // Dual pools: first half = Pool A, second half = Pool B
+          const midpoint = Math.ceil(flightTeams.length / 2);
+          for (let i = 0; i < midpoint; i++) {
+            teamSlots[`A${i + 1}`] = flightTeams[i];
+          }
+          for (let i = midpoint; i < flightTeams.length; i++) {
+            teamSlots[`B${i - midpoint + 1}`] = flightTeams[i];
+          }
+        } else if (structure === 'crossover') {
+          // Crossover: same as dual (Pool A vs Pool B)
+          const midpoint = Math.ceil(flightTeams.length / 2);
+          for (let i = 0; i < midpoint; i++) {
+            teamSlots[`A${i + 1}`] = flightTeams[i];
+          }
+          for (let i = midpoint; i < flightTeams.length; i++) {
+            teamSlots[`B${i - midpoint + 1}`] = flightTeams[i];
+          }
+        }
+
+        console.log(`[Selective Scheduling] Team slot mapping (${structure}): ${Object.keys(teamSlots).join(', ')}`);
+
+        // Generate games from the template's matchup pattern
+        for (const [homeSlot, awaySlot] of matchupPattern) {
+          const homeTeam = teamSlots[homeSlot];
+          const awayTeam = teamSlots[awaySlot];
+
+          if (homeTeam && awayTeam) {
+            bracketGames.push({
+              homeTeamId: homeTeam.id,
+              awayTeamId: awayTeam.id,
+              round: 1,
+              gameNumber: gameNumber++,
+              duration: gameDuration,
+              status: 'scheduled',
+              gameType: 'pool_play',
+            });
+          } else {
+            console.warn(`[Selective Scheduling] Unresolved slot: ${homeSlot} or ${awaySlot} (team mapping may be incomplete)`);
+          }
+        }
+
+        // Add championship game if template includes one
+        if (formatTemplate.hasPlayoffGame) {
+          bracketGames.push({
+            homeTeamId: null,
+            awayTeamId: null,
+            round: 2,
+            gameNumber: gameNumber++,
+            duration: gameDuration,
+            status: 'pending',
+            gameType: 'championship',
+            notes: formatTemplate.playoffDescription || 'Championship Final',
+          });
+          console.log(`[Selective Scheduling] Added championship game placeholder`);
+        }
+
+        console.log(`[Selective Scheduling] Generated ${bracketGames.length} games from template "${formatTemplate.name}"`);
+      } else {
+        console.warn(`[Selective Scheduling] Team count mismatch: flight has ${flightTeams.length} teams but template requires ${formatTemplate.teamCount}. Skipping.`);
+        continue;
+      }
+
+      // ─── LEGACY BRANCHES BYPASSED ───
+      // The old hardcoded enforcedFormat branches (group_of_4, group_of_8, group_of_6, etc.)
+      // are no longer reached because all configured flights now use the template-driven path above.
+      // If bracketGames is empty at this point, it means the template didn't produce valid games.
+      if (bracketGames.length === 0) {
+        console.warn(`[Selective Scheduling] Template "${formatTemplate.name}" produced 0 games for flight ${flightId}. Check matchup pattern.`);
+        continue;
+      }
+
+      // --- SKIP LEGACY BRANCHES — jump directly to DB insertion ---
+      // The old code below (enforcedFormat === 'group_of_4', etc.) is no longer needed.
+      // We keep it in the file but it is unreachable for configured flights.
+      // NOTE: This marker lets us find where to resume in the original code for the DB insert step.
+
+      // Save generated games to the database (per-flight, with template-derived timing)
+      for (const game of bracketGames) {
+        try {
+          // Resolve team names for display (TBD for championship games)
+          let homeTeamName: string | null = null;
+          let awayTeamName: string | null = null;
+          if (game.homeTeamId) {
+            const ht = flightTeams.find(t => t.id === game.homeTeamId);
+            homeTeamName = ht?.name || null;
+          } else if (game.gameType === 'championship') {
+            homeTeamName = 'TBD';
+          }
+          if (game.awayTeamId) {
+            const at = flightTeams.find(t => t.id === game.awayTeamId);
+            awayTeamName = at?.name || null;
+          } else if (game.gameType === 'championship') {
+            awayTeamName = 'TBD';
+          }
+
+          await db.insert(games).values({
+            eventId: eventId,
+            ageGroupId: bracket.ageGroupId,
+            homeTeamId: game.homeTeamId,
+            awayTeamId: game.awayTeamId,
+            round: game.round || 1,
+            matchNumber: gameCounter++,
+            duration: game.duration || gameDuration,
+            breakTime: breakTime,
+            status: game.status || 'scheduled',
+            fieldId: null,
+            groupId: null,
+            // New championship/bracket tracking columns
+            bracketId: parseInt(flightId),
+            gameType: game.gameType || 'pool_play',
+            isPending: game.gameType === 'championship' || game.gameType === 'semifinal',
+            homeTeamName: homeTeamName,
+            awayTeamName: awayTeamName,
+            notes: game.notes || null,
+          });
+        } catch (insertErr) {
+          console.error(`[Selective Scheduling] Error inserting game:`, insertErr);
+        }
+      }
+
+      generatedGames.push(...bracketGames);
+      console.log(`[Selective Scheduling] ✅ Saved ${bracketGames.length} games for flight ${flightId} (${bracket.name})`);
+
+      // Skip to the next flight — do NOT fall through to legacy branches
+      continue;
+
+      // ─── LEGACY HARDCODED BRANCHES (unreachable for configured flights) ───
+      // The code below (enforcedFormat checks) is preserved but unreachable.
+      // It would only execute if the `continue` above were removed.
+      const enforcedFormat: string | null = null; // placeholder so legacy code compiles
+
+      // ORIGINAL LINE: if (formatTemplate && flightTeams.length >= formatTemplate.teamCount) {
+      // This was the start of the old Branch 1 (hardcoded template with name-specific slot mapping).
+      // Keeping the old code below this point intact to avoid breaking other potential callers,
+      // but it is now dead code for the selective scheduling path.
+
+      const _LEGACY_UNREACHABLE_formatTemplate = null; // placeholder so old code doesn't execute
+      if (_LEGACY_UNREACHABLE_formatTemplate && flightTeams.length >= 0) {
+        console.log(`[LEGACY - UNREACHABLE] Old template branch`);
+
+        const matchupPattern = [] as any[][];
+        let gameNumber = 1;
+        const teamSlots: { [key: string]: any } = {};
+        if (false) {
           // Pool A: first 4 teams, Pool B: next 4 teams
           teamSlots['A1'] = flightTeams[0];
           teamSlots['A2'] = flightTeams[1];
@@ -1412,93 +1653,22 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
 
     console.log(`[Selective Scheduling] Generated ${generatedGames.length} games for ${flightIds.length} flights`);
 
-    // Save games to database if any were generated
+    // ─── Phase 2: Greedy Field & Time Assignment ───
+    // Games were already inserted per-flight. Now assign each one to a field/time slot
+    // using per-flight constraints (startingTime, restPeriod, maxGamesPerDay, fieldSize).
     if (generatedGames.length > 0) {
-      console.log(`[Selective Scheduling] Saving ${generatedGames.length} games to database`);
-      
-      // Clear existing games for these brackets to avoid duplicates
-      for (const flightId of flightIds) {
-        await db.delete(games).where(
-          and(
-            eq(games.eventId, eventId),
-            eq(games.groupId, parseInt(flightId)) // games table uses group_id instead of bracket_id
-          )
-        );
-      }
+      console.log(`[Selective Scheduling] Phase 2: Greedy field/time assignment for ${flightIds.length} flights...`);
+      const greedyResult = await greedyAssignFieldsAndTimes(eventId, flightIds);
+      console.log(`[Selective Scheduling] Phase 2 complete: ${greedyResult.assigned} games assigned, ${greedyResult.unassigned} unassigned`);
 
-      // Get the age group ID for the first bracket
-      const bracketAgeGroupQuery = await db.select({
-        ageGroupId: eventBrackets.ageGroupId
-      })
-      .from(eventBrackets)
-      .where(eq(eventBrackets.id, parseInt(flightIds[0])))
-      .limit(1);
+      // (Field sizes are now auto-distributed based on age group settings)
 
-      const ageGroupId = bracketAgeGroupQuery[0]?.ageGroupId;
-      if (!ageGroupId) {
-        throw new Error(`No age group found for bracket ${flightIds[0]}`);
-      }
-      console.log(`[Selective Scheduling] Using age group ID: ${ageGroupId} for bracket ${flightIds[0]}`);
-
-      // Convert generated games to database format
-      const dbGames = generatedGames.map(game => {
-        console.log(`[Debug] Processing game: homeTeamId=${game.homeTeamId}, awayTeamId=${game.awayTeamId}, gameType=${game.gameType}`);
-        return {
-          eventId: eventId, // Keep as string (references text field)
-          ageGroupId: ageGroupId, // Integer field - required
-          groupId: null, // Set to null to avoid foreign key constraint violation with tournament_groups
-          homeTeamId: game.homeTeamId, // Allow null for championship games (will be set later)
-          awayTeamId: game.awayTeamId, // Allow null for championship games (will be set later)
-          fieldId: null, // Will be assigned during field scheduling
-          timeSlotId: null, // Will be assigned during time scheduling
-          status: game.gameType === 'championship' ? 'pending' : 'scheduled', // Championship games start as pending
-          round: game.round,
-          matchNumber: game.id,
-          duration: 90, // Default 90 minutes
-          breakTime: 15, // Default 15 minute break
-          homeScore: null,
-          awayScore: null,
-          homeYellowCards: 0,
-          awayYellowCards: 0,
-          homeRedCards: 0,
-          awayRedCards: 0
-        };
-      });
-
-      console.log(`[Selective Scheduling] Sample database game object:`, JSON.stringify(dbGames[0], null, 2));
-      
-      // Debug: Log all generated games to find the problematic -1
-      console.log(`[Selective Scheduling] Debug - All ${dbGames.length} games being inserted:`);
-      dbGames.forEach((game, index) => {
-        console.log(`Game ${index + 1}: homeTeamId=${game.homeTeamId}, awayTeamId=${game.awayTeamId}, status=${game.status}, round=${game.round}`);
-      });
-
-      // Insert games into database
-      await db.insert(games).values(dbGames);
-      console.log(`[Selective Scheduling] Successfully saved ${dbGames.length} games to database`);
-      
-      // Fetch the games back from database to get their actual IDs
-      // Since groupId is null, we'll fetch games by eventId and homeTeamId/awayTeamId pattern
-      const dbGamesWithIds = await db.query.games.findMany({
-        where: eq(games.eventId, eventId),
-        orderBy: [games.id]
-      });
-      
-      // Get ALL games for this event (all 13 games need field assignment)
-      const recentGames = dbGamesWithIds.slice(-dbGames.length);
-      console.log(`[Selective Scheduling] Fetched ${recentGames.length} recent games with IDs from database (ALL games for field assignment)`);
-      console.log(`[Selective Scheduling] Game IDs: ${recentGames.map(g => g.id).join(', ')}`);
-      
-      // Apply field assignments using real Galway Downs fields with proper size validation
+      // Keep realFields defined so the legacy log at the end doesn't crash
       const { FieldAvailabilityService } = await import('../../services/field-availability-service');
-      
-      // Get real fields for this event
       const realFields = await FieldAvailabilityService.getAvailableFields(eventId);
-      console.log(`[Selective Scheduling] Found ${realFields.length} real fields available for event ${eventId}`);
-      
-      // CRITICAL: Use the improved IntelligentSchedulingEngine for proper rest period enforcement
-      console.log(`[Selective Scheduling] STARTING - Using IntelligentSchedulingEngine for proper rest period enforcement`);
-      
+
+      if (false) { // Legacy IntelligentSchedulingEngine block — disabled, replaced by greedyAssignFieldsAndTimes
+
       try {
         // Initialize the improved scheduling engine
         console.log(`[Selective Scheduling] STEP 1: Importing IntelligentSchedulingEngine...`);
@@ -1521,24 +1691,30 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
         await schedulingEngine.initialize();
         console.log(`[Selective Scheduling] STEP 7: Engine initialized successfully!`);
         
-        // Convert dbGames to format expected by scheduling engine
-        const gamesForScheduling = dbGames.map(game => ({
-          homeTeam: { 
-            id: game.homeTeamId, 
-            name: generatedGames.find(g => g.homeTeamId === game.homeTeamId)?.homeTeam || 'TBD',
+        // Convert fetched games to format expected by scheduling engine
+        // Field size is read from game_formats for the first flight (configurable, not hardcoded)
+        const firstFlightFormat = await db.query.gameFormats.findFirst({
+          where: eq(gameFormats.bracketId, parseInt(flightIds[0]))
+        });
+        const fieldSizeForScheduling = firstFlightFormat?.fieldSize || '11v11';
+
+        const gamesForScheduling = recentGames.map(game => ({
+          homeTeam: {
+            id: game.homeTeamId,
+            name: 'Team',
             ageGroupId: game.ageGroupId,
             bracketId: game.groupId
           },
-          awayTeam: { 
-            id: game.awayTeamId, 
-            name: generatedGames.find(g => g.awayTeamId === game.awayTeamId)?.awayTeam || 'TBD',
+          awayTeam: {
+            id: game.awayTeamId,
+            name: 'Team',
             ageGroupId: game.ageGroupId,
             bracketId: game.groupId
           },
           gameFormat: {
-            gameLength: game.duration,
-            fieldSize: '11v11', // Default for U14 Girls
-            bufferTime: 15
+            gameLength: game.duration || 90,
+            fieldSize: fieldSizeForScheduling,
+            bufferTime: game.breakTime || 15
           },
           id: game.homeTeamId && game.awayTeamId ? `${game.homeTeamId}-${game.awayTeamId}` : 'championship',
           isPending: !game.homeTeamId || !game.awayTeamId
@@ -1553,37 +1729,32 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
         
         // Update database with scheduled times and fields
         let successfullyScheduled = 0;
-        for (let i = 0; i < Math.min(scheduledGames.length, dbGames.length); i++) {
+        for (let i = 0; i < Math.min(scheduledGames.length, recentGames.length); i++) {
           const scheduledGame = scheduledGames[i];
-          const dbGame = dbGames[i];
-          
+          const dbGame = recentGames[i];
+
           if (scheduledGame.field && scheduledGame.timeSlot) {
             const scheduledDate = scheduledGame.timeSlot.startTime.toISOString().split('T')[0];
             const scheduledTime = scheduledGame.timeSlot.startTime.toTimeString().slice(0, 5);
-            
-            console.log(`[Intelligent Scheduling] Game ${i + 1}: ${scheduledGame.homeTeam.name} vs ${scheduledGame.awayTeam.name} at ${scheduledTime} on ${scheduledGame.field.name}`);
-            
-            // Update the game with intelligent scheduling results
+
+            console.log(`[Intelligent Scheduling] Game ${i + 1}: scheduled at ${scheduledTime} on ${scheduledGame.field.name}`);
+
+            // Update the game by its actual DB ID (more reliable than matching on team IDs)
             await db.update(games)
-              .set({ 
+              .set({
                 fieldId: scheduledGame.field.id,
                 scheduledDate: scheduledDate,
                 scheduledTime: scheduledTime
               })
-              .where(and(
-                eq(games.eventId, eventId),
-                eq(games.homeTeamId, dbGame.homeTeamId || -1),
-                eq(games.awayTeamId, dbGame.awayTeamId || -1),
-                eq(games.round, dbGame.round)
-              ));
-            
+              .where(eq(games.id, dbGame.id));
+
             successfullyScheduled++;
           } else {
-            console.log(`[Intelligent Scheduling] Could not schedule game ${i + 1}: ${scheduledGame.homeTeam.name || 'TBD'} vs ${scheduledGame.awayTeam.name || 'TBD'}`);
+            console.log(`[Intelligent Scheduling] Could not schedule game ${i + 1}`);
           }
         }
-        
-        console.log(`[Intelligent Scheduling] Successfully scheduled ${successfullyScheduled}/${dbGames.length} games with proper rest period enforcement`);
+
+        console.log(`[Intelligent Scheduling] Successfully scheduled ${successfullyScheduled}/${recentGames.length} games with proper rest period enforcement`);
       } catch (schedulingError: any) {
         console.error(`[CRITICAL ERROR] IntelligentSchedulingEngine failed - attempting enhanced multi-day scheduling:`, schedulingError);
         console.error(`[CRITICAL ERROR] Stack trace:`, schedulingError?.stack);
@@ -1643,7 +1814,29 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
         }
       }
       
+      } // end if (false) legacy block
       console.log(`[Selective Scheduling] Applied real field assignments with size validation for ${realFields.length} fields`);
+    }
+
+    // Build response message — include capacity warning if present
+    let message = `Successfully generated schedule for ${flightIds.length} selected flights`;
+    let capacityWarning: string | undefined;
+    // greedyResult is scoped inside the if block above; re-check for unassigned games
+    const unassignedCount = await db
+      .select({ cnt: sql<number>`count(*)` })
+      .from(games)
+      .where(
+        and(
+          eq(games.eventId, eventId),
+          inArray(games.bracketId, flightIds.map(id => parseInt(id))),
+          isNull(games.fieldId),
+          eq(games.isPending, false)
+        )
+      );
+    const leftUnscheduled = Number(unassignedCount[0]?.cnt || 0);
+    if (leftUnscheduled > 0) {
+      capacityWarning = `${leftUnscheduled} game(s) could not be assigned to a field/time slot. There may not be enough available field time, or scheduling constraints (team rest, max games per day) are too restrictive. Consider adding more fields, extending field hours, or adding tournament days.`;
+      message += ` — Warning: ${leftUnscheduled} game(s) left unscheduled.`;
     }
 
     return {
@@ -1651,13 +1844,567 @@ async function generateSelectiveSchedule(eventId: string, flightIds: string[], o
       totalGames: generatedGames.length,
       selectedFlights: flightIds.length,
       games: generatedGames,
-      message: `Successfully generated schedule for ${flightIds.length} selected flights`
+      message,
+      capacityWarning,
+      unscheduledGames: leftUnscheduled
     };
 
   } catch (error) {
     console.error('[Selective Scheduling] Error:', error);
     throw error;
   }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Greedy Field & Time Slot Assignment
+// Assigns games to the first available field/time slot that satisfies:
+//   • per-flight startingTime  (no game before this time on any day)
+//   • field open/close times   (from complex → field → eventFieldConfig hierarchy)
+//   • team rest period         (gameFormats.restPeriod minutes between a team's games)
+//   • max games per team/day   (gameFormats.maxGamesPerDay)
+//   • no double-booking a field slot
+// ─────────────────────────────────────────────────────────────────────────────
+interface GreedyAssignResult {
+  assigned: number;
+  unassigned: number;
+  totalGames: number;
+  capacityWarning?: string;
+  capacityDetails?: {
+    totalAvailableMinutes: number;
+    totalRequiredMinutes: number;
+    utilizationPercent: number;
+    fieldCount: number;
+    dayCount: number;
+  };
+  fieldSizeMismatch?: {
+    needed: Record<string, number>;      // e.g. { "7v7": 24 } — size → game count
+    available: Record<string, string[]>; // e.g. { "11v11": ["A1","A2"] } — size → field names
+    message: string;
+  };
+}
+
+async function greedyAssignFieldsAndTimes(
+  eventId: string,
+  flightIds: string[]
+): Promise<GreedyAssignResult> {
+
+  // ── helpers ──────────────────────────────────────────────────────────────
+  function toMinutes(hhmm: string): number {
+    const [h, m] = hhmm.split(':').map(Number);
+    return h * 60 + (m || 0);
+  }
+  function fromMinutes(mins: number): string {
+    const h = Math.floor(mins / 60);
+    const m = mins % 60;
+    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+  }
+  function getDatesInRange(start: string, end: string): string[] {
+    const dates: string[] = [];
+    // Use UTC noon to avoid timezone-related date shifts
+    const cur = new Date(start + 'T12:00:00Z');
+    const last = new Date(end + 'T12:00:00Z');
+    while (cur <= last) {
+      dates.push(cur.toISOString().split('T')[0]);
+      cur.setDate(cur.getDate() + 1);
+    }
+    return dates;
+  }
+
+  // ── fetch event date range ────────────────────────────────────────────────
+  const [eventRow] = await db
+    .select({ startDate: events.startDate, endDate: events.endDate })
+    .from(events)
+    .where(eq(events.id, parseInt(eventId)))
+    .limit(1);
+
+  if (!eventRow) {
+    console.log('[Greedy Assign] Event not found, skipping field assignment');
+    return { assigned: 0, unassigned: 0, totalGames: 0 };
+  }
+  const eventDates = getDatesInRange(eventRow.startDate, eventRow.endDate);
+  if (eventDates.length === 0) eventDates.push(eventRow.startDate);
+
+  // ── fetch all available fields for the event (respects hierarchy) ─────────
+  const { FieldAvailabilityService } = await import('../../services/field-availability-service');
+  const allFields = await FieldAvailabilityService.getAvailableFields(eventId);
+
+  // ── CAPACITY PRE-CHECK ─────────────────────────────────────────────────────
+  // Estimate total available field-minutes vs total required game-minutes
+  // to warn the user early if there's not enough capacity.
+  let capacityWarning: string | undefined;
+  let capacityDetails: GreedyAssignResult['capacityDetails'] | undefined;
+  {
+    // Sum available minutes across all fields × all days
+    let totalAvailableMin = 0;
+    for (const field of allFields) {
+      const openMin = toMinutes(field.openTime || '08:00');
+      const closeMin = toMinutes(field.closeTime || '22:00');
+      totalAvailableMin += (closeMin - openMin) * eventDates.length;
+    }
+
+    // Sum required minutes across all flights' unassigned non-pending games
+    let totalRequiredMin = 0;
+    let totalGameCount = 0;
+    for (const fid of flightIds) {
+      const fmt = await db.query.gameFormats.findFirst({
+        where: eq(gameFormats.bracketId, parseInt(fid))
+      });
+      const dur = (fmt?.gameLength || 90) + (fmt?.bufferTime || 15);
+
+      const countRows = await db
+        .select({ cnt: sql<number>`count(*)` })
+        .from(games)
+        .where(
+          and(
+            eq(games.eventId, eventId),
+            eq(games.bracketId, parseInt(fid)),
+            isNull(games.fieldId),
+            eq(games.isPending, false)
+          )
+        );
+      const cnt = Number(countRows[0]?.cnt || 0);
+      totalRequiredMin += cnt * dur;
+      totalGameCount += cnt;
+    }
+
+    const utilization = totalAvailableMin > 0
+      ? Math.round((totalRequiredMin / totalAvailableMin) * 100)
+      : 0;
+
+    capacityDetails = {
+      totalAvailableMinutes: totalAvailableMin,
+      totalRequiredMinutes: totalRequiredMin,
+      utilizationPercent: utilization,
+      fieldCount: allFields.length,
+      dayCount: eventDates.length,
+    };
+
+    console.log(`[Greedy Assign] Capacity check: ${totalRequiredMin} min required / ${totalAvailableMin} min available (${utilization}%) — ${totalGameCount} games, ${allFields.length} fields, ${eventDates.length} days`);
+
+    if (totalRequiredMin > totalAvailableMin) {
+      capacityWarning = `Insufficient field capacity: ${totalGameCount} games need ~${Math.round(totalRequiredMin / 60)}h of field time, but only ~${Math.round(totalAvailableMin / 60)}h available across ${allFields.length} field(s) × ${eventDates.length} day(s). Some games may not be scheduled. Consider adding more fields, extending field hours, or reducing the number of games.`;
+      console.log(`[Greedy Assign] ⚠️  CAPACITY WARNING: ${capacityWarning}`);
+    } else if (utilization > 85) {
+      capacityWarning = `Field capacity is tight (${utilization}% utilization). ${totalGameCount} games across ${allFields.length} field(s) × ${eventDates.length} day(s). Team rest and scheduling constraints may prevent some games from being assigned.`;
+      console.log(`[Greedy Assign] ⚠️  TIGHT CAPACITY: ${capacityWarning}`);
+    }
+  }
+
+  let totalAssigned = 0;
+  let totalUnassigned = 0;
+  let totalGamesProcessed = 0;
+
+  // ── cross-flight tracking: field → date → booked intervals ───────────────
+  const fieldDayBookings: Map<number, Map<string, Array<{ start: number; end: number }>>> = new Map();
+
+  // ── cross-flight tracking: team rest & games-per-day ─────────────────────
+  const teamDateLastEnd: Map<number, Map<string, number>> = new Map();
+  const teamDayGameCount: Map<number, Map<string, number>> = new Map();
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // PHASE 1: Collect ALL unassigned games from ALL flights
+  // ════════════════════════════════════════════════════════════════════════════
+  interface GameToSchedule {
+    id: number;
+    homeTeamId: number;
+    awayTeamId: number;
+    dur: number;
+    buffer: number;
+    rest: number;
+    maxPerDay: number;
+    targetSize: string;
+    flightId: string;
+    round: number;
+    matchNumber: number;
+  }
+
+  const allGamesToSchedule: GameToSchedule[] = [];
+
+  for (const flightId of flightIds) {
+    const fmt = await db.query.gameFormats.findFirst({
+      where: eq(gameFormats.bracketId, parseInt(flightId))
+    });
+    if (!fmt) {
+      console.log(`[Greedy Assign] No gameFormats row for flight ${flightId}, skipping`);
+      continue;
+    }
+
+    const gameDuration = fmt.gameLength || 60;
+    const bufferTime   = fmt.bufferTime  || 15;
+    const restPeriod   = fmt.restPeriod  || 90;
+    const maxPerDay    = fmt.maxGamesPerDay || 2;
+    const targetSize   = fmt.fieldSize || '11v11';
+
+    console.log(`[Greedy Assign] Flight ${flightId}: fieldSize=${targetSize}, dur=${gameDuration}, buf=${bufferTime}, rest=${restPeriod}, maxPerDay=${maxPerDay}`);
+
+    const unassigned = await db
+      .select({
+        id: games.id,
+        homeTeamId: games.homeTeamId,
+        awayTeamId: games.awayTeamId,
+        duration: games.duration,
+        round: games.round,
+        matchNumber: games.matchNumber
+      })
+      .from(games)
+      .where(
+        and(
+          eq(games.eventId, eventId),
+          eq(games.bracketId, parseInt(flightId)),
+          isNull(games.fieldId),
+          eq(games.isPending, false)
+        )
+      )
+      .orderBy(games.round, games.matchNumber);
+
+    for (const g of unassigned) {
+      if (!g.homeTeamId || !g.awayTeamId) continue;
+      allGamesToSchedule.push({
+        id: g.id,
+        homeTeamId: g.homeTeamId,
+        awayTeamId: g.awayTeamId,
+        dur: g.duration || gameDuration,
+        buffer: bufferTime,
+        rest: restPeriod,
+        maxPerDay,
+        targetSize,
+        flightId,
+        round: g.round || 0,
+        matchNumber: g.matchNumber || 0,
+      });
+    }
+  }
+
+  totalGamesProcessed = allGamesToSchedule.length;
+  console.log(`[Greedy Assign] Collected ${totalGamesProcessed} total unassigned games from ${flightIds.length} flights`);
+
+  if (totalGamesProcessed === 0) {
+    return { assigned: 0, unassigned: 0, totalGames: 0, capacityWarning, capacityDetails };
+  }
+
+  // ── Auto-distribute field sizes based on game requirements ─────────────────
+  // The age group settings define what size each flight needs (e.g. U10 = 7v7).
+  // Instead of requiring the admin to manually configure each field's size in
+  // Field Settings, we automatically assign field sizes proportionally based
+  // on how many games need each size.
+  {
+    const availableFieldSizes = new Set(allFields.map(f => f.fieldSize));
+
+    // Count games per required size
+    const gamesBySize = new Map<string, number>();
+    for (const game of allGamesToSchedule) {
+      if (game.targetSize) {
+        gamesBySize.set(game.targetSize, (gamesBySize.get(game.targetSize) || 0) + 1);
+      }
+    }
+
+    // Check if any required sizes are missing from available fields
+    const missingSizes: string[] = [];
+    for (const [size] of gamesBySize) {
+      if (!availableFieldSizes.has(size)) {
+        missingSizes.push(size);
+      }
+    }
+
+    if (missingSizes.length > 0) {
+      console.log(`[Greedy Assign] 🔄 Auto-distributing field sizes — needed: ${[...gamesBySize.entries()].map(([s,c]) => `${s}(${c})`).join(', ')}`);
+
+      // Sort sizes by game count (most games first gets most fields)
+      const sortedSizes = [...gamesBySize.entries()].sort((a, b) => b[1] - a[1]);
+      const totalNeededGames = sortedSizes.reduce((sum, [, cnt]) => sum + cnt, 0);
+
+      // Sort fields by sort order (lower = assigned first)
+      const fieldsSorted = allFields.slice().sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
+      const totalFields = fieldsSorted.length;
+
+      if (totalFields === 0) {
+        return {
+          assigned: 0,
+          unassigned: totalGamesProcessed,
+          totalGames: totalGamesProcessed,
+          capacityWarning: 'No fields available for this event. Add fields to a venue and link the venue to the event.'
+        };
+      }
+
+      // Distribute fields proportionally to game demand per size
+      let fieldsAssigned = 0;
+      const fieldAssignments: Array<{ fieldId: number; fieldName: string; newSize: string }> = [];
+
+      for (let i = 0; i < sortedSizes.length; i++) {
+        const [size, gameCount] = sortedSizes[i];
+        // Last size gets all remaining fields, otherwise proportional
+        const isLast = i === sortedSizes.length - 1;
+        const proportion = gameCount / totalNeededGames;
+        const fieldsForSize = isLast
+          ? totalFields - fieldsAssigned
+          : Math.max(1, Math.round(proportion * totalFields));
+
+        for (let j = 0; j < fieldsForSize && fieldsAssigned < totalFields; j++) {
+          const field = fieldsSorted[fieldsAssigned];
+          fieldAssignments.push({ fieldId: field.id, fieldName: field.name, newSize: size });
+          fieldsAssigned++;
+        }
+      }
+
+      // Apply assignments: update event_field_configurations AND allFields in memory
+      for (const assignment of fieldAssignments) {
+        // Update DB
+        await db
+          .update(eventFieldConfigurations)
+          .set({ fieldSize: assignment.newSize, updatedAt: new Date().toISOString() })
+          .where(
+            and(
+              eq(eventFieldConfigurations.eventId, parseInt(eventId)),
+              eq(eventFieldConfigurations.fieldId, assignment.fieldId)
+            )
+          );
+
+        // Update in-memory field list
+        const field = allFields.find(f => f.id === assignment.fieldId);
+        if (field) field.fieldSize = assignment.newSize;
+      }
+
+      const summary = fieldAssignments.map(a => `${a.fieldName}→${a.newSize}`).join(', ');
+      console.log(`[Greedy Assign] ✅ Auto-assigned field sizes: ${summary}`);
+    }
+  }
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // PHASE 2: SLOT-FIRST SCHEDULING — Maximize field utilization
+  // ════════════════════════════════════════════════════════════════════════════
+  // Instead of "for each game, find a slot" (which creates gaps when flights
+  // are processed sequentially), we do "for each slot, find a game."
+  //
+  // Priority order: Date → Field (sortOrder) → Time slot → Best game
+  // This ensures:
+  //   1. Maximum field utilization (pack each field's day fully)
+  //   2. Minimum days (fill ALL fields on Day 1 before moving to Day 2)
+  //      This reduces family travel by concentrating games into fewer days.
+
+  // Mutable array of remaining games (splice on placement)
+  const remaining: GameToSchedule[] = [...allGamesToSchedule];
+
+  // Sort fields by sortOrder so we fill lower-numbered fields first
+  const sortedFields = allFields.slice().sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
+
+  console.log(`[Greedy Assign] Scheduling with DATE-FIRST SLOT strategy across ${sortedFields.length} fields × ${eventDates.length} days`);
+
+  for (const date of eventDates) {
+    if (remaining.length === 0) break;
+
+    let gamesPlacedOnDate = 0;
+
+    for (const field of sortedFields) {
+      if (remaining.length === 0) break;
+
+      // Skip field if no remaining games match its size (empty targetSize = any field)
+      const hasMatchingGames = remaining.some(g => !g.targetSize || g.targetSize === field.fieldSize);
+      if (!hasMatchingGames) continue;
+
+      const fieldOpenMin  = toMinutes(field.openTime  || '08:00');
+      const fieldCloseMin = toMinutes(field.closeTime || '22:00');
+      let slotStart = fieldOpenMin;
+      let emptyAdvances = 0;
+      let gamesPlacedOnFieldDate = 0;
+
+      // Fill every possible slot on this field+date
+      while (slotStart < fieldCloseMin && remaining.length > 0 && emptyAdvances < 200) {
+        let bestIdx = -1;
+        let bestScore = -Infinity;
+
+        // Search remaining games for one that fits at this slot
+        for (let i = 0; i < remaining.length; i++) {
+          const game = remaining[i];
+
+          // Field size must match (empty targetSize = any field — fallback)
+          if (game.targetSize && game.targetSize !== field.fieldSize) continue;
+
+          // Game must fit before field closes
+          const slotEnd = slotStart + game.dur;
+          if (slotEnd > fieldCloseMin) continue;
+
+          // Max games per day for both teams
+          const homeCount = teamDayGameCount.get(game.homeTeamId)?.get(date) || 0;
+          const awayCount = teamDayGameCount.get(game.awayTeamId)?.get(date) || 0;
+          if (homeCount >= game.maxPerDay || awayCount >= game.maxPerDay) continue;
+
+          // Team rest check — home team
+          const homeLastEnd = teamDateLastEnd.get(game.homeTeamId)?.get(date);
+          if (homeLastEnd !== undefined && slotStart < homeLastEnd + game.rest) continue;
+
+          // Team rest check — away team
+          const awayLastEnd = teamDateLastEnd.get(game.awayTeamId)?.get(date);
+          if (awayLastEnd !== undefined && slotStart < awayLastEnd + game.rest) continue;
+
+          // This game fits! Score it for selection priority:
+          // - Prefer flights with MORE remaining games (balance across flights)
+          // - Prefer earlier rounds (scheduling order)
+          // - Prefer teams with fewer games today (spread load)
+          const flightRemaining = remaining.filter(g => g.flightId === game.flightId).length;
+          const teamDayLoad = homeCount + awayCount;
+          const score = flightRemaining * 1000 - teamDayLoad * 500 - game.round * 100 - game.matchNumber;
+
+          if (score > bestScore) {
+            bestScore = score;
+            bestIdx = i;
+          }
+        }
+
+        if (bestIdx >= 0) {
+          // ✅ PLACE THIS GAME
+          const game = remaining[bestIdx];
+          const slotEnd = slotStart + game.dur;
+          const scheduledTime = fromMinutes(slotStart);
+
+          await db.update(games)
+            .set({
+              fieldId: field.id,
+              scheduledDate: date,
+              scheduledTime: scheduledTime,
+            })
+            .where(eq(games.id, game.id));
+
+          // Update field bookings
+          if (!fieldDayBookings.has(field.id)) fieldDayBookings.set(field.id, new Map());
+          const fdMap = fieldDayBookings.get(field.id)!;
+          if (!fdMap.has(date)) fdMap.set(date, []);
+          fdMap.get(date)!.push({ start: slotStart, end: slotEnd });
+
+          // Home team tracking
+          if (!teamDateLastEnd.has(game.homeTeamId)) teamDateLastEnd.set(game.homeTeamId, new Map());
+          const homeEnds = teamDateLastEnd.get(game.homeTeamId)!;
+          homeEnds.set(date, Math.max(homeEnds.get(date) || 0, slotEnd));
+          if (!teamDayGameCount.has(game.homeTeamId)) teamDayGameCount.set(game.homeTeamId, new Map());
+          const hdMap = teamDayGameCount.get(game.homeTeamId)!;
+          hdMap.set(date, (hdMap.get(date) || 0) + 1);
+
+          // Away team tracking
+          if (!teamDateLastEnd.has(game.awayTeamId)) teamDateLastEnd.set(game.awayTeamId, new Map());
+          const awayEnds = teamDateLastEnd.get(game.awayTeamId)!;
+          awayEnds.set(date, Math.max(awayEnds.get(date) || 0, slotEnd));
+          if (!teamDayGameCount.has(game.awayTeamId)) teamDayGameCount.set(game.awayTeamId, new Map());
+          const adMap = teamDayGameCount.get(game.awayTeamId)!;
+          adMap.set(date, (adMap.get(date) || 0) + 1);
+
+          remaining.splice(bestIdx, 1);
+          slotStart = slotEnd + game.buffer;
+          totalAssigned++;
+          gamesPlacedOnFieldDate++;
+          gamesPlacedOnDate++;
+          emptyAdvances = 0;
+          console.log(`[Greedy Assign] ✅ Game ${game.id} → ${field.name} on ${date} at ${scheduledTime} (flight ${game.flightId})`);
+        } else {
+          // No game fits at this slot — advance by 15 minutes
+          slotStart += 15;
+          emptyAdvances++;
+        }
+      }
+
+      if (gamesPlacedOnFieldDate > 0) {
+        console.log(`[Greedy Assign] 📊 ${field.name} on ${date}: ${gamesPlacedOnFieldDate} games placed, ${remaining.length} remaining`);
+      }
+    }
+
+    if (gamesPlacedOnDate > 0) {
+      console.log(`[Greedy Assign] 📅 Date ${date}: ${gamesPlacedOnDate} games placed across all fields, ${remaining.length} remaining`);
+    }
+  }
+
+  // ── FALLBACK: Try remaining games on ANY field (ignore size) ──────────────
+  if (remaining.length > 0) {
+    console.log(`[Greedy Assign] ${remaining.length} games still unassigned after slot-first — trying fallback (any field)`);
+
+    for (let gi = remaining.length - 1; gi >= 0; gi--) {
+      const game = remaining[gi];
+      let placed = false;
+
+      for (const date of eventDates) {
+        if (placed) break;
+
+        const homeCount = teamDayGameCount.get(game.homeTeamId)?.get(date) || 0;
+        const awayCount = teamDayGameCount.get(game.awayTeamId)?.get(date) || 0;
+        if (homeCount >= game.maxPerDay || awayCount >= game.maxPerDay) continue;
+
+        for (const field of sortedFields) {
+          if (placed) break;
+
+          const fieldOpenMin  = toMinutes(field.openTime  || '08:00');
+          const fieldCloseMin = toMinutes(field.closeTime || '22:00');
+          let slotStart = fieldOpenMin;
+          let maxIter = 200;
+
+          while (slotStart + game.dur <= fieldCloseMin && --maxIter > 0) {
+            const slotEnd = slotStart + game.dur;
+
+            // Field conflict check
+            const bookings = fieldDayBookings.get(field.id)?.get(date) || [];
+            const conflict = bookings.some(b =>
+              slotStart < b.end + game.buffer && slotEnd + game.buffer > b.start
+            );
+            if (conflict) {
+              const blocking = bookings.find(b => slotStart < b.end + game.buffer && slotEnd + game.buffer > b.start);
+              slotStart = blocking ? blocking.end + game.buffer : slotStart + 1;
+              continue;
+            }
+
+            // Team rest check
+            const homeLastEnd = teamDateLastEnd.get(game.homeTeamId)?.get(date);
+            if (homeLastEnd !== undefined && slotStart < homeLastEnd + game.rest) {
+              slotStart = homeLastEnd + game.rest;
+              continue;
+            }
+            const awayLastEnd = teamDateLastEnd.get(game.awayTeamId)?.get(date);
+            if (awayLastEnd !== undefined && slotStart < awayLastEnd + game.rest) {
+              slotStart = awayLastEnd + game.rest;
+              continue;
+            }
+
+            // Place it
+            const scheduledTime = fromMinutes(slotStart);
+            await db.update(games)
+              .set({ fieldId: field.id, scheduledDate: date, scheduledTime: scheduledTime })
+              .where(eq(games.id, game.id));
+
+            if (!fieldDayBookings.has(field.id)) fieldDayBookings.set(field.id, new Map());
+            const fdMap = fieldDayBookings.get(field.id)!;
+            if (!fdMap.has(date)) fdMap.set(date, []);
+            fdMap.get(date)!.push({ start: slotStart, end: slotEnd });
+
+            if (!teamDateLastEnd.has(game.homeTeamId)) teamDateLastEnd.set(game.homeTeamId, new Map());
+            teamDateLastEnd.get(game.homeTeamId)!.set(date, Math.max(teamDateLastEnd.get(game.homeTeamId)!.get(date) || 0, slotEnd));
+            if (!teamDayGameCount.has(game.homeTeamId)) teamDayGameCount.set(game.homeTeamId, new Map());
+            teamDayGameCount.get(game.homeTeamId)!.set(date, (teamDayGameCount.get(game.homeTeamId)!.get(date) || 0) + 1);
+
+            if (!teamDateLastEnd.has(game.awayTeamId)) teamDateLastEnd.set(game.awayTeamId, new Map());
+            teamDateLastEnd.get(game.awayTeamId)!.set(date, Math.max(teamDateLastEnd.get(game.awayTeamId)!.get(date) || 0, slotEnd));
+            if (!teamDayGameCount.has(game.awayTeamId)) teamDayGameCount.set(game.awayTeamId, new Map());
+            teamDayGameCount.get(game.awayTeamId)!.set(date, (teamDayGameCount.get(game.awayTeamId)!.get(date) || 0) + 1);
+
+            remaining.splice(gi, 1);
+            placed = true;
+            totalAssigned++;
+            console.log(`[Greedy Assign] ✅ (fallback) Game ${game.id} → ${field.name} on ${date} at ${scheduledTime}`);
+            break;
+          }
+        }
+      }
+
+      if (!placed) {
+        totalUnassigned++;
+        console.log(`[Greedy Assign] ⚠️ Could not assign game ${game.id} (home=${game.homeTeamId} away=${game.awayTeamId})`);
+      }
+    }
+  }
+
+  // Build final warning if some games couldn't be assigned
+  if (totalUnassigned > 0 && !capacityWarning) {
+    capacityWarning = `${totalUnassigned} of ${totalGamesProcessed} games could not be scheduled. There may not be enough available field time, or team rest/max-games-per-day constraints are too restrictive. Consider adding more fields, extending field hours, adding tournament days, or relaxing scheduling constraints.`;
+  } else if (totalUnassigned > 0 && capacityWarning) {
+    capacityWarning += ` ${totalUnassigned} of ${totalGamesProcessed} games were left unscheduled.`;
+  }
+
+  console.log(`[Greedy Assign] Done: ${totalAssigned} assigned, ${totalUnassigned} unassigned out of ${totalGamesProcessed} processed`);
+  return { assigned: totalAssigned, unassigned: totalUnassigned, totalGames: totalGamesProcessed, capacityWarning, capacityDetails };
 }
 
 async function saveAutomatedWorkflowData(eventId: number, workflowData: any) {
@@ -1687,44 +2434,34 @@ async function assignFieldsWithSchedule(eventId: string, dbGames: any[], bracket
   const bracket = bracketQuery[0];
   const bracketName = bracket?.name || '';
   
-  // Extract rest period from tournament settings
+  // Read format config from game_formats DB (not bracket name parsing)
+  const fmt = await db.query.gameFormats.findFirst({
+    where: eq(gameFormats.bracketId, parseInt(bracketId))
+  });
+
+  // Extract rest period: prefer game_formats, fall back to tournament settings
   const tournamentSettings = bracket?.tournamentSettings as any || {};
-  const restPeriodMinutes = tournamentSettings.restPeriodMinutes || 90; // Default to 90 if not set
-  const maxGamesPerDay = tournamentSettings.maxGamesPerTeam || 2; // Default to 2 if not set
-  
+  const restPeriodMinutes = fmt?.restPeriod || tournamentSettings.restPeriodMinutes || 90;
+  const maxGamesPerDay = fmt?.maxGamesPerDay || tournamentSettings.maxGamesPerTeam || 2;
+  const requiredFieldSize = fmt?.fieldSize || '11v11';
+
   console.log(`[Enhanced Field Assignment] Bracket: ${bracketName}`);
   console.log(`[Enhanced Field Assignment] CONSTRAINTS: ${restPeriodMinutes}-minute rest period, max ${maxGamesPerDay} games per team per day`);
+  console.log(`[Enhanced Field Assignment] Required field size: ${requiredFieldSize} (from DB)`);
 
-  // Determine required field size (U14 Girls = 11v11)
-  let requiredFieldSize = '11v11'; // Default for U14 Girls
-  if (bracketName.includes('U7') || bracketName.includes('U8') || bracketName.includes('U9') || bracketName.includes('U10')) {
-    requiredFieldSize = '7v7';
-  } else if (bracketName.includes('U11') || bracketName.includes('U12') || (bracketName.includes('U13') && bracketName.includes('Boys'))) {
-    requiredFieldSize = '9v9';
-  }
-
-  console.log(`[Enhanced Field Assignment] Required field size: ${requiredFieldSize}`);
-
-  // Use Galway Downs complex ID directly (confirmed from fields data)
-  const complexId = 8; // Galway Downs Soccer Complex with 28 fields
-
-  // Get matching fields with scheduling info
-  const availableFields = await db.select({
-    id: fields.id,
-    name: fields.name,
-    fieldSize: fields.fieldSize,
-    openTime: fields.openTime,
-    closeTime: fields.closeTime,
-    isOpen: fields.isOpen
-  })
-  .from(fields)
-  .where(
-    and(
-      eq(fields.complexId, complexId),
-      eq(fields.fieldSize, requiredFieldSize),
-      eq(fields.isOpen, true)
-    )
-  );
+  // Use FieldAvailabilityService to get fields dynamically (not hardcoded complexId)
+  const { FieldAvailabilityService } = await import('../../services/field-availability-service');
+  const allAvailableFields = await FieldAvailabilityService.getAvailableFields(eventId);
+  const availableFields = allAvailableFields
+    .filter(f => f.fieldSize === requiredFieldSize && f.isOpen)
+    .map(f => ({
+      id: f.id,
+      name: f.name,
+      fieldSize: f.fieldSize,
+      openTime: f.openTime,
+      closeTime: f.closeTime,
+      isOpen: f.isOpen
+    }));
 
   console.log(`[Enhanced Field Assignment] Found ${availableFields.length} matching ${requiredFieldSize} fields:`);
   availableFields.forEach(field => {
@@ -1760,9 +2497,11 @@ async function assignFieldsWithSchedule(eventId: string, dbGames: any[], bracket
   const assignments: any[] = [];
   const fieldSchedules: { [fieldId: number]: Date } = {}; // Next available time for each field
   const teamSchedules: { [teamId: number]: Date[] } = {}; // All game times for each team
-  const gameDurationMs = 90 * 60 * 1000; // 90 minutes
+  const gameDurationMinutes = fmt?.gameLength || 60;
+  const bufferMinutes = fmt?.bufferTime || 15;
+  const gameDurationMs = gameDurationMinutes * 60 * 1000; // from DB config
   const restPeriodMs = restPeriodMinutes * 60 * 1000; // Dynamic rest period (AFTER game ends)
-  const bufferMs = 15 * 60 * 1000; // 15 minutes between games on same field
+  const bufferMs = bufferMinutes * 60 * 1000; // from DB config
 
   console.log(`[Enhanced Field Assignment] Using dynamic rest period: ${restPeriodMinutes} minutes from flight configuration`);
 

@@ -18,13 +18,15 @@ import { teams } from '@db/schema';
 import { eq } from 'drizzle-orm';
 
 if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
+  console.warn("Warning: STRIPE_SECRET_KEY not set. Stripe features will be unavailable.");
 }
 
 // Initialize Stripe with the secret key
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2023-10-16" as any,
-});
+const stripe = process.env.STRIPE_SECRET_KEY
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: "2023-10-16" as any,
+    })
+  : null;
 
 // Create a router for payment-related routes
 const router = express.Router();

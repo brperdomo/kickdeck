@@ -1,15 +1,17 @@
 /**
  * Refund Cost Recovery Service
- * Ensures tournament Connect accounts cover refund costs instead of MatchPro main account
+ * Ensures tournament Connect accounts cover refund costs instead of KickDeck main account
  */
 
 import Stripe from 'stripe';
 import { db } from '../db';
 import { paymentTransactions } from '../db/schema';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2023-10-16',
-});
+const stripe = process.env.STRIPE_SECRET_KEY
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: '2023-10-16',
+    })
+  : null;
 
 export interface RefundCostRecoveryResult {
   success: boolean;
@@ -45,11 +47,11 @@ export async function recoverRefundCost(
   try {
     console.log(`[REFUND COST RECOVERY] Attempting to recover ${refundAmount} cents from Connect account ${connectAccountId}`);
 
-    // Create transfer from Connect account to MatchPro main account
+    // Create transfer from Connect account to KickDeck main account
     const transfer = await stripe.transfers.create({
       amount: refundAmount,
       currency: 'usd',
-      destination: process.env.STRIPE_ACCOUNT_ID || 'main', // MatchPro main account
+      destination: process.env.STRIPE_ACCOUNT_ID || 'main', // KickDeck main account
       description: `Refund cost recovery for payment ${paymentIntentId}`,
       metadata: {
         purpose: 'refund_cost_recovery',
@@ -101,7 +103,7 @@ export async function recoverRefundCost(
         error: error.message,
         connectAccount: connectAccountId,
         attemptedAmount: refundAmount.toString(),
-        fallbackTo: 'matchpro_main_account',
+        fallbackTo: 'kickdeck_main_account',
         failureTimestamp: new Date().toISOString()
       },
     });
@@ -116,7 +118,7 @@ export async function recoverRefundCost(
 }
 
 /**
- * Gets the total amount MatchPro has absorbed in refund costs
+ * Gets the total amount KickDeck has absorbed in refund costs
  * Useful for financial reporting and Connect account balance recovery
  */
 export async function getRefundCostsAbsorbed(eventId?: string): Promise<{
@@ -130,7 +132,7 @@ export async function getRefundCostsAbsorbed(eventId?: string): Promise<{
       .select()
       .from(paymentTransactions)
       .where(
-        // Filter for transactions where MatchPro absorbed refund costs
+        // Filter for transactions where KickDeck absorbed refund costs
         // This includes failed recoveries and missing Connect account metadata
       );
 

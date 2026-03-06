@@ -19,10 +19,10 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { 
+import {
   FileIcon, MoreVertical, Edit, Trash2, Download, Share2, Star, Info,
-  Music, Video, Image, FileText, File as FileIconGeneric, FileCode, ArrowUpDown, 
-  Star as StarIcon, MoveRight, CheckCircle, AlertCircle, Copy, ExternalLink,
+  Music, Video, Image, FileText, File as FileIconGeneric, FileCode, ArrowUpDown,
+  MoveRight, CheckCircle, AlertCircle, Copy, ExternalLink,
   Zap, Eye
 } from 'lucide-react';
 import { useDrag } from 'react-dnd';
@@ -479,7 +479,7 @@ const FileItem = forwardRef<HTMLDivElement, FileItemProps>(
                     animate={{ rotate: [0, 15, 0] }}
                     transition={{ duration: 2, repeat: didJustMove ? 1 : 0 }}
                   >
-                    <StarIcon className="h-5 w-5 fill-current" />
+                    <Star className="h-5 w-5 fill-current" />
                   </motion.div>
                 )}
                 

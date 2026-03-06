@@ -4,12 +4,14 @@ import { eq, and, isNull, gte } from 'drizzle-orm';
 import Stripe from 'stripe';
 
 if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
+  console.warn("Warning: STRIPE_SECRET_KEY not set. Stripe features will be unavailable.");
 }
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2023-10-16" as any,
-});
+const stripe = process.env.STRIPE_SECRET_KEY
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: "2023-10-16" as any,
+    })
+  : null;
 
 /**
  * Real-time Payment Status Monitoring Service
@@ -229,7 +231,7 @@ export async function verifyWebhookStatus(): Promise<{
 
   return {
     webhookConfigured: !!process.env.STRIPE_WEBHOOK_SECRET,
-    endpointUrl: `${process.env.BACKEND_URL || 'https://app.matchpro.ai'}/api/payments/webhook`,
+    endpointUrl: `${process.env.BACKEND_URL || 'https://app.kickdeck.io'}/api/payments/webhook`,
     enabledEvents: [
       'payment_intent.succeeded',
       'payment_intent.payment_failed', 

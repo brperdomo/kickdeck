@@ -15,6 +15,7 @@ type AgeGroup = {
   id: number;
   eventId: string;
   ageGroup: string;
+  name?: string; // Some API endpoints return 'name' instead of 'ageGroup'
   gender: string;
   divisionCode: string;
   isEligible?: boolean;
@@ -56,8 +57,14 @@ export function BracketsContent() {
 
   // Get the display name for the age group - use original gender values
   const getAgeGroupDisplayName = (ageGroup: AgeGroup) => {
-    const gender = ageGroup.gender || 'Unknown';
-    const ageGroupName = ageGroup.ageGroup || 'Unknown';
+    let gender = ageGroup.gender;
+    if (!gender || gender === 'Unknown') {
+      // Infer from divisionCode: B prefix = Boys, G prefix = Girls
+      if (ageGroup.divisionCode?.startsWith('B')) gender = 'Boys';
+      else if (ageGroup.divisionCode?.startsWith('G')) gender = 'Girls';
+      else gender = 'Unknown';
+    }
+    const ageGroupName = ageGroup.ageGroup || ageGroup.name || 'Unknown';
     return `${gender} ${ageGroupName}`;
   };
 

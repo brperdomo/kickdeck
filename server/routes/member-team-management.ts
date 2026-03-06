@@ -112,14 +112,14 @@ async function findOrCreateUser(email: string, name?: string): Promise<{ user: a
   try {
     await sendEmail({
       to: email,
-      from: process.env.DEFAULT_FROM_EMAIL || 'support@matchpro.ai',
-      subject: 'Welcome to MatchPro - Team Management Account Created',
+      from: process.env.DEFAULT_FROM_EMAIL || 'support@kickdeck.io',
+      subject: 'Welcome to KickDeck - Team Management Account Created',
       templateId: 'welcome_new_account', // We'll need to create this template
       dynamicTemplateData: {
         firstName: firstName,
         email: email,
-        resetPasswordUrl: `${process.env.FRONTEND_URL || 'https://app.matchpro.ai'}/reset-password?email=${encodeURIComponent(email)}`,
-        loginUrl: `${process.env.FRONTEND_URL || 'https://app.matchpro.ai'}/login`,
+        resetPasswordUrl: `${process.env.FRONTEND_URL || 'https://app.kickdeck.io'}/reset-password?email=${encodeURIComponent(email)}`,
+        loginUrl: `${process.env.FRONTEND_URL || 'https://app.kickdeck.io'}/login`,
       },
     });
   } catch (emailError) {

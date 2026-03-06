@@ -84,7 +84,7 @@ async function clearAllSuppressions() {
   
   if (stillSuppressed === 0) {
     console.log(`\n🎉 SUCCESS: ${EMAIL_TO_CLEAR} is now clear from all suppression lists!`);
-    console.log(`You should now receive emails from MatchPro.`);
+    console.log(`You should now receive emails from KickDeck.`);
     return true;
   } else {
     console.log(`\n⚠️  Still suppressed in ${stillSuppressed} lists. You may need to contact SendGrid support.`);

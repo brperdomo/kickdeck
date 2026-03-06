@@ -1,7 +1,7 @@
-# MatchPro AI Event Management System
+# KickDeck AI Event Management System
 
 ## Overview
-MatchPro AI is a comprehensive sports event management platform for tournament organizers and sports clubs. Its main purpose is to automate and streamline workflows such as team registrations, payment processing, scoring, standings, and administrative tasks. The system aims to provide a professional, low-maintenance, and intelligent solution for managing tournaments from initial setup and scheduling to real-time updates and financial oversight, with ambitions to offer predictive insights and eliminate manual configuration.
+KickDeck AI is a comprehensive sports event management platform for tournament organizers and sports clubs. Its main purpose is to automate and streamline workflows such as team registrations, payment processing, scoring, standings, and administrative tasks. The system aims to provide a professional, low-maintenance, and intelligent solution for managing tournaments from initial setup and scheduling to real-time updates and financial oversight, with ambitions to offer predictive insights and eliminate manual configuration.
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
@@ -72,7 +72,7 @@ Preferred communication style: Simple, everyday language.
 - **Styling**: Tailwind CSS
 - **State Management**: React hooks and context
 - **Routing**: Wouter
-- **UI/UX Decisions**: Modern, professional design featuring gradient themes, interactive cards, and consistent MatchPro branding. Emphasis is placed on intuitive workflows, clear visual feedback, and comprehensive dashboards, including an enhanced Schedule Grid with detailed game cards, hover tooltips, and a right-click context menu for game manipulation.
+- **UI/UX Decisions**: Modern, professional design featuring gradient themes, interactive cards, and consistent KickDeck branding. Emphasis is placed on intuitive workflows, clear visual feedback, and comprehensive dashboards, including an enhanced Schedule Grid with detailed game cards, hover tooltips, and a right-click context menu for game manipulation.
 
 ### Backend
 - **Runtime**: Node.js with TypeScript

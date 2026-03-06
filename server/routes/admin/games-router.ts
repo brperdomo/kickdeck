@@ -293,25 +293,39 @@ router.put('/:gameId/reschedule', hasEventAccess, async (req, res) => {
       return res.status(404).json({ message: "Game not found" });
     }
     
-    // Update the game with new field (note: games table doesn't have startTime field directly)
+    // Extract date and time by string splitting — DO NOT use new Date().toISOString()
+    // which converts local time to UTC, shifting the time by the server's timezone offset.
+    const scheduledDate = startTime.split('T')[0]; // "2026-04-02"
+    const scheduledTime = startTime.split('T')[1];  // "08:00:00"
+
+    // Update the game with new field, date, and time
     await db
       .update(games)
       .set({
         fieldId: parsedFieldId,
+        scheduledDate: scheduledDate,
+        scheduledTime: scheduledTime,
         updatedAt: new Date().toISOString()
       })
       .where(eq(games.id, parsedGameId));
     
     // Find or create appropriate time slot for the new time and field
     try {
-      // Calculate end time (assuming 90 minutes total: 70 min game + 20 min buffer)
-      const startDate = new Date(startTime);
-      const endDate = new Date(startDate.getTime() + 90 * 60 * 1000); // 90 minutes later
-      const endTimeStr = endDate.toISOString();
-      
-      // Get day index (days since start of event)
-      const eventStartTime = new Date(startTime);
-      const dayIndex = Math.floor((eventStartTime.getTime() - new Date(startTime.split('T')[0] + 'T00:00:00.000Z').getTime()) / (24 * 60 * 60 * 1000));
+      // Look up the game's actual duration (don't hardcode 90 minutes)
+      const gameRecord = await db.query.games.findFirst({
+        where: eq(games.id, parsedGameId),
+        columns: { duration: true }
+      });
+      const gameDuration = gameRecord?.duration || 90;
+
+      // Calculate end time using string math — DO NOT use new Date() which applies timezone conversion
+      const [datePart, timePart] = startTime.split('T');
+      const [startH, startM] = timePart.split(':').map(Number);
+      const endTotalMin = startH * 60 + startM + gameDuration;
+      const endH = Math.floor(endTotalMin / 60).toString().padStart(2, '0');
+      const endM = (endTotalMin % 60).toString().padStart(2, '0');
+      const endTimeStr = `${datePart}T${endH}:${endM}:00`;
+      const dayIndex = 0;
       
       // Look for an existing time slot that matches this field, time, and event
       const existingSlots = await db

@@ -6,7 +6,7 @@ echo "Testing admin authentication..."
 # First, try to login as admin
 LOGIN_RESPONSE=$(curl -s -c /tmp/admin_cookies.txt -X POST "http://localhost:5000/api/auth/login" \
   -H "Content-Type: application/json" \
-  -d '{"email": "admin@matchpro.ai", "password": "admin123"}')
+  -d '{"email": "admin@kickdeck.io", "password": "admin123"}')
 
 echo "Login response: $LOGIN_RESPONSE"
 

@@ -121,7 +121,7 @@ export default function Newsletter() {
             Subscribe to Our Newsletter
           </CardTitle>
           <CardDescription>
-            Stay updated with the latest tournament news, features, and announcements from MatchPro
+            Stay updated with the latest tournament news, features, and announcements from KickDeck
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -159,7 +159,7 @@ export default function Newsletter() {
           
           <div className="mt-6 text-center text-sm text-gray-500 dark:text-gray-400">
             <p>
-              By subscribing, you agree to receive emails from MatchPro. 
+              By subscribing, you agree to receive emails from KickDeck. 
               You can unsubscribe at any time.
             </p>
           </div>

@@ -10,9 +10,11 @@ import { teams, events } from "../../db/schema.js";
 import { eq, and, isNotNull, or } from "drizzle-orm";
 import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2024-06-20",
-});
+const stripe = process.env.STRIPE_SECRET_KEY
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: "2024-06-20",
+    })
+  : null;
 
 export interface RetroactiveUpdateResult {
   teamId: number;
@@ -75,7 +77,7 @@ export async function updateTeamPaymentMetadata(teamId: number): Promise<Retroac
     managerName: team.managerName || "Team Manager",
     registrationDate: team.createdAt?.toISOString() || "",
     internalReference: `TEAM-${team.teamId}-${team.eventId}`,
-    systemSource: "MatchPro",
+    systemSource: "KickDeck",
     updateType: "RetroactiveMetadata",
     updateDate: new Date().toISOString(),
   };

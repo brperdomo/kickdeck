@@ -4,7 +4,7 @@
 
 ### Problem Confirmation
 - Screenshot shows teams with "N/A" in Event and Age Group columns
-- This is from **PRODUCTION environment** (app.matchpro.ai domain)
+- This is from **PRODUCTION environment** (app.kickdeck.io domain)
 - **1,039 teams exist safely** in production database - no data loss
 
 ### Root Cause

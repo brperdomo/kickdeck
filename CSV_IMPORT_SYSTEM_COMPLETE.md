@@ -19,7 +19,7 @@ The comprehensive CSV import system has been successfully implemented and is now
    - Enhanced cache lookup with event ID filtering
 
 2. **Frontend API Routing Fixed**
-   - Resolved production URL redirect issue (`https://app.matchpro.ai`)
+   - Resolved production URL redirect issue (`https://app.kickdeck.io`)
    - Implemented dynamic URL detection for development environments
    - Both preview and execute endpoints now route correctly
 

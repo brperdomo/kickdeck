@@ -1,4 +1,5 @@
 @import './styles/dashboard-enhancements.css';
+@import './styles/dashboard-dark-theme.css';
 @import './styles/mobile-optimizations.css';
 
 @tailwind base;
@@ -275,10 +276,10 @@ body {
     color: var(--table-row-selected-text, var(--admin-nav-selected-text, #000000)) !important;
   }
 
-  /* Force light mode for inputs and form elements */
-  .dark input, 
-  .dark textarea, 
-  .dark select {
+  /* Force light mode for inputs and form elements (except neon-themed auth pages) */
+  .dark input:not(.neon-input),
+  .dark textarea:not(.neon-input),
+  .dark select:not(.neon-input) {
     background-color: white !important;
     border-color: #D1D5DB !important;
   }
@@ -307,69 +308,311 @@ body {
     border-color: #E5E7EB !important;
   }
   
-  /* Force light mode styling for event registration pages */
-  [class*="register-event-page"] {
-    color: #333333 !important;
-    background-color: #F5F5F5 !important;
+  /* ====== Dark glassmorphism for event registration pages ====== */
+
+  /* Override CSS variables on body when registration page is active (for portals/popovers) */
+  body:has(.register-event-page) {
+    --background: 233 47% 7%;
+    --foreground: 0 0% 90%;
+    --popover: 240 40% 10%;
+    --popover-foreground: 0 0% 90%;
+    --accent: 240 10% 18%;
+    --accent-foreground: 0 0% 90%;
+    --muted: 240 10% 15%;
+    --muted-foreground: 0 0% 60%;
+    --border: 0 0% 20%;
+    --input: 240 10% 15%;
+    --ring: 260 50% 40%;
+  }
+
+  .register-event-page {
+    color: #e5e7eb !important;
+    background-color: transparent !important;
+  }
+
+  .dark .register-event-page input,
+  .dark .register-event-page textarea,
+  .dark .register-event-page select,
+  .register-event-page input,
+  .register-event-page textarea,
+  .register-event-page select,
+  .register-event-page .input-wrapper {
+    color: hsl(240 5% 90%) !important;
+    background-color: hsl(240 20% 14%) !important;
+    border-color: hsl(240 20% 22%) !important;
+  }
+
+  /* Select trigger buttons (Radix UI uses button[role=combobox]) */
+  .dark .register-event-page button[role="combobox"],
+  .register-event-page button[role="combobox"] {
+    color: hsl(240 5% 90%) !important;
+    background-color: hsl(240 20% 14%) !important;
+    border-color: hsl(240 20% 22%) !important;
+  }
+
+  .dark .register-event-page button[role="combobox"]:hover,
+  .register-event-page button[role="combobox"]:hover {
+    border-color: hsl(263 70% 50% / 0.5) !important;
+  }
+
+  /* Select popover portal content */
+  body:has(.register-event-page) [data-radix-popper-content-wrapper] [role="listbox"],
+  body:has(.register-event-page) [data-radix-popper-content-wrapper] > div {
+    background-color: hsl(240 40% 10%) !important;
+    color: hsl(0 0% 90%) !important;
+    border-color: hsl(240 20% 22%) !important;
+  }
+
+  body:has(.register-event-page) [data-radix-popper-content-wrapper] [role="option"] {
+    color: hsl(0 0% 90%) !important;
+    background-color: transparent !important;
+  }
+
+  body:has(.register-event-page) [data-radix-popper-content-wrapper] [role="option"]:hover,
+  body:has(.register-event-page) [data-radix-popper-content-wrapper] [role="option"][data-highlighted] {
+    background-color: hsl(240 10% 18%) !important;
+    color: hsl(0 0% 95%) !important;
+  }
+
+  /* Also target Radix select/popover elements rendered in portals */
+  body:has(.register-event-page) [role="listbox"],
+  body:has(.register-event-page) [role="listbox"] [role="option"] {
+    background-color: transparent !important;
+    color: hsl(0 0% 90%) !important;
+  }
+
+  body:has(.register-event-page) [role="listbox"] [role="option"][data-highlighted] {
+    background-color: hsl(240 10% 18%) !important;
+    color: hsl(0 0% 95%) !important;
+  }
+
+  /* Ensure combobox triggers on registration page are dark */
+  body:has(.register-event-page) [role="combobox"] {
+    color: hsl(240 5% 90%) !important;
+    background-color: hsl(240 20% 14%) !important;
+    border-color: hsl(240 20% 22%) !important;
+  }
+
+  .register-event-page input::placeholder,
+  .register-event-page textarea::placeholder {
+    color: hsl(240 5% 50%) !important;
+  }
+
+  .dark .register-event-page input:focus,
+  .dark .register-event-page textarea:focus,
+  .dark .register-event-page select:focus,
+  .register-event-page input:focus,
+  .register-event-page textarea:focus,
+  .register-event-page select:focus {
+    border-color: hsl(263 70% 58%) !important;
+    box-shadow: 0 0 0 2px hsl(263 70% 58% / 0.15), 0 0 10px hsl(263 70% 58% / 0.1) !important;
+  }
+
+  .dark .register-event-page input:disabled,
+  .dark .register-event-page textarea:disabled,
+  .dark .register-event-page select:disabled,
+  .register-event-page input:disabled,
+  .register-event-page textarea:disabled,
+  .register-event-page select:disabled {
+    background-color: hsl(240 20% 10%) !important;
+    color: hsl(240 5% 45%) !important;
+    cursor: not-allowed;
+  }
+
+  .register-event-page label,
+  .register-event-page h1,
+  .register-event-page h2,
+  .register-event-page h3,
+  .register-event-page h4 {
+    color: inherit !important;
+  }
+
+  .register-event-page p,
+  .register-event-page span {
+    color: inherit !important;
+  }
+
+  /* Override the global .dark * border reset for registration page */
+  .register-event-page *:not(input):not(textarea):not(select) {
+    border-color: rgba(255, 255, 255, 0.08) !important;
   }
   
-  [class*="register-event-page"] input,
-  [class*="register-event-page"] textarea,
-  [class*="register-event-page"] select,
-  [class*="register-event-page"] .input-wrapper {
+  /* Force light mode for all Select, Popover, Dropdown components
+     EXCEPT when inside or triggered from .register-event-page (dark glassmorphism) */
+  body:not(:has(.register-event-page)) [role="combobox"],
+  body:not(:has(.register-event-page)) [role="dialog"],
+  body:not(:has(.register-event-page)) [role="listbox"],
+  body:not(:has(.register-event-page)) [role="menu"],
+  body:not(:has(.register-event-page)) [role="menuitem"],
+  body:not(:has(.register-event-page)) [role="option"],
+  body:not(:has(.register-event-page)) .popover-content,
+  body:not(:has(.register-event-page)) .select-content,
+  body:not(:has(.register-event-page)) .dropdown-content,
+  body:not(:has(.register-event-page)) .SelectContent,
+  body:not(:has(.register-event-page)) .PopoverContent {
     color: #333333 !important;
     background-color: #FFFFFF !important;
     border-color: #D1D5DB !important;
   }
-  
-  [class*="register-event-page"] label,
-  [class*="register-event-page"] h1, 
-  [class*="register-event-page"] h2, 
-  [class*="register-event-page"] h3, 
-  [class*="register-event-page"] h4, 
-  [class*="register-event-page"] p, 
-  [class*="register-event-page"] span {
+
+  /* Force light text on all selectable options (except registration page) */
+  body:not(:has(.register-event-page)) [role="option"],
+  body:not(:has(.register-event-page)) .SelectItem,
+  body:not(:has(.register-event-page)) .select-item,
+  body:not(:has(.register-event-page)) .dropdown-item,
+  body:not(:has(.register-event-page)) .SelectContent *,
+  body:not(:has(.register-event-page)) .PopoverContent * {
     color: #333333 !important;
   }
-  
-  /* Force light mode for all Select, Popover, Dropdown components */
-  [role="combobox"],
-  [role="dialog"],
-  [role="listbox"],
-  [role="menu"],
-  [role="menuitem"],
-  [role="option"],
-  .popover-content,
-  .select-content,
-  .dropdown-content,
-  .SelectContent,
-  .PopoverContent {
-    color: #333333 !important;
-    background-color: #FFFFFF !important;
-    border-color: #D1D5DB !important;
-  }
-  
-  /* Force light text on all selectable options */
-  [role="option"],
-  .SelectItem,
-  .select-item,
-  .dropdown-item,
-  .SelectContent *,
-  .PopoverContent * {
-    color: #333333 !important;
-  }
-  
-  /* Force light background in all dialog/modal content */
-  .dialog-content,
-  .modal-content,
-  .DialogContent,
-  .ModalContent,
-  .Dialog,
-  .Modal,
-  [role="dialog"] {
+
+  /* Force light background in all dialog/modal content (except registration page) */
+  body:not(:has(.register-event-page)) .dialog-content,
+  body:not(:has(.register-event-page)) .modal-content,
+  body:not(:has(.register-event-page)) .DialogContent,
+  body:not(:has(.register-event-page)) .ModalContent,
+  body:not(:has(.register-event-page)) .Dialog,
+  body:not(:has(.register-event-page)) .Modal,
+  body:not(:has(.register-event-page)) [role="dialog"] {
     background-color: #FFFFFF !important;
     color: #333333 !important;
   }
+}
+
+/* ============================================================
+   Dashboard Dark Override — MUST come AFTER the .dark force-light block above
+   so that .dashboard-dark rules win when both .dark and .dashboard-dark are present.
+   The .dark class on <html> triggers force-light rules, but within .dashboard-dark
+   wrappers we need the dark neon theme to take precedence.
+   ============================================================ */
+
+/* Override .dark nav/sidebar white background */
+.dashboard-dark nav,
+.dashboard-dark .sidebar {
+  background-color: transparent !important;
+  border-color: transparent !important;
+}
+
+/* Override .dark * border reset */
+.dashboard-dark * {
+  border-color: hsl(240 20% 20%) !important;
+}
+
+/* Override .dark .bg-white */
+.dashboard-dark .bg-white {
+  background-color: hsl(240 30% 11%) !important;
+}
+
+/* Override .dark .bg-gray-50 */
+.dashboard-dark .bg-gray-50 {
+  background-color: hsl(240 20% 14%) !important;
+}
+
+/* Override .dark text color */
+.dashboard-dark .text-gray-900 {
+  color: hsl(240 5% 92%) !important;
+}
+
+.dashboard-dark .text-gray-800 {
+  color: hsl(240 5% 85%) !important;
+}
+
+.dashboard-dark .text-gray-700 {
+  color: hsl(240 5% 75%) !important;
+}
+
+.dashboard-dark .text-gray-600 {
+  color: hsl(240 5% 65%) !important;
+}
+
+.dashboard-dark .text-gray-500 {
+  color: hsl(240 5% 55%) !important;
+}
+
+/* Override .dark input/textarea/select */
+.dashboard-dark input:not(.neon-input),
+.dashboard-dark textarea:not(.neon-input),
+.dashboard-dark select:not(.neon-input) {
+  background-color: hsl(240 20% 14%) !important;
+  border-color: hsl(240 20% 22%) !important;
+  color: hsl(240 5% 90%) !important;
+}
+
+/* Override .dark dialog/popover/menu backgrounds */
+.dashboard-dark [role="dialog"],
+.dashboard-dark [role="menu"],
+.dashboard-dark [role="listbox"],
+.dashboard-dark [role="menuitem"],
+.dashboard-dark [role="option"] {
+  background-color: hsl(240 30% 13%) !important;
+  border-color: hsl(240 20% 22%) !important;
+  color: hsl(240 5% 90%) !important;
+}
+
+/* Override .dark table styling */
+.dashboard-dark table thead th {
+  background-color: hsl(240 30% 13%) !important;
+  color: hsl(240 5% 85%) !important;
+  border-color: hsl(240 20% 22%) !important;
+}
+
+.dashboard-dark table tbody tr {
+  border-color: hsl(240 20% 18%) !important;
+}
+
+.dashboard-dark table tbody td {
+  color: hsl(240 5% 85%) !important;
+  border-color: hsl(240 20% 18%) !important;
+}
+
+/* Portalled elements — override .dark dialogs/popovers/menus */
+body.dashboard-dark-active [data-radix-popper-content-wrapper] > *,
+body.dashboard-dark-active [data-radix-portal] > * {
+  background-color: hsl(240 30% 13%) !important;
+  border-color: hsl(240 20% 22%) !important;
+  color: hsl(240 5% 90%) !important;
+}
+
+body.dashboard-dark-active [data-radix-popper-content-wrapper] [role="menuitem"],
+body.dashboard-dark-active [data-radix-popper-content-wrapper] [role="option"],
+body.dashboard-dark-active [data-radix-portal] [role="menuitem"],
+body.dashboard-dark-active [data-radix-portal] [role="option"] {
+  background-color: transparent !important;
+  color: hsl(240 5% 90%) !important;
+}
+
+body.dashboard-dark-active [data-radix-popper-content-wrapper] [role="menuitem"]:hover,
+body.dashboard-dark-active [data-radix-popper-content-wrapper] [role="menuitem"][data-highlighted],
+body.dashboard-dark-active [data-radix-popper-content-wrapper] [role="option"]:hover,
+body.dashboard-dark-active [data-radix-popper-content-wrapper] [role="option"][data-highlighted],
+body.dashboard-dark-active [data-radix-portal] [role="menuitem"]:hover,
+body.dashboard-dark-active [data-radix-portal] [role="menuitem"][data-highlighted],
+body.dashboard-dark-active [data-radix-portal] [data-highlighted] {
+  background-color: hsl(263 70% 58% / 0.12) !important;
+}
+
+body.dashboard-dark-active [data-radix-popper-content-wrapper] span,
+body.dashboard-dark-active [data-radix-popper-content-wrapper] label,
+body.dashboard-dark-active [data-radix-popper-content-wrapper] p,
+body.dashboard-dark-active [data-radix-portal] span,
+body.dashboard-dark-active [data-radix-portal] label,
+body.dashboard-dark-active [data-radix-portal] p {
+  color: hsl(240 5% 90%) !important;
+}
+
+body.dashboard-dark-active [data-radix-portal] [role="dialog"],
+body.dashboard-dark-active [data-radix-portal] [role="alertdialog"] {
+  background-color: hsl(240 30% 11%) !important;
+  border-color: hsl(240 20% 22%) !important;
+  color: hsl(240 5% 90%) !important;
+}
+
+/* Preserve specific border colors */
+.dashboard-dark .border-primary {
+  border-color: hsl(263 70% 58%) !important;
+}
+
+.dashboard-dark .border-destructive {
+  border-color: hsl(0 62% 55%) !important;
 }
 
 /* Enhanced Form Controls and Validation Messages */
@@ -439,3 +682,4 @@ body {
 .enhanced-input:focus {
   box-shadow: 0 0 0 2px rgba(30, 136, 229, 0.20), 0 1px 2px rgba(0, 0, 0, 0.05);
 }
+

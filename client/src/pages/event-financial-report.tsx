@@ -53,7 +53,6 @@ import {
   TabsTrigger 
 } from "@/components/ui/tabs";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
 
 // Define color palette that matches our UI
 const CHART_COLORS = [

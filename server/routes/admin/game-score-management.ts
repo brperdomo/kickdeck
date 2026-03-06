@@ -305,6 +305,24 @@ router.post('/games/:gameId/score', async (req, res) => {
       isOverride
     });
 
+    // ─── Auto-trigger championship resolution after pool play completion ───
+    // Run asynchronously after the response is sent (fire-and-forget)
+    if (currentGame.bracketId && currentGame.gameType === 'pool_play') {
+      setImmediate(async () => {
+        try {
+          const { resolveChampionshipGames } = await import('../../services/championship-resolver.js');
+          const result = await resolveChampionshipGames(currentGame.bracketId!, currentGame.eventId.toString());
+          if (result.success) {
+            console.log(`[Game Score Management] 🏆 Auto-resolved championship: ${result.message}`);
+          } else if (!result.message.includes('No pending') && !result.message.includes('Only')) {
+            console.log(`[Game Score Management] Championship auto-resolve skipped: ${result.message}`);
+          }
+        } catch (autoResolveErr) {
+          console.warn(`[Game Score Management] Championship auto-resolve error (non-critical):`, autoResolveErr);
+        }
+      });
+    }
+
   } catch (error) {
     console.error('[Game Score Management] Error updating score:', error);
     res.status(500).json({

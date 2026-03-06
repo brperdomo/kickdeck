@@ -2,7 +2,7 @@
  * Enhanced Fee Calculator Service
  * 
  * Handles complex fee calculations for tournament registration with:
- * - MatchPro platform fees (configurable, default 4%)
+ * - KickDeck platform fees (configurable, default 4%)
  * - Stripe processing fees (2.9% + $0.30)
  * - Volume-based platform fee reductions
  * - Precise revenue distribution calculations
@@ -13,12 +13,12 @@ import { events } from "@db/schema";
 import { eq } from "drizzle-orm";
 
 // Base fee rates
-export const DEFAULT_PLATFORM_FEE_RATE = 0.04; // 4% MatchPro fee
+export const DEFAULT_PLATFORM_FEE_RATE = 0.04; // 4% KickDeck fee
 export const STRIPE_PERCENTAGE_FEE = 0.029; // 2.9%
 export const STRIPE_FIXED_FEE = 30; // $0.30 in cents
 
 // Volume discount tiers for platform fees
-// Designed to ensure MatchPro profitability while providing volume incentives
+// Designed to ensure KickDeck profitability while providing volume incentives
 export const VOLUME_DISCOUNT_TIERS = [
   { minAmount: 0, maxAmount: 10000, platformFeeRate: 0.04 }, // 4% for $0-$100
   { minAmount: 10001, maxAmount: 50000, platformFeeRate: 0.04 }, // 4% for $100.01-$500  
@@ -35,14 +35,14 @@ export interface FeeCalculation {
   
   // Platform fee calculation
   platformFeeRate: number; // Actual platform fee rate applied
-  platformFeeAmount: number; // MatchPro platform fee in cents
+  platformFeeAmount: number; // KickDeck platform fee in cents
   
   // Stripe fee calculation
   stripeFeeAmount: number; // Total Stripe processing fee in cents
   
   // Distribution breakdown
   tournamentReceives: number; // Amount tournament receives in cents
-  matchproReceives: number; // Amount MatchPro receives in cents
+  kickdeckReceives: number; // Amount KickDeck receives in cents
   stripeReceives: number; // Amount Stripe receives in cents
   
   // Validation
@@ -77,7 +77,7 @@ export function calculateStripeFees(totalAmount: number): number {
 /**
  * Calculate comprehensive fee breakdown
  * Fee structure: Tournament Cost + 4% + $0.30 total fee
- * Where: Stripe gets 2.9% + $0.30, MatchPro gets 1.1%
+ * Where: Stripe gets 2.9% + $0.30, KickDeck gets 1.1%
  */
 export function calculateFeeBreakdown(
   tournamentCost: number,
@@ -97,15 +97,15 @@ export function calculateFeeBreakdown(
   // Stripe gets exactly 2.9% + $0.30 of the tournament cost
   const stripeFeeAmount = Math.round(tournamentCost * STRIPE_PERCENTAGE_FEE + STRIPE_FIXED_FEE);
   
-  // MatchPro gets the remaining 1.1% of tournament cost
-  const matchproReceives = platformFeeAmount - stripeFeeAmount;
+  // KickDeck gets the remaining 1.1% of tournament cost
+  const kickdeckReceives = platformFeeAmount - stripeFeeAmount;
   
   // Distribution calculation
   const tournamentReceives = tournamentCost; // Tournament gets their base amount
   const stripeReceives = stripeFeeAmount; // Stripe gets 2.9% + $0.30
   
   // Validation
-  const totalAccounted = tournamentReceives + stripeReceives + matchproReceives;
+  const totalAccounted = tournamentReceives + stripeReceives + kickdeckReceives;
   const isBalanced = totalAccounted === totalChargedAmount;
   
   return {
@@ -115,7 +115,7 @@ export function calculateFeeBreakdown(
     platformFeeAmount,
     stripeFeeAmount,
     tournamentReceives,
-    matchproReceives,
+    kickdeckReceives,
     stripeReceives,
     totalAccounted,
     isBalanced
@@ -168,7 +168,7 @@ export function formatFeeCalculation(calculation: FeeCalculation) {
     breakdown: {
       tournamentReceives: formatCurrency(calculation.tournamentReceives),
       stripeReceives: formatCurrency(calculation.stripeReceives),
-      matchproReceives: formatCurrency(calculation.matchproReceives),
+      kickdeckReceives: formatCurrency(calculation.kickdeckReceives),
     },
     validation: {
       totalAccounted: formatCurrency(calculation.totalAccounted),
@@ -200,7 +200,7 @@ export function simulateFeeScenarios() {
     console.log(`  Total Charged: ${formatted.summary.totalCharged}`);
     console.log(`  Tournament Gets: ${formatted.breakdown.tournamentReceives}`);
     console.log(`  Stripe Gets: ${formatted.breakdown.stripeReceives}`);
-    console.log(`  MatchPro Gets: ${formatted.breakdown.matchproReceives}`);
+    console.log(`  KickDeck Gets: ${formatted.breakdown.kickdeckReceives}`);
     console.log(`  Balanced: ${formatted.validation.isBalanced ? 'Yes' : 'No'}`);
     console.log('');
   });

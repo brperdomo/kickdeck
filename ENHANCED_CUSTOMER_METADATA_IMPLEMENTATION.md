@@ -32,7 +32,7 @@ Metadata: {
   managerName: "John Smith",
   registrationDate: "2025-08-19T02:30:00.000Z",
   internalReference: "TEAM-1234-123",
-  systemSource: "MatchPro",
+  systemSource: "KickDeck",
   customerType: "ConnectAccount"
 }
 ```
@@ -74,7 +74,7 @@ Updated Setup Intent creation with matching metadata:
 ### **System Tracking**
 - `registrationDate`: When customer was created
 - `internalReference`: "TEAM-{teamId}-{eventId}" format
-- `systemSource`: "MatchPro" identifier
+- `systemSource`: "KickDeck" identifier
 - `customerType`: "ConnectAccount" designation
 
 ---

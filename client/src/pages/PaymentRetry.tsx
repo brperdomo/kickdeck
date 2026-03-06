@@ -178,7 +178,7 @@ export default function PaymentRetry() {
         {/* Header */}
         <div className="text-center">
           <div className="mx-auto mb-4 h-10 flex items-center justify-center">
-            <span className="text-2xl font-bold text-blue-600">MatchPro</span>
+            <span className="text-2xl font-bold text-blue-600">KickDeck</span>
           </div>
           <h1 className="text-2xl font-bold text-gray-900">Complete Your Payment</h1>
           <p className="text-gray-600 mt-2">Secure tournament registration payment</p>
@@ -269,7 +269,7 @@ export default function PaymentRetry() {
 
         {/* Help Text */}
         <div className="text-center text-sm text-gray-600">
-          <p>Having trouble? Contact support at support@matchpro.ai</p>
+          <p>Having trouble? Contact support at support@kickdeck.io</p>
         </div>
       </div>
     </div>

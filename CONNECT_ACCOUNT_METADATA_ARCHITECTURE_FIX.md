@@ -2,11 +2,11 @@
 
 ## ❌ **PROBLEM IDENTIFIED**
 
-**You discovered a fundamental architectural flaw**: Payments and metadata are being created inconsistently across main MatchPro account vs Connect accounts.
+**You discovered a fundamental architectural flaw**: Payments and metadata are being created inconsistently across main KickDeck account vs Connect accounts.
 
 ### **Current Broken State:**
 - **Some payments**: Created on Connect accounts ✅
-- **Other payments**: Created on main MatchPro account ❌  
+- **Other payments**: Created on main KickDeck account ❌  
 - **Metadata updates**: Target Connect accounts but payments may not exist there ❌
 - **Result**: Metadata appears in main account, but not where actual payment processing occurs
 

@@ -32,7 +32,7 @@ async function testProductionDirect() {
   
   try {
     // Test with a fake admin session to see the actual error
-    const prodResponse = await makeHTTPSRequest('GET', 'app.matchpro.ai', '/api/admin/sendgrid/templates', {
+    const prodResponse = await makeHTTPSRequest('GET', 'app.kickdeck.io', '/api/admin/sendgrid/templates', {
       'User-Agent': 'Production-Test-Tool',
       'Accept': 'application/json',
       'Cookie': 'connect.sid=test' // This will fail auth but show us the real error
@@ -62,7 +62,7 @@ async function testProductionDirect() {
   console.log('\n3. Replit Environment Status:');
   console.log('   Current secrets in Replit should be:');
   console.log(`   SENDGRID_API_KEY = ${devApiKey}`);
-  console.log('   DEFAULT_FROM_EMAIL = support@matchpro.ai');
+  console.log('   DEFAULT_FROM_EMAIL = support@kickdeck.io');
   console.log('   NODE_ENV = production');
   
   // 4. Create immediate deployment test
@@ -76,14 +76,14 @@ echo "=== Deployment Verification ==="
 
 # Test the deployed application
 echo "Testing production endpoint..."
-curl -s -H "Accept: application/json" "https://app.matchpro.ai/api/admin/sendgrid/templates" | head -200
+curl -s -H "Accept: application/json" "https://app.kickdeck.io/api/admin/sendgrid/templates" | head -200
 
 echo ""
 echo "If you see 'Authentication required', that's expected (need admin login)"
 echo "If you see 'SendGrid authorization failed', the secrets update didn't work"
 
 echo ""
-echo "Next: Login to app.matchpro.ai as admin and test SendGrid Settings"
+echo "Next: Login to app.kickdeck.io as admin and test SendGrid Settings"
 `;
 
   require('fs').writeFileSync('test-deployment.sh', deploymentTest);
@@ -105,7 +105,7 @@ echo "Next: Login to app.matchpro.ai as admin and test SendGrid Settings"
   console.log('   - Wait for new deployment to complete');
   console.log('   Step 3: Verify Fix');
   console.log('   - Run: ./test-deployment.sh');
-  console.log('   - Login to app.matchpro.ai as admin');
+  console.log('   - Login to app.kickdeck.io as admin');
   console.log('   - Test SendGrid Settings page');
   
   // 6. Alternative: Direct environment variable injection
@@ -117,7 +117,7 @@ echo "Next: Login to app.matchpro.ai as admin and test SendGrid Settings"
 // Force production SendGrid API key
 if (process.env.NODE_ENV === 'production') {
   process.env.SENDGRID_API_KEY = '${devApiKey}';
-  process.env.DEFAULT_FROM_EMAIL = 'support@matchpro.ai';
+  process.env.DEFAULT_FROM_EMAIL = 'support@kickdeck.io';
 }
 `;
 

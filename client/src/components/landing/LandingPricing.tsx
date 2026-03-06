@@ -74,7 +74,7 @@ const LandingPricing = () => {
               Choose the Right Plan for Your Organization
             </h2>
             <p className="max-w-[1000px] mx-auto text-gray-300 md:text-xl mt-6">
-              Affordable solutions for organizations of all sizes. All plans include core MatchPro.ai features.
+              Affordable solutions for organizations of all sizes. All plans include core KickDeck features.
             </p>
           </div>
         </div>

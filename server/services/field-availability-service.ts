@@ -28,6 +28,7 @@ export interface FieldInfo {
   closeTime: string;
   hasLights: boolean;
   isOpen: boolean;
+  sortOrder: number;
 }
 
 export interface TimeSlot {
@@ -92,7 +93,8 @@ export class FieldAvailabilityService {
         isOpen: fields.isOpen,
         isActive: sql`COALESCE(${eventFieldConfigurations.isActive}, true)`.as('isActive'),
         firstGameTime: eventFieldConfigurations.firstGameTime,
-        lastGameTime: eventFieldConfigurations.lastGameTime
+        lastGameTime: eventFieldConfigurations.lastGameTime,
+        fieldSortOrder: sql`COALESCE(${eventFieldConfigurations.sortOrder}, ${fields.sortOrder}, 0)`.as('fieldSortOrder')
       })
       .from(eventComplexes)
       .innerJoin(complexes, eq(complexes.id, eventComplexes.complexId))
@@ -128,7 +130,8 @@ export class FieldAvailabilityService {
           isOpen: fields.isOpen,
           isActive: sql`COALESCE(${eventFieldConfigurations.isActive}, true)`.as('isActive'),
           firstGameTime: eventFieldConfigurations.firstGameTime,
-          lastGameTime: eventFieldConfigurations.lastGameTime
+          lastGameTime: eventFieldConfigurations.lastGameTime,
+          fieldSortOrder: sql`COALESCE(${eventFieldConfigurations.sortOrder}, ${fields.sortOrder}, 0)`.as('fieldSortOrder')
         })
         .from(complexes)
         .innerJoin(fields, eq(fields.complexId, complexes.id))
@@ -154,7 +157,8 @@ export class FieldAvailabilityService {
       openTime: row.firstGameTime || row.fieldOpenTime || row.complexOpenTime,
       closeTime: row.lastGameTime || row.fieldCloseTime || row.complexCloseTime,
       hasLights: row.hasLights,
-      isOpen: row.isActive && row.isOpen
+      isOpen: row.isActive && row.isOpen,
+      sortOrder: row.fieldSortOrder ?? 0
     }));
 
     console.log(`🏟️ Found ${fieldsInfo.length} available fields across ${new Set(fieldsInfo.map(f => f.complexId)).size} complexes`);

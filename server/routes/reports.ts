@@ -14,8 +14,8 @@ import OpenAI from 'openai';
 // Initialize router
 const router = Router();
 
-// Initialize OpenAI API client
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+// Initialize OpenAI API client (lazy - null if no key)
+const openai = process.env.OPENAI_API_KEY ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY }) : null;
 
 /**
  * Get Registration Orders Report

@@ -108,7 +108,7 @@ All bulk delete operations now work correctly:
 3. Entire tournament schedule is cleared
 
 ## 🚀 Production Ready
-All bulk delete functionality is now operational in your production environment (`app.matchpro.ai`, `matchpro.replit.app`).
+All bulk delete functionality is now operational in your production environment (`app.kickdeck.io`, `kickdeck.replit.app`).
 
 ---
 **Status**: FIXED ✅  

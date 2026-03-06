@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, MutableRefObject } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -71,6 +71,7 @@ import {
   ScoringRuleValues,
   EventSettingValues,
   AdminModalProps,
+  ReviewFormData,
 } from "./event-form-types";
 import { ComplexSelector } from "@/components/events/ComplexSelector";
 import { InfoPopover } from "@/components/ui/InfoPopover";
@@ -89,6 +90,7 @@ interface EventFormValues extends EventInformationValues {
 
 interface EventFormProps {
   mode: 'create' | 'edit';
+  layout?: 'tabs' | 'wizard' | 'edit';
   defaultValues?: EventFormValues;
   onSubmit: (data: EventFormValues) => Promise<void>;
   isSubmitting?: boolean;
@@ -97,9 +99,14 @@ interface EventFormProps {
   completedTabs: EventTab[];
   onCompletedTabsChange: (tabs: EventTab[]) => void;
   navigateTab: (direction: 'next' | 'prev') => void;
+  // Wizard-mode callbacks (optional — ignored in tabs mode)
+  onValidationStateChange?: (state: Record<string, boolean>) => void;
+  onFormDataChange?: (data: ReviewFormData) => void;
+  validateStepRef?: MutableRefObject<(() => Promise<boolean>) | null>;
+  submitRef?: MutableRefObject<(() => void) | null>;
 }
 
-export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false, activeTab, onTabChange, completedTabs, onCompletedTabsChange, navigateTab }: EventFormProps) => {
+export const EventForm = ({ mode, layout = 'tabs', defaultValues, onSubmit, isSubmitting = false, activeTab, onTabChange, completedTabs, onCompletedTabsChange, navigateTab, onValidationStateChange, onFormDataChange, validateStepRef, submitRef }: EventFormProps) => {
   const queryClient = useQueryClient();
   const [, setLocation] = useLocation();
   const { toast } = useToast();
@@ -677,6 +684,83 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
     maxFiles: 1,
     multiple: false
   });
+
+  // --- Wizard mode: expose validation state, form data snapshot, and step validator ---
+  const isWizardLayout = layout === 'wizard';
+
+  const watchedName = form.watch('name');
+  const watchedStartDate = form.watch('startDate');
+  const watchedEndDate = form.watch('endDate');
+  const watchedTimezone = form.watch('timezone');
+  const watchedDeadline = form.watch('applicationDeadline');
+
+  useEffect(() => {
+    if (!onValidationStateChange) return;
+    onValidationStateChange({
+      information: !!(watchedName && watchedStartDate && watchedEndDate && watchedTimezone && watchedDeadline),
+      'age-groups': !!selectedSeasonalScopeId,
+      complexes: selectedComplexIds.length > 0,
+      settings: true,
+    });
+  }, [watchedName, watchedStartDate, watchedEndDate, watchedTimezone, watchedDeadline, selectedSeasonalScopeId, selectedComplexIds, onValidationStateChange]);
+
+  useEffect(() => {
+    if (!onFormDataChange) return;
+    const scopeName = seasonalScopesQuery.data?.find((s: any) => s.id === selectedSeasonalScopeId)?.name || '';
+    const cNames = complexesQuery.data
+      ? complexesQuery.data.filter((c: Complex) => selectedComplexIds.includes(c.id)).map((c: Complex) => c.name)
+      : [];
+    onFormDataChange({
+      name: watchedName || '',
+      startDate: watchedStartDate || '',
+      endDate: watchedEndDate || '',
+      timezone: watchedTimezone || '',
+      applicationDeadline: watchedDeadline || '',
+      hasDetails: !!(form.getValues('details')),
+      hasAgreement: !!(form.getValues('agreement')),
+      hasRefundPolicy: !!(form.getValues('refundPolicy')),
+      ageGroupCount: ageGroups.length,
+      seasonalScopeName: scopeName,
+      selectedComplexCount: selectedComplexIds.length,
+      complexNames: cNames,
+      primaryColor,
+      secondaryColor,
+      logoPreviewUrl: previewUrl,
+      settingsCount: settings.filter(s => !s.key.startsWith('branding.') && s.key !== 'allowPayLater').length,
+      allowPayLater: settings.find(s => s.key === 'allowPayLater')?.value === 'true',
+    });
+  }, [watchedName, watchedStartDate, watchedEndDate, watchedTimezone, watchedDeadline, selectedSeasonalScopeId, ageGroups, selectedComplexIds, primaryColor, secondaryColor, previewUrl, settings, seasonalScopesQuery.data, complexesQuery.data, onFormDataChange]);
+
+  useEffect(() => {
+    if (!submitRef) return;
+    submitRef.current = () => {
+      form.handleSubmit(handleSubmit)();
+    };
+  }, [submitRef, form, handleSubmit]);
+
+  useEffect(() => {
+    if (!validateStepRef) return;
+    validateStepRef.current = async () => {
+      if (activeTab === 'information') {
+        return form.trigger();
+      }
+      if (activeTab === 'age-groups') {
+        if (!selectedSeasonalScopeId) {
+          toast({ title: "Required", description: "Please select a seasonal scope", variant: "destructive" });
+          return false;
+        }
+        return true;
+      }
+      if (activeTab === 'complexes') {
+        if (selectedComplexIds.length === 0) {
+          toast({ title: "Required", description: "Please select at least one venue", variant: "destructive" });
+          return false;
+        }
+        return true;
+      }
+      return true;
+    };
+  }, [activeTab, selectedSeasonalScopeId, selectedComplexIds, form, validateStepRef]);
 
   const renderAgeGroupsContent = (mode: 'create' | 'edit', ageGroups: AgeGroup[], seasonalScopesQuery: any, selectedSeasonalScopeId: number | null, handleSeasonalScopeChange: (id: number) => void) => (
     <div className="space-y-6">
@@ -1675,6 +1759,102 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
 
   const isEditMode = mode === "edit";
 
+  // --- Wizard mode: render only the active step's content, no chrome ---
+  if (isWizardLayout) {
+    return (
+      <div className="w-full">
+        {activeTab === 'information' && renderInformationContent()}
+        {activeTab === 'age-groups' && renderAgeGroupsContent(
+          mode,
+          ageGroups,
+          seasonalScopesQuery,
+          selectedSeasonalScopeId,
+          handleSeasonalScopeChange
+        )}
+        {activeTab === 'complexes' && renderComplexesContent()}
+        {activeTab === 'settings' && renderSettingsContent()}
+        <EventAdminModal
+          open={isAdminModalOpen}
+          onOpenChange={setIsAdminModalOpen}
+          adminToEdit={editingAdmin}
+          eventId={defaultValues?.id}
+          onSave={() => {
+            refetchAdmins();
+            setIsAdminModalOpen(false);
+            setEditingAdmin(null);
+          }}
+        />
+      </div>
+    );
+  }
+
+  // --- Edit layout mode: render active tab content without chrome (used by EventEditLayout) ---
+  if (layout === 'edit') {
+    return (
+      <div className="w-full">
+        {activeTab === 'information' && renderInformationContent()}
+        {activeTab === 'age-groups' && renderAgeGroupsContent(
+          mode,
+          ageGroups,
+          seasonalScopesQuery,
+          selectedSeasonalScopeId,
+          handleSeasonalScopeChange
+        )}
+        {activeTab === 'flights' && (
+          mode === 'edit' ? (
+            <BracketsContent />
+          ) : (
+            <div className="p-4 bg-muted/50 rounded-md text-center">
+              <p>You must save the event before managing flights.</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                Save the event with age groups first, then you can add flights in edit mode.
+              </p>
+            </div>
+          )
+        )}
+        {activeTab === 'scoring' && (
+          mode === 'edit' && defaultValues?.id ? (
+            <ScoringRulesTab eventId={defaultValues.id.toString()} />
+          ) : (
+            <div className="p-4 bg-muted/50 rounded-md text-center">
+              <p>Save the event first to configure scoring rules.</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                Scoring and standings configuration is available after creating the event.
+              </p>
+            </div>
+          )
+        )}
+        {activeTab === 'complexes' && renderComplexesContent()}
+        {activeTab === 'settings' && renderSettingsContent()}
+        {activeTab === 'banking' && (
+          mode === 'edit' && defaultValues?.id ? (
+            <StripeConnectBankingView eventId={defaultValues.id.toString()} />
+          ) : (
+            <div className="p-4 bg-muted/50 rounded-md text-center">
+              <p>Save the event first to set up banking information.</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                Banking setup is available after creating the event.
+              </p>
+            </div>
+          )
+        )}
+        {activeTab === 'administrators' && renderAdministratorsContent()}
+        <EventAdminModal
+          open={isAdminModalOpen}
+          onOpenChange={setIsAdminModalOpen}
+          adminToEdit={editingAdmin}
+          eventId={defaultValues?.id}
+          onSave={() => {
+            refetchAdmins();
+            setIsAdminModalOpen(false);
+            setEditingAdmin(null);
+          }}
+        />
+      </div>
+    );
+  }
+
+  // --- Tabs mode (edit mode / default): original rendering ---
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-6">
       <Card className="bg-white shadow-sm border border-gray-200">
@@ -1689,8 +1869,8 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                     data-[state=active]:bg-white data-[state=active]:text-[#007AFF] data-[state=active]:shadow-sm
                     text-[#1C1C1E] hover:text-[#007AFF]`}
                 >
-                  {tab === 'administrators' 
-                    ? 'Admins' 
+                  {tab === 'administrators'
+                    ? 'Admins'
                     : tab === 'flights'
                     ? 'Flights'
                     : tab.replace('-', ' ').charAt(0).toUpperCase() + tab.slice(1).replace('-', ' ')}
@@ -1712,7 +1892,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                   handleSeasonalScopeChange
                 )}
               </TabsContent>
-              
+
 
 
               <TabsContent value="flights">

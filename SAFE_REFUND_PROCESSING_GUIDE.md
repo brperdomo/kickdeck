@@ -1,5 +1,5 @@
 # Safe Refund Processing Guide
-## How to Issue Refunds Without MatchPro Overdraft Risk
+## How to Issue Refunds Without KickDeck Overdraft Risk
 
 ---
 
@@ -7,9 +7,9 @@
 
 **Stripe Rule:** Refunds must be processed from the same account that created the customer.
 
-**Old System Risk:** Customers created in MatchPro account → Refunds must come from MatchPro → Tournament may not cover cost
+**Old System Risk:** Customers created in KickDeck account → Refunds must come from KickDeck → Tournament may not cover cost
 
-**New System Safety:** Customers created in Connect account → Refunds come from Connect account → Zero MatchPro risk
+**New System Safety:** Customers created in Connect account → Refunds come from Connect account → Zero KickDeck risk
 
 ---
 
@@ -22,12 +22,12 @@
 New System Payments: Customer created on Connect account
 - Payment Intent will show Connect account metadata
 - Refund can be processed safely from Connect account
-- Zero MatchPro risk
+- Zero KickDeck risk
 
-Legacy System Payments: Customer created on MatchPro account  
-- Payment Intent shows MatchPro as source
-- Refund MUST come from MatchPro account
-- HIGH risk of MatchPro absorbing cost
+Legacy System Payments: Customer created on KickDeck account  
+- Payment Intent shows KickDeck as source
+- Refund MUST come from KickDeck account
+- HIGH risk of KickDeck absorbing cost
 ```
 
 ### API Check Method:
@@ -37,7 +37,7 @@ curl -H "Authorization: Bearer sk_..." \
   https://api.stripe.com/v1/payment_intents/pi_...
 
 # Look for:
-- "application": null (MatchPro main account - RISKY)
+- "application": null (KickDeck main account - RISKY)
 - "application": "ca_..." (Connect account - SAFE)
 ```
 
@@ -48,7 +48,7 @@ curl -H "Authorization: Bearer sk_..." \
 ### For New System Payments (Connect Account)
 1. **Verify Connect Account Balance:** Ensure tournament has sufficient Stripe balance
 2. **Process Refund:** Use Connect account refund API
-3. **Result:** Refund comes from tournament's balance, zero MatchPro cost
+3. **Result:** Refund comes from tournament's balance, zero KickDeck cost
 
 ```javascript
 // Safe refund processing
@@ -62,8 +62,8 @@ const refund = await stripe.refunds.create({
 
 ### For Legacy System Payments (High Risk)
 1. **Check Tournament Balance First:** Verify they can cover the refund cost
-2. **Coordinate with Tournament:** Get confirmation they'll reimburse MatchPro
-3. **Process with Caution:** Understand MatchPro may absorb cost
+2. **Coordinate with Tournament:** Get confirmation they'll reimburse KickDeck
+3. **Process with Caution:** Understand KickDeck may absorb cost
 4. **Attempt Recovery:** Try transfer from tournament to recover cost
 
 ```javascript
@@ -71,7 +71,7 @@ const refund = await stripe.refunds.create({
 const refund = await stripe.refunds.create({
   payment_intent: paymentIntentId,
   amount: refundAmount,
-  // Comes from MatchPro main account - RISK!
+  // Comes from KickDeck main account - RISK!
 });
 
 // Attempt cost recovery
@@ -79,12 +79,12 @@ try {
   const recovery = await stripe.transfers.create({
     amount: refundAmount,
     currency: 'usd',
-    destination: 'main_matchpro_account'
+    destination: 'main_kickdeck_account'
   }, {
     stripeAccount: connectAccountId
   });
 } catch (error) {
-  // MatchPro absorbs the cost!
+  // KickDeck absorbs the cost!
 }
 ```
 
@@ -94,7 +94,7 @@ try {
 
 ### Before Processing ANY Refund:
 
-- [ ] **Identify payment type** (Connect account vs MatchPro account)
+- [ ] **Identify payment type** (Connect account vs KickDeck account)
 - [ ] **Check tournament Stripe balance** (for new payments)
 - [ ] **Verify tournament can cover cost** (for legacy payments)  
 - [ ] **Get approval for risky refunds** (legacy payments)
@@ -116,7 +116,7 @@ Refund Request Received
 Check Payment Source
 ↓
 ┌─────────────────┬─────────────────┐
-│  Connect Account │  MatchPro Account │
+│  Connect Account │  KickDeck Account │
 │    (NEW/SAFE)    │   (LEGACY/RISKY)  │
 └─────────────────┴─────────────────┘
 ↓                    ↓
@@ -129,7 +129,7 @@ Account Balance      Willingness to Pay
 └──────────────┴──────────────┘
 ↓                    ↓
 ✅ Process Safely    ❌ DENY REFUND
-Zero MatchPro Risk   High MatchPro Risk
+Zero KickDeck Risk   High KickDeck Risk
 ```
 
 ---
@@ -143,10 +143,10 @@ Zero MatchPro Risk   High MatchPro Risk
 4. **Documentation:** Record all refund sources for accounting
 
 ### Long-term Strategy:
-1. **Phase Out Legacy:** Gradually eliminate MatchPro main account payments
+1. **Phase Out Legacy:** Gradually eliminate KickDeck main account payments
 2. **Tournament Education:** Train organizers on maintaining Stripe balances
 3. **Automated Checks:** Build balance verification into refund workflows
-4. **Risk Reporting:** Monitor and report MatchPro absorption incidents
+4. **Risk Reporting:** Monitor and report KickDeck absorption incidents
 
 ---
 
@@ -160,7 +160,7 @@ Zero MatchPro Risk   High MatchPro Risk
 
 ### API Endpoints:
 - `POST /api/refunds/process` - Intelligent refund processing with source detection
-- `GET /api/refunds/absorption-report` - MatchPro cost absorption tracking
+- `GET /api/refunds/absorption-report` - KickDeck cost absorption tracking
 - `GET /api/refunds/:paymentIntentId` - Detailed refund analysis
 
 ---
@@ -169,15 +169,15 @@ Zero MatchPro Risk   High MatchPro Risk
 
 ### Monitor These KPIs:
 - **Connect Account Refund Success Rate:** Target 100%
-- **MatchPro Cost Absorption:** Target $0 for new payments
+- **KickDeck Cost Absorption:** Target $0 for new payments
 - **Legacy Payment Volume:** Track declining trend
 - **Tournament Balance Health:** Monitor average Stripe balances
 
 ### Alert Thresholds:
 - **High Risk:** Legacy refund > $500 without tournament coverage
 - **System Health:** Connect account refund failure rate > 5%
-- **Financial Impact:** MatchPro absorption > $100/month from new payments
+- **Financial Impact:** KickDeck absorption > $100/month from new payments
 
 ---
 
-**KEY TAKEAWAY:** The new Connect account system eliminates MatchPro overdraft risk, but legacy payments still require careful handling until fully transitioned.
+**KEY TAKEAWAY:** The new Connect account system eliminates KickDeck overdraft risk, but legacy payments still require careful handling until fully transitioned.

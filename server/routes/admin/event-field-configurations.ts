@@ -1,8 +1,9 @@
 import { Router } from 'express';
 import { db } from '@db';
 import { isAdmin } from '../../middleware';
-import { eventFieldConfigurations, events, fields, complexes } from '@db/schema';
-import { eq, and, desc, sql } from 'drizzle-orm';
+import { eventFieldConfigurations, events, fields, complexes, games } from '@db/schema';
+import { eq, and, desc, sql, isNotNull } from 'drizzle-orm';
+import { EventFieldConfigService } from '../../services/eventFieldConfigService';
 
 const router = Router();
 
@@ -30,8 +31,8 @@ router.get('/events/:eventId/fields', isAdmin, async (req, res) => {
       });
     }
     
-    // Fetch all fields for the event with complete field information
-    const fieldsData = await db
+    // Helper to fetch fields with complete info
+    const fetchFieldsData = () => db
       .select({
         id: eventFieldConfigurations.id,
         fieldId: eventFieldConfigurations.fieldId,
@@ -54,7 +55,17 @@ router.get('/events/:eventId/fields', isAdmin, async (req, res) => {
       .leftJoin(complexes, eq(fields.complexId, complexes.id))
       .where(eq(eventFieldConfigurations.eventId, parseInt(eventId)))
       .orderBy(eventFieldConfigurations.sortOrder);
-    
+
+    // Always sync field configurations — picks up newly added fields/venues
+    try {
+      await EventFieldConfigService.createFieldConfigurationsForEvent(parseInt(eventId));
+    } catch (seedError: any) {
+      console.error(`[EVENT FIELDS] Field config sync failed:`, seedError.message);
+    }
+
+    // Fetch all fields for the event with complete field information
+    let fieldsData = await fetchFieldsData();
+
     console.log(`[EVENT FIELDS] Found ${fieldsData.length} fields for event ${eventId}`);
     
     res.json({
@@ -194,7 +205,46 @@ router.put('/events/:eventId/fields/:fieldId', isAdmin, async (req, res) => {
         error: 'Field configuration not found for this event'
       });
     }
-    
+
+    // ── Detect field size change → clear all scheduled games ─────────────
+    const oldFieldSize = existingField[0].fieldSize;
+    const newFieldSize = fieldSize || oldFieldSize;
+    let gamesCleared = 0;
+
+    if (newFieldSize !== oldFieldSize) {
+      console.log(`[EVENT FIELDS] Field size changing: ${oldFieldSize} → ${newFieldSize} for field ${fieldId} in event ${eventId}`);
+
+      // Count how many scheduled games exist for this event
+      const countResult = await db
+        .select({ count: sql<number>`count(*)::int` })
+        .from(games)
+        .where(
+          and(
+            eq(games.eventId, parseInt(eventId)),
+            isNotNull(games.fieldId)
+          )
+        );
+      gamesCleared = countResult[0]?.count || 0;
+
+      if (gamesCleared > 0) {
+        // Clear all field/date/time assignments — games become "unscheduled"
+        await db
+          .update(games)
+          .set({
+            fieldId: null,
+            scheduledDate: null,
+            scheduledTime: null,
+          })
+          .where(
+            and(
+              eq(games.eventId, parseInt(eventId)),
+              isNotNull(games.fieldId)
+            )
+          );
+        console.log(`[EVENT FIELDS] Cleared ${gamesCleared} scheduled games for event ${eventId} due to field size change`);
+      }
+    }
+
     // Update field configuration
     const [updatedField] = await db
       .update(eventFieldConfigurations)
@@ -213,6 +263,8 @@ router.put('/events/:eventId/fields/:fieldId', isAdmin, async (req, res) => {
     
     res.json({
       success: true,
+      gamesCleared,
+      fieldSizeChanged: newFieldSize !== oldFieldSize,
       field: {
         id: updatedField.id,
         fieldId: updatedField.fieldId,

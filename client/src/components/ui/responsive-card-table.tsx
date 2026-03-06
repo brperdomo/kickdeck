@@ -4,8 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, Search } from "lucide-react";
-import { Loader2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Search, Loader2 } from "lucide-react";
 import { useMobileContext } from "@/hooks/use-mobile";
 
 export interface ResponsiveCardTableColumn<T = any> {

@@ -38,7 +38,7 @@ interface TestResult {
 
 export function SendGridSetupWizard() {
   const [apiKey, setApiKey] = useState('');
-  const [fromEmail, setFromEmail] = useState('support@matchpro.ai');
+  const [fromEmail, setFromEmail] = useState('support@kickdeck.io');
   const [currentStep, setCurrentStep] = useState(1);
   const [testEmail, setTestEmail] = useState('');
   const { toast } = useToast();
@@ -152,7 +152,7 @@ export function SendGridSetupWizard() {
       const sendgridConfig = currentConfig.find(c => c.providerType === 'sendgrid');
       if (sendgridConfig) {
         setApiKey(sendgridConfig.settings.apiKey || '');
-        setFromEmail(sendgridConfig.settings.from || 'support@matchpro.ai');
+        setFromEmail(sendgridConfig.settings.from || 'support@kickdeck.io');
       }
     }
   }, [currentConfig]);
@@ -246,7 +246,7 @@ export function SendGridSetupWizard() {
                 <Input
                   id="fromEmail"
                   type="email"
-                  placeholder="support@matchpro.ai"
+                  placeholder="support@kickdeck.io"
                   value={fromEmail}
                   onChange={(e) => setFromEmail(e.target.value)}
                 />

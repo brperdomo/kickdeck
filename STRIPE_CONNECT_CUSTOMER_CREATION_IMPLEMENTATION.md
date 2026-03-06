@@ -7,7 +7,7 @@
 ### 1. **Checkout Session (Already Complete)**
 - ✅ `stripeCheckoutService.ts` creates sessions on Connect accounts using `stripeAccount` parameter
 - ✅ Customers automatically created on tournament Connect accounts
-- ✅ Zero MatchPro refund risk for new payments
+- ✅ Zero KickDeck refund risk for new payments
 
 ### 2. **Setup Intent (UPDATED)**
 - ✅ Modified `createSetupIntent` in `stripeService.ts` to use Connect accounts
@@ -17,7 +17,7 @@
 
 ### 3. **Payment Intent Charging**
 - ✅ When teams approved, charge occurs on same Connect account where customer was created
-- ✅ Refunds process from Connect account balance (zero MatchPro risk)
+- ✅ Refunds process from Connect account balance (zero KickDeck risk)
 
 ## 🎯 STRIPE WORKFLOW IMPLEMENTATION
 
@@ -25,7 +25,7 @@ Following Stripe's exact recommendations:
 
 ### **Step 1: Customer Creation on Connect Account**
 ```javascript
-// BEFORE (MatchPro main account - RISKY)
+// BEFORE (KickDeck main account - RISKY)
 const customer = await stripe.customers.create({
   email: "team@example.com",
   name: "Soccer Team Name"
@@ -42,7 +42,7 @@ const customer = await stripe.customers.create({
 
 ### **Step 2: Setup Intent on Connect Account**
 ```javascript
-// BEFORE (MatchPro main account - RISKY)
+// BEFORE (KickDeck main account - RISKY)
 const setupIntent = await stripe.setupIntents.create({
   customer: customerId,
   payment_method_types: ['card']
@@ -73,7 +73,7 @@ const paymentIntent = await stripe.paymentIntents.create({
 
 ### **Step 4: Refund Processing**
 ```javascript
-// Refund from Connect account (no MatchPro involvement)
+// Refund from Connect account (no KickDeck involvement)
 const refund = await stripe.refunds.create({
   payment_intent: paymentIntentId
 }, {
@@ -100,7 +100,7 @@ const refund = await stripe.refunds.create({
 **Refund Flow:**
 1. Refund requested → Processed from Connect account balance
 2. Tournament covers refund from their own money
-3. Zero MatchPro financial involvement
+3. Zero KickDeck financial involvement
 
 ### **🛡️ FINANCIAL PROTECTION ACHIEVED**
 
@@ -109,11 +109,11 @@ const refund = await stripe.refunds.create({
 - ✅ Payment methods stored on Connect accounts  
 - ✅ Charges processed on Connect accounts
 - ✅ Refunds processed from Connect accounts
-- ✅ **ZERO MatchPro overdraft risk**
+- ✅ **ZERO KickDeck overdraft risk**
 
 **Legacy Operations:**
-- ⚠️ Old customers still on MatchPro main account
-- ⚠️ Old refunds still require MatchPro processing + cost recovery
+- ⚠️ Old customers still on KickDeck main account
+- ⚠️ Old refunds still require KickDeck processing + cost recovery
 - ⚠️ Gradual transition as old payments complete
 
 ## 📊 IMPLEMENTATION VERIFICATION
@@ -138,6 +138,6 @@ We now follow Stripe's exact recommendations:
 - ✅ Payment Intents on same Connect accounts
 - ✅ Refunds processed from Connect accounts
 - ✅ Tournament organizers control their own refund capacity
-- ✅ MatchPro completely protected from overdraft risk
+- ✅ KickDeck completely protected from overdraft risk
 
 **Status: OPERATIONAL** - All new payments now use zero-risk Connect account architecture.

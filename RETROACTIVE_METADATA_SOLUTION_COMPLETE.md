@@ -39,7 +39,7 @@
     managerName: "John Smith",
     registrationDate: "2025-08-19T15:39:00.000Z",
     internalReference: "TEAM-1234-123",
-    systemSource: "MatchPro",
+    systemSource: "KickDeck",
     customerType: "ConnectAccount"
   }
 }
@@ -112,7 +112,7 @@ npx tsx server/scripts/retroactiveMetadataUpdate.ts
   eventName: "Empire Super Cup", 
   managerEmail: "manager@email.com",
   internalReference: "TEAM-1234-123",
-  systemSource: "MatchPro",
+  systemSource: "KickDeck",
   updateType: "RetroactiveMetadata",
   updateDate: "2025-08-19T16:00:00.000Z"
 }
@@ -127,7 +127,7 @@ npx tsx server/scripts/retroactiveMetadataUpdate.ts
   eventName: "Empire Super Cup",
   managerEmail: "manager@email.com", 
   internalReference: "TEAM-1234-123",
-  systemSource: "MatchPro",
+  systemSource: "KickDeck",
   updateType: "RetroactiveMetadata"
 }
 ```

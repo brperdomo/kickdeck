@@ -16,22 +16,17 @@ export class EventFieldConfigService {
    */
   static async createFieldConfigurationsForEvent(eventId: number): Promise<void> {
     try {
-      console.log(`🏟️ [FIELD CONFIG] Creating field configurations for event ${eventId}`);
-      
-      // Check if field configurations already exist for this event
+      console.log(`🏟️ [FIELD CONFIG] Syncing field configurations for event ${eventId}`);
+
+      // Get existing field configurations for this event
       const existingConfigs = await db
-        .select({ count: sql`COUNT(*)` })
+        .select({ fieldId: eventFieldConfigurations.fieldId })
         .from(eventFieldConfigurations)
         .where(eq(eventFieldConfigurations.eventId, eventId));
-      
-      const existingCount = Number(existingConfigs[0]?.count || 0);
-      
-      if (existingCount > 0) {
-        console.log(`🏟️ [FIELD CONFIG] Event ${eventId} already has ${existingCount} field configurations`);
-        return;
-      }
-      
-      // Fetch all available fields
+
+      const existingFieldIds = new Set(existingConfigs.map(c => c.fieldId));
+
+      // Fetch all available fields in the system
       const allFields = await db
         .select({
           id: fields.id,
@@ -42,35 +37,45 @@ export class EventFieldConfigService {
         })
         .from(fields)
         .orderBy(fields.id);
-      
+
       if (allFields.length === 0) {
         console.log(`⚠️ [FIELD CONFIG] No fields found in system - cannot create configurations`);
         return;
       }
-      
-      // Create field configurations for all fields
-      const fieldConfigurations = allFields.map((field, index) => ({
+
+      // Find fields that don't have event configurations yet (new fields)
+      const newFields = allFields.filter(f => !existingFieldIds.has(f.id));
+
+      if (newFields.length === 0) {
+        console.log(`🏟️ [FIELD CONFIG] Event ${eventId} already has configs for all ${allFields.length} fields — up to date`);
+        return;
+      }
+
+      // Create field configurations for new fields only
+      const maxSortOrder = existingConfigs.length > 0
+        ? existingConfigs.length // new fields get appended after existing
+        : 0;
+
+      const fieldConfigurations = newFields.map((field, index) => ({
         eventId: eventId,
         fieldId: field.id,
-        fieldSize: field.fieldSize || '11v11', // Default to 11v11 if not specified
-        sortOrder: index,
+        fieldSize: field.fieldSize || '11v11',
+        sortOrder: maxSortOrder + index,
         isActive: true,
         firstGameTime: null,
         lastGameTime: null,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       }));
-      
-      // Insert all field configurations
+
       await db
         .insert(eventFieldConfigurations)
         .values(fieldConfigurations);
-      
-      console.log(`✅ [FIELD CONFIG] Created ${fieldConfigurations.length} field configurations for event ${eventId}`);
-      console.log(`🎯 [FIELD CONFIG] Field sizes can now be customized per event for optimal game scheduling`);
-      
+
+      console.log(`✅ [FIELD CONFIG] Added ${newFields.length} new field configurations for event ${eventId} (${existingConfigs.length} existed, ${allFields.length} total)`);
+
     } catch (error: any) {
-      console.error(`❌ [FIELD CONFIG] Failed to create field configurations for event ${eventId}:`, error);
+      console.error(`❌ [FIELD CONFIG] Failed to sync field configurations for event ${eventId}:`, error);
       throw new Error(`Failed to create field configurations: ${error.message}`);
     }
   }

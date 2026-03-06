@@ -1,6 +1,6 @@
 import express from 'express';
 import { db } from '@db';
-import { games, teams, eventAgeGroups, fields, complexes, gameTimeSlots, events, eventBrackets } from '@db/schema';
+import { games, teams, eventAgeGroups, fields, complexes, gameTimeSlots, events, eventBrackets, eventFieldConfigurations } from '@db/schema';
 import { eq, and, sql } from 'drizzle-orm';
 
 const router = express.Router();
@@ -114,16 +114,20 @@ router.get('/:eventId/schedule-calendar', async (req, res) => {
 
     console.log(`[Schedule Calendar] Found ${allTimeSlots.length} time slots`);
 
-    // Get all fields, excluding unwanted fields and sorting in sequential order
+    // Get all fields with event-specific field sizes from event_field_configurations
     const allFieldsRaw = await db
       .select({
         id: fields.id,
         name: fields.name,
-        fieldSize: fields.fieldSize,
+        fieldSize: sql`COALESCE(${eventFieldConfigurations.fieldSize}, ${fields.fieldSize})`.as('fieldSize'),
         complexName: complexes.name
       })
       .from(fields)
-      .leftJoin(complexes, eq(fields.complexId, complexes.id));
+      .leftJoin(complexes, eq(fields.complexId, complexes.id))
+      .leftJoin(eventFieldConfigurations, and(
+        eq(eventFieldConfigurations.fieldId, fields.id),
+        eq(eventFieldConfigurations.eventId, parseInt(eventId))
+      ));
 
     // Filter out unwanted fields and sort in sequential order
     const allFields = allFieldsRaw
@@ -385,10 +389,20 @@ router.put('/games/:gameId/reschedule', async (req, res) => {
 
     console.log(`[Game Reschedule] Updating game ${gameId} to field ${fieldId} at ${startTime} for event ${eventId}`);
 
-    // Calculate end time (assuming 90 minute games)
-    const start = new Date(startTime);
-    const end = new Date(start.getTime() + 90 * 60 * 1000);
-    const endTime = end.toISOString();
+    // Look up the game's actual duration (don't hardcode 90 minutes)
+    const gameRecord = await db.query.games.findFirst({
+      where: eq(games.id, parseInt(gameId)),
+      columns: { duration: true }
+    });
+    const gameDuration = gameRecord?.duration || 90;
+
+    // Calculate end time using string math — DO NOT use new Date() which applies timezone conversion
+    const [datePart, timePart] = startTime.split('T');
+    const [startH, startM] = timePart.split(':').map(Number);
+    const endTotalMin = startH * 60 + startM + gameDuration;
+    const endH = Math.floor(endTotalMin / 60).toString().padStart(2, '0');
+    const endM = (endTotalMin % 60).toString().padStart(2, '0');
+    const endTime = `${datePart}T${endH}:${endM}:00`;
 
     // Create or find time slot for this assignment
     let timeSlot;
@@ -412,10 +426,10 @@ router.put('/games/:gameId/reschedule', async (req, res) => {
       timeSlot = null;
     }
 
-    // Parse date and time from startTime for scheduled_date and scheduled_time fields
-    const startDate = new Date(startTime);
-    const scheduledDate = startDate.toISOString().split('T')[0]; // YYYY-MM-DD
-    const scheduledTime = startDate.toTimeString().split(' ')[0].substr(0, 8); // HH:MM:SS
+    // Extract date and time by string splitting — DO NOT use new Date().toISOString()
+    // which converts local time to UTC, shifting the time by the server's timezone offset.
+    const scheduledDate = startTime.split('T')[0]; // "2026-04-02"
+    const scheduledTime = startTime.split('T')[1];  // "08:00:00"
     
     console.log(`[Game Reschedule] Parsed date: ${scheduledDate}, time: ${scheduledTime}`);
 

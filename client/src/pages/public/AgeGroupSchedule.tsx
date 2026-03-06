@@ -340,12 +340,12 @@ export default function AgeGroupSchedule() {
           </TabsContent>
         </Tabs>
 
-        {/* Powered by MatchPro Footer */}
+        {/* Powered by KickDeck Footer */}
         <div className="mt-16 py-8 border-t border-gray-200/50">
           <div className="flex items-center justify-center gap-2 text-gray-500">
             <Trophy className="h-4 w-4" />
             <span className="text-sm">Powered by</span>
-            <span className="text-sm font-semibold text-gray-700">MatchPro</span>
+            <span className="text-sm font-semibold text-gray-700">KickDeck</span>
           </div>
           <p className="text-center text-xs text-gray-400 mt-1">
             Intelligent Tournament Management

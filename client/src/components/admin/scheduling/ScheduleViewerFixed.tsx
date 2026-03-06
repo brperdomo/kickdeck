@@ -91,6 +91,43 @@ interface TBDGameCreation {
   duration: number;
 }
 
+// KickDeck Dark Theme Style Constants
+const dk = {
+  cardBg: 'rgba(15, 15, 35, 0.85)',
+  cardBorder: 'rgba(255, 255, 255, 0.08)',
+  cardShadow: '0 4px 20px rgba(0,0,0,0.3), 0 0 15px rgba(124,58,237,0.06)',
+  innerBg: 'rgba(255, 255, 255, 0.03)',
+  innerBorder: 'rgba(255, 255, 255, 0.06)',
+  textPrimary: '#eaeaf0',
+  textSecondary: '#9393a8',
+  textMuted: 'rgba(147, 147, 168, 0.7)',
+  violet: '#7c3aed',
+  violetMuted: 'rgba(124, 58, 237, 0.7)',
+  violetBg: 'rgba(124, 58, 237, 0.15)',
+  violetBorder: 'rgba(124, 58, 237, 0.2)',
+  cyan: '#06b6d4',
+  cyanMuted: 'rgba(6, 182, 212, 0.7)',
+  greenBg: 'rgba(34, 197, 94, 0.15)',
+  greenBorder: 'rgba(34, 197, 94, 0.3)',
+  greenText: '#4ade80',
+  yellowBg: 'rgba(234, 179, 8, 0.15)',
+  yellowBorder: 'rgba(234, 179, 8, 0.3)',
+  yellowText: '#facc15',
+  redBg: 'rgba(239, 68, 68, 0.15)',
+  redBorder: 'rgba(239, 68, 68, 0.3)',
+  redText: '#f87171',
+  blueBg: 'rgba(59, 130, 246, 0.15)',
+  blueBorder: 'rgba(59, 130, 246, 0.3)',
+  blueText: '#60a5fa',
+  orangeBg: 'rgba(249, 115, 22, 0.15)',
+  orangeBorder: 'rgba(249, 115, 22, 0.3)',
+  orangeText: '#fb923c',
+  iconBlue: '#60a5fa',
+  iconGreen: '#4ade80',
+  iconPurple: '#a78bfa',
+  iconOrange: '#fb923c',
+} as const;
+
 export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
   // Use useMemo for initial state to ensure stable references
   const initialState = useMemo(() => ({
@@ -1174,8 +1211,8 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
-          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
-          <p className="text-gray-600">Loading tournament schedule...</p>
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" style={{ color: dk.violetMuted }} />
+          <p style={{ color: dk.textSecondary }}>Loading tournament schedule...</p>
         </div>
       </div>
     );
@@ -1183,11 +1220,11 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
 
   if (error) {
     return (
-      <Card className="border-red-200 bg-red-50">
+      <Card style={{ background: dk.cardBg, border: `1px solid ${dk.redBorder}`, boxShadow: dk.cardShadow }}>
         <CardContent className="p-8 text-center">
-          <AlertCircle className="h-12 w-12 text-red-600 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-red-800 mb-2">Error Loading Schedule</h3>
-          <p className="text-red-600">Unable to load tournament schedule. Please try again.</p>
+          <AlertCircle className="h-12 w-12 mx-auto mb-4" style={{ color: dk.redText }} />
+          <h3 className="text-lg font-semibold mb-2" style={{ color: dk.redText }}>Error Loading Schedule</h3>
+          <p style={{ color: dk.textSecondary }}>Unable to load tournament schedule. Please try again.</p>
         </CardContent>
       </Card>
     );
@@ -1195,11 +1232,11 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
 
   if (!scheduleData) {
     return (
-      <Card className="border-gray-200">
+      <Card style={{ background: dk.cardBg, border: `1px solid ${dk.cardBorder}`, boxShadow: dk.cardShadow }}>
         <CardContent className="p-8 text-center">
-          <Database className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-gray-800 mb-2">No Schedule Data</h3>
-          <p className="text-gray-600">Tournament schedule data is not available.</p>
+          <Database className="h-12 w-12 mx-auto mb-4" style={{ color: dk.textMuted }} />
+          <h3 className="text-lg font-semibold mb-2" style={{ color: dk.textPrimary }}>No Schedule Data</h3>
+          <p style={{ color: dk.textSecondary }}>Tournament schedule data is not available.</p>
         </CardContent>
       </Card>
     );
@@ -1209,51 +1246,51 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
     <div className="space-y-4">
       {/* Header Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-        <Card>
+        <Card style={{ background: dk.cardBg, border: `1px solid ${dk.cardBorder}`, backdropFilter: 'blur(12px)', boxShadow: dk.cardShadow }}>
           <CardContent className="p-3">
             <div className="flex items-center">
-              <Database className="h-6 w-6 text-blue-600 mr-2" />
+              <Database className="h-6 w-6 mr-2" style={{ color: dk.iconBlue }} />
               <div>
-                <p className="text-sm font-medium text-gray-600">
+                <p className="text-sm font-medium" style={{ color: dk.textSecondary }}>
                   {scheduleData.actualData.scheduleType || 'Database Games'}
                 </p>
-                <p className="text-2xl font-bold text-gray-900">{scheduleData.actualData.gamesInDatabase}</p>
+                <p className="text-2xl font-bold" style={{ color: dk.textPrimary }}>{scheduleData.actualData.gamesInDatabase}</p>
               </div>
             </div>
           </CardContent>
         </Card>
-        
-        <Card>
+
+        <Card style={{ background: dk.cardBg, border: `1px solid ${dk.cardBorder}`, backdropFilter: 'blur(12px)', boxShadow: dk.cardShadow }}>
           <CardContent className="p-3">
             <div className="flex items-center">
-              <Users className="h-6 w-6 text-green-600 mr-2" />
+              <Users className="h-6 w-6 mr-2" style={{ color: dk.iconGreen }} />
               <div>
-                <p className="text-sm font-medium text-gray-600">Teams</p>
-                <p className="text-2xl font-bold text-gray-900">{scheduleData.actualData.teamsInDatabase}</p>
+                <p className="text-sm font-medium" style={{ color: dk.textSecondary }}>Teams</p>
+                <p className="text-2xl font-bold" style={{ color: dk.textPrimary }}>{scheduleData.actualData.teamsInDatabase}</p>
               </div>
             </div>
           </CardContent>
         </Card>
-        
-        <Card>
+
+        <Card style={{ background: dk.cardBg, border: `1px solid ${dk.cardBorder}`, backdropFilter: 'blur(12px)', boxShadow: dk.cardShadow }}>
           <CardContent className="p-3">
             <div className="flex items-center">
-              <Calendar className="h-6 w-6 text-purple-600 mr-2" />
+              <Calendar className="h-6 w-6 mr-2" style={{ color: dk.iconPurple }} />
               <div>
-                <p className="text-sm font-medium text-gray-600">Age Groups</p>
-                <p className="text-2xl font-bold text-gray-900">{scheduleData.actualData.ageGroupsConfigured}</p>
+                <p className="text-sm font-medium" style={{ color: dk.textSecondary }}>Age Groups</p>
+                <p className="text-2xl font-bold" style={{ color: dk.textPrimary }}>{scheduleData.actualData.ageGroupsConfigured}</p>
               </div>
             </div>
           </CardContent>
         </Card>
-        
-        <Card>
+
+        <Card style={{ background: dk.cardBg, border: `1px solid ${dk.cardBorder}`, backdropFilter: 'blur(12px)', boxShadow: dk.cardShadow }}>
           <CardContent className="p-3">
             <div className="flex items-center">
-              <MapPin className="h-6 w-6 text-orange-600 mr-2" />
+              <MapPin className="h-6 w-6 mr-2" style={{ color: dk.iconOrange }} />
               <div>
-                <p className="text-sm font-medium text-gray-600">Fields</p>
-                <p className="text-2xl font-bold text-gray-900">{scheduleData.fields.length}</p>
+                <p className="text-sm font-medium" style={{ color: dk.textSecondary }}>Fields</p>
+                <p className="text-2xl font-bold" style={{ color: dk.textPrimary }}>{scheduleData.fields.length}</p>
               </div>
             </div>
           </CardContent>
@@ -1261,11 +1298,11 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
       </div>
 
       {/* Schedule Management */}
-      <Card>
+      <Card style={{ background: dk.cardBg, border: `1px solid ${dk.cardBorder}`, backdropFilter: 'blur(12px)', boxShadow: dk.cardShadow }}>
         <CardHeader>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <CardTitle className="flex items-center">
-              <Calendar className="h-5 w-5 mr-2 text-blue-600" />
+            <CardTitle className="flex items-center" style={{ color: dk.textPrimary }}>
+              <Calendar className="h-5 w-5 mr-2" style={{ color: dk.violetMuted }} />
               Tournament Schedule ({filteredGames.length} games)
             </CardTitle>
             
@@ -1277,7 +1314,7 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                     variant="outline"
                     size="sm"
                     onClick={() => setSelectedGames([])}
-                    className="text-gray-600"
+                    style={{ color: dk.textSecondary }}
                   >
                     <X className="h-4 w-4 mr-1" />
                     Clear ({selectedGames.length})
@@ -1286,7 +1323,7 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                     variant="outline"
                     size="sm"
                     onClick={() => setShowBulkFieldAssignment(true)}
-                    className="text-blue-600"
+                    style={{ color: dk.blueText }}
                   >
                     <MapPin className="h-4 w-4 mr-1" />
                     Assign Field
@@ -1314,7 +1351,7 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                         setIsFillingSlotsMode(true);
                         setSelectedGames([]); // Clear regular game selection
                       }}
-                      className="text-blue-600 border-blue-600 hover:bg-blue-50"
+                      style={{ color: dk.blueText, borderColor: dk.blueBorder }}
                     >
                       <Clock className="h-4 w-4 mr-1" />
                       Fill Empty Slots ({unscheduledGames.length} unscheduled)
@@ -1328,7 +1365,7 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                           setIsFillingSlotsMode(false);
                           setSelectedUnscheduledGames([]);
                         }}
-                        className="text-gray-600"
+                        style={{ color: dk.textSecondary }}
                       >
                         <X className="h-4 w-4 mr-1" />
                         Cancel
@@ -1394,7 +1431,7 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
           {/* Filters */}
           <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
             <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3 top-3 h-4 w-4" style={{ color: dk.textMuted }} />
               <Input
                 placeholder="Search teams..."
                 value={searchTerm}
@@ -1506,10 +1543,10 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
           {/* Games List */}
           {filteredGames.length === 0 ? (
             <div className="text-center py-12">
-              <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-800 mb-2">No Games Found</h3>
-              <p className="text-gray-600">
-                {scheduleData.games.length === 0 
+              <Calendar className="h-12 w-12 mx-auto mb-4" style={{ color: dk.textMuted }} />
+              <h3 className="text-lg font-semibold mb-2" style={{ color: dk.textPrimary }}>No Games Found</h3>
+              <p style={{ color: dk.textSecondary }}>
+                {scheduleData.games.length === 0
                   ? "No games have been scheduled yet. Use the Quick Generator to create a schedule."
                   : "No games match your current filter criteria."
                 }
@@ -1524,16 +1561,28 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                 const hasOverlap = overlapCheck.hasOverlap;
                 
                 return (
-                <Card 
-                  key={game.id} 
-                  className={`border transition-colors hover:shadow-md ${
-                    isFillingSlotsMode ? 
-                      (selectedUnscheduledGames.includes(game.id) ? 'border-green-400 bg-green-50' : 
-                       hasUnassignedFields ? 'border-yellow-300 bg-yellow-50' : 'border-gray-200 opacity-50') :
-                      (selectedGames.includes(game.id) ? 'border-blue-300 bg-blue-50' : 'border-gray-200')
-                  } ${hasUnassignedFields && !isFillingSlotsMode ? 'border-yellow-300 bg-yellow-50' : ''} ${
-                    hasOverlap ? 'border-red-400 bg-red-50' : ''
-                  }`}
+                <Card
+                  key={game.id}
+                  className="transition-all duration-200 rounded-xl overflow-hidden"
+                  style={{
+                    background: dk.cardBg,
+                    backdropFilter: 'blur(12px)',
+                    WebkitBackdropFilter: 'blur(12px)',
+                    border: `1px solid ${
+                      hasOverlap ? dk.redBorder :
+                      (isFillingSlotsMode && selectedUnscheduledGames.includes(game.id)) ? dk.greenBorder :
+                      (isFillingSlotsMode && hasUnassignedFields) ? dk.yellowBorder :
+                      (!isFillingSlotsMode && selectedGames.includes(game.id)) ? dk.violetBorder :
+                      (!isFillingSlotsMode && hasUnassignedFields) ? dk.yellowBorder :
+                      dk.cardBorder
+                    }`,
+                    boxShadow: hasOverlap
+                      ? `0 0 20px rgba(239,68,68,0.12), ${dk.cardShadow}`
+                      : (selectedGames.includes(game.id) || selectedUnscheduledGames.includes(game.id))
+                        ? `0 0 20px rgba(124,58,237,0.15), ${dk.cardShadow}`
+                        : dk.cardShadow,
+                    opacity: (isFillingSlotsMode && !hasUnassignedFields) ? 0.5 : 1,
+                  }}
                   title={tooltipMessage || undefined}
                 >
                   <CardContent className="p-4">
@@ -1562,14 +1611,14 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                           disabled={isFillingSlotsMode && !hasUnassignedFields}
                         />
                         <div className="flex items-center gap-2">
-                          <Badge variant="outline" className="text-xs font-mono">
+                          <Badge variant="outline" className="text-xs font-mono" style={{ color: dk.textSecondary, borderColor: dk.innerBorder, background: 'transparent' }}>
                             #{game.id}
                           </Badge>
-                          <Badge variant="outline" className="text-xs">
+                          <Badge variant="outline" className="text-xs" style={{ color: dk.violetMuted, borderColor: dk.violetBorder, background: dk.violetBg }}>
                             {game.ageGroup}
                           </Badge>
                           {game.flightName && (
-                            <Badge variant="secondary" className="text-xs">
+                            <Badge variant="secondary" className="text-xs" style={{ color: dk.cyanMuted, background: 'rgba(6,182,212,0.12)', borderColor: 'rgba(6,182,212,0.2)' }}>
                               {game.flightName}
                             </Badge>
                           )}
@@ -1583,7 +1632,8 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                             variant="ghost"
                             size="sm"
                             onClick={() => setEditingGame(game.id)}
-                            className="h-8 w-8 p-0 text-blue-600 hover:bg-blue-50"
+                            className="h-8 w-8 p-0"
+                            style={{ color: dk.blueText }}
                           >
                             <Edit className="h-3 w-3" />
                           </Button>
@@ -1592,7 +1642,8 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                           variant="ghost"
                           size="sm"
                           onClick={() => handleDeleteGame(game.id)}
-                          className="h-8 w-8 p-0 text-red-600 hover:bg-red-50"
+                          className="h-8 w-8 p-0"
+                          style={{ color: dk.redText }}
                         >
                           <Trash2 className="h-3 w-3" />
                         </Button>
@@ -1605,10 +1656,10 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                       {editingGame?.gameId === game.id ? (
                           // Team Editing Interface
                           <div className="space-y-3 w-full">
-                            <div className="text-sm font-medium text-gray-700">Edit Game Teams</div>
+                            <div className="text-sm font-medium" style={{ color: dk.textPrimary }}>Edit Game Teams</div>
                             <div className="grid grid-cols-1 gap-2">
                               <div>
-                                <Label className="text-xs text-gray-600">Home Team</Label>
+                                <Label className="text-xs" style={{ color: dk.textSecondary }}>Home Team</Label>
                                 <Select 
                                   defaultValue={
                                     editingGame?.editingPosition === 'home' 
@@ -1648,7 +1699,7 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                                 </Select>
                               </div>
                               <div>
-                                <Label className="text-xs text-gray-600">Away Team</Label>
+                                <Label className="text-xs" style={{ color: dk.textSecondary }}>Away Team</Label>
                                 <Select 
                                   defaultValue={game.awayTeamId?.toString()}
                                   onValueChange={(value) => {
@@ -1690,32 +1741,32 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                           // Normal Game Display
                           <div className="space-y-4">
                             {/* Teams Display */}
-                            <div className="bg-gray-50 rounded-lg p-3">
+                            <div className="rounded-lg p-3" style={{ background: dk.innerBg, border: `1px solid ${dk.innerBorder}` }}>
                               <div className="text-center">
                                 <div className="flex items-center justify-center gap-4">
                                   {/* Home Team */}
                                   <div className="flex flex-col items-center">
-                                    <span className="text-sm font-semibold text-blue-700">
+                                    <span className="text-sm font-semibold" style={{ color: dk.blueText }}>
                                       {game.homeTeam}
                                     </span>
-                                    <span className="text-xs text-gray-500">Home</span>
+                                    <span className="text-xs" style={{ color: dk.textMuted }}>Home</span>
                                   </div>
-                                  
+
                                   {/* VS Divider */}
                                   <div className="flex flex-col items-center">
-                                    <span className="text-lg font-bold text-gray-400">VS</span>
+                                    <span className="text-lg font-bold" style={{ color: 'rgba(124, 58, 237, 0.5)', textShadow: '0 0 10px rgba(124, 58, 237, 0.2)' }}>VS</span>
                                     {game.homeScore !== null && game.awayScore !== null && (
-                                      <div className="text-sm font-mono">
+                                      <div className="text-sm font-mono" style={{ color: dk.textPrimary }}>
                                         {game.homeScore} - {game.awayScore}
                                       </div>
                                     )}
                                   </div>
                                   {/* Away Team */}
                                   <div className="flex flex-col items-center">
-                                    <span className="text-sm font-semibold text-red-700">
+                                    <span className="text-sm font-semibold" style={{ color: dk.orangeText }}>
                                       {game.awayTeam}
                                     </span>
-                                    <span className="text-xs text-gray-500">Away</span>
+                                    <span className="text-xs" style={{ color: dk.textMuted }}>Away</span>
                                   </div>
                                 </div>
                               </div>
@@ -1724,33 +1775,33 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                             {/* Game Details */}
                             <div className="grid grid-cols-3 gap-3 text-sm">
                               {/* Date */}
-                              <div className="flex items-center gap-2 p-2 bg-white rounded border">
-                                <Calendar className="h-4 w-4 text-blue-500" />
+                              <div className="flex items-center gap-2 p-2 rounded-lg" style={{ background: dk.innerBg, border: `1px solid ${dk.innerBorder}` }}>
+                                <Calendar className="h-4 w-4" style={{ color: dk.iconBlue }} />
                                 <div>
-                                  <div className="text-xs text-gray-500">Date</div>
-                                  <div className={`font-medium ${game.date === 'TBD' ? 'text-yellow-600' : 'text-gray-900'}`}>
+                                  <div className="text-xs" style={{ color: dk.textMuted }}>Date</div>
+                                  <div className="font-medium" style={{ color: game.date === 'TBD' ? dk.yellowText : dk.textPrimary }}>
                                     {game.date === 'TBD' ? 'TBD' : new Date(game.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                                   </div>
                                 </div>
                               </div>
 
                               {/* Time */}
-                              <div className="flex items-center gap-2 p-2 bg-white rounded border">
-                                <Clock className="h-4 w-4 text-green-500" />
+                              <div className="flex items-center gap-2 p-2 rounded-lg" style={{ background: dk.innerBg, border: `1px solid ${dk.innerBorder}` }}>
+                                <Clock className="h-4 w-4" style={{ color: dk.iconGreen }} />
                                 <div>
-                                  <div className="text-xs text-gray-500">Time</div>
-                                  <div className={`font-medium ${game.time === 'TBD' ? 'text-yellow-600' : 'text-gray-900'}`}>
+                                  <div className="text-xs" style={{ color: dk.textMuted }}>Time</div>
+                                  <div className="font-medium" style={{ color: game.time === 'TBD' ? dk.yellowText : dk.textPrimary }}>
                                     {game.time === 'TBD' ? 'TBD' : game.time}
                                   </div>
                                 </div>
                               </div>
 
                               {/* Field */}
-                              <div className="flex items-center gap-2 p-2 bg-white rounded border">
-                                <MapPin className="h-4 w-4 text-orange-500" />
+                              <div className="flex items-center gap-2 p-2 rounded-lg" style={{ background: dk.innerBg, border: `1px solid ${dk.innerBorder}` }}>
+                                <MapPin className="h-4 w-4" style={{ color: dk.iconOrange }} />
                                 <div>
-                                  <div className="text-xs text-gray-500">Field</div>
-                                  <div className={`font-medium ${(game.field === 'Unassigned' || game.field === 'TBD') ? 'text-yellow-600' : 'text-gray-900'}`}>
+                                  <div className="text-xs" style={{ color: dk.textMuted }}>Field</div>
+                                  <div className="font-medium" style={{ color: (game.field === 'Unassigned' || game.field === 'TBD') ? dk.yellowText : dk.textPrimary }}>
                                     {game.field}
                                   </div>
                                 </div>
@@ -1759,23 +1810,38 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
 
                             {/* Status and Warnings */}
                             <div className="flex flex-wrap gap-2 justify-center">
-                              <Badge 
-                                variant={game.status === 'scheduled' ? 'default' : 'secondary'}
+                              <Badge
                                 className="text-xs"
+                                style={{
+                                  background: game.status === 'scheduled' ? dk.greenBg :
+                                    game.status === 'completed' ? dk.blueBg :
+                                    game.status === 'pending' ? dk.yellowBg :
+                                    'rgba(255,255,255,0.05)',
+                                  color: game.status === 'scheduled' ? dk.greenText :
+                                    game.status === 'completed' ? dk.blueText :
+                                    game.status === 'pending' ? dk.yellowText :
+                                    dk.textSecondary,
+                                  border: `1px solid ${
+                                    game.status === 'scheduled' ? dk.greenBorder :
+                                    game.status === 'completed' ? dk.blueBorder :
+                                    game.status === 'pending' ? dk.yellowBorder :
+                                    dk.innerBorder
+                                  }`,
+                                }}
                               >
-                                {game.status}
+                                {game.status.charAt(0).toUpperCase() + game.status.slice(1)}
                               </Badge>
-                              
+
                               {hasOverlap && (
                                 <>
                                   {overlapCheck.conflicts.length > 0 && (
-                                    <Badge variant="destructive" className="text-xs">
+                                    <Badge className="text-xs" style={{ background: dk.redBg, color: dk.redText, border: `1px solid ${dk.redBorder}` }}>
                                       <AlertTriangle className="h-3 w-3 mr-1" />
                                       Field Conflict
                                     </Badge>
                                   )}
                                   {overlapCheck.restPeriodViolations?.length > 0 && (
-                                    <Badge variant="destructive" className="text-xs bg-orange-500 hover:bg-orange-600">
+                                    <Badge className="text-xs" style={{ background: dk.orangeBg, color: dk.orangeText, border: `1px solid ${dk.orangeBorder}` }}>
                                       <Clock className="h-3 w-3 mr-1" />
                                       Rest Violation ({overlapCheck.restPeriodViolations.length})
                                     </Badge>
@@ -1784,7 +1850,7 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                               )}
 
                               {hasUnassignedFields && (
-                                <Badge variant="outline" className="text-xs text-yellow-600 border-yellow-300">
+                                <Badge className="text-xs" style={{ background: dk.yellowBg, color: dk.yellowText, border: `1px solid ${dk.yellowBorder}` }}>
                                   <AlertTriangle className="h-3 w-3 mr-1" />
                                   Incomplete
                                 </Badge>
@@ -1805,16 +1871,16 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
       {/* Team Swapping Indicator */}
       {swappingTeam && (
         <div className="fixed top-4 right-4 z-40">
-          <Card className="bg-blue-50 border-blue-200">
+          <Card style={{ background: dk.cardBg, backdropFilter: 'blur(16px)', border: `1px solid ${dk.violetBorder}`, boxShadow: '0 0 30px rgba(124,58,237,0.15), 0 8px 32px rgba(0,0,0,0.4)' }}>
             <CardContent className="p-3">
-              <div className="flex items-center gap-2 text-blue-800">
-                <ArrowLeftRight className="h-4 w-4" />
+              <div className="flex items-center gap-2" style={{ color: dk.textPrimary }}>
+                <ArrowLeftRight className="h-4 w-4" style={{ color: dk.violetMuted }} />
                 <div className="text-sm">
                   <div className="font-medium">Swapping Mode Active</div>
-                  <div className="text-xs">
+                  <div className="text-xs" style={{ color: dk.textSecondary }}>
                     Selected: {swappingTeam.teamName} ({swappingTeam.position})
                   </div>
-                  <div className="text-xs text-blue-600">
+                  <div className="text-xs" style={{ color: dk.violetMuted }}>
                     Click another team to complete swap
                   </div>
                 </div>
@@ -1822,7 +1888,8 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                   variant="ghost"
                   size="sm"
                   onClick={() => setSwappingTeam(null)}
-                  className="h-6 w-6 p-0 text-blue-600 hover:bg-blue-100"
+                  className="h-6 w-6 p-0"
+                  style={{ color: dk.textSecondary }}
                 >
                   <X className="h-3 w-3" />
                 </Button>
@@ -1834,16 +1901,16 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
 
       {/* Delete Confirmation Dialog */}
       {showDeleteConfirm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <Card className="w-full max-w-md mx-4">
+        <div className="fixed inset-0 flex items-center justify-center z-50" style={{ backgroundColor: 'rgba(10, 5, 30, 0.75)', backdropFilter: 'blur(4px)' }}>
+          <Card className="w-full max-w-md mx-4" style={{ background: 'rgba(15, 15, 35, 0.95)', backdropFilter: 'blur(24px)', border: `1px solid ${dk.redBorder}`, boxShadow: '0 0 30px rgba(239,68,68,0.1), 0 25px 50px rgba(0,0,0,0.5)' }}>
             <CardHeader>
-              <CardTitle className="flex items-center text-red-600">
+              <CardTitle className="flex items-center" style={{ color: dk.redText }}>
                 <AlertTriangle className="h-5 w-5 mr-2" />
                 Confirm Deletion
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-700 mb-4">
+              <p className="mb-4" style={{ color: dk.textSecondary }}>
                 {deleteType === 'single' && 'Are you sure you want to delete this game? This action cannot be undone.'}
                 {deleteType === 'bulk' && `Are you sure you want to delete ${selectedGames.length} selected games? This action cannot be undone.`}
                 {deleteType === 'all' && `Are you sure you want to delete ALL ${scheduleData.games.length} games? This will completely clear the tournament schedule and cannot be undone.`}
@@ -1877,10 +1944,10 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
 
       {/* TBD Game Creation Dialog */}
       {showTBDCreator && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <Card className="w-full max-w-md mx-4">
+        <div className="fixed inset-0 flex items-center justify-center z-50" style={{ backgroundColor: 'rgba(10, 5, 30, 0.75)', backdropFilter: 'blur(4px)' }}>
+          <Card className="w-full max-w-md mx-4" style={{ background: 'rgba(15, 15, 35, 0.95)', backdropFilter: 'blur(24px)', border: `1px solid ${dk.greenBorder}`, boxShadow: '0 0 30px rgba(34,197,94,0.1), 0 25px 50px rgba(0,0,0,0.5)' }}>
             <CardHeader>
-              <CardTitle className="flex items-center text-green-600">
+              <CardTitle className="flex items-center" style={{ color: dk.greenText }}>
                 <Calendar className="h-5 w-5 mr-2" />
                 Create TBD Game
               </CardTitle>
@@ -2005,17 +2072,17 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
 
       {/* Bulk Field Assignment Dialog */}
       {showBulkFieldAssignment && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <Card className="w-96 max-w-full mx-4">
+        <div className="fixed inset-0 flex items-center justify-center z-50" style={{ backgroundColor: 'rgba(10, 5, 30, 0.75)', backdropFilter: 'blur(4px)' }}>
+          <Card className="w-96 max-w-full mx-4" style={{ background: 'rgba(15, 15, 35, 0.95)', backdropFilter: 'blur(24px)', border: `1px solid ${dk.violetBorder}`, boxShadow: '0 0 30px rgba(124,58,237,0.12), 0 25px 50px rgba(0,0,0,0.5)' }}>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <MapPin className="h-5 w-5" />
+              <CardTitle className="flex items-center gap-2" style={{ color: dk.textPrimary }}>
+                <MapPin className="h-5 w-5" style={{ color: dk.iconOrange }} />
                 Assign Field to {selectedGames.length} Games
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <Label className="text-sm font-medium">Select Field</Label>
+                <Label className="text-sm font-medium" style={{ color: dk.textSecondary }}>Select Field</Label>
                 <Select 
                   value={bulkFieldId} 
                   onValueChange={setBulkFieldId}
@@ -2027,7 +2094,7 @@ export function ScheduleViewer({ eventId }: ScheduleViewerProps) {
                     {availableFields?.map((field) => (
                       <SelectItem key={field.id} value={field.id.toString()}>
                         <div className="flex items-center gap-2">
-                          <span className="text-xs text-gray-500">({field.fieldSize})</span>
+                          <span className="text-xs" style={{ color: dk.textMuted }}>({field.fieldSize})</span>
                           <span>{field.name}</span>
                         </div>
                       </SelectItem>

@@ -78,9 +78,9 @@ async function debugProductionAuth() {
     console.log('\n6. Testing production API endpoints...');
     
     const testUrls = [
-      'https://app.matchpro.ai/api/health',
-      'https://app.matchpro.ai/api/user',
-      'https://app.matchpro.ai/api/admin/sendgrid-settings/templates'
+      'https://app.kickdeck.io/api/health',
+      'https://app.kickdeck.io/api/user',
+      'https://app.kickdeck.io/api/admin/sendgrid-settings/templates'
     ];
     
     for (const url of testUrls) {

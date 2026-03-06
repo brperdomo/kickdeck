@@ -1,7 +1,7 @@
 # Terminology Conversion: "Brackets" to "Flights" - COMPLETE
 
 ## Summary
-Successfully completed systematic conversion from "Brackets" terminology to "Flights" throughout the MatchPro tournament management system interface.
+Successfully completed systematic conversion from "Brackets" terminology to "Flights" throughout the KickDeck tournament management system interface.
 
 ## Changes Made:
 

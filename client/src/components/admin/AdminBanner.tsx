@@ -191,15 +191,22 @@ export function AdminBanner() {
       )}
     
       {/* Regular admin banner */}
-      <motion.div 
-        className="bg-card/50 backdrop-blur-sm p-4 border-b sticky top-0 z-10 shadow-sm"
+      <motion.div
+        className="p-4 sticky top-0 z-10"
+        style={{
+          background: 'rgba(15, 15, 35, 0.80)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
+          boxShadow: '0 4px 30px rgba(0, 0, 0, 0.3), 0 0 15px rgba(124, 58, 237, 0.05)'
+        }}
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, type: "spring" }}
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            {/* MatchPro Logo */}
+            {/* KickDeck Logo */}
             <motion.div
               className="flex items-center"
               initial={{ opacity: 0 }}
@@ -207,8 +214,8 @@ export function AdminBanner() {
               transition={{ delay: 0.15 }}
             >
               <img 
-                src={settings?.logoUrl || "/uploads/MatchProAI_Linear_BlackNOBUFFER.png"} 
-                alt="MatchPro" 
+                src={settings?.logoUrl || "/uploads/KickDeck_Linear_Black.png"}
+                alt="KickDeck" 
                 className="h-8 mr-2"
               />
               {/* Page title removed as requested */}

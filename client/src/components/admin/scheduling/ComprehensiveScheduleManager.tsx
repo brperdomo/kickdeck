@@ -520,7 +520,7 @@ export function ComprehensiveScheduleManager({ eventId }: ComprehensiveScheduleM
                                         <Badge 
                                           variant={game.status === 'scheduled' ? 'default' : 'secondary'}
                                         >
-                                          {game.status}
+                                          {game.status.charAt(0).toUpperCase() + game.status.slice(1)}
                                         </Badge>
                                       </div>
                                     </div>

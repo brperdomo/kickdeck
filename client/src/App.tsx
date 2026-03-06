@@ -24,9 +24,7 @@ import EventApplicationForm from "@/pages/event-application-form";
 import EmailTemplatesPage from "@/pages/email-templates";
 import EmailTemplateEdit from "@/pages/email-template-edit";
 import TeamStatusTest from "@/pages/team-status-test";
-import FormTemplatesPage from "@/pages/form-templates";
-import FormTemplateCreatePage from "@/pages/form-template-create";
-import FormTemplateEditPage from "@/pages/form-template-edit";
+// Legacy standalone form template pages removed — now handled by AdminDashboard
 import ProductUpdatesPage from "@/pages/product-updates";
 import { useUser } from "@/hooks/use-user";
 import EventRegistration from "./pages/event-registration";
@@ -145,7 +143,7 @@ function Router() {
   // Only fetch user data for non-public routes
   const { user, isLoading } = useUser(isPublicRoute);
   
-  // Check if we're on the main domain (matchpro.ai)
+  // Check if we're on the main domain (kickdeck.io)
   const showLandingPage = isMainDomain();
 
   if (isLoading) {
@@ -400,13 +398,16 @@ function Router() {
             {user.isAdmin ? <GameScoreManagement /> : <NotFound />}
           </Route>
           <Route path="/admin/form-templates/create">
-            {user.isAdmin ? <FormTemplateCreatePage /> : <NotFound />}
+            {user.isAdmin ? <AdminDashboard initialView="formTemplates" /> : <NotFound />}
           </Route>
           <Route path="/admin/form-templates/:id/edit">
-            {user.isAdmin ? <FormTemplateEditPage /> : <NotFound />}
+            {user.isAdmin ? <AdminDashboard initialView="formTemplates" /> : <NotFound />}
           </Route>
           <Route path="/admin/form-templates">
             {user.isAdmin ? <AdminDashboard initialView="formTemplates" /> : <NotFound />}
+          </Route>
+          <Route path="/admin/form-submissions">
+            {user.isAdmin ? <AdminDashboard initialView="formSubmissions" /> : <NotFound />}
           </Route>
           <Route path="/admin/team-status-test">
             {user.isAdmin ? <TeamStatusTest /> : <NotFound />}

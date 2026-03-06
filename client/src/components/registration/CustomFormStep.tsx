@@ -105,7 +105,7 @@ export function CustomFormStep({ eventId, teamId, onComplete, onSkip }: CustomFo
           <div key={field.id} className="space-y-2">
             <Label htmlFor={field.fieldId} className="flex items-center gap-1">
               {field.label}
-              {field.required && <span className="text-red-500">*</span>}
+              {field.required && <span className="text-red-400">*</span>}
             </Label>
             <Input
               id={field.fieldId}
@@ -116,10 +116,10 @@ export function CustomFormStep({ eventId, teamId, onComplete, onSkip }: CustomFo
               className={hasError ? 'border-red-500' : ''}
             />
             {field.helpText && (
-              <p className="text-sm text-muted-foreground">{field.helpText}</p>
+              <p className="text-sm text-gray-400">{field.helpText}</p>
             )}
             {hasError && (
-              <p className="text-sm text-red-500 flex items-center gap-1">
+              <p className="text-sm text-red-400 flex items-center gap-1">
                 <AlertCircle className="h-4 w-4" />
                 {errors[field.fieldId]}
               </p>
@@ -132,7 +132,7 @@ export function CustomFormStep({ eventId, teamId, onComplete, onSkip }: CustomFo
           <div key={field.id} className="space-y-2">
             <Label htmlFor={field.fieldId} className="flex items-center gap-1">
               {field.label}
-              {field.required && <span className="text-red-500">*</span>}
+              {field.required && <span className="text-red-400">*</span>}
             </Label>
             <Textarea
               id={field.fieldId}
@@ -143,10 +143,10 @@ export function CustomFormStep({ eventId, teamId, onComplete, onSkip }: CustomFo
               className={hasError ? 'border-red-500' : ''}
             />
             {field.helpText && (
-              <p className="text-sm text-muted-foreground">{field.helpText}</p>
+              <p className="text-sm text-gray-400">{field.helpText}</p>
             )}
             {hasError && (
-              <p className="text-sm text-red-500 flex items-center gap-1">
+              <p className="text-sm text-red-400 flex items-center gap-1">
                 <AlertCircle className="h-4 w-4" />
                 {errors[field.fieldId]}
               </p>
@@ -160,7 +160,7 @@ export function CustomFormStep({ eventId, teamId, onComplete, onSkip }: CustomFo
           <div key={field.id} className="space-y-2">
             <Label htmlFor={field.fieldId} className="flex items-center gap-1">
               {field.label}
-              {field.required && <span className="text-red-500">*</span>}
+              {field.required && <span className="text-red-400">*</span>}
             </Label>
             <Select
               value={value}
@@ -178,10 +178,10 @@ export function CustomFormStep({ eventId, teamId, onComplete, onSkip }: CustomFo
               </SelectContent>
             </Select>
             {field.helpText && (
-              <p className="text-sm text-muted-foreground">{field.helpText}</p>
+              <p className="text-sm text-gray-400">{field.helpText}</p>
             )}
             {hasError && (
-              <p className="text-sm text-red-500 flex items-center gap-1">
+              <p className="text-sm text-red-400 flex items-center gap-1">
                 <AlertCircle className="h-4 w-4" />
                 {errors[field.fieldId]}
               </p>
@@ -194,7 +194,7 @@ export function CustomFormStep({ eventId, teamId, onComplete, onSkip }: CustomFo
           <div key={field.id} className="space-y-3">
             <Label className="flex items-center gap-1">
               {field.label}
-              {field.required && <span className="text-red-500">*</span>}
+              {field.required && <span className="text-red-400">*</span>}
             </Label>
             <RadioGroup
               value={value}
@@ -209,10 +209,10 @@ export function CustomFormStep({ eventId, teamId, onComplete, onSkip }: CustomFo
               ))}
             </RadioGroup>
             {field.helpText && (
-              <p className="text-sm text-muted-foreground">{field.helpText}</p>
+              <p className="text-sm text-gray-400">{field.helpText}</p>
             )}
             {hasError && (
-              <p className="text-sm text-red-500 flex items-center gap-1">
+              <p className="text-sm text-red-400 flex items-center gap-1">
                 <AlertCircle className="h-4 w-4" />
                 {errors[field.fieldId]}
               </p>
@@ -231,14 +231,14 @@ export function CustomFormStep({ eventId, teamId, onComplete, onSkip }: CustomFo
               />
               <Label htmlFor={field.fieldId} className="flex items-center gap-1">
                 {field.label}
-                {field.required && <span className="text-red-500">*</span>}
+                {field.required && <span className="text-red-400">*</span>}
               </Label>
             </div>
             {field.helpText && (
-              <p className="text-sm text-muted-foreground ml-6">{field.helpText}</p>
+              <p className="text-sm text-gray-400 ml-6">{field.helpText}</p>
             )}
             {hasError && (
-              <p className="text-sm text-red-500 flex items-center gap-1 ml-6">
+              <p className="text-sm text-red-400 flex items-center gap-1 ml-6">
                 <AlertCircle className="h-4 w-4" />
                 {errors[field.fieldId]}
               </p>
@@ -251,7 +251,7 @@ export function CustomFormStep({ eventId, teamId, onComplete, onSkip }: CustomFo
           <div key={field.id} className="space-y-2">
             <Label htmlFor={field.fieldId} className="flex items-center gap-1">
               {field.label}
-              {field.required && <span className="text-red-500">*</span>}
+              {field.required && <span className="text-red-400">*</span>}
             </Label>
             <Input
               id={field.fieldId}
@@ -262,10 +262,10 @@ export function CustomFormStep({ eventId, teamId, onComplete, onSkip }: CustomFo
               className={hasError ? 'border-red-500' : ''}
             />
             {field.helpText && (
-              <p className="text-sm text-muted-foreground">{field.helpText}</p>
+              <p className="text-sm text-gray-400">{field.helpText}</p>
             )}
             {hasError && (
-              <p className="text-sm text-red-500 flex items-center gap-1">
+              <p className="text-sm text-red-400 flex items-center gap-1">
                 <AlertCircle className="h-4 w-4" />
                 {errors[field.fieldId]}
               </p>
@@ -278,7 +278,7 @@ export function CustomFormStep({ eventId, teamId, onComplete, onSkip }: CustomFo
           <div key={field.id} className="space-y-2">
             <Label htmlFor={field.fieldId} className="flex items-center gap-1">
               {field.label}
-              {field.required && <span className="text-red-500">*</span>}
+              {field.required && <span className="text-red-400">*</span>}
             </Label>
             <Input
               id={field.fieldId}
@@ -288,10 +288,10 @@ export function CustomFormStep({ eventId, teamId, onComplete, onSkip }: CustomFo
               className={hasError ? 'border-red-500' : ''}
             />
             {field.helpText && (
-              <p className="text-sm text-muted-foreground">{field.helpText}</p>
+              <p className="text-sm text-gray-400">{field.helpText}</p>
             )}
             {hasError && (
-              <p className="text-sm text-red-500 flex items-center gap-1">
+              <p className="text-sm text-red-400 flex items-center gap-1">
                 <AlertCircle className="h-4 w-4" />
                 {errors[field.fieldId]}
               </p>
@@ -307,11 +307,11 @@ export function CustomFormStep({ eventId, teamId, onComplete, onSkip }: CustomFo
   // If no template found, show skip option
   if (templateQuery.isLoading) {
     return (
-      <Card>
+      <Card className="rounded-xl" style={{ background: 'rgba(15,15,35,0.6)', border: '1px solid rgba(255,255,255,0.08)' }}>
         <CardContent className="p-8 text-center">
           <div className="animate-pulse">
-            <div className="h-4 bg-gray-200 rounded w-3/4 mx-auto mb-4"></div>
-            <div className="h-4 bg-gray-200 rounded w-1/2 mx-auto"></div>
+            <div className="h-4 bg-gray-700 rounded w-3/4 mx-auto mb-4"></div>
+            <div className="h-4 bg-gray-700 rounded w-1/2 mx-auto"></div>
           </div>
         </CardContent>
       </Card>
@@ -327,28 +327,28 @@ export function CustomFormStep({ eventId, teamId, onComplete, onSkip }: CustomFo
   const template = templateQuery.data;
 
   return (
-    <Card>
+    <Card className="rounded-xl" style={{ background: 'rgba(15,15,35,0.6)', border: '1px solid rgba(255,255,255,0.08)' }}>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+        <CardTitle className="flex items-center gap-2 text-white">
           <FileText className="h-5 w-5" />
           {template.name}
         </CardTitle>
         {template.description && (
-          <p className="text-muted-foreground">{template.description}</p>
+          <p className="text-gray-400">{template.description}</p>
         )}
       </CardHeader>
       <CardContent className="space-y-6">
         {template.fields
           .sort((a, b) => a.order - b.order)
           .map(field => renderField(field))}
-        
-        <Separator />
-        
+
+        <Separator className="bg-white/10" />
+
         <div className="flex gap-3">
           <Button onClick={handleSubmit} className="flex-1">
             Continue to Payment
           </Button>
-          <Button variant="outline" onClick={onSkip}>
+          <Button variant="outline" onClick={onSkip} className="border-white/20 text-gray-300 hover:text-white hover:bg-white/5">
             Skip This Step
           </Button>
         </div>

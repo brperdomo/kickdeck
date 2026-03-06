@@ -76,7 +76,7 @@ async function testApprovalPayment() {
         console.log(`New Setup Intent: ${newSetupIntent.id}`);
         console.log(`Client Secret: ${newSetupIntent.client_secret}`);
         console.log(`\nPayment completion link:`);
-        console.log(`https://app.matchpro.ai/complete-payment?setup_intent=${newSetupIntent.client_secret}&team_id=${team.id}`);
+        console.log(`https://app.kickdeck.io/complete-payment?setup_intent=${newSetupIntent.client_secret}&team_id=${team.id}`);
         
         return;
       }

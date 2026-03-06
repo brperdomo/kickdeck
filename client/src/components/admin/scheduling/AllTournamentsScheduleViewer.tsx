@@ -375,7 +375,7 @@ export function AllTournamentsScheduleViewer() {
                               game.status === 'cancelled' ? 'destructive' : 'outline'
                             }
                           >
-                            {game.status.replace('_', ' ')}
+                            {game.status.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase())}
                           </Badge>
                         </td>
                       </tr>

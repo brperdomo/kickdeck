@@ -1,7 +1,7 @@
 // Test fee calculation for $1.00 registration
 // Based on server/services/fee-calculator.ts logic
 
-const DEFAULT_PLATFORM_FEE_RATE = 0.04; // 4% MatchPro fee
+const DEFAULT_PLATFORM_FEE_RATE = 0.04; // 4% KickDeck fee
 const STRIPE_PERCENTAGE_FEE = 0.029; // 2.9%
 const STRIPE_FIXED_FEE = 30; // $0.30 in cents
 
@@ -10,15 +10,15 @@ function calculateStripeFees(totalAmount) {
 }
 
 function calculateFeeBreakdown(tournamentCost) {
-  // Calculate the total amount needed to cover tournament cost + Stripe fees + MatchPro margin
-  // We need to solve: totalAmount = tournamentCost + stripeFees + matchproMargin
+  // Calculate the total amount needed to cover tournament cost + Stripe fees + KickDeck margin
+  // We need to solve: totalAmount = tournamentCost + stripeFees + kickdeckMargin
   // Where stripeFees = (totalAmount * 0.029) + 30
-  // And matchproMargin = tournamentCost * DEFAULT_PLATFORM_FEE_RATE
+  // And kickdeckMargin = tournamentCost * DEFAULT_PLATFORM_FEE_RATE
   
-  const matchproTargetMargin = Math.round(tournamentCost * DEFAULT_PLATFORM_FEE_RATE);
+  const kickdeckTargetMargin = Math.round(tournamentCost * DEFAULT_PLATFORM_FEE_RATE);
   
-  // Solve for total amount: totalAmount = (tournamentCost + matchproMargin + 30) / (1 - 0.029)
-  const totalChargedAmount = Math.round((tournamentCost + matchproTargetMargin + STRIPE_FIXED_FEE) / (1 - STRIPE_PERCENTAGE_FEE));
+  // Solve for total amount: totalAmount = (tournamentCost + kickdeckMargin + 30) / (1 - 0.029)
+  const totalChargedAmount = Math.round((tournamentCost + kickdeckTargetMargin + STRIPE_FIXED_FEE) / (1 - STRIPE_PERCENTAGE_FEE));
   
   // Calculate actual platform fee (what customer pays above tournament cost)
   const platformFeeAmount = totalChargedAmount - tournamentCost;
@@ -32,10 +32,10 @@ function calculateFeeBreakdown(tournamentCost) {
   // Distribution calculation
   const tournamentReceives = tournamentCost; // Tournament gets their base amount
   const stripeReceives = stripeFeeAmount; // Stripe gets their processing fee
-  const matchproReceives = platformFeeAmount - stripeFeeAmount; // MatchPro gets platform fee minus Stripe costs
+  const kickdeckReceives = platformFeeAmount - stripeFeeAmount; // KickDeck gets platform fee minus Stripe costs
   
   // Validation
-  const totalAccounted = tournamentReceives + stripeReceives + matchproReceives;
+  const totalAccounted = tournamentReceives + stripeReceives + kickdeckReceives;
   const isBalanced = totalAccounted === totalChargedAmount;
   
   return {
@@ -45,11 +45,11 @@ function calculateFeeBreakdown(tournamentCost) {
     platformFeeAmount,
     stripeFeeAmount,
     tournamentReceives,
-    matchproReceives,
+    kickdeckReceives,
     stripeReceives,
     totalAccounted,
     isBalanced,
-    matchproTargetMargin
+    kickdeckTargetMargin
   };
 }
 
@@ -76,7 +76,7 @@ console.log('');
 console.log('Fund Distribution:');
 console.log('- Tournament Receives: $' + (fees.tournamentReceives / 100).toFixed(2));
 console.log('- Stripe Receives: $' + (fees.stripeReceives / 100).toFixed(2));
-console.log('- MatchPro Receives: $' + (fees.matchproReceives / 100).toFixed(2));
+console.log('- KickDeck Receives: $' + (fees.kickdeckReceives / 100).toFixed(2));
 console.log('');
 
 console.log('Verification:');
@@ -88,11 +88,11 @@ console.log('=== Analysis ===');
 console.log('Expected your process:');
 console.log('- Tournament should get: $1.00');
 console.log('- Stripe should get: 2.9% + $0.30 = $' + ((104 * 0.029 + 30) / 100).toFixed(2));
-console.log('- MatchPro should get: Remaining from 4% platform fee');
+console.log('- KickDeck should get: Remaining from 4% platform fee');
 console.log('');
 console.log('Actual calculated:');
 console.log('- Tournament gets: $' + (fees.tournamentReceives / 100).toFixed(2));
 console.log('- Stripe gets: $' + (fees.stripeReceives / 100).toFixed(2));
-console.log('- MatchPro gets: $' + (fees.matchproReceives / 100).toFixed(2));
+console.log('- KickDeck gets: $' + (fees.kickdeckReceives / 100).toFixed(2));
 console.log('');
-console.log('MatchPro receives: Platform fee ($' + (fees.platformFeeAmount / 100).toFixed(2) + ') - Stripe costs ($' + (fees.stripeFeeAmount / 100).toFixed(2) + ') = $' + (fees.matchproReceives / 100).toFixed(2));
+console.log('KickDeck receives: Platform fee ($' + (fees.platformFeeAmount / 100).toFixed(2) + ') - Stripe costs ($' + (fees.stripeFeeAmount / 100).toFixed(2) + ') = $' + (fees.kickdeckReceives / 100).toFixed(2));

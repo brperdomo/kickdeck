@@ -4,19 +4,21 @@ import { teams, events, paymentTransactions } from '@db/schema';
 import { eq, and } from 'drizzle-orm';
 
 if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
+  console.warn("Warning: STRIPE_SECRET_KEY not set. Stripe features will be unavailable.");
 }
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2024-06-20",
-});
+const stripe = process.env.STRIPE_SECRET_KEY
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: "2024-06-20",
+    })
+  : null;
 
 /**
  * CONNECT ACCOUNT REFUND SERVICE
  * 
  * Handles all refunds directly on tournament Connect accounts to guarantee:
  * 1. Tournament organizers have full refund control
- * 2. MatchPro has zero refund financial exposure
+ * 2. KickDeck has zero refund financial exposure
  * 3. Complete payment traceability in Connect dashboards
  */
 
@@ -45,7 +47,7 @@ interface RefundResult {
 
 /**
  * Process refund entirely on Connect account
- * Guarantees tournament organizer pays the refund, not MatchPro
+ * Guarantees tournament organizer pays the refund, not KickDeck
  */
 export async function processConnectAccountRefund(request: RefundRequest): Promise<RefundResult> {
   try {
@@ -130,7 +132,7 @@ export async function processConnectAccountRefund(request: RefundRequest): Promi
         originalAmount: paymentIntent.amount.toString(),
         refundAmount: refundAmount.toString(),
         internalReference: `REFUND-${request.teamId}-${event.id}`,
-        systemSource: "MatchPro",
+        systemSource: "KickDeck",
         refundType: "connect_account_refund",
         processedDate: new Date().toISOString(),
       }

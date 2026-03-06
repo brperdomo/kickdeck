@@ -8,7 +8,7 @@
 ## ⚠️ CRITICAL GAPS IDENTIFIED
 
 ### 1. **Legacy Customer Migration Risk**
-**Gap**: Existing customers on MatchPro main account still pose refund risk
+**Gap**: Existing customers on KickDeck main account still pose refund risk
 **Impact**: Medium - affects only legacy registrations
 **Mitigation Strategy**:
 - Legacy customers continue with existing cost recovery system
@@ -137,7 +137,7 @@
 
 2. **Validate Fee Calculations**
    - Confirm platform fees calculated correctly on Connect accounts
-   - Verify fee distribution between MatchPro and tournaments
+   - Verify fee distribution between KickDeck and tournaments
 
 3. **Test Error Scenarios**
    - Missing Connect account handling

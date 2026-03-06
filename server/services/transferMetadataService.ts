@@ -10,9 +10,11 @@ import { db } from "../../db/index.js";
 import { teams, events, paymentTransactions } from "../../db/schema.js";
 import { eq, and } from "drizzle-orm";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2024-06-20",
-});
+const stripe = process.env.STRIPE_SECRET_KEY
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: "2024-06-20",
+    })
+  : null;
 
 export interface TransferMetadataResult {
   transferId: string;
@@ -75,7 +77,7 @@ export async function createTransferWithMetadata({
       originalAmount: team.totalAmount?.toString() || "",
       transferAmount: amount.toString(),
       internalReference: `TRANSFER-TEAM-${teamId}-${eventId}`,
-      systemSource: "MatchPro",
+      systemSource: "KickDeck",
       transferType: "tournament_payout",
       transferDate: new Date().toISOString(),
     };
@@ -155,7 +157,7 @@ export async function updateTransferMetadata({
       originalPaymentIntent: team.paymentIntentId || "",
       originalAmount: team.totalAmount?.toString() || "",
       internalReference: `TRANSFER-TEAM-${teamId}-${eventId}`,
-      systemSource: "MatchPro",
+      systemSource: "KickDeck",
       transferType: "tournament_payout",
       updateType: "RetroactiveMetadata",
       updateDate: new Date().toISOString(),

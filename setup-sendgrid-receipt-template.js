@@ -55,8 +55,8 @@ async function setupSendGridReceiptTemplate() {
         description: 'SendGrid dynamic template for registration receipts',
         type: 'registration_receipt',
         subject: 'Your Registration Receipt for {{eventName}}',
-        senderName: 'MatchPro Registration',
-        senderEmail: 'support@matchpro.ai',
+        senderName: 'KickDeck Registration',
+        senderEmail: 'support@kickdeck.io',
         isActive: true,
         sendgridTemplateId: sendgridTemplateId,
         variables: [

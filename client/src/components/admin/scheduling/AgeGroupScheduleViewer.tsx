@@ -493,7 +493,7 @@ const AgeGroupScheduleViewer = ({ eventId }: { eventId: number }) => {
                                   Game #{game.gameNumber || game.id}
                                 </Badge>
                                 <Badge className={getStatusColor(game.status, game.hasScore)}>
-                                  {game.hasScore ? 'Final' : game.status}
+                                  {game.hasScore ? 'Final' : game.status.charAt(0).toUpperCase() + game.status.slice(1)}
                                 </Badge>
                               </div>
                               

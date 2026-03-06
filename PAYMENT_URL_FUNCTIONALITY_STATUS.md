@@ -15,7 +15,7 @@ The payment URL system is **fully operational** and provides multiple ways for t
 
 **Example**: 
 ```
-https://app.matchpro.ai/complete-payment?setup_intent=seti_1RvtBOP4BpmZARxtjohbhwCw_secret_abc123&team_id=783
+https://app.kickdeck.io/complete-payment?setup_intent=seti_1RvtBOP4BpmZARxtjohbhwCw_secret_abc123&team_id=783
 ```
 
 **Use Case**: When teams have completed Setup Intents but need final payment confirmation
@@ -36,7 +36,7 @@ https://app.matchpro.ai/complete-payment?setup_intent=seti_1RvtBOP4BpmZARxtjohbh
 
 **Example**: 
 ```
-https://app.matchpro.ai/complete-payment/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+https://app.kickdeck.io/complete-payment/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
 **Generated via**: `POST /api/payment-completion/generate-link`
@@ -152,7 +152,7 @@ If the team needs a new card:
 ## Email Integration
 
 The system can automatically send payment completion emails with:
-- ✅ **Professional email templates** with MatchPro branding
+- ✅ **Professional email templates** with KickDeck branding
 - ✅ **Secure payment links** embedded in email
 - ✅ **Team and event details** for context
 - ✅ **Clear instructions** for completing payment

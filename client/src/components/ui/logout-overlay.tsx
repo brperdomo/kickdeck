@@ -1,22 +1,17 @@
-import * as React from "react"
-import { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import { cn } from "@/lib/utils"
-import { Card, CardContent } from "@/components/ui/card"
-import { QueryClient } from "@tanstack/react-query"
 
 const logoutMessages = [
-  "See you soon! 👋",
-  "Thanks for stopping by! ⭐",
-  "Have a great day! 🌟",
-  "Catch you on the flip side! 🎵",
-  "Taking a break? We'll be here! ⚡",
-  "Until next time! 🌈",
-  "Logging you out safely... 🔒",
-  "Thanks for playing! ⚽"
+  "See you soon!",
+  "Thanks for stopping by!",
+  "Have a great day!",
+  "Until next time!",
+  "Logging you out safely...",
 ];
 
 interface LogoutOverlayProps extends React.HTMLAttributes<HTMLDivElement> {
-  onFinished: () => void;
+  /** Optional extra cleanup to run. The overlay handles session destruction and redirect. */
+  onFinished?: () => void;
 }
 
 export function LogoutOverlay({ className, onFinished, ...props }: LogoutOverlayProps) {
@@ -25,76 +20,89 @@ export function LogoutOverlay({ className, onFinished, ...props }: LogoutOverlay
     return logoutMessages[randomIndex];
   });
 
-  useEffect(() => {
-    // Clear any browser storage immediately
-    try {
-      localStorage.clear();
-      sessionStorage.clear();
-      
-      // Also try to clear any cookies by setting them to expire
-      document.cookie.split(";").forEach((cookie) => {
-        const eqPos = cookie.indexOf("=");
-        const name = eqPos > -1 ? cookie.substring(0, eqPos).trim() : cookie.trim();
-        document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
-      });
-      
-      // Clear browser cache for API endpoints
-      if (window.caches) {
-        caches.keys().then(names => {
-          names.forEach(name => {
-            caches.delete(name);
-          });
-        });
-      }
-    } catch (e) {
-      console.error("Error clearing browser data during logout:", e);
-    }
-    
-    // Show the message for a moment before redirecting
-    const redirectTimer = setTimeout(() => {
-      onFinished();
-      
-      // Force redirect as a fallback if the callback doesn't work
-      setTimeout(() => {
-        console.log("Forcing logout redirect via fallback");
-        window.location.href = "/auth?logged_out=true";
-      }, 200);
-    }, 1500); // Show the message for 1.5 seconds
+  const onFinishedRef = useRef(onFinished);
+  onFinishedRef.current = onFinished;
+  const redirectedRef = useRef(false);
 
-    return () => clearTimeout(redirectTimer);
-  }, [onFinished]);
+  useEffect(() => {
+    const timer = setTimeout(async () => {
+      if (redirectedRef.current) return;
+      redirectedRef.current = true;
+
+      // 1. FIRST: Destroy server session and WAIT for completion.
+      //    This ensures /api/user returns 401 when the auth page loads.
+      try {
+        await fetch('/api/logout', {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Cache-Control': 'no-cache' },
+        });
+      } catch (e) {
+        console.error("Logout API error (continuing anyway):", e);
+      }
+
+      // 2. Clear all client-side storage
+      try {
+        localStorage.clear();
+        sessionStorage.clear();
+      } catch (e) {
+        console.error("Storage clear error:", e);
+      }
+
+      // 3. Set logout message (after clear so it's not wiped)
+      try {
+        sessionStorage.setItem('logout_message', 'You have been successfully logged out');
+      } catch (e) {
+        // Fallback: URL param will handle message display
+      }
+
+      // 4. Run any extra cleanup the parent wants
+      try {
+        onFinishedRef.current?.();
+      } catch (e) {
+        console.error("Error in logout cleanup:", e);
+      }
+
+      // 5. Redirect — session is destroyed, storage is clean
+      window.location.href = "/auth?logged_out=true";
+    }, 1200);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
-    <div 
+    <div
       className={cn(
-        "fixed inset-0 z-50 bg-[#4A154B]/80 backdrop-blur-sm",
-        "animate-in fade-in-0",
+        "fixed inset-0 z-50 animate-in fade-in-0",
         className
       )}
+      style={{
+        backgroundColor: "rgba(15, 15, 26, 0.95)",
+        backdropFilter: "blur(12px)",
+        WebkitBackdropFilter: "blur(12px)",
+      }}
       {...props}
     >
-      <div className="fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4">
-        <Card className="border-[#36C5F0] bg-white shadow-lg">
-          <CardContent className="p-6">
-            <div className="flex flex-col items-center justify-center space-y-2 text-center">
-              <h2 
-                className="text-2xl font-semibold tracking-tight first:mt-0 text-[#1D1C1D]"
-                style={{ 
-                  fontFamily: "'Lato', 'Open Sans', sans-serif",
-                  textShadow: "0 1px 2px rgba(0,0,0,0.1)"
-                }}
-              >
-                {message}
-              </h2>
-              <div className="mt-2 flex flex-col items-center">
-                <div className="mb-2 animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-[#36C5F0]"></div>
-                <p className="text-sm text-muted-foreground">
-                  Clearing session data...
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-sm px-4">
+        <div
+          className="rounded-2xl p-8 text-center"
+          style={{
+            background: "rgba(15, 15, 35, 0.9)",
+            border: "1px solid rgba(124, 58, 237, 0.15)",
+            boxShadow:
+              "0 0 30px rgba(124,58,237,0.1), 0 0 60px rgba(6,182,212,0.05), 0 8px 32px rgba(0,0,0,0.4)",
+          }}
+        >
+          <h2 className="text-xl font-semibold text-white mb-4">
+            {message}
+          </h2>
+          <div className="flex flex-col items-center gap-2">
+            <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-violet-500" />
+            <p className="text-sm text-gray-400">
+              Clearing session data...
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );

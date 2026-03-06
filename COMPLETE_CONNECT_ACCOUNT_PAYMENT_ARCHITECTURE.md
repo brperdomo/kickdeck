@@ -24,7 +24,7 @@ Team Registration → Event Validation → Connect Account Required → All Oper
 - **Naming**: `"Team Eagles B12 - John Smith"` format
 - **Descriptions**: `"Team: Eagles B12 | Event: Empire Super Cup | TeamID: 1234"`
 
-### **Refund Processing (Zero MatchPro Risk):**
+### **Refund Processing (Zero KickDeck Risk):**
 - **Location**: Entirely on tournament Connect accounts
 - **Coverage**: Tournament organizers fund all refunds
 - **Visibility**: Complete refund details in Connect dashboards
@@ -43,7 +43,7 @@ const customer = await stripe.customers.create({
   description: `Team: ${teamData.name} | Event: ${teamData.eventName} | TeamID: ${teamId}`,
   metadata: {
     teamId, teamName, eventId, eventName, managerEmail,
-    registrationDate, internalReference, systemSource: "MatchPro",
+    registrationDate, internalReference, systemSource: "KickDeck",
     createdFor: "checkout_session",
     connectAccountType: "tournament_refund_account"
   }
@@ -104,7 +104,7 @@ export async function processConnectAccountRefund(request: RefundRequest): Promi
   "managerName": "John Smith",
   "registrationDate": "2025-08-19T17:00:00.000Z",
   "internalReference": "TEAM-1234-123",
-  "systemSource": "MatchPro",
+  "systemSource": "KickDeck",
   "createdFor": "checkout_session|setup_intent|payment_retry",
   "connectAccountType": "tournament_refund_account"
 }
@@ -119,7 +119,7 @@ export async function processConnectAccountRefund(request: RefundRequest): Promi
   "eventName": "Empire Super Cup",
   "connectAccountId": "acct_1234567890",
   "internalReference": "TEAM-1234-123",
-  "systemSource": "MatchPro",
+  "systemSource": "KickDeck",
   "operationType": "SetupIntent|Checkout|PaymentRetry"
 }
 ```
@@ -136,7 +136,7 @@ export async function processConnectAccountRefund(request: RefundRequest): Promi
   "originalAmount": "106630",
   "refundAmount": "106630",
   "internalReference": "REFUND-1234-123",
-  "systemSource": "MatchPro",
+  "systemSource": "KickDeck",
   "refundType": "connect_account_refund",
   "processedDate": "2025-08-19T17:00:00.000Z"
 }
@@ -179,7 +179,7 @@ const refund = await stripe.refunds.create({
 
 ## 🎯 **BENEFITS ACHIEVED**
 
-### **1. Zero MatchPro Financial Risk:**
+### **1. Zero KickDeck Financial Risk:**
 - All customers created on tournament Connect accounts
 - All payments processed on tournament Connect accounts
 - All refunds paid by tournament organizers
@@ -233,7 +233,7 @@ const refund = await stripe.refunds.create({
 
 **Every refund will:**
 1. ✅ **Process entirely on tournament Connect account**
-2. ✅ **Be paid by tournament organizer (not MatchPro)**
+2. ✅ **Be paid by tournament organizer (not KickDeck)**
 3. ✅ **Include complete audit trail and metadata**
 4. ✅ **Be visible in Connect account dashboards**
 
@@ -243,7 +243,7 @@ const refund = await stripe.refunds.create({
 
 The system now provides:
 - **100% payment identification capability**
-- **Zero MatchPro refund financial risk**
+- **Zero KickDeck refund financial risk**
 - **Complete tournament organizer control**
 - **Comprehensive audit trail and metadata**
 - **Proper Connect account architecture compliance**

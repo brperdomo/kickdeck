@@ -171,3 +171,86 @@ export interface AdminModalProps {
     roles: string[];
   } | null;
 }
+
+// --- Wizard Step Types (create mode guided flow) ---
+
+export type WizardStep = 'event-information' | 'age-groups' | 'venues-fields' | 'settings-branding' | 'review';
+
+export const WIZARD_STEPS: WizardStep[] = [
+  'event-information',
+  'age-groups',
+  'venues-fields',
+  'settings-branding',
+  'review',
+];
+
+export const WIZARD_STEP_CONFIG: Record<WizardStep, {
+  label: string;
+  shortLabel: string;
+  description: string;
+  icon: string;
+  mapsToTab: EventTab | null;
+  required: boolean;
+}> = {
+  'event-information': {
+    label: 'Event Information',
+    shortLabel: 'Info',
+    description: 'Name, dates, timezone, and event details',
+    icon: 'FileText',
+    mapsToTab: 'information',
+    required: true,
+  },
+  'age-groups': {
+    label: 'Age Groups',
+    shortLabel: 'Ages',
+    description: 'Select seasonal scope and configure age groups',
+    icon: 'Users',
+    mapsToTab: 'age-groups',
+    required: true,
+  },
+  'venues-fields': {
+    label: 'Venues & Fields',
+    shortLabel: 'Venues',
+    description: 'Select complexes and assign field sizes',
+    icon: 'MapPin',
+    mapsToTab: 'complexes',
+    required: true,
+  },
+  'settings-branding': {
+    label: 'Settings & Branding',
+    shortLabel: 'Settings',
+    description: 'Payment options, logo, and color branding',
+    icon: 'Settings',
+    mapsToTab: 'settings',
+    required: false,
+  },
+  'review': {
+    label: 'Review & Create',
+    shortLabel: 'Review',
+    description: 'Review all details and create your event',
+    icon: 'CheckCircle',
+    mapsToTab: null,
+    required: true,
+  },
+};
+
+// Data snapshot for the review step
+export interface ReviewFormData {
+  name: string;
+  startDate: string;
+  endDate: string;
+  timezone: string;
+  applicationDeadline: string;
+  hasDetails: boolean;
+  hasAgreement: boolean;
+  hasRefundPolicy: boolean;
+  ageGroupCount: number;
+  seasonalScopeName: string;
+  selectedComplexCount: number;
+  complexNames: string[];
+  primaryColor: string;
+  secondaryColor: string;
+  logoPreviewUrl: string | null;
+  settingsCount: number;
+  allowPayLater: boolean;
+}

@@ -1,10 +1,10 @@
 # Email Template Guide
 
-This guide explains the email templates used in MatchPro and how they're implemented.
+This guide explains the email templates used in KickDeck and how they're implemented.
 
 ## Welcome Email Templates
 
-MatchPro has two distinct welcome email templates:
+KickDeck has two distinct welcome email templates:
 
 1. **Member Welcome Email** - Sent to regular users who register via the `/register` endpoint
 2. **Admin Welcome Email** - Sent to administrators when they are created by a super admin
@@ -27,7 +27,7 @@ Both templates support the following variables:
 
 **Member Welcome Email**
 - Personalized greeting using `{{firstName}}` and `{{lastName}}`
-- Brief explanation of MatchPro's features
+- Brief explanation of KickDeck's features
 - Information about the dashboard and what users can do there
 - Clear login button/link using `{{loginUrl}}`
 - Support information

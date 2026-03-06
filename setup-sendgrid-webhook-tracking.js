@@ -18,7 +18,7 @@ async function setupSendGridWebhook() {
   }
   
   // 1. Create webhook endpoint URL (will be your production domain)
-  const webhookUrl = 'https://app.matchpro.ai/api/webhooks/sendgrid';
+  const webhookUrl = 'https://app.kickdeck.io/api/webhooks/sendgrid';
   
   console.log('1. Configuring SendGrid Event Webhook...');
   
@@ -98,7 +98,7 @@ async function setupSendGridWebhook() {
         {
           to: [{ email: 'bperdomo@zoho.com' }],
           dynamic_template_data: {
-            reset_url: `https://matchpro.ai/reset-password?token=${uniqueTag}`,
+            reset_url: `https://kickdeck.io/reset-password?token=${uniqueTag}`,
             user_name: 'Webhook Test User'
           },
           custom_args: {
@@ -109,8 +109,8 @@ async function setupSendGridWebhook() {
         }
       ],
       from: { 
-        email: 'support@matchpro.ai',
-        name: 'MatchPro.ai [WEBHOOK TEST]'
+        email: 'support@kickdeck.io',
+        name: 'KickDeck [WEBHOOK TEST]'
       },
       template_id: 'd-7eb7ea1c19ca4090a0cefa3a2be75088',
       categories: ['webhook-test', 'production-tracking'],

@@ -11,7 +11,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const apiKey = process.env.SENDGRID_API_KEY;
-const fromEmail = 'support@matchpro.ai';
+const fromEmail = 'support@kickdeck.io';
 const testEmail = 'bperdomo@zoho.com';
 
 console.log('Verifying Production Email Flows');
@@ -26,13 +26,13 @@ async function verifyEmailFlows() {
   const passwordResetEmail = {
     to: testEmail,
     from: fromEmail,
-    subject: 'Password Reset Request - MatchPro',
+    subject: 'Password Reset Request - KickDeck',
     html: `
       <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 600px;">
         <h2 style="color: #333;">Password Reset Request</h2>
-        <p>You requested a password reset for your MatchPro account.</p>
+        <p>You requested a password reset for your KickDeck account.</p>
         <div style="background: #f8f9fa; padding: 15px; margin: 20px 0; border-radius: 5px;">
-          <a href="https://app.matchpro.ai/reset-password?token=test123" 
+          <a href="https://app.kickdeck.io/reset-password?token=test123" 
              style="background: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">
             Reset Password
           </a>
@@ -56,11 +56,11 @@ async function verifyEmailFlows() {
   const registrationEmail = {
     to: testEmail,
     from: fromEmail,
-    subject: 'Team Registration Received - MatchPro',
+    subject: 'Team Registration Received - KickDeck',
     html: `
       <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 600px;">
         <h2 style="color: #28a745;">Registration Received</h2>
-        <p>Thank you for registering your team with MatchPro.</p>
+        <p>Thank you for registering your team with KickDeck.</p>
         <div style="background: #d4edda; border: 1px solid #c3e6cb; padding: 15px; margin: 15px 0; border-radius: 4px;">
           <h4 style="margin: 0 0 10px 0;">Registration Details:</h4>
           <ul style="margin: 0;">
@@ -89,7 +89,7 @@ async function verifyEmailFlows() {
   const statusUpdateEmail = {
     to: testEmail,
     from: fromEmail,
-    subject: 'Team Status Updated - MatchPro',
+    subject: 'Team Status Updated - KickDeck',
     html: `
       <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 600px;">
         <h2 style="color: #007bff;">Team Status Update</h2>
@@ -119,7 +119,7 @@ async function verifyEmailFlows() {
   const paymentReceiptEmail = {
     to: testEmail,
     from: fromEmail,
-    subject: 'Payment Receipt - MatchPro',
+    subject: 'Payment Receipt - KickDeck',
     html: `
       <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 600px;">
         <h2 style="color: #28a745;">Payment Received</h2>

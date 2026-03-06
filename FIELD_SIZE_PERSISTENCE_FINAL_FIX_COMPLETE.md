@@ -18,7 +18,7 @@
 // From user's attached logs:
 "Successfully saved field size 7v7 for age group 9972"
 "Successfully saved field size 7v7 for age group 9971" 
-"Fetch finished loading: PATCH https://app.matchpro.ai/api/admin/age-groups/9972/field-size"
+"Fetch finished loading: PATCH https://app.kickdeck.io/api/admin/age-groups/9972/field-size"
 ```
 
 ### **Database Verification**

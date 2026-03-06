@@ -14,9 +14,11 @@ import { teams, events } from "../../db/schema.js";
 import { eq, and, isNotNull } from "drizzle-orm";
 import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2024-06-20",
-});
+const stripe = process.env.STRIPE_SECRET_KEY
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: "2024-06-20",
+    })
+  : null;
 
 interface TeamPaymentData {
   teamId: number;
@@ -82,7 +84,7 @@ function generateTeamMetadata(team: TeamPaymentData): Record<string, string> {
     managerName: team.managerName || "Team Manager",
     registrationDate: team.createdAt ? (typeof team.createdAt === 'string' ? team.createdAt : team.createdAt.toISOString()) : new Date().toISOString(),
     internalReference: `TEAM-${team.teamId}-${team.eventId}`,
-    systemSource: "MatchPro",
+    systemSource: "KickDeck",
     updateType: "RetroactiveMetadata",
     updateDate: new Date().toISOString(),
   };

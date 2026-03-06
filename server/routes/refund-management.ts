@@ -164,13 +164,13 @@ router.get('/:paymentIntentId', async (req, res) => {
       refundProcessed: !!refundTransaction,
       costRecoveryAttempted: !!costRecoveryTransaction,
       costRecoverySuccessful: costRecoveryTransaction?.transactionType === 'refund_cost_recovery',
-      netCostToMatchPro: 0,
+      netCostToKickDeck: 0,
       transactions
     };
 
-    // Calculate net cost to MatchPro
+    // Calculate net cost to KickDeck
     if (refundTransaction && !analysis.costRecoverySuccessful) {
-      analysis.netCostToMatchPro = Math.abs(refundTransaction.amount || 0);
+      analysis.netCostToKickDeck = Math.abs(refundTransaction.amount || 0);
     }
 
     res.json({

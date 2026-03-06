@@ -6,7 +6,7 @@
               alt={`${event?.name || 'Event'} Logo`} 
               className="max-h-32 object-contain"
               onError={(e) => {
-                (e.target as HTMLImageElement).src = "/uploads/MatchProAI_Linear_BlackNOBUFFER.png";
+                (e.target as HTMLImageElement).src = "/uploads/KickDeck_Linear_Black.png";
                 (e.target as HTMLImageElement).alt = "Default Logo";
               }}
             />

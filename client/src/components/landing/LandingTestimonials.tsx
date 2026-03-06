@@ -26,7 +26,7 @@ const LandingTestimonials = () => {
 
   const testimonials = [
     {
-      quote: "MatchPro.ai transformed how we manage our youth soccer league. The AI scheduling alone saved us countless hours of work.",
+      quote: "KickDeck.io transformed how we manage our youth soccer league. The AI scheduling alone saved us countless hours of work.",
       author: "Sarah Johnson",
       title: "Tournament Director",
       organization: "Youth Soccer Association"
@@ -38,7 +38,7 @@ const LandingTestimonials = () => {
       organization: "Metro FC"
     },
     {
-      quote: "We've reduced administrative work by 70% since implementing MatchPro. Their customer support team is also incredibly responsive.",
+      quote: "We've reduced administrative work by 70% since implementing KickDeck. Their customer support team is also incredibly responsive.",
       author: "David Chen",
       title: "League Administrator",
       organization: "Regional Soccer League"
@@ -76,7 +76,7 @@ const LandingTestimonials = () => {
               variants={fadeUpVariant}
               className="max-w-[1000px] mx-auto text-gray-300 md:text-xl mt-6"
             >
-              See what tournament directors, club presidents, and league administrators are saying about MatchPro.ai.
+              See what tournament directors, club presidents, and league administrators are saying about KickDeck.io.
             </motion.p>
           </div>
         </motion.div>

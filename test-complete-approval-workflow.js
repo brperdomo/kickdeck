@@ -25,7 +25,7 @@ async function testCompleteApprovalWorkflow() {
     // Create a customer first
     console.log('📋 Creating test customer...');
     const customer = await stripe.customers.create({
-      email: 'test-approval@matchpro.ai',
+      email: 'test-approval@kickdeck.io',
       metadata: {
         testType: 'approval_workflow_test'
       }
@@ -70,8 +70,8 @@ async function testCompleteApprovalWorkflow() {
         stripe_customer_id, payment_status, card_brand, card_last_four,
         created_at, updated_at
       ) VALUES (
-        'Approval Test Team', '1755746106', 1, 'Test Manager', 'test-approval@matchpro.ai', 
-        '555-0123', 'test-approval@matchpro.ai', 'registered', 100, $1, $2, 
+        'Approval Test Team', '1755746106', 1, 'Test Manager', 'test-approval@kickdeck.io', 
+        '555-0123', 'test-approval@kickdeck.io', 'registered', 100, $1, $2, 
         $3, 'payment_info_provided', 'visa', '4242', NOW(), NOW()
       ) RETURNING id
     `, [setupIntent.id, paymentMethod.id, customer.id]);

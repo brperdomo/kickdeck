@@ -21,7 +21,7 @@ SELECT id, age_group, gender FROM event_age_groups WHERE event_id = 1656618593 L
 ## API Call Verification ✅
 From browser console logs:
 ```
-Fetch finished loading: GET "https://app.matchpro.ai/api/admin/events/1656618593/age-groups"
+Fetch finished loading: GET "https://app.kickdeck.io/api/admin/events/1656618593/age-groups"
 ```
 
 ✅ **Age groups API endpoint is working and returning data**

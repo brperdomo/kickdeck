@@ -2,11 +2,11 @@
  * Update Email Config Script
  * 
  * This script updates all email configurations to use SendGrid as the provider
- * and sets support@matchpro.ai as the sender email for all templates.
+ * and sets support@kickdeck.io as the sender email for all templates.
  * 
  * What it does:
  * 1. Sets up SendGrid as the primary email provider
- * 2. Updates all email templates to use support@matchpro.ai as the sender
+ * 2. Updates all email templates to use support@kickdeck.io as the sender
  * 3. Deactivates any SMTP providers
  */
 

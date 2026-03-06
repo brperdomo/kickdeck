@@ -97,7 +97,7 @@ async function compareApiKeys() {
       // Test with a simple API call (this won't send email)
       const testMessage = {
         to: 'test@example.com',
-        from: currentEnv.SENDGRID_FROM_EMAIL || 'noreply@matchpro.ai',
+        from: currentEnv.SENDGRID_FROM_EMAIL || 'noreply@kickdeck.io',
         subject: 'Test',
         text: 'Test'
       };

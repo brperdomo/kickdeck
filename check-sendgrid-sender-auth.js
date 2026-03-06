@@ -108,9 +108,9 @@ async function testEmailDelivery() {
     const testRecipient = 'bperdomo@zoho.com'; // Using the admin email as test recipient
     
     const testConfigs = [
-      { from: 'support@matchpro.ai', label: 'Current Default' },
-      { from: 'noreply@matchpro.ai', label: 'No Reply' },
-      { from: 'admin@matchpro.ai', label: 'Admin' }
+      { from: 'support@kickdeck.io', label: 'Current Default' },
+      { from: 'noreply@kickdeck.io', label: 'No Reply' },
+      { from: 'admin@kickdeck.io', label: 'Admin' }
     ];
     
     for (const config of testConfigs) {
@@ -224,8 +224,8 @@ async function main() {
       console.log('SOLUTION:');
       console.log('1. Go to SendGrid Dashboard → Settings → Sender Authentication');
       console.log('2. Either:');
-      console.log('   a) Verify a single sender email (support@matchpro.ai), OR');
-      console.log('   b) Authenticate your entire domain (matchpro.ai)');
+      console.log('   a) Verify a single sender email (support@kickdeck.io), OR');
+      console.log('   b) Authenticate your entire domain (kickdeck.io)');
       console.log('3. Domain authentication is recommended for production');
       console.log('');
       console.log('Until sender authentication is configured, emails will');

@@ -6,16 +6,16 @@ import { log } from "../vite";
 import { sendRegistrationReceiptEmail } from "./emailService";
 
 if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error("Missing required Stripe secret: STRIPE_SECRET_KEY");
+  console.warn("Warning: STRIPE_SECRET_KEY not set. Stripe features will be unavailable.");
 }
 
 // In production, we can add a version check to ensure our API version stays current
 const STRIPE_API_VERSION = "2023-10-16" as any;
 
-// Initialize Stripe client with proper API version
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: STRIPE_API_VERSION,
-});
+// Initialize Stripe client with proper API version (null if no key)
+const stripe = process.env.STRIPE_SECRET_KEY
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: STRIPE_API_VERSION })
+  : null;
 
 // Check Stripe API version on startup (only in production)
 if (process.env.NODE_ENV === "production") {
@@ -401,14 +401,14 @@ export async function createRefund(paymentIntentId: string, amount?: number) {
 
     const chargeId = charges.data[0].id;
 
-    // CORRECT REFUND LOGIC: Refund from MatchPro main account (where charge was received)
+    // CORRECT REFUND LOGIC: Refund from KickDeck main account (where charge was received)
     // Then reverse the transfer from Connect account to offset the cost
-    log(`Processing refund from main MatchPro account (original charge location)`);
+    log(`Processing refund from main KickDeck account (original charge location)`);
     const refund = await stripe.refunds.create({
       charge: chargeId,
       amount: amount, // If not specified, refund the full amount
     });
-    log(`✅ Refund processed from main MatchPro account: ${refund.id}`);
+    log(`✅ Refund processed from main KickDeck account: ${refund.id}`);
 
     // CRITICAL: Ensure tournament Connect account covers the refund cost
     const refundAmount = amount || paymentIntent.amount;
@@ -418,7 +418,7 @@ export async function createRefund(paymentIntentId: string, amount?: number) {
       log(`Attempting to recover ${refundAmount} cents from Connect account ${connectAccountId}`);
       
       try {
-        // Create transfer FROM Connect account TO MatchPro to reimburse the refund
+        // Create transfer FROM Connect account TO KickDeck to reimburse the refund
         const offsetTransfer = await stripe.transfers.create({
           amount: refundAmount,
           currency: 'usd',
@@ -453,38 +453,38 @@ export async function createRefund(paymentIntentId: string, amount?: number) {
         
       } catch (transferError: any) {
         log(`❌ FAILED: Cannot recover from Connect account: ${transferError.message}`);
-        log(`❌ MatchPro absorbs ${refundAmount} cent refund cost`);
+        log(`❌ KickDeck absorbs ${refundAmount} cent refund cost`);
         
-        // Record failed recovery - MatchPro absorbs cost
+        // Record failed recovery - KickDeck absorbs cost
         await db.insert(paymentTransactions).values({
           teamId: parseInt(teamId),
           paymentIntentId: paymentIntentId,
-          amount: -refundAmount, // Negative - cost absorbed by MatchPro
+          amount: -refundAmount, // Negative - cost absorbed by KickDeck
           status: "failed",
           transactionType: "refund_cost_recovery_failed",
           metadata: {
             error: transferError.message,
             connectAccount: connectAccountId,
             attemptedAmount: refundAmount.toString(),
-            costAbsorbedBy: "matchpro_main_account",
+            costAbsorbedBy: "kickdeck_main_account",
             originalRefundId: refund.id
           },
         });
       }
     } else {
-      log(`⚠️ No Connect account - MatchPro absorbs ${refundAmount} cent refund cost`);
+      log(`⚠️ No Connect account - KickDeck absorbs ${refundAmount} cent refund cost`);
       
       // Record cost absorption due to missing Connect account
       await db.insert(paymentTransactions).values({
         teamId: parseInt(teamId),
         paymentIntentId: paymentIntentId,
-        amount: -refundAmount, // Negative - cost absorbed by MatchPro
+        amount: -refundAmount, // Negative - cost absorbed by KickDeck
         status: "completed",
         transactionType: "refund_cost_absorbed",
         metadata: {
           reason: "no_connect_account_metadata",
           refundAmount: refundAmount.toString(),
-          costAbsorbedBy: "matchpro_main_account",
+          costAbsorbedBy: "kickdeck_main_account",
           originalRefundId: refund.id,
           note: "old_payment_or_missing_metadata"
         },
@@ -513,7 +513,7 @@ export async function createRefund(paymentIntentId: string, amount?: number) {
         transactionType: "refund",
         refundedAt: new Date(),
         metadata: {
-          refundSource: "main_matchpro_account", // Refund always from main account
+          refundSource: "main_kickdeck_account", // Refund always from main account
           transferReversalAttempted: connectAccountId ? "yes" : "no",
           connectAccountId: connectAccountId || "none",
           originalPaymentIntent: paymentIntentId,
@@ -607,7 +607,7 @@ export async function createSetupIntent(
               managerName: team.submitterName || "Team Manager",
               registrationDate: new Date().toISOString(),
               internalReference: `TEAM-${teamId}-${team.eventId}`,
-              systemSource: "MatchPro",
+              systemSource: "KickDeck",
               customerType: "ConnectAccount"
             },
           }, {
@@ -696,7 +696,7 @@ export async function createSetupIntent(
           : metadata?.userEmail || "",
         internalReference: `TEAM-${teamId}-${(typeof teamId === "number" || !teamId.toString().startsWith("temp-")) ? team?.eventId : metadata?.eventId}`,
         connectAccountId: connectAccountId,
-        systemSource: "MatchPro",
+        systemSource: "KickDeck",
         operationType: "SetupIntent",
         ...metadata,
       },
@@ -813,7 +813,7 @@ export async function processPaymentForApprovedTeam(
             teamId: teamId.toString(),
             eventId: team.eventId?.toString() || "",
             teamName: team.name || "Unknown Team",
-            systemSource: "MatchPro",
+            systemSource: "KickDeck",
             createdFor: "payment_retry"
           },
         }, connectAccountId ? { stripeAccount: connectAccountId } : {});
@@ -1108,7 +1108,7 @@ export async function handleSetupIntentSuccess(
           teamId: teamId.toString(),
           eventId: existingTeam.eventId?.toString() || "",
           teamName: existingTeam.name || "Unknown Team",
-          systemSource: "MatchPro",
+          systemSource: "KickDeck",
           createdFor: "setup_intent_success"
         },
       }, connectAccountId ? { stripeAccount: connectAccountId } : {});

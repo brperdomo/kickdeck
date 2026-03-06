@@ -51,7 +51,7 @@ async function generatePaymentLinks() {
       return;
     }
     
-    const baseUrl = process.env.FRONTEND_URL || 'https://app.matchpro.ai';
+    const baseUrl = process.env.FRONTEND_URL || 'https://app.kickdeck.io';
     let totalAmount = 0;
     const teamsWithLinks = [];
     

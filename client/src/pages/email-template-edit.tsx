@@ -28,8 +28,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Editor } from "@tinymce/tinymce-react";
 import { AdminBanner } from "@/components/admin/AdminBanner";
-import type { EmailTemplate } from "@db/schema/emailTemplates";
-import { insertEmailTemplateSchema } from "@db/schema/emailTemplates";
+import { insertEmailTemplateSchema, type EmailTemplate } from "@db/schema/emailTemplates";
 
 // Define template types
 const templateTypes = [
@@ -398,7 +397,7 @@ export default function EmailTemplateEdit() {
                     <FormItem>
                       <FormLabel>Sender Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="MatchPro" {...field} />
+                        <Input placeholder="KickDeck" {...field} />
                       </FormControl>
                       <FormDescription>
                         The name that will appear in the From field
@@ -414,7 +413,7 @@ export default function EmailTemplateEdit() {
                     <FormItem>
                       <FormLabel>Sender Email</FormLabel>
                       <FormControl>
-                        <Input placeholder="notifications@matchpro.ai" {...field} />
+                        <Input placeholder="notifications@kickdeck.io" {...field} />
                       </FormControl>
                       <FormDescription>
                         The email address that will appear in the From field
@@ -432,7 +431,7 @@ export default function EmailTemplateEdit() {
                   <FormItem>
                     <FormLabel>Email Subject</FormLabel>
                     <FormControl>
-                      <Input placeholder="Welcome to MatchPro" {...field} />
+                      <Input placeholder="Welcome to KickDeck" {...field} />
                     </FormControl>
                     <FormDescription>
                       The subject line of the email

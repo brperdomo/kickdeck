@@ -9,7 +9,7 @@ const https = require('https');
 const { performance } = require('perf_hooks');
 
 // Test configuration
-const PRODUCTION_URL = 'https://app.matchpro.ai';
+const PRODUCTION_URL = 'https://app.kickdeck.io';
 const TEST_EMAIL = 'bperdomo@zoho.com';
 
 /**
@@ -62,7 +62,7 @@ async function testPasswordReset() {
     console.log('');
     
     const options = {
-      hostname: 'app.matchpro.ai',
+      hostname: 'app.kickdeck.io',
       port: 443,
       path: '/api/auth/forgot-password',
       method: 'POST',
@@ -95,9 +95,9 @@ async function testPasswordReset() {
       
       console.log('\n📧 EMAIL CHECK INSTRUCTIONS:');
       console.log(`1. Check ${TEST_EMAIL} inbox for password reset email`);
-      console.log('2. Verify email contains reset link with app.matchpro.ai domain');
+      console.log('2. Verify email contains reset link with app.kickdeck.io domain');
       console.log('3. Click the reset link to test functionality');
-      console.log('4. Reset link should direct to: https://app.matchpro.ai/reset-password?token=...');
+      console.log('4. Reset link should direct to: https://app.kickdeck.io/reset-password?token=...');
       
     } else {
       console.log('\n❌ PASSWORD RESET REQUEST FAILED');
@@ -128,7 +128,7 @@ async function runCompleteTest() {
   console.log('1. Check SendGrid Activity Feed at https://app.sendgrid.com');
   console.log('2. Verify email delivery status and opens');
   console.log('3. Test the actual password reset flow end-to-end');
-  console.log('4. Confirm reset URLs use https://app.matchpro.ai domain');
+  console.log('4. Confirm reset URLs use https://app.kickdeck.io domain');
 }
 
 // Run the test

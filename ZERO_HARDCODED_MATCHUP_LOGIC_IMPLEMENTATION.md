@@ -1,7 +1,7 @@
 # ZERO HARDCODED MATCHUP LOGIC IMPLEMENTATION - COMPLETE
 
 ## Overview
-Complete elimination of all hardcoded scheduling patterns and fallback logic from the MatchPro tournament management system. All tournament formats now use dynamic matchup templates accessible via Format Settings interface.
+Complete elimination of all hardcoded scheduling patterns and fallback logic from the KickDeck tournament management system. All tournament formats now use dynamic matchup templates accessible via Format Settings interface.
 
 ## Implementation Status: ✅ COMPLETE
 

@@ -71,8 +71,8 @@ export function UserBanner() {
             transition={{ delay: 0.15 }}
           >
             <img 
-              src={settings?.logoUrl || "/uploads/MatchProAI_Linear_BlackNOBUFFER.png"} 
-              alt={settings?.name || "MatchPro"} 
+              src={settings?.logoUrl || "/uploads/KickDeck_Linear_Black.png"}
+              alt={settings?.name || "KickDeck"} 
               className="h-8 mr-2"
             />
             <motion.h2 

@@ -62,7 +62,7 @@ async function diagnoseEmailIssue() {
 
     const testMessage = {
       to: TEST_EMAIL,
-      from: 'support@matchpro.ai',
+      from: 'support@kickdeck.io',
       subject: `Production Email Test - ${new Date().toISOString()}`,
       text: 'This is a direct SendGrid API test from the production environment.',
       html: `
@@ -145,14 +145,14 @@ async function diagnoseEmailIssue() {
           <p><strong>Time:</strong> ${new Date().toISOString()}</p>
         </div>
       `,
-      from: 'support@matchpro.ai'
+      from: 'support@kickdeck.io'
     });
     console.log('   ✅ Basic email service test completed');
 
     // Test templated email
     console.log('   Testing templated email function...');
     await sendTemplatedEmail(TEST_EMAIL, 'password_reset', {
-      resetUrl: 'https://matchpro.ai/reset-password?token=test-token',
+      resetUrl: 'https://kickdeck.io/reset-password?token=test-token',
       userName: 'Test User'
     });
     console.log('   ✅ Templated email service test completed');

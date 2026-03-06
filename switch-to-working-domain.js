@@ -1,8 +1,8 @@
 /**
  * Switch Email System to Working Domain
  * 
- * This script configures the email system to use matchpro.ai (which is properly
- * authenticated) instead of app.matchpro.com for all production emails.
+ * This script configures the email system to use kickdeck.io (which is properly
+ * authenticated) instead of app.kickdeck.io for all production emails.
  */
 
 import { MailService } from '@sendgrid/mail';
@@ -15,8 +15,8 @@ const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 async function switchToWorkingDomain() {
   console.log('Switching email system to use working domain...');
   
-  // Step 1: Update email templates to use matchpro.ai sender
-  console.log('\n1. Updating email template senders to use matchpro.ai...');
+  // Step 1: Update email templates to use kickdeck.io sender
+  console.log('\n1. Updating email template senders to use kickdeck.io...');
   
   const client = new Client({
     connectionString: process.env.DATABASE_URL
@@ -25,17 +25,17 @@ async function switchToWorkingDomain() {
   try {
     await client.connect();
     
-    // Update all email templates to use support@matchpro.ai
+    // Update all email templates to use support@kickdeck.io
     const updateQuery = `
       UPDATE email_templates 
-      SET sender_email = 'support@matchpro.ai',
-          sender_name = 'MatchPro Team',
+      SET sender_email = 'support@kickdeck.io',
+          sender_name = 'KickDeck Team',
           updated_at = CURRENT_TIMESTAMP
-      WHERE sender_email LIKE '%@app.matchpro.com' OR sender_email LIKE '%@matchpro.com'
+      WHERE sender_email LIKE '%@app.kickdeck.io' OR sender_email LIKE '%@kickdeck.io'
     `;
     
     const result = await client.query(updateQuery);
-    console.log(`Updated ${result.rowCount} email templates to use matchpro.ai domain`);
+    console.log(`Updated ${result.rowCount} email templates to use kickdeck.io domain`);
     
     // Verify the welcome template specifically
     const welcomeCheck = await client.query(`
@@ -58,7 +58,7 @@ async function switchToWorkingDomain() {
   }
   
   // Step 2: Test email sending with the working domain
-  console.log('\n2. Testing email delivery with matchpro.ai domain...');
+  console.log('\n2. Testing email delivery with kickdeck.io domain...');
   
   const mailService = new MailService();
   mailService.setApiKey(SENDGRID_API_KEY);
@@ -66,14 +66,14 @@ async function switchToWorkingDomain() {
   try {
     // Test direct email
     const testMessage = {
-      to: 'domain.test@matchproteam.testinator.com',
-      from: 'support@matchpro.ai',
+      to: 'domain.test@kickdeckteam.testinator.com',
+      from: 'support@kickdeck.io',
       subject: 'Domain Fix Test - Working Domain',
-      text: 'This email tests delivery using the properly authenticated matchpro.ai domain.',
+      text: 'This email tests delivery using the properly authenticated kickdeck.io domain.',
       html: `
         <div style="font-family: Arial, sans-serif; padding: 20px; border: 2px solid green;">
           <h2 style="color: green;">Email Domain Fix Complete</h2>
-          <p>This email is sent using the properly authenticated matchpro.ai domain.</p>
+          <p>This email is sent using the properly authenticated kickdeck.io domain.</p>
           <p>All production emails should now be delivered successfully.</p>
           <p>Timestamp: ${new Date().toISOString()}</p>
         </div>
@@ -86,13 +86,13 @@ async function switchToWorkingDomain() {
     
     // Test welcome template
     const welcomeTest = {
-      to: 'welcome.domain.test@matchproteam.testinator.com',
-      from: 'support@matchpro.ai',
+      to: 'welcome.domain.test@kickdeckteam.testinator.com',
+      from: 'support@kickdeck.io',
       templateId: 'd-6064756d74914ec79b3a3586f6713424',
       dynamicTemplateData: {
         firstName: 'Domain',
         lastName: 'Test',
-        email: 'welcome.domain.test@matchproteam.testinator.com',
+        email: 'welcome.domain.test@kickdeckteam.testinator.com',
         username: 'domaintest'
       }
     };
@@ -111,7 +111,7 @@ async function switchToWorkingDomain() {
   const timestamp = Date.now();
   const testUser = {
     username: `domainfix${timestamp}`,
-    email: `domainfix${timestamp}@matchproteam.testinator.com`,
+    email: `domainfix${timestamp}@kickdeckteam.testinator.com`,
     password: 'DomainFix123!',
     firstName: 'Domain',
     lastName: 'Fix',
@@ -119,7 +119,7 @@ async function switchToWorkingDomain() {
   };
   
   try {
-    const regResponse = await fetch('https://app.matchpro.ai/api/register', {
+    const regResponse = await fetch('https://app.kickdeck.io/api/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -141,14 +141,14 @@ async function switchToWorkingDomain() {
   
   console.log('\n=== DOMAIN SWITCH COMPLETE ===');
   console.log('\nChanges made:');
-  console.log('• Updated all email templates to use support@matchpro.ai');
+  console.log('• Updated all email templates to use support@kickdeck.io');
   console.log('• Configured system to use properly authenticated domain');
   console.log('• Tested email delivery with working domain');
   console.log('• Verified registration flow with domain fix');
   
   console.log('\nResult:');
   console.log('Your production email system now uses the properly authenticated');
-  console.log('matchpro.ai domain instead of the problematic app.matchpro.com domain.');
+  console.log('kickdeck.io domain instead of the problematic app.kickdeck.io domain.');
   console.log('Welcome emails and all other notifications should now be delivered successfully.');
 }
 

@@ -55,14 +55,14 @@ const LandingFooter = () => {
             <div className="mb-4">
               <Link href="/" className="flex items-center">
                 <img 
-                  src="/uploads/MatchProAI_Linear_WhiteNOBUFFER_1746209708212_2e1hcr.png" 
-                  alt="MatchPro.ai" 
+                  src="/uploads/KickDeck_Linear_White.png" 
+                  alt="KickDeck.io" 
                   className="h-10 w-auto"
                   onError={(e) => {
                     // Fallback in case the image doesn't load
                     const target = e.target as HTMLImageElement;
                     target.onerror = null; // Prevent infinite loop
-                    target.src = "https://placehold.co/200x50/1a1e36/4d79ff.png?text=MatchPro.ai";
+                    target.src = "https://placehold.co/200x50/1a1e36/4d79ff.png?text=KickDeck.io";
                   }} 
                 />
               </Link>
@@ -133,7 +133,7 @@ const LandingFooter = () => {
         <div className="mt-12 border-t border-[#1a1e36]/40 pt-6">
           <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
             <p className="text-xs text-gray-400">
-              &copy; {currentYear} MatchPro.ai. All rights reserved.
+              &copy; {currentYear} KickDeck.io. All rights reserved.
             </p>
             <div className="flex gap-4">
               <Link href="/terms" className="text-xs text-gray-400 hover:text-[#4d79ff]">

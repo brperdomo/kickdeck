@@ -141,14 +141,14 @@ async function compareSendGridEnvironments() {
         {
           to: [{ email: 'bperdomo@zoho.com' }],
           dynamic_template_data: {
-            reset_url: `https://matchpro.ai/reset-password?token=${uniqueTag}`,
+            reset_url: `https://kickdeck.io/reset-password?token=${uniqueTag}`,
             user_name: 'Environment Test User'
           }
         }
       ],
       from: { 
-        email: 'support@matchpro.ai',
-        name: `MatchPro.ai [${currentEnv.toUpperCase()}]`
+        email: 'support@kickdeck.io',
+        name: `KickDeck [${currentEnv.toUpperCase()}]`
       },
       template_id: 'd-7eb7ea1c19ca4090a0cefa3a2be75088',
       categories: [`environment-${currentEnv}`, uniqueTag],

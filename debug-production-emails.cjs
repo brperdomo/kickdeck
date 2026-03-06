@@ -16,7 +16,7 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 async function debugProductionEmails() {
   try {
     console.log('=== Production Email Debug Report ===');
-    console.log('Target emails: bperdomo@zoho.com, bryan@matchpro.ai');
+    console.log('Target emails: bperdomo@zoho.com, bryan@kickdeck.io');
     console.log('');
 
     // 1. Check SendGrid Configuration
@@ -41,7 +41,7 @@ async function debugProductionEmails() {
       and(
         or(
           eq(teams.submitterEmail, 'bperdomo@zoho.com'),
-          eq(teams.submitterEmail, 'bryan@matchpro.ai')
+          eq(teams.submitterEmail, 'bryan@kickdeck.io')
         ),
         gte(teams.createdAt, new Date(Date.now() - 7 * 24 * 60 * 60 * 1000))
       )
@@ -90,7 +90,7 @@ async function debugProductionEmails() {
     try {
       const testEmail = {
         to: 'bperdomo@zoho.com',
-        from: 'noreply@matchpro.ai',
+        from: 'noreply@kickdeck.io',
         subject: `Production Email Debug Test - ${new Date().toISOString()}`,
         text: 'This is a direct test email to verify SendGrid connectivity in production.',
         html: '<p>This is a direct test email to verify SendGrid connectivity in production.</p><p>If you receive this, SendGrid is working.</p>'

@@ -16,7 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Trophy, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { z } from "zod";
 import { Link, useLocation } from "wouter";
 import { useEffect, useState } from "react";
@@ -35,18 +35,34 @@ export default function AuthPage() {
   const [location, setLocation] = useLocation();
   const [logoutMessage, setLogoutMessage] = useState<string | null>(null);
 
-  // Check for logout message in session storage and handle eventId parameter
+  // Check for logout message in session storage or URL param, and handle eventId parameter
   useEffect(() => {
-    // Handle logout message
+    // Handle logout message — check sessionStorage first, then URL param as fallback
     const message = sessionStorage.getItem('logout_message');
+    const urlParams = new URLSearchParams(window.location.search);
+    const hasLoggedOut = urlParams.get('logged_out') === 'true';
+
     if (message) {
       console.log('Found logout message in session storage:', message);
       setLogoutMessage(message);
       sessionStorage.removeItem('logout_message');
+    } else if (hasLoggedOut) {
+      console.log('Detected logged_out URL param, showing default message');
+      setLogoutMessage('You have been successfully logged out');
+    }
+
+    // Clean the logged_out param from URL if present
+    if (hasLoggedOut) {
+      try {
+        const newUrl = new URL(window.location.href);
+        newUrl.searchParams.delete('logged_out');
+        window.history.replaceState({}, '', newUrl.toString());
+      } catch (e) {
+        console.error('Failed to clean URL:', e);
+      }
     }
 
     // Look for redirect in URL parameters
-    const urlParams = new URLSearchParams(window.location.search);
     const redirectParam = urlParams.get('redirect');
     const eventId = urlParams.get('eventId');
     
@@ -237,27 +253,31 @@ export default function AuthPage() {
   return (
     <AuthLayout>
       <div className="min-h-screen w-full relative">
-        <AnimatedBackground type="particles" primaryColor="#3d3a98" secondaryColor="#2d2a88" speed="medium" />
+        <AnimatedBackground type="neon" primaryColor="#7c3aed" secondaryColor="#a855f7" speed="medium" />
 
         <div className="relative z-10 flex items-center justify-center min-h-screen">
           <div className="w-full max-w-[min(400px,100%-2rem)] mx-auto">
-            <Card className="w-full bg-[#3d3a98]/70 backdrop-blur-md shadow-xl border-0 ring-4 ring-[#6a67ff]/60 ring-offset-4 ring-offset-[#3d3a98]/20 shadow-[0_0_20px_5px_rgba(106,103,255,0.4)]">
+            <Card className="w-full bg-[#0f0f23]/85 backdrop-blur-2xl border border-white/[0.08] rounded-2xl shadow-[0_0_30px_rgba(124,58,237,0.15),0_0_60px_rgba(6,182,212,0.08)]">
               <CardHeader className="space-y-3 pb-6">
                 <div className="flex justify-center">
-                  <div className="w-100 h-100">
+                  <div className="w-64">
                     <img
-                      src="/uploads/MatchProAI_Linear_BlackNOBUFFER.png"
-                      alt="MatchPro Logo"
+                      src="/uploads/KickDeck_Linear_White.png"
+                      alt="KickDeck Logo"
                       className="w-full h-full object-contain"
+                      style={{ filter: "drop-shadow(0 0 20px rgba(124,58,237,0.3))" }}
                     />
                   </div>
                 </div>
-                <CardTitle className="text-2xl sm:text-3xl font-bold text-center text-white">
-                  Let's get you signed in
-                </CardTitle>
+                <div className="text-center space-y-1">
+                  <CardTitle className="text-2xl sm:text-3xl font-bold text-white">
+                    Welcome back
+                  </CardTitle>
+                  <p className="text-sm text-gray-400">Sign in to your account</p>
+                </div>
                 {logoutMessage && (
                   <div className={`mt-2 px-4 py-2 rounded-md text-sm font-medium ${
-                    window.location.search.includes('forced') ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'
+                    window.location.search.includes('forced') ? 'bg-red-500/20 text-red-300 border border-red-500/30' : 'bg-green-500/20 text-green-300 border border-green-500/30'
                   }`}>
                     {logoutMessage}
                   </div>
@@ -277,16 +297,17 @@ export default function AuthPage() {
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-base text-white">Email</FormLabel>
+                          <FormLabel className="text-sm text-gray-300">Email</FormLabel>
                           <FormControl>
                             <Input
                               type="email"
                               autoComplete="username email"
-                              className="h-11 text-base px-4 bg-white/90 border-white/50 focus:border-white focus:ring-white/50"
+                              className="neon-input h-11 text-base px-4 text-white placeholder:text-gray-500 focus:ring-1 focus:ring-purple-500/20 focus:shadow-[0_0_10px_rgba(124,58,237,0.15)]"
+                              style={{ backgroundColor: 'rgba(255,255,255,0.06)', borderColor: 'rgba(255,255,255,0.1)' }}
                               {...field}
                             />
                           </FormControl>
-                          <FormMessage className="text-yellow-200" />
+                          <FormMessage className="text-red-400" />
                         </FormItem>
                       )}
                     />
@@ -295,22 +316,23 @@ export default function AuthPage() {
                       name="password"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-base text-white">Password</FormLabel>
+                          <FormLabel className="text-sm text-gray-300">Password</FormLabel>
                           <FormControl>
                             <Input
                               type="password"
                               autoComplete="current-password"
-                              className="h-11 text-base px-4 bg-white/90 border-white/50 focus:border-white focus:ring-white/50"
+                              className="neon-input h-11 text-base px-4 text-white placeholder:text-gray-500 focus:ring-1 focus:ring-purple-500/20 focus:shadow-[0_0_10px_rgba(124,58,237,0.15)]"
+                              style={{ backgroundColor: 'rgba(255,255,255,0.06)', borderColor: 'rgba(255,255,255,0.1)' }}
                               {...field}
                             />
                           </FormControl>
-                          <FormMessage className="text-yellow-200" />
+                          <FormMessage className="text-red-400" />
                         </FormItem>
                       )}
                     />
                     <Button
                       type="submit"
-                      className="w-full h-11 text-base bg-white hover:bg-white/90 text-[#3d3a98] font-medium transition-colors"
+                      className="w-full h-11 text-base bg-gradient-to-r from-purple-600 to-violet-500 hover:from-purple-500 hover:to-violet-400 text-white font-medium transition-all duration-200 hover:shadow-[0_0_20px_rgba(124,58,237,0.4)]"
                       disabled={loginMutation.isPending}
                     >
                       {loginMutation.isPending ? (
@@ -319,24 +341,24 @@ export default function AuthPage() {
                           Signing in...
                         </>
                       ) : (
-                        'Login'
+                        'Sign In'
                       )}
                     </Button>
                     {loginForm.formState.errors.root?.serverError && (
-                      <div className="p-3 text-sm font-medium text-white bg-red-500 rounded-md">
+                      <div className="p-3 text-sm font-medium text-red-300 bg-red-500/20 border border-red-500/30 rounded-md">
                         {loginForm.formState.errors.root.serverError.message}
                       </div>
                     )}
                     <Link href="/forgot-password">
-                      <Button variant="link" className="w-full text-sm text-yellow-200 p-0 h-auto font-semibold hover:text-yellow-100">
+                      <Button variant="link" className="w-full text-sm text-gray-400 p-0 h-auto font-medium hover:text-purple-400 transition-colors">
                         Forgot Password?
                       </Button>
                     </Link>
                     <div className="text-center">
-                      <p className="text-sm sm:text-base text-white">
-                        New to MatchPro?{" "}
+                      <p className="text-sm text-gray-400">
+                        New to KickDeck?{" "}
                         <Link href={`/register${window.location.search}`}>
-                          <Button variant="link" className="p-0 h-auto font-semibold text-yellow-300 hover:text-yellow-100">
+                          <Button variant="link" className="p-0 h-auto font-semibold text-cyan-400 hover:text-cyan-300 transition-colors">
                             Register Here
                           </Button>
                         </Link>

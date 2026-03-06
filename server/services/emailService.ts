@@ -61,7 +61,7 @@ async function getEmailProvider() {
         providerName: "SendGrid Provider",
         settings: {
           apiKey: sendgridApiKey,
-          from: process.env.SENDGRID_FROM_EMAIL || "support@matchpro.ai",
+          from: process.env.SENDGRID_FROM_EMAIL || "support@kickdeck.io",
         },
         isActive: true,
         isDefault: true,
@@ -197,7 +197,7 @@ function generateTextFromHtml(html: string, context: TemplateContext): string {
   if (context.resetUrl && context.username) {
     return `Hello ${context.username},
 
-We received a request to reset your password for your MatchPro account.
+We received a request to reset your password for your KickDeck account.
 
 To reset your password, please visit this link:
 ${context.resetUrl}
@@ -207,8 +207,8 @@ This link will expire in ${context.expiryHours || 24} hours.
 If you didn't request this password reset, you can safely ignore this email.
 
 Best regards,
-MatchPro Support Team
-support@matchpro.ai`;
+KickDeck Support Team
+support@kickdeck.io`;
   }
 
   // General HTML to text conversion (basic)
@@ -227,7 +227,7 @@ support@matchpro.ai`;
 
   return (
     text ||
-    "You have received a notification from MatchPro. Please check your account for more information."
+    "You have received a notification from KickDeck. Please check your account for more information."
   );
 }
 
@@ -256,7 +256,7 @@ export async function sendEmail(options: EmailOptions): Promise<void> {
     // Use SendGrid to send the email
     const from =
       options.from ||
-      `${provider.providerName} <${(provider.settings as any).from || "support@matchpro.ai"}>`;
+      `${provider.providerName} <${(provider.settings as any).from || "support@kickdeck.io"}>`;
 
     const result = await sendgridService.sendEmail({
       to: options.to,
@@ -367,7 +367,7 @@ export async function sendTemplatedEmail(
         // Ensure html is never empty or undefined
         if (!html || html.trim() === "") {
           html =
-            "<p>You have received a notification from MatchPro. Please check your account for more information.</p>";
+            "<p>You have received a notification from KickDeck. Please check your account for more information.</p>";
         }
 
         // Generate text version for better deliverability
@@ -472,8 +472,8 @@ function createFallbackTemplate(
           <p style="margin-top: 20px; font-size: 12px; color: #666;">This template was generated automatically as a fallback in development mode.</p>
         </div>
       `,
-      senderName: "MatchPro",
-      senderEmail: "support@matchpro.ai",
+      senderName: "KickDeck",
+      senderEmail: "support@kickdeck.io",
       isActive: true,
       type: templateType,
       providerId: null,
@@ -494,8 +494,8 @@ function createFallbackTemplate(
           <p style="margin-top: 20px; font-size: 12px; color: #666;">This is an automated notification.</p>
         </div>
       `,
-      senderName: "MatchPro",
-      senderEmail: "support@matchpro.ai",
+      senderName: "KickDeck",
+      senderEmail: "support@kickdeck.io",
       isActive: true,
       type: templateType,
       providerId: null,
@@ -518,7 +518,7 @@ function getAppUrl(
     );
   } else {
     // Production environment - use correct production domain
-    return "https://app.matchpro.ai";
+    return "https://app.kickdeck.io";
   }
 }
 
@@ -702,8 +702,8 @@ export async function sendRegistrationConfirmationEmail(
       setupIntentId: teamData.setupIntentId || "",
       addRosterLater: teamData.addRosterLater || false,
       loginLink: loginLink,
-      supportEmail: "support@matchpro.ai",
-      organizationName: "MatchPro",
+      supportEmail: "support@kickdeck.io",
+      organizationName: "KickDeck",
       currentYear: new Date().getFullYear(),
     };
 

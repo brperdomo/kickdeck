@@ -22,7 +22,7 @@ async function finalWelcomeEmailStatus() {
   const timestamp = Date.now();
   const finalTestUser = {
     username: `finaltest${timestamp}`,
-    email: `finaltest${timestamp}@matchproteam.testinator.com`,
+    email: `finaltest${timestamp}@kickdeckteam.testinator.com`,
     password: 'FinalTest123!',
     firstName: 'Final',
     lastName: 'Test',
@@ -51,7 +51,7 @@ async function finalWelcomeEmailStatus() {
       
       console.log('\n📧 Welcome Email Status:');
       console.log('   Template: d-6064756d74914ec79b3a3586f6713424 (SendGrid Dynamic)');
-      console.log('   Sender: MatchPro Team <support@matchpro.ai>');
+      console.log('   Sender: KickDeck Team <support@kickdeck.io>');
       console.log('   Expected: Email sent to recipient');
       
     } else {

@@ -37,7 +37,7 @@ async function debugProductionEmailDelivery() {
         
         // Check for our test emails
         const testEmails = activity.messages.filter(msg => 
-          msg.to_email.includes('matchproteam.testinator.com')
+          msg.to_email.includes('kickdeckteam.testinator.com')
         );
         
         if (testEmails.length > 0) {
@@ -58,7 +58,7 @@ async function debugProductionEmailDelivery() {
   
   // Step 2: Test direct SendGrid email sending
   console.log('\n2. Testing direct SendGrid email sending...');
-  const testEmail = 'directtest@matchproteam.testinator.com';
+  const testEmail = 'directtest@kickdeckteam.testinator.com';
   
   try {
     const mailService = new MailService();
@@ -66,7 +66,7 @@ async function debugProductionEmailDelivery() {
     
     const directMessage = {
       to: testEmail,
-      from: 'support@matchpro.ai',
+      from: 'support@kickdeck.io',
       subject: 'Direct SendGrid Test - Production Debug',
       text: 'This is a direct test to verify SendGrid is actually sending emails.',
       html: `
@@ -130,13 +130,13 @@ async function debugProductionEmailDelivery() {
   console.log('\n3. Testing dynamic template directly...');
   try {
     const templateMessage = {
-      to: 'templatetest@matchproteam.testinator.com',
-      from: 'support@matchpro.ai',
+      to: 'templatetest@kickdeckteam.testinator.com',
+      from: 'support@kickdeck.io',
       templateId: 'd-6064756d74914ec79b3a3586f6713424', // Welcome template ID
       dynamicTemplateData: {
         firstName: 'Template',
         lastName: 'Test',
-        email: 'templatetest@matchproteam.testinator.com',
+        email: 'templatetest@kickdeckteam.testinator.com',
         username: 'templatetest'
       }
     };
@@ -160,8 +160,8 @@ async function debugProductionEmailDelivery() {
   // Step 4: Check suppression lists for test emails
   console.log('\n4. Checking suppression lists for test emails...');
   const testEmails = [
-    'hello@matchproteam.testinator.com',
-    'goodbye@matchproteam.testinator.com'
+    'hello@kickdeckteam.testinator.com',
+    'goodbye@kickdeckteam.testinator.com'
   ];
   
   const suppressionTypes = ['bounces', 'blocks', 'spam_reports', 'unsubscribes', 'invalid_emails'];

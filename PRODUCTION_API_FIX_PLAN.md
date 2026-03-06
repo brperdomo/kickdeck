@@ -5,7 +5,7 @@
 ### User Authentication ✅
 - **User**: Bryan Perdomo (bperdomo@zoho.com)
 - **Status**: Authenticated as admin (ID: 24, isAdmin: true)
-- **Login**: Successful to production environment (app.matchpro.ai)
+- **Login**: Successful to production environment (app.kickdeck.io)
 
 ### Teams Ready for Recovery ✅
 All 4 teams confirmed with burned payment methods ready for intelligent recovery:

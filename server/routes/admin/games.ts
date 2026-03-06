@@ -377,22 +377,34 @@ router.put('/:gameId/reschedule', isAdmin, async (req, res) => {
       console.log(`   • Event: ${eventId}`);
       console.log(`   • Field: ${fieldId}`);
       console.log(`   • Start: ${startTime}`);
-      
-      // Create time slot with 90-minute duration
-      const endTime = new Date(new Date(startTime).getTime() + 90 * 60 * 1000).toISOString();
-      console.log(`   • End: ${endTime} (90-minute duration)`);
-      
+
+      // Look up the game's actual duration (don't hardcode 90 minutes)
+      const gameRecord = await db.query.games.findFirst({
+        where: eq(games.id, parseInt(gameId)),
+        columns: { duration: true }
+      });
+      const gameDuration = gameRecord?.duration || 90;
+
+      // Calculate end time using string math — DO NOT use new Date() which applies timezone conversion
+      const [datePart, timePart] = startTime.split('T');
+      const [startH, startM] = timePart.split(':').map(Number);
+      const endTotalMin = startH * 60 + startM + gameDuration;
+      const endH = Math.floor(endTotalMin / 60).toString().padStart(2, '0');
+      const endM = (endTotalMin % 60).toString().padStart(2, '0');
+      const endTime = `${datePart}T${endH}:${endM}:00`;
+      console.log(`   • End: ${endTime} (${gameDuration}-minute duration)`);
+
       const [newTimeSlot] = await db.insert(gameTimeSlots).values({
         eventId: eventId.toString(),
         fieldId: fieldId,
         startTime: startTime,
         endTime: endTime,
         isAvailable: true,
-        dayIndex: Math.floor((new Date(startTime).getTime() - new Date('2025-08-16').getTime()) / (24 * 60 * 60 * 1000)),
+        dayIndex: 0,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       }).returning();
-      
+
       timeSlot = newTimeSlot;
       console.log(`✅ New time slot created with ID: ${timeSlot.id}`);
     } else {
@@ -404,12 +416,13 @@ router.put('/:gameId/reschedule', isAdmin, async (req, res) => {
     console.log(`   • Game ID: ${gameId}`);
     console.log(`   • New Field ID: ${fieldId}`);
     console.log(`   • New Time Slot ID: ${timeSlot.id}`);
-    
-    // Parse the startTime to extract date and time components
-    const startTimeDate = new Date(startTime);
-    const scheduledDate = startTimeDate.toISOString().split('T')[0]; // YYYY-MM-DD format
-    const scheduledTime = startTimeDate.toISOString().split('T')[1].split('.')[0]; // HH:MM:SS format
-    
+
+    // Extract date and time by string splitting — DO NOT use new Date().toISOString()
+    // which converts local time to UTC, shifting the time by the server's timezone offset.
+    // Input is a naive ISO string like "2026-04-02T08:00:00" — NOT a UTC timestamp.
+    const scheduledDate = startTime.split('T')[0]; // "2026-04-02"
+    const scheduledTime = startTime.split('T')[1];  // "08:00:00"
+
     console.log(`📅 Extracted date/time components:`);
     console.log(`   • Scheduled Date: ${scheduledDate}`);
     console.log(`   • Scheduled Time: ${scheduledTime}`);

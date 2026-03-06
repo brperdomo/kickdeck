@@ -1,15 +1,15 @@
-# SendGrid Template Data Mapping for MatchPro
+# SendGrid Template Data Mapping for KickDeck
 
 ## Real Data Fields Your Application Sends
 
-Based on your email service analysis, here are the actual data fields your MatchPro application captures and sends to SendGrid templates:
+Based on your email service analysis, here are the actual data fields your KickDeck application captures and sends to SendGrid templates:
 
 ### Password Reset Template
 **Template ID:** `d-7eb7ea1c19ca4090a0cefa3a2be75088`
 ```
 {
   "username": "User's actual username",
-  "resetUrl": "https://app.matchpro.ai/reset-password?token=abc123",
+  "resetUrl": "https://app.kickdeck.io/reset-password?token=abc123",
   "token": "actual_reset_token",
   "expiryHours": 24
 }
@@ -37,9 +37,9 @@ Based on your email service analysis, here are the actual data fields your Match
   "cardLastFour": "4242",
   "setupIntentId": "seti_1234567890",
   "addRosterLater": true/false,
-  "loginLink": "https://app.matchpro.ai/dashboard",
-  "supportEmail": "support@matchpro.ai",
-  "organizationName": "MatchPro",
+  "loginLink": "https://app.kickdeck.io/dashboard",
+  "supportEmail": "support@kickdeck.io",
+  "organizationName": "KickDeck",
   "currentYear": 2025
 }
 ```
@@ -62,7 +62,7 @@ Based on your email service analysis, here are the actual data fields your Match
   "submitterName": "Contact person",
   "submitterEmail": "Contact email",
   "loginLink": "Dashboard URL",
-  "supportEmail": "support@matchpro.ai"
+  "supportEmail": "support@kickdeck.io"
 }
 ```
 
@@ -78,7 +78,7 @@ Based on your email service analysis, here are the actual data fields your Match
   "paymentAmount": "150.00" (for approved),
   "reason": "Rejection reason" (for rejected),
   "position": "Waitlist position" (for waitlisted),
-  "supportEmail": "support@matchpro.ai"
+  "supportEmail": "support@kickdeck.io"
 }
 ```
 
@@ -114,4 +114,4 @@ Based on your email service analysis, here are the actual data fields your Match
 4. **Handle missing data gracefully** with fallback text
 5. **Use `{{#if fieldName}}` blocks** for optional sections
 
-Your application is already sending rich, real data to these templates. Ensure your SendGrid template designs use these exact variable names to display the actual MatchPro information.
+Your application is already sending rich, real data to these templates. Ensure your SendGrid template designs use these exact variable names to display the actual KickDeck information.

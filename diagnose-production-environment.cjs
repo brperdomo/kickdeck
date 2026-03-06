@@ -15,7 +15,7 @@ async function diagnoseProductionEnvironment() {
   
   // Test authenticated request (this will fail but show us the error type)
   try {
-    const response = await makeRequest('app.matchpro.ai', '/api/admin/sendgrid/templates', {
+    const response = await makeRequest('app.kickdeck.io', '/api/admin/sendgrid/templates', {
       'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)',
       'Accept': 'application/json'
     });
@@ -95,7 +95,7 @@ echo "Or update your Cloud Run deployment environment variables."
   console.log('\n   Option B - Manual Cloud Run Update:');
   console.log('   1. Go to Google Cloud Console');
   console.log('   2. Navigate to Cloud Run services');
-  console.log('   3. Find your matchpro service');
+  console.log('   3. Find your kickdeck service');
   console.log('   4. Edit & Deploy New Revision');
   console.log('   5. Update environment variable SENDGRID_API_KEY');
   

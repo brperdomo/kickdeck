@@ -6,18 +6,18 @@ interface FeeBreakdownProps {
   tournamentCost: number; // in cents
   selectedFeeName?: string;
   requiredFees?: { name: string; amount: number }[];
-  appliedCoupon?: { 
-    code: string; 
-    discountType: 'fixed' | 'percentage'; 
-    amount: number; 
+  appliedCoupon?: {
+    code: string;
+    discountType: 'fixed' | 'percentage';
+    amount: number;
   };
 }
 
-export function FeeBreakdown({ 
-  tournamentCost, 
+export function FeeBreakdown({
+  tournamentCost,
   selectedFeeName = "Registration Fee",
   requiredFees = [],
-  appliedCoupon 
+  appliedCoupon
 }: FeeBreakdownProps) {
   // Platform fee calculation (matches server logic)
   const DEFAULT_PLATFORM_FEE_RATE = 0.04; // 4%
@@ -25,34 +25,37 @@ export function FeeBreakdown({
   const STRIPE_FIXED_FEE = 30; // $0.30 in cents
 
   // Calculate the total amount needed to cover tournament cost + fees
-  const matchproTargetMargin = Math.round(tournamentCost * DEFAULT_PLATFORM_FEE_RATE);
-  const totalChargedAmount = Math.round((tournamentCost + matchproTargetMargin + STRIPE_FIXED_FEE) / (1 - STRIPE_PERCENTAGE_FEE));
+  const kickdeckTargetMargin = Math.round(tournamentCost * DEFAULT_PLATFORM_FEE_RATE);
+  const totalChargedAmount = Math.round((tournamentCost + kickdeckTargetMargin + STRIPE_FIXED_FEE) / (1 - STRIPE_PERCENTAGE_FEE));
   const platformFeeAmount = totalChargedAmount - tournamentCost;
   const stripeFeeAmount = Math.round(totalChargedAmount * STRIPE_PERCENTAGE_FEE) + STRIPE_FIXED_FEE;
 
   const formatCurrency = (cents: number) => `$${(cents / 100).toFixed(2)}`;
 
   return (
-    <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200">
+    <Card className="rounded-xl" style={{
+      background: 'rgba(15, 15, 35, 0.6)',
+      border: '1px solid rgba(255, 255, 255, 0.08)',
+    }}>
       <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 text-blue-800">
+        <CardTitle className="flex items-center gap-2 text-blue-300">
           <Calculator className="h-5 w-5" />
           Payment Amount Breakdown
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Tournament Cost */}
-        <div className="bg-white p-3 rounded-lg border border-blue-100">
+        <div className="p-3 rounded-lg" style={{ backgroundColor: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2">
-              <DollarSign className="h-4 w-4 text-green-600" />
-              <span className="font-medium text-gray-700">Tournament Registration</span>
+              <DollarSign className="h-4 w-4 text-green-400" />
+              <span className="font-medium text-gray-200">Tournament Registration</span>
             </div>
-            <span className="font-semibold text-green-700">
+            <span className="font-semibold text-green-400">
               {formatCurrency(tournamentCost)}
             </span>
           </div>
-          <div className="text-xs text-gray-500 mt-1">
+          <div className="text-xs text-gray-400 mt-1">
             {selectedFeeName}
             {requiredFees.length > 0 && ` + ${requiredFees.length} required fee${requiredFees.length > 1 ? 's' : ''}`}
           </div>
@@ -60,12 +63,12 @@ export function FeeBreakdown({
 
         {/* Required Fees Breakdown (if any) */}
         {requiredFees.length > 0 && (
-          <div className="bg-white p-3 rounded-lg border border-blue-100">
-            <div className="text-sm font-medium text-gray-700 mb-2">Additional Required Fees:</div>
+          <div className="p-3 rounded-lg" style={{ backgroundColor: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
+            <div className="text-sm font-medium text-gray-200 mb-2">Additional Required Fees:</div>
             {requiredFees.map((fee, index) => (
               <div key={index} className="flex justify-between items-center text-sm">
-                <span className="text-gray-600">{fee.name}</span>
-                <span className="font-medium">{formatCurrency(fee.amount)}</span>
+                <span className="text-gray-300">{fee.name}</span>
+                <span className="font-medium text-gray-200">{formatCurrency(fee.amount)}</span>
               </div>
             ))}
           </div>
@@ -73,14 +76,14 @@ export function FeeBreakdown({
 
         {/* Coupon Discount (if applied) */}
         {appliedCoupon && (
-          <div className="bg-green-50 p-3 rounded-lg border border-green-200">
+          <div className="p-3 rounded-lg" style={{ backgroundColor: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.2)' }}>
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-green-700">Coupon Applied: {appliedCoupon.code}</span>
+                <span className="text-sm font-medium text-green-400">Coupon Applied: {appliedCoupon.code}</span>
               </div>
-              <span className="font-semibold text-green-700">
-                -{appliedCoupon.discountType === 'percentage' 
-                  ? `${appliedCoupon.amount}%` 
+              <span className="font-semibold text-green-400">
+                -{appliedCoupon.discountType === 'percentage'
+                  ? `${appliedCoupon.amount}%`
                   : formatCurrency(appliedCoupon.amount * 100)
                 }
               </span>
@@ -89,15 +92,15 @@ export function FeeBreakdown({
         )}
 
         {/* Platform Fee */}
-        <div className="bg-orange-50 p-3 rounded-lg border border-orange-200">
+        <div className="p-3 rounded-lg" style={{ backgroundColor: 'rgba(251,146,60,0.08)', border: '1px solid rgba(251,146,60,0.2)' }}>
           <div className="flex justify-between items-center">
             <div>
-              <span className="font-medium text-orange-700">Platform & Processing Fee</span>
-              <div className="text-xs text-orange-600 mt-1">
+              <span className="font-medium text-orange-400">Platform & Processing Fee</span>
+              <div className="text-xs text-orange-400/80 mt-1">
                 Includes payment processing and platform services (4%)
               </div>
             </div>
-            <span className="font-semibold text-orange-700">
+            <span className="font-semibold text-orange-400">
               {formatCurrency(platformFeeAmount)}
             </span>
           </div>
@@ -120,8 +123,8 @@ export function FeeBreakdown({
         </div>
 
         {/* Fee Explanation */}
-        <div className="bg-gray-50 p-3 rounded-lg text-xs text-gray-600">
-          <div className="font-medium mb-1">How fees work:</div>
+        <div className="p-3 rounded-lg text-xs text-gray-400" style={{ backgroundColor: 'rgba(255,255,255,0.03)' }}>
+          <div className="font-medium mb-1 text-gray-300">How fees work:</div>
           <ul className="space-y-1 list-disc list-inside">
             <li>Tournament registration fee goes directly to the tournament organizer</li>
             <li>Platform fee covers payment processing, customer support, and platform services</li>

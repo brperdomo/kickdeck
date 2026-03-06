@@ -29,8 +29,8 @@ async function createPaymentFlowTemplates() {
         description: 'Sent when a team registration is submitted with payment info but not charged yet',
         type: 'registration_submission',
         subject: 'Registration Confirmation - {{teamName}} for {{eventName}}',
-        senderName: 'MatchPro Registration',
-        senderEmail: 'support@matchpro.ai',
+        senderName: 'KickDeck Registration',
+        senderEmail: 'support@kickdeck.io',
         isActive: true,
         variables: [
           'submitterName',
@@ -58,8 +58,8 @@ async function createPaymentFlowTemplates() {
         description: 'Sent when a team is approved and payment is processed',
         type: 'team_approved_payment',
         subject: 'Payment Confirmation - {{teamName}} for {{eventName}}',
-        senderName: 'MatchPro Registration',
-        senderEmail: 'support@matchpro.ai',
+        senderName: 'KickDeck Registration',
+        senderEmail: 'support@kickdeck.io',
         isActive: true,
         variables: [
           'submitterName', 
@@ -89,8 +89,8 @@ async function createPaymentFlowTemplates() {
         description: 'Sent when a team is rejected and no payment is processed',
         type: 'team_rejected',
         subject: 'Registration Status Update - {{teamName}} for {{eventName}}',
-        senderName: 'MatchPro Registration',
-        senderEmail: 'support@matchpro.ai',
+        senderName: 'KickDeck Registration',
+        senderEmail: 'support@kickdeck.io',
         isActive: true,
         variables: [
           'submitterName',
@@ -117,8 +117,8 @@ async function createPaymentFlowTemplates() {
         description: 'Sent when a team is placed on the waitlist',
         type: 'team_waitlisted',
         subject: 'Waitlist Notification - {{teamName}} for {{eventName}}',
-        senderName: 'MatchPro Registration',
-        senderEmail: 'support@matchpro.ai',
+        senderName: 'KickDeck Registration',
+        senderEmail: 'support@kickdeck.io',
         isActive: true,
         variables: [
           'submitterName',

@@ -1,13 +1,18 @@
 import { useState, useMemo, useEffect, lazy, Suspense, useCallback, useRef } from "react";
 import { useLocation, Link } from "wouter";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { formatPhoneNumber } from "@/utils/phone-formatter";
-import { 
-  Link2, X, Ticket, Plus, Mail, KeyRound, Check, RefreshCcw, UserMinus, RotateCcw, 
+import {
+  Link2, X, Ticket, Plus, Mail, KeyRound, Check, RefreshCcw, UserMinus, RotateCcw,
   Pencil, PlusCircle, CalendarRange, UserRoundPlus, ClipboardX, ArrowLeft,
   Upload, Wand2, Sparkles, AlertTriangle, CalendarDays, Loader2,
   Trophy, WandSparkles, CheckCircle2, AlertCircle, CreditCard, MapPin,
-  TrendingUp, BarChart2, HelpCircle, Eye, Clock, Download
+  TrendingUp, BarChart2, HelpCircle,
+  Calendar, Shield, UserPlus, Home, LogOut, User, UserRound, Palette,
+  ChevronRight, Search, ClipboardList, MoreHorizontal, Building2, MessageSquare,
+  DollarSign, Settings, Users, ChevronDown, Edit, Eye, UserCircle, Percent,
+  Printer, Flag, ImageIcon, FormInput, Bell, Moon, Sun, Trash2, FileText,
+  Trash, CalendarIcon, Map, Download, FileUp, Filter, ListFilter, ListChecks, Clock
 } from "lucide-react";
 // Removed ClubLogo import as we now display club name as text
 import { ComplexCard } from "@/components/admin/ComplexCard";
@@ -18,14 +23,10 @@ import EmulationManager from "@/components/admin/EmulationManager";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { AnimatedSidebar } from "@/components/admin/AnimatedSidebar";
-import { AnimatedNavigationButton } from "@/components/admin/AnimatedNavigationButton";
 import { AnimatedContainer, AnimatedList, AnimatedItem, AnimatedContent } from "@/components/ui/animation";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { AdminDashboardLayout } from "@/components/admin/AdminDashboardLayout";
+import { URL_TO_VIEW, type AdminNavItem } from "@/config/admin-navigation";
 import { TeamModal } from "@/components/teams/TeamModal";
 import { TeamCsvUploader } from "@/components/teams/TeamCsvUploader";
 import { FormSubmissionsCard } from "@/components/admin/FormSubmissionsCard";
@@ -43,12 +44,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectSeparator, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { PaymentStatusBadge, TeamStatusBadge } from "@/components/ui/payment-status-badge";
 import { PaymentMethodDisplay, PaymentStatusLegend } from "@/components/ui/payment-method-display";
 import { Textarea } from "@/components/ui/textarea";
-import { Checkbox as CheckboxComponent } from "@/components/ui/checkbox";
 import { useUser } from "@/hooks/use-user";
 import { usePermissions } from "@/hooks/use-permissions";
 import { useTournamentDirector } from "@/hooks/use-tournament-director";
@@ -95,51 +95,8 @@ function getRosterCount(team: any): string {
 
 
 
-import {
-  Calendar,
-  Shield,
-  UserPlus,
-  Home,
-  LogOut,
-  User,
-  UserRound,
-  Palette,
-  ChevronRight,
-  Search,
-  ClipboardList,
-  MoreHorizontal,
-  Building2,
-  MessageSquare,
-  DollarSign,
-  Settings,
-  Users,
-  ChevronDown,
-  Edit,
-  Eye,
-  UserCircle,
-  Percent,
-  Printer,
-  Flag,
-  ImageIcon,
-  FormInput,
-  Bell,
-  Moon,
-  Sun,
-  Trash2,
-  FileText,
-  FileText,
-  Trash,
-  CalendarIcon,
-  Map,
-  Download,
-  FileUp,
-  Filter,
-  ListFilter,
-  ListChecks,
-  Clock
-} from "lucide-react";
 import { format } from "date-fns";
-import { cn } from "@/lib/utils";
+import { cn, formatDate } from "@/lib/utils";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Popover,
@@ -151,9 +108,7 @@ import { BrandingPreviewProvider, useBrandingPreview } from "@/hooks/use-brandin
 import { BrandingPreview } from "@/components/BrandingPreview";
 import { DetailedFeeBreakdown } from "@/components/teams/DetailedFeeBreakdown";
 import { useExportProcess } from "@/hooks/use-export-process";
-import { formatDate } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AnimatePresence } from "framer-motion";
 import { MotionCard } from "@/components/ui/motion-card";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -172,16 +127,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { 
-  Select, 
-  SelectContent, 
-  SelectGroup,
-  SelectItem, 
-  SelectLabel,
-  SelectSeparator,
-  SelectTrigger, 
-  SelectValue 
-} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { AdminModal } from "@/components/admin/AdminModal";
 import { ComplexEditor } from "@/components/ComplexEditor";
@@ -198,12 +143,11 @@ import FormTemplateCreatePage from "@/pages/form-template-create";
 import { InternalOperationsPanel } from "@/components/admin/InternalOperationsPanel"; // Added import
 import { StripeSettingsView } from "@/components/admin/StripeSettingsView"; // Added import
 import RolePermissionsManager from "@/components/admin/RolePermissionsManager"; // Added import
-import { AdminBanner } from "@/components/admin/AdminBanner"; // Import the AdminBanner component
+// AdminBanner removed — emulation controls absorbed into AdminTopNav
 import { NewRegistrationsBanner } from "@/components/admin/NewRegistrationsBanner"; // Import the notification banner
 import { Toggle } from '@/components/ui/toggle';
 import { Progress } from '@/components/ui/progress';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 // CSV Uploader Component
@@ -428,7 +372,7 @@ function LogoBanner() {
       <div className="container mx-auto px-4 py-2">
         <div className="flex justify-center items-center">
           <img
-            src={settings?.logoUrl || "/attached_assets/MatchPro.ai_Stacked_Color.png"}
+            src={settings?.logoUrl || "/attached_assets/KickDeck_Stacked_Color.png"}
             alt="Organization Logo"
             className="w-auto h-48 md:h-60 max-w-[840px] md:max-w-[960px] object-contain"
           />
@@ -6410,12 +6354,14 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
   const [showUpdatesLog, setShowUpdatesLog] = useState(false);
   const [showInternalOps, setShowInternalOps] = useState(false);
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
-  const [showLogoutOverlay, setShowLogoutOverlay] = useState(false);
+  // showLogoutOverlay removed — logout now navigates to /logout route directly
   const [showEmulationModal, setShowEmulationModal] = useState(false);
   const { setAppearance, currentAppearance } = useTheme();
   const [theme, setTheme] = useState(currentAppearance);
   const queryClient = useQueryClient();
   const { settings, isLoading: isSettingsLoading } = useOrganizationSettings();
+
+  // Body class for portalled elements now managed by AdminDashboardLayout
 
   // Track initial load completion
   useEffect(() => {
@@ -6430,22 +6376,11 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
     // Extract view from URL path
     const path = location.split('/');
     if (path.length >= 2 && path[1] === 'admin') {
-      // URL format should be /admin/[view]
-      let urlView = path[2];
-      
-      // Handle special cases for kebab-case to camelCase conversion
-      if (urlView === 'form-templates') {
-        urlView = 'formTemplates';
-      }
-      
-      // Handle file-manager URL path
-      if (urlView === 'file-manager') {
-        urlView = 'files';
-      }
-      
-      if (urlView && urlView !== activeView) {
-        console.log('Updating activeView from URL:', urlView);
-        setActiveView(urlView as View);
+      const urlSegment = path[2];
+      // Use centralized URL_TO_VIEW mapping from navigation config
+      const mappedView = urlSegment ? URL_TO_VIEW[urlSegment] : undefined;
+      if (mappedView && mappedView !== activeView) {
+        setActiveView(mappedView as View);
       }
     }
   }, [location, activeView]);
@@ -6501,7 +6436,9 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
   }
 
   const handleLogout = () => {
-    setShowLogoutOverlay(true);
+    // Navigate to the dedicated /logout route which is rendered by the Router
+    // BEFORE the user-check conditional, so it always works reliably.
+    window.location.href = '/logout';
   };
 
   const handleAppearanceToggle = async () => {
@@ -6625,414 +6562,119 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
     }
   };
 
+  // Emulation state (from localStorage/sessionStorage)
+  const isEmulating = typeof window !== 'undefined' && !!localStorage.getItem('emulationToken');
+  const emulatedName = typeof window !== 'undefined' ? sessionStorage.getItem('emulatedAdminName') : null;
+
+  const handleStopEmulation = () => {
+    localStorage.removeItem('emulationToken');
+    sessionStorage.removeItem('emulationActive');
+    sessionStorage.removeItem('emulatedAdminName');
+    window.location.href = '/admin';
+  };
+
+  // Navigation handler for sidebar item clicks
+  const handleNavItemClick = (item: AdminNavItem) => {
+    if (item.route) {
+      navigate(item.route);
+    }
+    if (item.view) {
+      setActiveView(item.view as View);
+    }
+  };
+
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
-      {/* Sidebar */}
-      <AnimatedSidebar title="Admin Dashboard" icon={<Calendar className="h-5 w-5 text-primary" />}>
-        <div className="space-y-1">
-            {/* Tournament Directors only see Events and Account */}
-            {isTournamentDirector && !hasRole('super_admin') ? (
-              <>
-                <AnimatedNavigationButton
-                  view="events"
-                  activeView={activeView}
-                  onClick={() => navigate('/admin/events')}
-                  icon={<Calendar className="h-4 w-4" />}
-                  label="Events"
-                  permission="view_events"
-                  index={0}
-                />
-                <AnimatedNavigationButton
-                  view="account"
-                  activeView={activeView}
-                  onClick={() => navigate('/admin/account')}
-                  icon={<User className="h-4 w-4" />}
-                  label="My Account"
-                  permission="view_account"
-                  index={1}
-                />
-              </>
-            ) : (
-              <>
-                <AnimatedNavigationButton
-                  view="formTemplates"
-                  activeView={activeView}
-                  onClick={() => navigate('/admin/form-templates')}
-                  icon={<FormInput className="h-4 w-4" />}
-                  label="Form Templates"
-                  permission="view_form_templates"
-                  index={0}
-                />
-                
-                <AnimatedNavigationButton
-                  view="events"
-                  activeView={activeView}
-                  onClick={() => navigate('/admin/events')}
-                  icon={<Calendar className="h-4 w-4" />}
-                  label="Events"
-                  permission="view_events"
-                  index={1}
-                />
-                
-                <AnimatedNavigationButton
-                  view="teams"
-                  activeView={activeView}
-                  onClick={() => navigate('/admin/teams')}
-                  icon={<Users className="h-4 w-4" />}
-                  label="Teams"
-                  permission="view_teams"
-                  index={2}
-                />
+    <>
+      <AdminDashboardLayout
+        activeView={activeView}
+        onViewChange={handleNavItemClick}
+        isTournamentDirector={isTournamentDirector}
+        isSuperAdmin={hasRole('super_admin')}
+        user={user}
+        logoUrl={settings?.logoUrl}
+        onLogout={handleLogout}
+        onNavigateToAccount={() => navigate('/admin/account')}
+        onSwitchToMember={() => { window.location.href = '/dashboard'; }}
+        isEmulating={isEmulating}
+        emulatingUser={emulatedName || undefined}
+        onStopEmulation={handleStopEmulation}
+      >
+        {/* New registration notifications */}
+        <NewRegistrationsBanner />
 
-                <AnimatedNavigationButton
-                  view="administrators"
-                  activeView={activeView}
-                  onClick={() => navigate('/admin/administrators')}
-                  icon={<Shield className="h-4 w-4" />}
-                  label="Administrators"
-                  permission="view_administrators"
-                  index={3}
-                />
-                
-                <AnimatedNavigationButton
-                  view="complexes"
-                  activeView={activeView}
-                  onClick={() => navigate('/admin/complexes')}
-                  icon={<Building2 className="h-4 w-4" />}
-                  label="Field Complexes"
-                  permission="view_complexes"
-                />
-                
-                <AnimatedNavigationButton
-                  view="complex-map"
-                  activeView={activeView}
-                  onClick={() => navigate('/admin/complex-locations')}
-                  icon={<MapPin className="h-4 w-4" />}
-                  label="Complex Locations"
-                  permission="view_complexes"
-                />
-                
-                <AnimatedNavigationButton
-                  view="households"
-                  activeView={activeView}
-                  onClick={() => navigate('/admin/households')}
-                  icon={<Home className="h-4 w-4" />}
-                  label="MatchPro Client"
-                  permission="view_households"
-                />
-                
-                <AnimatedNavigationButton
-                  view="scheduling"
-                  activeView={activeView}
-                  onClick={() => navigate('/admin/scheduling')}
-                  icon={<CalendarDays className="h-4 w-4" />}
-                  label="Scheduling"
-                  permission="view_scheduling"
-                />
-                
-                <AnimatedNavigationButton
-                  view="reports"
-                  activeView={activeView}
-                  onClick={() => navigate('/admin/reports')}
-                  icon={<FileText className="h-4 w-4" />}
-                  label="Reports and Financials"
-                  permission="view_reports"
-                />
-                
-                <AnimatedNavigationButton
-                  view="files"
-                  activeView={activeView}
-                  onClick={() => navigate('/admin/file-manager')}
-                  icon={<ImageIcon className="h-4 w-4" />}
-                  label="File Manager"
-                  permission="view_files"
-                />
-                
-                <AnimatedNavigationButton
-                  view="members"
-                  activeView={activeView}
-                  onClick={() => navigate('/admin/members')}
-                  icon={<Users className="h-4 w-4" />}
-                  label="Members"
-                  permission="view_members"
-                />
-                
-                <AnimatedNavigationButton
-                  view="formSubmissions"
-                  activeView={activeView}
-                  onClick={() => setActiveView('formSubmissions')}
-                  icon={<FileText className="h-4 w-4" />}
-                  label="Form Submissions"
-                  permission="view_form_templates"
-                />
-                
-                {/* Coupons are managed within events, so no standalone navigation is needed */}
-                
-                <AnimatedNavigationButton
-                  view="roles"
-                  activeView={activeView}
-                  onClick={() => navigate('/admin/roles')}
-                  icon={<KeyRound className="h-4 w-4" />}
-                  label="Role Permissions"
-                  permission="view_role_permissions"
-                />
-              </>
-            )}
-
-            {/* Settings - Hide from Tournament Directors */}
-            {!(isTournamentDirector && !hasRole('super_admin')) && (
-              <Collapsible
-                open={isSettingsOpen}
-                onOpenChange={setIsSettingsOpen}
-                className="space-y-2"
-              >
-              <CollapsibleTrigger asChild>
-                <Button
-                  variant={activeView === 'settings' ? 'secondary' : 'ghost'}
-                  className="w-full justify-between"
-                >
-                  <span className="flex items-center">
-                    <Settings className="h-4 w-4" />
-                    Settings
-                  </span>
-                  <ChevronRight
-                    className={`h-4 w-4 transition-transform duration-200 ${
-                      isSettingsOpen ? 'rotate-90' : ''
-                    }`}
-                  />
-                </Button>
-              </CollapsibleTrigger>
-              <CollapsibleContent className="space-y-2 pl-4">
-                {/* Removed permission check to allow access */}
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start relative overflow-hidden group"
-                  style={{
-                    backgroundColor: activeSettingsView === 'general' 
-                      ? 'var(--admin-nav-selected-bg, var(--admin-nav-active))' 
-                      : 'transparent',
-                    color: activeSettingsView === 'general'
-                      ? 'var(--admin-nav-selected-text, var(--admin-nav-active-text))' 
-                      : 'var(--admin-nav-text, inherit)',
-                  }}
-                  onClick={() => {
-                    navigate('/admin/settings');
-                    setActiveSettingsView('general');
-                  }}
-                >
-                  <Settings className="h-4 w-4" />
-                  General
-                </Button>
-                
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start relative overflow-hidden group"
-                  style={{
-                    backgroundColor: activeSettingsView === 'email' 
-                      ? 'var(--admin-nav-selected-bg, var(--admin-nav-active))' 
-                      : 'transparent',
-                    color: activeSettingsView === 'email'
-                      ? 'var(--admin-nav-selected-text, var(--admin-nav-active-text))' 
-                      : 'var(--admin-nav-text, inherit)',
-                  }}
-                  onClick={() => {
-                    navigate('/admin/sendgrid-setup');
-                    setActiveSettingsView('email');
-                  }}
-                >
-                  <Mail className="h-4 w-4" />
-                  Email Configuration
-                </Button>
-              </CollapsibleContent>
-            </Collapsible>
-            )}
-
-            {/* Account */}
-            <Button
-              variant="ghost"
-              className="w-full justify-start relative overflow-hidden group"
-              style={{
-                backgroundColor: activeView === 'account' 
-                  ? 'var(--admin-nav-selected-bg, var(--admin-nav-active))' 
-                  : 'transparent',
-                color: activeView === 'account'
-                  ? 'var(--admin-nav-selected-text, var(--admin-nav-active-text))' 
-                  : 'var(--admin-nav-text, inherit)',
-              }}
-              onClick={() => navigate('/admin/account')}
+        {/* Welcome Card */}
+        {showWelcome && (
+          <AnimatedContainer animation="scale" delay={0.1}>
+            <div className="mb-6 relative rounded-lg neon-glass neon-border-animated"
+              style={{ padding: '1.5rem' }}
             >
-              <User className="h-4 w-4" />
-              My Account
-            </Button>
-
-            <div className="flex flex-col space-y-3 mt-auto mb-4 px-2">
-              <div className="border-t border-gray-700 my-2 pt-4"></div>
-
-              
-              <Button 
-                onClick={handleLogout} 
-                className="w-full bg-gray-800 text-gray-300 hover:bg-red-900 hover:text-white transition-colors border-0 shadow-sm"
-              >
-                <div className="flex items-center justify-between w-full">
-                  <div className="flex items-center">
-                    <LogOut className="h-4 w-4" />
-                    <span>Logout</span>
-                  </div>
-                  <div className="bg-red-800 rounded-full p-1 h-5 w-5 flex items-center justify-center">
-                    <ChevronRight className="h-3 w-3" />
-                  </div>
-                </div>
-              </Button>
-            </div>
-          </div>
-      </AnimatedSidebar>
-
-      {/* Main Content */}
-      <AnimatedContent>
-        {/* Use the imported AdminBanner component that includes the ViewToggle */}
-        <AdminBanner />
-        <div className="p-8 pattern-bg">
-          {/* Display new registration notifications */}
-          <NewRegistrationsBanner />
-          {/* Enhanced dashboard with subtle pattern background */}
-
-          {/* Welcome Card with Animation */}
-          {showWelcome && (
-            <AnimatedContainer animation="scale" delay={0.1}>
-              <div className="mb-6 relative rounded-lg overflow-hidden shadow-lg" 
-                style={{ 
-                  background: 'linear-gradient(135deg, rgba(48, 46, 158, 0.65), rgba(48, 46, 158, 1))',
-                  padding: '1.5rem'
+              <button
+                onClick={() => {
+                  sessionStorage.setItem('welcomeBannerShown', 'true');
+                  setShowWelcome(false);
                 }}
+                className="absolute top-2 right-2 p-2 hover:bg-white/10 rounded-full z-10 transition-colors"
+                style={{ color: 'rgba(255,255,255,0.6)' }}
               >
-                <button 
-                  onClick={() => {
-                    // Store in session storage that banner has been shown
-                    sessionStorage.setItem('welcomeBannerShown', 'true');
-                    // Hide the banner
-                    setShowWelcome(false);
-                  }}
-                  className="absolute top-2 right-2 p-2 hover:bg-white/20 rounded-full z-10"
-                  style={{ color: 'white' }}
-                >
-                  <X className="h-4 w-4" />
-                </button>
-                
-                <div className="flex items-center gap-4">
-                  <motion.div 
-                    className="h-14 w-14 rounded-full flex items-center justify-center"
-                    style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)' }}
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ delay: 0.2, duration: 0.5, type: "spring" }}
-                  >
-                    <UserCircle className="h-7 w-7" style={{ color: 'white' }} />
-                  </motion.div>
-                  <div>
-                    <motion.h2 
-                      className="text-2xl font-bold"
-                      style={{ color: 'white' }}
-                      initial={{ x: -10, opacity: 0 }}
-                      animate={{ x: 0, opacity: 1 }}
-                      transition={{ delay: 0.3, duration: 0.5 }}
-                    >
-                      Welcome back, {user?.firstName}!
-                    </motion.h2>
-                    <motion.p 
-                      style={{ color: 'rgba(255, 255, 255, 0.9)' }}
-                      initial={{ x: -10, opacity: 0 }}
-                      animate={{ x: 0, opacity: 1 }}
-                      transition={{ delay: 0.4, duration: 0.5 }}
-                    >
-                      Manage your organization's activities and settings from this dashboard.
-                    </motion.p>
-                  </div>
-                </div>
-                
-                {/* Decorative elements */}
-                <div 
-                  className="absolute top-0 right-0 w-64 h-full opacity-10" 
-                  style={{ 
-                    background: 'radial-gradient(circle at center, rgba(255,255,255,0.8) 0%, transparent 70%)',
-                    transform: 'translateX(20%)'
-                  }}
-                />
-                <div 
-                  className="absolute bottom-0 left-0 w-32 h-32 opacity-10" 
-                  style={{ 
-                    background: 'radial-gradient(circle at center, rgba(255,255,255,0.8) 0%, transparent 70%)',
-                    transform: 'translateY(40%)'
-                  }}
-                />
-              </div>
-            </AnimatedContainer>
-          )}
+                <X className="h-4 w-4" />
+              </button>
 
-          {renderView()}
-        </div>
+              <div className="flex items-center gap-4 relative z-[2]">
+                <motion.div
+                  className="h-14 w-14 rounded-full flex items-center justify-center"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(124, 58, 237, 0.3), rgba(6, 182, 212, 0.15))',
+                    border: '1px solid rgba(124, 58, 237, 0.3)',
+                    boxShadow: '0 0 20px rgba(124, 58, 237, 0.2), 0 0 40px rgba(6, 182, 212, 0.08)'
+                  }}
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: 0.2, duration: 0.5, type: "spring" }}
+                >
+                  <UserCircle className="h-7 w-7" style={{ color: 'rgba(167, 139, 250, 1)' }} />
+                </motion.div>
+                <div>
+                  <motion.h2
+                    className="text-2xl font-bold neon-text-glow"
+                    style={{ color: 'white' }}
+                    initial={{ x: -10, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: 0.3, duration: 0.5 }}
+                  >
+                    Welcome back, {user?.firstName}!
+                  </motion.h2>
+                  <motion.p
+                    style={{ color: 'rgba(200, 200, 230, 0.85)' }}
+                    initial={{ x: -10, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: 0.4, duration: 0.5 }}
+                  >
+                    Manage your organization's activities and settings from this dashboard.
+                  </motion.p>
+                </div>
+              </div>
+
+              {/* Neon decorative orbs */}
+              <div className="neon-orb neon-orb-violet" style={{ width: '200px', height: '200px', top: '-60px', right: '-40px' }} />
+              <div className="neon-orb neon-orb-cyan" style={{ width: '150px', height: '150px', bottom: '-40px', left: '20%' }} />
+            </div>
+          </AnimatedContainer>
+        )}
+
+        {renderView()}
 
         {/* Internal Operations Panel */}
         {showInternalOps && (
           <InternalOperationsPanel
             setActiveView={setActiveView}
             openSettings={(section) => {
-              setIsSettingsOpen(true);
+              navigate('/admin/settings');
               setActiveSettingsView(section as SettingsView);
             }}
           />
         )}
-      </AnimatedContent>
-      {showLogoutOverlay && (
-        <LogoutOverlay onFinished={() => {
-          // Initiate logout call but don't await it, in case it's stuck or taking too long
-          console.log("Initiating logout process...");
-          
-          // Broadcast a logout event to all tabs - this helps with multi-tab logout
-          try {
-            // Create a broadcast channel for cross-tab communication
-            const broadcastChannel = new BroadcastChannel('app-logout');
-            // Send a logout message to all tabs
-            broadcastChannel.postMessage({ type: 'LOGOUT', timestamp: Date.now() });
-            // Close the channel
-            broadcastChannel.close();
-          } catch (err) {
-            console.warn('BroadcastChannel not supported or failed', err);
-          }
-          
-          // Make the actual logout API call
-          logout().catch(e => console.error("API logout error:", e));
-          
-          // Don't wait for API call to complete, immediately continue with cleanup
-          console.log("Performing client-side logout cleanup");
-          
-          // Clear all storage to reset application state
-          localStorage.clear();
-          sessionStorage.clear();
-          
-          // Clear cookies (all of them to be thorough)
-          document.cookie.split(";").forEach(function(c) { 
-            document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
-          });
-          
-          // Set cache control headers
-          const meta = document.createElement('meta');
-          meta.httpEquiv = 'Cache-Control';
-          meta.content = 'no-store, no-cache, must-revalidate, max-age=0';
-          document.head.appendChild(meta);
-          
-          const pragmaMeta = document.createElement('meta');
-          pragmaMeta.httpEquiv = 'Pragma';
-          pragmaMeta.content = 'no-cache';
-          document.head.appendChild(pragmaMeta);
-          
-          // Use our dedicated logout page to ensure proper session clearing
-          console.log("Redirecting to dedicated logout handler...");
-          // Set a flag to prevent potential infinite loops
-          sessionStorage.setItem('admin_logout_initiated', Date.now().toString());
-          window.location.href = "/logout";
-        }} />
-      )}
-      
+      </AdminDashboardLayout>
+
       {/* Emulation Dialog for Super Admins */}
       {user && user.isAdmin && hasPermission('emulate_users') && (
         <Dialog open={showEmulationModal} onOpenChange={setShowEmulationModal}>
@@ -7044,7 +6686,7 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
           </DialogContent>
         </Dialog>
       )}
-    </div>
+    </>
   );
 }
 
@@ -7356,7 +6998,7 @@ const getNavigationItems = (isTournamentDirector: boolean, hasRole: (role: strin
     { icon: Calendar, label: "Events", value: "events" as const },
     { icon: Users, label: "Teams", value: "teams" as const },
     { icon: Building2, label: "Field Complexes", value: "complexes" as const },
-    { icon: Home, label: "MatchPro Client", value: "households" as const },
+    { icon: Home, label: "KickDeck Client", value: "households" as const },
     { icon: CalendarDays, label: "Scheduling", value: "scheduling" as const },
     { icon: FileText, label: "Reports and Financials", value: "reports" as const },
     { icon: ImageIcon, label: "File Manager", value: "files" as const },

@@ -7,8 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
 
 // Persistent cache to store setup intents by team ID to prevent duplicates
-const CACHE_PREFIX = 'matchpro_setup_intent_';
-const SESSION_PREFIX = 'matchpro_session_setup_';
+const CACHE_PREFIX = 'kickdeck_setup_intent_';
+const SESSION_PREFIX = 'kickdeck_session_setup_';
 
 function getCacheKey(teamId: string | number, expectedAmount: number): string {
   return `${CACHE_PREFIX}${teamId}-${expectedAmount}`;

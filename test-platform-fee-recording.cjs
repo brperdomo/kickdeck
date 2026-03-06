@@ -54,8 +54,8 @@ async function testPlatformFeeRecording() {
     const stripeFeePercentage = 0.029; // 2.9%
     
     // Calculate what we expect the platform fee to be
-    const matchproTargetMargin = Math.round(tournamentCost * platformFeeRate); // 4 cents
-    const totalChargedAmount = Math.round((tournamentCost + matchproTargetMargin + stripeFeeFixed) / (1 - stripeFeePercentage));
+    const kickdeckTargetMargin = Math.round(tournamentCost * platformFeeRate); // 4 cents
+    const totalChargedAmount = Math.round((tournamentCost + kickdeckTargetMargin + stripeFeeFixed) / (1 - stripeFeePercentage));
     const actualPlatformFee = totalChargedAmount - tournamentCost;
     
     console.log(`Tournament cost: $${(tournamentCost / 100).toFixed(2)}`);

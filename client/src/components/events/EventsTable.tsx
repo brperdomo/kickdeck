@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback, useEffect } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { useTournamentDirector } from "@/hooks/use-tournament-director";
-import { Link2, Edit, FileQuestion, Copy, User, TagsIcon, Printer, AlertTriangle, MoreHorizontal, ChevronUp, ChevronDown, Search, FormInput, DollarSign, Ticket, Trash, Archive, RotateCcw, ChevronLeft, ChevronRight, Users, Calendar, CalendarDays } from "lucide-react";
+import { Link2, Edit, FileQuestion, Copy, User, TagsIcon, Printer, AlertTriangle, MoreHorizontal, ChevronUp, ChevronDown, Search, FormInput, DollarSign, Ticket, Trash, Archive, RotateCcw, RefreshCcw, ChevronLeft, ChevronRight, Users, Calendar, CalendarDays, Loader2 } from "lucide-react";
 import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -22,7 +22,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Loader2 } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -480,6 +479,20 @@ export function EventsTable() {
                 <SelectItem value="upcoming">Upcoming</SelectItem>
               </SelectContent>
             </Select>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => queryClient.invalidateQueries({ queryKey: ["/api/admin/events"] })}
+              disabled={eventsQuery.isFetching}
+              className="text-indigo-500 hover:text-indigo-700 hover:bg-indigo-50"
+              title="Refresh events"
+            >
+              {eventsQuery.isFetching ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <RefreshCcw className="h-4 w-4" />
+              )}
+            </Button>
           </div>
         </div>
 

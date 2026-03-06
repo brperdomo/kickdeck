@@ -33,8 +33,8 @@ async function createTeamEmailTemplates() {
         name: 'Team Status Update',
         description: 'Notification when a team status is updated',
         subject: 'Your Team Registration Status Has Been Updated',
-        senderName: 'MatchPro Registration',
-        senderEmail: 'support@matchpro.ai',
+        senderName: 'KickDeck Registration',
+        senderEmail: 'support@kickdeck.io',
         variables: [
           'teamName',
           'eventName',
@@ -89,7 +89,7 @@ async function createTeamEmailTemplates() {
       </div>
       
       <p>If you have any questions, please contact our support team.</p>
-      <p>Thank you,<br>The MatchPro Team</p>
+      <p>Thank you,<br>The KickDeck Team</p>
     </div>
     <div class="footer">
       <p>This is an automated message. Please do not reply directly.</p>
@@ -104,8 +104,8 @@ async function createTeamEmailTemplates() {
         name: 'Team Approved',
         description: 'Notification when a team is approved',
         subject: 'Congratulations! Your Team Registration Has Been Approved',
-        senderName: 'MatchPro Registration',
-        senderEmail: 'support@matchpro.ai',
+        senderName: 'KickDeck Registration',
+        senderEmail: 'support@kickdeck.io',
         variables: [
           'teamName',
           'eventName',
@@ -168,7 +168,7 @@ async function createTeamEmailTemplates() {
       </div>
       
       <p>Thank you for registering. We look forward to your participation!</p>
-      <p>Best regards,<br>The MatchPro Team</p>
+      <p>Best regards,<br>The KickDeck Team</p>
     </div>
     <div class="footer">
       <p>This is an automated message. Please do not reply directly.</p>
@@ -183,8 +183,8 @@ async function createTeamEmailTemplates() {
         name: 'Team Rejected',
         description: 'Notification when a team is rejected',
         subject: 'Important Information About Your Team Registration',
-        senderName: 'MatchPro Registration',
-        senderEmail: 'support@matchpro.ai',
+        senderName: 'KickDeck Registration',
+        senderEmail: 'support@kickdeck.io',
         variables: [
           'teamName',
           'eventName',
@@ -242,7 +242,7 @@ async function createTeamEmailTemplates() {
       </div>
       
       <p>Thank you for your understanding.</p>
-      <p>Regards,<br>The MatchPro Team</p>
+      <p>Regards,<br>The KickDeck Team</p>
     </div>
     <div class="footer">
       <p>This is an automated message. Please do not reply directly.</p>
@@ -257,8 +257,8 @@ async function createTeamEmailTemplates() {
         name: 'Team Withdrawn',
         description: 'Notification when a team is withdrawn',
         subject: 'Your Team Registration Status: Withdrawn',
-        senderName: 'MatchPro Registration',
-        senderEmail: 'support@matchpro.ai',
+        senderName: 'KickDeck Registration',
+        senderEmail: 'support@kickdeck.io',
         variables: [
           'teamName',
           'eventName',
@@ -320,7 +320,7 @@ async function createTeamEmailTemplates() {
       </div>
       
       <p>Thank you for your understanding.</p>
-      <p>Regards,<br>The MatchPro Team</p>
+      <p>Regards,<br>The KickDeck Team</p>
     </div>
     <div class="footer">
       <p>This is an automated message. Please do not reply directly.</p>
@@ -335,8 +335,8 @@ async function createTeamEmailTemplates() {
         name: 'Payment Confirmation',
         description: 'Confirmation after successful payment',
         subject: 'Payment Confirmation for {{teamName}}',
-        senderName: 'MatchPro Payments',
-        senderEmail: 'payments@matchpro.ai',
+        senderName: 'KickDeck Payments',
+        senderEmail: 'payments@kickdeck.io',
         variables: [
           'teamName',
           'eventName',
@@ -445,7 +445,7 @@ async function createTeamEmailTemplates() {
       <p>Please keep this receipt for your records. If you have any questions about your payment or registration, please contact our support team.</p>
       
       <p>Thank you for your registration!</p>
-      <p>Best regards,<br>The MatchPro Team</p>
+      <p>Best regards,<br>The KickDeck Team</p>
     </div>
     <div class="footer">
       <p>This is an automated receipt. Please do not reply directly.</p>
@@ -460,8 +460,8 @@ async function createTeamEmailTemplates() {
         name: 'Payment Refunded',
         description: 'Notification when a payment is refunded',
         subject: 'Refund Confirmation for {{teamName}}',
-        senderName: 'MatchPro Payments',
-        senderEmail: 'payments@matchpro.ai',
+        senderName: 'KickDeck Payments',
+        senderEmail: 'payments@kickdeck.io',
         variables: [
           'teamName',
           'eventName',
@@ -545,7 +545,7 @@ async function createTeamEmailTemplates() {
       <p>If you have any questions about this refund, please contact our support team.</p>
       
       <p>Thank you for your understanding.</p>
-      <p>Regards,<br>The MatchPro Team</p>
+      <p>Regards,<br>The KickDeck Team</p>
     </div>
     <div class="footer">
       <p>This is an automated message. Please do not reply directly.</p>

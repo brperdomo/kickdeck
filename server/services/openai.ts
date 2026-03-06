@@ -1,5 +1,5 @@
 /**
- * OpenAI Service for MatchPro.ai
+ * OpenAI Service for KickDeck
  * 
  * This service provides a unified interface for utilizing OpenAI's capabilities
  * in various aspects of the application, particularly financial reporting and analysis.
@@ -12,10 +12,8 @@ import { eq, and, gte, lte, desc, sql, sum, count, avg, inArray } from "drizzle-
 // Simple console.log replacement for now
 const log = (message: string, category?: string) => console.log(`[${category || 'OpenAI'}]`, message);
 
-// Initialize OpenAI client
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
+// Initialize OpenAI client (lazy - null if no key)
+const openai = process.env.OPENAI_API_KEY ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY }) : null;
 
 // Verify the OpenAI API key is configured
 const verifyApiKey = async (): Promise<boolean> => {

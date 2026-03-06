@@ -225,7 +225,7 @@ export async function testDynamicTemplate(
 
     return await sendDynamicTemplateEmail({
       to: testEmail,
-      from: "support@matchpro.ai", // Must be a verified sender in SendGrid
+      from: "support@kickdeck.io", // Must be a verified sender in SendGrid
       templateId,
       dynamicTemplateData: sampleData,
     });

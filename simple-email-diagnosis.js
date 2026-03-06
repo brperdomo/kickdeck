@@ -9,7 +9,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const apiKey = process.env.SENDGRID_API_KEY;
-const fromEmail = process.env.SENDGRID_FROM_EMAIL || 'support@matchpro.ai';
+const fromEmail = process.env.SENDGRID_FROM_EMAIL || 'support@kickdeck.io';
 
 console.log('Production Email Diagnosis');
 console.log('========================');

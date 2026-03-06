@@ -192,3 +192,67 @@
   color: var(--muted-foreground);
   font-size: 0.875rem;
 }
+
+/* ========== Dashboard Dark Theme Overrides ========== */
+.dashboard-dark .member-card {
+  background: linear-gradient(to bottom right, hsl(240 30% 11%), hsl(240 25% 13%));
+  border: 1px solid rgba(124, 58, 237, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.dashboard-dark .member-card:hover {
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35), 0 0 15px rgba(124, 58, 237, 0.08);
+  border-color: rgba(124, 58, 237, 0.2);
+}
+
+.dashboard-dark .member-card::before {
+  background: linear-gradient(90deg, #7c3aed, #a855f7);
+}
+
+.dashboard-dark .member-card-header {
+  background: linear-gradient(to right, rgba(124, 58, 237, 0.15), rgba(124, 58, 237, 0.03));
+  border-bottom-color: rgba(124, 58, 237, 0.15);
+}
+
+.dashboard-dark .stat-card {
+  background-color: hsl(240 30% 11%);
+  border: 1px solid rgba(124, 58, 237, 0.12);
+}
+
+.dashboard-dark .stat-card:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3), 0 0 15px rgba(124, 58, 237, 0.1);
+  border-color: rgba(124, 58, 237, 0.25);
+}
+
+.dashboard-dark .stat-card .stat-value {
+  color: #a855f7;
+}
+
+.dashboard-dark .user-profile-section {
+  background-color: rgba(124, 58, 237, 0.08);
+}
+
+.dashboard-dark .user-profile-section .avatar-outline {
+  border-color: #7c3aed;
+}
+
+.dashboard-dark .section-header-member .title::after {
+  background-color: #7c3aed;
+}
+
+/* Dark scrollbar for member content */
+.dashboard-dark .member-content::-webkit-scrollbar-track {
+  background: hsl(240 20% 10%);
+}
+
+.dashboard-dark .member-content::-webkit-scrollbar-thumb {
+  background: hsl(263 30% 30%);
+}
+
+.dashboard-dark .member-content::-webkit-scrollbar-thumb:hover {
+  background: hsl(263 40% 40%);
+}
+
+.dashboard-dark .welcome-banner {
+  background-image: linear-gradient(to right, rgba(124, 58, 237, 0.2), rgba(124, 58, 237, 0.08));
+}

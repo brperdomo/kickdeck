@@ -73,28 +73,28 @@ async function testLinkPaymentFees() {
       const linkPlatformFee = Math.round(linkAmount * 0.04 + 30); // 4% + $0.30
       const linkStripeFee = Math.round((linkAmount + linkPlatformFee) * 0.029 + 30); // 2.9% + $0.30 on total
       const linkTournamentReceives = linkAmount + linkPlatformFee - linkStripeFee;
-      const linkMatchProReceives = linkPlatformFee - (linkStripeFee - Math.round(linkAmount * 0.029 + 30));
+      const linkKickDeckReceives = linkPlatformFee - (linkStripeFee - Math.round(linkAmount * 0.029 + 30));
       
       console.log(`  Tournament cost: $${(linkAmount / 100).toFixed(2)}`);
       console.log(`  Total charged: $${((linkAmount + linkPlatformFee) / 100).toFixed(2)}`);
       console.log(`  Platform fee: $${(linkPlatformFee / 100).toFixed(2)}`);
       console.log(`  Stripe fee: $${(linkStripeFee / 100).toFixed(2)}`);
       console.log(`  Tournament receives: $${(linkTournamentReceives / 100).toFixed(2)}`);
-      console.log(`  MatchPro net: $${(linkMatchProReceives / 100).toFixed(2)}`);
+      console.log(`  KickDeck net: $${(linkKickDeckReceives / 100).toFixed(2)}`);
       
       console.log('\nCard Payment Example:');
       const cardAmount = cardTeam.total_amount;
       const cardPlatformFee = Math.round(cardAmount * 0.04 + 30);
       const cardStripeFee = Math.round((cardAmount + cardPlatformFee) * 0.029 + 30);
       const cardTournamentReceives = cardAmount + cardPlatformFee - cardStripeFee;
-      const cardMatchProReceives = cardPlatformFee - (cardStripeFee - Math.round(cardAmount * 0.029 + 30));
+      const cardKickDeckReceives = cardPlatformFee - (cardStripeFee - Math.round(cardAmount * 0.029 + 30));
       
       console.log(`  Tournament cost: $${(cardAmount / 100).toFixed(2)}`);
       console.log(`  Total charged: $${((cardAmount + cardPlatformFee) / 100).toFixed(2)}`);
       console.log(`  Platform fee: $${(cardPlatformFee / 100).toFixed(2)}`);
       console.log(`  Stripe fee: $${(cardStripeFee / 100).toFixed(2)}`);
       console.log(`  Tournament receives: $${(cardTournamentReceives / 100).toFixed(2)}`);
-      console.log(`  MatchPro net: $${(cardMatchProReceives / 100).toFixed(2)}`);
+      console.log(`  KickDeck net: $${(cardKickDeckReceives / 100).toFixed(2)}`);
       
       console.log('\n4. Fee structure comparison:');
       console.log(`Both payment types should have identical fee calculations for same amounts.`);

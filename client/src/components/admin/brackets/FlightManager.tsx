@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { PlusCircle, Edit, Trash2, CheckCircle, XCircle } from "lucide-react";
+import { PlusCircle, Edit, Trash2, CheckCircle, XCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { 
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -24,7 +24,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { toast } from 'sonner';
-import { Loader2 } from "lucide-react";
 import { 
   Table, 
   TableBody, 

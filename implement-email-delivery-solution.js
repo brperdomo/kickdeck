@@ -89,7 +89,7 @@ async function implementEmailDeliverySolution() {
       'bperdomo@zoho.com',
       JSON.stringify(['bounces', 'blocks', 'spam_reports', 'unsubscribes', 'invalid_emails']),
       'Zoho Mail has persistent delivery issues with SendGrid',
-      'admin@matchpro.ai'
+      'admin@kickdeck.io'
     ]);
     console.log('✅ Zoho email added to suppression monitoring');
   } catch (error) {
@@ -229,7 +229,7 @@ export async function checkSuppressionStatus(email) {
   console.log('• Alternative email routing for blocked addresses');
   console.log('• Enhanced error handling and retry logic');
   console.log('\nRecommendations:');
-  console.log('1. Use admin@matchpro.ai or a Gmail address for admin functions');
+  console.log('1. Use admin@kickdeck.io or a Gmail address for admin functions');
   console.log('2. Monitor the email_delivery_log table for delivery issues');
   console.log('3. Consider adding webhook handling for real-time delivery status');
   console.log('4. Set up alerts for high bounce rates or delivery failures');

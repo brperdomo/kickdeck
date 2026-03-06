@@ -1,7 +1,7 @@
 # Production CSV Import Fix Guide
 
 ## Current Issue
-CSV import failing in production environments (`app.matchpro.ai`, `matchpro.replit.app`) with 500 errors, while working in development.
+CSV import failing in production environments (`app.kickdeck.io`, `kickdeck.replit.app`) with 500 errors, while working in development.
 
 ## Root Cause Analysis
 The issue appears to be related to production URL handling and session authentication in the live environment.
@@ -14,8 +14,8 @@ The issue appears to be related to production URL handling and session authentic
 
 ### Step 1: Test Route Accessibility
 Visit these URLs in production to verify endpoints are reachable:
-- `https://app.matchpro.ai/api/admin/csv-import/test`
-- `https://matchpro.replit.app/api/admin/csv-import/test`
+- `https://app.kickdeck.io/api/admin/csv-import/test`
+- `https://kickdeck.replit.app/api/admin/csv-import/test`
 
 Expected response: `{"message": "CSV Import router is working!", "timestamp": "..."}`
 
@@ -54,4 +54,4 @@ fetch('/api/admin/csv-import/test', { credentials: 'include' })
 ---
 **Status**: FIXED for production environments
 **Date**: August 16, 2025
-**Environments**: app.matchpro.ai, matchpro.replit.app
+**Environments**: app.kickdeck.io, kickdeck.replit.app

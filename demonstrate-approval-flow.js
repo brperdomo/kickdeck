@@ -35,10 +35,10 @@ const platformFee = Math.round(calEliteTeam.tournamentCost * platformFeeRate);
 const totalCharge = calEliteTeam.tournamentCost + platformFee;
 const stripeFee = Math.round(totalCharge * 0.029 + 30);
 const tournamentGets = calEliteTeam.tournamentCost;
-const matchproGets = platformFee - stripeFee;
+const kickdeckGets = platformFee - stripeFee;
 
 console.log(`   • Tournament cost: $${(calEliteTeam.tournamentCost / 100).toFixed(2)}`);
-console.log(`   • MatchPro fee (4%): $${(platformFee / 100).toFixed(2)}`);
+console.log(`   • KickDeck fee (4%): $${(platformFee / 100).toFixed(2)}`);
 console.log(`   • Total to charge: $${(totalCharge / 100).toFixed(2)}`);
 console.log(`   • Stripe processing: $${(stripeFee / 100).toFixed(2)}`);
 
@@ -47,13 +47,13 @@ console.log('\n2. Payment Processing:');
 console.log('   • Creates Stripe Payment Intent');
 console.log(`   • Charges $${(totalCharge / 100).toFixed(2)} to Cal Elite SC card`);
 console.log('   • Uses destination charge to tournament Connect account');
-console.log(`   • Applies $${(platformFee / 100).toFixed(2)} application fee to MatchPro`);
+console.log(`   • Applies $${(platformFee / 100).toFixed(2)} application fee to KickDeck`);
 
 // Step 4: Money distribution
 console.log('\n3. Money Distribution (Immediate):');
 console.log(`   • Tournament Director: $${(tournamentGets / 100).toFixed(2)} → Connect account`);
 console.log(`   • Stripe: $${(stripeFee / 100).toFixed(2)} → Processing fees`);
-console.log(`   • MatchPro: $${(matchproGets / 100).toFixed(2)} → Platform revenue`);
+console.log(`   • KickDeck: $${(kickdeckGets / 100).toFixed(2)} → Platform revenue`);
 
 // Step 5: Database updates
 console.log('\n4. System Updates:');
@@ -66,13 +66,13 @@ console.log('   • Payment intent ID stored for reference');
 console.log('\n5. Notifications Sent:');
 console.log('   • Cal Elite SC: "Team Approved" email with receipt');
 console.log('   • Tournament Director: Payment notification');
-console.log('   • MatchPro: Transaction summary for accounting');
+console.log('   • KickDeck: Transaction summary for accounting');
 
 // Step 7: Settlement timeline
 console.log('\n6. Settlement Timeline:');
 console.log('   • Cal Elite SC: Charged immediately');
 console.log('   • Tournament Director: Funds available in 2-7 business days');
-console.log('   • MatchPro: Platform fee available immediately');
+console.log('   • KickDeck: Platform fee available immediately');
 
 console.log('\n=== TECHNICAL DETAILS ===\n');
 
@@ -117,8 +117,8 @@ console.log('• Gets notification of payment');
 console.log('• Funds settle in 2-7 business days');
 console.log('• Can track all team payments in dashboard');
 console.log('');
-console.log('MatchPro Experience:');
-console.log(`• Earns $${(matchproGets / 100).toFixed(2)} platform revenue`);
+console.log('KickDeck Experience:');
+console.log(`• Earns $${(kickdeckGets / 100).toFixed(2)} platform revenue`);
 console.log('• All fees automatically calculated');
 console.log('• Complete transaction audit trail');
 console.log('• No manual fee collection needed');

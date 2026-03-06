@@ -1,9 +1,8 @@
 
 import { FormTemplateEditor } from "@/components/admin/FormTemplateEditor";
 import { AdminLayout, AdminSidebar, AdminSidebarItem } from "@/components/layouts/AdminLayout.tsx";
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
 import { Users, Settings, FileText, LayoutTemplate, ArrowLeft } from "lucide-react";
-import { Link } from "wouter";
 
 export default function FormTemplateCreatePage() {
   const [location] = useLocation();

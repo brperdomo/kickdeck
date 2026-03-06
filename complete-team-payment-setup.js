@@ -76,13 +76,13 @@ async function completeTeamPaymentSetup(teamId) {
       console.log(`\n✅ NEW SETUP INTENT CREATED: ${newSetupIntent.id}`);
       console.log(`Client Secret: ${newSetupIntent.client_secret}`);
       console.log('\nSend this payment link to the team:');
-      console.log(`https://app.matchpro.ai/complete-payment?setup_intent=${newSetupIntent.client_secret}&team_id=${team.id}`);
+      console.log(`https://app.kickdeck.io/complete-payment?setup_intent=${newSetupIntent.client_secret}&team_id=${team.id}`);
       
       return {
         success: false,
         reason: 'payment_method_required',
         newSetupIntent: newSetupIntent.id,
-        paymentLink: `https://app.matchpro.ai/complete-payment?setup_intent=${newSetupIntent.client_secret}&team_id=${team.id}`
+        paymentLink: `https://app.kickdeck.io/complete-payment?setup_intent=${newSetupIntent.client_secret}&team_id=${team.id}`
       };
     }
     

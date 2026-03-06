@@ -3,7 +3,7 @@
  * 
  * This script tests the payment completion endpoint to verify that:
  * 1. Tournament funds flow to the Connect account
- * 2. Platform fees stay in the main MatchPro account
+ * 2. Platform fees stay in the main KickDeck account
  * 3. Correct amounts are charged and distributed
  */
 
@@ -55,7 +55,7 @@ async function testConnectPaymentRouting() {
     
     console.log('\n=== EXPECTED AMOUNTS ===');
     console.log(`Tournament cost (to Connect): $${(tournamentCost / 100).toFixed(2)}`);
-    console.log(`Platform fee (to MatchPro): $${(platformFee / 100).toFixed(2)}`);
+    console.log(`Platform fee (to KickDeck): $${(platformFee / 100).toFixed(2)}`);
     console.log(`Total charged to customer: $${(totalExpected / 100).toFixed(2)}`);
     
     console.log('\n=== TESTING PAYMENT COMPLETION ENDPOINT ===');
@@ -80,7 +80,7 @@ async function testConnectPaymentRouting() {
     console.log('\n=== VERIFICATION SUMMARY ===');
     console.log('🔧 FIXED: Payment completion endpoint now uses Connect destination charges');
     console.log('🔧 FIXED: Tournament funds will flow to Connect account');
-    console.log('🔧 FIXED: Platform fees will stay in main MatchPro account');
+    console.log('🔧 FIXED: Platform fees will stay in main KickDeck account');
     console.log('🔧 FIXED: Correct parameter order for processDestinationCharge()');
     console.log('✅ Ready for live testing with next payment completion');
     

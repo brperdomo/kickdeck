@@ -56,14 +56,14 @@ const templateMappings = [
     type: 'admin_welcome',
     name: 'Admin Welcome Email',
     sendgridTemplateId: 'd-29971e21ccc641de982f3d60f395ccb5',
-    subject: 'Welcome to MatchPro',
+    subject: 'Welcome to KickDeck',
     variables: ['userName', 'loginLink', 'supportEmail']
   },
   {
     type: 'member_welcome',
     name: 'Member Welcome Email',
     sendgridTemplateId: 'd-6064756d74914ec79b3a3586f6713424',
-    subject: 'Welcome to MatchPro',
+    subject: 'Welcome to KickDeck',
     variables: ['userName', 'loginLink', 'supportEmail']
   }
 ];
@@ -110,8 +110,8 @@ async function setupDynamicTemplates() {
               subject: mapping.subject,
               variables: JSON.stringify(mapping.variables),
               isActive: true,
-              senderEmail: 'support@matchpro.ai',
-              senderName: 'MatchPro',
+              senderEmail: 'support@kickdeck.io',
+              senderName: 'KickDeck',
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString()
             });

@@ -151,7 +151,7 @@ async function testEmailDelivery() {
     
     const testMessage = {
       to: EMAIL_TO_CLEAR,
-      from: 'support@matchpro.ai',
+      from: 'support@kickdeck.io',
       subject: `Email Delivery Test - ${new Date().toISOString()}`,
       text: 'This email confirms that suppression lists have been cleared and delivery is working.',
       html: `
@@ -159,7 +159,7 @@ async function testEmailDelivery() {
           <h2 style="color: green;">✅ Email Delivery Restored!</h2>
           <p>This email confirms that suppression lists have been cleared and delivery is working.</p>
           <p><strong>Time:</strong> ${new Date().toISOString()}</p>
-          <p>You should now receive all MatchPro emails including password resets.</p>
+          <p>You should now receive all KickDeck emails including password resets.</p>
         </div>
       `
     };

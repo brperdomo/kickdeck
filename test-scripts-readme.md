@@ -1,6 +1,6 @@
-# MatchPro Registration Process Test Scripts
+# KickDeck Registration Process Test Scripts
 
-This directory contains a set of test scripts designed to validate the complete registration process for the MatchPro application. These scripts simulate user actions from authentication to team registration and payment processing.
+This directory contains a set of test scripts designed to validate the complete registration process for the KickDeck application. These scripts simulate user actions from authentication to team registration and payment processing.
 
 ## Available Scripts
 
@@ -21,7 +21,7 @@ This directory contains a set of test scripts designed to validate the complete 
 ## Prerequisites
 
 - Node.js installed
-- MatchPro application running locally on port 5000
+- KickDeck application running locally on port 5000
 - Required npm packages: `node-fetch`
 
 ## How to Run

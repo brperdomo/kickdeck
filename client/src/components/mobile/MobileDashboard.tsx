@@ -86,7 +86,7 @@ export function MobileDashboard({ toggleSidebar }: MobileDashboardProps) {
   return (
     <div className="pb-20"> {/* Add bottom padding for the mobile nav */}
       <MobileHeader
-        title={settings?.name || "MatchPro"}
+        title={settings?.name || "KickDeck"}
         leftAction={toggleSidebar && (
           <Button variant="ghost" size="icon" onClick={toggleSidebar}>
             <Menu className="h-5 w-5" />
@@ -108,7 +108,7 @@ export function MobileDashboard({ toggleSidebar }: MobileDashboardProps) {
             <div className="relative z-10">
               <h1 className="text-xl font-bold mb-1">Welcome, {user?.firstName || "User"}!</h1>
               <p className="text-white/80 text-sm">
-                Here's your MatchPro dashboard
+                Here's your KickDeck dashboard
               </p>
             </div>
             
@@ -209,7 +209,7 @@ export function MobileDashboard({ toggleSidebar }: MobileDashboardProps) {
                     </div>
                     <h3 className="text-sm font-medium mb-1">Mobile Responsive Update</h3>
                     <p className="text-xs text-muted-foreground">
-                      MatchPro is now optimized for mobile devices! Access all features on your phone or tablet with improved layouts.
+                      KickDeck is now optimized for mobile devices! Access all features on your phone or tablet with improved layouts.
                     </p>
                   </div>
                   

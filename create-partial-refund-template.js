@@ -137,7 +137,7 @@ async function updateRefundEmailTemplate() {
       <p>If you have any questions about this refund, please contact our support team.</p>
       
       <p>Thank you for your understanding.</p>
-      <p>Regards,<br>The MatchPro Team</p>
+      <p>Regards,<br>The KickDeck Team</p>
     </div>
     <div class="footer">
       <p>This is an automated message. Please do not reply directly.</p>
@@ -171,8 +171,8 @@ async function createRefundEmailTemplate() {
       description: 'Notification when a payment is refunded (full or partial)',
       type: 'payment_refunded',
       subject: 'Refund Confirmation for {{teamName}}',
-      senderName: 'MatchPro Payments',
-      senderEmail: 'payments@matchpro.ai',
+      senderName: 'KickDeck Payments',
+      senderEmail: 'payments@kickdeck.io',
       variables: [
         'teamName',
         'eventName',
@@ -282,7 +282,7 @@ async function createRefundEmailTemplate() {
       <p>If you have any questions about this refund, please contact our support team.</p>
       
       <p>Thank you for your understanding.</p>
-      <p>Regards,<br>The MatchPro Team</p>
+      <p>Regards,<br>The KickDeck Team</p>
     </div>
     <div class="footer">
       <p>This is an automated message. Please do not reply directly.</p>

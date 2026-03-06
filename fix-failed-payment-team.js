@@ -100,7 +100,7 @@ async function fixFailedPaymentTeam() {
     
     console.log('\n=== PAYMENT COMPLETION URL ===');
     const baseUrl = process.env.NODE_ENV === 'production' 
-      ? 'https://app.matchpro.ai' 
+      ? 'https://app.kickdeck.io' 
       : 'http://localhost:5000';
     
     const paymentUrl = `${baseUrl}/complete-payment?setup_intent=${setupIntent.id}&team_id=${teamId}`;

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,6 +7,16 @@ import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { toast } from '@/hooks/use-toast';
 import { 
   GripVertical, 
@@ -42,6 +52,7 @@ interface FieldSortingManagerProps {
 }
 
 const FIELD_SIZE_OPTIONS = [
+  { value: '4v4', label: '4v4 (Mini Field)' },
   { value: '7v7', label: '7v7 (Small Field)' },
   { value: '9v9', label: '9v9 (Medium Field)' },
   { value: '11v11', label: '11v11 (Full Field)' }
@@ -54,6 +65,17 @@ export default function FieldSortingManager({
 }: FieldSortingManagerProps) {
   const [fields, setFields] = useState<Field[]>(initialFields);
   const [hasChanges, setHasChanges] = useState(false);
+  const [showFieldSizeWarning, setShowFieldSizeWarning] = useState(false);
+
+  // Track original field sizes to detect changes
+  const originalFieldSizesRef = useRef<Map<number, string>>(
+    new Map(initialFields.map(f => [f.id, f.fieldSize]))
+  );
+
+  // Update original sizes when parent re-fetches after a save
+  useEffect(() => {
+    originalFieldSizesRef.current = new Map(initialFields.map(f => [f.id, f.fieldSize]));
+  }, [initialFields]);
 
   // Bulk update field configurations
   const updateFieldsMutation = useMutation({
@@ -72,7 +94,7 @@ export default function FieldSortingManager({
 
       // First update individual field properties
       const updatePromises = fieldUpdates.map(async (fieldUpdate) => {
-        const response = await fetch(`/api/admin/events/${eventId}/fields/${fieldUpdate.id}`, {
+        const response = await fetch(`/api/admin/field-config/events/${eventId}/fields/${fieldUpdate.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
@@ -108,10 +130,27 @@ export default function FieldSortingManager({
       return { success: true };
     },
     onSuccess: () => {
-      toast({
-        title: "Field Configuration Updated",
-        description: "Field sizes, order, and availability have been saved successfully."
+      // Check if field sizes actually changed in this save
+      const hadSizeChanges = fields.some(f => {
+        const original = originalFieldSizesRef.current.get(f.id);
+        return original && original !== f.fieldSize;
       });
+
+      // Update ref with new sizes
+      originalFieldSizesRef.current = new Map(fields.map(f => [f.id, f.fieldSize]));
+
+      if (hadSizeChanges) {
+        toast({
+          title: "Field Sizes Updated — Schedule Cleared",
+          description: "Field sizes were changed. All scheduled games have been cleared. Please regenerate the schedule from the Setup tab.",
+          variant: "destructive"
+        });
+      } else {
+        toast({
+          title: "Field Configuration Updated",
+          description: "Field sizes, order, and availability have been saved successfully."
+        });
+      }
       setHasChanges(false);
       onFieldsReordered(fields);
     },
@@ -168,6 +207,23 @@ export default function FieldSortingManager({
   };
 
   const handleSaveChanges = () => {
+    // Check if any field sizes actually changed
+    const sizeChanges = fields.filter(f => {
+      const original = originalFieldSizesRef.current.get(f.id);
+      return original && original !== f.fieldSize;
+    });
+
+    if (sizeChanges.length > 0) {
+      // Show confirmation dialog before saving
+      setShowFieldSizeWarning(true);
+      return;
+    }
+
+    updateFieldsMutation.mutate(fields);
+  };
+
+  const handleConfirmSaveWithSizeChange = () => {
+    setShowFieldSizeWarning(false);
     updateFieldsMutation.mutate(fields);
   };
 
@@ -407,6 +463,53 @@ export default function FieldSortingManager({
           </CardContent>
         </Card>
       </div>
+
+      {/* Field Size Change Warning Dialog */}
+      <AlertDialog open={showFieldSizeWarning} onOpenChange={setShowFieldSizeWarning}>
+        <AlertDialogContent className="bg-slate-800 border-slate-600">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-white flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-amber-400" />
+              Field Size Changes Will Clear Schedule
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-slate-300 space-y-2">
+              <p>
+                You are changing field sizes for this event. This will <strong className="text-red-400">clear all currently scheduled games</strong> because
+                game-to-field assignments depend on field sizes matching age group requirements.
+              </p>
+              <p>
+                After saving, you will need to <strong className="text-white">regenerate the schedule</strong> from the Setup tab.
+              </p>
+              <div className="mt-3 rounded-md bg-slate-700/50 border border-slate-600 p-3">
+                <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Fields being changed:</p>
+                {fields
+                  .filter(f => {
+                    const original = originalFieldSizesRef.current.get(f.id);
+                    return original && original !== f.fieldSize;
+                  })
+                  .map(f => (
+                    <p key={f.id} className="text-sm text-slate-200">
+                      {f.name}: <span className="text-red-400 line-through">{originalFieldSizesRef.current.get(f.id)}</span>
+                      {' '}<span className="text-green-400">{f.fieldSize}</span>
+                    </p>
+                  ))
+                }
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="border-slate-600 text-slate-200 hover:bg-slate-700">
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmSaveWithSizeChange}
+              className="bg-red-600 hover:bg-red-500 text-white"
+            >
+              Clear Games & Save
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-# MatchPro AI Implementation Roadmap
+# KickDeck AI Implementation Roadmap
 ## Addressing Critical Gaps & Enhancing Existing Features
 
 ---

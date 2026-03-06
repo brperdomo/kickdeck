@@ -12,7 +12,7 @@ async function finalPasswordResetTest() {
   
   const testEmails = [
     'bperdomo@zoho.com',
-    'admin@matchpro.ai'
+    'admin@kickdeck.io'
   ];
   
   const domain = process.env.REPLIT_DOMAINS?.split(',')[0] || 'localhost:5000';
@@ -53,7 +53,7 @@ async function finalPasswordResetTest() {
   console.log('\n=== FINAL TEST COMPLETE ===');
   console.log('\nPassword reset emails should now be delivered to both:');
   console.log('• bperdomo@zoho.com (your original admin email)');
-  console.log('• admin@matchpro.ai (recommended admin email)');
+  console.log('• admin@kickdeck.io (recommended admin email)');
   console.log('\nThe email system is now fully functional for both development and production.');
 }
 

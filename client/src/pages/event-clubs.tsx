@@ -1,6 +1,6 @@
 import { useParams } from "wouter";
 import { AdminPageLayout } from "@/components/layouts/AdminPageLayout";
-import { Users } from "lucide-react";
+import { Users, Loader2, PenLine, Image, Merge } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -25,7 +25,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Loader2, PenLine, Image, Merge } from "lucide-react";
 
 interface Club {
   id: number | null;

@@ -16,8 +16,8 @@ import {
 import { AIAuditLogger } from "./ai-audit-logger";
 import { v4 as uuidv4 } from 'uuid';
 
-// Initialize the OpenAI client
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+// Initialize the OpenAI client (lazy - null if no key)
+const openai = process.env.OPENAI_API_KEY ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY }) : null;
 
 interface TournamentGame {
   id: string;
@@ -98,7 +98,7 @@ export class OpenAIResponsesScheduler {
     const flightConfig = await this.getFlightConfigurations(eventId);
     
     return `
-You are a professional tournament scheduling assistant for MatchPro.AI. You help tournament directors manage complex scheduling with natural language commands.
+You are a professional tournament scheduling assistant for KickDeck. You help tournament directors manage complex scheduling with natural language commands.
 
 CORE PERSONALITY:
 - Be conversational, helpful, and proactive

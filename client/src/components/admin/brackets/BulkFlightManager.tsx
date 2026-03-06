@@ -211,7 +211,13 @@ export function BulkFlightManager() {
 
   // Get the display name for the age group - use original gender values
   const getAgeGroupDisplayName = (ageGroup: AgeGroup) => {
-    return `${ageGroup.gender} ${ageGroup.ageGroup}`;
+    let gender = ageGroup.gender;
+    if (!gender || gender === 'Unknown') {
+      if (ageGroup.divisionCode?.startsWith('B')) gender = 'Boys';
+      else if (ageGroup.divisionCode?.startsWith('G')) gender = 'Girls';
+      else gender = 'Unknown';
+    }
+    return `${gender} ${ageGroup.ageGroup || (ageGroup as any).name || 'Unknown'}`;
   };
 
   if (isLoading) {
@@ -443,7 +449,13 @@ function AgeGroupBracketRow({ ageGroup, eventId }: { ageGroup: AgeGroup, eventId
 
   // Get the display name for the age group
   const getAgeGroupDisplayName = (ageGroup: AgeGroup) => {
-    return `${ageGroup.gender} ${ageGroup.ageGroup}`;
+    let gender = ageGroup.gender;
+    if (!gender || gender === 'Unknown') {
+      if (ageGroup.divisionCode?.startsWith('B')) gender = 'Boys';
+      else if (ageGroup.divisionCode?.startsWith('G')) gender = 'Girls';
+      else gender = 'Unknown';
+    }
+    return `${gender} ${ageGroup.ageGroup || (ageGroup as any).name || 'Unknown'}`;
   };
 
   return (

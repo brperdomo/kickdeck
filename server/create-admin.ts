@@ -1,5 +1,5 @@
 import { db } from "@db";
-import { users, roles, adminRoles } from "@db/schema";
+import { users, roles, adminRoles, households } from "@db/schema";
 import { eq, and } from "drizzle-orm";
 import { crypto } from "./crypto";
 
@@ -14,6 +14,20 @@ export async function createAdmin() {
 
     let adminUser;
     if (!existingAdmin) {
+      // Ensure a default household exists for the admin user
+      const [existingHousehold] = await db.select().from(households).limit(1);
+      if (!existingHousehold) {
+        await db.insert(households).values({
+          lastName: "Admin",
+          address: "",
+          city: "",
+          state: "",
+          zipCode: "",
+          primaryEmail: "bperdomo@zoho.com",
+          createdAt: new Date().toISOString(),
+        });
+      }
+
       const hashedPassword = await crypto.hash("!Nova2025");
 
       // Create the admin user and get the returned user with ID

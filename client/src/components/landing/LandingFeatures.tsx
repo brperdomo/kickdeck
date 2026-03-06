@@ -15,7 +15,7 @@ import { fadeUpVariant, scaleVariant, staggerContainer } from '@/lib/animations'
 
 /**
  * Features section for the landing page
- * Showcases the key features of the MatchPro platform
+ * Showcases the key features of the KickDeck platform
  */
 const LandingFeatures = () => {
   const controls = useAnimation();
@@ -104,7 +104,7 @@ const LandingFeatures = () => {
               variants={fadeUpVariant}
               className="max-w-[1000px] mx-auto text-gray-300 md:text-xl mt-6"
             >
-              MatchPro.ai combines cutting-edge technology with intuitive design to streamline every aspect of soccer tournament management.
+              KickDeck combines cutting-edge technology with intuitive design to streamline every aspect of soccer tournament management.
             </motion.p>
           </div>
         </motion.div>

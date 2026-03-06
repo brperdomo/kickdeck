@@ -21,12 +21,12 @@
 2. Creates Stripe checkout session directly on Connect account using `stripeAccount` parameter
 3. Customer objects are created and owned by Connect account
 4. Payments go directly to Connect account
-5. Refunds can be processed from Connect account (no MatchPro involvement)
+5. Refunds can be processed from Connect account (no KickDeck involvement)
 
 **For Legacy Payments:**
-1. Still processed through old MatchPro main account system
-2. Refunds must come from MatchPro with cost recovery attempts
-3. Risk of MatchPro absorption if tournament can't reimburse
+1. Still processed through old KickDeck main account system
+2. Refunds must come from KickDeck with cost recovery attempts
+3. Risk of KickDeck absorption if tournament can't reimburse
 
 ## Verification Steps
 
@@ -43,7 +43,7 @@ stripe payment_intents retrieve pi_xxx --expand application
 ```bash
 # For any new customer, check ownership
 stripe customers retrieve cus_xxx
-# Should be owned by Connect account, not main MatchPro account
+# Should be owned by Connect account, not main KickDeck account
 ```
 
 3. **Test Refund Processing:**
@@ -60,14 +60,14 @@ stripe refunds create --payment-intent pi_xxx --stripe-account acct_xxx
 - Customer created on Connect account using `stripeAccount` parameter
 - Payment processed on Connect account
 - Refund processable from Connect account balance
-- Zero MatchPro financial exposure
+- Zero KickDeck financial exposure
 
 ### ⚠️ Legacy System (Pre-Implementation):
-- Old payment intents created on MatchPro main account
-- Customers owned by MatchPro main account
-- Refunds must come from MatchPro account
+- Old payment intents created on KickDeck main account
+- Customers owned by KickDeck main account
+- Refunds must come from KickDeck account
 - Cost recovery attempted from Connect account
-- MatchPro may absorb costs if recovery fails
+- KickDeck may absorb costs if recovery fails
 
 ## System Status: OPERATIONAL ✅
 

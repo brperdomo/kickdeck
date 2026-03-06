@@ -13,8 +13,8 @@ import {
   gameFormats
 } from "../../db/schema";
 
-// Initialize the OpenAI client
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+// Initialize the OpenAI client (lazy - null if no key)
+const openai = process.env.OPENAI_API_KEY ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY }) : null;
 
 /**
  * OpenAI Realtime API Tournament Scheduling Service

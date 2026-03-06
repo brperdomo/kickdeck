@@ -95,7 +95,7 @@ export function BracketSelector({ brackets, value, onChange }: BracketSelectorPr
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+                <Info className="h-4 w-4 text-gray-400 cursor-help" />
               </TooltipTrigger>
               <TooltipContent className="max-w-[300px]">
                 <p>No specific brackets are defined for this age group, but you can allow directors to choose.</p>
@@ -118,9 +118,9 @@ export function BracketSelector({ brackets, value, onChange }: BracketSelectorPr
         </Select>
 
         {/* Director choice message */}
-        <div className="rounded-md border p-3 bg-muted/30">
-          <h4 className="font-medium mb-1">Allow directors to choose</h4>
-          <p className="text-sm text-muted-foreground mb-2">
+        <div className="rounded-md border p-3 bg-white/5 border-white/10">
+          <h4 className="font-medium mb-1 text-white">Allow directors to choose</h4>
+          <p className="text-sm text-gray-400 mb-2">
             Tournament directors will determine the appropriate bracket for your team.
           </p>
         </div>
@@ -135,7 +135,7 @@ export function BracketSelector({ brackets, value, onChange }: BracketSelectorPr
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+              <Info className="h-4 w-4 text-gray-400 cursor-help" />
             </TooltipTrigger>
             <TooltipContent className="max-w-[300px]">
               <p>Select the appropriate bracket for your team's competitive level.</p>
@@ -166,24 +166,24 @@ export function BracketSelector({ brackets, value, onChange }: BracketSelectorPr
 
       {/* Show selected bracket details or director choice message */}
       {selectedBracket ? (
-        <div className="rounded-md border p-3 bg-muted/30">
-          <h4 className="font-medium mb-1">{selectedBracket.name}</h4>
+        <div className="rounded-md border p-3 bg-white/5 border-white/10">
+          <h4 className="font-medium mb-1 text-white">{selectedBracket.name}</h4>
           {selectedBracket.description && (
-            <p className="text-sm text-muted-foreground mb-2">
+            <p className="text-sm text-gray-400 mb-2">
               {selectedBracket.description}
             </p>
           )}
           {selectedBracket.eligibility && (
-            <div className="text-sm">
+            <div className="text-sm text-gray-200">
               <span className="font-medium">Eligibility:</span>{" "}
               {selectedBracket.eligibility}
             </div>
           )}
         </div>
       ) : value === null && (
-        <div className="rounded-md border p-3 bg-muted/30">
-          <h4 className="font-medium mb-1">Allow directors to choose</h4>
-          <p className="text-sm text-muted-foreground mb-2">
+        <div className="rounded-md border p-3 bg-white/5 border-white/10">
+          <h4 className="font-medium mb-1 text-white">Allow directors to choose</h4>
+          <p className="text-sm text-gray-400 mb-2">
             Tournament directors will determine the appropriate bracket for your team.
           </p>
         </div>

@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 
 interface AnimatedBackgroundProps {
   className?: string;
-  type?: "gradients" | "particles" | "mesh";
+  type?: "gradients" | "particles" | "mesh" | "neon";
   primaryColor?: string;
   secondaryColor?: string;
   speed?: "slow" | "medium" | "fast";
@@ -285,8 +285,229 @@ export function AnimatedBackground({
       };
       
       animate();
+    } else if (type === "neon") {
+      // === SYNTHWAVE / 80s RETRO NEON ANIMATION ===
+      // Starfield sky, segmented sunset, scrolling perspective grid, CRT scan lines
+
+      const speedFactor = speed === "slow" ? 0.0008 : speed === "fast" ? 0.003 : 0.0015;
+      let t = 0;
+
+      // Neon color palette
+      const neonColors = {
+        violet: { r: 124, g: 58, b: 237 },
+        purple: { r: 168, g: 85, b: 247 },
+        cyan:   { r: 6, g: 182, b: 212 },
+        pink:   { r: 236, g: 72, b: 153 },
+        hotPink:{ r: 255, g: 16, b: 120 },
+        orange: { r: 255, g: 120, b: 30 },
+      };
+
+      // Stars configuration
+      interface Star {
+        x: number;
+        y: number;
+        size: number;
+        baseAlpha: number;
+        twinkleSpeed: number;
+        twinklePhase: number;
+      }
+      const stars: Star[] = [];
+      const starCount = 80;
+      for (let i = 0; i < starCount; i++) {
+        stars.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height * 0.45, // only in upper sky
+          size: Math.random() * 1.5 + 0.3,
+          baseAlpha: Math.random() * 0.4 + 0.2,
+          twinkleSpeed: Math.random() * 2 + 1,
+          twinklePhase: Math.random() * Math.PI * 2,
+        });
+      }
+
+      // Grid scroll offset
+      let gridScroll = 0;
+      const gridScrollSpeed = speed === "slow" ? 0.3 : speed === "fast" ? 1.0 : 0.5;
+
+      // Initial fill
+      ctx.fillStyle = "#0a0a1a";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      const animate = () => {
+        const W = canvas.width;
+        const H = canvas.height;
+
+        // --- Full clear each frame (no trails) ---
+        ctx.fillStyle = "#0a0a1a";
+        ctx.fillRect(0, 0, W, H);
+
+        // --- Layer 1: Sky gradient (deep space to horizon glow) ---
+        const skyGrad = ctx.createLinearGradient(0, 0, 0, H * 0.5);
+        skyGrad.addColorStop(0, "#0a0a1a");
+        skyGrad.addColorStop(0.6, "#0d0b2e");
+        skyGrad.addColorStop(0.85, "#1a0a3a");
+        skyGrad.addColorStop(1, "#2d1050");
+        ctx.fillStyle = skyGrad;
+        ctx.fillRect(0, 0, W, H * 0.5);
+
+        // --- Layer 2: Starfield ---
+        stars.forEach(star => {
+          const twinkle = Math.sin(t * star.twinkleSpeed + star.twinklePhase);
+          const alpha = star.baseAlpha + twinkle * 0.2;
+          if (alpha <= 0) return;
+
+          ctx.beginPath();
+          ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 255, 255, ${Math.max(0, alpha)})`;
+          ctx.fill();
+
+          // Brighter stars get a tiny cross-shaped glint
+          if (star.size > 1.2 && alpha > 0.35) {
+            const glintLen = star.size * 2.5;
+            ctx.strokeStyle = `rgba(255, 255, 255, ${alpha * 0.3})`;
+            ctx.lineWidth = 0.5;
+            ctx.beginPath();
+            ctx.moveTo(star.x - glintLen, star.y);
+            ctx.lineTo(star.x + glintLen, star.y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(star.x, star.y - glintLen);
+            ctx.lineTo(star.x, star.y + glintLen);
+            ctx.stroke();
+          }
+        });
+
+        // --- Layer 3: Floor + Sun + Grid ---
+        const horizonY = H * 0.48;
+        const sunCenterY = horizonY - H * 0.02;
+        const sunRadius = Math.min(W, H) * 0.18;
+        const vanishX = W * 0.5;
+        const vanishY = horizonY;
+        const gridBottom = H;
+        const gridHeight = gridBottom - vanishY;
+
+        // 3a: Floor gradient (below horizon, drawn FIRST so sun sits on top)
+        const floorGrad = ctx.createLinearGradient(0, vanishY, 0, gridBottom);
+        floorGrad.addColorStop(0, "rgba(20, 5, 50, 0.5)");
+        floorGrad.addColorStop(1, "rgba(10, 10, 26, 0.9)");
+        ctx.fillStyle = floorGrad;
+        ctx.fillRect(0, vanishY, W, gridHeight);
+
+        // 3b: Sun glow (outer aura — drawn before disc)
+        const sunGlow = ctx.createRadialGradient(
+          W * 0.5, sunCenterY, sunRadius * 0.5,
+          W * 0.5, sunCenterY, sunRadius * 2.5
+        );
+        sunGlow.addColorStop(0, "rgba(255, 60, 120, 0.14)");
+        sunGlow.addColorStop(0.4, "rgba(168, 85, 247, 0.07)");
+        sunGlow.addColorStop(1, "rgba(10, 10, 26, 0)");
+        ctx.fillStyle = sunGlow;
+        ctx.fillRect(0, 0, W, H * 0.65);
+
+        // 3c: Sun disc with gradient (hot pink top → orange bottom)
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(W * 0.5, sunCenterY, sunRadius, 0, Math.PI * 2);
+        ctx.clip();
+
+        const sunGrad = ctx.createLinearGradient(W * 0.5, sunCenterY - sunRadius, W * 0.5, sunCenterY + sunRadius);
+        sunGrad.addColorStop(0, "rgba(255, 50, 160, 0.95)");
+        sunGrad.addColorStop(0.35, "rgba(255, 70, 110, 0.9)");
+        sunGrad.addColorStop(0.6, "rgba(255, 130, 50, 0.88)");
+        sunGrad.addColorStop(1, "rgba(255, 200, 40, 0.85)");
+        ctx.fillStyle = sunGrad;
+        ctx.fillRect(W * 0.5 - sunRadius, sunCenterY - sunRadius, sunRadius * 2, sunRadius * 2);
+
+        // Cut horizontal slices out of the bottom half (classic 80s segmented sun)
+        ctx.globalCompositeOperation = "destination-out";
+        const sliceCount = 7;
+        const sliceRegionTop = sunCenterY + sunRadius * 0.05;
+        const sliceRegionHeight = sunRadius * 0.95;
+        for (let i = 0; i < sliceCount; i++) {
+          const sliceFrac = i / sliceCount;
+          const sliceY = sliceRegionTop + sliceFrac * sliceRegionHeight;
+          const gapHeight = 1.5 + sliceFrac * 4.5;
+          ctx.fillStyle = "rgba(0, 0, 0, 1)";
+          ctx.fillRect(W * 0.5 - sunRadius, sliceY, sunRadius * 2, gapHeight);
+        }
+        ctx.globalCompositeOperation = "source-over";
+        ctx.restore();
+
+        // 3d: Horizon line glow
+        const horizonGlow = ctx.createLinearGradient(0, horizonY - 4, 0, horizonY + 4);
+        horizonGlow.addColorStop(0, "rgba(168, 85, 247, 0)");
+        horizonGlow.addColorStop(0.5, "rgba(168, 85, 247, 0.2)");
+        horizonGlow.addColorStop(1, "rgba(168, 85, 247, 0)");
+        ctx.fillStyle = horizonGlow;
+        ctx.fillRect(0, horizonY - 4, W, 8);
+
+        // 3e: Grid lines (clipped below horizon, drawn AFTER sun)
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(0, vanishY, W, gridHeight);
+        ctx.clip();
+
+        // Scrolling horizontal lines
+        gridScroll = (gridScroll + gridScrollSpeed * 0.008) % 1;
+        const hLineCount = 22;
+        for (let i = 0; i <= hLineCount; i++) {
+          // Lines scroll toward the viewer — offset by gridScroll
+          const rawFrac = ((i + gridScroll) / hLineCount) % 1;
+          const fraction = Math.pow(rawFrac, 2.0);
+          const y = vanishY + fraction * gridHeight;
+
+          const opacity = 0.06 + fraction * 0.18;
+          const lineWidth = 0.4 + fraction * 1.0;
+
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          ctx.lineTo(W, y);
+          ctx.strokeStyle = `rgba(${neonColors.cyan.r}, ${neonColors.cyan.g}, ${neonColors.cyan.b}, ${opacity})`;
+          ctx.lineWidth = lineWidth;
+          ctx.stroke();
+        }
+
+        // Vertical lines (fanning from vanishing point)
+        const vLineCount = 28;
+        for (let i = 0; i <= vLineCount; i++) {
+          const fraction = i / vLineCount;
+          const bottomX = (fraction - 0.5) * W * 3.0 + W * 0.5;
+
+          const distFromCenter = Math.abs(fraction - 0.5) * 2;
+          const opacity = 0.08 + (1 - distFromCenter) * 0.08;
+
+          ctx.beginPath();
+          ctx.moveTo(vanishX, vanishY);
+          ctx.lineTo(bottomX, gridBottom);
+          ctx.strokeStyle = `rgba(${neonColors.violet.r}, ${neonColors.violet.g}, ${neonColors.violet.b}, ${opacity})`;
+          ctx.lineWidth = 0.6;
+          ctx.stroke();
+        }
+
+        ctx.restore(); // remove grid clip
+
+        // --- Layer 5: CRT scan lines (very subtle) ---
+        ctx.fillStyle = "rgba(0, 0, 0, 0.04)";
+        for (let y = 0; y < H; y += 3) {
+          ctx.fillRect(0, y, W, 1);
+        }
+
+        // --- Layer 6: Corner vignette ---
+        const vignetteGrad = ctx.createRadialGradient(
+          W * 0.5, H * 0.5, Math.min(W, H) * 0.3,
+          W * 0.5, H * 0.5, Math.max(W, H) * 0.8
+        );
+        vignetteGrad.addColorStop(0, "rgba(0, 0, 0, 0)");
+        vignetteGrad.addColorStop(1, "rgba(0, 0, 0, 0.35)");
+        ctx.fillStyle = vignetteGrad;
+        ctx.fillRect(0, 0, W, H);
+
+        t += speedFactor;
+        animationFrameId = requestAnimationFrame(animate);
+      };
+
+      animate();
     }
-    
+
     // Cleanup function
     return () => {
       window.removeEventListener('resize', handleResize);

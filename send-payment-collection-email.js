@@ -47,8 +47,8 @@ async function sendPaymentCollectionEmail() {
         amount: (team.total_amount / 100).toFixed(2),
         approvalDate: new Date().toLocaleDateString(),
         paymentDeadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString(), // 7 days from now
-        loginUrl: `${process.env.PUBLIC_URL || 'https://app.matchpro.ai'}/dashboard`,
-        supportEmail: 'support@matchpro.ai'
+        loginUrl: `${process.env.PUBLIC_URL || 'https://app.kickdeck.io'}/dashboard`,
+        supportEmail: 'support@kickdeck.io'
       }
     };
     

@@ -65,8 +65,8 @@ async function setupTemplates() {
             sendgridTemplateId: mapping.sendgridTemplateId,
             subject: mapping.subject,
             isActive: true,
-            senderEmail: 'support@matchpro.ai',
-            senderName: 'MatchPro',
+            senderEmail: 'support@kickdeck.io',
+            senderName: 'KickDeck',
             updatedAt: new Date().toISOString()
           })
           .where(eq(emailTemplates.type, mapping.type));
@@ -82,8 +82,8 @@ async function setupTemplates() {
             subject: mapping.subject,
             content: '',
             isActive: true,
-            senderEmail: 'support@matchpro.ai',
-            senderName: 'MatchPro',
+            senderEmail: 'support@kickdeck.io',
+            senderName: 'KickDeck',
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
           });

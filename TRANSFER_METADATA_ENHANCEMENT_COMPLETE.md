@@ -70,7 +70,7 @@ const transfer = await stripe.transfers.create({
     originalAmount: "62130", // Original payment amount in cents
     transferAmount: "50000", // Transfer amount in cents
     internalReference: "TRANSFER-TEAM-1234-123",
-    systemSource: "MatchPro",
+    systemSource: "KickDeck",
     transferType: "tournament_payout",
     transferDate: "2025-08-19T16:15:00.000Z"
   }
@@ -136,7 +136,7 @@ POST /api/admin/transfers/update-metadata
 - **Dispute Resolution**: Complete context for every transfer
 - **Tax Documentation**: Comprehensive transaction records
 
-### **MatchPro Platform Benefits:**
+### **KickDeck Platform Benefits:**
 - **Risk Management**: Complete payment visibility
 - **Automated Operations**: Reduced manual reconciliation
 - **Scaling Support**: Systematic metadata across all transfers

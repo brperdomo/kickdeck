@@ -148,7 +148,7 @@ router.post('/events/:eventId/brackets/:bracketId/add-placeholder', async (req, 
       status: 'approved', // Approve automatically so it can be scheduled
       isPlaceholder: true, // Add flag to identify placeholders
       clubName: 'TBD',
-      submitterEmail: 'placeholder@matchpro.ai',
+      submitterEmail: 'placeholder@kickdeck.io',
       submitterName: 'System Generated',
       selectedFeeIds: '[]',
       totalAmount: 0,

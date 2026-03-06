@@ -1,7 +1,7 @@
 /**
  * Platform Fee Report Dashboard
  * 
- * Comprehensive breakdown of MatchPro revenue vs Stripe fees
+ * Comprehensive breakdown of KickDeck revenue vs Stripe fees
  * from all processed transactions.
  */
 
@@ -39,11 +39,11 @@ interface PlatformFeeData {
     totalChargedToCustomers: number;
     totalPlatformFeesCollected: number;
     totalStripeFeespaid: number;
-    totalMatchProNetRevenue: number;
-    avgMatchProRevenuePerTransaction: number;
+    totalKickDeckNetRevenue: number;
+    avgKickDeckRevenuePerTransaction: number;
     platformFeeRate: number;
     stripeFeeRate: number;
-    matchproMarginRate: number;
+    kickdeckMarginRate: number;
   };
   paymentMethodBreakdown: {
     linkPayments: {
@@ -65,7 +65,7 @@ interface PlatformFeeData {
     totalCharged: number;
     platformFees: number;
     stripeFees: number;
-    matchproRevenue: number;
+    kickdeckRevenue: number;
     avgRevenuePerTeam: number;
   }>;
   transactions: Array<{
@@ -76,7 +76,7 @@ interface PlatformFeeData {
     totalChargedAmount: number;
     platformFeeAmount: number;
     stripeFeeAmount: number;
-    matchproRevenue: number;
+    kickdeckRevenue: number;
     tournamentReceives: number;
     paymentMethodType: string;
     paymentIntentId: string;
@@ -154,7 +154,7 @@ export default function PlatformFeeReportPage() {
         <div>
           <h1 className="text-3xl font-bold">Platform Fee Report</h1>
           <p className="text-muted-foreground">
-            MatchPro revenue breakdown and Stripe fee analysis
+            KickDeck revenue breakdown and Stripe fee analysis
           </p>
         </div>
         <Button onClick={() => refetch()}>
@@ -246,15 +246,15 @@ export default function PlatformFeeReportPage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">MatchPro Net Revenue</CardTitle>
+            <CardTitle className="text-sm font-medium">KickDeck Net Revenue</CardTitle>
             <TrendingUp className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
-              {formatCurrency(data.summary.totalMatchProNetRevenue)}
+              {formatCurrency(data.summary.totalKickDeckNetRevenue)}
             </div>
             <p className="text-xs text-muted-foreground">
-              Avg: {formatCurrency(data.summary.avgMatchProRevenuePerTransaction)} per transaction
+              Avg: {formatCurrency(data.summary.avgKickDeckRevenuePerTransaction)} per transaction
             </p>
           </CardContent>
         </Card>
@@ -301,8 +301,8 @@ export default function PlatformFeeReportPage() {
                     <span className="font-semibold">{formatCurrency(data.summary.totalPlatformFeesCollected)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>MatchPro Margin:</span>
-                    <Badge variant="secondary">{formatPercentage(data.summary.matchproMarginRate)}</Badge>
+                    <span>KickDeck Margin:</span>
+                    <Badge variant="secondary">{formatPercentage(data.summary.kickdeckMarginRate)}</Badge>
                   </div>
                 </div>
               </CardContent>
@@ -340,8 +340,8 @@ export default function PlatformFeeReportPage() {
                     <span className="font-semibold">{formatCurrency(data.summary.totalTournamentCosts)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>MatchPro:</span>
-                    <span className="font-semibold text-green-600">{formatCurrency(data.summary.totalMatchProNetRevenue)}</span>
+                    <span>KickDeck:</span>
+                    <span className="font-semibold text-green-600">{formatCurrency(data.summary.totalKickDeckNetRevenue)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Stripe:</span>
@@ -419,7 +419,7 @@ export default function PlatformFeeReportPage() {
                 Event Revenue Breakdown
               </CardTitle>
               <CardDescription>
-                MatchPro revenue by event
+                KickDeck revenue by event
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -430,7 +430,7 @@ export default function PlatformFeeReportPage() {
                     <TableHead className="text-right">Teams</TableHead>
                     <TableHead className="text-right">Tournament Costs</TableHead>
                     <TableHead className="text-right">Total Charged</TableHead>
-                    <TableHead className="text-right">MatchPro Revenue</TableHead>
+                    <TableHead className="text-right">KickDeck Revenue</TableHead>
                     <TableHead className="text-right">Avg per Team</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -442,7 +442,7 @@ export default function PlatformFeeReportPage() {
                       <TableCell className="text-right">{formatCurrency(event.tournamentCosts)}</TableCell>
                       <TableCell className="text-right">{formatCurrency(event.totalCharged)}</TableCell>
                       <TableCell className="text-right text-green-600 font-semibold">
-                        {formatCurrency(event.matchproRevenue)}
+                        {formatCurrency(event.kickdeckRevenue)}
                       </TableCell>
                       <TableCell className="text-right">{formatCurrency(event.avgRevenuePerTeam)}</TableCell>
                     </TableRow>
@@ -458,7 +458,7 @@ export default function PlatformFeeReportPage() {
             <CardHeader>
               <CardTitle>Transaction Details</CardTitle>
               <CardDescription>
-                Individual transaction breakdown showing MatchPro revenue and Stripe fees
+                Individual transaction breakdown showing KickDeck revenue and Stripe fees
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -471,7 +471,7 @@ export default function PlatformFeeReportPage() {
                     <TableHead className="text-right">Total Charged</TableHead>
                     <TableHead className="text-right">Platform Fee</TableHead>
                     <TableHead className="text-right">Stripe Fee</TableHead>
-                    <TableHead className="text-right">MatchPro Revenue</TableHead>
+                    <TableHead className="text-right">KickDeck Revenue</TableHead>
                     <TableHead>Payment Type</TableHead>
                     <TableHead>Date</TableHead>
                   </TableRow>
@@ -486,7 +486,7 @@ export default function PlatformFeeReportPage() {
                       <TableCell className="text-right">{formatCurrency(transaction.platformFeeAmount)}</TableCell>
                       <TableCell className="text-right text-red-600">{formatCurrency(transaction.stripeFeeAmount)}</TableCell>
                       <TableCell className="text-right text-green-600 font-semibold">
-                        {formatCurrency(transaction.matchproRevenue)}
+                        {formatCurrency(transaction.kickdeckRevenue)}
                       </TableCell>
                       <TableCell>
                         <Badge variant={transaction.paymentMethodType === 'Link' ? 'secondary' : 'default'}>

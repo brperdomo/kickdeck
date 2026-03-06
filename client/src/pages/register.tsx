@@ -259,24 +259,28 @@ export default function Register() {
   return (
     <AuthLayout>
       <div className="relative">
-        <AnimatedBackground type="particles" primaryColor="#3d3a98" secondaryColor="#2d2a88" speed="medium" />
-        
-        <div className="relative z-10 flex items-center justify-center min-h-screen">
+        <AnimatedBackground type="neon" primaryColor="#7c3aed" secondaryColor="#a855f7" speed="medium" />
+
+        <div className="relative z-10 flex items-center justify-center min-h-screen py-8">
           <div className="w-full max-w-[min(400px,100%-2rem)] mx-auto">
-            <Card className="w-full bg-[#3d3a98]/70 backdrop-blur-md shadow-xl border-0 ring-4 ring-[#6a67ff]/60 ring-offset-4 ring-offset-[#3d3a98]/20 shadow-[0_0_20px_5px_rgba(106,103,255,0.4)]">
+            <Card className="w-full bg-[#0f0f23]/85 backdrop-blur-2xl border border-white/[0.08] rounded-2xl shadow-[0_0_30px_rgba(124,58,237,0.15),0_0_60px_rgba(6,182,212,0.08)]">
               <CardHeader className="space-y-3 pb-6">
                 <div className="flex justify-center">
-                  <div className="w-100 h-100">
+                  <div className="w-64">
                     <img
-                      src="/uploads/MatchProAI_Linear_BlackNOBUFFER.png"
-                      alt="MatchPro Logo"
+                      src="/uploads/KickDeck_Linear_White.png"
+                      alt="KickDeck Logo"
                       className="w-full h-full object-contain"
+                      style={{ filter: "drop-shadow(0 0 20px rgba(124,58,237,0.3))" }}
                     />
                   </div>
                 </div>
-                <CardTitle className="text-2xl sm:text-3xl font-bold text-center text-white">
-                  Create Your Account
-                </CardTitle>
+                <div className="text-center space-y-1">
+                  <CardTitle className="text-2xl sm:text-3xl font-bold text-white">
+                    Create Your Account
+                  </CardTitle>
+                  <p className="text-sm text-gray-400">Join KickDeck today</p>
+                </div>
               </CardHeader>
               <CardContent>
                 <Form {...form}>
@@ -292,15 +296,16 @@ export default function Register() {
                       name="firstName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-base text-white">First Name</FormLabel>
+                          <FormLabel className="text-sm text-gray-300">First Name</FormLabel>
                           <FormControl>
                             <Input
                               autoComplete="given-name"
-                              className="h-11 text-base px-4 bg-white/90 border-white/50 focus:border-white focus:ring-white/50"
+                              className="neon-input h-11 text-base px-4 text-white placeholder:text-gray-500 focus:ring-1 focus:ring-purple-500/20 focus:shadow-[0_0_10px_rgba(124,58,237,0.15)]"
+                              style={{ backgroundColor: 'rgba(255,255,255,0.06)', borderColor: 'rgba(255,255,255,0.1)' }}
                               {...field}
                             />
                           </FormControl>
-                          <FormMessage className="text-yellow-200" />
+                          <FormMessage className="text-red-400" />
                         </FormItem>
                       )}
                     />
@@ -309,15 +314,16 @@ export default function Register() {
                       name="lastName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-base text-white">Last Name</FormLabel>
+                          <FormLabel className="text-sm text-gray-300">Last Name</FormLabel>
                           <FormControl>
                             <Input
                               autoComplete="family-name"
-                              className="h-11 text-base px-4 bg-white/90 border-white/50 focus:border-white focus:ring-white/50"
+                              className="neon-input h-11 text-base px-4 text-white placeholder:text-gray-500 focus:ring-1 focus:ring-purple-500/20 focus:shadow-[0_0_10px_rgba(124,58,237,0.15)]"
+                              style={{ backgroundColor: 'rgba(255,255,255,0.06)', borderColor: 'rgba(255,255,255,0.1)' }}
                               {...field}
                             />
                           </FormControl>
-                          <FormMessage className="text-yellow-200" />
+                          <FormMessage className="text-red-400" />
                         </FormItem>
                       )}
                     />
@@ -326,29 +332,30 @@ export default function Register() {
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-base text-white">Email</FormLabel>
+                          <FormLabel className="text-sm text-gray-300">Email</FormLabel>
                           <FormControl>
                             <div className="relative">
                               <Input
                                 type="email"
                                 autoComplete="email"
-                                className={`h-11 text-base px-4 bg-white/90 border-white/50 focus:border-white focus:ring-white/50 ${
+                                className={`neon-input h-11 text-base px-4 text-white placeholder:text-gray-500 focus:ring-1 focus:ring-purple-500/20 focus:shadow-[0_0_10px_rgba(124,58,237,0.15)] ${
                                   emailAvailability?.available === false
-                                    ? "border-red-500 focus:ring-red-500"
+                                    ? "border-red-500/50 focus:ring-red-500/20"
                                     : emailAvailability?.available
-                                    ? "border-green-500 focus:ring-green-500"
+                                    ? "border-green-500/50 focus:ring-green-500/20"
                                     : ""
                                 }`}
+                                style={{ backgroundColor: 'rgba(255,255,255,0.06)', borderColor: emailAvailability?.available === false ? undefined : emailAvailability?.available ? undefined : 'rgba(255,255,255,0.1)' }}
                                 {...field}
                               />
                               {isCheckingEmail && (
                                 <div className="absolute right-3 top-3">
-                                  <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                                  <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
                                 </div>
                               )}
                             </div>
                           </FormControl>
-                          <FormMessage className="text-yellow-200" />
+                          <FormMessage className="text-red-400" />
                         </FormItem>
                       )}
                     />
@@ -357,20 +364,21 @@ export default function Register() {
                       name="password"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-base text-white">Password</FormLabel>
+                          <FormLabel className="text-sm text-gray-300">Password</FormLabel>
                           <FormControl>
                             <Input
                               type="password"
                               autoComplete="new-password"
-                              className="h-11 text-base px-4 bg-white/90 border-white/50 focus:border-white focus:ring-white/50"
+                              className="neon-input h-11 text-base px-4 text-white placeholder:text-gray-500 focus:ring-1 focus:ring-purple-500/20 focus:shadow-[0_0_10px_rgba(124,58,237,0.15)]"
+                              style={{ backgroundColor: 'rgba(255,255,255,0.06)', borderColor: 'rgba(255,255,255,0.1)' }}
                               {...field}
                             />
                           </FormControl>
                           <PasswordStrength password={field.value} />
-                          <FormDescription className="text-white/80 text-sm">
+                          <FormDescription className="text-gray-400 text-sm">
                             Must be at least 8 characters with a number and special character
                           </FormDescription>
-                          <FormMessage className="text-yellow-200" />
+                          <FormMessage className="text-red-400" />
                         </FormItem>
                       )}
                     />
@@ -379,29 +387,30 @@ export default function Register() {
                       name="confirmPassword"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-base text-white">Confirm Password</FormLabel>
+                          <FormLabel className="text-sm text-gray-300">Confirm Password</FormLabel>
                           <FormControl>
                             <Input
                               type="password"
                               autoComplete="new-password"
-                              className="h-11 text-base px-4 bg-white/90 border-white/50 focus:border-white focus:ring-white/50"
+                              className="neon-input h-11 text-base px-4 text-white placeholder:text-gray-500 focus:ring-1 focus:ring-purple-500/20 focus:shadow-[0_0_10px_rgba(124,58,237,0.15)]"
+                              style={{ backgroundColor: 'rgba(255,255,255,0.06)', borderColor: 'rgba(255,255,255,0.1)' }}
                               {...field}
                             />
                           </FormControl>
-                          <FormMessage className="text-yellow-200" />
+                          <FormMessage className="text-red-400" />
                         </FormItem>
                       )}
                     />
                     <Button
                       type="submit"
-                      className="w-full h-11 text-base bg-white hover:bg-white/90 text-[#3d3a98] font-medium transition-colors"
+                      className="w-full h-11 text-base bg-gradient-to-r from-purple-600 to-violet-500 hover:from-purple-500 hover:to-violet-400 text-white font-medium transition-all duration-200 hover:shadow-[0_0_20px_rgba(124,58,237,0.4)]"
                       disabled={isCheckingEmail || emailAvailability?.available === false}
                     >
                       Create Account
                     </Button>
                     <div className="text-center">
                       <Link href="/auth">
-                        <Button variant="link" className="w-full text-sm text-yellow-200 p-0 h-auto font-semibold hover:text-yellow-100" type="button">
+                        <Button variant="link" className="w-full text-sm text-gray-400 p-0 h-auto font-medium hover:text-purple-400 transition-colors" type="button">
                           <ArrowLeft className="h-4 w-4 mr-2" />
                           Back to Login
                         </Button>

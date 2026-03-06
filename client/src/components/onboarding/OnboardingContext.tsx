@@ -68,7 +68,7 @@ interface OnboardingContextType {
 const OnboardingContext = createContext<OnboardingContextType | undefined>(undefined);
 
 // Storage key for persisting onboarding progress
-const STORAGE_KEY = 'matchpro-onboarding-progress';
+const STORAGE_KEY = 'kickdeck-onboarding-progress';
 
 // Default initial progress state
 const defaultProgress: OnboardingProgress = {

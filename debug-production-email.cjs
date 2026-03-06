@@ -20,12 +20,12 @@ function sendGridDirectTest() {
         to: [{ email: 'bperdomo@zoho.com' }],
         dynamic_template_data: {
           username: 'bperdomo',
-          resetUrl: 'https://app.matchpro.ai/reset-password?token=test-token-123',
+          resetUrl: 'https://app.kickdeck.io/reset-password?token=test-token-123',
           token: 'test-token-123',
           expiryHours: 24
         }
       }],
-      from: { email: 'support@matchpro.ai', name: 'MatchPro' },
+      from: { email: 'support@kickdeck.io', name: 'KickDeck' },
       template_id: TEMPLATE_ID
     };
 
@@ -97,7 +97,7 @@ function testProductionEndpoint() {
     const postData = JSON.stringify({ email: 'bperdomo@zoho.com' });
 
     const options = {
-      hostname: 'app.matchpro.ai',
+      hostname: 'app.kickdeck.io',
       port: 443,
       path: '/api/auth/forgot-password',
       method: 'POST',
@@ -108,7 +108,7 @@ function testProductionEndpoint() {
     };
 
     console.log('\n=== Testing Production Endpoint ===');
-    console.log('URL: https://app.matchpro.ai/api/auth/forgot-password');
+    console.log('URL: https://app.kickdeck.io/api/auth/forgot-password');
 
     const req = https.request(options, (res) => {
       let data = '';

@@ -1,8 +1,8 @@
-# MatchPro AI Automated Tournament Scheduling System - Admin Guide
+# KickDeck AI Automated Tournament Scheduling System - Admin Guide
 
 ## Overview
 
-The MatchPro AI automated scheduling system is designed to generate complete tournament schedules with genuine one-click automation. Tournament directors can select their tournament, click "Generate Complete Schedule", wait 10-30 seconds, and receive a complete ready-to-publish schedule without any manual configuration.
+The KickDeck AI automated scheduling system is designed to generate complete tournament schedules with genuine one-click automation. Tournament directors can select their tournament, click "Generate Complete Schedule", wait 10-30 seconds, and receive a complete ready-to-publish schedule without any manual configuration.
 
 ## System Architecture
 
@@ -25,7 +25,7 @@ The MatchPro AI automated scheduling system is designed to generate complete tou
 
 ### Step 1: Access the Scheduling Dashboard
 
-1. Log into the MatchPro AI admin dashboard
+1. Log into the KickDeck AI admin dashboard
 2. Navigate to "Scheduling" in the main menu
 3. You'll see the Tournament Scheduling Hub page
 
@@ -375,13 +375,13 @@ POST /api/admin/events/{eventId}/generate-complete-schedule
 **3. Manual Override Options**
 - Use enhanced workflow for complex scenarios
 - Generate partial schedules and complete manually
-- Contact MatchPro support for complex tournaments
+- Contact KickDeck support for complex tournaments
 
 ---
 
 ## Conclusion
 
-The MatchPro AI automated scheduling system represents a breakthrough in tournament management efficiency. By eliminating the need for manual configuration and decision-making, tournament directors can focus on other aspects of tournament management while ensuring professional, conflict-free schedules that maximize venue utilization and provide fair competition for all teams.
+The KickDeck AI automated scheduling system represents a breakthrough in tournament management efficiency. By eliminating the need for manual configuration and decision-making, tournament directors can focus on other aspects of tournament management while ensuring professional, conflict-free schedules that maximize venue utilization and provide fair competition for all teams.
 
 The system's true automation means that even inexperienced tournament directors can generate professional-quality schedules that would previously require hours of expert-level work.
 

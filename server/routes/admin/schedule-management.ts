@@ -244,24 +244,37 @@ router.put('/games/:gameId/reschedule', async (req, res) => {
       return res.status(400).json({ error: 'Field ID and start time are required' });
     }
 
-    // Calculate end time (assuming 90-minute games)
-    const startDateTime = new Date(startTime);
-    const endDateTime = new Date(startDateTime.getTime() + 90 * 60 * 1000);
+    // Look up the game's actual duration (don't hardcode 90 minutes)
+    const gameRecord = await db.query.games.findFirst({
+      where: eq(games.id, parseInt(gameId)),
+      columns: { duration: true }
+    });
+    const gameDuration = gameRecord?.duration || 90;
+
+    // Calculate end time using string math — DO NOT use new Date() which applies timezone conversion
+    const [datePart, timePart] = startTime.split('T');
+    const [startH, startM] = timePart.split(':').map(Number);
+    const endTotalMin = startH * 60 + startM + gameDuration;
+    const endH = Math.floor(endTotalMin / 60).toString().padStart(2, '0');
+    const endM = (endTotalMin % 60).toString().padStart(2, '0');
+    const endTimeStr = `${datePart}T${endH}:${endM}:00`;
+
+    // Extract date and time by string splitting — DO NOT use new Date().toISOString()
+    const scheduledDate = startTime.split('T')[0]; // "2026-04-02"
+    const scheduledTime = startTime.split('T')[1];  // "08:00:00"
 
     // Update the game in the database with both field and time information
     const updatedGame = await db.update(games)
       .set({
         fieldId: parseInt(fieldId),
-        startTime: startDateTime.toISOString(),
-        endTime: endDateTime.toISOString(),
+        scheduledDate: scheduledDate,
+        scheduledTime: scheduledTime,
         updatedAt: new Date().toISOString()
       })
       .where(eq(games.id, parseInt(gameId)))
       .returning();
 
     // Find and update the associated time slot if it exists
-    // Since gameTimeSlots doesn't have gameId, we need to find it by other means
-    // For now, we'll create a new time slot if needed
     const existingSlot = await db.select()
       .from(gameTimeSlots)
       .where(and(
@@ -275,8 +288,8 @@ router.put('/games/:gameId/reschedule', async (req, res) => {
       await db.insert(gameTimeSlots).values({
         eventId: updatedGame[0]?.eventId?.toString() || '1074883084',
         fieldId: parseInt(fieldId),
-        startTime: startDateTime.toISOString(),
-        endTime: endDateTime.toISOString(),
+        startTime: startTime,
+        endTime: endTimeStr,
         dayIndex: 0,
         isAvailable: false,
         createdAt: new Date().toISOString(),
@@ -287,19 +300,19 @@ router.put('/games/:gameId/reschedule', async (req, res) => {
     console.log(`[RESCHEDULE] Successfully updated game ${gameId}:`, {
       gameId: updatedGame[0]?.id,
       fieldId: updatedGame[0]?.fieldId,
-      startTime: updatedGame[0]?.startTime,
-      endTime: updatedGame[0]?.endTime
+      scheduledDate: updatedGame[0]?.scheduledDate,
+      scheduledTime: updatedGame[0]?.scheduledTime
     });
 
-    res.json({ 
-      success: true, 
+    res.json({
+      success: true,
       message: 'Game rescheduled successfully',
       game: updatedGame[0],
       debug: {
         originalRequest: { fieldId, startTime },
         calculatedTimes: {
-          startTime: startDateTime.toISOString(),
-          endTime: endDateTime.toISOString()
+          startTime: startTime,
+          endTime: endTimeStr
         }
       }
     });

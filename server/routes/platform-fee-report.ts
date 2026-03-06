@@ -1,7 +1,7 @@
 /**
  * Platform Fee Report API
  * 
- * Provides comprehensive breakdown of MatchPro revenue and Stripe fees
+ * Provides comprehensive breakdown of KickDeck revenue and Stripe fees
  * from all processed transactions across all events.
  */
 
@@ -45,7 +45,7 @@ export async function getPlatformFeeReport(req: Request, res: Response) {
         pt.total_charged_amount,
         pt.platform_fee_amount,
         pt.stripe_fee_amount,
-        pt.matchpro_revenue,
+        pt.kickdeck_revenue,
         pt.net_amount as tournament_receives,
         CASE 
           WHEN t.stripe_customer_id IS NULL THEN 'Link'
@@ -72,10 +72,10 @@ export async function getPlatformFeeReport(req: Request, res: Response) {
         SUM(pt.total_charged_amount) as total_charged_to_customers,
         SUM(pt.platform_fee_amount) as total_platform_fees_collected,
         SUM(pt.stripe_fee_amount) as total_stripe_fees_paid,
-        SUM(pt.matchpro_revenue) as total_matchpro_net_revenue,
-        AVG(pt.matchpro_revenue) as avg_matchpro_revenue_per_transaction,
-        SUM(CASE WHEN t.stripe_customer_id IS NULL THEN pt.matchpro_revenue ELSE 0 END) as link_payment_revenue,
-        SUM(CASE WHEN t.stripe_customer_id IS NOT NULL THEN pt.matchpro_revenue ELSE 0 END) as card_payment_revenue,
+        SUM(pt.kickdeck_revenue) as total_kickdeck_net_revenue,
+        AVG(pt.kickdeck_revenue) as avg_kickdeck_revenue_per_transaction,
+        SUM(CASE WHEN t.stripe_customer_id IS NULL THEN pt.kickdeck_revenue ELSE 0 END) as link_payment_revenue,
+        SUM(CASE WHEN t.stripe_customer_id IS NOT NULL THEN pt.kickdeck_revenue ELSE 0 END) as card_payment_revenue,
         COUNT(CASE WHEN t.stripe_customer_id IS NULL THEN 1 END) as link_payment_count,
         COUNT(CASE WHEN t.stripe_customer_id IS NOT NULL THEN 1 END) as card_payment_count
       FROM teams t
@@ -98,8 +98,8 @@ export async function getPlatformFeeReport(req: Request, res: Response) {
       ? (summary.total_stripe_fees_paid / summary.total_charged_to_customers) * 100
       : 0;
       
-    const matchproMarginRate = summary.total_platform_fees_collected > 0
-      ? (summary.total_matchpro_net_revenue / summary.total_platform_fees_collected) * 100
+    const kickdeckMarginRate = summary.total_platform_fees_collected > 0
+      ? (summary.total_kickdeck_net_revenue / summary.total_platform_fees_collected) * 100
       : 0;
     
     // Get event-level breakdown
@@ -112,8 +112,8 @@ export async function getPlatformFeeReport(req: Request, res: Response) {
         SUM(pt.total_charged_amount) as total_charged,
         SUM(pt.platform_fee_amount) as platform_fees,
         SUM(pt.stripe_fee_amount) as stripe_fees,
-        SUM(pt.matchpro_revenue) as matchpro_revenue,
-        AVG(pt.matchpro_revenue) as avg_revenue_per_team
+        SUM(pt.kickdeck_revenue) as kickdeck_revenue,
+        AVG(pt.kickdeck_revenue) as avg_revenue_per_team
       FROM events e
       INNER JOIN teams t ON e.id = t.event_id
       LEFT JOIN payment_transactions pt ON t.payment_intent_id = pt.payment_intent_id
@@ -122,7 +122,7 @@ export async function getPlatformFeeReport(req: Request, res: Response) {
         ${dateFilter}
         ${eventFilter}
       GROUP BY e.id, e.name
-      ORDER BY matchpro_revenue DESC
+      ORDER BY kickdeck_revenue DESC
     `;
     
     const eventBreakdown = await db.execute(eventBreakdownQuery);
@@ -141,11 +141,11 @@ export async function getPlatformFeeReport(req: Request, res: Response) {
         totalChargedToCustomers: parseInt(summary.total_charged_to_customers) || 0,
         totalPlatformFeesCollected: parseInt(summary.total_platform_fees_collected) || 0,
         totalStripeFeespaid: parseInt(summary.total_stripe_fees_paid) || 0,
-        totalMatchProNetRevenue: parseInt(summary.total_matchpro_net_revenue) || 0,
-        avgMatchProRevenuePerTransaction: parseInt(summary.avg_matchpro_revenue_per_transaction) || 0,
+        totalKickDeckNetRevenue: parseInt(summary.total_kickdeck_net_revenue) || 0,
+        avgKickDeckRevenuePerTransaction: parseInt(summary.avg_kickdeck_revenue_per_transaction) || 0,
         platformFeeRate: parseFloat(platformFeeRate.toFixed(2)),
         stripeFeeRate: parseFloat(stripeFeeRate.toFixed(2)),
-        matchproMarginRate: parseFloat(matchproMarginRate.toFixed(2))
+        kickdeckMarginRate: parseFloat(kickdeckMarginRate.toFixed(2))
       },
       paymentMethodBreakdown: {
         linkPayments: {
@@ -171,7 +171,7 @@ export async function getPlatformFeeReport(req: Request, res: Response) {
         totalCharged: parseInt(event.total_charged),
         platformFees: parseInt(event.platform_fees),
         stripeFees: parseInt(event.stripe_fees),
-        matchproRevenue: parseInt(event.matchpro_revenue),
+        kickdeckRevenue: parseInt(event.kickdeck_revenue),
         avgRevenuePerTeam: parseInt(event.avg_revenue_per_team)
       })),
       transactions: paymentData.map(payment => ({
@@ -182,7 +182,7 @@ export async function getPlatformFeeReport(req: Request, res: Response) {
         totalChargedAmount: parseInt(payment.total_charged_amount),
         platformFeeAmount: parseInt(payment.platform_fee_amount),
         stripeFeeAmount: parseInt(payment.stripe_fee_amount),
-        matchproRevenue: parseInt(payment.matchpro_revenue),
+        kickdeckRevenue: parseInt(payment.kickdeck_revenue),
         tournamentReceives: parseInt(payment.tournament_receives),
         paymentMethodType: payment.payment_method_type,
         paymentIntentId: payment.payment_intent_id,
@@ -191,7 +191,7 @@ export async function getPlatformFeeReport(req: Request, res: Response) {
       }))
     };
     
-    console.log(`Platform fee report generated: ${response.summary.totalTransactions} transactions, $${(response.summary.totalMatchProNetRevenue / 100).toFixed(2)} total MatchPro revenue`);
+    console.log(`Platform fee report generated: ${response.summary.totalTransactions} transactions, $${(response.summary.totalKickDeckNetRevenue / 100).toFixed(2)} total KickDeck revenue`);
     
     res.json(response);
     
@@ -243,11 +243,11 @@ export async function getRevenueTrends(req: Request, res: Response) {
       SELECT 
         ${dateGrouping} as period,
         COUNT(*) as transaction_count,
-        SUM(pt.matchpro_revenue) as matchpro_revenue,
+        SUM(pt.kickdeck_revenue) as kickdeck_revenue,
         SUM(pt.stripe_fee_amount) as stripe_fees,
         SUM(pt.platform_fee_amount) as platform_fees,
         SUM(pt.total_charged_amount) as total_charged,
-        AVG(pt.matchpro_revenue) as avg_revenue_per_transaction
+        AVG(pt.kickdeck_revenue) as avg_revenue_per_transaction
       FROM teams t
       LEFT JOIN payment_transactions pt ON t.payment_intent_id = pt.payment_intent_id
       WHERE t.payment_status = 'paid' 
@@ -268,7 +268,7 @@ export async function getRevenueTrends(req: Request, res: Response) {
       trends: trends.map(trend => ({
         period: trend.period,
         transactionCount: parseInt(trend.transaction_count),
-        matchproRevenue: parseInt(trend.matchpro_revenue),
+        kickdeckRevenue: parseInt(trend.kickdeck_revenue),
         stripeFees: parseInt(trend.stripe_fees),
         platformFees: parseInt(trend.platform_fees),
         totalCharged: parseInt(trend.total_charged),

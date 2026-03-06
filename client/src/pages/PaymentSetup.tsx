@@ -181,14 +181,14 @@ export default function PaymentSetup() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
-      {/* MatchPro Header */}
+      {/* KickDeck Header */}
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-4xl mx-auto px-4 py-6">
           <div className="flex items-center justify-center space-x-3">
             <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">M</span>
+              <span className="text-white font-bold text-sm">K</span>
             </div>
-            <h1 className="text-2xl font-bold text-gray-900">MatchPro</h1>
+            <h1 className="text-2xl font-bold text-gray-900">KickDeck</h1>
             <span className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-full">Payment Center</span>
           </div>
         </div>

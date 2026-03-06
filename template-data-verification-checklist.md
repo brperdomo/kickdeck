@@ -1,6 +1,6 @@
 # SendGrid Template Data Verification Checklist
 
-## Verified Data Fields for Your MatchPro Templates
+## Verified Data Fields for Your KickDeck Templates
 
 Based on your application's email service analysis, here are the exact data fields to verify in each SendGrid template:
 
@@ -8,7 +8,7 @@ Based on your application's email service analysis, here are the exact data fiel
 **Required placeholders:**
 - `{{username}}` or `{{resetLink}}` or `{{resetUrl}}`
 - `{{expiryHours}}` (shows "24")
-- `{{supportEmail}}` (shows "support@matchpro.ai")
+- `{{supportEmail}}` (shows "support@kickdeck.io")
 
 ### Registration Confirmation (d-4eca2752ddd247158dd1d5433407cd5e)
 **Team Information:**
@@ -121,4 +121,4 @@ Your templates successfully received test data with:
 - ✅ Transaction IDs and amounts
 - ✅ Working dashboard links
 
-All merge fields in your SendGrid templates should now display authentic MatchPro data instead of empty placeholders.
+All merge fields in your SendGrid templates should now display authentic KickDeck data instead of empty placeholders.

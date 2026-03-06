@@ -65,7 +65,7 @@ async function comprehensiveEmailFix() {
     'test.admin@gmail.com',
     'bperdomo.test@gmail.com',
     'bperdomo@zoho.com',
-    'admin@matchpro.ai'
+    'admin@kickdeck.io'
   ];
   
   const suppressionTypes = ['bounces', 'blocks', 'spam_reports', 'unsubscribes', 'invalid_emails'];
@@ -130,7 +130,7 @@ async function comprehensiveEmailFix() {
     
     const testMessage = {
       to: freshEmail,
-      from: 'support@matchpro.ai',
+      from: 'support@kickdeck.io',
       subject: 'SendGrid Account Test',
       text: 'This is a test to verify SendGrid account functionality.',
       html: `
@@ -158,7 +158,7 @@ async function comprehensiveEmailFix() {
   console.log('\n5. Testing password reset with working email...');
   
   // Use a known working email for testing
-  const workingEmail = 'admin@matchpro.ai';
+  const workingEmail = 'admin@kickdeck.io';
   
   try {
     const domain = process.env.REPLIT_DOMAINS?.split(',')[0] || 'localhost:5000';
@@ -227,7 +227,7 @@ async function comprehensiveEmailFix() {
   console.log('• Tested password reset endpoint');
   console.log('• Confirmed template configuration');
   console.log('\nNext steps:');
-  console.log('1. Test password reset with admin@matchpro.ai');
+  console.log('1. Test password reset with admin@kickdeck.io');
   console.log('2. Monitor email delivery in SendGrid Activity Feed');
   console.log('3. Use verified sender addresses for all admin functions');
 }

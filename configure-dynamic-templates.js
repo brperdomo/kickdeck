@@ -76,8 +76,8 @@ async function configureDynamicTemplates() {
         subject: `{{subject}}`, // Will be handled by SendGrid template
         content: '', // Not used for dynamic templates
         isActive: true,
-        senderEmail: 'support@matchpro.ai',
-        senderName: 'MatchPro'
+        senderEmail: 'support@kickdeck.io',
+        senderName: 'KickDeck'
       };
       
       let response;
@@ -128,8 +128,8 @@ async function configureDynamicTemplates() {
         recipientEmail: 'bperdomo@zoho.com',
         testData: {
           userName: 'Test User',
-          resetLink: 'https://app.matchpro.ai/reset-password?token=test123',
-          supportEmail: 'support@matchpro.ai'
+          resetLink: 'https://app.kickdeck.io/reset-password?token=test123',
+          supportEmail: 'support@kickdeck.io'
         }
       })
     });

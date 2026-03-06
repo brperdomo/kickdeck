@@ -13,7 +13,7 @@ const https = require('https');
 function checkProductionTemplates() {
   return new Promise((resolve, reject) => {
     const options = {
-      hostname: 'app.matchpro.ai',
+      hostname: 'app.kickdeck.io',
       port: 443,
       path: '/api/admin/sendgrid/templates',
       method: 'GET',
@@ -70,7 +70,7 @@ function testProductionEmailSend() {
       templateType: 'password_reset',
       templateData: {
         username: 'bperdomo',
-        resetUrl: 'https://app.matchpro.ai/reset-password?token=test-123',
+        resetUrl: 'https://app.kickdeck.io/reset-password?token=test-123',
         token: 'test-123',
         expiryHours: 24
       }
@@ -79,7 +79,7 @@ function testProductionEmailSend() {
     const postData = JSON.stringify(emailData);
 
     const options = {
-      hostname: 'app.matchpro.ai',
+      hostname: 'app.kickdeck.io',
       port: 443,
       path: '/api/admin/sendgrid/send-email',
       method: 'POST',

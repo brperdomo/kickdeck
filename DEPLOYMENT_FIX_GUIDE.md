@@ -35,7 +35,7 @@ DATABASE_URL=your_production_database_url
 
 # SendGrid (Email)
 SENDGRID_API_KEY=your_sendgrid_api_key
-DEFAULT_FROM_EMAIL=support@matchpro.ai
+DEFAULT_FROM_EMAIL=support@kickdeck.io
 
 # Session
 SESSION_SECRET=your_session_secret

@@ -229,7 +229,7 @@ export function PaymentReportsView({ eventId }: PaymentReportsViewProps) {
       {/* Key Benefits */}
       <Card className="border-green-200 bg-green-50/30">
         <CardHeader>
-          <CardTitle className="text-green-800">MatchPro Payment Benefits</CardTitle>
+          <CardTitle className="text-green-800">KickDeck Payment Benefits</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

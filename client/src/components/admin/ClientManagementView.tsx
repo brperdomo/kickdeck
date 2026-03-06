@@ -304,7 +304,7 @@ export function ClientManagementView() {
                   onChange={handleInputChange}
                   placeholder="client"
                 />
-                <p className="text-xs text-muted-foreground">This will be accessible as client.matchpro.ai</p>
+                <p className="text-xs text-muted-foreground">This will be accessible as client.kickdeck.io</p>
               </div>
               
               <div className="grid gap-2">

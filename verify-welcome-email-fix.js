@@ -17,7 +17,7 @@ async function verifyWelcomeEmailFix() {
   const timestamp = Date.now();
   const testUser = {
     username: `testmember${timestamp}`,
-    email: `testmember${timestamp}@matchproteam.testinator.com`,
+    email: `testmember${timestamp}@kickdeckteam.testinator.com`,
     password: 'Welcome123!',
     firstName: 'Test',
     lastName: 'Member',

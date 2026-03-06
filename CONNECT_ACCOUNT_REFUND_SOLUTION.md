@@ -1,13 +1,13 @@
 # Connect Account Refund Solution - COMPLETED
 
 ## Problem Statement
-When refunds are processed through MatchPro, funds were being taken from the main MatchPro account instead of the tournament Connect account where the original payment was deposited. This creates cash flow issues for MatchPro.
+When refunds are processed through KickDeck, funds were being taken from the main KickDeck account instead of the tournament Connect account where the original payment was deposited. This creates cash flow issues for KickDeck.
 
 ## Root Cause Analysis
-1. **Payment Flow**: Payments processed through main MatchPro account via Stripe Checkout
+1. **Payment Flow**: Payments processed through main KickDeck account via Stripe Checkout
 2. **Missing Metadata**: Payment intents didn't include Connect account information
 3. **Refund Logic**: Existing refund system couldn't identify which Connect account to refund from
-4. **Result**: All refunds came from MatchPro's main account balance
+4. **Result**: All refunds came from KickDeck's main account balance
 
 ## Solution Implementation ✅
 
@@ -92,13 +92,13 @@ if (connectAccountId) {
 
 ### Before Fix:
 - **Payment**: $775.10 → Tournament Connect Account
-- **Refund**: $775.10 ← MatchPro Main Account  
-- **Net Impact**: MatchPro loses $775.10 per refund
+- **Refund**: $775.10 ← KickDeck Main Account  
+- **Net Impact**: KickDeck loses $775.10 per refund
 
 ### After Fix:
 - **Payment**: $775.10 → Tournament Connect Account  
 - **Refund**: $775.10 ← Tournament Connect Account
-- **Net Impact**: $0.00 for MatchPro (correct cash flow)
+- **Net Impact**: $0.00 for KickDeck (correct cash flow)
 
 ## Deployment Status ✅
 
@@ -113,7 +113,7 @@ if (connectAccountId) {
 2. **No Customer Impact**: Payment flow remains unchanged for users
 3. **Audit Trail**: Enhanced logging for refund source tracking
 4. **Future-Proof**: Supports both main account and Connect account refunds
-5. **Cash Flow Correction**: Eliminates MatchPro balance drain from refunds
+5. **Cash Flow Correction**: Eliminates KickDeck balance drain from refunds
 
 ## Verification Commands
 
@@ -131,7 +131,7 @@ curl -X POST "http://localhost:5000/api/payments/webhook" -H "Content-Type: appl
 ## CRITICAL UPDATE: No Fallback Policy ✅
 
 **Enhanced Protection Against Negative Balances:**
-- **Removed Fallback**: No refunds processed through MatchPro main account
+- **Removed Fallback**: No refunds processed through KickDeck main account
 - **Strict Validation**: Refunds ONLY allowed with valid Connect account metadata
 - **Error Handling**: Old payments without Connect metadata are blocked (require manual intervention)
 - **Cash Flow Protection**: 100% prevention of negative balances on main account
@@ -155,4 +155,4 @@ if (!connectAccountId) {
 
 ## Status: MAXIMUM PROTECTION IMPLEMENTED ✅
 
-The refund system now provides complete protection against negative balances on the MatchPro main account. All refunds must be processed through tournament Connect accounts - no exceptions.
+The refund system now provides complete protection against negative balances on the KickDeck main account. All refunds must be processed through tournament Connect accounts - no exceptions.

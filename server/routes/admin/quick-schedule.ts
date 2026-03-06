@@ -398,7 +398,8 @@ function generateGamesForTeamsWithConstraints(teams: string[], ageGroup: string,
   // Group slots by day for better distribution
   const slotsByDay: { [date: string]: any[] } = {};
   sortedSlots.forEach(slot => {
-    const date = new Date(slot.startTime).toISOString().split('T')[0];
+    // Extract date by string splitting — DO NOT use new Date() which applies timezone conversion
+    const date = slot.startTime.split('T')[0];
     if (!slotsByDay[date]) slotsByDay[date] = [];
     slotsByDay[date].push(slot);
   });
@@ -410,8 +411,8 @@ function generateGamesForTeamsWithConstraints(teams: string[], ageGroup: string,
     
     // Try to find the best slot considering multiple factors
     for (const slot of sortedSlots) {
-      const slotTime = new Date(slot.startTime);
-      const slotDate = slotTime.toISOString().split('T')[0];
+      // Extract date by string splitting — DO NOT use new Date() which applies timezone conversion
+      const slotDate = slot.startTime.split('T')[0];
       
       // Removed duplicate field check - handled below with better logging
       
@@ -451,7 +452,7 @@ function generateGamesForTeamsWithConstraints(teams: string[], ageGroup: string,
     
     if (assignedSlot) {
       const slotTime = new Date(assignedSlot.startTime);
-      const slotDate = slotTime.toISOString().split('T')[0];
+      const slotDate = assignedSlot.startTime.split('T')[0]; // String split, no timezone conversion
       
       // Update team tracking
       teamLastGameTime[matchup.homeTeam] = slotTime;
@@ -481,7 +482,7 @@ function generateGamesForTeamsWithConstraints(teams: string[], ageGroup: string,
 
 function isSlotValidForTeams(homeTeam: string, awayTeam: string, slot: any, teamLastGameTime: any, teamGamesPerDay: any, constraints: any): boolean {
   const slotTime = new Date(slot.startTime);
-  const slotDate = slotTime.toISOString().split('T')[0];
+  const slotDate = slot.startTime.split('T')[0]; // String split, no timezone conversion
   
   // Check team rest period constraint
   const minRestMs = constraints.minRestTimeBetweenGames * 60 * 1000; // Convert minutes to milliseconds
@@ -547,9 +548,9 @@ function isSlotValidForTeams(homeTeam: string, awayTeam: string, slot: any, team
 
 function calculateSlotScore(homeTeam: string, awayTeam: string, slot: any, teamLastGameTime: any, teamGamesPerDay: any, existingGames: any[]): number {
   let score = 100; // Base score
-  
+
   const slotTime = new Date(slot.startTime);
-  const slotDate = slotTime.toISOString().split('T')[0];
+  const slotDate = slot.startTime.split('T')[0]; // String split, no timezone conversion
   
   // Prefer spreading games throughout the day
   const homeTeamLastGame = teamLastGameTime[homeTeam];

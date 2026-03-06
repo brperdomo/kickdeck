@@ -38,8 +38,8 @@ export async function createTeamWaitlistTemplate() {
       name: 'Team Waitlisted',
       description: 'Notification when a team is placed on the waitlist',
       subject: 'Your Team Has Been Placed on the Waitlist',
-      senderName: 'MatchPro Registration',
-      senderEmail: 'support@matchpro.ai',
+      senderName: 'KickDeck Registration',
+      senderEmail: 'support@kickdeck.io',
       variables: [
         'teamName',
         'eventName',
@@ -104,7 +104,7 @@ export async function createTeamWaitlistTemplate() {
       </div>
       
       <p>If you have any questions, please contact our support team.</p>
-      <p>Thank you,<br>The MatchPro Team</p>
+      <p>Thank you,<br>The KickDeck Team</p>
     </div>
     <div class="footer">
       <p>This is an automated message. Please do not reply directly.</p>

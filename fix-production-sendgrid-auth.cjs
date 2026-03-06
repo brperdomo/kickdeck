@@ -51,7 +51,7 @@ echo "Timestamp: $(date)"
 # Set critical environment variables for Cloud Run
 export NODE_ENV="production"
 export SENDGRID_API_KEY="${workingApiKey}"
-export DEFAULT_FROM_EMAIL="support@matchpro.ai"
+export DEFAULT_FROM_EMAIL="support@kickdeck.io"
 
 echo "Environment variables set:"
 echo "- NODE_ENV: $NODE_ENV"
@@ -75,7 +75,7 @@ echo "Deploy this to your Cloud Run service with these environment variables."
 
 NODE_ENV=production
 SENDGRID_API_KEY=${workingApiKey}
-DEFAULT_FROM_EMAIL=support@matchpro.ai
+DEFAULT_FROM_EMAIL=support@kickdeck.io
 DATABASE_URL=\${DATABASE_URL}
 SESSION_SECRET=\${SESSION_SECRET}
 STRIPE_SECRET_KEY=\${STRIPE_SECRET_KEY}
@@ -90,7 +90,7 @@ STRIPE_SECRET_KEY=\${STRIPE_SECRET_KEY}
       environment: {
         NODE_ENV: 'production',
         SENDGRID_API_KEY: workingApiKey,
-        DEFAULT_FROM_EMAIL: 'support@matchpro.ai'
+        DEFAULT_FROM_EMAIL: 'support@kickdeck.io'
       }
     }
   };
@@ -112,14 +112,14 @@ console.log('2. Click on "Secrets" in the left sidebar (lock icon)');
 console.log('3. Add or update these secrets:');
 console.log('');
 console.log('   SENDGRID_API_KEY = ${workingApiKey}');
-console.log('   DEFAULT_FROM_EMAIL = support@matchpro.ai');
+console.log('   DEFAULT_FROM_EMAIL = support@kickdeck.io');
 console.log('   NODE_ENV = production');
 console.log('');
 console.log('4. Go to "Deployments" tab');
 console.log('5. Click "Deploy" to create a new deployment with updated secrets');
 console.log('');
 console.log('6. Test the deployment by visiting:');
-console.log('   https://app.matchpro.ai/api/admin/sendgrid/templates');
+console.log('   https://app.kickdeck.io/api/admin/sendgrid/templates');
 console.log('   (After logging in as admin)');
 console.log('');
 console.log('The deployment should now use the correct SendGrid API key.');
@@ -132,7 +132,7 @@ console.log('The deployment should now use the correct SendGrid API key.');
   console.log('\n🔍 Testing current production endpoint...');
   
   try {
-    const prodResponse = await makeHTTPSRequest('GET', 'app.matchpro.ai', '/api/admin/sendgrid/templates', {
+    const prodResponse = await makeHTTPSRequest('GET', 'app.kickdeck.io', '/api/admin/sendgrid/templates', {
       'User-Agent': 'Production-Test-Tool'
     });
     
@@ -173,7 +173,7 @@ console.log('The deployment should now use the correct SendGrid API key.');
   console.log('2. Deploy the built application to your hosting platform');
   console.log('');
   console.log('After deployment, verify by:');
-  console.log('1. Login to app.matchpro.ai as admin');
+  console.log('1. Login to app.kickdeck.io as admin');
   console.log('2. Navigate to SendGrid Settings');
   console.log('3. Confirm templates load without authorization errors');
 }

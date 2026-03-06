@@ -4,8 +4,8 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 (async () => {
   try {
     await sgMail.send({
-      to: "teamtest@matchprotest.testinator.com",
-      from: "support@matchpro.ai",
+      to: "teamtest@kickdecktest.testinator.com",
+      from: "support@kickdeck.io",
       subject: "Test Email from Shell",
       text: "This is a simple test email sent from the Shell script.",
     });

@@ -38,7 +38,7 @@ async function updateWelcomeEmailTemplates() {
     console.log(`Using SendGrid provider: ${sendGridProvider.providerName} (ID: ${sendGridProvider.id})`);
     
     // Base url for login link
-    const appBaseUrl = process.env.APP_URL || 'https://matchpro.ai';
+    const appBaseUrl = process.env.APP_URL || 'https://kickdeck.io';
     
     // Get the existing welcome email template
     const [welcomeTemplate] = await db
@@ -54,13 +54,13 @@ async function updateWelcomeEmailTemplates() {
         .set({
           name: 'Member Welcome Email',
           description: 'Welcome email for new members who register via the public registration page',
-          subject: 'Welcome to MatchPro - Your Account is Ready!',
+          subject: 'Welcome to KickDeck - Your Account is Ready!',
           content: `
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Welcome to MatchPro</title>
+  <title>Welcome to KickDeck</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -108,19 +108,19 @@ async function updateWelcomeEmailTemplates() {
 <body>
   <div class="container">
     <div class="header">
-      <h1>Welcome to MatchPro!</h1>
+      <h1>Welcome to KickDeck!</h1>
     </div>
     <div class="content">
       <p>Hello {{firstName}},</p>
       
-      <p>Welcome to MatchPro! We're thrilled to have you join our sports management platform designed to make team management easier and more efficient.</p>
+      <p>Welcome to KickDeck! We're thrilled to have you join our sports management platform designed to make team management easier and more efficient.</p>
       
       <p>Your account has been successfully created and is ready to use:</p>
       <ul>
         <li><strong>Email:</strong> {{email}}</li>
       </ul>
       
-      <p>With your MatchPro member account, you can:</p>
+      <p>With your KickDeck member account, you can:</p>
       <ul>
         <li>Register teams for tournaments and events</li>
         <li>Track your upcoming games and schedules</li>
@@ -137,9 +137,9 @@ async function updateWelcomeEmailTemplates() {
       
       <p>If you have any questions or need assistance, please don't hesitate to contact our support team.</p>
       
-      <p>Thank you for choosing MatchPro for your sports management needs!</p>
+      <p>Thank you for choosing KickDeck for your sports management needs!</p>
       
-      <p>Best regards,<br>The MatchPro Team</p>
+      <p>Best regards,<br>The KickDeck Team</p>
     </div>
     <div class="footer">
       <p>This email was sent to {{email}}. If you did not create an account, please contact us immediately.</p>
@@ -147,8 +147,8 @@ async function updateWelcomeEmailTemplates() {
   </div>
 </body>
 </html>`,
-          senderName: 'MatchPro',
-          senderEmail: 'support@matchpro.ai',
+          senderName: 'KickDeck',
+          senderEmail: 'support@kickdeck.io',
           isActive: true,
           variables: ['firstName', 'lastName', 'email'],
           providerId: sendGridProvider.id,
@@ -165,13 +165,13 @@ async function updateWelcomeEmailTemplates() {
         name: 'Member Welcome Email',
         description: 'Welcome email for new members who register via the public registration page',
         type: 'welcome',
-        subject: 'Welcome to MatchPro - Your Account is Ready!',
+        subject: 'Welcome to KickDeck - Your Account is Ready!',
         content: `
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Welcome to MatchPro</title>
+  <title>Welcome to KickDeck</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -219,19 +219,19 @@ async function updateWelcomeEmailTemplates() {
 <body>
   <div class="container">
     <div class="header">
-      <h1>Welcome to MatchPro!</h1>
+      <h1>Welcome to KickDeck!</h1>
     </div>
     <div class="content">
       <p>Hello {{firstName}},</p>
       
-      <p>Welcome to MatchPro! We're thrilled to have you join our sports management platform designed to make team management easier and more efficient.</p>
+      <p>Welcome to KickDeck! We're thrilled to have you join our sports management platform designed to make team management easier and more efficient.</p>
       
       <p>Your account has been successfully created and is ready to use:</p>
       <ul>
         <li><strong>Email:</strong> {{email}}</li>
       </ul>
       
-      <p>With your MatchPro member account, you can:</p>
+      <p>With your KickDeck member account, you can:</p>
       <ul>
         <li>Register teams for tournaments and events</li>
         <li>Track your upcoming games and schedules</li>
@@ -248,9 +248,9 @@ async function updateWelcomeEmailTemplates() {
       
       <p>If you have any questions or need assistance, please don't hesitate to contact our support team.</p>
       
-      <p>Thank you for choosing MatchPro for your sports management needs!</p>
+      <p>Thank you for choosing KickDeck for your sports management needs!</p>
       
-      <p>Best regards,<br>The MatchPro Team</p>
+      <p>Best regards,<br>The KickDeck Team</p>
     </div>
     <div class="footer">
       <p>This email was sent to {{email}}. If you did not create an account, please contact us immediately.</p>
@@ -258,8 +258,8 @@ async function updateWelcomeEmailTemplates() {
   </div>
 </body>
 </html>`,
-        senderName: 'MatchPro',
-        senderEmail: 'support@matchpro.ai',
+        senderName: 'KickDeck',
+        senderEmail: 'support@kickdeck.io',
         isActive: true,
         variables: ['firstName', 'lastName', 'email'],
         providerId: sendGridProvider.id,
@@ -284,13 +284,13 @@ async function updateWelcomeEmailTemplates() {
         .set({
           name: 'Admin Welcome Email',
           description: 'Welcome email for users assigned to admin roles',
-          subject: 'Welcome to MatchPro - Admin Account Access',
+          subject: 'Welcome to KickDeck - Admin Account Access',
           content: `
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Welcome to MatchPro Admin</title>
+  <title>Welcome to KickDeck Admin</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -338,12 +338,12 @@ async function updateWelcomeEmailTemplates() {
 <body>
   <div class="container">
     <div class="header">
-      <h1>Welcome to MatchPro Admin!</h1>
+      <h1>Welcome to KickDeck Admin!</h1>
     </div>
     <div class="content">
       <p>Hello {{firstName}},</p>
       
-      <p>You have been invited to join MatchPro as an administrator for your organization. Your admin account has been created and is ready to use.</p>
+      <p>You have been invited to join KickDeck as an administrator for your organization. Your admin account has been created and is ready to use.</p>
       
       <p>Your account details:</p>
       <ul>
@@ -370,7 +370,7 @@ async function updateWelcomeEmailTemplates() {
       
       <p>Thank you for being part of our team!</p>
       
-      <p>Best regards,<br>The MatchPro Team</p>
+      <p>Best regards,<br>The KickDeck Team</p>
     </div>
     <div class="footer">
       <p>This email was sent to {{email}}. If you did not request an admin account, please contact us immediately.</p>
@@ -378,8 +378,8 @@ async function updateWelcomeEmailTemplates() {
   </div>
 </body>
 </html>`,
-          senderName: 'MatchPro',
-          senderEmail: 'support@matchpro.ai',
+          senderName: 'KickDeck',
+          senderEmail: 'support@kickdeck.io',
           isActive: true,
           variables: ['firstName', 'lastName', 'email', 'role'],
           providerId: sendGridProvider.id,
@@ -396,13 +396,13 @@ async function updateWelcomeEmailTemplates() {
         name: 'Admin Welcome Email',
         description: 'Welcome email for users assigned to admin roles',
         type: 'admin_welcome',
-        subject: 'Welcome to MatchPro - Admin Account Access',
+        subject: 'Welcome to KickDeck - Admin Account Access',
         content: `
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Welcome to MatchPro Admin</title>
+  <title>Welcome to KickDeck Admin</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -450,12 +450,12 @@ async function updateWelcomeEmailTemplates() {
 <body>
   <div class="container">
     <div class="header">
-      <h1>Welcome to MatchPro Admin!</h1>
+      <h1>Welcome to KickDeck Admin!</h1>
     </div>
     <div class="content">
       <p>Hello {{firstName}},</p>
       
-      <p>You have been invited to join MatchPro as an administrator for your organization. Your admin account has been created and is ready to use.</p>
+      <p>You have been invited to join KickDeck as an administrator for your organization. Your admin account has been created and is ready to use.</p>
       
       <p>Your account details:</p>
       <ul>
@@ -482,7 +482,7 @@ async function updateWelcomeEmailTemplates() {
       
       <p>Thank you for being part of our team!</p>
       
-      <p>Best regards,<br>The MatchPro Team</p>
+      <p>Best regards,<br>The KickDeck Team</p>
     </div>
     <div class="footer">
       <p>This email was sent to {{email}}. If you did not request an admin account, please contact us immediately.</p>
@@ -490,8 +490,8 @@ async function updateWelcomeEmailTemplates() {
   </div>
 </body>
 </html>`,
-        senderName: 'MatchPro',
-        senderEmail: 'support@matchpro.ai',
+        senderName: 'KickDeck',
+        senderEmail: 'support@kickdeck.io',
         isActive: true,
         variables: ['firstName', 'lastName', 'email', 'role'],
         providerId: sendGridProvider.id,
@@ -514,8 +514,8 @@ async function updateWelcomeEmailTemplates() {
       await db.update(emailTemplateRouting)
         .set({
           providerId: sendGridProvider.id,
-          fromEmail: 'support@matchpro.ai',
-          fromName: 'MatchPro',
+          fromEmail: 'support@kickdeck.io',
+          fromName: 'KickDeck',
           isActive: true,
           updatedAt: new Date()
         })
@@ -527,8 +527,8 @@ async function updateWelcomeEmailTemplates() {
       await db.insert(emailTemplateRouting).values({
         templateType: 'welcome',
         providerId: sendGridProvider.id,
-        fromEmail: 'support@matchpro.ai',
-        fromName: 'MatchPro',
+        fromEmail: 'support@kickdeck.io',
+        fromName: 'KickDeck',
         isActive: true,
         createdAt: new Date(),
         updatedAt: new Date()
@@ -548,8 +548,8 @@ async function updateWelcomeEmailTemplates() {
       await db.update(emailTemplateRouting)
         .set({
           providerId: sendGridProvider.id,
-          fromEmail: 'support@matchpro.ai',
-          fromName: 'MatchPro',
+          fromEmail: 'support@kickdeck.io',
+          fromName: 'KickDeck',
           isActive: true,
           updatedAt: new Date()
         })
@@ -561,8 +561,8 @@ async function updateWelcomeEmailTemplates() {
       await db.insert(emailTemplateRouting).values({
         templateType: 'admin_welcome',
         providerId: sendGridProvider.id,
-        fromEmail: 'support@matchpro.ai',
-        fromName: 'MatchPro',
+        fromEmail: 'support@kickdeck.io',
+        fromName: 'KickDeck',
         isActive: true,
         createdAt: new Date(),
         updatedAt: new Date()

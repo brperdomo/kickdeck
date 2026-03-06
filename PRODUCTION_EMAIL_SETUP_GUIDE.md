@@ -10,7 +10,7 @@ Add these to your production environment:
 
 ```
 SENDGRID_API_KEY=your_production_sendgrid_api_key
-SENDGRID_FROM_EMAIL=noreply@matchpro.ai
+SENDGRID_FROM_EMAIL=noreply@kickdeck.io
 ```
 
 ### 2. Database Setup Scripts to Run
@@ -54,7 +54,7 @@ These files are already in your codebase and will be deployed automatically:
 
 Ensure these are configured in your SendGrid account:
 
-1. **Domain Authentication**: Verify matchpro.ai domain
+1. **Domain Authentication**: Verify kickdeck.io domain
 2. **Sender Verification**: Verify sender email addresses
 3. **API Key Permissions**: Full access API key
 4. **Webhook Endpoint**: Configure webhook URL for event tracking

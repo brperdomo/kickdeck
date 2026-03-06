@@ -11,7 +11,7 @@ const router = express.Router();
  * CONNECT ACCOUNT REFUND ROUTES
  * 
  * All refunds processed directly on tournament Connect accounts to guarantee:
- * 1. Tournament organizers pay refunds (not MatchPro)
+ * 1. Tournament organizers pay refunds (not KickDeck)
  * 2. Complete refund visibility in Connect dashboards
  * 3. Full metadata for easy refund management
  */

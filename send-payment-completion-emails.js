@@ -73,13 +73,13 @@ const PAYMENT_COMPLETION_EMAIL_TEMPLATE = {
             Please complete your payment setup within 7 days to avoid registration cancellation.
           </p>
           <p style="color: #666; font-size: 14px; margin: 0;">
-            Questions? Contact us at <a href="mailto:support@matchpro.ai" style="color: #667eea;">support@matchpro.ai</a>
+            Questions? Contact us at <a href="mailto:support@kickdeck.io" style="color: #667eea;">support@kickdeck.io</a>
           </p>
         </div>
       </div>
       
       <div style="text-align: center; padding: 20px; color: #999; font-size: 12px;">
-        <p style="margin: 0;">© 2024 MatchPro Tournament Management. All rights reserved.</p>
+        <p style="margin: 0;">© 2024 KickDeck Tournament Management. All rights reserved.</p>
       </div>
     </div>
   `,
@@ -105,9 +105,9 @@ What happens next?
 
 Important: Please complete your payment setup within 7 days to avoid registration cancellation.
 
-Questions? Contact us at support@matchpro.ai
+Questions? Contact us at support@kickdeck.io
 
-© 2024 MatchPro Tournament Management
+© 2024 KickDeck Tournament Management
   `
 };
 
@@ -157,7 +157,7 @@ async function sendPaymentCompletionEmails(options = {}) {
       return { sent: 0, errors: 0 };
     }
     
-    const baseUrl = process.env.FRONTEND_URL || 'https://app.matchpro.ai';
+    const baseUrl = process.env.FRONTEND_URL || 'https://app.kickdeck.io';
     let sentCount = 0;
     let errorCount = 0;
     const errors = [];

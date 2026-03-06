@@ -15,38 +15,38 @@ interface AnimatedNavigationButtonProps {
   index?: number;
 }
 
-// Enhanced animation variants for more sophisticated animations
+// Enhanced animation variants — neon theme (Phase 2: dramatic overhaul)
 const buttonVariants = {
-  hidden: { 
+  hidden: {
     opacity: 0,
     x: -20,
     filter: "blur(8px)"
   },
-  visible: (index = 0) => ({ 
+  visible: (index = 0) => ({
     opacity: 1,
     x: 0,
     filter: "blur(0px)",
-    transition: { 
-      delay: 0.2 + (index * 0.08),
-      duration: 0.6,
-      type: "spring", 
-      stiffness: 120,
-      damping: 15
+    transition: {
+      delay: 0.1 + (index * 0.05),
+      duration: 0.5,
+      type: "spring",
+      stiffness: 180,
+      damping: 12
     }
   }),
-  hover: { 
-    x: 6,
-    transition: { 
-      duration: 0.4,
+  hover: {
+    x: 8,
+    transition: {
+      duration: 0.25,
       type: "spring",
-      stiffness: 300,
-      damping: 15
+      stiffness: 500,
+      damping: 12
     }
   },
-  tap: { 
-    scale: 0.96,
-    transition: { 
-      duration: 0.1 
+  tap: {
+    scale: 0.92,
+    transition: {
+      duration: 0.06
     }
   }
 };
@@ -89,75 +89,55 @@ const pulseVariants = {
 // Wrapper component that previously handled permission checks
 function NavigationButtonWrapper(props: AnimatedNavigationButtonProps) {
   const { hasPermission } = usePermissions();
-  
+
   // Always render the button regardless of permissions
-  // Removing permission check to allow access to all navigation items
   return <NavigationButtonContent {...props} />;
-  
-  // Original code (commented out):
-  // If no permission needed or user has permission, render the button
-  // if (!props.permission || hasPermission(props.permission as any)) {
-  //   return <NavigationButtonContent {...props} />;
-  // }
-  
-  // Otherwise, render nothing
-  // return null;
 }
 
-// Actual button component - only rendered if permission check passes
-function NavigationButtonContent({ 
-  view, 
-  activeView, 
-  onClick, 
-  icon, 
-  label, 
+// Actual button component
+function NavigationButtonContent({
+  view,
+  activeView,
+  onClick,
+  icon,
+  label,
   index = 0
 }: AnimatedNavigationButtonProps) {
-  // Declare all hooks unconditionally
   const [hasShined, setHasShined] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const isActive = activeView === view;
-  
-  // Track animation state
+
   const [animationState, setAnimationState] = useState("initial");
-  
-  // Handle animation completion effect
+
   useEffect(() => {
     if (animationState === "completed") {
-      // Reset to initial state after animation completes
       setAnimationState("initial");
       setHasShined(true);
     }
   }, [animationState]);
-  
-  // Handle shine effect when button becomes active
+
   useEffect(() => {
-    // Clean up any existing interval
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
-    
+
     if (isActive) {
-      // Use a safer approach with a small delay to ensure component is mounted
       const timer = setTimeout(() => {
-        // Start animation
         setAnimationState("animate");
       }, 100);
-      
-      // Set up shine interval (only if already shined once)
+
       if (hasShined) {
         intervalRef.current = setInterval(() => {
           setAnimationState("animate");
         }, 8000);
       }
-      
+
       return () => {
         clearTimeout(timer);
       };
     }
-    
-    // Cleanup function
+
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
@@ -181,52 +161,72 @@ function NavigationButtonContent({
           "w-full justify-start relative overflow-hidden group",
           isActive ? "font-medium" : ""
         )}
-        onClick={onClick}
         style={{
-          backgroundColor: isActive 
-            ? 'rgba(79, 70, 229, 0.15)' // subtle indigo background
+          backgroundColor: isActive
+            ? 'rgba(124, 58, 237, 0.15)'
             : 'transparent',
-          color: isActive 
-            ? '#ffffff' 
+          color: isActive
+            ? '#ffffff'
             : 'rgba(255, 255, 255, 0.7)',
-          boxShadow: isActive ? '0 0 20px rgba(99, 102, 241, 0.15)' : 'none',
+          boxShadow: isActive ? '0 0 20px rgba(124, 58, 237, 0.2)' : 'none',
           borderRadius: '0.375rem',
           padding: '0.5rem 0.75rem',
           height: 'auto',
           minHeight: '2.25rem',
-          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease'
+        }}
+        onMouseEnter={(e) => {
+          if (!isActive) {
+            e.currentTarget.style.backgroundColor = 'rgba(124, 58, 237, 0.12)';
+            e.currentTarget.style.boxShadow = '0 0 25px rgba(124, 58, 237, 0.2), inset 0 0 15px rgba(124, 58, 237, 0.05)';
+            e.currentTarget.style.borderColor = 'rgba(124, 58, 237, 0.25)';
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (!isActive) {
+            e.currentTarget.style.backgroundColor = 'transparent';
+            e.currentTarget.style.boxShadow = 'none';
+            e.currentTarget.style.borderColor = 'transparent';
+          }
+        }}
+        onClick={(e) => {
+          // Trigger neon flash animation on click
+          const el = e.currentTarget;
+          el.classList.add('neon-click-flash');
+          setTimeout(() => el.classList.remove('neon-click-flash'), 400);
+          onClick();
         }}
       >
-        {/* Active indicator elements (always rendered but conditionally visible) */}
+        {/* Active indicator elements */}
         <div className={isActive ? "block" : "hidden"}>
-          {/* Main indicator bar with gradient */}
-          <motion.div 
-            className="absolute left-0 top-[15%] bottom-[15%] w-1.5 rounded-full shadow-lg shadow-indigo-500/40"
-            style={{ 
-              background: 'linear-gradient(to bottom, #4f46e5, #a78bfa)'
+          {/* Main indicator bar — violet gradient */}
+          <motion.div
+            className="absolute left-0 top-[15%] bottom-[15%] w-1.5 rounded-full shadow-lg shadow-violet-500/40"
+            style={{
+              background: 'linear-gradient(to bottom, #7c3aed, #a855f7)'
             }}
             initial={{ scaleY: 0, opacity: 0 }}
             animate={{ scaleY: 1, opacity: 1 }}
             transition={{ duration: 0.4 }}
           />
-          
+
           {/* Glowing dot at the top of the indicator */}
-          <motion.div 
-            className="absolute left-0 top-[12%] w-3 h-3 rounded-full bg-indigo-400 shadow-lg shadow-indigo-500/50 -translate-x-1"
+          <motion.div
+            className="absolute left-0 top-[12%] w-3 h-3 rounded-full shadow-lg shadow-violet-500/50 -translate-x-1"
             initial="initial"
             animate="pulse"
             variants={pulseVariants}
             style={{
               filter: "blur(1px)",
-              background: "radial-gradient(circle, rgba(129,140,248,1) 0%, rgba(99,102,241,1) 100%)"
+              background: "radial-gradient(circle, rgba(167,139,250,1) 0%, rgba(124,58,237,1) 100%)"
             }}
           />
-          
-          {/* Subtle background glow for active button */}
-          <div className="absolute inset-0 pointer-events-none opacity-20 bg-gradient-to-r from-indigo-600/0 via-indigo-600/30 to-indigo-600/0 rounded-md" />
-          
+
+          {/* Subtle background glow */}
+          <div className="absolute inset-0 pointer-events-none opacity-20 bg-gradient-to-r from-violet-600/0 via-violet-600/30 to-violet-600/0 rounded-md" />
+
           {/* Animated shine effect */}
-          <motion.div 
+          <motion.div
             className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent pointer-events-none"
             variants={shineVariants}
             initial="initial"
@@ -238,31 +238,36 @@ function NavigationButtonContent({
             }}
           />
         </div>
-        
+
         {/* Button content */}
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center">
-            {/* Enhanced icon wrapper */}
-            <motion.div 
+            {/* Enhanced icon wrapper — neon violet/cyan */}
+            <motion.div
               className={cn(
                 "w-6 h-6 flex items-center justify-center rounded-md mr-3 relative",
-                isActive 
-                  ? "bg-gradient-to-br from-indigo-600/90 to-indigo-800/90 shadow-lg shadow-indigo-900/20" 
+                isActive
+                  ? "bg-gradient-to-br from-violet-600/90 to-purple-800/90 shadow-lg shadow-violet-900/20"
                   : "bg-gray-800/70 border border-gray-700/50"
               )}
-              whileHover={{ scale: 1.08 }}
-              animate={{ 
+              whileHover={{
+                scale: 1.18,
+                rotate: 12,
+                boxShadow: '0 0 16px rgba(6, 182, 212, 0.4), 0 0 30px rgba(124, 58, 237, 0.2)'
+              }}
+              animate={{
                 rotate: isActive ? [0, 6, 0] : 0
               }}
-              transition={{ 
-                duration: 0.5,
+              transition={{
+                duration: 0.35,
                 type: "spring",
+                stiffness: 300,
                 damping: 10
               }}
             >
-              {/* Subtle background glow for active icon */}
-              <div className={isActive ? "absolute inset-0 rounded-md bg-indigo-500/20 filter blur-sm" : "hidden"} />
-              
+              {/* Background glow for active icon */}
+              <div className={isActive ? "absolute inset-0 rounded-md bg-violet-500/20 filter blur-sm" : "hidden"} />
+
               {/* Icon */}
               <motion.div
                 animate={{
@@ -277,15 +282,15 @@ function NavigationButtonContent({
                 {icon}
               </motion.div>
             </motion.div>
-            
-            {/* Label text with sophisticated styling */}
+
+            {/* Label text */}
             <div className="flex flex-col">
-              <motion.span 
+              <motion.span
                 className={cn(
                   "text-sm transition-all duration-200",
-                  isActive 
-                    ? "text-white font-medium tracking-wide" 
-                    : "text-gray-400 group-hover:text-gray-300"
+                  isActive
+                    ? "text-white font-medium tracking-wide"
+                    : "text-gray-400 group-hover:text-gray-200"
                 )}
                 animate={{
                   y: isActive ? [2, 0] : 0,
@@ -297,19 +302,19 @@ function NavigationButtonContent({
                 }}
               >
                 {label}
-                
-                {/* Subtle underline for active state - always rendered but conditionally visible */}
-                <motion.div 
-                  className={`h-[1px] mt-0.5 bg-gradient-to-r from-indigo-500/0 via-indigo-500/60 to-indigo-500/0 ${isActive ? 'block' : 'hidden'}`}
+
+                {/* Subtle underline for active state */}
+                <motion.div
+                  className={`h-[1px] mt-0.5 bg-gradient-to-r from-violet-500/0 via-violet-500/60 to-violet-500/0 ${isActive ? 'block' : 'hidden'}`}
                   initial={{ scaleX: 0 }}
                   animate={{ scaleX: isActive ? 1 : 0 }}
                   transition={{ duration: 0.3, delay: 0.15 }}
                 />
               </motion.span>
-              
-              {/* Optional micro-label that could show additional info - always in DOM but conditionally visible */}
-              <motion.span 
-                className={`text-[10px] text-indigo-300/70 mt-0.5 tracking-wider ${isActive ? '' : 'hidden'}`}
+
+              {/* Optional micro-label */}
+              <motion.span
+                className={`text-[10px] text-violet-300/70 mt-0.5 tracking-wider ${isActive ? '' : 'hidden'}`}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: isActive ? 1 : 0 }}
                 transition={{ duration: 0.3, delay: 0.2 }}
@@ -319,19 +324,19 @@ function NavigationButtonContent({
               </motion.span>
             </div>
           </div>
-          
-          {/* Chevron indicator for active state - always rendered but conditionally visible */}
+
+          {/* Chevron indicator for active state */}
           <motion.div
             initial={{ opacity: 0, scale: 0.5, x: -10 }}
-            animate={{ 
-              opacity: isActive ? 1 : 0, 
-              scale: isActive ? 1 : 0.5, 
-              x: isActive ? 0 : -10 
+            animate={{
+              opacity: isActive ? 1 : 0,
+              scale: isActive ? 1 : 0.5,
+              x: isActive ? 0 : -10
             }}
             transition={{ duration: 0.3, type: "spring" }}
-            className={`h-5 w-5 rounded-full bg-indigo-600/40 flex items-center justify-center ${isActive ? 'block' : 'hidden'}`}
+            className={`h-5 w-5 rounded-full bg-violet-600/40 flex items-center justify-center ${isActive ? 'block' : 'hidden'}`}
           >
-            <ChevronRight className="h-3 w-3 text-indigo-200 flex-shrink-0" />
+            <ChevronRight className="h-3 w-3 text-violet-200 flex-shrink-0" />
           </motion.div>
         </div>
       </Button>

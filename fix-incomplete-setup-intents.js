@@ -125,7 +125,7 @@ async function fixIncompleteSetupIntents() {
       // Confirm the Setup Intent with the payment method
       const confirmedSetupIntent = await stripe.setupIntents.confirm(newSetupIntent.id, {
         payment_method: paymentMethodId,
-        return_url: 'https://app.matchpro.ai/registration-complete'
+        return_url: 'https://app.kickdeck.io/registration-complete'
       });
       
       // Update team record with complete payment setup

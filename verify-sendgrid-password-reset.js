@@ -92,17 +92,17 @@ async function sendTestEmail(provider, recipient) {
 
     // Generate a fake reset token
     const resetToken = 'test-' + Math.random().toString(36).substring(2, 15);
-    const resetLink = `https://app.matchpro.ai/reset-password?token=${resetToken}`;
+    const resetLink = `https://app.kickdeck.io/reset-password?token=${resetToken}`;
 
     // Email message
     const msg = {
       to: recipient,
-      from: 'support@matchpro.ai', // Must be the verified sender
-      subject: 'MatchPro - Test Password Reset',
+      from: 'support@kickdeck.io', // Must be the verified sender
+      subject: 'KickDeck - Test Password Reset',
       text: `This is a test password reset email. If you received this, SendGrid is working correctly! Reset link: ${resetLink}`,
       html: `
         <div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
-          <h2 style="color: #0066cc;">MatchPro Password Reset - TEST</h2>
+          <h2 style="color: #0066cc;">KickDeck Password Reset - TEST</h2>
           <p>This is a test email to verify that password reset emails are configured correctly with SendGrid.</p>
           <p>If you received this email, the configuration is working properly!</p>
           <p>

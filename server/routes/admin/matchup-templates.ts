@@ -292,4 +292,105 @@ router.post('/matchup-templates/:id/clone', async (req, res) => {
   }
 });
 
+// Seed default common templates
+router.post('/matchup-templates/seed-defaults', async (req, res) => {
+  try {
+    console.log('[Matchup Templates] Seeding default templates');
+
+    // Check if any templates already exist to avoid duplicates
+    const existing = await db.select().from(matchupTemplates).limit(1);
+
+    const defaults = [
+      {
+        name: '4-Team Round Robin',
+        description: 'All 4 teams play each other once (6 pool games). Best for single-bracket flights with 4 teams.',
+        teamCount: 4,
+        bracketStructure: 'single' as const,
+        matchupPattern: [['A1','A2'],['A3','A4'],['A1','A3'],['A2','A4'],['A1','A4'],['A2','A3']],
+        totalGames: 6,
+        hasPlayoffGame: false,
+        isActive: true,
+      },
+      {
+        name: '4-Team Round Robin + Championship',
+        description: 'All 4 teams play each other once (6 pool games), then top 2 teams by points play a championship final.',
+        teamCount: 4,
+        bracketStructure: 'single' as const,
+        matchupPattern: [['A1','A2'],['A3','A4'],['A1','A3'],['A2','A4'],['A1','A4'],['A2','A3']],
+        totalGames: 7,
+        hasPlayoffGame: true,
+        playoffDescription: '1st place vs 2nd place in points standings play a championship final',
+        isActive: true,
+      },
+      {
+        name: '6-Team Dual Pools',
+        description: '2 pools of 3 teams. Round robin within each pool (3+3=6 games), then Pool A winner vs Pool B winner in championship.',
+        teamCount: 6,
+        bracketStructure: 'dual' as const,
+        matchupPattern: [['A1','A2'],['A1','A3'],['A2','A3'],['B1','B2'],['B1','B3'],['B2','B3']],
+        totalGames: 7,
+        hasPlayoffGame: true,
+        playoffDescription: 'Pool A winner vs Pool B winner in championship final',
+        isActive: true,
+      },
+      {
+        name: '6-Team Crossover',
+        description: '2 pools of 3. Every Pool A team plays every Pool B team (9 crossover games) plus championship.',
+        teamCount: 6,
+        bracketStructure: 'crossover' as const,
+        matchupPattern: [['A1','B1'],['A2','B2'],['A3','B3'],['A1','B2'],['A2','B3'],['A3','B1'],['A1','B3'],['A2','B1'],['A3','B2']],
+        totalGames: 10,
+        hasPlayoffGame: true,
+        playoffDescription: 'Top team from each pool plays in championship final',
+        isActive: true,
+      },
+      {
+        name: '8-Team Dual Brackets',
+        description: '2 brackets of 4 teams. Round robin within each bracket (6+6=12 games), then bracket winners play in championship.',
+        teamCount: 8,
+        bracketStructure: 'dual' as const,
+        matchupPattern: [
+          ['A1','A2'],['A3','A4'],['A1','A3'],['A2','A4'],['A1','A4'],['A2','A3'],
+          ['B1','B2'],['B3','B4'],['B1','B3'],['B2','B4'],['B1','B4'],['B2','B3'],
+        ],
+        totalGames: 13,
+        hasPlayoffGame: true,
+        playoffDescription: 'Bracket A winner vs Bracket B winner in championship final',
+        isActive: true,
+      },
+      {
+        name: '3-Team Round Robin',
+        description: 'All 3 teams play each other once (3 pool games). Simplest format for small brackets.',
+        teamCount: 3,
+        bracketStructure: 'single' as const,
+        matchupPattern: [['A1','A2'],['A1','A3'],['A2','A3']],
+        totalGames: 3,
+        hasPlayoffGame: false,
+        isActive: true,
+      },
+    ];
+
+    // Filter out templates whose names already exist
+    const existingNames = new Set(
+      (await db.select({ name: matchupTemplates.name }).from(matchupTemplates)).map(t => t.name)
+    );
+    const toInsert = defaults.filter(d => !existingNames.has(d.name));
+
+    if (toInsert.length === 0) {
+      return res.json({ message: 'All default templates already exist', created: 0 });
+    }
+
+    const inserted = await db.insert(matchupTemplates).values(toInsert).returning();
+
+    console.log(`[Matchup Templates] Seeded ${inserted.length} default templates`);
+    res.status(201).json({ message: `Created ${inserted.length} default templates`, created: inserted.length, templates: inserted });
+  } catch (error) {
+    console.error('[Matchup Templates] Error seeding defaults:', error);
+    res.status(500).json({
+      error: 'Failed to seed default templates',
+      details: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
+});
+
 export default router;

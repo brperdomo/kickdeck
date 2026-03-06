@@ -54,11 +54,11 @@ async function investigateSendGridDelivery() {
       const senders = await sendersResponse.json();
       console.log(`Verified senders: ${senders.results?.length || 0}`);
       
-      const supportSender = senders.results?.find(s => s.from_email === 'support@matchpro.ai');
+      const supportSender = senders.results?.find(s => s.from_email === 'support@kickdeck.io');
       if (supportSender) {
-        console.log(`support@matchpro.ai: ${supportSender.verified ? 'VERIFIED' : 'NOT VERIFIED'}`);
+        console.log(`support@kickdeck.io: ${supportSender.verified ? 'VERIFIED' : 'NOT VERIFIED'}`);
       } else {
-        console.log('❌ support@matchpro.ai not found in verified senders');
+        console.log('❌ support@kickdeck.io not found in verified senders');
       }
     }
   } catch (error) {
@@ -75,7 +75,7 @@ async function investigateSendGridDelivery() {
     
     const gmailMessage = {
       to: gmailTest,
-      from: 'support@matchpro.ai',
+      from: 'support@kickdeck.io',
       subject: 'SendGrid Production Test - Gmail',
       text: 'This tests if SendGrid can deliver to Gmail addresses.',
       html: `
@@ -101,7 +101,7 @@ async function investigateSendGridDelivery() {
   try {
     const welcomeMessage = {
       to: 'welcome.test@gmail.com',
-      from: 'support@matchpro.ai',
+      from: 'support@kickdeck.io',
       templateId: 'd-6064756d74914ec79b3a3586f6713424',
       dynamicTemplateData: {
         firstName: 'Welcome',

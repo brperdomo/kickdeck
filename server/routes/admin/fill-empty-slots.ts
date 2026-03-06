@@ -130,8 +130,9 @@ router.post('/:eventId/games/fill-empty-slots', async (req, res) => {
       for (const timeSlot of availableTimeSlots) {
         if (scheduled) break;
 
-        const slotDate = new Date(timeSlot.startTime).toISOString().split('T')[0]; // YYYY-MM-DD
-        const slotTime = new Date(timeSlot.startTime).toTimeString().split(' ')[0].substring(0, 5); // HH:MM
+        // Extract date/time by string splitting — DO NOT use new Date() which applies timezone conversion
+        const slotDate = timeSlot.startTime.split('T')[0]; // YYYY-MM-DD
+        const slotTime = timeSlot.startTime.split('T')[1]?.substring(0, 5) || '08:00'; // HH:MM
 
         // Try each field for this time slot (prioritize Galway Downs)
         for (const field of availableFields) {

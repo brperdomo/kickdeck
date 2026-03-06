@@ -12,7 +12,7 @@ import { MailService } from '@sendgrid/mail';
 
 // Get the command line arguments
 const recipient = process.argv[2];
-const sender = process.argv[3] || 'noreply@matchpro.ai';
+const sender = process.argv[3] || 'noreply@kickdeck.io';
 
 // Validate arguments
 if (!recipient) {

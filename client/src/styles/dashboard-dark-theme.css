@@ -1,0 +1,912 @@
+/* ============================================================
+   Dashboard Dark Neon Theme
+   Scoped to .dashboard-dark class to avoid affecting auth pages
+   ============================================================ */
+
+/* ====== CSS Variable Overrides ====== */
+.dashboard-dark {
+  --background: 233 47% 7%;           /* #0f0f1a - deep dark blue-black */
+  --foreground: 240 5% 92%;           /* #eaeaf0 - near-white */
+  --card: 240 30% 11%;                /* #161628 - dark card surface */
+  --card-foreground: 240 5% 90%;      /* #e3e3eb */
+  --popover: 240 30% 13%;             /* #1a1a30 */
+  --popover-foreground: 240 5% 92%;
+  --primary: 263 70% 58%;             /* #7c3aed - violet neon */
+  --primary-rgb: 124, 58, 237;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 240 20% 16%;           /* #222238 - dark secondary */
+  --secondary-foreground: 240 5% 90%;
+  --muted: 240 20% 16%;               /* #222238 */
+  --muted-foreground: 240 5% 60%;     /* #9393a8 */
+  --accent: 263 50% 20%;              /* deep violet accent */
+  --accent-foreground: 240 5% 92%;
+  --destructive: 0 62% 55%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 240 20% 20%;              /* #2d2d45 - subtle dark border */
+  --input: 240 20% 18%;               /* #272740 */
+  --ring: 263 70% 58%;
+
+  /* Table variable overrides */
+  --table-header-bg: hsl(240 30% 13%);
+  --table-header-text: hsl(240 5% 85%);
+  --table-header-border: hsl(240 20% 22%);
+  --table-row-hover: hsl(263 70% 58% / 0.08);
+  --table-row-selected: hsl(263 70% 58% / 0.2);
+  --table-row-selected-text: hsl(0 0% 100%);
+  --table-border: hsl(240 20% 20%);
+
+  /* Custom color overrides */
+  --color-background: #0f0f1a;
+  --color-text: #eaeaf0;
+
+  /* Direct color/bg for elements that inherit from body instead of using CSS vars */
+  color: #eaeaf0;
+  background-color: hsl(233 47% 7%);
+  color-scheme: dark;
+
+  /* ====== CRT Scanlines + Neon Grid Background ====== */
+  background-image:
+    repeating-linear-gradient(0deg, rgba(0,0,0,0.03) 0px, transparent 1px, transparent 3px),
+    linear-gradient(rgba(124,58,237,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(124,58,237,0.03) 1px, transparent 1px);
+  background-size: 100% 3px, 60px 60px, 60px 60px;
+  background-attachment: fixed;
+}
+
+/* ====== Blanket Tailwind Class Overrides ====== */
+
+/* Background overrides */
+.dashboard-dark .bg-white {
+  background-color: hsl(240 30% 11%) !important;
+}
+
+.dashboard-dark .bg-gray-50 {
+  background-color: hsl(240 20% 14%) !important;
+}
+
+.dashboard-dark .bg-gray-100 {
+  background-color: hsl(240 20% 16%) !important;
+}
+
+.dashboard-dark .bg-gray-200 {
+  background-color: hsl(240 20% 18%) !important;
+}
+
+/* Border overrides */
+.dashboard-dark .border-gray-200 {
+  border-color: hsl(240 20% 20%) !important;
+}
+
+.dashboard-dark .border-gray-300 {
+  border-color: hsl(240 20% 22%) !important;
+}
+
+/* Text color overrides */
+.dashboard-dark .text-gray-900 {
+  color: hsl(240 5% 92%) !important;
+}
+
+.dashboard-dark .text-gray-800 {
+  color: hsl(240 5% 85%) !important;
+}
+
+.dashboard-dark .text-gray-700 {
+  color: hsl(240 5% 75%) !important;
+}
+
+.dashboard-dark .text-gray-600 {
+  color: hsl(240 5% 65%) !important;
+}
+
+.dashboard-dark .text-gray-500 {
+  color: hsl(240 5% 55%) !important;
+}
+
+.dashboard-dark .text-gray-400 {
+  color: hsl(240 5% 50%) !important;
+}
+
+/* Hover background overrides */
+.dashboard-dark .hover\:bg-gray-50:hover {
+  background-color: hsl(240 20% 14%) !important;
+}
+
+.dashboard-dark .hover\:bg-gray-100:hover {
+  background-color: hsl(240 20% 16%) !important;
+}
+
+/* Gradient overrides — light gradients to dark neon gradients */
+.dashboard-dark .bg-gradient-to-r.from-indigo-50\/30.to-white,
+.dashboard-dark .bg-gradient-to-r.from-indigo-50.to-blue-50 {
+  background-image: none !important;
+  background-color: transparent !important;
+}
+
+.dashboard-dark .from-indigo-50 {
+  --tw-gradient-from: hsl(263 70% 58% / 0.06) !important;
+}
+
+.dashboard-dark .to-white {
+  --tw-gradient-to: hsl(240 30% 11%) !important;
+}
+
+.dashboard-dark .to-blue-50 {
+  --tw-gradient-to: hsl(240 30% 13%) !important;
+}
+
+.dashboard-dark .from-indigo-50\/30 {
+  --tw-gradient-from: hsl(263 70% 58% / 0.04) !important;
+}
+
+.dashboard-dark .bg-blue-50\/30 {
+  background-color: hsl(263 70% 58% / 0.04) !important;
+}
+
+.dashboard-dark .hover\:bg-blue-50\/30:hover {
+  background-color: hsl(263 70% 58% / 0.06) !important;
+}
+
+/* ====== Indigo to Violet Neon Overrides ====== */
+/* Many components use hardcoded indigo-* classes designed for light mode */
+.dashboard-dark .text-indigo-900 {
+  color: hsl(263 80% 80%) !important;
+}
+
+.dashboard-dark .text-indigo-700 {
+  color: hsl(263 70% 75%) !important;
+}
+
+.dashboard-dark .text-indigo-600 {
+  color: hsl(263 70% 70%) !important;
+}
+
+.dashboard-dark .text-indigo-400 {
+  color: hsl(263 60% 65%) !important;
+}
+
+.dashboard-dark .border-indigo-200 {
+  border-color: hsl(263 40% 30%) !important;
+}
+
+.dashboard-dark .border-indigo-300 {
+  border-color: hsl(263 50% 35%) !important;
+}
+
+.dashboard-dark .hover\:bg-indigo-50:hover {
+  background-color: hsl(263 70% 58% / 0.1) !important;
+}
+
+.dashboard-dark .hover\:text-indigo-700:hover {
+  color: hsl(263 70% 75%) !important;
+}
+
+.dashboard-dark .focus\:border-indigo-300:focus {
+  border-color: hsl(263 60% 50%) !important;
+}
+
+.dashboard-dark .focus\:ring-indigo-200:focus {
+  --tw-ring-color: hsl(263 60% 50% / 0.3) !important;
+}
+
+.dashboard-dark .bg-indigo-50 {
+  background-color: hsl(263 70% 58% / 0.08) !important;
+}
+
+.dashboard-dark .bg-indigo-100 {
+  background-color: hsl(263 70% 58% / 0.12) !important;
+}
+
+/* ====== Form Element Overrides ====== */
+.dashboard-dark input:not(.neon-input),
+.dashboard-dark textarea:not(.neon-input),
+.dashboard-dark select:not(.neon-input) {
+  background-color: hsl(240 20% 14%) !important;
+  border-color: hsl(240 20% 22%) !important;
+  color: hsl(240 5% 90%) !important;
+}
+
+.dashboard-dark input:not(.neon-input)::placeholder,
+.dashboard-dark textarea:not(.neon-input)::placeholder {
+  color: hsl(240 5% 45%) !important;
+}
+
+.dashboard-dark input:not(.neon-input):focus,
+.dashboard-dark textarea:not(.neon-input):focus,
+.dashboard-dark select:not(.neon-input):focus {
+  border-color: hsl(263 70% 50%) !important;
+  box-shadow: 0 0 0 2px hsl(263 70% 58% / 0.15), 0 0 10px hsl(263 70% 58% / 0.1) !important;
+}
+
+/* ====== Dialog / Popover / Dropdown Overrides ====== */
+.dashboard-dark [role="dialog"],
+.dashboard-dark [role="menu"],
+.dashboard-dark [role="listbox"],
+.dashboard-dark [role="menuitem"],
+.dashboard-dark [role="option"],
+.dashboard-dark [role="combobox"],
+.dashboard-dark .popover-content,
+.dashboard-dark .select-content,
+.dashboard-dark .dropdown-content,
+.dashboard-dark .SelectContent,
+.dashboard-dark .PopoverContent,
+.dashboard-dark .dialog-content,
+.dashboard-dark .modal-content,
+.dashboard-dark .DialogContent,
+.dashboard-dark .ModalContent {
+  background-color: hsl(240 30% 13%) !important;
+  border-color: hsl(240 20% 22%) !important;
+  color: hsl(240 5% 90%) !important;
+}
+
+.dashboard-dark [role="option"]:hover,
+.dashboard-dark .SelectItem:hover,
+.dashboard-dark [role="menuitem"]:hover {
+  background-color: hsl(263 70% 58% / 0.12) !important;
+}
+
+/* Radix UI portalled elements - these render outside .dashboard-dark */
+/* We need to use data attributes or a body-level class for these */
+
+/* ====== Table Overrides — Neon Enhanced ====== */
+.dashboard-dark table {
+  border-color: hsl(240 20% 20%) !important;
+}
+
+.dashboard-dark table thead th {
+  background: linear-gradient(180deg, hsl(263 40% 16%), hsl(240 30% 12%)) !important;
+  color: hsl(263 40% 82%) !important;
+  border-color: hsl(263 30% 25%) !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.02em !important;
+  text-transform: uppercase !important;
+  font-size: 0.75rem !important;
+}
+
+.dashboard-dark table tbody tr {
+  border-color: hsl(240 20% 18%) !important;
+  transition: all 0.2s ease !important;
+}
+
+.dashboard-dark table tbody tr:hover {
+  background-color: hsl(263 70% 58% / 0.08) !important;
+  box-shadow: inset 0 0 30px rgba(124, 58, 237, 0.04) !important;
+}
+
+.dashboard-dark table tbody tr:nth-child(even) {
+  background-color: hsl(240 20% 12%) !important;
+}
+
+.dashboard-dark table tbody td {
+  color: hsl(240 5% 85%) !important;
+  border-color: hsl(240 20% 18%) !important;
+}
+
+/* ====== Sidebar / Navigation Overrides ====== */
+/* Prevent the global .dark nav override from affecting dashboard-dark sidebars */
+.dashboard-dark .sidebar,
+.dashboard-dark nav {
+  background-color: transparent !important;
+  border-color: transparent !important;
+}
+
+/* ====== Border Override ====== */
+/* Override the global .dark * border reset */
+.dashboard-dark * {
+  border-color: hsl(240 20% 20%) !important;
+}
+
+/* Restore specific border colors within dashboard-dark */
+.dashboard-dark .border-primary {
+  border-color: hsl(263 70% 58%) !important;
+}
+
+.dashboard-dark .border-destructive {
+  border-color: hsl(0 62% 55%) !important;
+}
+
+/* ====== Code Block Overrides ====== */
+.dashboard-dark pre,
+.dashboard-dark code {
+  background-color: hsl(240 25% 10%) !important;
+  color: hsl(240 5% 85%) !important;
+}
+
+/* ====== Logo Inversion ====== */
+.dashboard-dark img[src*="Black"] {
+  filter: brightness(0) invert(1) !important;
+}
+
+/* ====== Enhanced Form Controls ====== */
+.dashboard-dark .enhanced-input {
+  background-color: hsl(240 20% 14%) !important;
+  border-color: hsl(240 20% 22%) !important;
+  color: hsl(240 5% 90%) !important;
+}
+
+.dashboard-dark .enhanced-input:hover {
+  border-color: hsl(263 70% 50% / 0.5) !important;
+}
+
+.dashboard-dark .enhanced-input:focus {
+  border-color: hsl(263 70% 58%) !important;
+  box-shadow: 0 0 0 2px hsl(263 70% 58% / 0.15), 0 0 10px hsl(263 70% 58% / 0.1) !important;
+}
+
+.dashboard-dark .enhanced-label {
+  color: hsl(240 5% 75%) !important;
+}
+
+/* ====== Shadow Overrides — with neon violet glow ====== */
+.dashboard-dark .shadow-sm {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3), 0 0 8px rgba(124, 58, 237, 0.04) !important;
+}
+
+.dashboard-dark .shadow-md {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4), 0 0 15px rgba(124, 58, 237, 0.06) !important;
+}
+
+.dashboard-dark .shadow-lg {
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.4), 0 0 25px rgba(124, 58, 237, 0.08) !important;
+}
+
+/* ====== Scrollbar Styling ====== */
+.dashboard-dark ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.dashboard-dark ::-webkit-scrollbar-track {
+  background: hsl(240 20% 10%);
+  border-radius: 4px;
+}
+
+.dashboard-dark ::-webkit-scrollbar-thumb {
+  background: hsl(263 30% 30%);
+  border-radius: 4px;
+}
+
+.dashboard-dark ::-webkit-scrollbar-thumb:hover {
+  background: hsl(263 40% 40%);
+}
+
+/* ====== Utility Classes ====== */
+
+/* Neon glow effects */
+.neon-glow-violet {
+  box-shadow: 0 0 15px hsl(263 70% 58% / 0.2), 0 0 30px hsl(263 70% 58% / 0.1);
+}
+
+.neon-glow-cyan {
+  box-shadow: 0 0 15px hsl(187 90% 43% / 0.2), 0 0 30px hsl(187 90% 43% / 0.1);
+}
+
+/* Neon card with hover glow */
+.neon-card {
+  border: 1px solid hsl(240 20% 20%);
+  transition: all 0.3s ease;
+}
+
+.neon-card:hover {
+  border-color: hsl(263 70% 58% / 0.3);
+  box-shadow: 0 0 20px hsl(263 70% 58% / 0.1), 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Neon divider - gradient line */
+.neon-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, hsl(263 70% 58% / 0.3), hsl(187 90% 43% / 0.2), transparent);
+}
+
+/* Neon pulse animation */
+@keyframes neon-pulse {
+  0%, 100% {
+    box-shadow: 0 0 10px hsl(263 70% 58% / 0.15);
+  }
+  50% {
+    box-shadow: 0 0 20px hsl(263 70% 58% / 0.3), 0 0 40px hsl(263 70% 58% / 0.1);
+  }
+}
+
+.neon-pulse {
+  animation: neon-pulse 3s ease-in-out infinite;
+}
+
+/* ====== NEW: Glass-morphism Card (mirrors auth page style) ====== */
+.neon-glass {
+  background: rgba(15, 15, 35, 0.85) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow:
+    0 0 30px rgba(124, 58, 237, 0.12),
+    0 0 60px rgba(6, 182, 212, 0.06),
+    0 8px 32px rgba(0, 0, 0, 0.4) !important;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.neon-glass:hover {
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  box-shadow:
+    0 0 40px rgba(124, 58, 237, 0.18),
+    0 0 80px rgba(6, 182, 212, 0.1),
+    0 12px 40px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* ====== NEW: Animated Gradient Border ====== */
+.neon-border-animated {
+  position: relative;
+  overflow: hidden;
+}
+
+.neon-border-animated::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg,
+    rgba(124, 58, 237, 0.6),
+    rgba(6, 182, 212, 0.4),
+    rgba(168, 85, 247, 0.5),
+    rgba(6, 182, 212, 0.3),
+    rgba(124, 58, 237, 0.6)
+  );
+  background-size: 300% 300%;
+  animation: neon-border-flow 6s linear infinite;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes neon-border-flow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ====== NEW: CSS-only Floor Grid ====== */
+.neon-floor-grid {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    linear-gradient(rgba(124, 58, 237, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(6, 182, 212, 0.04) 1px, transparent 1px);
+  background-size: 60px 20px;
+  animation: grid-scroll 4s linear infinite;
+  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 100%);
+  mask-image: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 100%);
+  transform: perspective(300px) rotateX(45deg);
+  transform-origin: bottom;
+}
+
+@keyframes grid-scroll {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 60px; }
+}
+
+/* ====== NEW: Section Header with Gradient Border ====== */
+.neon-section-header {
+  border-left: 3px solid transparent;
+  border-image: linear-gradient(to bottom, #7c3aed, #06b6d4) 1;
+  padding-left: 12px;
+  background: linear-gradient(90deg, rgba(124, 58, 237, 0.06), transparent);
+}
+
+/* ====== NEW: Glowing Gradient Divider ====== */
+.neon-divider-glow {
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(124, 58, 237, 0.4) 20%, rgba(6, 182, 212, 0.3) 50%, rgba(124, 58, 237, 0.4) 80%, transparent 100%);
+  box-shadow: 0 0 8px rgba(124, 58, 237, 0.15), 0 0 20px rgba(6, 182, 212, 0.08);
+}
+
+/* ====== NEW: Click Flash Animation ====== */
+@keyframes neon-click-flash {
+  0% {
+    box-shadow: 0 0 0 0 rgba(124, 58, 237, 0.4), inset 0 0 0 rgba(124, 58, 237, 0.2);
+  }
+  30% {
+    box-shadow: 0 0 20px 4px rgba(124, 58, 237, 0.3), inset 0 0 15px rgba(6, 182, 212, 0.15);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(124, 58, 237, 0), inset 0 0 0 rgba(124, 58, 237, 0);
+  }
+}
+
+.neon-click-flash {
+  animation: neon-click-flash 0.4s ease-out;
+}
+
+/* ====== NEW: Text Glow ====== */
+.neon-text-glow {
+  text-shadow: 0 0 10px rgba(124, 58, 237, 0.4), 0 0 30px rgba(124, 58, 237, 0.15);
+}
+
+/* ====== NEW: Ambient Glow Orbs (decorative) ====== */
+@keyframes neon-orb-float {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.3; }
+  33% { transform: translate(10px, -10px) scale(1.1); opacity: 0.4; }
+  66% { transform: translate(-5px, 5px) scale(0.95); opacity: 0.25; }
+}
+
+.neon-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  pointer-events: none;
+  animation: neon-orb-float 8s ease-in-out infinite;
+}
+
+.neon-orb-violet {
+  background: rgba(124, 58, 237, 0.15);
+}
+
+.neon-orb-cyan {
+  background: rgba(6, 182, 212, 0.1);
+  animation-delay: -3s;
+}
+
+/* ====== Badge / Status Overrides ====== */
+.dashboard-dark .status-badge.active {
+  background-color: rgba(16, 185, 129, 0.15);
+  color: rgb(52, 211, 153);
+}
+
+.dashboard-dark .status-badge.pending {
+  background-color: rgba(245, 158, 11, 0.15);
+  color: rgb(251, 191, 36);
+}
+
+.dashboard-dark .status-badge.inactive {
+  background-color: rgba(239, 68, 68, 0.15);
+  color: rgb(248, 113, 113);
+}
+
+/* ====== Alert / Toast Overrides ====== */
+.dashboard-dark .bg-amber-50 {
+  background-color: hsl(40 90% 50% / 0.1) !important;
+}
+
+.dashboard-dark .bg-red-50 {
+  background-color: hsl(0 80% 50% / 0.1) !important;
+}
+
+.dashboard-dark .bg-green-50 {
+  background-color: hsl(142 70% 40% / 0.1) !important;
+}
+
+.dashboard-dark .bg-blue-50 {
+  background-color: hsl(220 80% 50% / 0.1) !important;
+}
+
+/* ====== Separator / Divider ====== */
+.dashboard-dark [data-orientation="horizontal"] {
+  background-color: hsl(240 20% 20%) !important;
+}
+
+/* ====== Card Hover States ====== */
+.dashboard-dark .hover\:bg-muted\/50:hover {
+  background-color: hsl(240 20% 16% / 0.5) !important;
+}
+
+/* ====== Portalled Dialog/Dropdown Fix ====== */
+/* Radix UI renders dialogs/popovers in portals outside .dashboard-dark
+   We need a body-level marker so portalled content inherits dark styling */
+body.dashboard-dark-active [data-radix-popper-content-wrapper],
+body.dashboard-dark-active [data-radix-portal],
+body.dashboard-dark-active [role="dialog"],
+body.dashboard-dark-active [role="alertdialog"] {
+  --background: 233 47% 7%;
+  --foreground: 240 5% 92%;
+  --card: 240 30% 11%;
+  --card-foreground: 240 5% 90%;
+  --popover: 240 30% 13%;
+  --popover-foreground: 240 5% 92%;
+  --primary: 263 70% 58%;
+  --primary-rgb: 124, 58, 237;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 240 20% 16%;
+  --secondary-foreground: 240 5% 90%;
+  --muted: 240 20% 16%;
+  --muted-foreground: 240 5% 60%;
+  --accent: 263 50% 20%;
+  --accent-foreground: 240 5% 92%;
+  --border: 240 20% 20%;
+  --input: 240 20% 18%;
+  --ring: 263 70% 58%;
+}
+
+/* Direct children of portal/popper wrappers */
+body.dashboard-dark-active [data-radix-popper-content-wrapper] > *,
+body.dashboard-dark-active [data-radix-portal] > * {
+  background-color: hsl(240 30% 13%) !important;
+  border-color: hsl(240 20% 22%) !important;
+  color: hsl(240 5% 90%) !important;
+}
+
+/* ALL descendants within popper/portal — menu items, labels, text, etc. */
+body.dashboard-dark-active [data-radix-popper-content-wrapper] [role="menuitem"],
+body.dashboard-dark-active [data-radix-popper-content-wrapper] [role="option"],
+body.dashboard-dark-active [data-radix-popper-content-wrapper] [role="menuitemradio"],
+body.dashboard-dark-active [data-radix-popper-content-wrapper] [role="menuitemcheckbox"],
+body.dashboard-dark-active [data-radix-portal] [role="menuitem"],
+body.dashboard-dark-active [data-radix-portal] [role="option"],
+body.dashboard-dark-active [data-radix-portal] [role="menuitemradio"],
+body.dashboard-dark-active [data-radix-portal] [role="menuitemcheckbox"] {
+  background-color: transparent !important;
+  color: hsl(240 5% 90%) !important;
+}
+
+/* Menu/dropdown labels, separators, groups */
+body.dashboard-dark-active [data-radix-popper-content-wrapper] [role="group"],
+body.dashboard-dark-active [data-radix-popper-content-wrapper] [role="separator"],
+body.dashboard-dark-active [data-radix-portal] [role="group"],
+body.dashboard-dark-active [data-radix-portal] [role="separator"] {
+  border-color: hsl(240 20% 22%) !important;
+}
+
+/* Labels inside dropdowns/menus */
+body.dashboard-dark-active [data-radix-popper-content-wrapper] label,
+body.dashboard-dark-active [data-radix-popper-content-wrapper] p,
+body.dashboard-dark-active [data-radix-popper-content-wrapper] span,
+body.dashboard-dark-active [data-radix-popper-content-wrapper] div:not([data-radix-popper-content-wrapper]),
+body.dashboard-dark-active [data-radix-portal] label,
+body.dashboard-dark-active [data-radix-portal] p,
+body.dashboard-dark-active [data-radix-portal] span {
+  color: hsl(240 5% 90%) !important;
+}
+
+/* Hover states for items */
+body.dashboard-dark-active [data-radix-popper-content-wrapper] [role="menuitem"]:hover,
+body.dashboard-dark-active [data-radix-popper-content-wrapper] [role="menuitem"]:focus,
+body.dashboard-dark-active [data-radix-popper-content-wrapper] [role="menuitem"][data-highlighted],
+body.dashboard-dark-active [data-radix-popper-content-wrapper] [role="option"]:hover,
+body.dashboard-dark-active [data-radix-popper-content-wrapper] [role="option"][data-highlighted],
+body.dashboard-dark-active [data-radix-portal] [role="option"]:hover,
+body.dashboard-dark-active [data-radix-portal] [role="menuitem"]:hover,
+body.dashboard-dark-active [data-radix-portal] [role="menuitem"]:focus,
+body.dashboard-dark-active [data-radix-portal] [role="menuitem"][data-highlighted],
+body.dashboard-dark-active [data-radix-portal] [data-highlighted] {
+  background-color: hsl(263 70% 58% / 0.12) !important;
+}
+
+/* Inputs within portals */
+body.dashboard-dark-active [data-radix-popper-content-wrapper] input,
+body.dashboard-dark-active [data-radix-popper-content-wrapper] textarea,
+body.dashboard-dark-active [data-radix-popper-content-wrapper] select,
+body.dashboard-dark-active [data-radix-portal] input,
+body.dashboard-dark-active [data-radix-portal] textarea,
+body.dashboard-dark-active [data-radix-portal] select {
+  background-color: hsl(240 20% 14%) !important;
+  border-color: hsl(240 20% 22%) !important;
+  color: hsl(240 5% 90%) !important;
+}
+
+/* ====== Dialog Glass-morphism ====== */
+/* Dialog content — glass-morphism treatment matching auth page
+   Note: Radix dialogs may be inside [data-radix-portal] OR directly on body */
+body.dashboard-dark-active [data-radix-portal] [role="dialog"],
+body.dashboard-dark-active [data-radix-portal] [role="alertdialog"],
+body.dashboard-dark-active > [role="dialog"],
+body.dashboard-dark-active > [role="alertdialog"],
+body.dashboard-dark-active [role="dialog"].fixed,
+body.dashboard-dark-active [role="alertdialog"].fixed {
+  background: rgba(15, 15, 35, 0.92) !important;
+  background-color: rgba(15, 15, 35, 0.92) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow:
+    0 0 30px rgba(124, 58, 237, 0.15),
+    0 0 60px rgba(6, 182, 212, 0.08),
+    0 25px 50px rgba(0, 0, 0, 0.5) !important;
+  color: hsl(240 5% 90%) !important;
+}
+
+/* Dialog overlay — violet tinted with blur */
+body.dashboard-dark-active [data-radix-portal] [data-state="open"].fixed.inset-0,
+body.dashboard-dark-active > [data-state="open"].fixed.inset-0 {
+  background-color: rgba(10, 5, 30, 0.75) !important;
+  backdrop-filter: blur(4px) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
+}
+
+/* Dialog headings */
+body.dashboard-dark-active [role="dialog"] h1,
+body.dashboard-dark-active [role="dialog"] h2,
+body.dashboard-dark-active [role="dialog"] h3,
+body.dashboard-dark-active [role="dialog"] h4 {
+  color: hsl(240 5% 95%) !important;
+}
+
+/* Dialog text content */
+body.dashboard-dark-active [role="dialog"] p,
+body.dashboard-dark-active [role="dialog"] label,
+body.dashboard-dark-active [role="dialog"] span,
+body.dashboard-dark-active [role="dialog"] div {
+  color: hsl(240 5% 85%) !important;
+}
+
+/* Dialog inputs — neon focus */
+body.dashboard-dark-active [role="dialog"] input,
+body.dashboard-dark-active [role="dialog"] textarea,
+body.dashboard-dark-active [role="dialog"] select {
+  background-color: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: hsl(240 5% 92%) !important;
+}
+
+body.dashboard-dark-active [role="dialog"] input:focus,
+body.dashboard-dark-active [role="dialog"] textarea:focus,
+body.dashboard-dark-active [role="dialog"] select:focus {
+  border-color: rgba(124, 58, 237, 0.5) !important;
+  box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.15), 0 0 15px rgba(124, 58, 237, 0.1) !important;
+}
+
+/* Dialog buttons */
+body.dashboard-dark-active [role="dialog"] button {
+  color: hsl(240 5% 90%) !important;
+}
+
+body.dashboard-dark-active [role="dialog"] button:hover {
+  background-color: rgba(124, 58, 237, 0.12) !important;
+}
+
+/* Dialog primary buttons — keep their gradient */
+body.dashboard-dark-active [role="dialog"] button[class*="bg-primary"],
+body.dashboard-dark-active [role="dialog"] button[class*="bg-violet"],
+body.dashboard-dark-active [role="dialog"] button[class*="bg-purple"] {
+  color: white !important;
+}
+
+/* Dialog close button */
+body.dashboard-dark-active [role="dialog"] button[class*="absolute"][class*="right"] {
+  color: hsl(240 5% 60%) !important;
+}
+
+/* Dialog drag-drop areas (e.g., TeamCsvUploader hover:bg-gray-50) */
+body.dashboard-dark-active [role="dialog"] .bg-gray-50,
+body.dashboard-dark-active [role="dialog"] [class*="hover:bg-gray-50"]:hover,
+body.dashboard-dark-active [role="dialog"] [class*="bg-muted"] {
+  background-color: rgba(124, 58, 237, 0.06) !important;
+}
+
+/* Dialog separator/dividers */
+body.dashboard-dark-active [role="dialog"] [data-orientation="horizontal"] {
+  background-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+/* Dialog Radix Select triggers (not native <select>) */
+body.dashboard-dark-active [role="dialog"] [role="combobox"],
+body.dashboard-dark-active [role="dialog"] button[role="combobox"],
+body.dashboard-dark-active [role="dialog"] [data-slot="control"],
+body.dashboard-dark-active [role="dialog"] .bg-background {
+  background-color: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: hsl(240 5% 90%) !important;
+}
+
+/* Dialog alert/warning areas */
+body.dashboard-dark-active [role="dialog"] [role="alert"],
+body.dashboard-dark-active [role="dialog"] .bg-amber-50,
+body.dashboard-dark-active [role="dialog"] .bg-yellow-50 {
+  background-color: rgba(245, 158, 11, 0.08) !important;
+  color: hsl(40 90% 70%) !important;
+}
+
+/* ============================================================
+   Mobile Responsive Overrides for Admin Dashboard
+   Fixes content views (tables, filters, headings, button rows)
+   that were designed for desktop-width content areas.
+   ============================================================ */
+
+@media (max-width: 767px) {
+  /* ---- Headings: scale down to prevent wrapping ---- */
+  .dashboard-dark h1 {
+    font-size: 1.375rem !important;  /* 22px instead of 30px+ */
+    line-height: 1.3 !important;
+  }
+  .dashboard-dark h2 {
+    font-size: 1.15rem !important;   /* 18.4px instead of 24px */
+    line-height: 1.3 !important;
+  }
+  .dashboard-dark h3 {
+    font-size: 1rem !important;
+  }
+
+  /* ---- Title + action button rows: stack vertically ---- */
+  .dashboard-dark .flex.items-center.justify-between {
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+  }
+
+  /* ---- Button groups: wrap instead of squeezing ---- */
+  .dashboard-dark .flex.items-center.gap-2,
+  .dashboard-dark .flex.items-center.gap-3,
+  .dashboard-dark .flex.items-center.gap-4 {
+    flex-wrap: wrap !important;
+  }
+
+  /* ---- Filter / toolbar rows: stack vertically ---- */
+  .dashboard-dark .flex.flex-wrap.gap-4,
+  .dashboard-dark .flex.gap-4.items-end,
+  .dashboard-dark .flex.gap-3.items-end,
+  .dashboard-dark .flex.gap-2.items-end {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  .dashboard-dark .flex.gap-4.items-end > *,
+  .dashboard-dark .flex.gap-3.items-end > *,
+  .dashboard-dark .flex.gap-2.items-end > * {
+    width: 100% !important;
+  }
+
+  /* ---- Select triggers: full-width on mobile ---- */
+  .dashboard-dark [role="combobox"],
+  .dashboard-dark button[role="combobox"] {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  /* ---- Tables: horizontal scroll instead of squeezing ---- */
+  .dashboard-dark .overflow-x-auto,
+  .dashboard-dark table {
+    display: block !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+  .dashboard-dark table {
+    min-width: 600px !important;
+  }
+  .dashboard-dark table th,
+  .dashboard-dark table td {
+    white-space: nowrap !important;
+    padding: 0.5rem 0.75rem !important;
+    font-size: 0.75rem !important;
+  }
+
+  /* ---- Cards with side-by-side grids: stack ---- */
+  .dashboard-dark .grid.grid-cols-2,
+  .dashboard-dark .grid.grid-cols-3 {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ---- Tabs: smaller text, scroll horizontal ---- */
+  .dashboard-dark [role="tablist"] {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    flex-wrap: nowrap !important;
+    gap: 0 !important;
+  }
+  .dashboard-dark [role="tab"] {
+    font-size: 0.75rem !important;
+    padding: 0.5rem 0.625rem !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* ---- Registration banner: tighter ---- */
+  .dashboard-dark .rounded-xl.border {
+    padding: 0.75rem !important;
+  }
+
+  /* ---- Fixed-width elements: constrain to viewport ---- */
+  .dashboard-dark .w-48 {
+    width: 100% !important;
+  }
+  .dashboard-dark .min-w-\[200px\],
+  .dashboard-dark .min-w-\[180px\],
+  .dashboard-dark .min-w-\[160px\] {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+}

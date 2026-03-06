@@ -99,16 +99,16 @@ async function verifySendGridActivity() {
     mailService.setApiKey(SENDGRID_API_KEY);
     
     const gmailTest = {
-      to: 'test.matchpro.delivery@gmail.com',
-      from: 'support@matchpro.ai',
-      subject: 'MatchPro Production Delivery Verification',
-      text: 'This email verifies that MatchPro production emails are being delivered.',
+      to: 'test.kickdeck.delivery@gmail.com',
+      from: 'support@kickdeck.io',
+      subject: 'KickDeck Production Delivery Verification',
+      text: 'This email verifies that KickDeck production emails are being delivered.',
       html: `
         <div style="font-family: Arial, sans-serif; padding: 20px;">
-          <h2>MatchPro Production Email Verification</h2>
+          <h2>KickDeck Production Email Verification</h2>
           <p>This email confirms that production emails are being sent successfully.</p>
           <p>Time: ${new Date().toISOString()}</p>
-          <p>Domain: matchpro.ai (authenticated)</p>
+          <p>Domain: kickdeck.io (authenticated)</p>
           <p>If you receive this email, the delivery system is working correctly.</p>
         </div>
       `

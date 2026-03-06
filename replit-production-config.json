@@ -3,7 +3,7 @@
     "environment": {
       "NODE_ENV": "production",
       "SENDGRID_API_KEY": "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",
-      "DEFAULT_FROM_EMAIL": "support@matchpro.ai"
+      "DEFAULT_FROM_EMAIL": "support@kickdeck.io"
     }
   }
 }

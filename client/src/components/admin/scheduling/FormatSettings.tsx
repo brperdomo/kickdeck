@@ -132,6 +132,7 @@ export function FormatSettings({ eventId }: FormatSettingsProps) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['matchup-templates'] });
+      queryClient.invalidateQueries({ queryKey: ['format-templates'] });
       setIsCreateModalOpen(false);
       resetForm();
       toast({
@@ -175,6 +176,7 @@ export function FormatSettings({ eventId }: FormatSettingsProps) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['matchup-templates'] });
+      queryClient.invalidateQueries({ queryKey: ['format-templates'] });
       setIsEditModalOpen(false);
       setEditingTemplate(null);
       resetForm();
@@ -208,6 +210,7 @@ export function FormatSettings({ eventId }: FormatSettingsProps) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['matchup-templates'] });
+      queryClient.invalidateQueries({ queryKey: ['format-templates'] });
       toast({
         title: 'Success',
         description: 'Matchup template deleted successfully',
@@ -238,6 +241,7 @@ export function FormatSettings({ eventId }: FormatSettingsProps) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['matchup-templates'] });
+      queryClient.invalidateQueries({ queryKey: ['format-templates'] });
       toast({
         title: 'Success',
         description: 'Matchup template cloned successfully',
@@ -265,10 +269,62 @@ export function FormatSettings({ eventId }: FormatSettingsProps) {
   };
 
   const addMatchup = () => {
+    // Default new matchups based on bracket structure
+    const defaultHome = formData.bracketStructure === 'crossover' || formData.bracketStructure === 'dual' ? 'A1' : 'A1';
+    const defaultAway = formData.bracketStructure === 'crossover' || formData.bracketStructure === 'dual' ? 'B1' : 'A2';
     setFormData((prev) => ({
       ...prev,
-      matchups: [...prev.matchups, { home: 'A1', away: 'B1' }],
+      matchups: [...prev.matchups, { home: defaultHome, away: defaultAway }],
     }));
+  };
+
+  // Auto-generate round robin matchups for the given team count and bracket structure
+  const generateRoundRobinMatchups = () => {
+    const count = formData.teamCount;
+    const structure = formData.bracketStructure;
+    const matchups: Matchup[] = [];
+
+    if (structure === 'single' || structure === 'round_robin') {
+      // Single pool: all teams play each other (A1 vs A2, A1 vs A3, etc.)
+      for (let i = 1; i <= count; i++) {
+        for (let j = i + 1; j <= count; j++) {
+          matchups.push({ home: `A${i}`, away: `A${j}` });
+        }
+      }
+    } else if (structure === 'dual') {
+      // Dual: two pools, round robin within each, then cross-pool championship
+      const halfA = Math.ceil(count / 2);
+      const halfB = count - halfA;
+      // Pool A round robin
+      for (let i = 1; i <= halfA; i++) {
+        for (let j = i + 1; j <= halfA; j++) {
+          matchups.push({ home: `A${i}`, away: `A${j}` });
+        }
+      }
+      // Pool B round robin
+      for (let i = 1; i <= halfB; i++) {
+        for (let j = i + 1; j <= halfB; j++) {
+          matchups.push({ home: `B${i}`, away: `B${j}` });
+        }
+      }
+    } else if (structure === 'crossover') {
+      // Crossover: every Pool A team plays every Pool B team
+      const halfA = Math.ceil(count / 2);
+      const halfB = count - halfA;
+      for (let i = 1; i <= halfA; i++) {
+        for (let j = 1; j <= halfB; j++) {
+          matchups.push({ home: `A${i}`, away: `B${j}` });
+        }
+      }
+    }
+
+    if (matchups.length > 0) {
+      setFormData((prev) => ({ ...prev, matchups }));
+      toast({
+        title: 'Matchups Generated',
+        description: `${matchups.length} matchups created for ${count}-team ${structure} format`,
+      });
+    }
   };
 
   const removeMatchup = (index: number) => {
@@ -301,6 +357,35 @@ export function FormatSettings({ eventId }: FormatSettingsProps) {
     setIsEditModalOpen(true);
   };
 
+  // Seed default templates mutation
+  const seedDefaultsMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch('/api/admin/matchup-templates/seed-defaults', {
+        method: 'POST',
+      });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.details || 'Failed to seed default templates');
+      }
+      return response.json();
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['matchup-templates'] });
+      queryClient.invalidateQueries({ queryKey: ['format-templates'] });
+      toast({
+        title: 'Default Templates Created',
+        description: `${data.created || 'Common'} format templates have been added.`,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: 'Error',
+        description: error.message || 'Failed to seed default templates',
+        variant: 'destructive',
+      });
+    },
+  });
+
   const exportTemplate = (template: MatchupTemplate) => {
     const exportData = {
       templateName: template.name,
@@ -316,6 +401,37 @@ export function FormatSettings({ eventId }: FormatSettingsProps) {
     linkElement.setAttribute('href', dataUri);
     linkElement.setAttribute('download', exportFileDefaultName);
     linkElement.click();
+  };
+
+  // Client-side validation matching server Zod schema
+  const validateFormData = (): string | null => {
+    if (!formData.name.trim()) return 'Template name is required.';
+    if (!formData.description.trim()) return 'Description is required.';
+    if (formData.teamCount < 3 || formData.teamCount > 16) return 'Team count must be between 3 and 16.';
+    if (!['single', 'crossover', 'dual', 'round_robin', 'swiss'].includes(formData.bracketStructure)) {
+      return 'Please select a valid bracket structure.';
+    }
+    if (formData.matchups.length === 0) return 'At least one matchup is required.';
+    // Check for empty matchup slots
+    const hasEmptySlots = formData.matchups.some(m => !m.home.trim() || !m.away.trim());
+    if (hasEmptySlots) return 'All matchup home/away fields must be filled in.';
+    // Check for duplicate matchups
+    const seen = new Set<string>();
+    for (const m of formData.matchups) {
+      const key = [m.home, m.away].sort().join('-');
+      if (seen.has(key)) return `Duplicate matchup: ${m.home} vs ${m.away}`;
+      seen.add(key);
+    }
+    return null;
+  };
+
+  const handleValidatedSubmit = (onSuccess: () => void) => {
+    const error = validateFormData();
+    if (error) {
+      toast({ title: 'Validation Error', description: error, variant: 'destructive' });
+      return;
+    }
+    onSuccess();
   };
 
   const getBracketTypeIcon = (structure: string) => {
@@ -381,15 +497,52 @@ export function FormatSettings({ eventId }: FormatSettingsProps) {
             <CreateEditTemplateForm
               formData={formData}
               setFormData={setFormData}
-              onSubmit={() => createTemplateMutation.mutate(formData)}
+              onSubmit={() => handleValidatedSubmit(() => createTemplateMutation.mutate(formData))}
               isLoading={createTemplateMutation.isPending}
               addMatchup={addMatchup}
               removeMatchup={removeMatchup}
               updateMatchup={updateMatchup}
+              generateRoundRobinMatchups={generateRoundRobinMatchups}
             />
           </DialogContent>
         </Dialog>
       </div>
+
+      {/* Empty state with guidance */}
+      {templatesQuery.data && templatesQuery.data.length === 0 && (
+        <Card className="border-dashed border-2 border-muted-foreground/25">
+          <CardContent className="flex flex-col items-center justify-center py-12 text-center">
+            <Trophy className="h-12 w-12 text-muted-foreground/40 mb-4" />
+            <h3 className="text-lg font-semibold mb-2">No Format Templates Yet</h3>
+            <p className="text-muted-foreground mb-1 max-w-md">
+              Format templates define how teams are matched up during pool play. You need at least one template before you can assign formats to flights.
+            </p>
+            <p className="text-sm text-muted-foreground mb-6 max-w-md">
+              <strong>Quick start:</strong> Click "Load Common Templates" to add pre-built formats for 4, 6, and 8-team brackets, or create your own.
+            </p>
+            <div className="flex items-center gap-3">
+              <Button
+                onClick={() => seedDefaultsMutation.mutate()}
+                disabled={seedDefaultsMutation.isPending}
+                variant="default"
+              >
+                <Download className="h-4 w-4 mr-2" />
+                {seedDefaultsMutation.isPending ? 'Creating...' : 'Load Common Templates'}
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  resetForm();
+                  setIsCreateModalOpen(true);
+                }}
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Create Custom
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Templates Grid */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -534,16 +687,19 @@ export function FormatSettings({ eventId }: FormatSettingsProps) {
             formData={formData}
             setFormData={setFormData}
             onSubmit={() =>
-              editingTemplate &&
-              updateTemplateMutation.mutate({
-                id: editingTemplate.id,
-                templateData: formData,
-              })
+              handleValidatedSubmit(() =>
+                editingTemplate &&
+                updateTemplateMutation.mutate({
+                  id: editingTemplate.id,
+                  templateData: formData,
+                })
+              )
             }
             isLoading={updateTemplateMutation.isPending}
             addMatchup={addMatchup}
             removeMatchup={removeMatchup}
             updateMatchup={updateMatchup}
+            generateRoundRobinMatchups={generateRoundRobinMatchups}
           />
         </DialogContent>
       </Dialog>
@@ -560,6 +716,7 @@ interface CreateEditTemplateFormProps {
   addMatchup: () => void;
   removeMatchup: (index: number) => void;
   updateMatchup: (index: number, field: 'home' | 'away', value: string) => void;
+  generateRoundRobinMatchups?: () => void;
 }
 
 function CreateEditTemplateForm({
@@ -570,6 +727,7 @@ function CreateEditTemplateForm({
   addMatchup,
   removeMatchup,
   updateMatchup,
+  generateRoundRobinMatchups,
 }: CreateEditTemplateFormProps) {
   return (
     <div className="space-y-6">
@@ -635,11 +793,19 @@ function CreateEditTemplateForm({
       {/* Matchups */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <Label>Matchups</Label>
-          <Button type="button" variant="outline" size="sm" onClick={addMatchup}>
-            <Plus className="h-3 w-3 mr-1" />
-            Add Matchup
-          </Button>
+          <Label>Matchups ({formData.matchups.length} games)</Label>
+          <div className="flex items-center gap-2">
+            {generateRoundRobinMatchups && (
+              <Button type="button" variant="secondary" size="sm" onClick={generateRoundRobinMatchups}>
+                <Settings className="h-3 w-3 mr-1" />
+                Auto-Generate
+              </Button>
+            )}
+            <Button type="button" variant="outline" size="sm" onClick={addMatchup}>
+              <Plus className="h-3 w-3 mr-1" />
+              Add Matchup
+            </Button>
+          </div>
         </div>
         <div className="space-y-2 max-h-64 overflow-y-auto">
           {formData.matchups.map((matchup: Matchup, index: number) => (
@@ -704,7 +870,7 @@ function CreateEditTemplateForm({
         <Button
           type="submit"
           onClick={onSubmit}
-          disabled={isLoading || !formData.name}
+          disabled={isLoading}
           className="w-full sm:w-auto"
         >
           {isLoading ? 'Saving...' : 'Save Template'}

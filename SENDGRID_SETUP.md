@@ -1,6 +1,6 @@
 # SendGrid Integration Guide
 
-This guide explains how to properly set up and configure SendGrid for use with MatchPro's email functionality, particularly for welcome emails.
+This guide explains how to properly set up and configure SendGrid for use with KickDeck's email functionality, particularly for welcome emails.
 
 ## Setup Process
 
@@ -36,7 +36,7 @@ Create two separate dynamic templates:
 #### Member Welcome Email
 This email should include:
 - Personalized greeting (use `{{user.firstName}}`)
-- Welcome message explaining what MatchPro is
+- Welcome message explaining what KickDeck is
 - Clear call-to-action for logging in (`{{loginUrl}}`)
 - Brief overview of dashboard features
 - Support contact information
@@ -62,7 +62,7 @@ Both templates should support these variables:
 Admin template should also use:
 - `{{role}}` - Role of the user (e.g., "Administrator")
 
-## Configuration in MatchPro
+## Configuration in KickDeck
 
 ### 1. Configure SendGrid Email Provider
 
@@ -71,7 +71,7 @@ Admin template should also use:
    - Provider Type: SendGrid
    - API Key: [Use environment variable, don't enter directly]
    - Sender Email: The verified email address from step 2
-   - Sender Name: "MatchPro" or your organization name
+   - Sender Name: "KickDeck" or your organization name
 
 ### 2. Map SendGrid Templates to Email Types
 

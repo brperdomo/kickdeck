@@ -79,11 +79,14 @@ export default function AuthLoggedOut() {
   
   // Simple loading state while redirect happens
   return (
-    <div className="flex items-center justify-center min-h-screen bg-background">
+    <div
+      className="flex items-center justify-center min-h-screen"
+      style={{ backgroundColor: '#0f0f1a' }}
+    >
       <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mx-auto mb-4"></div>
-        <p className="text-lg font-medium">Securely logging you out...</p>
-        <p className="text-sm text-muted-foreground mt-2">Redirecting to login page...</p>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-violet-500 mx-auto mb-4"></div>
+        <p className="text-white text-lg font-medium">Securely logging you out...</p>
+        <p className="text-sm text-gray-400 mt-2">Redirecting to login page...</p>
       </div>
     </div>
   );

@@ -172,7 +172,7 @@ export function setupAuth(app: Express) {
     }),
     rolling: true, // Reset expiration countdown on every response
     unset: 'destroy',
-    name: 'matchpro.session' // Custom session name
+    name: 'kickdeck.session' // Custom session name
   };
 
   // Production-specific optimizations

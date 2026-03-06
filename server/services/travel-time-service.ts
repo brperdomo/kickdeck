@@ -37,7 +37,7 @@ interface TravelValidation {
 
 export class TravelTimeService {
 
-  // Real complex data for MatchPro AI
+  // Real complex data for KickDeck
   private static readonly COMPLEX_LOCATIONS: ComplexLocation[] = [
     {
       id: 1,

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Production Deployment Script for MatchPro
+# Production Deployment Script for KickDeck
 # This script properly builds and starts the application in production mode
 
 echo "Starting production deployment..."

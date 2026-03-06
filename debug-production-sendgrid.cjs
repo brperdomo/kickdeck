@@ -37,7 +37,7 @@ async function debugProductionSendGrid() {
   console.log('\n2. Production Environment Test:');
   
   try {
-    const prodResponse = await makeHTTPSRequest('GET', 'app.matchpro.ai', '/api/admin/sendgrid/templates', {
+    const prodResponse = await makeHTTPSRequest('GET', 'app.kickdeck.io', '/api/admin/sendgrid/templates', {
       'Cookie': 'test=1', // This will fail auth but give us the response format
       'User-Agent': 'Production-Debug-Tool'
     });
@@ -122,7 +122,7 @@ async function debugProductionSendGrid() {
 # SendGrid Production Deployment Fix
 
 ## Issue Identified
-Production environment at app.matchpro.ai has invalid SendGrid API key, while development environment is working correctly.
+Production environment at app.kickdeck.io has invalid SendGrid API key, while development environment is working correctly.
 
 ## Root Cause
 Environment variables are managed separately between development and production environments.
@@ -144,7 +144,7 @@ Environment variables are managed separately between development and production 
 
 ### Verification:
 After deployment, test by:
-1. Logging into app.matchpro.ai as admin
+1. Logging into app.kickdeck.io as admin
 2. Navigate to SendGrid Settings
 3. Verify templates load without authorization errors
 

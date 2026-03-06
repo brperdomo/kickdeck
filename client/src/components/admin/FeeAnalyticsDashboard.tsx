@@ -1,11 +1,11 @@
 /**
  * Fee Analytics Dashboard Component
  * 
- * Provides comprehensive visualization of the MatchPro fee structure:
+ * Provides comprehensive visualization of the KickDeck fee structure:
  * - Tournament Cost: Base amount
- * - MatchPro Fee: 4% platform fee (configurable by volume)
+ * - KickDeck Fee: 4% platform fee (configurable by volume)
  * - Stripe Processing: 2.9% + $0.30
- * - Revenue Distribution: Tournament, MatchPro, Stripe breakdown
+ * - Revenue Distribution: Tournament, KickDeck, Stripe breakdown
  */
 
 import { useState, useEffect } from "react";
@@ -24,7 +24,7 @@ interface FeeCalculation {
   platformFeeAmount: number;
   stripeFeeAmount: number;
   tournamentReceives: number;
-  matchproReceives: number;
+  kickdeckReceives: number;
   stripeReceives: number;
   totalAccounted: number;
   isBalanced: boolean;
@@ -84,9 +84,9 @@ export function FeeAnalyticsDashboard() {
     
     const tournamentReceives = tournamentCost;
     const stripeReceives = stripeFeeAmount;
-    const matchproReceives = platformFeeAmount - stripeFeeAmount;
+    const kickdeckReceives = platformFeeAmount - stripeFeeAmount;
     
-    const totalAccounted = tournamentReceives + stripeReceives + matchproReceives;
+    const totalAccounted = tournamentReceives + stripeReceives + kickdeckReceives;
     const isBalanced = totalAccounted === totalChargedAmount;
 
     setCalculation({
@@ -96,7 +96,7 @@ export function FeeAnalyticsDashboard() {
       platformFeeAmount,
       stripeFeeAmount,
       tournamentReceives,
-      matchproReceives,
+      kickdeckReceives,
       stripeReceives,
       totalAccounted,
       isBalanced
@@ -199,8 +199,8 @@ export function FeeAnalyticsDashboard() {
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-muted-foreground">MatchPro Gets</p>
-                    <p className="text-2xl font-bold text-blue-600">{formatCurrency(calculation.matchproReceives)}</p>
+                    <p className="text-sm font-medium text-muted-foreground">KickDeck Gets</p>
+                    <p className="text-2xl font-bold text-blue-600">{formatCurrency(calculation.kickdeckReceives)}</p>
                   </div>
                   <PieChart className="h-4 w-4 text-blue-600" />
                 </div>
@@ -238,7 +238,7 @@ export function FeeAnalyticsDashboard() {
                 
                 <div className="flex justify-between items-center text-blue-600">
                   <span className="flex items-center gap-2">
-                    MatchPro Platform Fee 
+                    KickDeck Platform Fee 
                     <Badge variant="secondary">{formatPercentage(calculation.platformFeeRate)}</Badge>
                   </span>
                   <span className="text-lg">+ {formatCurrency(calculation.platformFeeAmount)}</span>
@@ -277,10 +277,10 @@ export function FeeAnalyticsDashboard() {
                   
                   <div className="flex justify-between items-center">
                     <span className="flex items-center gap-2">
-                      MatchPro Platform Revenue
+                      KickDeck Platform Revenue
                       <Badge variant="outline" className="text-blue-600 border-blue-600">Remainder</Badge>
                     </span>
-                    <span className="text-lg font-medium text-blue-600">{formatCurrency(calculation.matchproReceives)}</span>
+                    <span className="text-lg font-medium text-blue-600">{formatCurrency(calculation.kickdeckReceives)}</span>
                   </div>
                 </div>
 
@@ -323,8 +323,8 @@ export function FeeAnalyticsDashboard() {
                     <p className="text-sm text-blue-600">≈ Your $29.30 estimate</p>
                   </div>
                   <div>
-                    <p className="font-semibold">MatchPro Gets</p>
-                    <p className="text-2xl">{formatCurrency(calculation.matchproReceives)}</p>
+                    <p className="font-semibold">KickDeck Gets</p>
+                    <p className="text-2xl">{formatCurrency(calculation.kickdeckReceives)}</p>
                     <p className="text-sm text-blue-600">≈ Your $10.70 estimate</p>
                   </div>
                 </div>

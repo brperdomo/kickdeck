@@ -105,7 +105,7 @@ async function processB2017Payment() {
               teamName: team.name,
               amount: (team.total_amount / 100).toFixed(2),
               paymentId: 'Manual Processing',
-              loginUrl: `${process.env.PUBLIC_URL || 'https://app.matchpro.ai'}/dashboard`
+              loginUrl: `${process.env.PUBLIC_URL || 'https://app.kickdeck.io'}/dashboard`
             }
           })
         });

@@ -191,14 +191,14 @@ async function diagnoseSendGridProduction() {
         {
           to: [{ email: testEmail }],
           dynamic_template_data: {
-            reset_url: 'https://matchpro.ai/reset-password?token=test123',
+            reset_url: 'https://kickdeck.io/reset-password?token=test123',
             user_name: 'Test User'
           }
         }
       ],
       from: { 
-        email: process.env.DEFAULT_FROM_EMAIL || 'support@matchpro.ai',
-        name: 'MatchPro.ai Test' 
+        email: process.env.DEFAULT_FROM_EMAIL || 'support@kickdeck.io',
+        name: 'KickDeck Test' 
       },
       template_id: 'd-7eb7ea1c19ca4090a0cefa3a2be75088'
     };

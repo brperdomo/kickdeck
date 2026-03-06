@@ -196,7 +196,7 @@ interface ComplexDistanceMatrix {
   }
 }
 
-// Real complex distances for MatchPro venues
+// Real complex distances for KickDeck venues
 const COMPLEX_DISTANCES: ComplexDistanceMatrix = {
   1: { // Central Sports Complex
     2: { drivingTimeMinutes: 15, walkingTimeMinutes: 45, distance: 8.2, trafficMultiplier: 1.3 },

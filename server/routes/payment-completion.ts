@@ -293,7 +293,7 @@ router.post('/send-notifications', async (req, res) => {
                   Please complete your payment setup within 7 days to avoid registration cancellation.
                 </p>
                 <p style="color: #666; font-size: 14px; margin: 0;">
-                  Questions? Contact us at <a href="mailto:support@matchpro.ai" style="color: #667eea;">support@matchpro.ai</a>
+                  Questions? Contact us at <a href="mailto:support@kickdeck.io" style="color: #667eea;">support@kickdeck.io</a>
                 </p>
               </div>
             </div>

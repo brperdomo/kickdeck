@@ -61,14 +61,14 @@ async function clearSuppressions() {
         {
           to: [{ email }],
           dynamic_template_data: {
-            reset_url: 'https://matchpro.ai/reset-password?token=cleanup-test',
+            reset_url: 'https://kickdeck.io/reset-password?token=cleanup-test',
             user_name: 'Test User'
           }
         }
       ],
       from: { 
-        email: process.env.DEFAULT_FROM_EMAIL || 'support@matchpro.ai',
-        name: 'MatchPro.ai' 
+        email: process.env.DEFAULT_FROM_EMAIL || 'support@kickdeck.io',
+        name: 'KickDeck' 
       },
       template_id: 'd-7eb7ea1c19ca4090a0cefa3a2be75088'
     };

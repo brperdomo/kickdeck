@@ -2,7 +2,7 @@
  * Final Email Delivery Test
  * 
  * This script performs a final test to confirm emails are now being delivered
- * successfully using the properly authenticated matchpro.ai domain.
+ * successfully using the properly authenticated kickdeck.io domain.
  */
 
 import fetch from 'node-fetch';
@@ -14,7 +14,7 @@ async function finalDeliveryTest() {
   const timestamp = Date.now();
   const finalTestUser = {
     username: `finaldelivery${timestamp}`,
-    email: `finaldelivery${timestamp}@matchproteam.testinator.com`,
+    email: `finaldelivery${timestamp}@kickdeckteam.testinator.com`,
     password: 'FinalDelivery123!',
     firstName: 'Final',
     lastName: 'Delivery',
@@ -24,7 +24,7 @@ async function finalDeliveryTest() {
   console.log(`Testing final delivery with: ${finalTestUser.email}`);
   
   // Test registration on both production domains
-  const domains = ['https://app.matchpro.ai', 'https://matchpro.replit.app'];
+  const domains = ['https://app.kickdeck.io', 'https://kickdeck.replit.app'];
   
   for (const domain of domains) {
     console.log(`\nTesting registration on: ${domain}`);
@@ -63,7 +63,7 @@ async function finalDeliveryTest() {
   
   console.log('\n=== FINAL DELIVERY TEST COMPLETE ===');
   console.log('\nEmail system status:');
-  console.log('• Domain: matchpro.ai (properly authenticated)');
+  console.log('• Domain: kickdeck.io (properly authenticated)');
   console.log('• SendGrid: Accepting emails (status 202)');
   console.log('• Templates: Active and configured');
   console.log('• Registration: Triggering welcome emails');

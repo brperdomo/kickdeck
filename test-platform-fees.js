@@ -6,7 +6,7 @@
  */
 
 // Constants from fee-calculator.ts
-const DEFAULT_PLATFORM_FEE_RATE = 0.04; // 4% MatchPro fee
+const DEFAULT_PLATFORM_FEE_RATE = 0.04; // 4% KickDeck fee
 const STRIPE_PERCENTAGE_FEE = 0.029; // 2.9%
 const STRIPE_FIXED_FEE = 30; // $0.30 in cents
 
@@ -28,10 +28,10 @@ function calculateFeeBreakdown(tournamentCost) {
   // Distribution calculation
   const tournamentReceives = tournamentCost; // Tournament gets their base amount
   const stripeReceives = stripeFeeAmount; // Stripe gets their processing fee
-  const matchproReceives = platformFeeAmount - stripeFeeAmount; // MatchPro gets platform fee minus Stripe costs
+  const kickdeckReceives = platformFeeAmount - stripeFeeAmount; // KickDeck gets platform fee minus Stripe costs
   
   // Validation
-  const totalAccounted = tournamentReceives + stripeReceives + matchproReceives;
+  const totalAccounted = tournamentReceives + stripeReceives + kickdeckReceives;
   const isBalanced = totalAccounted === totalChargedAmount;
   
   return {
@@ -41,7 +41,7 @@ function calculateFeeBreakdown(tournamentCost) {
     platformFeeAmount,
     stripeFeeAmount,
     tournamentReceives,
-    matchproReceives,
+    kickdeckReceives,
     stripeReceives,
     totalAccounted,
     isBalanced
@@ -63,18 +63,18 @@ testAmounts.forEach((amount, i) => {
   console.log(`Expected Calculation:`);
   console.log(`  Total Charged: $${(calculated.totalChargedAmount/100).toFixed(2)}`);
   console.log(`  Platform Fee: $${(calculated.platformFeeAmount/100).toFixed(2)}`);
-  console.log(`  MatchPro Revenue: $${(calculated.matchproReceives/100).toFixed(2)}`);
+  console.log(`  KickDeck Revenue: $${(calculated.kickdeckReceives/100).toFixed(2)}`);
   console.log(`  Stripe Fee: $${(calculated.stripeFeeAmount/100).toFixed(2)}`);
   console.log(`  Tournament Receives: $${(calculated.tournamentReceives/100).toFixed(2)}`);
   
   console.log(`Actual Results:`);
   console.log(`  Total Charged: $${(actualCharged/100).toFixed(2)}`);
   console.log(`  Platform Fee Recorded: $0.00 (DATABASE ISSUE)`);
-  console.log(`  MatchPro Revenue Recorded: $0.00 (DATABASE ISSUE)`);
+  console.log(`  KickDeck Revenue Recorded: $0.00 (DATABASE ISSUE)`);
   
   console.log(`Analysis:`);
   console.log(`  Calculation Matches Actual: ${calculated.totalChargedAmount === actualCharged}`);
-  console.log(`  Missing MatchPro Revenue: $${(calculated.matchproReceives/100).toFixed(2)}`);
+  console.log(`  Missing KickDeck Revenue: $${(calculated.kickdeckReceives/100).toFixed(2)}`);
   console.log(`  ✅ Fee calculation is working correctly`);
   console.log(`  ❌ Database recording is NOT working`);
 });

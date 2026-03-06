@@ -70,15 +70,15 @@ async function checkSendGridTemplates() {
     
     const dynamicEmail = {
       to: 'bperdomo@zoho.com',
-      from: 'support@matchpro.ai',
+      from: 'support@kickdeck.io',
       templateId: testTemplate.id,
       dynamicTemplateData: {
         // Common variables that might be in your templates
         userName: 'Test User',
         teamName: 'Test Team FC',
         eventName: 'Test Tournament',
-        confirmationLink: 'https://app.matchpro.ai/test',
-        supportEmail: 'support@matchpro.ai',
+        confirmationLink: 'https://app.kickdeck.io/test',
+        supportEmail: 'support@kickdeck.io',
         currentYear: new Date().getFullYear().toString(),
         timestamp: new Date().toISOString()
       }

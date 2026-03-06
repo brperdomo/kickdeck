@@ -1,15 +1,16 @@
 import { ReactNode, useEffect } from "react";
-import { MemberSidebar } from "./MemberSidebar";
+import { MemberTopNav } from "./MemberTopNav";
 import { motion } from "framer-motion";
 import { useBreakpoint } from "@/hooks/use-mobile";
-import { MobileDashboard } from "@/components/mobile/MobileDashboard";
+import { useUser } from "@/hooks/use-user";
+import { useOrganizationSettings } from "@/hooks/use-organization-settings";
 
 interface MemberLayoutProps {
   children: ReactNode;
   mobileDashboard?: boolean; // Flag to force mobile dashboard
 }
 
-// Helper to update the member styles
+// Helper to update the member styles with dark neon theme
 export function updateMemberStyles() {
   const styleElement = document.getElementById('member-dashboard-styles') || (() => {
     const el = document.createElement('style');
@@ -18,48 +19,33 @@ export function updateMemberStyles() {
     return el;
   })();
 
-  // Get primary color variables from the theme
-  const styles = getComputedStyle(document.documentElement);
-  const primaryColor = styles.getPropertyValue('--primary').trim();
-  const backgroundColor = styles.getPropertyValue('--background').trim();
-  const cardColor = styles.getPropertyValue('--card').trim();
-
   styleElement.innerHTML = `
-    .member-dashboard {
-      background: linear-gradient(180deg, ${backgroundColor} 0%, ${backgroundColor} 100%);
+    .member-dashboard.dashboard-dark {
+      background-color: #0f0f1a;
+      background-image:
+        repeating-linear-gradient(0deg, rgba(0,0,0,0.03) 0px, transparent 1px, transparent 3px),
+        linear-gradient(rgba(124,58,237,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(124,58,237,0.03) 1px, transparent 1px),
+        linear-gradient(180deg, #0f0f1a 0%, #0d0b2e 100%) !important;
+      background-size: 100% 3px, 60px 60px, 60px 60px, 100% 100% !important;
+      background-attachment: fixed !important;
     }
-    
-    .member-sidebar {
-      backdrop-filter: blur(8px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-    
+
     .member-content {
-      background-color: ${backgroundColor};
+      background-color: transparent;
     }
-    
-    .member-card {
-      background: linear-gradient(to bottom right, ${cardColor} 0%, ${cardColor} 100%);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    
-    .member-card:hover {
-      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
-      transform: translateY(-2px);
-    }
-    
+
     .member-card-header {
-      background: linear-gradient(to right, ${primaryColor}20, ${primaryColor}05);
-      border-bottom: 1px solid ${primaryColor}20;
+      background: linear-gradient(to right, rgba(124, 58, 237, 0.15), rgba(124, 58, 237, 0.03));
+      border-bottom: 1px solid rgba(124, 58, 237, 0.15);
     }
-    
+
     .section-header {
       position: relative;
       margin-bottom: 1.5rem;
       padding-bottom: 0.75rem;
     }
-    
+
     .section-header::after {
       content: '';
       position: absolute;
@@ -67,7 +53,7 @@ export function updateMemberStyles() {
       left: 0;
       width: 80px;
       height: 3px;
-      background: ${primaryColor};
+      background: linear-gradient(90deg, #7c3aed, #a855f7);
       border-radius: 3px;
     }
   `;
@@ -75,40 +61,54 @@ export function updateMemberStyles() {
 
 export function MemberLayout({ children, mobileDashboard = false }: MemberLayoutProps) {
   const { isMobile } = useBreakpoint();
-  
-  // Apply the member dashboard styles when component mounts
+  const { user, logout } = useUser();
+  const { settings } = useOrganizationSettings();
+
+  // Apply the member dashboard styles and body class for portalled elements
   useEffect(() => {
     updateMemberStyles();
+    document.body.classList.add('dashboard-dark-active');
+
     return () => {
-      // Cleanup if needed
       const styleElement = document.getElementById('member-dashboard-styles');
       if (styleElement) {
         styleElement.textContent = '';
       }
+      document.body.classList.remove('dashboard-dark-active');
     };
   }, []);
-  
-  // Check if we should use mobile layout
-  const useMobileDashboard = mobileDashboard || isMobile;
-  
-  // For the main dashboard view, we'll use the same layout for both mobile and desktop
-  // We're removing the conditional that used a completely different mobile layout
-  // The standard dashboard will be used for all devices with responsive styling
-  
-  return (
-    <div className="flex min-h-screen bg-background member-dashboard">
-      {/* Sidebar - only visible on desktop */}
-      <MemberSidebar />
 
-      {/* Main Content */}
-      <motion.main 
-        className="flex-1 px-4 sm:px-6 md:px-8 py-6 overflow-auto member-content"
+  const handleLogout = async () => {
+    try {
+      await logout();
+      window.location.href = "/?loggedOut=true";
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col bg-background member-dashboard dashboard-dark">
+      {/* Top Navigation */}
+      <MemberTopNav
+        user={user}
+        logoUrl={settings?.logoUrl}
+        hasAdminAccess={user?.isAdmin}
+        onLogout={handleLogout}
+      />
+
+      {/* Main Content — full-width, no sidebar */}
+      <motion.main
+        className="flex-1 px-4 sm:px-6 md:px-8 py-6 max-w-6xl mx-auto w-full member-content"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.3 }}
       >
         {children}
       </motion.main>
+
+      {/* Neon floor grid effect */}
+      <div className="neon-floor-grid" aria-hidden="true" />
     </div>
   );
 }

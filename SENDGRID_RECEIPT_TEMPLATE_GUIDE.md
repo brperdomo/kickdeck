@@ -1,6 +1,6 @@
 # SendGrid Registration Receipt Template Guide
 
-This guide explains how to set up a SendGrid dynamic template for team registration receipts in MatchPro.
+This guide explains how to set up a SendGrid dynamic template for team registration receipts in KickDeck.
 
 ## Overview
 
@@ -24,9 +24,9 @@ The template uses SendGrid's dynamic templating system to automatically populate
 6. Paste the HTML template (sample provided below)
 7. Save the template and note the Template ID
 
-## Connecting the Template in MatchPro
+## Connecting the Template in KickDeck
 
-1. Go to MatchPro Admin > Email Settings
+1. Go to KickDeck Admin > Email Settings
 2. Select "SendGrid" as your email provider
 3. Under "Template Mappings," find "Registration Receipt"
 4. Paste your SendGrid Template ID
@@ -205,8 +205,8 @@ The following variables are available to use in your template:
         <a href="{{dashboardLink}}" class="button">Go to Dashboard</a>
       </div>
       
-      <p>Thank you for using MatchPro!</p>
-      <p>Best regards,<br>The MatchPro Team</p>
+      <p>Thank you for using KickDeck!</p>
+      <p>Best regards,<br>The KickDeck Team</p>
     </div>
     <div class="footer">
       <p>This is an automated message. Please do not reply directly to this email.</p>
@@ -230,4 +230,4 @@ After setting up your template, you can test it with the following methods:
 - Check that your SendGrid API key has the necessary permissions for sending mail
 - Verify that your sender email is properly verified in SendGrid
 
-For additional support, please contact the MatchPro support team.
+For additional support, please contact the KickDeck support team.

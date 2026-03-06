@@ -3,7 +3,7 @@
  * 
  * This script verifies that SendGrid is properly configured by:
  * 1. Checking that a SendGrid provider is set up in the database
- * 2. Ensuring that all templates use support@matchpro.ai as the sender
+ * 2. Ensuring that all templates use support@kickdeck.io as the sender
  * 3. Sending a test email using SendGrid to verify the integration works
  */
 
@@ -13,7 +13,7 @@ import { eq } from "drizzle-orm";
 import { MailService } from '@sendgrid/mail';
 
 // Constants
-const SENDER_EMAIL = 'support@matchpro.ai';
+const SENDER_EMAIL = 'support@kickdeck.io';
 
 async function verifyConfig() {
   try {
@@ -123,12 +123,12 @@ async function sendTestEmail(provider, recipient) {
     const msg = {
       to: recipient,
       from: SENDER_EMAIL,
-      subject: 'MatchPro SendGrid Verification',
-      text: 'This is a test email to verify SendGrid integration with MatchPro.',
+      subject: 'KickDeck SendGrid Verification',
+      text: 'This is a test email to verify SendGrid integration with KickDeck.',
       html: `
         <div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
-          <h2 style="color: #0066cc;">MatchPro SendGrid Verification</h2>
-          <p>This is a test email to verify that SendGrid is properly integrated with MatchPro.</p>
+          <h2 style="color: #0066cc;">KickDeck SendGrid Verification</h2>
+          <p>This is a test email to verify that SendGrid is properly integrated with KickDeck.</p>
           <p>If you received this email, it means that:</p>
           <ul>
             <li>SendGrid API key is valid</li>

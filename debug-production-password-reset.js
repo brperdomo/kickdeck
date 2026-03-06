@@ -66,12 +66,12 @@ async function debugPasswordResetFlow() {
         console.log(`   - ${sender.from_email} (${sender.verified ? 'VERIFIED' : 'NOT VERIFIED'})`);
       });
       
-      // Check if support@matchpro.ai is verified
-      const supportSender = senders.results?.find(s => s.from_email === 'support@matchpro.ai');
+      // Check if support@kickdeck.io is verified
+      const supportSender = senders.results?.find(s => s.from_email === 'support@kickdeck.io');
       if (supportSender) {
-        console.log(`   support@matchpro.ai status: ${supportSender.verified ? 'VERIFIED' : 'NOT VERIFIED'}`);
+        console.log(`   support@kickdeck.io status: ${supportSender.verified ? 'VERIFIED' : 'NOT VERIFIED'}`);
       } else {
-        console.log('   ⚠️  support@matchpro.ai is not in verified senders list');
+        console.log('   ⚠️  support@kickdeck.io is not in verified senders list');
       }
     } else {
       console.log('❌ Verified senders check: FAILED');
@@ -117,7 +117,7 @@ async function debugPasswordResetFlow() {
     
     const testMessage = {
       to: testEmail,
-      from: 'support@matchpro.ai',
+      from: 'support@kickdeck.io',
       subject: `Production Email Test - ${new Date().toISOString()}`,
       text: 'This is a direct test email from the production environment.',
       html: `

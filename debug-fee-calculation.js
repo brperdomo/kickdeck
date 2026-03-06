@@ -18,10 +18,10 @@ function calculateFeeBreakdown(tournamentCost) {
   console.log(`\n=== Fee Calculation for $${tournamentCost/100} tournament cost ===`);
   
   // Method 1: Current implementation
-  const matchproTargetMargin = Math.round(tournamentCost * DEFAULT_PLATFORM_FEE_RATE);
-  console.log(`MatchPro target margin: ${matchproTargetMargin} cents ($${matchproTargetMargin/100})`);
+  const kickdeckTargetMargin = Math.round(tournamentCost * DEFAULT_PLATFORM_FEE_RATE);
+  console.log(`KickDeck target margin: ${kickdeckTargetMargin} cents ($${kickdeckTargetMargin/100})`);
   
-  const totalChargedAmount = Math.round((tournamentCost + matchproTargetMargin + STRIPE_FIXED_FEE) / (1 - STRIPE_PERCENTAGE_FEE));
+  const totalChargedAmount = Math.round((tournamentCost + kickdeckTargetMargin + STRIPE_FIXED_FEE) / (1 - STRIPE_PERCENTAGE_FEE));
   console.log(`Total charged amount: ${totalChargedAmount} cents ($${totalChargedAmount/100})`);
   
   const platformFeeAmount = totalChargedAmount - tournamentCost;
@@ -35,14 +35,14 @@ function calculateFeeBreakdown(tournamentCost) {
   
   const tournamentReceives = tournamentCost;
   const stripeReceives = stripeFeeAmount;
-  const matchproReceives = platformFeeAmount - stripeFeeAmount;
+  const kickdeckReceives = platformFeeAmount - stripeFeeAmount;
   
   console.log(`\nDistribution:`);
   console.log(`Tournament receives: ${tournamentReceives} cents ($${tournamentReceives/100})`);
   console.log(`Stripe receives: ${stripeReceives} cents ($${stripeReceives/100})`);
-  console.log(`MatchPro receives: ${matchproReceives} cents ($${matchproReceives/100})`);
+  console.log(`KickDeck receives: ${kickdeckReceives} cents ($${kickdeckReceives/100})`);
   
-  const totalAccounted = tournamentReceives + stripeReceives + matchproReceives;
+  const totalAccounted = tournamentReceives + stripeReceives + kickdeckReceives;
   console.log(`\nTotal accounted: ${totalAccounted} cents ($${totalAccounted/100})`);
   console.log(`Balanced: ${totalAccounted === totalChargedAmount}`);
   
@@ -53,7 +53,7 @@ function calculateFeeBreakdown(tournamentCost) {
     platformFeeAmount,
     stripeFeeAmount,
     tournamentReceives,
-    matchproReceives,
+    kickdeckReceives,
     stripeReceives,
     totalAccounted,
     isBalanced: totalAccounted === totalChargedAmount

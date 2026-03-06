@@ -19,7 +19,7 @@ export async function createDefaultEmailTemplates() {
         name: 'Password Reset',
         description: 'Template for password reset emails',
         type: 'password_reset',
-        subject: 'Reset Your Password - MatchPro',
+        subject: 'Reset Your Password - KickDeck',
         content: `
 <!DOCTYPE html>
 <html>
@@ -91,7 +91,7 @@ export async function createDefaultEmailTemplates() {
       <p>Or copy and paste the following URL into your browser:</p>
       <div class="token-box">{{resetUrl}}</div>
       <p>This link will expire in {{expiryHours}} hours.</p>
-      <p>Thank you,<br>The MatchPro Team</p>
+      <p>Thank you,<br>The KickDeck Team</p>
     </div>
     <div class="footer">
       <p>If you're having trouble with the button above, copy and paste the URL below into your web browser.</p>
@@ -100,8 +100,8 @@ export async function createDefaultEmailTemplates() {
   </div>
 </body>
 </html>`,
-        senderName: 'MatchPro',
-        senderEmail: 'noreply@matchpro.ai',
+        senderName: 'KickDeck',
+        senderEmail: 'noreply@kickdeck.io',
         isActive: true,
         variables: ['username', 'resetUrl', 'token', 'expiryHours'],
         createdAt: new Date(),
@@ -119,13 +119,13 @@ export async function createDefaultEmailTemplates() {
         name: 'Welcome Email',
         description: 'Template for welcome emails sent to new users',
         type: 'welcome',
-        subject: 'Welcome to MatchPro!',
+        subject: 'Welcome to KickDeck!',
         content: `
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Welcome to MatchPro</title>
+  <title>Welcome to KickDeck</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -173,17 +173,17 @@ export async function createDefaultEmailTemplates() {
 <body>
   <div class="container">
     <div class="header">
-      <h1>Welcome to MatchPro!</h1>
+      <h1>Welcome to KickDeck!</h1>
     </div>
     <div class="content">
       <p>Hello {{firstName}},</p>
-      <p>Welcome to MatchPro! We're excited to have you join our sports management platform.</p>
+      <p>Welcome to KickDeck! We're excited to have you join our sports management platform.</p>
       <p>Your account has been successfully created with the following information:</p>
       <ul>
         <li><strong>Username:</strong> {{username}}</li>
         <li><strong>Email:</strong> {{email}}</li>
       </ul>
-      <p>With your MatchPro account, you can:</p>
+      <p>With your KickDeck account, you can:</p>
       <ul>
         <li>Register teams for tournaments</li>
         <li>Manage player information</li>
@@ -191,7 +191,7 @@ export async function createDefaultEmailTemplates() {
         <li>And much more!</li>
       </ul>
       <p>If you have any questions or need assistance, please don't hesitate to contact our support team.</p>
-      <p>Thank you,<br>The MatchPro Team</p>
+      <p>Thank you,<br>The KickDeck Team</p>
     </div>
     <div class="footer">
       <p>This email was sent to {{email}}. If you did not create an account, please contact us immediately.</p>
@@ -199,8 +199,8 @@ export async function createDefaultEmailTemplates() {
   </div>
 </body>
 </html>`,
-        senderName: 'MatchPro',
-        senderEmail: 'noreply@matchpro.ai',
+        senderName: 'KickDeck',
+        senderEmail: 'noreply@kickdeck.io',
         isActive: true,
         variables: ['firstName', 'lastName', 'username', 'email'],
         createdAt: new Date(),

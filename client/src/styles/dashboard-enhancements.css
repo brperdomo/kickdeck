@@ -406,3 +406,63 @@
   background-color: rgba(239, 68, 68, 0.1);
   color: rgb(239, 68, 68);
 }
+
+/* ========== Dashboard Dark Theme Overrides ========== */
+.dashboard-dark .enhanced-card {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(124, 58, 237, 0.1);
+  background-color: hsl(240 30% 11%);
+}
+
+.dashboard-dark .enhanced-card:hover {
+  box-shadow: 0 8px 20px rgba(124, 58, 237, 0.12), 0 4px 12px rgba(0, 0, 0, 0.3);
+  border-color: rgba(124, 58, 237, 0.2);
+}
+
+.dashboard-dark .stats-card {
+  background: linear-gradient(145deg, hsl(240 30% 11%), hsl(263 30% 13%));
+  border: 1px solid rgba(124, 58, 237, 0.15);
+}
+
+.dashboard-dark .stats-card::before {
+  background: linear-gradient(to bottom, #7c3aed, #a855f7);
+}
+
+.dashboard-dark .content-panel {
+  background-color: hsl(240 30% 11%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.dashboard-dark .pattern-bg {
+  background-color: hsl(233 47% 7%);
+  background-image: radial-gradient(rgba(124, 58, 237, 0.03) 1.5px, transparent 1.5px);
+  background-size: 30px 30px;
+}
+
+.dashboard-dark .input-enhanced {
+  background-color: hsl(240 20% 14%);
+  border-color: hsl(240 20% 22%);
+  color: hsl(240 5% 90%);
+}
+
+.dashboard-dark .input-enhanced:focus {
+  border-color: hsl(263 70% 58%);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+}
+
+.dashboard-dark .mobile-table-card {
+  background-color: hsl(240 30% 11%);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.dashboard-dark .mobile-table-card__row {
+  border-bottom-color: rgba(124, 58, 237, 0.08);
+}
+
+.dashboard-dark .welcome-banner {
+  background: linear-gradient(135deg, #7c3aed, rgba(124, 58, 237, 0.8));
+}
+
+.dashboard-dark .section-header::after {
+  background: linear-gradient(90deg, #7c3aed, #a855f7);
+}

@@ -4,7 +4,7 @@
  * This script diagnoses and fixes the critical issue where platform fees
  * are being calculated correctly but not recorded in the database.
  * 
- * This causes MatchPro to receive $0 revenue while customers pay 4% platform fees.
+ * This causes KickDeck to receive $0 revenue while customers pay 4% platform fees.
  */
 
 import { db } from './db/index.js';
@@ -12,7 +12,7 @@ import { paymentTransactions } from './db/schema.js';
 import { eq, desc } from 'drizzle-orm';
 
 // Fee calculation logic (copied from fee-calculator.ts)
-const DEFAULT_PLATFORM_FEE_RATE = 0.04; // 4% MatchPro fee
+const DEFAULT_PLATFORM_FEE_RATE = 0.04; // 4% KickDeck fee
 const STRIPE_PERCENTAGE_FEE = 0.029; // 2.9%
 const STRIPE_FIXED_FEE = 30; // $0.30 in cents
 
@@ -34,7 +34,7 @@ function calculateFeeBreakdown(tournamentCost) {
   // Distribution calculation
   const tournamentReceives = tournamentCost; // Tournament gets their base amount
   const stripeReceives = stripeFeeAmount; // Stripe gets their processing fee
-  const matchproReceives = platformFeeAmount - stripeFeeAmount; // MatchPro gets platform fee minus Stripe costs
+  const kickdeckReceives = platformFeeAmount - stripeFeeAmount; // KickDeck gets platform fee minus Stripe costs
   
   return {
     tournamentCost,
@@ -43,7 +43,7 @@ function calculateFeeBreakdown(tournamentCost) {
     platformFeeAmount,
     stripeFeeAmount,
     tournamentReceives,
-    matchproReceives,
+    kickdeckReceives,
     stripeReceives
   };
 }
@@ -72,18 +72,18 @@ async function fixPlatformFeeRecording() {
         console.log(`Transaction ${transaction.paymentIntentId}:`);
         console.log(`  Total Charged: $${(transaction.amount / 100).toFixed(2)}`);
         console.log(`  Calculated Platform Fee: $${(breakdown.platformFeeAmount / 100).toFixed(2)}`);
-        console.log(`  Calculated MatchPro Revenue: $${(breakdown.matchproReceives / 100).toFixed(2)}`);
+        console.log(`  Calculated KickDeck Revenue: $${(breakdown.kickdeckReceives / 100).toFixed(2)}`);
         console.log(`  Database Platform Fee: $${(transaction.platformFeeAmount / 100).toFixed(2)} ❌`);
-        console.log(`  Database MatchPro Revenue: $${(transaction.matchproRevenue / 100).toFixed(2)} ❌`);
+        console.log(`  Database KickDeck Revenue: $${(transaction.kickdeckRevenue / 100).toFixed(2)} ❌`);
         
-        totalMissingRevenue += breakdown.matchproReceives;
+        totalMissingRevenue += breakdown.kickdeckReceives;
         
         // Fix this transaction
         try {
           await db.update(paymentTransactions)
             .set({
               platformFeeAmount: breakdown.platformFeeAmount,
-              matchproRevenue: breakdown.matchproReceives,
+              kickdeckRevenue: breakdown.kickdeckReceives,
               applicationFeeAmount: breakdown.platformFeeAmount // This should have been sent to Stripe
             })
             .where(eq(paymentTransactions.id, transaction.id));
@@ -101,16 +101,16 @@ async function fixPlatformFeeRecording() {
         console.log(`  Total Charged: $${(transaction.amount / 100).toFixed(2)}`);
         console.log(`  Estimated Tournament Cost: $${(tournamentCost / 100).toFixed(2)}`);
         console.log(`  Calculated Platform Fee: $${(calculated.platformFeeAmount / 100).toFixed(2)}`);
-        console.log(`  Calculated MatchPro Revenue: $${(calculated.matchproReceives / 100).toFixed(2)}`);
+        console.log(`  Calculated KickDeck Revenue: $${(calculated.kickdeckReceives / 100).toFixed(2)}`);
         
-        totalMissingRevenue += calculated.matchproReceives;
+        totalMissingRevenue += calculated.kickdeckReceives;
         
         // Fix this transaction
         try {
           await db.update(paymentTransactions)
             .set({
               platformFeeAmount: calculated.platformFeeAmount,
-              matchproRevenue: calculated.matchproReceives,
+              kickdeckRevenue: calculated.kickdeckReceives,
               applicationFeeAmount: calculated.platformFeeAmount
             })
             .where(eq(paymentTransactions.id, transaction.id));
@@ -123,7 +123,7 @@ async function fixPlatformFeeRecording() {
     }
     
     console.log('=' .repeat(80));
-    console.log(`💰 TOTAL MISSING MATCHPRO REVENUE: $${(totalMissingRevenue / 100).toFixed(2)}`);
+    console.log(`💰 TOTAL MISSING KICKDECK REVENUE: $${(totalMissingRevenue / 100).toFixed(2)}`);
     console.log('=' .repeat(80));
     
     console.log('\n🔧 NEXT STEPS TO COMPLETE THE FIX:');

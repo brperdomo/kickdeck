@@ -1,13 +1,13 @@
-# MatchPro Payment System: Connect Account Direct Processing
+# KickDeck Payment System: Connect Account Direct Processing
 ## Admin Guide - Critical Update
 
 ---
 
 ## 🎯 WHAT WE DISCOVERED
 
-**The Problem:** We learned that Stripe customers created in MatchPro's main account cannot have their refunds processed through tournament Connect accounts - refunds must come from the same account that created the customer.
+**The Problem:** We learned that Stripe customers created in KickDeck's main account cannot have their refunds processed through tournament Connect accounts - refunds must come from the same account that created the customer.
 
-**The Risk:** This meant all refunds had to come from MatchPro's main account, with only hope of cost recovery from tournaments via transfers.
+**The Risk:** This meant all refunds had to come from KickDeck's main account, with only hope of cost recovery from tournaments via transfers.
 
 **The Solution:** Stripe's recommended approach is to create customers directly on Connect accounts using the `stripeAccount` parameter, ensuring refunds can be processed from tournament accounts.
 
@@ -17,21 +17,21 @@
 
 ### Previous Flow (Risky)
 ```
-Customer created in MatchPro account → Payment to MatchPro → Transfer to Tournament
-Refund request → Must refund from MatchPro → Hope tournament covers via transfer
+Customer created in KickDeck account → Payment to KickDeck → Transfer to Tournament
+Refund request → Must refund from KickDeck → Hope tournament covers via transfer
 ```
 
 ### New Flow (Safe)
 ```
 Customer created in Tournament Connect account → Payment to Tournament directly
-Refund request → Processed from Tournament Connect account → Zero MatchPro involvement
+Refund request → Processed from Tournament Connect account → Zero KickDeck involvement
 ```
 
 ### Key Financial Changes
 - **Customer Ownership:** Created directly on tournament Connect accounts using `stripeAccount` parameter
-- **Payment Routing:** Goes directly to tournament accounts (bypasses MatchPro entirely)
+- **Payment Routing:** Goes directly to tournament accounts (bypasses KickDeck entirely)
 - **Refund Source:** Processed from tournament's own Stripe balance
-- **MatchPro Risk:** **ZERO** - We're completely removed from refund processing
+- **KickDeck Risk:** **ZERO** - We're completely removed from refund processing
 
 ---
 
@@ -40,15 +40,15 @@ Refund request → Processed from Tournament Connect account → Zero MatchPro i
 ### For Current/Future Registrations
 **✅ Automatic Processing:**
 - Refunds processed directly from tournament Connect account
-- No MatchPro involvement or approval needed
+- No KickDeck involvement or approval needed
 - No cost recovery transfers required
 - Instant processing once refund is initiated
 
 ### For Legacy Registrations (Existing Customers)
 **⚠️ Mixed Processing:**
 - Payments made before this update: Use existing cost recovery system
-- Refunds come from MatchPro main account, attempt to recover from tournament
-- Some risk of MatchPro absorption if tournament Connect account lacks funds
+- Refunds come from KickDeck main account, attempt to recover from tournament
+- Some risk of KickDeck absorption if tournament Connect account lacks funds
 
 ---
 
@@ -61,8 +61,8 @@ Refund request → Processed from Tournament Connect account → Zero MatchPro i
 - ✅ Same support process
 
 ### What Customers Don't See
-- Payment routing now goes to tournament accounts instead of MatchPro
-- Refund source now comes from tournament accounts instead of MatchPro
+- Payment routing now goes to tournament accounts instead of KickDeck
+- Refund source now comes from tournament accounts instead of KickDeck
 - Customer service quality remains identical
 
 ---
@@ -78,7 +78,7 @@ Refund request → Processed from Tournament Connect account → Zero MatchPro i
 ### Refund Safety Measures
 - **New payments:** Refunds can ONLY be processed if tournament has sufficient Stripe balance
 - **Failed refunds:** Customer must wait until tournament funds their Stripe account
-- **No MatchPro fallback:** We cannot and will not process refunds from our account
+- **No KickDeck fallback:** We cannot and will not process refunds from our account
 - **Legacy payments:** Still use old risky system until fully transitioned
 
 ---
@@ -87,7 +87,7 @@ Refund request → Processed from Tournament Connect account → Zero MatchPro i
 
 ### System Changes Made
 1. **Customer Creation:** Customers now created directly on Connect accounts using `stripeAccount` parameter
-2. **Checkout Sessions:** Created on Connect accounts instead of MatchPro main account
+2. **Checkout Sessions:** Created on Connect accounts instead of KickDeck main account
 3. **Payment Processing:** Charges go directly to tournament accounts
 4. **Refund Processing:** Handled by Connect account that received original payment
 
@@ -101,14 +101,14 @@ Refund request → Processed from Tournament Connect account → Zero MatchPro i
 ## 📊 REPORTING CHANGES
 
 ### New Transaction Categories
-- **`refund_connect_account`:** Direct refund from tournament account (zero MatchPro cost)
+- **`refund_connect_account`:** Direct refund from tournament account (zero KickDeck cost)
 - **`refund_cost_recovery`:** Legacy system successful cost recovery
-- **`refund_cost_recovery_failed`:** Legacy system failed recovery (MatchPro absorbed)
+- **`refund_cost_recovery_failed`:** Legacy system failed recovery (KickDeck absorbed)
 
 ### Financial Reports
 - Clear separation between new (zero-risk) and legacy (some-risk) refunds
 - Tournament-specific refund tracking by Connect account
-- MatchPro cost absorption reporting for legacy payments only
+- KickDeck cost absorption reporting for legacy payments only
 
 ---
 
@@ -117,7 +117,7 @@ Refund request → Processed from Tournament Connect account → Zero MatchPro i
 ### Immediate Actions Required
 1. **Verify Connect Accounts:** Ensure all active tournaments have valid Stripe Connect accounts
 2. **Update Procedures:** Train staff on new refund processing (automatic vs legacy)
-3. **Monitor Legacy Costs:** Track any remaining MatchPro absorption from old payments
+3. **Monitor Legacy Costs:** Track any remaining KickDeck absorption from old payments
 
 ### Communication Guidelines
 **To Tournament Organizers:**
@@ -134,14 +134,14 @@ Refund request → Processed from Tournament Connect account → Zero MatchPro i
 ## 📈 BUSINESS IMPACT
 
 ### Financial Benefits
-- **Eliminated Risk:** Zero possibility of MatchPro absorbing future refund costs
+- **Eliminated Risk:** Zero possibility of KickDeck absorbing future refund costs
 - **Improved Cash Flow:** Tournament payments stay in tournament accounts
 - **Clear Accountability:** Tournaments responsible for their own customer refunds
 
 ### Operational Benefits
 - **Simplified Refund Process:** No transfer recovery mechanisms needed
-- **Reduced Support Load:** Fewer MatchPro financial disputes
-- **Enhanced Scalability:** System scales without increasing MatchPro financial risk
+- **Reduced Support Load:** Fewer KickDeck financial disputes
+- **Enhanced Scalability:** System scales without increasing KickDeck financial risk
 
 ---
 
@@ -149,7 +149,7 @@ Refund request → Processed from Tournament Connect account → Zero MatchPro i
 
 ### Monitor These KPIs
 - **New Refund Processing Success Rate:** Should be 100% (from tournament accounts)
-- **Legacy Refund Cost Recovery Rate:** Track remaining MatchPro absorption
+- **Legacy Refund Cost Recovery Rate:** Track remaining KickDeck absorption
 - **Customer Support Tickets:** Should remain unchanged
 - **Tournament Account Health:** Monitor Connect account balances
 
@@ -158,15 +158,15 @@ Refund request → Processed from Tournament Connect account → Zero MatchPro i
 ## ❓ FAQ FOR ADMINS
 
 **Q: What happens if a tournament Connect account has insufficient funds for a refund?**
-A: The refund will fail completely. Customer must wait until tournament adds funds to their Stripe account. We cannot process it from MatchPro.
+A: The refund will fail completely. Customer must wait until tournament adds funds to their Stripe account. We cannot process it from KickDeck.
 
 **Q: How do we handle customer complaints about failed refunds?**
 A: Explain that tournament organizers control refunds from their own Stripe balance. Direct customers to contact tournament organizers to fund their accounts.
 
 **Q: What's the difference between new and legacy payments?**
-A: New payments use Connect accounts directly (safe). Legacy payments were created in MatchPro account (risky - we may absorb costs).
+A: New payments use Connect accounts directly (safe). Legacy payments were created in KickDeck account (risky - we may absorb costs).
 
-**Q: How do we avoid MatchPro overdrafts completely?**
+**Q: How do we avoid KickDeck overdrafts completely?**
 A: Only process refunds for payments made through the new Connect account system. For legacy payments, ensure tournament has funds before processing.
 
 ---
@@ -187,7 +187,7 @@ A: Only process refunds for payments made through the new Connect account system
 
 **Implementation Date:** Effective immediately for all new payments  
 **Legacy Support:** Continues for existing payments until fully processed  
-**System Status:** ✅ OPERATIONAL - Zero MatchPro refund risk achieved
+**System Status:** ✅ OPERATIONAL - Zero KickDeck refund risk achieved
 
 ---
 

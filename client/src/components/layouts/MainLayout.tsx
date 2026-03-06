@@ -7,7 +7,7 @@ interface MainLayoutProps {
 
 /**
  * MainLayout component wraps all content with a footer
- * This ensures the "powered by MatchPro" text is displayed on every page
+ * This ensures the "powered by KickDeck" text is displayed on every page
  */
 export function MainLayout({ children }: MainLayoutProps) {
   return (

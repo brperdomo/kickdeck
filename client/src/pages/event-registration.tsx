@@ -33,8 +33,7 @@ import {
   LogOut
 } from "lucide-react";
 import { InfoPopover } from "@/components/ui/InfoPopover";
-import { SoccerFieldBackground } from "@/components/ui/SoccerFieldBackground";
-import { AnimatedEventBackground } from "@/components/ui/AnimatedEventBackground";
+// SoccerFieldBackground and AnimatedEventBackground removed — dark theme uses CSS-only background
 import { useAuth } from "@/hooks/use-auth";
 import { useHouseholdDetails } from "@/hooks/use-household-details";
 import { CustomFormStep } from "@/components/registration/CustomFormStep";
@@ -77,6 +76,15 @@ declare global {
     stripe: any;
     elements: any;
   }
+}
+
+/** Convert hex color to rgba string for dynamic theming */
+function hexToRgba(hex: string, alpha: number): string {
+  const clean = hex.replace("#", "");
+  const r = parseInt(clean.slice(0, 2), 16);
+  const g = parseInt(clean.slice(2, 4), 16);
+  const b = parseInt(clean.slice(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
 // Payment Completion Form Component - Prevents registration until payment setup is complete
@@ -159,12 +167,12 @@ function PaymentCompletionForm({
       
       {paymentCompleted && (
         <div className="border-t pt-4 mt-6">
-          <div className="bg-green-50 border border-green-200 rounded-md p-4 mb-4">
+          <div className="rounded-md p-4 mb-4" style={{ backgroundColor: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.2)' }}>
             <div className="flex items-center">
               <CheckCircle className="h-5 w-5 text-green-600 mr-2" />
               <div>
-                <h4 className="text-green-800 font-medium">Payment Method Secured</h4>
-                <p className="text-green-700 text-sm">Your card information has been safely stored and verified.</p>
+                <h4 className="text-green-300 font-medium">Payment Method Secured</h4>
+                <p className="text-green-400 text-sm">Your card information has been safely stored and verified.</p>
               </div>
             </div>
           </div>
@@ -296,7 +304,7 @@ function CsvUploader({ onUploadSuccess }: { onUploadSuccess: (players: PlayerFor
       )}
       
       <div 
-        className="border-2 border-dashed rounded-md p-6 text-center cursor-pointer hover:bg-gray-50 transition-colors"
+        className="border-2 border-dashed rounded-md p-6 text-center cursor-pointer hover:bg-white/5 transition-colors"
         onClick={handleBrowseClick}
         onDragOver={handleDragOver}
         onDrop={handleDrop}
@@ -309,18 +317,18 @@ function CsvUploader({ onUploadSuccess }: { onUploadSuccess: (players: PlayerFor
           className="hidden"
         />
         <FileText className="w-12 h-12 mx-auto text-gray-400 mb-2" />
-        <p className="text-sm text-gray-600 mb-1">
-          Drag and drop your CSV file here, or <span className="text-[#2C5282] font-medium">browse</span>
+        <p className="text-sm text-gray-300 mb-1">
+          Drag and drop your CSV file here, or <span className="text-blue-400 font-medium">browse</span>
         </p>
-        <p className="text-xs text-gray-500">
+        <p className="text-xs text-gray-400">
           CSV files only (.csv)
         </p>
       </div>
       
       {file && (
-        <div className="bg-gray-50 p-3 rounded-md flex items-center justify-between">
+        <div className="p-3 rounded-md flex items-center justify-between" style={{ backgroundColor: 'rgba(255,255,255,0.05)' }}>
           <div className="flex items-center">
-            <FileText className="w-4 h-4 mr-2 text-gray-500" />
+            <FileText className="w-4 h-4 mr-2 text-gray-400" />
             <span className="text-sm font-medium truncate max-w-[200px]">
               {file.name}
             </span>
@@ -1873,18 +1881,22 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
         {steps.map((step, index) => {
           const isActive = currentStep === step.key;
           const isCompleted = index < steps.findIndex(s => s.key === currentStep);
-          const stepColor = isActive ? 
-            (event?.branding?.primaryColor || '#2C5282') : 
-            (isCompleted ? '#48BB78' : '#718096'); 
-          
+          const stepColor = isActive ?
+            (event?.branding?.primaryColor || '#2C5282') :
+            (isCompleted ? '#22c55e' : 'rgba(255,255,255,0.2)');
+
           return (
             <div key={step.key} className="flex items-center">
               <div className="flex flex-col items-center group">
-                <div 
+                <div
                   className={`w-10 h-10 rounded-full flex items-center justify-center mb-2 text-white shadow-md transition-all duration-300 ${isActive ? 'scale-110' : ''}`}
-                  style={{ 
+                  style={{
                     backgroundColor: stepColor,
-                    boxShadow: isActive ? '0 3px 10px rgba(0,0,0,0.2)' : '0 2px 4px rgba(0,0,0,0.1)'
+                    boxShadow: isActive
+                      ? `0 0 15px ${hexToRgba(event?.branding?.primaryColor || '#2C5282', 0.4)}, 0 3px 10px rgba(0,0,0,0.3)`
+                      : isCompleted
+                      ? '0 0 10px rgba(34,197,94,0.3)'
+                      : '0 2px 4px rgba(0,0,0,0.2)'
                   }}>
                   {isCompleted ? (
                     <CheckCircle2 className="w-5 h-5" />
@@ -1894,18 +1906,18 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                     </div>
                   )}
                 </div>
-                <span 
+                <span
                   className={`text-sm font-medium transition-all ${isActive ? 'font-semibold scale-105' : ''}`}
-                  style={{ 
-                    color: isActive ? '#111827' : (isCompleted ? '#1F2937' : '#4B5563')
+                  style={{
+                    color: isActive ? '#ffffff' : (isCompleted ? '#d1d5db' : '#6b7280')
                   }}>
                   {step.label}
                 </span>
               </div>
               {index < steps.length - 1 && (
-                <div className="w-16 sm:w-20 h-[3px] mx-2 transition-all duration-500" style={{ 
-                  backgroundColor: isCompleted ? '#48BB78' : '#D1D5DB',
-                  boxShadow: isCompleted ? '0 1px 2px rgba(0,0,0,0.1)' : 'none'
+                <div className="w-16 sm:w-20 h-[3px] mx-2 transition-all duration-500" style={{
+                  backgroundColor: isCompleted ? '#22c55e' : 'rgba(255,255,255,0.1)',
+                  boxShadow: isCompleted ? '0 0 6px rgba(34,197,94,0.3)' : 'none'
                 }} />
               )}
             </div>
@@ -1969,7 +1981,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
               {groupedByGender[gender].map((group) => (
                 <span 
                   key={group.id} 
-                  className="bg-white px-3 py-1 rounded-full text-sm border"
+                  className="px-3 py-1 rounded-full text-sm" style={{ backgroundColor: hexToRgba(primaryColor, 0.12), color: 'rgba(255,255,255,0.85)', border: `1px solid ${hexToRgba(primaryColor, 0.25)}` }}
                   style={{ 
                     color: event?.branding?.primaryColor || '#2C5282',
                     borderColor: `${event?.branding?.primaryColor || '#2C5282'}25` // 25 = 25% opacity
@@ -2348,10 +2360,10 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     const STRIPE_FIXED_FEE = 30; // $0.30 in cents
 
     // Server-side calculation logic (calculateFeeBreakdown function)
-    const matchproTargetMargin = Math.round(tournamentCostCents * DEFAULT_PLATFORM_FEE_RATE);
+    const kickdeckTargetMargin = Math.round(tournamentCostCents * DEFAULT_PLATFORM_FEE_RATE);
     
-    // Solve for total amount: totalAmount = (tournamentCost + matchproMargin + 30) / (1 - 0.029)
-    const totalChargedAmount = Math.round((tournamentCostCents + matchproTargetMargin + STRIPE_FIXED_FEE) / (1 - STRIPE_PERCENTAGE_FEE));
+    // Solve for total amount: totalAmount = (tournamentCost + kickdeckMargin + 30) / (1 - 0.029)
+    const totalChargedAmount = Math.round((tournamentCostCents + kickdeckTargetMargin + STRIPE_FIXED_FEE) / (1 - STRIPE_PERCENTAGE_FEE));
     
     return totalChargedAmount; // Return in cents
   };
@@ -2835,19 +2847,25 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
 
   if (loading || authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#0f0f1a' }}>
+        <Loader2 className="h-8 w-8 animate-spin text-violet-400" />
       </div>
     );
   }
 
   if (!event) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Card className="w-full max-w-md">
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#0f0f1a' }}>
+        <Card className="w-full max-w-md rounded-2xl" style={{
+          background: 'rgba(15, 15, 35, 0.85)',
+          backdropFilter: 'blur(24px)',
+          WebkitBackdropFilter: 'blur(24px)',
+          border: '1px solid rgba(255, 255, 255, 0.08)',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
+        }}>
           <CardContent className="p-6 text-center">
-            <h2 className="text-xl font-semibold text-red-600">Event Not Found</h2>
-            <p className="mt-2 text-gray-600">This event may have been removed or is no longer available.</p>
+            <h2 className="text-xl font-semibold text-red-400">Event Not Found</h2>
+            <p className="mt-2 text-gray-300">This event may have been removed or is no longer available.</p>
           </CardContent>
         </Card>
       </div>
@@ -2874,12 +2892,18 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   })();
   if (isDeadlinePassed) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Card className="w-full max-w-md">
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#0f0f1a' }}>
+        <Card className="w-full max-w-md rounded-2xl" style={{
+          background: 'rgba(15, 15, 35, 0.85)',
+          backdropFilter: 'blur(24px)',
+          WebkitBackdropFilter: 'blur(24px)',
+          border: '1px solid rgba(255, 255, 255, 0.08)',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
+        }}>
           <CardContent className="p-6 text-center">
-            <h2 className="text-xl font-semibold text-amber-600">Registration Closed</h2>
-            <p className="mt-2 text-gray-600">
-              The registration deadline for this event ({formatDateInEventTimezone(event.applicationDeadline, event.timezone)}) has passed. 
+            <h2 className="text-xl font-semibold text-amber-400">Registration Closed</h2>
+            <p className="mt-2 text-gray-300">
+              The registration deadline for this event ({formatDateInEventTimezone(event.applicationDeadline, event.timezone)}) has passed.
               Registration is no longer available.
             </p>
           </CardContent>
@@ -2912,23 +2936,64 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   
   return (
     <div className="min-h-screen relative register-event-page">
-      {/* Display themed background using event branding colors */}
-      {hasBranding ? (
-        <AnimatedEventBackground 
-          primaryColor={primaryColor}
-          secondaryColor={secondaryColor}
-          type="particles" 
-          opacity={0.6}
-          className="opacity-90"
-        />
-      ) : (
-        <SoccerFieldBackground className="opacity-50" />
-      )}
+      {/* Dark background with grid overlay */}
+      <div
+        className="fixed inset-0 z-0"
+        style={{
+          backgroundColor: '#0f0f1a',
+          backgroundImage: [
+            'repeating-linear-gradient(0deg, rgba(0,0,0,0.03) 0px, transparent 1px, transparent 3px)',
+            'linear-gradient(rgba(124,58,237,0.02) 1px, transparent 1px)',
+            'linear-gradient(90deg, rgba(124,58,237,0.02) 1px, transparent 1px)',
+          ].join(', '),
+          backgroundSize: '100% 3px, 60px 60px, 60px 60px',
+        }}
+      />
+      {/* Primary color glow orb */}
+      <div
+        className="pointer-events-none fixed z-0"
+        style={{
+          top: '5%',
+          right: '8%',
+          width: '350px',
+          height: '350px',
+          background: `radial-gradient(circle, ${hexToRgba(primaryColor, 0.08)} 0%, transparent 70%)`,
+          filter: 'blur(60px)',
+        }}
+      />
+      {/* Secondary color glow orb */}
+      <div
+        className="pointer-events-none fixed z-0"
+        style={{
+          bottom: '10%',
+          left: '5%',
+          width: '280px',
+          height: '280px',
+          background: `radial-gradient(circle, ${hexToRgba(secondaryColor, 0.06)} 0%, transparent 70%)`,
+          filter: 'blur(50px)',
+        }}
+      />
       <div className="container mx-auto px-4 py-8 relative z-10">
         {renderStepIndicator()}
 
-        <Card className="max-w-4xl mx-auto bg-white/95 backdrop-blur">
-          <CardHeader className="text-center border-b relative">
+        <Card
+          className="max-w-4xl mx-auto rounded-2xl overflow-hidden"
+          style={{
+            background: 'rgba(15, 15, 35, 0.85)',
+            backdropFilter: 'blur(24px)',
+            WebkitBackdropFilter: 'blur(24px)',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+            boxShadow: [
+              `0 0 30px ${hexToRgba(primaryColor, 0.1)}`,
+              `0 0 60px ${hexToRgba(secondaryColor, 0.05)}`,
+              '0 8px 32px rgba(0,0,0,0.3)',
+            ].join(', '),
+          }}
+        >
+          <CardHeader
+            className="text-center relative"
+            style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}
+          >
             {/* Logout button for authenticated users */}
             {user && (
               <div className="absolute top-4 right-4">
@@ -2936,36 +3001,56 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                   variant="outline"
                   size="sm"
                   onClick={handleLogout}
-                  className="flex items-center gap-2 text-gray-600 hover:text-gray-800"
+                  className="flex items-center gap-2 text-gray-400 hover:text-white border-white/20 hover:bg-white/5"
                 >
                   <LogOut className="h-4 w-4" />
                   Logout
                 </Button>
               </div>
             )}
-            
+
             {event.branding?.logoUrl && (
               <div className="mx-auto mb-4">
-                <img 
-                  src={event.branding.logoUrl} 
-                  alt={`${event.name} logo`} 
+                <img
+                  src={event.branding.logoUrl}
+                  alt={`${event.name} logo`}
                   className="max-h-32 object-contain mx-auto"
+                  style={{ filter: `drop-shadow(0 0 20px ${hexToRgba(primaryColor, 0.3)})` }}
                 />
               </div>
             )}
-            <CardTitle 
-              className="text-3xl font-bold" 
-              style={{ 
-                color: event?.branding?.primaryColor || '#2C5282',
-                textShadow: event?.branding?.primaryColor ? `0 1px 2px rgba(0,0,0,0.1)` : 'none'
+            <CardTitle
+              className="text-3xl font-bold text-white"
+              style={{
+                textShadow: `0 0 20px ${hexToRgba(primaryColor, 0.3)}`
               }}
             >
               {event.name}
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-6 space-y-6">
+          <CardContent className="p-6 space-y-6 text-gray-200" style={{
+            '--background': '233 47% 7%',
+            '--foreground': '0 0% 90%',
+            '--card': '233 47% 7%',
+            '--card-foreground': '0 0% 90%',
+            '--popover': '240 40% 10%',
+            '--popover-foreground': '0 0% 90%',
+            '--primary': '260 50% 50%',
+            '--primary-foreground': '0 0% 100%',
+            '--secondary': '240 10% 15%',
+            '--secondary-foreground': '0 0% 90%',
+            '--muted': '240 10% 15%',
+            '--muted-foreground': '0 0% 60%',
+            '--accent': '240 10% 18%',
+            '--accent-foreground': '0 0% 90%',
+            '--destructive': '0 84% 60%',
+            '--destructive-foreground': '0 0% 100%',
+            '--border': '0 0% 20%',
+            '--input': '240 10% 15%',
+            '--ring': '260 50% 40%',
+          } as React.CSSProperties}>
 
-            
+
             <AnimatePresence mode="wait">
               {currentStep === 'auth' && !authLoading && (
                 <motion.div 
@@ -2985,7 +3070,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                       <h3 className="text-xl font-semibold mb-4">
                         Already Signed In
                       </h3>
-                      <p className="text-gray-600 mb-6">
+                      <p className="text-gray-300 mb-6">
                         Redirecting to registration form...
                       </p>
                       <Button 
@@ -2993,7 +3078,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                           console.log("MANUAL STEP ADVANCE - Moving to personal details step");
                           setCurrentStep('personal');
                         }}
-                        className="bg-green-600 hover:bg-green-700 text-white"
+                        className="bg-green-600 hover:bg-green-500 text-white"
                       >
                         Continue to Registration
                       </Button>
@@ -3002,7 +3087,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                     // User is not logged in - show sign in button
                     <>
                       <h3 className="text-xl font-semibold mb-4">Sign In Required</h3>
-                      <p className="text-gray-600 mb-6">
+                      <p className="text-gray-300 mb-6">
                         Please sign in or create an account to register for this event.
                       </p>
                       <Button 
@@ -3047,10 +3132,10 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                   <form onSubmit={form.handleSubmit(onSubmitPersonalDetails)} className="space-y-6">
                   {/* Authentication status message */}
                   {user && (
-                    <div className="bg-green-50 border border-green-200 rounded-md p-3 mb-4">
+                    <div className="rounded-md p-3 mb-4" style={{ backgroundColor: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.2)' }}>
                       <div className="flex items-center">
                         <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
-                        <p className="text-green-700 text-sm">
+                        <p className="text-green-400 text-sm">
                           You're signed in as <strong>{user.email}</strong>
                         </p>
                       </div>
@@ -3059,11 +3144,11 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                   
                   {/* Display authentication related fields conditionally */}
                   {!user && (
-                    <div className="bg-blue-50 border border-blue-200 rounded-md p-4 mb-4">
-                      <h3 className="text-lg font-medium text-blue-800 mb-2">
+                    <div className="rounded-md p-4 mb-4" style={{ backgroundColor: 'rgba(59,130,246,0.08)', border: '1px solid rgba(59,130,246,0.2)' }}>
+                      <h3 className="text-lg font-medium text-blue-300 mb-2">
                         Account Verification
                       </h3>
-                      <p className="text-blue-700 mb-2">
+                      <p className="text-blue-400 mb-2">
                         {form.getValues().emailChecked 
                           ? (form.getValues().emailExists 
                               ? "This email is already registered. You'll be prompted to verify your account below." 
@@ -3073,7 +3158,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                       
                       {/* Show any authentication errors */}
                       {authError && (
-                        <p className="text-red-500 text-sm mt-2">{authError}</p>
+                        <p className="text-red-400 text-sm mt-2">{authError}</p>
                       )}
                       
                       {/* Show registration fields if email is new */}
@@ -3117,7 +3202,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                             )}
                           />
                           {authError && (
-                            <p className="text-red-500 text-sm mt-2">{authError}</p>
+                            <p className="text-red-400 text-sm mt-2">{authError}</p>
                           )}
                         </div>
                       )}
@@ -3319,7 +3404,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                         <h3 className="text-lg font-semibold text-primary">Existing Account Found</h3>
                       </div>
                       
-                      <p className="text-sm mb-5 text-gray-600">
+                      <p className="text-sm mb-5 text-gray-300">
                         We found your information in our system. Please enter your password to continue with your saved information.
                       </p>
                       
@@ -3367,7 +3452,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                           )}
                         </Button>
                         
-                        <div className="text-sm pt-2 border-t border-gray-100 mt-2">
+                        <div className="text-sm pt-2 border-t border-white/5 mt-2">
                           <span className="text-muted-foreground">Don't remember your password? </span>
                           <a 
                             href="/forgot-password" 
@@ -3399,7 +3484,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                           console.log('Cleared authentication state when going back');
                           setCurrentStep('auth');
                         }}
-                        className="border-gray-300 hover:border-gray-400 transition-all hover:bg-gray-50"
+                        className="border-white/20 hover:border-white/30 text-gray-300 hover:text-white transition-all hover:bg-white/5"
                       >
                         Back
                       </Button>
@@ -3531,7 +3616,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                       
                       {/* New Club Input Fields */}
                       {isNewClub && (
-                        <div className="p-4 border rounded-md bg-gray-50 space-y-4">
+                        <div className="p-4 rounded-md space-y-4" style={{ backgroundColor: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
                           <h4 className="font-medium">New Club Details</h4>
                           
                           <FormField
@@ -3561,7 +3646,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                               {clubLogo && (
                                 <div className="mt-2">
                                   <p className="text-sm text-muted-foreground mb-2">Logo Preview:</p>
-                                  <div className="relative w-16 h-16 bg-gray-200 rounded overflow-hidden">
+                                  <div className="relative w-16 h-16 bg-white/10 rounded overflow-hidden">
                                     <img
                                       src={URL.createObjectURL(clubLogo)}
                                       alt="Club logo preview"
@@ -3658,7 +3743,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                                 }}
                               />
                             </FormControl>
-                            <FormDescription className="text-sm text-gray-500">
+                            <FormDescription className="text-sm text-gray-400">
                               Select a bracket that best matches your team's skill level
                             </FormDescription>
                             <FormMessage />
@@ -3669,20 +3754,20 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                     
                     {/* Fee display when age group is selected */}
                     {selectedAgeGroup && selectedFee && (
-                      <div className="mt-2 bg-blue-50 p-3 rounded-md">
+                      <div className="mt-2 p-3 rounded-md" style={{ backgroundColor: 'rgba(59,130,246,0.08)' }}>
                         <div className="space-y-2">
                           <div className="border-b pb-2 mb-1">
                             <div className="flex justify-between items-center">
-                              <span className="text-sm font-medium text-gray-600">Primary Registration Fee:</span>
-                              <span className="text-base font-semibold text-blue-700">
+                              <span className="text-sm font-medium text-gray-300">Primary Registration Fee:</span>
+                              <span className="text-base font-semibold text-blue-400">
                                 ${(selectedFee.amount / 100).toFixed(2)}
                               </span>
                             </div>
                             <div className="flex justify-between items-center">
-                              <div className="text-xs text-gray-500">
+                              <div className="text-xs text-gray-400">
                                 {selectedFee.name}
                               </div>
-                              <div className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
+                              <div className="text-xs text-blue-400 px-2 py-0.5 rounded bg-blue-500/15">
                                 {selectedFee.feeType || 'registration'}
                               </div>
                             </div>
@@ -3690,7 +3775,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                           
                           {/* Show required fees automatically */}
                           {requiredFees.length > 0 && (
-                            <div className="text-xs text-gray-600">
+                            <div className="text-xs text-gray-300">
                               <p className="font-medium text-sm">Required Additional Fees:</p>
                               {requiredFees.map(fee => (
                                 <div key={`req-${fee.id}`} className="flex justify-between items-center mt-1">
@@ -3703,8 +3788,8 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                           
                           {/* Total amount */}
                           <div className="border-t pt-2 mt-1 flex justify-between items-center">
-                            <span className="text-sm font-semibold text-gray-700">Total:</span>
-                            <span className="text-sm font-bold text-blue-700">${calculateTotalAmount()}</span>
+                            <span className="text-sm font-semibold text-gray-200">Total:</span>
+                            <span className="text-sm font-bold text-blue-400">${calculateTotalAmount()}</span>
                           </div>
                         </div>
                       </div>
@@ -3983,13 +4068,13 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                             />
                             <div className="border-t pt-4 mt-4">
                               <h4 className="font-medium mb-2">Need a template?</h4>
-                              <p className="text-sm text-gray-500 mb-4">
+                              <p className="text-sm text-gray-400 mb-4">
                                 Download our CSV template with all the required fields:
                               </p>
                               <a
                                 href="/api/upload/template"
                                 download="player-roster-template.csv"
-                                className="flex items-center text-[#2C5282] hover:underline"
+                                className="flex items-center text-blue-400 hover:underline"
                               >
                                 <Download className="w-4 h-4 mr-2" />
                                 Download Template
@@ -4001,17 +4086,17 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                     </div>
                     
                     {addRosterLater ? (
-                      <div className="text-center p-8 border border-dashed rounded-md bg-amber-50">
+                      <div className="text-center p-8 border border-dashed rounded-md" style={{ backgroundColor: 'rgba(245,158,11,0.06)', borderColor: 'rgba(245,158,11,0.2)' }}>
                         <Clock className="w-12 h-12 mx-auto text-amber-500 mb-2" />
-                        <h4 className="font-medium text-amber-800">Add Roster Later</h4>
-                        <p className="text-amber-700 mt-2">
+                        <h4 className="font-medium text-amber-400">Add Roster Later</h4>
+                        <p className="text-amber-400 mt-2">
                           You've chosen to complete your roster later. After registration, 
                           you'll be able to add players from your dashboard or via CSV upload.
                         </p>
                         <Button 
                           type="button" 
                           variant="outline" 
-                          className="mt-4 text-amber-700 border-amber-300"
+                          className="mt-4 text-amber-400 border-amber-400/30 hover:bg-amber-500/10"
                           onClick={() => setAddRosterLater(false)}
                         >
                           <X className="w-4 h-4 mr-2" />
@@ -4021,7 +4106,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                     ) : players.length === 0 ? (
                       <div className="text-center p-8 border border-dashed rounded-md">
                         <UserRoundPlus className="w-12 h-12 mx-auto text-gray-300 mb-2" />
-                        <p className="text-gray-500">No players added yet. Click "Add Player" or "CSV Upload" to begin building your roster.</p>
+                        <p className="text-gray-400">No players added yet. Click "Add Player" or "CSV Upload" to begin building your roster.</p>
                         <Button
                           type="button"
                           variant="link"
@@ -4040,7 +4125,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                               type="button"
                               variant="ghost"
                               size="icon"
-                              className="absolute right-2 top-2 text-gray-400 hover:text-red-500"
+                              className="absolute right-2 top-2 text-gray-400 hover:text-red-400"
                               onClick={() => removePlayer(player.id as string)}
                             >
                               <X className="w-4 h-4" />
@@ -4274,13 +4359,13 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                 </h3>
                 
                 {/* Cart Summary */}
-                <div className="bg-blue-50 p-4 rounded-lg">
-                  <h4 className="font-semibold text-blue-800 mb-4">Registration Summary</h4>
-                  
+                <div className="p-4 rounded-lg" style={{ backgroundColor: 'rgba(59,130,246,0.08)', border: '1px solid rgba(59,130,246,0.15)' }}>
+                  <h4 className="font-semibold text-blue-300 mb-4">Registration Summary</h4>
+
                   {/* Team Info Display */}
-                  <div className="mb-4 bg-white p-3 rounded-md">
-                    <h5 className="font-medium text-blue-700">Team Information</h5>
-                    <div className="mt-1 text-gray-600">
+                  <div className="mb-4 p-3 rounded-md" style={{ backgroundColor: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                    <h5 className="font-medium text-blue-400">Team Information</h5>
+                    <div className="mt-1 text-gray-300">
                       <p><span className="font-medium">Team Name:</span> {teamForm.getValues().name}</p>
                       <p><span className="font-medium">Division:</span> {selectedAgeGroup?.divisionCode || selectedAgeGroup?.ageGroup}</p>
                       <p><span className="font-medium">Coach:</span> {teamForm.getValues().headCoachName}</p>
@@ -4289,14 +4374,14 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                   
                   {/* Fee Section */}
                   <div className="mb-4">
-                    <h5 className="font-medium text-blue-700 mb-2">Fee Details</h5>
+                    <h5 className="font-medium text-blue-400 mb-2">Fee Details</h5>
                     
                     {availableFees.length > 0 ? (
                       <div className="space-y-3">
                         {/* Multiple Fee Options Selector */}
                         {availableFees.length > 1 && (
                           <div className="space-y-2">
-                            <label className="text-sm font-medium text-gray-700">Select Registration Fee Option:</label>
+                            <label className="text-sm font-medium text-gray-200">Select Registration Fee Option:</label>
                             <div className="grid gap-2">
                               {availableFees.filter(fee => fee.feeType === 'registration').map((fee) => (
                                 <div 
@@ -4307,20 +4392,20 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                                   }}
                                   className={`
                                     p-3 border rounded-md flex justify-between items-center cursor-pointer
-                                    ${selectedFee?.id === fee.id ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-blue-300'}
+                                    ${selectedFee?.id === fee.id ? 'border-blue-500 bg-blue-500/10' : 'border-white/10 hover:border-blue-500/50'}
                                   `}
                                 >
                                   <div>
                                     <p className="font-medium">{fee.name}</p>
                                     {(fee.beginDate || fee.endDate) && (
-                                      <p className="text-xs text-gray-500">
+                                      <p className="text-xs text-gray-400">
                                         {fee.beginDate && `Available from ${formatDateInEventTimezone(fee.beginDate, event.timezone)}`}
                                         {fee.beginDate && fee.endDate && ' to '}
                                         {fee.endDate && `${formatDateInEventTimezone(fee.endDate, event.timezone)}`}
                                       </p>
                                     )}
                                   </div>
-                                  <div className="font-bold text-blue-800">
+                                  <div className="font-bold text-blue-300">
                                     ${(fee.amount / 100).toFixed(2)}
                                   </div>
                                 </div>
@@ -4330,29 +4415,29 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                         )}
                         
                         {/* Cart Items */}
-                        <div className="bg-white rounded-md overflow-hidden">
+                        <div className="rounded-md overflow-hidden" style={{ backgroundColor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
                           <table className="w-full text-left">
-                            <thead className="bg-gray-50 text-xs uppercase text-gray-700">
+                            <thead className="text-xs uppercase text-gray-300" style={{ backgroundColor: 'rgba(255,255,255,0.05)' }}>
                               <tr>
                                 <th className="px-4 py-2">Item</th>
                                 <th className="px-4 py-2">Type</th>
                                 <th className="px-4 py-2 text-right">Amount</th>
                               </tr>
                             </thead>
-                            <tbody className="divide-y">
+                            <tbody className="divide-y divide-white/5">
                               {/* Registration Fee */}
                               {selectedFee && (
                                 <tr>
                                   <td className="px-4 py-3">
                                     <div>
                                       <p className="font-medium">{selectedFee.name}</p>
-                                      <p className="text-xs text-gray-500">
+                                      <p className="text-xs text-gray-400">
                                         {selectedAgeGroup?.divisionCode || selectedAgeGroup?.ageGroup} Team
                                       </p>
                                     </div>
                                   </td>
                                   <td className="px-4 py-3 text-sm">
-                                    <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+                                    <span className="px-2 py-1 bg-blue-500/15 text-blue-400 rounded-full text-xs">
                                       Primary {selectedFee.feeType || 'Registration'} Fee
                                     </span>
                                   </td>
@@ -4371,7 +4456,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                                     </div>
                                   </td>
                                   <td className="px-4 py-3 text-sm">
-                                    <span className="px-2 py-1 bg-amber-100 text-amber-800 rounded-full text-xs flex items-center gap-1">
+                                    <span className="px-2 py-1 bg-amber-500/15 text-amber-400 rounded-full text-xs flex items-center gap-1">
                                       {fee.feeType || 'Additional'}
                                       <Badge variant="outline" className="ml-1 text-[10px] py-0 h-4">Required</Badge>
                                     </span>
@@ -4384,18 +4469,18 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                               
                               {/* Show coupon discount row if applied */}
                               {appliedCoupon && (
-                                <tr className="border-t border-green-200 bg-green-50">
+                                <tr style={{ borderTop: '1px solid rgba(34,197,94,0.2)', backgroundColor: 'rgba(34,197,94,0.08)' }}>
                                   <td className="px-4 py-3">
                                     <div className="flex items-center">
-                                      <p className="font-medium text-green-800">Discount: {appliedCoupon.code}</p>
+                                      <p className="font-medium text-green-300">Discount: {appliedCoupon.code}</p>
                                     </div>
                                   </td>
                                   <td className="px-4 py-3 text-sm">
-                                    <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
+                                    <span className="px-2 py-1 bg-green-500/15 text-green-400 rounded-full text-xs">
                                       {appliedCoupon.discountType === 'fixed' ? 'Fixed Amount' : 'Percentage'}
                                     </span>
                                   </td>
-                                  <td className="px-4 py-3 text-right font-medium text-green-800">
+                                  <td className="px-4 py-3 text-right font-medium text-green-300">
                                     -{(() => {
                                       let subtotal = selectedFee ? selectedFee.amount : 0;
                                       requiredFees.forEach((fee) => {
@@ -4414,10 +4499,10 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                                 </tr>
                               )}
                             </tbody>
-                            <tfoot className="bg-gray-50 font-medium">
+                            <tfoot className="font-medium" style={{ backgroundColor: 'rgba(255,255,255,0.05)' }}>
                               <tr>
                                 <td className="px-4 py-3" colSpan={2}>Total</td>
-                                <td className="px-4 py-3 text-right text-blue-800">
+                                <td className="px-4 py-3 text-right text-blue-300">
                                   ${calculateTotalAmount()}
                                 </td>
                               </tr>
@@ -4428,7 +4513,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                         {/* Optional fees removed - all fees are automatically applied */}
                       </div>
                     ) : (
-                      <div className="text-center py-4 text-gray-500">
+                      <div className="text-center py-4 text-gray-400">
                         No fees available for the selected age group
                       </div>
                     )}
@@ -4452,8 +4537,8 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                       className="font-semibold"
                       style={{ color: event?.branding?.primaryColor || '#2C5282' }}
                     >Tournament Agreement</h4>
-                    <ScrollArea className="h-48 w-full rounded-md border p-4 bg-white">
-                      <div className="text-sm text-gray-700 space-y-3">
+                    <ScrollArea className="h-48 w-full rounded-md p-4 text-gray-300" style={{ backgroundColor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                      <div className="text-sm text-gray-200 space-y-3">
                         {event.agreement ? (
                           <div dangerouslySetInnerHTML={{ __html: event.agreement }} />
                         ) : (
@@ -4473,8 +4558,8 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                       className="font-semibold"
                       style={{ color: event?.branding?.primaryColor || '#2C5282' }}
                     >Refund Policy</h4>
-                    <ScrollArea className="h-32 w-full rounded-md border p-4 bg-white">
-                      <div className="text-sm text-gray-700 space-y-3">
+                    <ScrollArea className="h-32 w-full rounded-md p-4 text-gray-300" style={{ backgroundColor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                      <div className="text-sm text-gray-200 space-y-3">
                         {event.refundPolicy ? (
                           <div dangerouslySetInnerHTML={{ __html: event.refundPolicy }} />
                         ) : (
@@ -4500,7 +4585,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                       />
                       <label
                         htmlFor="terms-agreement"
-                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-700"
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-200"
                       >
                         I have read and agree to the tournament terms, conditions, and refund policy
                       </label>
@@ -4517,9 +4602,9 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                         style={{ color: event?.branding?.primaryColor || '#2C5282' }}
                       >Payment Options</h4>
                       {registrationFee ? (
-                        <p className="text-sm text-gray-600">Select how you would like to proceed with payment</p>
+                        <p className="text-sm text-gray-300">Select how you would like to proceed with payment</p>
                       ) : (
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-gray-300">
                           No registration fee is configured for this age group. You can register without payment at this time.
                         </p>
                       )}
@@ -4575,7 +4660,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                     {(requiredFees.length > 0 || selectedFee) && (
                       <div className="space-y-3 border-t pt-4">
                         <div className="flex items-center justify-between">
-                          <h4 className="text-sm font-medium text-gray-700">Discount Code (Optional)</h4>
+                          <h4 className="text-sm font-medium text-gray-200">Discount Code (Optional)</h4>
                           {appliedCoupon && (
                             <Button
                               type="button"
@@ -4614,10 +4699,10 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                             </Button>
                           </div>
                         ) : (
-                          <div className="bg-green-50 border border-green-200 rounded-md p-3">
+                          <div className="rounded-md p-3" style={{ backgroundColor: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.2)' }}>
                             <div className="flex items-center justify-between">
                               <div>
-                                <p className="text-sm font-medium text-green-800">
+                                <p className="text-sm font-medium text-green-300">
                                   Discount Applied: {appliedCoupon.code}
                                 </p>
                                 {appliedCoupon.description && (
@@ -4626,7 +4711,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                                   </p>
                                 )}
                               </div>
-                              <div className="text-sm font-medium text-green-800">
+                              <div className="text-sm font-medium text-green-300">
                                 -{appliedCoupon.discountType === 'fixed' 
                                   ? `$${appliedCoupon.amount.toFixed(2)}`
                                   : `${appliedCoupon.amount}%`
@@ -4642,7 +4727,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                         
                         {/* Total amount display with discount applied */}
                         {(requiredFees.length > 0 || selectedFee) && (
-                          <div className="bg-gray-50 border rounded-md p-3 mt-3">
+                          <div className="rounded-md p-3 mt-3" style={{ backgroundColor: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
                             <div className="space-y-2">
                               {/* Show fee breakdown */}
                               {selectedFee && (
@@ -4698,7 +4783,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                     {registrationFee && isPayLaterShown ? (
                       <div className="space-y-4">
                         <div className="flex flex-col space-y-3">
-                          <label className="flex items-center space-x-3 p-3 border rounded-md cursor-pointer hover:bg-blue-50 transition-colors">
+                          <label className="flex items-center space-x-3 p-3 border rounded-md cursor-pointer hover:bg-white/5 transition-colors">
                             <input
                               type="radio"
                               name="paymentMethod"
@@ -4709,11 +4794,11 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                             />
                             <div>
                               <h4 className="font-medium">Pay now with card</h4>
-                              <p className="text-sm text-gray-500">Complete payment immediately with credit/debit card</p>
+                              <p className="text-sm text-gray-400">Complete payment immediately with credit/debit card</p>
                             </div>
                           </label>
                           
-                          <label className="flex items-center space-x-3 p-3 border rounded-md cursor-pointer hover:bg-blue-50 transition-colors">
+                          <label className="flex items-center space-x-3 p-3 border rounded-md cursor-pointer hover:bg-white/5 transition-colors">
                             <input
                               type="radio"
                               name="paymentMethod"
@@ -4724,7 +4809,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                             />
                             <div>
                               <h4 className="font-medium">Pay later</h4>
-                              <p className="text-sm text-gray-500">Register now and pay before the event date</p>
+                              <p className="text-sm text-gray-400">Register now and pay before the event date</p>
                             </div>
                           </label>
                         </div>
@@ -4736,8 +4821,8 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                               className="font-semibold"
                               style={{ color: event?.branding?.primaryColor || '#2C5282' }}
                             >Payment Information</h4>
-                            <p className="text-sm text-gray-600 mb-2">Please provide your payment details below</p>
-                            <div className="p-3 mb-4 bg-blue-50 border border-blue-100 rounded-md text-blue-800 text-sm">
+                            <p className="text-sm text-gray-300 mb-2">Please provide your payment details below</p>
+                            <div className="p-3 mb-4 rounded-md text-blue-300 text-sm" style={{ backgroundColor: 'rgba(59,130,246,0.08)', border: '1px solid rgba(59,130,246,0.15)' }}>
                               <p className="flex items-start">
                                 <InfoPopover content={
                                   <div>
@@ -4782,12 +4867,12 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                         {/* Pay Later option - Show confirmation button */}
                         {payLaterOption && (
                           <div className="mt-4">
-                            <div className="bg-amber-50 p-3 rounded border border-amber-200 mb-4">
-                              <h4 className="font-medium text-amber-800 flex items-center">
+                            <div className="p-3 rounded mb-4" style={{ backgroundColor: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.2)' }}>
+                              <h4 className="font-medium text-amber-400 flex items-center">
                                 <AlertCircle className="h-4 w-4 mr-2" />
                                 Payment Reminder
                               </h4>
-                              <p className="text-sm text-amber-700 mt-1">
+                              <p className="text-sm text-amber-400 mt-1">
                                 By choosing to pay later, you agree to complete payment before the event. 
                                 Your team registration will be marked as "pending payment" until the full amount is received.
                               </p>
@@ -4841,8 +4926,8 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                               className="font-semibold"
                               style={{ color: event?.branding?.primaryColor || '#2C5282' }}
                             >Payment Information</h4>
-                            <p className="text-sm text-gray-600 mb-2">Please provide your payment details below</p>
-                            <div className="p-3 mb-4 bg-blue-50 border border-blue-100 rounded-md text-blue-800 text-sm">
+                            <p className="text-sm text-gray-300 mb-2">Please provide your payment details below</p>
+                            <div className="p-3 mb-4 rounded-md text-blue-300 text-sm" style={{ backgroundColor: 'rgba(59,130,246,0.08)', border: '1px solid rgba(59,130,246,0.15)' }}>
                               <p className="flex items-start">
                                 <InfoPopover content={
                                   <div>
@@ -4958,46 +5043,46 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                   <CardContent className="space-y-4">
                     <div className="grid gap-4 md:grid-cols-2">
                       <div>
-                        <label className="text-sm font-medium text-gray-500">Team Name</label>
+                        <label className="text-sm font-medium text-gray-400">Team Name</label>
                         <p className="font-medium">{teamForm.getValues().name}</p>
                       </div>
                       <div>
-                        <label className="text-sm font-medium text-gray-500">Age Group</label>
+                        <label className="text-sm font-medium text-gray-400">Age Group</label>
                         <p className="font-medium">
                           {selectedAgeGroup ? `${selectedAgeGroup.ageGroup} ${selectedAgeGroup.gender}` : 'Not selected'}
                         </p>
                       </div>
                       <div>
-                        <label className="text-sm font-medium text-gray-500">Head Coach</label>
+                        <label className="text-sm font-medium text-gray-400">Head Coach</label>
                         <p className="font-medium">{teamForm.getValues().headCoachName}</p>
-                        <p className="text-sm text-gray-600">{teamForm.getValues().headCoachEmail}</p>
+                        <p className="text-sm text-gray-300">{teamForm.getValues().headCoachEmail}</p>
                       </div>
                       <div>
-                        <label className="text-sm font-medium text-gray-500">Team Manager</label>
+                        <label className="text-sm font-medium text-gray-400">Team Manager</label>
                         <p className="font-medium">{teamForm.getValues().managerName}</p>
-                        <p className="text-sm text-gray-600">{teamForm.getValues().managerEmail}</p>
+                        <p className="text-sm text-gray-300">{teamForm.getValues().managerEmail}</p>
                       </div>
                       {teamForm.getValues().clubName && (
                         <div>
-                          <label className="text-sm font-medium text-gray-500">Club</label>
+                          <label className="text-sm font-medium text-gray-400">Club</label>
                           <p className="font-medium">{teamForm.getValues().clubName}</p>
                         </div>
                       )}
                     </div>
                     
                     {addRosterLater ? (
-                      <div className="bg-amber-50 p-3 rounded border border-amber-200">
-                        <p className="text-amber-800 font-medium">Players will be added later</p>
+                      <div className="p-3 rounded" style={{ backgroundColor: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.2)' }}>
+                        <p className="text-amber-400 font-medium">Players will be added later</p>
                         <p className="text-sm text-amber-600">You've chosen to add your team roster after registration</p>
                       </div>
                     ) : (
                       <div>
-                        <label className="text-sm font-medium text-gray-500">Players ({players.length})</label>
+                        <label className="text-sm font-medium text-gray-400">Players ({players.length})</label>
                         <div className="mt-2 max-h-40 overflow-y-auto">
                           {players.map((player, index) => (
-                            <div key={index} className="flex justify-between py-1 border-b border-gray-100 last:border-0">
+                            <div key={index} className="flex justify-between py-1 border-b border-white/5 last:border-0">
                               <span className="font-medium">{player.firstName} {player.lastName}</span>
-                              <span className="text-sm text-gray-600">Born: {player.dateOfBirth}</span>
+                              <span className="text-sm text-gray-300">Born: {player.dateOfBirth}</span>
                             </div>
                           ))}
                         </div>
@@ -5030,7 +5115,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                       )}
                       
                       {requiredFees.length === 0 && !selectedFee && (
-                        <div className="text-center py-4 text-gray-500">
+                        <div className="text-center py-4 text-gray-400">
                           No registration fees for this age group
                         </div>
                       )}
@@ -5039,11 +5124,11 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                     {/* Applied Coupon Display Only (for review) */}
                     {appliedCoupon && (
                       <div className="space-y-3 border-t pt-4">
-                        <h4 className="text-sm font-medium text-gray-700">Applied Discount</h4>
-                        <div className="bg-green-50 border border-green-200 rounded-md p-3">
+                        <h4 className="text-sm font-medium text-gray-200">Applied Discount</h4>
+                        <div className="rounded-md p-3" style={{ backgroundColor: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.2)' }}>
                           <div className="flex items-center justify-between">
                             <div>
-                              <p className="text-sm font-medium text-green-800">
+                              <p className="text-sm font-medium text-green-300">
                                 Discount Code: {appliedCoupon.code}
                               </p>
                               {appliedCoupon.description && (
@@ -5052,7 +5137,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                                 </p>
                               )}
                             </div>
-                            <div className="text-sm font-medium text-green-800">
+                            <div className="text-sm font-medium text-green-300">
                               -{appliedCoupon.discountType === 'fixed' 
                                 ? `$${appliedCoupon.amount.toFixed(2)}`
                                 : `${appliedCoupon.amount}%`
@@ -5073,9 +5158,9 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                       </>
                     )}
                     
-                    <div className="bg-blue-50 p-4 rounded border border-blue-200">
-                      <h4 className="font-medium text-blue-800 mb-2">Payment Process</h4>
-                      <ul className="text-sm text-blue-700 space-y-1">
+                    <div className="p-4 rounded" style={{ backgroundColor: 'rgba(59,130,246,0.08)', border: '1px solid rgba(59,130,246,0.2)' }}>
+                      <h4 className="font-medium text-blue-300 mb-2">Payment Process</h4>
+                      <ul className="text-sm text-blue-400 space-y-1">
                         <li>• Your payment method will be securely saved</li>
                         <li>• No charge will be made immediately</li>
                         <li>• Payment will only be processed if your registration is approved</li>
@@ -5093,15 +5178,15 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                   <CardContent>
                     <div className="grid gap-4 md:grid-cols-2">
                       <div>
-                        <label className="text-sm font-medium text-gray-500">Name</label>
+                        <label className="text-sm font-medium text-gray-400">Name</label>
                         <p className="font-medium">{form.getValues().firstName} {form.getValues().lastName}</p>
                       </div>
                       <div>
-                        <label className="text-sm font-medium text-gray-500">Email</label>
+                        <label className="text-sm font-medium text-gray-400">Email</label>
                         <p className="font-medium">{form.getValues().email}</p>
                       </div>
                       <div>
-                        <label className="text-sm font-medium text-gray-500">Phone</label>
+                        <label className="text-sm font-medium text-gray-400">Phone</label>
                         <p className="font-medium">{form.getValues().phone}</p>
                       </div>
                     </div>
@@ -5117,9 +5202,9 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                     {(requiredFees.length > 0 || selectedFee) ? (
                       <div className="space-y-4">
                         {/* Show payment form directly */}
-                        <div className="bg-blue-50 p-4 rounded border border-blue-200 mb-4">
-                          <h4 className="font-medium text-blue-800 mb-2">Ready to Complete Registration</h4>
-                          <p className="text-sm text-blue-700">
+                        <div className="p-4 rounded mb-4" style={{ backgroundColor: 'rgba(59,130,246,0.08)', border: '1px solid rgba(59,130,246,0.2)' }}>
+                          <h4 className="font-medium text-blue-300 mb-2">Ready to Complete Registration</h4>
+                          <p className="text-sm text-blue-400">
                             Review your information above and complete the payment setup below to finalize your registration.
                           </p>
                         </div>
@@ -5180,7 +5265,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                       </div>
                     ) : (
                       <div className="text-center py-8">
-                        <p className="text-gray-600 mb-4">No payment required for this registration.</p>
+                        <p className="text-gray-300 mb-4">No payment required for this registration.</p>
                         <Button
                           onClick={() => {
                             teamForm.setValue('players', players);
@@ -5237,10 +5322,10 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                 >
                   Registration Complete
                 </h3>
-                <div className="bg-green-50 border border-green-200 rounded-md p-4">
+                <div className="rounded-md p-4" style={{ backgroundColor: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.2)' }}>
                   <div className="flex items-center">
                     <CheckCircle className="h-6 w-6 text-green-500 mr-2" />
-                    <p className="text-green-700 font-medium">Your team has been successfully registered for this event.</p>
+                    <p className="text-green-400 font-medium">Your team has been successfully registered for this event.</p>
                   </div>
                 </div>
                 
@@ -5297,7 +5382,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                       style={{ color: event?.branding?.primaryColor || '#2C5282' }}
                     >Event Details</h3>
                     <div 
-                      className="prose max-w-none prose-blue prose-p:text-gray-700" 
+                      className="prose prose-sm prose-invert max-w-none" 
                       style={{ 
                         '--tw-prose-headings': event?.branding?.primaryColor || '#2C5282' 
                       } as React.CSSProperties}

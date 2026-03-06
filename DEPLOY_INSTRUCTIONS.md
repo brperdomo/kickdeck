@@ -33,7 +33,7 @@ Set these environment variables in your production environment:
 ```
 SENDGRID_API_KEY=your_sendgrid_api_key
 NODE_ENV=production
-PRODUCTION_URL=https://matchpro.ai     # Add this new variable with your actual production URL
+PRODUCTION_URL=https://kickdeck.io     # Add this new variable with your actual production URL
 ```
 
 The `PRODUCTION_URL` environment variable is important as it ensures that email links always point to your production site, not your development environment.

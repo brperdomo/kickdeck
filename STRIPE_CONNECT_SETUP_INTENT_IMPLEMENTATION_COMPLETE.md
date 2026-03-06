@@ -5,7 +5,7 @@
 **Implementation: 100% Complete - Full Stripe Compliance Achieved**
 
 ## 🎯 CRITICAL ACHIEVEMENT
-**Zero-Risk Payment Architecture**: MatchPro is now 100% protected from refund absorption risks across all payment methods.
+**Zero-Risk Payment Architecture**: KickDeck is now 100% protected from refund absorption risks across all payment methods.
 
 ## 📋 IMPLEMENTATION SUMMARY
 
@@ -14,13 +14,13 @@
 **1. Enhanced `createSetupIntent` Function in `stripeService.ts`:**
 - ✅ **Connect Account Validation**: Function now requires tournament Connect account before proceeding
 - ✅ **Customer Creation on Connect**: Creates customers directly on tournament accounts using `stripeAccount` parameter
-- ✅ **Setup Intent on Connect**: All Setup Intents created on tournament accounts, not MatchPro main account
+- ✅ **Setup Intent on Connect**: All Setup Intents created on tournament accounts, not KickDeck main account
 - ✅ **Temp Team Support**: Enhanced handling for temporary teams during registration flow
 - ✅ **Error Handling**: Comprehensive error handling with Connect account validation
 
 **2. Stripe API Compliance:**
 ```typescript
-// BEFORE (Risk): Customer created on MatchPro main account
+// BEFORE (Risk): Customer created on KickDeck main account
 const customer = await stripe.customers.create({...});
 
 // AFTER (Safe): Customer created on tournament Connect account
@@ -52,7 +52,7 @@ const customer = await stripe.customers.create({...}, {
 - ✅ Setup Intents created on tournament Connect accounts
 - ✅ Payment processing occurs on tournament accounts
 - ✅ Refunds processed from tournament balance
-- ✅ **ZERO MatchPro financial exposure**
+- ✅ **ZERO KickDeck financial exposure**
 
 **For Legacy Registrations (Pre-Implementation):**
 - ✅ Continue to work with existing cost recovery system
@@ -76,9 +76,9 @@ const customer = await stripe.customers.create({...}, {
 ## 🎯 BUSINESS IMPACT
 
 **Risk Elimination:**
-- **Before**: MatchPro absorbed refund costs when tournament accounts insufficient
+- **Before**: KickDeck absorbed refund costs when tournament accounts insufficient
 - **After**: Tournament accounts handle all refunds from their own balance
-- **Result**: 100% financial protection for MatchPro
+- **Result**: 100% financial protection for KickDeck
 
 **Operational Benefits:**
 - ✅ Identical user experience (no workflow changes)
@@ -103,7 +103,7 @@ const customer = await stripe.customers.create({...}, {
 - Existing events continue working normally
 - Enhanced refund processing control
 
-**For MatchPro Operations:**
+**For KickDeck Operations:**
 - Zero financial risk for new registrations
 - Legacy cost recovery system remains for transition
 - Complete audit trail maintained

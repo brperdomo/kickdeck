@@ -59,7 +59,7 @@ async function getEmailProvider() {
         providerName: 'SendGrid Provider',
         settings: {
           apiKey: sendgridApiKey,
-          from: process.env.SENDGRID_FROM_EMAIL || 'support@matchpro.ai'
+          from: process.env.SENDGRID_FROM_EMAIL || 'support@kickdeck.io'
         },
         isActive: true,
         isDefault: true,
@@ -204,7 +204,7 @@ export async function sendEmail(options: EmailOptions): Promise<void> {
     const provider = await getEmailProvider();
     
     // Use SendGrid to send the email
-    const from = options.from || `${provider.providerName} <${(provider.settings as any).from || 'support@matchpro.ai'}>`;
+    const from = options.from || `${provider.providerName} <${(provider.settings as any).from || 'support@kickdeck.io'}>`;
     
     const result = await sendgridService.sendEmail({
       to: options.to,
@@ -266,7 +266,7 @@ export async function sendTemplatedEmail(
       
       // Ensure html is never empty or undefined
       if (!html || html.trim() === '') {
-        html = '<p>You have received a notification from MatchPro. Please check your account for more information.</p>';
+        html = '<p>You have received a notification from KickDeck. Please check your account for more information.</p>';
       }
       
       await sendEmail({
@@ -308,8 +308,8 @@ function createFallbackTemplate(templateType: string, context: TemplateContext, 
           <p style="margin-top: 20px; font-size: 12px; color: #666;">This template was generated automatically as a fallback in development mode.</p>
         </div>
       `,
-      senderName: "MatchPro",
-      senderEmail: "support@matchpro.ai",
+      senderName: "KickDeck",
+      senderEmail: "support@kickdeck.io",
       isActive: true,
       type: templateType,
       providerId: null
@@ -327,8 +327,8 @@ function createFallbackTemplate(templateType: string, context: TemplateContext, 
           <p style="margin-top: 20px; font-size: 12px; color: #666;">This is an automated notification.</p>
         </div>
       `,
-      senderName: "MatchPro",
-      senderEmail: "support@matchpro.ai",
+      senderName: "KickDeck",
+      senderEmail: "support@kickdeck.io",
       isActive: true,
       type: templateType,
       providerId: null
@@ -357,7 +357,7 @@ export async function sendPasswordResetEmail(
       console.log(`Using development URL for password reset: ${appUrl}`);
     } else {
       // Production environment - use production domain
-      appUrl = process.env.PRODUCTION_URL || process.env.APP_URL || 'https://matchpro.ai';
+      appUrl = process.env.PRODUCTION_URL || process.env.APP_URL || 'https://kickdeck.io';
       console.log(`Using production URL for password reset: ${appUrl}`);
     }
     

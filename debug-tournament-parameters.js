@@ -15,7 +15,7 @@ async function testTournamentParametersAPI() {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        email: 'admin@matchpro.ai',
+        email: 'admin@kickdeck.io',
         password: 'admin123'
       })
     });

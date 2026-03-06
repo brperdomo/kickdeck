@@ -70,13 +70,13 @@ export function AuthFooter() {
             whileHover="hover"
             className="inline-block"
           >
-            <Link href="https://matchpro.ai" className="font-bold text-[#3d3a98] hover:text-[#6A67FF] transition-colors">
-              MatchPro
+            <Link href="https://kickdeck.io" className="font-bold text-[#3d3a98] hover:text-[#6A67FF] transition-colors">
+              KickDeck
             </Link>
           </motion.span>
         </motion.p>
         <motion.p variants={itemVariants} className="text-[#3d3a98] font-medium">
-          &copy; {currentYear} MatchPro. All rights reserved.
+          &copy; {currentYear} KickDeck. All rights reserved.
         </motion.p>
       </motion.div>
     </footer>

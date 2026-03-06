@@ -253,12 +253,12 @@ async function insertTemplate() {
       
       <div class="support-info">
         <p>If you have any questions regarding your registration or payment, please contact our support team.</p>
-        <p>Thank you for registering with MatchPro!</p>
+        <p>Thank you for registering with KickDeck!</p>
       </div>
     </div>
     <div class="footer">
       <p>This is an automated message. Please do not reply directly to this email.</p>
-      <p>&copy; {{currentYear}} MatchPro. All rights reserved.</p>
+      <p>&copy; {{currentYear}} KickDeck. All rights reserved.</p>
     </div>
   </div>
 </body>
@@ -270,8 +270,8 @@ async function insertTemplate() {
       description: 'Email receipt sent to registration submitters with transaction details',
       type: 'registration_receipt',
       subject: 'Your Registration Receipt for {{eventName}}',
-      senderName: 'MatchPro Registration',
-      senderEmail: 'support@matchpro.ai',
+      senderName: 'KickDeck Registration',
+      senderEmail: 'support@kickdeck.io',
       isActive: true,
       variables: [
         'teamName',

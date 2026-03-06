@@ -4,12 +4,14 @@ import { teams, events } from '@db/schema';
 import { eq } from 'drizzle-orm';
 
 if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
+  console.warn("Warning: STRIPE_SECRET_KEY not set. Stripe features will be unavailable.");
 }
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2023-10-16" as any,
-});
+const stripe = process.env.STRIPE_SECRET_KEY
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: "2023-10-16" as any,
+    })
+  : null;
 
 /**
  * Calculate platform fees: 4% + $0.30
@@ -81,7 +83,7 @@ export async function createCheckoutSession(teamId: number): Promise<{
         managerEmail: teamData.managerEmail || teamData.submitterEmail || "",
         registrationDate: new Date().toISOString(),
         internalReference: `TEAM-${teamId}-${teamData.eventId}`,
-        systemSource: "MatchPro",
+        systemSource: "KickDeck",
         createdFor: "checkout_session",
         connectAccountType: "tournament_refund_account"
       },
@@ -114,8 +116,8 @@ export async function createCheckoutSession(teamId: number): Promise<{
         },
       ],
       mode: 'payment',
-      success_url: `${process.env.FRONTEND_URL || 'https://app.matchpro.ai'}/payment/success?session_id={CHECKOUT_SESSION_ID}&team_id=${teamId}`,
-      cancel_url: `${process.env.FRONTEND_URL || 'https://app.matchpro.ai'}/payment/retry/${teamId}?cancelled=true`,
+      success_url: `${process.env.FRONTEND_URL || 'https://app.kickdeck.io'}/payment/success?session_id={CHECKOUT_SESSION_ID}&team_id=${teamId}`,
+      cancel_url: `${process.env.FRONTEND_URL || 'https://app.kickdeck.io'}/payment/retry/${teamId}?cancelled=true`,
       customer_email: teamData.managerEmail || teamData.submitterEmail || undefined,
       metadata: {
         teamId: teamId.toString(),

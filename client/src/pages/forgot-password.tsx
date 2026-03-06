@@ -71,24 +71,28 @@ export default function ForgotPassword() {
   return (
     <AuthLayout>
       <div className="relative">
-        <AnimatedBackground type="particles" primaryColor="#3d3a98" secondaryColor="#2d2a88" speed="medium" />
+        <AnimatedBackground type="neon" primaryColor="#7c3aed" secondaryColor="#a855f7" speed="medium" />
 
         <div className="relative z-10 flex items-center justify-center min-h-screen">
           <div className="w-full max-w-[min(400px,100%-2rem)] mx-auto">
-            <Card className="w-full bg-[#3d3a98]/70 backdrop-blur-md shadow-xl border-0 ring-4 ring-[#6a67ff]/60 ring-offset-4 ring-offset-[#3d3a98]/20 shadow-[0_0_20px_5px_rgba(106,103,255,0.4)]">
+            <Card className="w-full bg-[#0f0f23]/85 backdrop-blur-2xl border border-white/[0.08] rounded-2xl shadow-[0_0_30px_rgba(124,58,237,0.15),0_0_60px_rgba(6,182,212,0.08)]">
               <CardHeader className="space-y-3 pb-6">
                 <div className="flex justify-center">
-                  <div className="w-100 h-100">
+                  <div className="w-64">
                     <img
-                      src="/uploads/MatchProAI_Linear_BlackNOBUFFER.png"
-                      alt="MatchPro Logo"
+                      src="/uploads/KickDeck_Linear_White.png"
+                      alt="KickDeck Logo"
                       className="w-full h-full object-contain"
+                      style={{ filter: "drop-shadow(0 0 20px rgba(124,58,237,0.3))" }}
                     />
                   </div>
                 </div>
-                <CardTitle className="text-2xl sm:text-3xl font-bold text-center text-white">
-                  Reset Password
-                </CardTitle>
+                <div className="text-center space-y-1">
+                  <CardTitle className="text-2xl sm:text-3xl font-bold text-white">
+                    Reset Password
+                  </CardTitle>
+                  <p className="text-sm text-gray-400">We'll send you reset instructions</p>
+                </div>
               </CardHeader>
               <CardContent>
                 <Form {...form}>
@@ -102,23 +106,24 @@ export default function ForgotPassword() {
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-base text-white">Email</FormLabel>
+                          <FormLabel className="text-sm text-gray-300">Email</FormLabel>
                           <FormControl>
                             <Input
                               type="email"
                               autoComplete="email"
-                              className="h-11 text-base px-4 bg-white/90 border-white/50 focus:border-white focus:ring-white/50"
+                              className="neon-input h-11 text-base px-4 text-white placeholder:text-gray-500 focus:ring-1 focus:ring-purple-500/20 focus:shadow-[0_0_10px_rgba(124,58,237,0.15)]"
+                              style={{ backgroundColor: 'rgba(255,255,255,0.06)', borderColor: 'rgba(255,255,255,0.1)' }}
                               {...field}
                             />
                           </FormControl>
-                          <FormMessage className="text-yellow-200" />
+                          <FormMessage className="text-red-400" />
                         </FormItem>
                       )}
                     />
 
                     <Button
                       type="submit"
-                      className="w-full h-11 text-base bg-white hover:bg-white/90 text-[#3d3a98] font-medium transition-colors"
+                      className="w-full h-11 text-base bg-gradient-to-r from-purple-600 to-violet-500 hover:from-purple-500 hover:to-violet-400 text-white font-medium transition-all duration-200 hover:shadow-[0_0_20px_rgba(124,58,237,0.4)]"
                       disabled={isSubmitting}
                     >
                       {isSubmitting ? (
@@ -133,7 +138,7 @@ export default function ForgotPassword() {
 
                     <div className="text-center">
                       <Link href="/auth">
-                        <Button variant="link" className="w-full text-sm text-yellow-200 p-0 h-auto font-semibold hover:text-yellow-100" type="button">
+                        <Button variant="link" className="w-full text-sm text-gray-400 p-0 h-auto font-medium hover:text-purple-400 transition-colors" type="button">
                           <ArrowLeft className="h-4 w-4 mr-2" />
                           Back to Login
                         </Button>

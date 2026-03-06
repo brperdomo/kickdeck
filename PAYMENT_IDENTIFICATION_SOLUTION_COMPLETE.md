@@ -39,7 +39,7 @@ All new customers now include:
     managerName: "John Smith",
     registrationDate: "2025-08-19T15:39:00.000Z",
     internalReference: "TEAM-1234-123",
-    systemSource: "MatchPro",
+    systemSource: "KickDeck",
     customerType: "ConnectAccount"
   }
 }
@@ -58,7 +58,7 @@ All Setup Intents now include:
     managerEmail: "manager@email.com",
     internalReference: "TEAM-1234-123",
     connectAccountId: "acct_xxx",
-    systemSource: "MatchPro",
+    systemSource: "KickDeck",
     operationType: "SetupIntent"
   }
 }

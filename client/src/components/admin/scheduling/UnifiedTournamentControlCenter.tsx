@@ -13,8 +13,18 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { toast } from '@/hooks/use-toast';
 import {
-  Trophy, Settings, Users, Calendar, Zap, Eye, 
-  CheckCircle, Clock, AlertTriangle, ArrowRight, 
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import {
+  Trophy, Settings, Users, Calendar, Zap, Eye,
+  CheckCircle, Clock, AlertTriangle, ArrowRight,
   Play, Pause, RotateCcw, Download, Share2, Trash2
 } from 'lucide-react';
 
@@ -48,6 +58,8 @@ export function UnifiedTournamentControlCenter({ eventId }: TournamentControlCen
   const [isProcessing, setIsProcessing] = useState(false);
   const [showFlightSelector, setShowFlightSelector] = useState(false);
   const [selectedFlights, setSelectedFlights] = useState<string[]>([]);
+  const [showScheduleConfirm, setShowScheduleConfirm] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   // Fetch tournament status
   const { data: tournamentStatus, refetch: refetchStatus } = useQuery({
@@ -87,6 +99,54 @@ export function UnifiedTournamentControlCenter({ eventId }: TournamentControlCen
     },
     refetchInterval: 5000,
     retry: 1
+  });
+
+  // Fetch championship game status (pending championship games)
+  const { data: championshipStatus, refetch: refetchChampionship } = useQuery({
+    queryKey: ['championship-status', eventId],
+    queryFn: async () => {
+      try {
+        const response = await fetch(`/api/admin/championship/${eventId}/championship-status`, {
+          credentials: 'include'
+        });
+        if (!response.ok) return [];
+        return response.json();
+      } catch {
+        return [];
+      }
+    },
+    refetchInterval: 10000,
+    retry: 1
+  });
+
+  const pendingChampionships = (championshipStatus || []).filter((g: any) => g.isPending);
+
+  // Resolve championship games mutation
+  const resolveChampionshipMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch(`/api/admin/championship/${eventId}/update-championship-teams`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include'
+      });
+      if (!response.ok) throw new Error('Failed to resolve championship games');
+      return response.json();
+    },
+    onSuccess: (data) => {
+      toast({
+        title: "Championships Resolved",
+        description: data.message || 'Championship games have been updated with teams.',
+      });
+      refetchChampionship();
+      refetchStatus();
+    },
+    onError: (error) => {
+      toast({
+        title: "Championship Resolution Failed",
+        description: error instanceof Error ? error.message : 'An error occurred',
+        variant: "destructive"
+      });
+    }
   });
 
   // Fetch scheduling readiness (configured flights with game formats)
@@ -143,29 +203,70 @@ export function UnifiedTournamentControlCenter({ eventId }: TournamentControlCen
     retry: 1
   });
 
-  // Auto-scheduling mutation (all flights)
+  // Auto-scheduling mutation — schedules ONLY configured flights using the
+  // template-aware selective endpoint (not the hardcoded complete-schedule).
+  // Accepts an optional overrideFlightIds param to schedule a subset of flights.
   const autoScheduleMutation = useMutation({
-    mutationFn: async () => {
-      const response = await fetch(`/api/admin/events/${eventId}/generate-complete-schedule`, {
+    mutationFn: async (overrideFlightIds?: string[]) => {
+      // Use override list if provided, else collect all configured flights
+      const configuredFlightIds = overrideFlightIds || (schedulingReadiness?.flights || [])
+        .filter((f: any) => f.isConfigured && f.formatName && f.formatName !== 'Not Configured')
+        .map((f: any) => f.id);
+
+      if (configuredFlightIds.length === 0) {
+        throw new Error('No configured flights to schedule. Assign a format template to at least one flight first.');
+      }
+
+      const response = await fetch(`/api/admin/events/${eventId}/generate-selective-schedule`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ includeReferees: true, includeFacilities: true })
+        credentials: 'include',
+        body: JSON.stringify({
+          flightIds: configuredFlightIds,
+          includeReferees: true,
+          includeFacilities: true,
+        }),
       });
-      if (!response.ok) throw new Error('Auto-scheduling failed');
+
+      if (!response.ok) {
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('text/html')) {
+          throw new Error('Authentication required. Please log in.');
+        }
+        try {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Auto-scheduling failed');
+        } catch {
+          throw new Error(`Auto-scheduling failed (${response.status})`);
+        }
+      }
       return response.json();
     },
     onSuccess: (data) => {
+      const configuredCount = (schedulingReadiness?.flights || [])
+        .filter((f: any) => f.isConfigured && f.formatName && f.formatName !== 'Not Configured').length;
       toast({
-        title: "Tournament Auto-Scheduling Complete",
-        description: `${data.message || 'Tournament schedule generated respecting flight configurations, game formats, and bracket structures.'}`,
+        title: "Schedule Generated",
+        description: data.message || `Schedule generated for ${configuredCount} configured flight(s) using their assigned format templates.`,
       });
+      // Show capacity warning as a separate destructive toast if present
+      if (data.capacityWarning) {
+        setTimeout(() => {
+          toast({
+            title: "⚠️ Scheduling Capacity Warning",
+            description: data.capacityWarning,
+            variant: "destructive",
+            duration: 15000,
+          });
+        }, 500);
+      }
       refetchStatus();
       setIsProcessing(false);
     },
     onError: (error) => {
       toast({
         title: "Scheduling Failed",
-        description: error.message,
+        description: error instanceof Error ? error.message : 'An error occurred',
         variant: "destructive"
       });
       setIsProcessing(false);
@@ -260,6 +361,17 @@ export function UnifiedTournamentControlCenter({ eventId }: TournamentControlCen
         title: "Selective Scheduling Complete",
         description: `${data.message || `Schedule generated for ${selectedFlights.length} selected flights.`}`,
       });
+      // Show capacity warning as a separate destructive toast if present
+      if (data.capacityWarning) {
+        setTimeout(() => {
+          toast({
+            title: "⚠️ Scheduling Capacity Warning",
+            description: data.capacityWarning,
+            variant: "destructive",
+            duration: 15000,
+          });
+        }, 500);
+      }
       setIsProcessing(false);
       refetchStatus();
       setShowFlightSelector(false);
@@ -275,7 +387,51 @@ export function UnifiedTournamentControlCenter({ eventId }: TournamentControlCen
     }
   });
 
+  // Helper: get configured flights
+  const getConfiguredFlights = () =>
+    (schedulingReadiness?.flights || []).filter(
+      (f: any) => f.isConfigured && f.formatName && f.formatName !== 'Not Configured'
+    );
+
+  // Helper: get configured flights that already have games
+  const getFlightsWithGames = () =>
+    getConfiguredFlights().filter((f: any) => (f.scheduledGamesCount || 0) > 0);
+
   const handleAutoSchedule = () => {
+    const flightsWithGames = getFlightsWithGames();
+    if (flightsWithGames.length > 0) {
+      // Some flights already have games — show confirmation dialog
+      setShowScheduleConfirm(true);
+    } else {
+      // No flights have games — schedule immediately
+      setIsProcessing(true);
+      setAutoMode(true);
+      autoScheduleMutation.mutate();
+    }
+  };
+
+  const handleScheduleSkipExisting = () => {
+    // Schedule only flights that DON'T have games yet
+    const unscheduledFlightIds = getConfiguredFlights()
+      .filter((f: any) => (f.scheduledGamesCount || 0) === 0)
+      .map((f: any) => f.id);
+    setShowScheduleConfirm(false);
+    if (unscheduledFlightIds.length === 0) {
+      toast({
+        title: "No Unscheduled Flights",
+        description: "All configured flights already have games. Use 'Regenerate All' to recreate schedules.",
+        variant: "destructive"
+      });
+      return;
+    }
+    setIsProcessing(true);
+    setAutoMode(true);
+    autoScheduleMutation.mutate(unscheduledFlightIds);
+  };
+
+  const handleScheduleRegenerateAll = () => {
+    // Regenerate all configured flights (backend will delete existing games first)
+    setShowScheduleConfirm(false);
     setIsProcessing(true);
     setAutoMode(true);
     autoScheduleMutation.mutate();
@@ -318,9 +474,12 @@ export function UnifiedTournamentControlCenter({ eventId }: TournamentControlCen
   };
 
   const handleBulkDelete = () => {
-    if (window.confirm('Are you sure you want to delete ALL games from this tournament? This action cannot be undone.')) {
-      bulkDeleteMutation.mutate();
-    }
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmBulkDelete = () => {
+    setShowDeleteConfirm(false);
+    bulkDeleteMutation.mutate();
   };
 
   const getPhaseColor = (phase: string) => {
@@ -427,6 +586,21 @@ export function UnifiedTournamentControlCenter({ eventId }: TournamentControlCen
                 Refresh
               </Button>
 
+              {/* Resolve Championships — only visible when pending championship games exist */}
+              {pendingChampionships.length > 0 && (
+                <Button
+                  variant="outline"
+                  onClick={() => resolveChampionshipMutation.mutate()}
+                  disabled={resolveChampionshipMutation.isPending}
+                  className="flex items-center gap-2 border-amber-600 text-amber-400 hover:bg-amber-900/20 hover:text-amber-300"
+                >
+                  <Trophy className="h-4 w-4" />
+                  {resolveChampionshipMutation.isPending
+                    ? 'Resolving...'
+                    : `Resolve Championships (${pendingChampionships.length})`}
+                </Button>
+              )}
+
               <Button
                 variant="outline"
                 onClick={handleBulkDelete}
@@ -465,7 +639,7 @@ export function UnifiedTournamentControlCenter({ eventId }: TournamentControlCen
                     </span>
                   ) : (
                     <span>
-                      <strong>Setup Required:</strong> Configure game formats for flights in the Flight Assignment tab before using automated scheduling. {schedulingReadiness.totalFlights} flights available, {schedulingReadiness.configuredFlights} configured.
+                      <strong>Setup Required:</strong> Create a game format template in <strong>Format Settings</strong>, then assign it to each flight in <strong>Flight Assignment</strong> before using automated scheduling. {schedulingReadiness.totalFlights} flights available, {schedulingReadiness.configuredFlights} configured.
                     </span>
                   )}
                 </AlertDescription>
@@ -658,9 +832,13 @@ export function UnifiedTournamentControlCenter({ eventId }: TournamentControlCen
                         size="sm"
                         variant="outline"
                         onClick={() => handleManualStep(issue.action!)}
-                        className="border-slate-600 text-slate-200 hover:bg-slate-700"
+                        className="border-slate-600 text-slate-200 hover:bg-slate-700 whitespace-nowrap"
                       >
-                        Fix
+                        {issue.action === 'assign-formats' ? 'Assign Formats' :
+                         issue.action === 'configure-fields' ? 'Configure Fields' :
+                         issue.action === 'register-teams' ? 'Add Teams' :
+                         issue.action === 'resolve-championships' ? 'Resolve' :
+                         'Fix'}
                       </Button>
                     )}
                   </div>
@@ -671,6 +849,80 @@ export function UnifiedTournamentControlCenter({ eventId }: TournamentControlCen
         </Card>
       )}
 
+
+      {/* Re-Schedule Confirmation Dialog */}
+      <AlertDialog open={showScheduleConfirm} onOpenChange={setShowScheduleConfirm}>
+        <AlertDialogContent className="bg-slate-800 border-slate-600 text-white">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-white flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-amber-400" />
+              Flights Already Have Games
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-slate-300 space-y-3">
+              <p>The following configured flights already have scheduled games:</p>
+              <ul className="list-disc list-inside space-y-1 text-slate-200">
+                {getFlightsWithGames().map((f: any) => (
+                  <li key={f.id}>
+                    <span className="font-medium">{f.flightName}</span>
+                    {' '}<span className="text-slate-400">({f.ageGroup})</span>
+                    {' — '}<span className="text-amber-400 font-semibold">{f.scheduledGamesCount} games</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="text-sm text-slate-400 mt-2">
+                Choose how to proceed:
+              </p>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+            <AlertDialogCancel className="border-slate-600 text-slate-200 hover:bg-slate-700 bg-slate-700">
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleScheduleSkipExisting}
+              className="bg-blue-600 hover:bg-blue-500 text-white"
+            >
+              <Zap className="h-4 w-4 mr-1" />
+              Skip Scheduled Flights
+            </AlertDialogAction>
+            <AlertDialogAction
+              onClick={handleScheduleRegenerateAll}
+              className="bg-amber-600 hover:bg-amber-500 text-white"
+            >
+              <RotateCcw className="h-4 w-4 mr-1" />
+              Regenerate All
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Delete All Games Confirmation Dialog */}
+      <AlertDialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+        <AlertDialogContent className="bg-slate-800 border-slate-600 text-white">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-white flex items-center gap-2">
+              <Trash2 className="h-5 w-5 text-red-400" />
+              Delete All Games
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-slate-300">
+              <p>Are you sure you want to delete <strong className="text-red-400">ALL games</strong> from this tournament?</p>
+              <p className="text-sm text-slate-400 mt-2">This action cannot be undone. All scheduled games, scores, and field assignments will be permanently removed.</p>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="border-slate-600 text-slate-200 hover:bg-slate-700 bg-slate-700">
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmBulkDelete}
+              className="bg-red-600 hover:bg-red-500 text-white"
+            >
+              <Trash2 className="h-4 w-4 mr-1" />
+              Delete All Games
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
     </div>
   );

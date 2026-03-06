@@ -235,9 +235,9 @@ const identifyOrganization = async (req: Request, res: Response, next: NextFunct
   try {
     const hostname = req.hostname;
     
-    // First, check if this is a custom domain (not matchpro.ai)
+    // First, check if this is a custom domain (not kickdeck.io)
     // This handles clientbrand.com or other custom A-record domains
-    if (!hostname.includes('matchpro.ai')) {
+    if (!hostname.includes('kickdeck.io')) {
       // Skip localhost or IP addresses during development
       if (hostname === 'localhost' || /^\d+\.\d+\.\d+\.\d+$/.test(hostname)) {
         return next();
@@ -273,7 +273,7 @@ const identifyOrganization = async (req: Request, res: Response, next: NextFunct
       }
     }
     
-    // Check for subdomain (e.g., 'client' from 'client.matchpro.ai')
+    // Check for subdomain (e.g., 'client' from 'client.kickdeck.io')
     const parts = hostname.split('.');
     const isSubdomain = parts.length > 2;
     
@@ -358,9 +358,11 @@ export function registerRoutes(app: Express): Server {
   
   try {
     // Initialize Stripe
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-      apiVersion: '2023-10-16',
-    });
+    const stripe = process.env.STRIPE_SECRET_KEY
+      ? new Stripe(process.env.STRIPE_SECRET_KEY, {
+          apiVersion: '2023-10-16',
+        })
+      : null;
     
     // Authentication is already set up in index.ts, no need to call setupAuth again
     log("Using existing authentication middleware");
@@ -427,12 +429,12 @@ export function registerRoutes(app: Express): Server {
             const tournamentCost = team.totalAmount; // The total amount IS the tournament registration fee
             
             // Use the same calculation logic as fee-calculator.ts
-            const DEFAULT_PLATFORM_FEE_RATE = 0.04; // 4% MatchPro fee
+            const DEFAULT_PLATFORM_FEE_RATE = 0.04; // 4% KickDeck fee
             const STRIPE_PERCENTAGE_FEE = 0.029; // 2.9%
             const STRIPE_FIXED_FEE = 30; // $0.30 in cents
             
-            const matchproTargetMargin = Math.round(tournamentCost * DEFAULT_PLATFORM_FEE_RATE);
-            const totalChargedAmount = Math.round((tournamentCost + matchproTargetMargin + STRIPE_FIXED_FEE) / (1 - STRIPE_PERCENTAGE_FEE));
+            const kickdeckTargetMargin = Math.round(tournamentCost * DEFAULT_PLATFORM_FEE_RATE);
+            const totalChargedAmount = Math.round((tournamentCost + kickdeckTargetMargin + STRIPE_FIXED_FEE) / (1 - STRIPE_PERCENTAGE_FEE));
             const platformFeeAmount = totalChargedAmount - tournamentCost;
             const platformFeeRate = platformFeeAmount / tournamentCost;
             
@@ -539,7 +541,7 @@ export function registerRoutes(app: Express): Server {
               teamId: team.id.toString(),
               teamName: team.name,
               source: 'payment_completion',
-              systemSource: 'MatchPro',
+              systemSource: 'KickDeck',
               createdFor: 'manual_payment_completion'
             }
           }, team.event?.stripeConnectAccountId ? { stripeAccount: team.event.stripeConnectAccountId } : {});
@@ -1289,7 +1291,7 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/scoring-templates', scoringTemplatesRouter); // Scoring & Standings templates router - NO AUTH for basic admin operations
     app.use('/api/admin/scoring-rules', adminScoringRulesRouter); // Enhanced tiebreaker and scoring rules management
     app.use('/api/admin', tournamentFormatConfigurationRouter); // Tournament format configuration - NO AUTH for basic admin operations
-    app.use('/api/admin', eventFieldConfigurationsRouter); // Event field configurations - NO AUTH for basic admin operations
+    app.use('/api/admin/field-config', eventFieldConfigurationsRouter); // Event field configurations - NO AUTH for basic admin operations
     app.use('/api/admin', autoFieldConfigRouter); // Automatic field configuration creation - NO AUTH for basic admin operations
     app.use('/api/admin/championship', championshipRouter); // Championship team assignment router - NO AUTH for basic admin operations
     app.use('/api/admin/championship-ai', isAdmin, championshipAiRouter); // Championship AI integration for chatbot queries
@@ -2646,21 +2648,24 @@ export function registerRoutes(app: Express): Server {
           .from(eventAgeGroups)
           .where(eq(eventAgeGroups.eventId, String(parsedEventId)));
 
-        // Get eligibility settings for age groups from the correct table using raw query
-        const eligibilityResult = await db.execute(sql`
-          SELECT age_group_id, is_eligible 
-          FROM event_age_group_eligibility 
-          WHERE event_id = ${parsedEventId}
-        `);
-        const eligibilitySettings = eligibilityResult.rows;
-
-        console.log(`Found ${eligibilitySettings.length} eligibility settings for event ${parsedEventId}:`, eligibilitySettings);
+        // Get eligibility settings for age groups (table may not exist in all environments)
+        let eligibilitySettings: any[] = [];
+        try {
+          const eligibilityResult = await db.execute(sql`
+            SELECT age_group_id, is_eligible
+            FROM event_age_group_eligibility
+            WHERE event_id = ${parsedEventId}
+          `);
+          eligibilitySettings = eligibilityResult.rows;
+        } catch (eligErr: any) {
+          // Table may not exist — gracefully continue without eligibility filtering
+          console.log(`Eligibility table not available (${eligErr.code || 'unknown'}), skipping eligibility filter`);
+        }
 
         // Create a map for quick eligibility lookup
         const eligibilityMap = new Map();
         eligibilitySettings.forEach((setting: any) => {
           eligibilityMap.set(setting.age_group_id, setting.is_eligible);
-          console.log(`Eligibility setting: age group ${setting.age_group_id} = ${setting.is_eligible}`);
         });
           
         // Deduplicate age groups based on division code and filter for eligibility
@@ -4280,8 +4285,8 @@ export function registerRoutes(app: Express): Server {
           const appUrl = process.env.APP_URL || 
                          (process.env.REPLIT_DOMAINS ? 
                           `https://${process.env.REPLIT_DOMAINS.split(',')[0]}` : 
-                          'https://matchpro.ai');
-          
+                          'https://kickdeck.io');
+
           // Send the welcome email with login link and admin context
           await sendTemplatedEmail(email, 'admin_welcome', {
             firstName,
@@ -5817,7 +5822,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           tournamentAdmin: '#4CAF50',
           scoreAdmin: '#4169E1',
           financeAdmin: '#9C27B0',
-          logoUrl: settings?.logoUrl || '/uploads/MatchProAI_Linear_Black.png',
+          logoUrl: settings?.logoUrl || '/uploads/KickDeck_Linear_Black.png',
           youtubeVideoId: '8DFc6wHHWPY'
         };
 
@@ -7081,6 +7086,63 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
             }
           }
 
+          // Handle event settings (e.g., allowPayLater)
+          if (formData.settings && Array.isArray(formData.settings)) {
+            for (const setting of formData.settings) {
+              if (setting.key && setting.value !== undefined) {
+                await tx.insert(eventSettings).values({
+                  eventId,
+                  settingKey: setting.key,
+                  settingValue: setting.value,
+                  createdAt: new Date().toISOString(),
+                  updatedAt: new Date().toISOString(),
+                });
+              }
+            }
+          }
+
+          // Handle branding settings
+          if (formData.branding) {
+            const brandingEntries = [
+              { key: 'branding.primaryColor', value: formData.branding.primaryColor },
+              { key: 'branding.secondaryColor', value: formData.branding.secondaryColor },
+              { key: 'branding.logoUrl', value: formData.branding.logoUrl },
+            ];
+            for (const entry of brandingEntries) {
+              if (entry.value) {
+                await tx.insert(eventSettings).values({
+                  eventId,
+                  settingKey: entry.key,
+                  settingValue: entry.value,
+                  createdAt: new Date().toISOString(),
+                  updatedAt: new Date().toISOString(),
+                });
+              }
+            }
+          }
+
+          // Handle complex assignments
+          if (formData.selectedComplexIds && Array.isArray(formData.selectedComplexIds) && formData.selectedComplexIds.length > 0) {
+            for (const complexId of formData.selectedComplexIds) {
+              await tx.insert(eventComplexes).values({
+                eventId,
+                complexId,
+                createdAt: new Date().toISOString(),
+              });
+            }
+          }
+
+          // Store seasonalScopeId as a setting for later retrieval
+          if (formData.selectedScopeId) {
+            await tx.insert(eventSettings).values({
+              eventId,
+              settingKey: 'seasonalScopeId',
+              settingValue: formData.selectedScopeId.toString(),
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+            });
+          }
+
           return [event];
         });
 
@@ -8288,7 +8350,9 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
 
         // Import Stripe
         const Stripe = (await import('stripe')).default;
-        const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+        const stripe = process.env.STRIPE_SECRET_KEY
+          ? new Stripe(process.env.STRIPE_SECRET_KEY)
+          : null;
 
         // Get Setup Intent details
         const setupIntent = await stripe.setupIntents.retrieve(team.setupIntentId);
@@ -8321,7 +8385,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
               teamId: team.id.toString(),
               teamName: team.name,
               eventName: team.event?.name || '',
-              systemSource: 'MatchPro',
+              systemSource: 'KickDeck',
               createdFor: 'legacy_processing'
             }
           }, team.event?.stripeConnectAccountId ? { stripeAccount: team.event.stripeConnectAccountId } : {});
@@ -9573,8 +9637,8 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
             const appUrl = process.env.APP_URL || 
                          (process.env.REPLIT_DOMAINS ? 
                           `https://${process.env.REPLIT_DOMAINS.split(',')[0]}` : 
-                          'https://matchpro.ai');
-            
+                          'https://kickdeck.io');
+
             // Send the welcome email with login link and admin context
             await sendTemplatedEmail(email, 'admin_welcome', {
               firstName,
@@ -11039,9 +11103,9 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
               hasClub: !!team.clubName,
               
               // Branding placeholders
-              loginLink: `${process.env.FRONTEND_URL || 'https://app.matchpro.ai'}/dashboard`,
-              supportEmail: 'support@matchpro.ai',
-              organizationName: 'MatchPro',
+              loginLink: `${process.env.FRONTEND_URL || 'https://app.kickdeck.io'}/dashboard`,
+              supportEmail: 'support@kickdeck.io',
+              organizationName: 'KickDeck',
               currentYear: new Date().getFullYear().toString()
             }
           );
@@ -12595,7 +12659,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         }
 
         const apiKey = (provider.settings as any)?.apiKey;
-        const fromEmail = (provider.settings as any)?.from || 'support@matchpro.ai';
+        const fromEmail = (provider.settings as any)?.from || 'support@kickdeck.io';
 
         if (!apiKey) {
           return res.status(400).json({ success: false, message: 'SendGrid API key not found' });
@@ -12607,14 +12671,14 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
             to: [{ email: targetEmail }],
             subject: 'SendGrid Test Email'
           }],
-          from: { email: fromEmail, name: 'MatchPro Test' },
+          from: { email: fromEmail, name: 'KickDeck Test' },
           content: [{
             type: 'text/html',
             value: `
               <h2>SendGrid Configuration Test</h2>
               <p>This is a test email to verify your SendGrid configuration is working correctly.</p>
               <p>If you received this email, your SendGrid setup is functioning properly!</p>
-              <p>Best regards,<br>MatchPro Team</p>
+              <p>Best regards,<br>KickDeck Team</p>
             `
           }]
         };

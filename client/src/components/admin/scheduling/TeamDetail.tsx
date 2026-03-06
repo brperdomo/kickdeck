@@ -311,7 +311,7 @@ export default function TeamDetail({ teamId, eventId, onClose }: TeamDetailProps
                       </td>
                       <td className="p-3 text-sm">
                         <Badge variant={game.status === 'completed' ? 'default' : game.status === 'in_progress' ? 'secondary' : 'outline'}>
-                          {game.status}
+                          {game.status.charAt(0).toUpperCase() + game.status.slice(1)}
                         </Badge>
                       </td>
                       <td className="p-3 text-sm">

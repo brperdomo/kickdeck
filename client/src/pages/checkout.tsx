@@ -16,12 +16,10 @@ import { Button } from "@/components/ui/button";
 import { Loader2, AlertCircle, CheckCircle } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
-// Initialize Stripe
-if (!import.meta.env.VITE_STRIPE_PUBLIC_KEY) {
-  throw new Error('Missing Stripe public key! Set VITE_STRIPE_PUBLIC_KEY in your environment.');
-}
-
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
+// Initialize Stripe (lazy - null if no key configured)
+const stripePromise = import.meta.env.VITE_STRIPE_PUBLIC_KEY
+  ? loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY)
+  : null;
 
 // The checkout form component that uses Stripe Elements
 const CheckoutForm = () => {

@@ -18,8 +18,8 @@
 **Root Cause**: Missing customer metadata in Stripe Connect payments
 
 ### 2. **Legacy Customer Refund Risk**
-**Issue**: Existing customers on MatchPro main account still pose refund absorption risk
-**Impact**: MatchPro must cover refunds from own funds for legacy customers
+**Issue**: Existing customers on KickDeck main account still pose refund absorption risk
+**Impact**: KickDeck must cover refunds from own funds for legacy customers
 **Scope**: Unknown number of legacy customers requiring refund capability
 
 ### 3. **Payment-to-Team Mapping Breakdown**
@@ -104,7 +104,7 @@ ORDER BY t.created_at DESC;
 3. **Documentation**: Clear agreement on legacy refund responsibility transfer
 
 ### **Option 3: Hybrid Approach (MOST PRACTICAL)**
-1. **MatchPro covers legacy refunds** for next 12 months
+1. **KickDeck covers legacy refunds** for next 12 months
 2. **Tournament organizers cover** all new Connect account refunds
 3. **Gradual transition** as legacy customers naturally migrate
 4. **Clear cutoff date** after which all refunds are tournament responsibility
@@ -166,7 +166,7 @@ ORDER BY t.created_at DESC;
 4. **Document refund responsibility** clearly in system
 
 ### **Recommended Strategy: Hybrid Approach**
-- **MatchPro retains responsibility** for existing legacy customers
+- **KickDeck retains responsibility** for existing legacy customers
 - **All new registrations** use Connect accounts (tournament responsibility)
 - **Natural migration** as customers re-register for new events
 - **Clear documentation** of which customers fall under which system

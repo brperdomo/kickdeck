@@ -293,7 +293,7 @@ export const events = pgTable("events", {
 
 export const eventAgeGroups = pgTable("event_age_groups", {
   id: serial("id").primaryKey(),
-  eventId: text("event_id").notNull().references(() => events.id),
+  eventId: bigint("event_id", { mode: "number" }).notNull().references(() => events.id),
   ageGroup: text("age_group").notNull(),
   birthYear: integer("birth_year").notNull(),
   gender: text("gender").notNull(),
@@ -352,7 +352,7 @@ export type SelectEvent = typeof events.$inferSelect;
 
 export const gameTimeSlots = pgTable("game_time_slots", {
   id: serial("id").primaryKey(),
-  eventId: text("event_id").notNull().references(() => events.id, { onDelete: 'cascade' }),
+  eventId: bigint("event_id", { mode: "number" }).notNull().references(() => events.id, { onDelete: 'cascade' }),
   fieldId: integer("field_id").notNull().references(() => fields.id),
   startTime: text("start_time").notNull(),
   endTime: text("end_time").notNull(),
@@ -365,7 +365,7 @@ export const gameTimeSlots = pgTable("game_time_slots", {
 // Brackets for event age groups - allows teams to select their competitive level
 export const eventBrackets = pgTable("event_brackets", {
   id: serial("id").primaryKey(),
-  eventId: text("event_id").notNull().references(() => events.id, { onDelete: 'cascade' }),
+  eventId: bigint("event_id", { mode: "number" }).notNull().references(() => events.id, { onDelete: 'cascade' }),
   ageGroupId: integer("age_group_id").notNull().references(() => eventAgeGroups.id),
   name: text("name").notNull(), // e.g., "Elite", "Premier", "Select", "Classic", "Recreational"
   description: text("description"), // More info about the bracket
@@ -403,7 +403,7 @@ export type SelectEventBracket = typeof eventBrackets.$inferSelect;
 
 export const tournamentGroups = pgTable("tournament_groups", {
   id: serial("id").primaryKey(),
-  eventId: text("event_id").notNull().references(() => events.id, { onDelete: 'cascade' }),
+  eventId: bigint("event_id", { mode: "number" }).notNull().references(() => events.id, { onDelete: 'cascade' }),
   ageGroupId: integer("age_group_id").notNull().references(() => eventAgeGroups.id),
   name: text("name").notNull(),
   type: text("type").notNull(),
@@ -474,7 +474,7 @@ export const teams = pgTable("teams", {
 
 export const games = pgTable("games", {
   id: serial("id").primaryKey(),
-  eventId: text("event_id").notNull().references(() => events.id, { onDelete: 'cascade' }),
+  eventId: bigint("event_id", { mode: "number" }).notNull().references(() => events.id, { onDelete: 'cascade' }),
   ageGroupId: integer("age_group_id").notNull().references(() => eventAgeGroups.id),
   groupId: integer("group_id").references(() => tournamentGroups.id),
   fieldId: integer("field_id").references(() => fields.id),
@@ -495,6 +495,13 @@ export const games = pgTable("games", {
   breakTime: integer("break_time").notNull().default(5),
   scheduledDate: date("scheduled_date"), // Date for the scheduled game
   scheduledTime: time("scheduled_time"), // Time for the scheduled game
+  // Championship/bracket tracking columns
+  bracketId: integer("bracket_id").references(() => eventBrackets.id), // Which flight/bracket this game belongs to
+  gameType: text("game_type").default('pool_play'), // 'pool_play', 'final', 'semifinal', 'consolation'
+  isPending: boolean("is_pending").default(false), // Whether TBD teams need resolution
+  homeTeamName: text("home_team_name"), // Cached display name (especially for TBD games)
+  awayTeamName: text("away_team_name"), // Cached display name (especially for TBD games)
+  notes: text("notes"), // General game notes (auto-assignment, manual overrides, etc.)
   // Score audit trail fields
   scoreEnteredBy: integer("score_entered_by").references(() => users.id), // Who entered/last modified the score
   scoreEnteredAt: timestamp("score_entered_at"), // When score was entered/last modified
@@ -547,8 +554,8 @@ export const paymentTransactions = pgTable("payment_transactions", {
   errorMessage: text("error_message"), // Error message if transaction failed
   settlementDate: timestamp("settlement_date"), // When funds settle to account
   payoutId: text("payout_id"), // Stripe payout ID when settled
-  platformFeeAmount: integer("platform_fee_amount"), // MatchPro platform fee in cents
-  matchproRevenue: integer("matchpro_revenue"), // MatchPro net revenue after Stripe fees
+  platformFeeAmount: integer("platform_fee_amount"), // KickDeck platform fee in cents
+  kickdeckRevenue: integer("kickdeck_revenue"), // KickDeck net revenue after Stripe fees
   applicationFeeAmount: integer("application_fee_amount"), // Application fee sent to Stripe Connect
   metadata: jsonb("metadata"), // Additional data about the transaction
   notes: text("notes"), // Admin notes about the transaction
@@ -580,7 +587,7 @@ export const refunds = pgTable("refunds", {
 // PDF Templates for Game Cards
 export const pdfTemplates = pgTable("pdf_templates", {
   id: text("id").primaryKey(),
-  eventId: text("event_id").notNull().references(() => events.id, { onDelete: 'cascade' }),
+  eventId: bigint("event_id", { mode: "number" }).notNull().references(() => events.id, { onDelete: 'cascade' }),
   name: text("name").notNull(),
   description: text("description"),
   pageWidth: integer("page_width").notNull().default(210), // A4 width in mm
@@ -889,6 +896,7 @@ export const gameFormats = pgTable("game_formats", {
   bufferTime: integer("buffer_time").notNull(), // minutes between games
   restPeriod: integer("rest_period").notNull(), // minimum rest between team games
   maxGamesPerDay: integer("max_games_per_day").notNull(),
+  startingTime: text("starting_time").default("08:00"), // HH:MM – earliest game start for this flight
   templateName: text("template_name"), // Reference to template used (if any)
   matchupTemplateId: integer("matchup_template_id").references(() => matchupTemplates.id), // Selected matchup logic
   createdAt: text("created_at").notNull().default(new Date().toISOString()),
@@ -977,14 +985,14 @@ export type SelectGame = typeof games.$inferSelect;
 
 export const eventComplexes = pgTable("event_complexes", {
   id: serial("id").primaryKey(),
-  eventId: text("event_id").notNull().references(() => events.id),
+  eventId: bigint("event_id", { mode: "number" }).notNull().references(() => events.id),
   complexId: integer("complex_id").notNull().references(() => complexes.id),
   createdAt: text("created_at").notNull().default(new Date().toISOString()),
 });
 
 export const eventFieldSizes = pgTable("event_field_sizes", {
   id: serial("id").primaryKey(),
-  eventId: text("event_id").notNull().references(() => events.id),
+  eventId: bigint("event_id", { mode: "number" }).notNull().references(() => events.id),
   fieldId: integer("field_id").notNull().references(() => fields.id),
   fieldSize: text("field_size").notNull(),
   createdAt: text("created_at").notNull().default(new Date().toISOString()),
@@ -992,7 +1000,7 @@ export const eventFieldSizes = pgTable("event_field_sizes", {
 
 export const eventScoringRules = pgTable("event_scoring_rules", {
   id: serial("id").primaryKey(),
-  eventId: text("event_id").notNull().references(() => events.id),
+  eventId: bigint("event_id", { mode: "number" }).notNull().references(() => events.id),
   title: text("title").notNull(),
   systemType: text("system_type").notNull().default("three_point"), // three_point, ten_point, custom
   // Basic point values
@@ -1043,7 +1051,7 @@ export const insertEventScoringRuleSchema = createInsertSchema(eventScoringRules
 // Team standings table for calculated standings and points
 export const teamStandings = pgTable("team_standings", {
   id: serial("id").primaryKey(),
-  eventId: text("event_id").notNull().references(() => events.id, { onDelete: 'cascade' }),
+  eventId: bigint("event_id", { mode: "number" }).notNull().references(() => events.id, { onDelete: 'cascade' }),
   ageGroupId: integer("age_group_id").notNull().references(() => eventAgeGroups.id),
   bracketId: integer("bracket_id").references(() => eventBrackets.id),
   teamId: integer("team_id").notNull().references(() => teams.id, { onDelete: 'cascade' }),
@@ -1121,7 +1129,7 @@ export const standingsCriteriaTemplates = pgTable("standings_criteria_templates"
 // Event Scoring and Standings Configuration - Links events to their dynamic templates
 export const eventScoringConfiguration = pgTable("event_scoring_configuration", {
   id: serial("id").primaryKey(),
-  eventId: text("event_id").notNull().references(() => events.id, { onDelete: 'cascade' }),
+  eventId: bigint("event_id", { mode: "number" }).notNull().references(() => events.id, { onDelete: 'cascade' }),
   scoringRuleTemplateId: integer("scoring_rule_template_id").references(() => scoringRuleTemplates.id),
   standingsCriteriaTemplateId: integer("standings_criteria_template_id").references(() => standingsCriteriaTemplates.id),
   includeChampionship: boolean("include_championship").default(false),
@@ -1168,7 +1176,7 @@ export type SelectEventScoringConfiguration = typeof eventScoringConfiguration.$
 
 export const eventAdministrators = pgTable("event_administrators", {
   id: serial("id").primaryKey(),
-  eventId: text("event_id").notNull().references(() => events.id),
+  eventId: bigint("event_id", { mode: "number" }).notNull().references(() => events.id),
   userId: integer("user_id").notNull().references(() => users.id),
   role: text("role").notNull(),
   permissions: jsonb("permissions"),
@@ -1177,7 +1185,7 @@ export const eventAdministrators = pgTable("event_administrators", {
 
 export const eventSettings = pgTable("event_settings", {
   id: serial("id").primaryKey(),
-  eventId: text("event_id").notNull().references(() => events.id),
+  eventId: bigint("event_id", { mode: "number" }).notNull().references(() => events.id),
   settingKey: text("setting_key").notNull(),
   settingValue: text("setting_value").notNull(),
   createdAt: text("created_at").notNull().default(new Date().toISOString()),
@@ -1206,7 +1214,7 @@ export const chatRooms = pgTable("chat_rooms", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
   type: text("type").notNull(),
-  eventId: text("event_id").references(() => events.id),
+  eventId: bigint("event_id", { mode: "number" }).references(() => events.id),
   teamId: integer("team_id").references(() => teams.id),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
@@ -1946,7 +1954,7 @@ export const feeAdjustments = pgTable("fee_adjustments", {
   reason: text("reason").notNull(), // Required reason for adjustment
   adjustedBy: integer("adjusted_by").notNull().references(() => users.id), // Admin who made the adjustment
   adjustedAt: timestamp("adjusted_at").notNull().defaultNow(),
-  eventId: text("event_id").notNull(), // For context and filtering
+  eventId: bigint("event_id", { mode: "number" }).notNull(), // For context and filtering
   teamName: text("team_name").notNull(), // For easy reporting
   adminEmail: text("admin_email").notNull(), // For audit trails
 });

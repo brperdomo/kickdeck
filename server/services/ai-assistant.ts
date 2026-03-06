@@ -3,9 +3,9 @@ import { db } from '@db';
 import { aiAuditLog } from '@db/schema';
 
 // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
-const openai = new OpenAI({ 
-  apiKey: process.env.OPENAI_API_KEY 
-});
+const openai = process.env.OPENAI_API_KEY
+  ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+  : null;
 
 interface ChatMessage {
   role: 'user' | 'assistant' | 'system';
@@ -45,11 +45,14 @@ Respond concisely and suggest specific actions when possible. Always confirm act
   }
 
   async processMessage(
-    userMessage: string, 
+    userMessage: string,
     userId: number,
     eventId?: string,
     context?: any
   ): Promise<AIResponse> {
+    if (!openai) {
+      return { success: false, message: 'AI assistant is not configured. Set OPENAI_API_KEY to enable.', error: 'OPENAI_API_KEY not set' };
+    }
     try {
       // Add user message to conversation
       this.conversationHistory.push({

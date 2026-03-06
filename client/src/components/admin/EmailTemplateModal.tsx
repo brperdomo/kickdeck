@@ -34,8 +34,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { EmailTemplate } from "@db/schema/emailTemplates";
-import { insertEmailTemplateSchema } from "@db/schema/emailTemplates";
+import { insertEmailTemplateSchema, type EmailTemplate } from "@db/schema/emailTemplates";
 
 // Define template types
 const templateTypes = [
@@ -285,7 +284,7 @@ export function EmailTemplateModal({ open, onOpenChange, template }: EmailTempla
                   <FormItem>
                     <FormLabel>Sender Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="MatchPro" {...field} />
+                      <Input placeholder="KickDeck" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -298,7 +297,7 @@ export function EmailTemplateModal({ open, onOpenChange, template }: EmailTempla
                   <FormItem>
                     <FormLabel>Sender Email</FormLabel>
                     <FormControl>
-                      <Input placeholder="notifications@matchpro.ai" {...field} />
+                      <Input placeholder="notifications@kickdeck.io" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -312,7 +311,7 @@ export function EmailTemplateModal({ open, onOpenChange, template }: EmailTempla
                 <FormItem>
                   <FormLabel>Email Subject</FormLabel>
                   <FormControl>
-                    <Input placeholder="Welcome to MatchPro" {...field} />
+                    <Input placeholder="Welcome to KickDeck" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

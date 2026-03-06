@@ -119,7 +119,7 @@ export function AdminDashboard() {
             view: "households",
             onClick: () => setActiveView('households'),
             icon: <Home className="h-4 w-4" />,
-            label: "MatchPro Client",
+            label: "KickDeck Client",
             permission: "view_households"
           },
           {

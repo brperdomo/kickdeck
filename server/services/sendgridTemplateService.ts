@@ -154,8 +154,8 @@ export async function testSendGridTemplate(templateId: string, recipientEmail: s
       throw new Error('SENDGRID_API_KEY environment variable is not set');
     }
 
-    // Default sender email to support@matchpro.ai if not specified
-    const senderEmail = process.env.DEFAULT_FROM_EMAIL || 'support@matchpro.ai';
+    // Default sender email to support@kickdeck.io if not specified
+    const senderEmail = process.env.DEFAULT_FROM_EMAIL || 'support@kickdeck.io';
 
     const mailData = {
       personalizations: [
@@ -164,7 +164,7 @@ export async function testSendGridTemplate(templateId: string, recipientEmail: s
           dynamic_template_data: testData || {}
         }
       ],
-      from: { email: senderEmail, name: 'MatchPro.ai' },
+      from: { email: senderEmail, name: 'KickDeck' },
       template_id: templateId
     };
 

@@ -61,13 +61,13 @@ async function debugWelcomeEmailProduction() {
     // Test with the same data format as registration
     const testMessage = {
       to: testEmail,
-      from: 'support@matchpro.ai',
-      subject: 'Welcome to MatchPro - Test Email',
+      from: 'support@kickdeck.io',
+      subject: 'Welcome to KickDeck - Test Email',
       html: `
         <div style="font-family: Arial, sans-serif; padding: 20px; border: 2px solid green;">
-          <h2 style="color: green;">Welcome to MatchPro!</h2>
+          <h2 style="color: green;">Welcome to KickDeck!</h2>
           <p>Hello Test User,</p>
-          <p>Thank you for registering with MatchPro. Your account has been created successfully.</p>
+          <p>Thank you for registering with KickDeck. Your account has been created successfully.</p>
           <p><strong>Test Details:</strong></p>
           <ul>
             <li>Email: ${testEmail}</li>

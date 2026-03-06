@@ -18,12 +18,14 @@ import {
 } from "../utils/stripeErrorHandler";
 
 if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error("Missing required Stripe secret: STRIPE_SECRET_KEY");
+  console.warn("Warning: STRIPE_SECRET_KEY not set. Stripe features will be unavailable.");
 }
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2023-10-16",
-});
+const stripe = process.env.STRIPE_SECRET_KEY
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: "2023-10-16",
+    })
+  : null;
 
 import {
   calculateEventFees,
@@ -206,7 +208,7 @@ export async function processDestinationCharge(
             `  Total charged to customer: $${(chargeAmount / 100).toFixed(2)}`,
           );
           console.log(
-            `  Platform fee (MatchPro): $${(feeCalculation.platformFeeAmount / 100).toFixed(2)}`,
+            `  Platform fee (KickDeck): $${(feeCalculation.platformFeeAmount / 100).toFixed(2)}`,
           );
           console.log(
             `  Stripe processing fee: $${(feeCalculation.stripeFeeAmount / 100).toFixed(2)}`,
@@ -215,7 +217,7 @@ export async function processDestinationCharge(
             `  Tournament should receive: $${(feeCalculation.tournamentReceives / 100).toFixed(2)}`,
           );
           console.log(
-            `  MatchPro net revenue: $${(feeCalculation.matchproReceives / 100).toFixed(2)}`,
+            `  KickDeck net revenue: $${(feeCalculation.kickdeckReceives / 100).toFixed(2)}`,
           );
 
           const transfer = await stripe.transfers.create({
@@ -230,7 +232,7 @@ export async function processDestinationCharge(
               totalCharged: chargeAmount.toString(),
               platformFeeAmount: feeCalculation.platformFeeAmount.toString(),
               stripeFeeAmount: feeCalculation.stripeFeeAmount.toString(),
-              matchproNetRevenue: feeCalculation.matchproReceives.toString(),
+              kickdeckNetRevenue: feeCalculation.kickdeckReceives.toString(),
             },
           });
 
@@ -238,7 +240,7 @@ export async function processDestinationCharge(
             `✅ Link manual transfer created: ${transfer.id} for $${feeCalculation.tournamentReceives / 100}`,
           );
           console.log(
-            `✅ MatchPro keeps $${(feeCalculation.matchproReceives / 100).toFixed(2)} net revenue (after paying Stripe fees)`,
+            `✅ KickDeck keeps $${(feeCalculation.kickdeckReceives / 100).toFixed(2)} net revenue (after paying Stripe fees)`,
           );
         } catch (transferError) {
           console.error(
@@ -269,7 +271,7 @@ export async function processDestinationCharge(
         `  Platform Fee Amount: $${(feeCalculation.platformFeeAmount / 100).toFixed(2)}`,
       );
       console.log(
-        `  MatchPro Revenue: $${(feeCalculation.matchproReceives / 100).toFixed(2)}`,
+        `  KickDeck Revenue: $${(feeCalculation.kickdeckReceives / 100).toFixed(2)}`,
       );
       console.log(
         `  Tournament Receives: $${(feeCalculation.tournamentReceives / 100).toFixed(2)}`,
@@ -287,11 +289,11 @@ export async function processDestinationCharge(
         confirm: true,
         on_behalf_of: connectAccountId,
         // NOTE: Removed receipt_email to allow Connect account to handle receipts
-        // Setting receipt_email on platform account causes receipts to come from MatchPro instead of tournament organizer
+        // Setting receipt_email on platform account causes receipts to come from KickDeck instead of tournament organizer
         transfer_data: {
           destination: connectAccountId,
         },
-        application_fee_amount: feeCalculation.platformFeeAmount, // This is the critical line that collects MatchPro revenue
+        application_fee_amount: feeCalculation.platformFeeAmount, // This is the critical line that collects KickDeck revenue
         payment_method_types: ["card"],
         metadata: {
           teamId: teamId.toString(),
@@ -305,7 +307,7 @@ export async function processDestinationCharge(
           stripeFeeAmount: feeCalculation.stripeFeeAmount.toString(),
           // Add the calculated values to metadata for debugging
           calculatedPlatformFee: feeCalculation.platformFeeAmount.toString(),
-          calculatedMatchProRevenue: feeCalculation.matchproReceives.toString(),
+          calculatedKickDeckRevenue: feeCalculation.kickdeckReceives.toString(),
         },
       };
 
@@ -614,11 +616,11 @@ export async function processDestinationCharge(
     }
 
     if (
-      !feeCalculation.matchproReceives &&
-      feeCalculation.matchproReceives !== 0
+      !feeCalculation.kickdeckReceives &&
+      feeCalculation.kickdeckReceives !== 0
     ) {
       throw new Error(
-        `Cannot record transaction: Invalid MatchPro revenue ${feeCalculation.matchproReceives}`,
+        `Cannot record transaction: Invalid KickDeck revenue ${feeCalculation.kickdeckReceives}`,
       );
     }
 
@@ -628,7 +630,7 @@ export async function processDestinationCharge(
       `  Platform Fee to Record: $${(feeCalculation.platformFeeAmount / 100).toFixed(2)}`,
     );
     console.log(
-      `  MatchPro Revenue to Record: $${(feeCalculation.matchproReceives / 100).toFixed(2)}`,
+      `  KickDeck Revenue to Record: $${(feeCalculation.kickdeckReceives / 100).toFixed(2)}`,
     );
     console.log(
       `  Application Fee Amount: $${(feeCalculation.platformFeeAmount / 100).toFixed(2)}`,
@@ -644,7 +646,7 @@ export async function processDestinationCharge(
       platformFeeAmount: feeCalculation.platformFeeAmount, // ✓ Add platform fee to dedicated column
       stripeFee: feeCalculation.stripeFeeAmount,
       netAmount: feeCalculation.tournamentReceives,
-      matchproRevenue: feeCalculation.matchproReceives, // ✓ Add MatchPro revenue field
+      kickdeckRevenue: feeCalculation.kickdeckReceives, // ✓ Add KickDeck revenue field
       applicationFeeAmount: feeCalculation.platformFeeAmount, // ✓ Record what was sent to Stripe
       status: paymentIntent.status,
       cardBrand: cardBrand, // ✓ Add card brand (visa, mastercard, etc.)
@@ -664,7 +666,7 @@ export async function processDestinationCharge(
     });
 
     console.log(
-      `✅ TRANSACTION RECORDED - Platform fee: $${(feeCalculation.platformFeeAmount / 100).toFixed(2)}, MatchPro revenue: $${(feeCalculation.matchproReceives / 100).toFixed(2)}`,
+      `✅ TRANSACTION RECORDED - Platform fee: $${(feeCalculation.platformFeeAmount / 100).toFixed(2)}, KickDeck revenue: $${(feeCalculation.kickdeckReceives / 100).toFixed(2)}`,
     );
 
     // Update team payment status and card details
@@ -690,7 +692,7 @@ export async function processDestinationCharge(
         tournamentReceives: feeCalculation.tournamentReceives,
         platformFeeAmount: feeCalculation.platformFeeAmount,
         stripeFeeAmount: feeCalculation.stripeFeeAmount,
-        matchproReceives: feeCalculation.matchproReceives,
+        kickdeckReceives: feeCalculation.kickdeckReceives,
       },
     };
   } catch (error) {

@@ -14,7 +14,7 @@
 **Code Changes**:
 ```typescript
 // BEFORE (hardcoded):
-eventInfo[0].logoUrl = 'https://app.matchpro.ai/uploads/2025-EmpireSurf-SuperCup-logo_badge_blue_1748622426612_i7ic0i.jpg';
+eventInfo[0].logoUrl = 'https://app.kickdeck.io/uploads/2025-EmpireSurf-SuperCup-logo_badge_blue_1748622426612_i7ic0i.jpg';
 
 // AFTER (from event settings):
 // Uses the event's actual logoUrl from database - no hardcoded overrides
@@ -79,7 +79,7 @@ Redirects to: /public/schedules/1656618593/age-group/10044
 
 ### **For Parents & Coaches**:
 - Navigate schedules by familiar division codes
-- See tournament-specific branding (not generic MatchPro branding)
+- See tournament-specific branding (not generic KickDeck branding)
 - Access schedules via `/public/schedules/EVENT/division/G2014` format
 
 ### **System Integration**:

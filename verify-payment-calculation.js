@@ -32,7 +32,7 @@ async function verifyPaymentCalculation() {
     console.log(`  Stripe Fee Amount: $${(feeCalculation.stripeFeeAmount / 100).toFixed(2)}`);
     console.log(`  Total Charged Amount: $${(feeCalculation.totalChargedAmount / 100).toFixed(2)}`);
     console.log(`  Tournament Receives: $${(feeCalculation.tournamentReceives / 100).toFixed(2)}`);
-    console.log(`  MatchPro Receives: $${(feeCalculation.matchproReceives / 100).toFixed(2)}`);
+    console.log(`  KickDeck Receives: $${(feeCalculation.kickdeckReceives / 100).toFixed(2)}`);
     console.log(`  Is Balanced: ${feeCalculation.isBalanced}`);
     
     // Verify the calculation is correct

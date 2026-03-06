@@ -2,7 +2,7 @@
  * Test Platform Fee Report API
  * 
  * This script tests the new platform fee report to verify
- * it's properly calculating MatchPro revenue vs Stripe fees.
+ * it's properly calculating KickDeck revenue vs Stripe fees.
  */
 
 import axios from 'axios';
@@ -31,13 +31,13 @@ async function testPlatformFeeReport() {
       console.log(`   Total Charged: $${(data.summary.totalChargedToCustomers / 100).toFixed(2)}`);
       console.log(`   Platform Fees: $${(data.summary.totalPlatformFeesCollected / 100).toFixed(2)}`);
       console.log(`   Stripe Fees: $${(data.summary.totalStripeFeespaid / 100).toFixed(2)}`);
-      console.log(`   MatchPro Revenue: $${(data.summary.totalMatchProNetRevenue / 100).toFixed(2)}`);
+      console.log(`   KickDeck Revenue: $${(data.summary.totalKickDeckNetRevenue / 100).toFixed(2)}`);
       
       console.log(`\n📈 Fee Structure Analysis:`);
       console.log(`   Platform Fee Rate: ${data.summary.platformFeeRate}%`);
       console.log(`   Stripe Fee Rate: ${data.summary.stripeFeeRate}%`);
-      console.log(`   MatchPro Margin: ${data.summary.matchproMarginRate}%`);
-      console.log(`   Avg Revenue/Transaction: $${(data.summary.avgMatchProRevenuePerTransaction / 100).toFixed(2)}`);
+      console.log(`   KickDeck Margin: ${data.summary.kickdeckMarginRate}%`);
+      console.log(`   Avg Revenue/Transaction: $${(data.summary.avgKickDeckRevenuePerTransaction / 100).toFixed(2)}`);
       
       console.log(`\n💳 Payment Method Breakdown:`);
       console.log(`   Card Payments: ${data.paymentMethodBreakdown.cardPayments.count} transactions`);
@@ -46,9 +46,9 @@ async function testPlatformFeeReport() {
       console.log(`   Link Revenue: $${(data.paymentMethodBreakdown.linkPayments.revenue / 100).toFixed(2)}`);
       
       if (data.eventBreakdown.length > 0) {
-        console.log(`\n🏆 Top 3 Events by MatchPro Revenue:`);
+        console.log(`\n🏆 Top 3 Events by KickDeck Revenue:`);
         data.eventBreakdown.slice(0, 3).forEach((event, index) => {
-          console.log(`   ${index + 1}. ${event.eventName}: $${(event.matchproRevenue / 100).toFixed(2)} (${event.teamCount} teams)`);
+          console.log(`   ${index + 1}. ${event.eventName}: $${(event.kickdeckRevenue / 100).toFixed(2)} (${event.teamCount} teams)`);
         });
       }
       
@@ -57,7 +57,7 @@ async function testPlatformFeeReport() {
         data.transactions.slice(0, 3).forEach((tx, index) => {
           console.log(`   ${index + 1}. ${tx.teamName} - ${tx.eventName}`);
           console.log(`      Tournament: $${(tx.tournamentCostCents / 100).toFixed(2)}, Total: $${(tx.totalChargedAmount / 100).toFixed(2)}`);
-          console.log(`      MatchPro: $${(tx.matchproRevenue / 100).toFixed(2)}, Stripe: $${(tx.stripeFeeAmount / 100).toFixed(2)}`);
+          console.log(`      KickDeck: $${(tx.kickdeckRevenue / 100).toFixed(2)}, Stripe: $${(tx.stripeFeeAmount / 100).toFixed(2)}`);
           console.log(`      Payment: ${tx.paymentMethodType}`);
         });
       }

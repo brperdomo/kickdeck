@@ -39,7 +39,7 @@ if (!process.env.SENDGRID_API_KEY && nodeEnv === "development") {
   process.env.SENDGRID_API_KEY = "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";
 }
 if (!process.env.DEFAULT_FROM_EMAIL) {
-  process.env.DEFAULT_FROM_EMAIL = "support@matchpro.ai";
+  process.env.DEFAULT_FROM_EMAIL = "support@kickdeck.io";
 }
 
 // Log critical environment variables for debugging (without exposing secrets)

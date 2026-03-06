@@ -24,7 +24,7 @@ async function checkSendGridDelivery() {
     // Send a simple test email to verify delivery
     const testEmail = {
       to: 'bperdomo@zoho.com',
-      from: 'support@matchpro.ai',
+      from: 'support@kickdeck.io',
       subject: 'SendGrid Delivery Test',
       text: 'This is a test email to verify SendGrid delivery is working.',
       html: '<p>This is a test email to verify SendGrid delivery is working.</p><p>If you receive this, the email system is functioning correctly.</p>'

@@ -2,7 +2,7 @@
  * Email Configuration Update Route
  * 
  * Admin-only route that updates the email configuration to use SendGrid
- * and sets support@matchpro.ai as the sender for all templates.
+ * and sets support@kickdeck.io as the sender for all templates.
  */
 
 import { Router, Request, Response } from 'express';
@@ -13,8 +13,8 @@ import { eq } from 'drizzle-orm';
 const router = Router();
 
 // Constants
-const SENDER_EMAIL = 'support@matchpro.ai';
-const SENDER_NAME = 'MatchPro';
+const SENDER_EMAIL = 'support@kickdeck.io';
+const SENDER_NAME = 'KickDeck';
 
 // Admin-only route to update email configuration
 router.post('/', async (req: Request, res: Response) => {
@@ -138,7 +138,7 @@ async function setupSendGridProvider(): Promise<number | null> {
 }
 
 /**
- * Updates all email templates to use support@matchpro.ai as the sender
+ * Updates all email templates to use support@kickdeck.io as the sender
  * @param providerId The ID of the SendGrid provider
  * @returns The number of templates updated
  */

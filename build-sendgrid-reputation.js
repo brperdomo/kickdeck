@@ -20,9 +20,9 @@ async function buildReputation() {
 
   // Use verified sender addresses
   const verifiedSenders = [
-    'support@matchpro.ai',
-    'mailer@matchpro.ai', 
-    'no-reply@matchpro.ai'
+    'support@kickdeck.io',
+    'mailer@kickdeck.io', 
+    'no-reply@kickdeck.io'
   ];
 
   // Send to verified recipient (your email)
@@ -39,7 +39,7 @@ async function buildReputation() {
       to: testRecipient,
       from: {
         email: sender,
-        name: 'MatchPro Team'
+        name: 'KickDeck Team'
       },
       subject: `SendGrid Reputation Test ${i + 1} - ${new Date().toISOString()}`,
       html: `
@@ -61,7 +61,7 @@ async function buildReputation() {
           </div>
           
           <p style="color: #666; font-size: 12px;">
-            This email was sent as part of SendGrid reputation building for MatchPro.ai
+            This email was sent as part of SendGrid reputation building for KickDeck
           </p>
         </div>
       `,
@@ -73,7 +73,7 @@ async function buildReputation() {
         From: ${sender}
         Purpose: Building legitimate sending history
         
-        This email was sent as part of SendGrid reputation building for MatchPro.ai
+        This email was sent as part of SendGrid reputation building for KickDeck
       `
     };
 

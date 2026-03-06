@@ -3,7 +3,7 @@
  */
 
 /**
- * Checks if the current domain is the main MatchPro.ai domain
+ * Checks if the current domain is the main KickDeck.io domain
  * This is used to determine whether to show the marketing site or the app
  */
 export function isMainDomain(): boolean {
@@ -16,14 +16,12 @@ export function isMainDomain(): boolean {
     
     // Check actual domain in production
     const hostname = window.location.hostname;
-    
+
     // Check if it's the main domain (not a subdomain)
+    // localhost is NEVER the main domain — use ?showLanding=true to test the landing page
     return (
-      hostname === 'matchpro.ai' || 
-      hostname === 'www.matchpro.ai' || 
-      // For development testing
-      (hostname === 'localhost' && !window.location.pathname.startsWith('/dashboard') && 
-        !window.location.pathname.startsWith('/admin'))
+      hostname === 'kickdeck.io' ||
+      hostname === 'www.kickdeck.io'
     );
   }
   

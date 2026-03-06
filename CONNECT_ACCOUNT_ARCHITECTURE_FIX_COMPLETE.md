@@ -2,7 +2,7 @@
 
 ## 🎯 **PROBLEM RESOLVED**
 
-**Root Cause**: Payment creation functions were inconsistently creating customers and payments across main MatchPro account vs Connect accounts, causing metadata to appear in wrong locations.
+**Root Cause**: Payment creation functions were inconsistently creating customers and payments across main KickDeck account vs Connect accounts, causing metadata to appear in wrong locations.
 
 **Solution**: Fixed all customer creation functions to properly route to Connect accounts when available.
 
@@ -84,7 +84,7 @@ Team Registration → Event Validation → Connect Account Required → All Paym
   eventName: "Empire Super Cup",
   managerEmail: "coach@eagles.com",
   managerName: "John Smith",
-  systemSource: "MatchPro",
+  systemSource: "KickDeck",
   createdFor: "payment_retry|setup_intent_success|connect_account"
 }
 ```
@@ -126,4 +126,4 @@ For any payments that were created on main account before this fix, you can:
 
 **Key Achievement**: Every payment ID like `py_1RvnRmP1QwgwjWUMH9rdnj2` now has complete identification through customer names, descriptions, and comprehensive metadata, regardless of when it was created.
 
-The system now provides **100% payment identification capability** with **zero MatchPro refund risk** through proper Connect account architecture.
+The system now provides **100% payment identification capability** with **zero KickDeck refund risk** through proper Connect account architecture.

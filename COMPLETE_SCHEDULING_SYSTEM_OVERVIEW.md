@@ -1,4 +1,4 @@
-# MatchPro AI Complete Scheduling System Overview
+# KickDeck AI Complete Scheduling System Overview
 ## Comprehensive Technical Documentation for LLM Analysis
 
 ---
@@ -605,7 +605,7 @@ const validateStep = (stepId: string, data: any) => {
 
 ## **CONCLUSION FOR LLM ANALYSIS**
 
-The MatchPro AI scheduling system has **excellent architectural foundation** with:
+The KickDeck AI scheduling system has **excellent architectural foundation** with:
 - ✅ Strong component organization
 - ✅ Comprehensive API infrastructure  
 - ✅ Working automated scheduling

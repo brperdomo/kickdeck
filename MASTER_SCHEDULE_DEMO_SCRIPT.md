@@ -1,7 +1,7 @@
 # Master Schedule Control Center - Demo Script
 
 ## Opening Statement (30 seconds)
-"Today I'm going to show you MatchPro's Master Schedule Control Center - our comprehensive tournament scheduling solution. This system automates what traditionally takes tournament directors hours or even days to accomplish manually. We'll walk through the complete workflow from initial schedule generation to game day management."
+"Today I'm going to show you KickDeck's Master Schedule Control Center - our comprehensive tournament scheduling solution. This system automates what traditionally takes tournament directors hours or even days to accomplish manually. We'll walk through the complete workflow from initial schedule generation to game day management."
 
 ## Demo Flow Overview
 1. **Tournament Overview** (1 minute)
@@ -198,7 +198,7 @@
 
 ### Backup Talking Points:
 - "This system handles tournaments from 50 to 500+ teams"
-- "Typical manual scheduling: 2-3 days. With MatchPro: 15 minutes"
+- "Typical manual scheduling: 2-3 days. With KickDeck: 15 minutes"
 - "Reduces scheduling errors by 95% through automation"
 - "Tournament directors report saving 20+ hours per event"
 

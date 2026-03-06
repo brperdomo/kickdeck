@@ -35,7 +35,7 @@ async function testProductionEmail() {
 
     const testMessage = {
       to: TEST_EMAIL,
-      from: 'support@matchpro.ai',
+      from: 'support@kickdeck.io',
       subject: `Production Email Test - ${new Date().toISOString()}`,
       text: 'This is a direct SendGrid API test from production environment.',
       html: `
@@ -104,10 +104,10 @@ async function testProductionEmail() {
 
     const templateMessage = {
       to: TEST_EMAIL,
-      from: 'support@matchpro.ai',
+      from: 'support@kickdeck.io',
       templateId: 'd-7eb7ea1c19ca4090a0cefa3a2be75088', // Password reset template ID from logs
       dynamicTemplateData: {
-        resetUrl: 'https://matchpro.ai/reset-password?token=test-production-token',
+        resetUrl: 'https://kickdeck.io/reset-password?token=test-production-token',
         userName: 'Production Test User'
       }
     };

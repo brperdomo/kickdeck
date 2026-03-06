@@ -28,14 +28,14 @@ export const FormSubmissionsReport = () => {
   const [selectedSubmission, setSelectedSubmission] = useState<FormSubmission | null>(null);
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedEvent, setSelectedEvent] = useState<string>("");
-  const [selectedTemplate, setSelectedTemplate] = useState<string>("");
+  const [selectedEvent, setSelectedEvent] = useState<string>("all");
+  const [selectedTemplate, setSelectedTemplate] = useState<string>("all");
 
   const { data: submissions, isLoading } = useQuery({
     queryKey: ['/api/admin/form-submissions/all', selectedEvent],
     queryFn: async () => {
       const params = new URLSearchParams();
-      if (selectedEvent) {
+      if (selectedEvent && selectedEvent !== 'all') {
         params.append('eventId', selectedEvent);
       }
       
@@ -50,13 +50,7 @@ export const FormSubmissionsReport = () => {
 
   const { data: events } = useQuery({
     queryKey: ['/api/admin/events'],
-    queryFn: async () => {
-      const response = await fetch('/api/admin/events');
-      if (!response.ok) {
-        throw new Error('Failed to fetch events');
-      }
-      return response.json();
-    },
+    select: (data: any) => Array.isArray(data) ? data : data?.events ?? [],
   });
 
   const formatDate = (dateString: string) => {
@@ -89,7 +83,7 @@ export const FormSubmissionsReport = () => {
       submission.templateName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       submission.submitterEmail?.toLowerCase().includes(searchTerm.toLowerCase());
     
-    const matchesTemplate = !selectedTemplate || submission.templateName === selectedTemplate;
+    const matchesTemplate = selectedTemplate === 'all' || submission.templateName === selectedTemplate;
     
     return matchesSearch && matchesTemplate;
   }) || [];
@@ -177,7 +171,7 @@ export const FormSubmissionsReport = () => {
                   <SelectValue placeholder="All Events" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Events</SelectItem>
+                  <SelectItem value="all">All Events</SelectItem>
                   {events?.map((event: any) => (
                     <SelectItem key={event.id} value={event.id.toString()}>
                       {event.name}
@@ -190,7 +184,7 @@ export const FormSubmissionsReport = () => {
                   <SelectValue placeholder="All Templates" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Templates</SelectItem>
+                  <SelectItem value="all">All Templates</SelectItem>
                   {uniqueTemplates.map((template) => (
                     <SelectItem key={template} value={template}>
                       {template}

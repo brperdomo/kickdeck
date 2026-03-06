@@ -185,7 +185,7 @@ export function MobileAdminDashboard({ toggleSidebar }: MobileAdminDashboardProp
   return (
     <div className="pb-20"> {/* Add bottom padding for the mobile nav */}
       <MobileHeader
-        title={settings?.name || "MatchPro Admin"}
+        title={settings?.name || "KickDeck Admin"}
         leftAction={toggleSidebar && (
           <Button variant="ghost" size="icon" onClick={toggleSidebar}>
             <Menu className="h-5 w-5" />
@@ -205,7 +205,7 @@ export function MobileAdminDashboard({ toggleSidebar }: MobileAdminDashboardProp
             <div className="relative z-10">
               <h1 className="text-xl font-bold mb-1">Welcome, {user?.firstName || "Admin"}!</h1>
               <p className="text-white/80 text-sm">
-                MatchPro Admin Dashboard
+                KickDeck Admin Dashboard
               </p>
             </div>
             

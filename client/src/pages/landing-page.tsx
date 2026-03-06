@@ -11,7 +11,7 @@ import LandingHeader from '@/components/landing/LandingHeader';
 import LandingFooter from '@/components/landing/LandingFooter';
 
 /**
- * Landing page for the MatchPro.ai main website
+ * Landing page for the KickDeck main website
  * This serves as the marketing site on the main domain
  */
 export function LandingPage() {

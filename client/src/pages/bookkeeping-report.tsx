@@ -19,18 +19,17 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
-import { 
-  ArrowLeft, 
-  Download, 
-  Filter, 
-  Loader2, 
-  RefreshCw, 
+import {
+  ArrowLeft,
+  Download,
+  Filter,
+  Loader2,
+  RefreshCw,
   Search,
   DollarSign,
   Calendar,
   CreditCard,
   ExternalLink,
-  CreditCard,
   RotateCcw
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";

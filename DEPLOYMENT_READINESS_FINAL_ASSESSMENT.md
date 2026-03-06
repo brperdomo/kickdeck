@@ -40,7 +40,7 @@
 
 ### Why Deploy Now:
 1. **Core payment architecture is sound** - Connect accounts properly implemented
-2. **Financial protection achieved** - Zero MatchPro refund risk
+2. **Financial protection achieved** - Zero KickDeck refund risk
 3. **Only 3 production events** need payment processing (confirmed working)
 4. **TypeScript errors affect edge cases**, not main payment flows
 
@@ -85,7 +85,7 @@
 
 **Key Success Metrics:**
 - 3 production events ready for Connect account payments
-- Zero MatchPro financial risk achieved
+- Zero KickDeck financial risk achieved
 - Stripe compliance fully implemented
 - User experience unchanged
 

@@ -118,7 +118,7 @@ if (missingInProd.length > 0) {
   console.log('');
   console.log('Critical for email functionality:');
   console.log('• SENDGRID_API_KEY - Your SendGrid API key');
-  console.log('• DEFAULT_FROM_EMAIL - Default sender email (e.g., support@matchpro.ai)');
+  console.log('• DEFAULT_FROM_EMAIL - Default sender email (e.g., support@kickdeck.io)');
 } else {
   console.log('✅ All critical variables are present');
   console.log('The issue may be in how the production environment loads these variables');

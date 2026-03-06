@@ -218,9 +218,9 @@ export default function GameCardsGenerator({ eventId }: GameCardsGeneratorProps)
         }
 
         // Modern header with gradient effect (simulated with rectangles)
-        pdf.setFillColor(46, 134, 171); // MatchPro primary blue
+        pdf.setFillColor(46, 134, 171); // KickDeck primary blue
         pdf.rect(0, 0, pageWidth, 30, 'F');
-        pdf.setFillColor(162, 59, 114); // MatchPro accent purple (lighter)
+        pdf.setFillColor(162, 59, 114); // KickDeck accent purple (lighter)
         pdf.rect(0, 25, pageWidth, 5, 'F');
         
         // Add logo if available
@@ -533,7 +533,7 @@ export default function GameCardsGenerator({ eventId }: GameCardsGeneratorProps)
         
         if (logoDataUrl) {
           pdf.setTextColor(46, 134, 171);
-          pdf.text('Powered by MatchPro AI', pageWidth - 45, yPos + 8);
+          pdf.text('Powered by KickDeck', pageWidth - 45, yPos + 8);
         } else {
           pdf.setTextColor(107, 114, 128);
           pdf.text('Professional Tournament Management', pageWidth - 65, yPos + 8);

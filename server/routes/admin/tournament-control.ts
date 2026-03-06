@@ -6,9 +6,9 @@
 import { Router } from 'express';
 import { db } from '@db';
 import { isAdmin } from '../../middleware';
-import { events, teams, games, eventAgeGroups, eventBrackets, fields, gameFormats, eventGameFormats, eventScheduleConstraints, gameTimeSlots, tournamentGroups } from '@db/schema';
+import { events, teams, games, eventAgeGroups, eventBrackets, fields, gameFormats, eventGameFormats, eventScheduleConstraints, gameTimeSlots, tournamentGroups, eventFieldConfigurations } from '@db/schema';
 import { TimeSlotManager } from '../../utils/timeSlotManager';
-import { eq, and, count, isNull } from 'drizzle-orm';
+import { eq, and, count, isNull, isNotNull } from 'drizzle-orm';
 
 const router = Router();
 
@@ -119,58 +119,136 @@ router.post('/tournaments/:eventId/execute-step', isAdmin, async (req, res) => {
 // Helper functions
 
 async function getTournamentStatus(eventId: string) {
-  // Get tournament data and analyze current state
-  const eventData = await db.select().from(events).where(eq(events.id, Number(eventId))).limit(1);
-  
-  if (eventData.length === 0) {
-    throw new Error('Tournament not found');
-  }
-  
-  // Analyze completion status
-  const teamsData = await db.select().from(teams).where(eq(teams.eventId, eventId));
-  const gamesData = await db.select().from(games).where(eq(games.eventId, eventId));
-  
-  // Determine current phase and progress with flexible validation
-  let phase: 'setup' | 'configuration' | 'scheduling' | 'optimization' | 'finalized' = 'setup';
+  // ── Fetch all relevant data in parallel ────────────────────────────────
+  const eid = Number(eventId);
+  const [
+    eventData,
+    teamsData,
+    gamesData,
+    bracketsData,
+    formatsData,
+    fieldConfigs,
+  ] = await Promise.all([
+    db.select().from(events).where(eq(events.id, eid)).limit(1),
+    db.select().from(teams).where(eq(teams.eventId, eventId)),
+    db.select().from(games).where(eq(games.eventId, eventId)),
+    db.select().from(eventBrackets).where(eq(eventBrackets.eventId, eid)),
+    db.select().from(gameFormats),
+    db.select().from(eventFieldConfigurations).where(eq(eventFieldConfigurations.eventId, eid)),
+  ]);
+
+  if (eventData.length === 0) throw new Error('Tournament not found');
+
+  // ── Weighted step scoring (total = 100) ────────────────────────────────
+  //   Step 1: Teams imported              → 15 pts
+  //   Step 2: Brackets/flights created    → 15 pts
+  //   Step 3: Game formats assigned       → 15 pts
+  //   Step 4: Fields configured           → 10 pts
+  //   Step 5: Schedule generated (games)  → 20 pts
+  //   Step 6: All games time-assigned     → 15 pts
+  //   Step 7: Championships resolved      → 10 pts
+
   let progress = 0;
-  let nextAction = 'Configure game formats and flights as needed';
-  let canProceed = true; // Allow flexible progression - users can configure partially
-  
-  const issues = [];
-  
-  if (teamsData.length === 0) {
-    issues.push({
-      type: 'info' as const,
-      message: 'Teams will be needed eventually, but you can configure formats first.',
-      action: 'register-teams'
-    });
-    progress = 10;
-    nextAction = 'Configure game formats and register teams when ready';
-  } else if (gamesData.length === 0) {
-    phase = 'configuration';
-    progress = 40;
-    nextAction = 'Continue configuring formats or create brackets when ready';
-  } else {
-    phase = 'scheduling';
-    progress = 75;
-    nextAction = 'Optimize schedule and assign referees';
-    
-    // Check if schedule is finalized
-    const scheduledGames = gamesData.filter(g => g.timeSlotId !== null);
-    if (scheduledGames.length === gamesData.length) {
-      phase = 'finalized';
-      progress = 100;
-      nextAction = 'Tournament schedule is complete';
+  const issues: Array<{ type: 'info' | 'warning' | 'error'; message: string; action?: string }> = [];
+
+  // Step 1 — Teams
+  const hasTeams = teamsData.length > 0;
+  if (hasTeams) progress += 15;
+  else issues.push({ type: 'info', message: 'Import or register teams.', action: 'register-teams' });
+
+  // Step 2 — Brackets / flights
+  const hasBrackets = bracketsData.length > 0;
+  if (hasBrackets) progress += 15;
+  else issues.push({ type: 'info', message: 'Create flights/brackets for your age groups.', action: 'create-brackets' });
+
+  // Step 3 — Game formats assigned to brackets
+  // Only count brackets that have ≥2 teams (viable for scheduling);
+  // phantom or empty brackets shouldn't block progress.
+  const bracketTeamCounts = new Map<number, number>();
+  for (const t of teamsData) {
+    if (t.bracketId) bracketTeamCounts.set(t.bracketId, (bracketTeamCounts.get(t.bracketId) || 0) + 1);
+  }
+  const viableBrackets = bracketsData.filter(b => (bracketTeamCounts.get(b.id) || 0) >= 2);
+  const viableBracketIds = new Set(viableBrackets.map(b => b.id));
+  const assignedFormats = formatsData.filter(f => viableBracketIds.has(f.bracketId));
+  const allFormatsAssigned = viableBrackets.length > 0 && assignedFormats.length >= viableBrackets.length;
+  if (allFormatsAssigned) {
+    progress += 15;
+  } else if (assignedFormats.length > 0) {
+    progress += Math.round(15 * (assignedFormats.length / Math.max(viableBrackets.length, 1)));
+    const unassigned = viableBrackets.length - assignedFormats.length;
+    issues.push({ type: 'warning', message: `${assignedFormats.length}/${viableBrackets.length} flights have game formats assigned. ${unassigned} flight(s) still need a format.`, action: 'assign-formats' });
+  } else if (hasBrackets) {
+    issues.push({ type: 'warning', message: 'Assign game formats to your flights.', action: 'assign-formats' });
+  }
+
+  // Step 4 — Fields configured for event
+  const hasFields = fieldConfigs.length > 0;
+  if (hasFields) progress += 10;
+  else issues.push({ type: 'info', message: 'Configure field availability for this event.', action: 'configure-fields' });
+
+  // Step 5 — Games generated
+  const nonPendingGames = gamesData.filter(g => !g.isPending);
+  const pendingGames = gamesData.filter(g => g.isPending);
+  const hasGames = nonPendingGames.length > 0;
+  if (hasGames) progress += 20;
+  else if (allFormatsAssigned && hasTeams) {
+    issues.push({ type: 'info', message: 'Generate the schedule to create games.', action: 'generate-schedule' });
+  }
+
+  // Step 6 — Games assigned to fields + times
+  const scheduledGames = nonPendingGames.filter(g => g.fieldId !== null && g.scheduledDate !== null && g.scheduledTime !== null);
+  if (hasGames) {
+    const ratio = scheduledGames.length / nonPendingGames.length;
+    const step6pts = Math.round(15 * ratio);
+    progress += step6pts;
+    if (ratio < 1) {
+      issues.push({
+        type: 'warning',
+        message: `${scheduledGames.length}/${nonPendingGames.length} games assigned to fields/times.`,
+        action: 'assign-fields'
+      });
     }
   }
-  
-  return {
-    phase,
-    progress,
-    nextAction,
-    canProceed,
-    issues
-  };
+
+  // Step 7 — Championship / pending games resolved
+  if (pendingGames.length > 0) {
+    const resolvedPending = pendingGames.filter(g => g.homeTeamId && g.awayTeamId);
+    const ratio = resolvedPending.length / pendingGames.length;
+    progress += Math.round(10 * ratio);
+    if (ratio < 1) {
+      issues.push({
+        type: 'info',
+        message: `${pendingGames.length - resolvedPending.length} championship games awaiting results.`,
+        action: 'resolve-championships'
+      });
+    }
+  } else if (hasGames) {
+    progress += 10; // no pending games = fully resolved
+  }
+
+  // Clamp
+  progress = Math.min(100, Math.max(0, progress));
+
+  // ── Determine phase ────────────────────────────────────────────────────
+  let phase: 'setup' | 'configuration' | 'scheduling' | 'optimization' | 'finalized' = 'setup';
+  let nextAction = 'Configure game formats and flights';
+
+  if (progress >= 100) {
+    phase = 'finalized';
+    nextAction = 'Tournament schedule is complete';
+  } else if (progress >= 65) {
+    phase = 'optimization';
+    nextAction = 'Optimize schedule and assign referees';
+  } else if (progress >= 45) {
+    phase = 'scheduling';
+    nextAction = 'Generate the schedule';
+  } else if (progress >= 15) {
+    phase = 'configuration';
+    nextAction = issues[0]?.message || 'Continue configuration';
+  }
+
+  return { phase, progress, nextAction, canProceed: true, issues };
 }
 
 async function getComponentsStatus(eventId: string) {
@@ -462,11 +540,11 @@ async function getFlightConfigurations(eventId: string) {
       divisionName: config.divisionName || `${config.ageGroup} ${config.gender}`,
       startDate: new Date().toISOString().split('T')[0],
       endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      matchCount: 3, // Will be calculated based on tournament format
-      matchTime: formatConfig?.gameLength || 35,
+      matchCount: formatConfig?.maxGamesPerDay || 2, // Max games per team per day from DB
+      matchTime: formatConfig?.gameLength || 60,
       breakTime: 5, // Default break time
-      paddingTime: formatConfig?.bufferTime || 10,
-      totalTime: (formatConfig?.gameLength || 35) + 5 + (formatConfig?.bufferTime || 10),
+      paddingTime: formatConfig?.bufferTime || 15,
+      totalTime: (formatConfig?.gameLength || 60) + 5 + (formatConfig?.bufferTime || 15),
       formatName: 'Round Robin', // Default format name
       teamCount: teamCountData?.teamCount || 0,
       ageGroupId: config.ageGroupId,

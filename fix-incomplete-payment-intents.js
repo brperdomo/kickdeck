@@ -154,7 +154,7 @@ async function generatePaymentCompletionUrls() {
     const paymentIntentData = await checkPaymentIntentStatus(team.payment_intent_id);
     if (paymentIntentData && paymentIntentData.client_secret) {
       const baseUrl = process.env.NODE_ENV === 'production' 
-        ? 'https://app.matchpro.ai' 
+        ? 'https://app.kickdeck.io' 
         : 'http://localhost:5000';
       
       const completionUrl = `${baseUrl}/complete-payment?payment_intent=${team.payment_intent_id}&payment_intent_client_secret=${paymentIntentData.client_secret}`;

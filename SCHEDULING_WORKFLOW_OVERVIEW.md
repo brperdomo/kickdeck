@@ -1,4 +1,4 @@
-# MatchPro AI Automated Tournament Scheduling System
+# KickDeck AI Automated Tournament Scheduling System
 ## Complete Workflow Overview & Implementation Guide
 
 ---

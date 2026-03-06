@@ -2,7 +2,7 @@
 
 ## Overview
 
-MatchProAI is a comprehensive event management system designed for sports organizations. The platform enables sports organizations to manage events, team registrations, payments, and more. It features a user-friendly interface for administrators to organize tournaments and events, and for team managers to register and manage their teams.
+KickDeck is a comprehensive event management system designed for sports organizations. The platform enables sports organizations to manage events, team registrations, payments, and more. It features a user-friendly interface for administrators to organize tournaments and events, and for team managers to register and manage their teams.
 
 The application follows a modern web architecture with a React-based frontend and a Node.js backend, using PostgreSQL for data storage. It implements a RESTful API pattern for communication between client and server, with comprehensive authentication and payment processing capabilities.
 
@@ -10,7 +10,7 @@ The application follows a modern web architecture with a React-based frontend an
 
 ### High-Level Architecture
 
-MatchProAI follows a classic three-tier architecture:
+KickDeck follows a classic three-tier architecture:
 
 1. **Presentation Layer**: React-based frontend using Vite for build tooling
 2. **Application Layer**: Node.js backend with Express 

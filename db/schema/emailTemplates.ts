@@ -100,8 +100,8 @@ export const defaultPasswordResetTemplate = {
   </div>
 </body>
 </html>`,
-  senderName: 'MatchPro Support',
-  senderEmail: 'support@matchpro.ai',
+  senderName: 'KickDeck Support',
+  senderEmail: 'support@kickdeck.io',
   variables: ['username', 'resetUrl', 'expiryHours']
 };
 

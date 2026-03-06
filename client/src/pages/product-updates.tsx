@@ -35,7 +35,7 @@ export default function ProductUpdatesPage() {
         <div className="mb-12 text-center">
           <h1 className="text-3xl font-bold">Product Updates</h1>
           <p className="text-muted-foreground mt-2">
-            Stay updated with the latest features and improvements to MatchPro
+            Stay updated with the latest features and improvements to KickDeck
           </p>
         </div>
 

@@ -43,6 +43,7 @@ router.get('/events/:eventId/flight-configurations', isAdmin, async (req, res) =
         bufferTime: gameFormats.bufferTime,
         restPeriod: gameFormats.restPeriod,
         maxGamesPerDay: gameFormats.maxGamesPerDay,
+        startingTime: gameFormats.startingTime,
         templateName: gameFormats.templateName
       })
       .from(eventBrackets)
@@ -130,7 +131,7 @@ router.get('/events/:eventId/flight-configurations', isAdmin, async (req, res) =
       console.log(`Processing flight ${flight.flightName}: ${teamCountData?.teamCount || 0} teams, configured = ${isCompletelyConfigured}, gender = "${flight.gender}"`);
 
       // Get the proper game format data from event_game_formats table
-      const halfLength = Math.floor((flight.gameLength || 90) / 2);
+      const halfLength = Math.floor((flight.gameLength || 60) / 2);
       const breakTime = 5; // Standard halftime break
       const paddingTime = flight.bufferTime || 15;
       // Use the rest period from tournament_settings (preferred) or fall back to game_formats table
@@ -142,7 +143,7 @@ router.get('/events/:eventId/flight-configurations', isAdmin, async (req, res) =
         divisionName: flight.flightName, // Just the flight name, we'll show full details in frontend
         startDate: startDate,
         endDate: endDate,
-        matchCount: 2, // Default halves
+        matchCount: flight.maxGamesPerDay || 2, // Max games per team per day from format config
         matchTime: halfLength, // Half time length (what frontend expects)
         breakTime: breakTime,
         paddingTime: paddingTime,
@@ -157,7 +158,8 @@ router.get('/events/:eventId/flight-configurations', isAdmin, async (req, res) =
         ageGroup: flight.ageGroup,
         gender: flight.gender,
         birthYear: flight.birthYear || '2024',
-        fieldSize: flight.fieldSize || '7v7',
+        fieldSize: flight.fieldSize || '11v11',
+        startingTime: flight.startingTime || '08:00',
         flightName: flight.flightName,
         level: flight.level
       };
@@ -213,13 +215,14 @@ router.patch('/events/:eventId/flight-configurations/:flightId', isAdmin, async 
       // Map frontend field names to database field names
       // matchTime in frontend is half-time length, gameLength in DB is full game length
       if (updates.matchTime !== undefined) updateData.gameLength = updates.matchTime * 2;
-      if (updates.breakTime !== undefined) updateData.restPeriod = updates.breakTime;
       if (updates.paddingTime !== undefined) updateData.bufferTime = updates.paddingTime;
       if (updates.restPeriod !== undefined) updateData.restPeriod = updates.restPeriod;
+      if (updates.matchCount !== undefined) updateData.maxGamesPerDay = updates.matchCount;
       if (updates.startDate !== undefined) updateData.startDate = updates.startDate;
       if (updates.endDate !== undefined) updateData.endDate = updates.endDate;
       if (updates.formatName !== undefined) updateData.templateName = updates.formatName;
       if (updates.fieldSize !== undefined) updateData.fieldSize = updates.fieldSize;
+      if (updates.startingTime !== undefined) updateData.startingTime = updates.startingTime;
 
       await db.update(gameFormats)
         .set(updateData)
@@ -264,7 +267,7 @@ router.patch('/events/:eventId/flight-configurations/:flightId', isAdmin, async 
           const updatedSettings = {
             ...currentSettings,
             restPeriodMinutes: updates.restPeriod,
-            maxGamesPerTeam: currentSettings.maxGamesPerTeam || 4,
+            maxGamesPerTeam: currentSettings.maxGamesPerTeam || 2,
             enableChampionship: currentSettings.enableChampionship || true
           };
 
@@ -303,11 +306,12 @@ router.patch('/events/:eventId/flight-configurations/:flightId', isAdmin, async 
       // Create new game format for this bracket
       const newFormatData = {
         bracketId: parseInt(flightId),
-        gameLength: (updates.matchTime || 45) * 2, // matchTime is half-time, gameLength is full game
+        gameLength: (updates.matchTime || 30) * 2, // matchTime is half-time, gameLength is full game
         restPeriod: updates.restPeriod || 90,
         bufferTime: updates.paddingTime || 15,
-        fieldSize: updates.fieldSize || '7v7', // Default based on most common youth soccer format
-        maxGamesPerDay: 3, // Default
+        fieldSize: updates.fieldSize || '11v11', // Default field size
+        maxGamesPerDay: updates.matchCount || 2, // Use provided value or default to 2
+        startingTime: updates.startingTime || '08:00',
         templateName: updates.formatName || 'Custom'
       };
 
@@ -350,7 +354,7 @@ router.patch('/events/:eventId/flight-configurations/:flightId', isAdmin, async 
           const updatedSettings = {
             ...currentSettings,
             restPeriodMinutes: updates.restPeriod,
-            maxGamesPerTeam: currentSettings.maxGamesPerTeam || 4,
+            maxGamesPerTeam: currentSettings.maxGamesPerTeam || 2,
             enableChampionship: currentSettings.enableChampionship || true
           };
 
