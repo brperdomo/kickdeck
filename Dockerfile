@@ -21,9 +21,7 @@ COPY vite.config.ts tsconfig.json theme.json .env.production ./
 # Build client assets to dist/public/
 RUN npx vite build
 
-EXPOSE 5000
 ENV NODE_ENV=production
-ENV PORT=5000
 
 # Run server with tsx (matches Replit deployment — resolves @db path aliases)
 CMD ["npx", "tsx", "server/index.ts"]
