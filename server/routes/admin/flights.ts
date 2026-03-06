@@ -151,6 +151,85 @@ router.post('/:eventId/flights/auto-generate', isAdmin, async (req, res) => {
   }
 });
 
+// Bulk create brackets/flights for multiple age groups
+router.post('/:eventId/bulk-brackets', isAdmin, async (req, res) => {
+  try {
+    const eventId = req.params.eventId;
+    const { ageGroupIds, brackets, replaceExisting } = req.body;
+
+    if (!ageGroupIds || !Array.isArray(ageGroupIds) || ageGroupIds.length === 0) {
+      return res.status(400).json({ error: 'At least one age group must be selected' });
+    }
+
+    if (!brackets || !Array.isArray(brackets) || brackets.length === 0) {
+      return res.status(400).json({ error: 'At least one bracket template is required' });
+    }
+
+    const createdBrackets: any[] = [];
+    const errors: any[] = [];
+
+    for (const ageGroupId of ageGroupIds) {
+      try {
+        // Get the age group details
+        const [ageGroup] = await db
+          .select()
+          .from(eventAgeGroups)
+          .where(
+            and(
+              eq(eventAgeGroups.id, Number(ageGroupId)),
+              eq(eventAgeGroups.eventId, eventId)
+            )
+          );
+
+        if (!ageGroup) {
+          errors.push({ message: `Age group ${ageGroupId} not found for this event` });
+          continue;
+        }
+
+        // Delete existing brackets for this age group if replacing
+        if (replaceExisting) {
+          await db
+            .delete(eventBrackets)
+            .where(
+              and(
+                eq(eventBrackets.eventId, eventId),
+                eq(eventBrackets.ageGroupId, Number(ageGroupId))
+              )
+            );
+        }
+
+        // Create a bracket for each template
+        for (const template of brackets) {
+          const bracketName = template.name || `${ageGroup.ageGroup} ${ageGroup.gender} Flight`;
+
+          const [created] = await db.insert(eventBrackets).values({
+            eventId: eventId,
+            name: bracketName,
+            ageGroupId: Number(ageGroupId),
+            maxTeams: 8,
+            isActive: true
+          }).returning();
+
+          createdBrackets.push({
+            ...created,
+            ageGroup: ageGroup.ageGroup,
+            gender: ageGroup.gender
+          });
+        }
+      } catch (ageGroupError) {
+        console.error(`Error creating brackets for age group ${ageGroupId}:`, ageGroupError);
+        errors.push({ message: `Failed to create brackets for age group ${ageGroupId}` });
+      }
+    }
+
+    console.log(`Bulk bracket creation: created ${createdBrackets.length} brackets, ${errors.length} errors`);
+    res.json({ createdBrackets, errors });
+  } catch (error) {
+    console.error('Error in bulk bracket creation:', error);
+    res.status(500).json({ error: 'Failed to create brackets in bulk' });
+  }
+});
+
 // Delete a flight
 router.delete('/:eventId/flights/:flightId', isAdmin, async (req, res) => {
   try {
