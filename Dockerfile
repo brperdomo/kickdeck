@@ -16,7 +16,7 @@ COPY server ./server
 COPY db ./db
 COPY templates ./templates
 COPY uploads ./uploads
-COPY vite.config.ts tsconfig.json drizzle.config.ts theme.json .env.production ./
+COPY vite.config.ts tsconfig.json drizzle.config.ts tailwind.config.ts postcss.config.js theme.json .env.production ./
 
 # Build client assets to dist/public/
 RUN npx vite build
