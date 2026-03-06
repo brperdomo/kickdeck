@@ -9122,10 +9122,10 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
     // Teams management endpoints
     app.get('/api/admin/events/:eventId/age-groups', hasEventAccess, async (req, res) => {
       try {
-        const eventId = req.params.eventId;
-        
+        const eventIdRaw = req.params.eventId;
+
         // Special handling for preview mode
-        if (eventId === 'preview') {
+        if (eventIdRaw === 'preview') {
           // Return sample age groups for preview
           const previewAgeGroups = [
             {
@@ -9197,6 +9197,12 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           
           console.log('Returning preview age groups');
           return res.json(previewAgeGroups);
+        }
+
+        // Convert eventId to number for database queries (bigint columns)
+        const eventId = Number(eventIdRaw);
+        if (isNaN(eventId)) {
+          return res.status(400).json({ error: 'Invalid event ID' });
         }
 
         // Initialize eligibility map first
