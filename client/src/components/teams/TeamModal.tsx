@@ -80,34 +80,20 @@ export function TeamModal({ isOpen, onClose, team }: TeamModalProps) {
   
   // Fetch age groups for this event if we have an eventId
   const ageGroupsQuery = useQuery({
-    queryKey: ['/api/admin/events/age-groups', team?.eventId, Date.now()], // Force fresh data
+    queryKey: ['/api/admin/events/age-groups', team?.eventId],
     queryFn: async () => {
       if (!team?.eventId) return [];
-      
-      console.log(`=== AGE GROUPS FETCH START ===`);
-      console.log(`Fetching age groups for event: ${team.eventId}`);
+
       const response = await fetch(`/api/admin/events/${team.eventId}/age-groups`);
-      
+
       if (!response.ok) {
-        console.error(`Age groups fetch failed: ${response.status}`);
         throw new Error('Failed to fetch age groups');
       }
-      
-      const data = await response.json();
-      console.log(`Received ${data.length} age groups`);
-      console.log('First group:', {
-        id: data[0]?.id,
-        ageGroup: data[0]?.ageGroup,
-        gender: data[0]?.gender,
-        display: `${data[0]?.ageGroup} (${data[0]?.gender})`
-      });
-      console.log(`=== AGE GROUPS FETCH END ===`);
-      
-      return data;
+
+      return response.json();
     },
     enabled: !!team?.eventId,
-    staleTime: 0, // Always fetch fresh
-    gcTime: 0, // Don't cache
+    staleTime: 30000, // Cache for 30 seconds
   });
   
   // State to track the selected age group for brackets query

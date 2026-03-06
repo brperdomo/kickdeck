@@ -9245,90 +9245,10 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         
         // Age groups properly retrieved with explicit field mapping
 
-        // Always check for seasonal scope configuration to ensure proper age group loading
-        // This ensures that when a seasonal scope is configured, all its age groups are available
-        let shouldLoadFromScope = ageGroups.length < 30; // Original condition
-        
-        // Also check if we should force reload based on seasonal scope configuration
-        const eventSettingsRecords = await db.query.eventSettings.findMany({
-          where: and(
-            eq(eventSettings.eventId, eventId),
-            eq(eventSettings.settingKey, 'seasonalScopeId')
-          )
-        });
-
-        // If a seasonal scope is configured but we have fewer than expected age groups, reload
-        if (eventSettingsRecords.length > 0) {
-          const seasonalScopeId = parseInt(eventSettingsRecords[0].settingValue);
-          
-          // Count expected age groups from the seasonal scope
-          const seasonalAgeGroups = await db.query.ageGroupSettings.findMany({
-            where: eq(ageGroupSettings.seasonalScopeId, seasonalScopeId)
-          });
-          
-          console.log(`Event ${eventId} has ${ageGroups.length} age groups but scope ${seasonalScopeId} has ${seasonalAgeGroups.length} available`);
-          
-          // Force reload if we have significantly fewer age groups than the scope provides
-          if (ageGroups.length < seasonalAgeGroups.length * 0.8) {
-            shouldLoadFromScope = true;
-            console.log(`Forcing age group reload from seasonal scope due to insufficient coverage`);
-          }
-        }
-        
-        if (shouldLoadFromScope && eventSettingsRecords.length > 0) {
-          const seasonalScopeId = parseInt(eventSettingsRecords[0].settingValue);
-          console.log(`Found seasonal scope ID ${seasonalScopeId} for event ${eventId}, fetching all age groups`);
-          
-          // Get the complete set of age groups from the seasonal scope
-          const seasonalAgeGroups = await db.query.ageGroupSettings.findMany({
-            where: eq(ageGroupSettings.seasonalScopeId, seasonalScopeId)
-          });
-          
-          console.log(`Found ${seasonalAgeGroups.length} age groups in seasonal scope ${seasonalScopeId}`);
-          
-          // Map the seasonal scope age groups to event age groups format
-          // but only for ones that don't already exist in the event
-          const existingIds = new Set(ageGroups.map(ag => `${ag.ageGroup}-${ag.gender}`));
-          
-          for (const scopeAgeGroup of seasonalAgeGroups) {
-            const ageGroupKey = `${scopeAgeGroup.ageGroup}-${scopeAgeGroup.gender}`;
-            
-            // Only add age groups that don't already exist
-            if (!existingIds.has(ageGroupKey)) {
-              // Insert the missing age group
-              const [newAgeGroup] = await db.insert(eventAgeGroups)
-                .values({
-                  eventId,
-                  ageGroup: scopeAgeGroup.ageGroup,
-                  gender: scopeAgeGroup.gender,
-                  birthYear: scopeAgeGroup.birthYear,
-                  divisionCode: scopeAgeGroup.divisionCode || `${scopeAgeGroup.gender[0]}${scopeAgeGroup.ageGroup.substring(1)}`,
-                  fieldSize: "11v11", // Default
-                  projectedTeams: 8, // Default
-                  scoringRule: "Standard", // Default
-                  seasonalScopeId: seasonalScopeId,
-                  createdAt: new Date().toISOString(),
-                  isEligible: true // Default to eligible
-                })
-                .returning();
-
-              // Check eligibility before adding to results for public registration
-              const isEligible = eligibilityMap.has(newAgeGroup.id) 
-                ? eligibilityMap.get(newAgeGroup.id) 
-                : true; // Default to eligible for new groups
-                
-              if (isEligible !== false) {
-                // Add to our existing results only if eligible
-                ageGroups.push(newAgeGroup);
-                console.log(`✓ Added missing eligible age group: ${scopeAgeGroup.ageGroup} ${scopeAgeGroup.gender}`);
-              } else {
-                console.log(`✗ Skipped missing ineligible age group: ${scopeAgeGroup.ageGroup} ${scopeAgeGroup.gender}`);
-              }
-            }
-          }
-          
-          console.log(`Added missing age groups, now have ${ageGroups.length} total age groups`);
-        }
+        // NOTE: Auto-inserting age groups from seasonal scope during GET was removed
+        // because it caused duplicates and data corruption. Age groups are now only
+        // created during event creation (POST) and event update (PATCH).
+        console.log(`Returning ${ageGroups.length} age groups for event ${eventId}`);
 
         // More targeted deduplication that preserves all relevant groups
         // Only deduplicate exact duplicates with the same ID
