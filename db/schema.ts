@@ -29,6 +29,7 @@ export const organizationSettings = pgTable("organization_settings", {
   primaryColor: text("primary_color").notNull(),
   secondaryColor: text("secondary_color"),
   logoUrl: text("logo_url"),
+  openaiApiKey: text("openai_api_key"),  // Encrypted with AES-256-GCM
   createdAt: text("created_at").notNull().default(new Date().toISOString()),
   updatedAt: text("updated_at").notNull().default(new Date().toISOString()),
 });

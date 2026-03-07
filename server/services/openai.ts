@@ -9,33 +9,18 @@ import OpenAI from "openai";
 import { db } from "@db";
 import { users, events, teams, eventFees, paymentTransactions, matchupTemplates, eventBrackets, games, eventFieldConfigurations, fields } from "@db/schema";
 import { eq, and, gte, lte, desc, sql, sum, count, avg, inArray } from "drizzle-orm";
+import { getOpenAIClient } from './openai-client-factory';
 // Simple console.log replacement for now
 const log = (message: string, category?: string) => console.log(`[${category || 'OpenAI'}]`, message);
 
-// Initialize OpenAI client (lazy - null if no key)
-const openai = process.env.OPENAI_API_KEY ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY }) : null;
-
-// Verify the OpenAI API key is configured
-const verifyApiKey = async (): Promise<boolean> => {
-  if (!process.env.OPENAI_API_KEY) {
+// Verify the OpenAI API key is configured (uses per-tenant factory)
+const verifyApiKey = async (orgId?: number): Promise<OpenAI | null> => {
+  const client = await getOpenAIClient(orgId);
+  if (!client) {
     log('OpenAI API key is not configured', 'openai');
-    return false;
+    return null;
   }
-  
-  try {
-    // Make a minimal API call to verify key is valid
-    await openai.chat.completions.create({
-      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
-      messages: [{ role: "user", content: "API key test" }],
-      max_tokens: 5
-    });
-    
-    log('OpenAI API key verified successfully', 'openai');
-    return true;
-  } catch (error) {
-    log(`OpenAI API key verification failed: ${error.message}`, 'openai');
-    return false;
-  }
+  return client;
 };
 
 /**
@@ -45,11 +30,11 @@ const verifyApiKey = async (): Promise<boolean> => {
  * @param timeframe - Optional timeframe for the analysis
  * @returns AI insights about the event's financial performance
  */
-const analyzeEventFinancials = async (eventId: string, timeframe?: { start: Date, end: Date }) => {
+const analyzeEventFinancials = async (eventId: string, timeframe?: { start: Date, end: Date }, orgId?: number) => {
   try {
-    // Verify API key before proceeding
-    const isApiKeyValid = await verifyApiKey();
-    if (!isApiKeyValid) {
+    // Get OpenAI client for this organization
+    const openai = await verifyApiKey(orgId);
+    if (!openai) {
       return { error: "OpenAI API key is not configured or invalid" };
     }
     
@@ -144,11 +129,11 @@ const analyzeEventFinancials = async (eventId: string, timeframe?: { start: Date
  * @param period - Time period for analysis (e.g., '30d', '90d', 'year')
  * @returns AI insights about overall financial performance
  */
-const analyzeFinancialOverview = async (period: string = '30d') => {
+const analyzeFinancialOverview = async (period: string = '30d', orgId?: number) => {
   try {
-    // Verify API key before proceeding
-    const isApiKeyValid = await verifyApiKey();
-    if (!isApiKeyValid) {
+    // Get OpenAI client for this organization
+    const openai = await verifyApiKey(orgId);
+    if (!openai) {
       return { error: "OpenAI API key is not configured or invalid" };
     }
     
@@ -229,11 +214,11 @@ const analyzeFinancialOverview = async (period: string = '30d') => {
  * 
  * @returns AI insights about fee structure effectiveness
  */
-const analyzeFeesStructure = async () => {
+const analyzeFeesStructure = async (orgId?: number) => {
   try {
-    // Verify API key before proceeding
-    const isApiKeyValid = await verifyApiKey();
-    if (!isApiKeyValid) {
+    // Get OpenAI client for this organization
+    const openai = await verifyApiKey(orgId);
+    if (!openai) {
       return { error: "OpenAI API key is not configured or invalid" };
     }
     
@@ -831,11 +816,11 @@ const getTournamentData = async (eventId: string) => {
 };
 
 // Enhanced AI chat function with tournament data access
-const chatWithTournamentContext = async (eventId: string, userMessage: string) => {
+const chatWithTournamentContext = async (eventId: string, userMessage: string, orgId?: number) => {
   try {
-    // Verify API key before proceeding
-    const isApiKeyValid = await verifyApiKey();
-    if (!isApiKeyValid) {
+    // Get OpenAI client for this organization
+    const openai = await verifyApiKey(orgId);
+    if (!openai) {
       return { error: "OpenAI API key is not configured or invalid" };
     }
 

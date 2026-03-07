@@ -373,11 +373,11 @@
 
 /* Neon glow effects */
 .neon-glow-violet {
-  box-shadow: 0 0 15px hsl(263 70% 58% / 0.2), 0 0 30px hsl(263 70% 58% / 0.1);
+  box-shadow: 0 0 15px hsl(263 70% 58% / 0.3), 0 0 40px hsl(263 70% 58% / 0.15), 0 0 80px hsl(263 70% 58% / 0.05);
 }
 
 .neon-glow-cyan {
-  box-shadow: 0 0 15px hsl(187 90% 43% / 0.2), 0 0 30px hsl(187 90% 43% / 0.1);
+  box-shadow: 0 0 15px hsl(187 90% 43% / 0.3), 0 0 40px hsl(187 90% 43% / 0.15), 0 0 80px hsl(187 90% 43% / 0.05);
 }
 
 /* Neon card with hover glow */
@@ -387,8 +387,8 @@
 }
 
 .neon-card:hover {
-  border-color: hsl(263 70% 58% / 0.3);
-  box-shadow: 0 0 20px hsl(263 70% 58% / 0.1), 0 4px 12px rgba(0, 0, 0, 0.3);
+  border-color: hsl(263 70% 58% / 0.35);
+  box-shadow: 0 0 25px hsl(263 70% 58% / 0.15), 0 0 50px hsl(263 70% 58% / 0.06), 0 4px 16px rgba(0, 0, 0, 0.35);
 }
 
 /* Neon divider - gradient line */
@@ -400,15 +400,29 @@
 /* Neon pulse animation */
 @keyframes neon-pulse {
   0%, 100% {
-    box-shadow: 0 0 10px hsl(263 70% 58% / 0.15);
+    box-shadow: 0 0 10px hsl(263 70% 58% / 0.2), 0 0 30px hsl(263 70% 58% / 0.05);
   }
   50% {
-    box-shadow: 0 0 20px hsl(263 70% 58% / 0.3), 0 0 40px hsl(263 70% 58% / 0.1);
+    box-shadow: 0 0 25px hsl(263 70% 58% / 0.4), 0 0 50px hsl(263 70% 58% / 0.15), 0 0 80px hsl(263 70% 58% / 0.05);
   }
 }
 
 .neon-pulse {
   animation: neon-pulse 3s ease-in-out infinite;
+}
+
+/* Dual-color neon pulse (violet + cyan) */
+@keyframes neon-pulse-dual {
+  0%, 100% {
+    box-shadow: 0 0 10px hsl(263 70% 58% / 0.2), 0 0 20px hsl(187 90% 43% / 0.08);
+  }
+  50% {
+    box-shadow: 0 0 25px hsl(263 70% 58% / 0.35), 0 0 50px hsl(187 90% 43% / 0.15), 0 0 80px hsl(263 70% 58% / 0.08);
+  }
+}
+
+.neon-pulse-dual {
+  animation: neon-pulse-dual 4s ease-in-out infinite;
 }
 
 /* ====== NEW: Glass-morphism Card (mirrors auth page style) ====== */
@@ -475,16 +489,16 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: 120px;
+  height: 150px;
   pointer-events: none;
   z-index: 0;
   background-image:
-    linear-gradient(rgba(124, 58, 237, 0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(6, 182, 212, 0.04) 1px, transparent 1px);
+    linear-gradient(rgba(124, 58, 237, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(6, 182, 212, 0.07) 1px, transparent 1px);
   background-size: 60px 20px;
   animation: grid-scroll 4s linear infinite;
-  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 100%);
-  mask-image: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 100%);
+  mask-image: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 100%);
   transform: perspective(300px) rotateX(45deg);
   transform-origin: bottom;
 }
@@ -528,14 +542,25 @@
 
 /* ====== NEW: Text Glow ====== */
 .neon-text-glow {
-  text-shadow: 0 0 10px rgba(124, 58, 237, 0.4), 0 0 30px rgba(124, 58, 237, 0.15);
+  text-shadow: 0 0 10px rgba(124, 58, 237, 0.5), 0 0 30px rgba(124, 58, 237, 0.2), 0 0 60px rgba(124, 58, 237, 0.08);
+}
+
+/* Cyan text glow variant */
+.neon-text-glow-cyan {
+  text-shadow: 0 0 10px rgba(6, 182, 212, 0.5), 0 0 30px rgba(6, 182, 212, 0.2), 0 0 60px rgba(6, 182, 212, 0.08);
+}
+
+/* Neon heading glow — automatically applies to h1/h2 in dashboard */
+.dashboard-dark h1,
+.dashboard-dark h2 {
+  text-shadow: 0 0 20px rgba(124, 58, 237, 0.08);
 }
 
 /* ====== NEW: Ambient Glow Orbs (decorative) ====== */
 @keyframes neon-orb-float {
-  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.3; }
-  33% { transform: translate(10px, -10px) scale(1.1); opacity: 0.4; }
-  66% { transform: translate(-5px, 5px) scale(0.95); opacity: 0.25; }
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.5; }
+  33% { transform: translate(10px, -10px) scale(1.1); opacity: 0.7; }
+  66% { transform: translate(-5px, 5px) scale(0.95); opacity: 0.4; }
 }
 
 .neon-orb {
@@ -547,12 +572,47 @@
 }
 
 .neon-orb-violet {
-  background: rgba(124, 58, 237, 0.15);
+  background: rgba(124, 58, 237, 0.2);
 }
 
 .neon-orb-cyan {
-  background: rgba(6, 182, 212, 0.1);
+  background: rgba(6, 182, 212, 0.15);
   animation-delay: -3s;
+}
+
+/* ====== NEW: Neon shimmer line — horizontal accent ====== */
+@keyframes neon-shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+
+.neon-shimmer-line {
+  position: relative;
+  overflow: hidden;
+}
+
+.neon-shimmer-line::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(124, 58, 237, 0.15), rgba(6, 182, 212, 0.1), transparent);
+  animation: neon-shimmer 6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* ====== NEW: Card hover glow — stronger neon lift ====== */
+.dashboard-dark .rounded-lg,
+.dashboard-dark .rounded-xl {
+  transition: box-shadow 0.3s ease, border-color 0.3s ease !important;
+}
+
+.dashboard-dark .border.rounded-lg:hover,
+.dashboard-dark .border.rounded-xl:hover {
+  border-color: rgba(124, 58, 237, 0.2) !important;
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.06), 0 4px 16px rgba(0, 0, 0, 0.3) !important;
 }
 
 /* ====== Badge / Status Overrides ====== */
@@ -909,4 +969,630 @@ body.dashboard-dark-active [role="dialog"] .bg-yellow-50 {
     min-width: 0 !important;
     width: 100% !important;
   }
+}
+
+/* ============================================================
+   NEON BACKGROUND — Retro Arcade / Miami Vice / Nightstalker
+   Ambient animation that sits behind all dashboard content.
+   z-index:1 so it sits above the base bg but below content (z:2+).
+   Pure CSS keyframes, composited on GPU (transform/opacity).
+   ============================================================ */
+
+/* ── Container — z-index:1 (inline on component for specificity) ── */
+.neon-bg-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+/* ── Gradient Mesh Blobs — BOOSTED opacity, larger sizes ── */
+.neon-bg-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  will-change: transform, opacity;
+}
+
+/* Violet blob — top-right, large, slow drift */
+.neon-bg-blob--violet {
+  width: 600px;
+  height: 600px;
+  top: -5%;
+  right: -2%;
+  background: radial-gradient(circle, rgba(124, 58, 237, 0.35) 0%, rgba(139, 92, 246, 0.15) 40%, transparent 70%);
+  animation: blob-drift-1 20s ease-in-out infinite;
+}
+
+/* Cyan blob — bottom-left, medium */
+.neon-bg-blob--cyan {
+  width: 500px;
+  height: 500px;
+  bottom: 5%;
+  left: -3%;
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.30) 0%, rgba(34, 211, 238, 0.12) 40%, transparent 70%);
+  animation: blob-drift-2 25s ease-in-out infinite;
+  animation-delay: -5s;
+}
+
+/* Hot pink blob — center-right, slow orbit */
+.neon-bg-blob--pink {
+  width: 450px;
+  height: 450px;
+  top: 35%;
+  right: 10%;
+  background: radial-gradient(circle, rgba(236, 72, 153, 0.25) 0%, rgba(244, 114, 182, 0.10) 40%, transparent 70%);
+  animation: blob-drift-3 22s ease-in-out infinite;
+  animation-delay: -8s;
+}
+
+/* Orange/sunset blob — bottom-right, accent warmth */
+.neon-bg-blob--orange {
+  width: 400px;
+  height: 400px;
+  bottom: 15%;
+  right: 25%;
+  background: radial-gradient(circle, rgba(251, 146, 60, 0.20) 0%, rgba(249, 115, 22, 0.08) 40%, transparent 70%);
+  animation: blob-drift-4 18s ease-in-out infinite;
+  animation-delay: -12s;
+}
+
+/* Blob drift keyframes — higher opacity peaks */
+@keyframes blob-drift-1 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.7;
+  }
+  25% {
+    transform: translate(-60px, 40px) scale(1.1);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(-30px, 80px) scale(0.92);
+    opacity: 0.6;
+  }
+  75% {
+    transform: translate(30px, 30px) scale(1.06);
+    opacity: 0.85;
+  }
+}
+
+@keyframes blob-drift-2 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.6;
+  }
+  30% {
+    transform: translate(60px, -40px) scale(1.12);
+    opacity: 0.9;
+  }
+  60% {
+    transform: translate(25px, -60px) scale(0.88);
+    opacity: 0.5;
+  }
+  80% {
+    transform: translate(-15px, -25px) scale(1.06);
+    opacity: 0.75;
+  }
+}
+
+@keyframes blob-drift-3 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    opacity: 0.5;
+  }
+  33% {
+    transform: translate(-40px, 50px) scale(1.15) rotate(5deg);
+    opacity: 0.85;
+  }
+  66% {
+    transform: translate(50px, -25px) scale(0.9) rotate(-3deg);
+    opacity: 0.45;
+  }
+}
+
+@keyframes blob-drift-4 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.45;
+  }
+  40% {
+    transform: translate(-25px, -50px) scale(1.18);
+    opacity: 0.75;
+  }
+  70% {
+    transform: translate(35px, 15px) scale(0.88);
+    opacity: 0.35;
+  }
+}
+
+/* ── Horizontal Light Streaks — arcade scanner lines — BOOSTED ── */
+.neon-bg-streak {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  will-change: transform, opacity;
+}
+
+.neon-bg-streak--1 {
+  top: 28%;
+  background: linear-gradient(90deg, transparent 0%, rgba(124, 58, 237, 0.5) 15%, rgba(6, 182, 212, 0.4) 50%, rgba(236, 72, 153, 0.35) 85%, transparent 100%);
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.25), 0 0 50px rgba(6, 182, 212, 0.12);
+  animation: streak-scan-1 12s ease-in-out infinite;
+}
+
+.neon-bg-streak--2 {
+  top: 55%;
+  background: linear-gradient(90deg, transparent 0%, rgba(236, 72, 153, 0.4) 20%, rgba(124, 58, 237, 0.5) 55%, rgba(6, 182, 212, 0.3) 80%, transparent 100%);
+  box-shadow: 0 0 18px rgba(236, 72, 153, 0.2), 0 0 40px rgba(124, 58, 237, 0.12);
+  animation: streak-scan-2 15s ease-in-out infinite;
+  animation-delay: -4s;
+}
+
+.neon-bg-streak--3 {
+  top: 78%;
+  background: linear-gradient(90deg, transparent 0%, rgba(6, 182, 212, 0.45) 25%, rgba(168, 85, 247, 0.35) 60%, rgba(251, 146, 60, 0.25) 85%, transparent 100%);
+  box-shadow: 0 0 15px rgba(6, 182, 212, 0.2), 0 0 35px rgba(168, 85, 247, 0.1);
+  animation: streak-scan-3 18s ease-in-out infinite;
+  animation-delay: -9s;
+}
+
+@keyframes streak-scan-1 {
+  0%, 100% {
+    transform: translateY(0) scaleX(0.7);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.6;
+  }
+  30% {
+    transform: translateY(-15px) scaleX(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: translateY(10px) scaleX(0.85);
+    opacity: 0.4;
+  }
+  70% {
+    transform: translateY(-5px) scaleX(1.1);
+    opacity: 0.75;
+  }
+  90% {
+    opacity: 0.25;
+  }
+}
+
+@keyframes streak-scan-2 {
+  0%, 100% {
+    transform: translateY(0) scaleX(0.6);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.5;
+  }
+  40% {
+    transform: translateY(20px) scaleX(1.05);
+    opacity: 0.7;
+  }
+  65% {
+    transform: translateY(-10px) scaleX(0.8);
+    opacity: 0.35;
+  }
+  85% {
+    opacity: 0.55;
+  }
+}
+
+@keyframes streak-scan-3 {
+  0%, 100% {
+    transform: translateY(0) scaleX(0.65);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.45;
+  }
+  45% {
+    transform: translateY(-20px) scaleX(1);
+    opacity: 0.65;
+  }
+  75% {
+    transform: translateY(15px) scaleX(0.9);
+    opacity: 0.3;
+  }
+}
+
+/* ── Vertical Accent Beam — side glow — BOOSTED ── */
+.neon-bg-beam {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 12%;
+  width: 3px;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(124, 58, 237, 0.3) 15%,
+    rgba(6, 182, 212, 0.4) 35%,
+    rgba(236, 72, 153, 0.3) 55%,
+    rgba(124, 58, 237, 0.2) 75%,
+    transparent 100%
+  );
+  box-shadow: 0 0 25px rgba(124, 58, 237, 0.15), 0 0 60px rgba(6, 182, 212, 0.08);
+  opacity: 0;
+  animation: beam-pulse 10s ease-in-out infinite;
+  will-change: opacity;
+}
+
+@keyframes beam-pulse {
+  0%, 100% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 0.5;
+  }
+}
+
+/* ── Horizon Glow — Miami sunset line — BOOSTED ── */
+.neon-bg-horizon {
+  position: absolute;
+  bottom: 8%;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(251, 146, 60, 0.3) 10%,
+    rgba(236, 72, 153, 0.55) 25%,
+    rgba(124, 58, 237, 0.6) 40%,
+    rgba(6, 182, 212, 0.5) 55%,
+    rgba(236, 72, 153, 0.45) 70%,
+    rgba(251, 146, 60, 0.25) 85%,
+    transparent 100%
+  );
+  box-shadow:
+    0 0 30px rgba(236, 72, 153, 0.2),
+    0 0 80px rgba(124, 58, 237, 0.12),
+    0 -15px 50px rgba(236, 72, 153, 0.08),
+    0 15px 50px rgba(6, 182, 212, 0.06);
+  opacity: 0;
+  animation: horizon-breathe 8s ease-in-out infinite;
+  will-change: opacity, transform;
+}
+
+@keyframes horizon-breathe {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scaleX(0.85);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scaleX(1);
+  }
+}
+
+/* ============================================================
+   SIDEBAR ANIMATIONS — Neon edge glow, floating particles, ambient blobs
+   ============================================================ */
+
+/* ── Animated neon edge — right border breathes violet→cyan ── */
+.neon-sidebar-edge {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 2px;
+  pointer-events: none;
+  z-index: 2;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(124, 58, 237, 0.4) 20%,
+    rgba(6, 182, 212, 0.5) 50%,
+    rgba(236, 72, 153, 0.3) 80%,
+    transparent 100%
+  );
+  animation: sidebar-edge-breathe 6s ease-in-out infinite;
+}
+
+@keyframes sidebar-edge-breathe {
+  0%, 100% {
+    opacity: 0.3;
+    box-shadow: 0 0 8px rgba(124, 58, 237, 0.1);
+  }
+  50% {
+    opacity: 0.8;
+    box-shadow:
+      0 0 15px rgba(124, 58, 237, 0.3),
+      0 0 30px rgba(6, 182, 212, 0.15),
+      -5px 0 25px rgba(124, 58, 237, 0.1);
+  }
+}
+
+/* ── Sidebar ambient glow blobs ── */
+.neon-sidebar-glow {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.neon-sidebar-glow--top {
+  top: 10%;
+  right: -20%;
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(circle, rgba(124, 58, 237, 0.2) 0%, transparent 70%);
+  filter: blur(40px);
+  animation: sidebar-glow-drift 8s ease-in-out infinite;
+}
+
+.neon-sidebar-glow--bottom {
+  bottom: 20%;
+  left: -10%;
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.15) 0%, transparent 70%);
+  filter: blur(35px);
+  animation: sidebar-glow-drift 10s ease-in-out infinite;
+  animation-delay: -4s;
+}
+
+@keyframes sidebar-glow-drift {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translate(10px, 15px) scale(1.2);
+    opacity: 0.8;
+  }
+}
+
+/* ── Sidebar floating micro-particles ── */
+.neon-sidebar-particles {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.neon-sidebar-particles span {
+  position: absolute;
+  display: block;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  opacity: 0;
+  animation: sidebar-particle-float linear infinite;
+}
+
+.neon-sidebar-particles span:nth-child(1) {
+  left: 20%;
+  background: rgba(124, 58, 237, 0.6);
+  animation-duration: 12s;
+  animation-delay: 0s;
+}
+.neon-sidebar-particles span:nth-child(2) {
+  left: 50%;
+  background: rgba(6, 182, 212, 0.5);
+  animation-duration: 15s;
+  animation-delay: -3s;
+}
+.neon-sidebar-particles span:nth-child(3) {
+  left: 75%;
+  background: rgba(236, 72, 153, 0.5);
+  animation-duration: 18s;
+  animation-delay: -6s;
+}
+.neon-sidebar-particles span:nth-child(4) {
+  left: 35%;
+  background: rgba(139, 92, 246, 0.5);
+  animation-duration: 14s;
+  animation-delay: -2s;
+}
+.neon-sidebar-particles span:nth-child(5) {
+  left: 60%;
+  background: rgba(6, 182, 212, 0.4);
+  animation-duration: 16s;
+  animation-delay: -8s;
+}
+.neon-sidebar-particles span:nth-child(6) {
+  left: 85%;
+  background: rgba(124, 58, 237, 0.4);
+  animation-duration: 20s;
+  animation-delay: -10s;
+}
+
+@keyframes sidebar-particle-float {
+  0% {
+    transform: translateY(100%) scale(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.6;
+    transform: translateY(85%) scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translateY(40%) scale(1.2);
+  }
+  90% {
+    opacity: 0.3;
+    transform: translateY(5%) scale(0.8);
+  }
+  100% {
+    transform: translateY(-5%) scale(0);
+    opacity: 0;
+  }
+}
+
+/* ============================================================
+   NEON BUTTON OVERRIDES — Miami Vice / Retro Arcade Buttons
+   Scoped to .dashboard-dark to avoid affecting auth pages.
+   ============================================================ */
+
+/* Primary / Default buttons — violet neon gradient */
+.dashboard-dark button[class*="bg-[#4CAF50]"],
+.dashboard-dark button[class*="bg-primary"],
+.dashboard-dark .btn-neon-primary,
+.dashboard-dark button:not([class*="ghost"]):not([class*="outline"]):not([class*="destructive"]):not([class*="secondary"]):not([class*="link"]):not([role="tab"]):not([role="combobox"]):not([class*="absolute"]):not([class*="bg-white"]):not([class*="bg-transparent"]):not([aria-label="Close"]):not([class*="lucide"]):not(.admin-top-nav button)[class*="bg-"] {
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 40%, #5b21b6 100%) !important;
+  border: 1px solid rgba(139, 92, 246, 0.4) !important;
+  color: #ffffff !important;
+  box-shadow:
+    0 0 15px rgba(124, 58, 237, 0.25),
+    0 0 30px rgba(124, 58, 237, 0.1),
+    0 2px 8px rgba(0, 0, 0, 0.3) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.dashboard-dark button[class*="bg-[#4CAF50]"]:hover,
+.dashboard-dark button[class*="bg-primary"]:hover {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 40%, #6d28d9 100%) !important;
+  border-color: rgba(167, 139, 250, 0.5) !important;
+  box-shadow:
+    0 0 25px rgba(124, 58, 237, 0.4),
+    0 0 50px rgba(124, 58, 237, 0.15),
+    0 0 80px rgba(6, 182, 212, 0.08),
+    0 4px 16px rgba(0, 0, 0, 0.3) !important;
+  transform: translateY(-1px);
+}
+
+.dashboard-dark button[class*="bg-[#4CAF50]"]:active,
+.dashboard-dark button[class*="bg-primary"]:active {
+  transform: translateY(0px) scale(0.98);
+  box-shadow:
+    0 0 10px rgba(124, 58, 237, 0.3),
+    0 0 20px rgba(124, 58, 237, 0.1),
+    inset 0 0 15px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Outline buttons — neon border with transparent fill */
+.dashboard-dark button[class*="outline"],
+.dashboard-dark .btn-neon-outline {
+  background: rgba(124, 58, 237, 0.06) !important;
+  border: 1px solid rgba(124, 58, 237, 0.35) !important;
+  color: rgba(167, 139, 250, 0.9) !important;
+  box-shadow: 0 0 10px rgba(124, 58, 237, 0.08) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.dashboard-dark button[class*="outline"]:hover {
+  background: rgba(124, 58, 237, 0.12) !important;
+  border-color: rgba(167, 139, 250, 0.5) !important;
+  color: #ffffff !important;
+  box-shadow:
+    0 0 20px rgba(124, 58, 237, 0.2),
+    0 0 40px rgba(124, 58, 237, 0.08) !important;
+  transform: translateY(-1px);
+}
+
+.dashboard-dark button[class*="outline"]:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Ghost buttons — subtle neon tint on hover */
+.dashboard-dark button[class*="ghost"] {
+  color: rgba(167, 139, 250, 0.8) !important;
+  transition: all 0.25s ease !important;
+}
+
+.dashboard-dark button[class*="ghost"]:hover {
+  background: rgba(124, 58, 237, 0.1) !important;
+  color: #ffffff !important;
+  text-shadow: 0 0 12px rgba(124, 58, 237, 0.3);
+}
+
+/* Destructive buttons — red neon */
+.dashboard-dark button[class*="destructive"] {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 50%, #991b1b 100%) !important;
+  border: 1px solid rgba(239, 68, 68, 0.4) !important;
+  color: #ffffff !important;
+  box-shadow:
+    0 0 15px rgba(220, 38, 38, 0.25),
+    0 0 30px rgba(220, 38, 38, 0.1),
+    0 2px 8px rgba(0, 0, 0, 0.3) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.dashboard-dark button[class*="destructive"]:hover {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 50%, #b91c1c 100%) !important;
+  border-color: rgba(248, 113, 113, 0.5) !important;
+  box-shadow:
+    0 0 25px rgba(220, 38, 38, 0.4),
+    0 0 50px rgba(220, 38, 38, 0.15),
+    0 4px 16px rgba(0, 0, 0, 0.3) !important;
+  transform: translateY(-1px);
+}
+
+/* Secondary buttons — subtle violet fill */
+.dashboard-dark button[class*="secondary"] {
+  background: rgba(124, 58, 237, 0.1) !important;
+  border: 1px solid rgba(124, 58, 237, 0.2) !important;
+  color: rgba(196, 181, 253, 0.9) !important;
+  transition: all 0.3s ease !important;
+}
+
+.dashboard-dark button[class*="secondary"]:hover {
+  background: rgba(124, 58, 237, 0.18) !important;
+  border-color: rgba(124, 58, 237, 0.35) !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 15px rgba(124, 58, 237, 0.12) !important;
+  transform: translateY(-1px);
+}
+
+/* ── Special Miami Vice accent buttons ── */
+.btn-neon-miami {
+  background: linear-gradient(135deg, #ec4899 0%, #7c3aed 50%, #06b6d4 100%) !important;
+  background-size: 200% 200% !important;
+  border: 1px solid rgba(236, 72, 153, 0.4) !important;
+  color: #ffffff !important;
+  box-shadow:
+    0 0 20px rgba(236, 72, 153, 0.2),
+    0 0 40px rgba(124, 58, 237, 0.12),
+    0 0 60px rgba(6, 182, 212, 0.06) !important;
+  animation: miami-gradient-shift 6s ease-in-out infinite;
+  transition: all 0.3s ease !important;
+}
+
+.btn-neon-miami:hover {
+  box-shadow:
+    0 0 30px rgba(236, 72, 153, 0.35),
+    0 0 60px rgba(124, 58, 237, 0.2),
+    0 0 90px rgba(6, 182, 212, 0.1) !important;
+  transform: translateY(-2px);
+}
+
+@keyframes miami-gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* ── Badge / Pill neon glow ── */
+.dashboard-dark .badge,
+.dashboard-dark [class*="Badge"],
+.dashboard-dark span[class*="rounded-full"][class*="px-"],
+.dashboard-dark span[class*="inline-flex"][class*="rounded"] {
+  border-color: rgba(124, 58, 237, 0.2) !important;
+  transition: all 0.2s ease !important;
+}
+
+/* ── Tab triggers — neon accent ── */
+.dashboard-dark [role="tablist"] [role="tab"][data-state="active"] {
+  background: rgba(124, 58, 237, 0.12) !important;
+  color: #ffffff !important;
+  border-color: rgba(124, 58, 237, 0.4) !important;
+  box-shadow: 0 0 10px rgba(124, 58, 237, 0.15), inset 0 -2px 0 rgba(124, 58, 237, 0.5) !important;
 }

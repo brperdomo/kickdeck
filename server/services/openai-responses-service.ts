@@ -1,13 +1,13 @@
 import OpenAI from "openai";
 import { db } from "../../db";
 import { eq, and, gte, lte, desc } from "drizzle-orm";
-import { 
-  teams, 
-  events, 
-  eventAgeGroups, 
-  eventBrackets, 
-  games, 
-  fields, 
+import {
+  teams,
+  events,
+  eventAgeGroups,
+  eventBrackets,
+  games,
+  fields,
   gameTimeSlots,
   eventGameFormats,
   gameFormats,
@@ -15,9 +15,7 @@ import {
 } from "../../db/schema";
 import { AIAuditLogger } from "./ai-audit-logger";
 import { v4 as uuidv4 } from 'uuid';
-
-// Initialize the OpenAI client (lazy - null if no key)
-const openai = process.env.OPENAI_API_KEY ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY }) : null;
+import { getOpenAIClient } from './openai-client-factory';
 
 interface TournamentGame {
   id: string;
@@ -416,9 +414,15 @@ Current tournament data: ${JSON.stringify(tournamentData, null, 2)}
   /**
    * Main chat interface with PostgreSQL persistence
    */
-  public static async chatWithScheduler(eventId: string, userMessage: string, sessionId?: string): Promise<string> {
+  public static async chatWithScheduler(eventId: string, userMessage: string, sessionId?: string, orgId?: number): Promise<string> {
     try {
       console.log(`🤖 Processing chat message for event ${eventId}: "${userMessage}"`);
+
+      // Get OpenAI client for this organization
+      const openai = await getOpenAIClient(orgId);
+      if (!openai) {
+        return '❌ AI features are not configured. An administrator can add an OpenAI API key in Settings → AI Configuration.';
+      }
 
       // Generate session ID if not provided
       if (!sessionId) {
@@ -427,7 +431,7 @@ Current tournament data: ${JSON.stringify(tournamentData, null, 2)}
 
       // Load conversation history from database
       const conversationHistory = await this.loadConversationHistory(eventId, sessionId);
-      
+
       // Add system prompt if this is a new conversation
       if (conversationHistory.length === 0) {
         const systemPrompt = await this.getSystemPrompt(eventId);

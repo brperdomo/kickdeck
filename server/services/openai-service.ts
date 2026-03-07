@@ -1,13 +1,13 @@
 import OpenAI from "openai";
 import { db } from "../../db";
 import { eq, and, inArray } from "drizzle-orm";
-import { 
-  teams, 
-  events, 
-  eventAgeGroups, 
-  eventBrackets, 
-  games, 
-  fields, 
+import {
+  teams,
+  events,
+  eventAgeGroups,
+  eventBrackets,
+  games,
+  fields,
   gameTimeSlots,
   tournamentGroups,
   complexes,
@@ -15,9 +15,7 @@ import {
   eventGameFormats,
   gameFormats
 } from "../../db/schema";
-
-// Initialize the OpenAI client (lazy - null if no key)
-const openai = process.env.OPENAI_API_KEY ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY }) : null;
+import { getOpenAIClient } from './openai-client-factory';
 
 // The newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
 const MODEL = "gpt-4o";
@@ -46,16 +44,16 @@ export class SoccerSchedulerAI {
    * @param constraints - Scheduling constraints
    * @returns The generated schedule and any detected conflicts
    */
-  static async generateSchedule(eventId: string | number, constraints: ScheduleConstraints) {
+  static async generateSchedule(eventId: string | number, constraints: ScheduleConstraints, orgId?: number) {
     console.log(`Starting schedule generation for event ID: ${eventId}`);
     console.log(`Constraints: ${JSON.stringify(constraints)}`);
-    
+
     // If preview mode is enabled, delegate to preview function
     if (constraints.previewMode) {
       console.log("Preview mode enabled, generating sample games only");
-      return this.generateSchedulePreview(eventId, constraints);
+      return this.generateSchedulePreview(eventId, constraints, orgId);
     }
-    
+
     try {
       // 0. Get flight configuration parameters from database
       console.log("Fetching flight configuration parameters...");
@@ -93,6 +91,10 @@ export class SoccerSchedulerAI {
       try {
         // 3. Call OpenAI API
         console.log("Making OpenAI API call...");
+        const openai = await getOpenAIClient(orgId);
+        if (!openai) {
+          throw new Error('OpenAI API key is not configured. Add a key in Settings → AI Configuration.');
+        }
         const scheduleResponse = await openai.chat.completions.create({
           model: MODEL,
           messages: [
@@ -202,7 +204,7 @@ export class SoccerSchedulerAI {
    * @param constraints - Scheduling constraints including age groups and brackets
    * @returns A preview of 5 games from the potential schedule with quality score and conflicts
    */
-  static async generateSchedulePreview(eventId: string | number, constraints: ScheduleConstraints) {
+  static async generateSchedulePreview(eventId: string | number, constraints: ScheduleConstraints, orgId?: number) {
     console.log(`Starting schedule preview generation for event ID: ${eventId}`);
     console.log(`Preview constraints: ${JSON.stringify(constraints)}`);
     
@@ -230,6 +232,10 @@ export class SoccerSchedulerAI {
       try {
         // 3. Call OpenAI API with a request for just a sample of games
         console.log("Making OpenAI API call for preview...");
+        const openai = await getOpenAIClient(orgId);
+        if (!openai) {
+          throw new Error('OpenAI API key is not configured. Add a key in Settings → AI Configuration.');
+        }
         const previewResponse = await openai.chat.completions.create({
           model: MODEL,
           messages: [
@@ -357,7 +363,7 @@ export class SoccerSchedulerAI {
     `;
   }
 
-  static async optimizeSchedule(eventId: string | number, options: OptimizationOptions) {
+  static async optimizeSchedule(eventId: string | number, options: OptimizationOptions, orgId?: number) {
     console.log(`Starting schedule optimization for event ID: ${eventId}`);
     console.log(`Options: ${JSON.stringify(options)}`);
     
@@ -384,6 +390,10 @@ export class SoccerSchedulerAI {
       try {
         // 4. Call OpenAI API
         console.log("Making OpenAI API call for schedule optimization...");
+        const openai = await getOpenAIClient(orgId);
+        if (!openai) {
+          throw new Error('OpenAI API key is not configured. Add a key in Settings → AI Configuration.');
+        }
         const optimizationResponse = await openai.chat.completions.create({
           model: MODEL,
           messages: [

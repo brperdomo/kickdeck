@@ -16,21 +16,37 @@ interface AdminContextSidebarProps<T extends SidebarNavItem = SidebarNavItem> {
   sectionId: string;
 }
 
+// Parent container variant — orchestrates staggered children
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.05,
+      delayChildren: 0.05,
+    },
+  },
+  exit: {
+    opacity: 0,
+    transition: { duration: 0.12 },
+  },
+};
+
+// Child item variant — slides in from left with blur
 const itemVariants = {
   hidden: { opacity: 0, x: -16, filter: 'blur(4px)' },
-  visible: (i: number) => ({
+  visible: {
     opacity: 1,
     x: 0,
     filter: 'blur(0px)',
     transition: {
-      delay: i * 0.05,
       duration: 0.35,
       type: 'spring' as const,
       stiffness: 200,
       damping: 16,
     },
-  }),
-  exit: { opacity: 0, x: -8, transition: { duration: 0.15 } },
+  },
+  exit: { opacity: 0, x: -8, transition: { duration: 0.1 } },
 };
 
 export function AdminContextSidebar({
@@ -41,46 +57,47 @@ export function AdminContextSidebar({
 }: AdminContextSidebarProps) {
   return (
     <aside
-      className="hidden md:flex flex-col shrink-0 overflow-y-auto relative"
+      className="hidden md:flex flex-col shrink-0 overflow-y-auto overflow-x-hidden relative"
       style={{
         width: '200px',
         background:
-          'linear-gradient(180deg, rgba(9, 9, 26, 0.98) 0%, rgba(16, 12, 42, 0.98) 50%, rgba(20, 16, 52, 0.96) 100%)',
-        borderRight: '1px solid rgba(124, 58, 237, 0.1)',
+          'linear-gradient(180deg, rgba(9, 9, 26, 0.85) 0%, rgba(16, 12, 42, 0.82) 50%, rgba(20, 16, 52, 0.80) 100%)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+        borderRight: '1px solid rgba(124, 58, 237, 0.15)',
         boxShadow:
-          '4px 0 20px rgba(0, 0, 0, 0.2), 0 0 10px rgba(124, 58, 237, 0.03)',
+          '4px 0 20px rgba(0, 0, 0, 0.2), 0 0 10px rgba(124, 58, 237, 0.05)',
       }}
     >
-      {/* Neon edge glow */}
-      <div className="absolute top-0 bottom-0 right-0 w-[1px] bg-gradient-to-b from-violet-500/0 via-cyan-500/15 to-violet-500/0 pointer-events-none" />
+      {/* Animated neon edge glow — right border breathes */}
+      <div className="neon-sidebar-edge" />
 
-      {/* Ambient glow */}
-      <div
-        className="absolute top-8 right-0 w-full h-24 pointer-events-none"
-        style={{
-          background: 'radial-gradient(ellipse at right, rgba(124,58,237,0.04) 0%, transparent 70%)',
-          filter: 'blur(30px)',
-        }}
-      />
+      {/* Animated ambient glow blob inside sidebar */}
+      <div className="neon-sidebar-glow neon-sidebar-glow--top" />
+      <div className="neon-sidebar-glow neon-sidebar-glow--bottom" />
+
+      {/* Floating micro-particles */}
+      <div className="neon-sidebar-particles" aria-hidden="true">
+        <span /><span /><span /><span /><span /><span />
+      </div>
 
       <div className="py-4 px-2 relative">
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="popLayout">
           <motion.div
             key={sectionId}
-            initial={{ opacity: 0, x: -12 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -12 }}
-            transition={{ duration: 0.15 }}
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
             className="space-y-0.5"
           >
-            {items.map((item, index) => {
+            {items.map((item) => {
               const isActive = item.view === activeView;
               const Icon = item.icon;
 
               return (
                 <motion.button
                   key={item.id}
-                  custom={index}
                   variants={itemVariants}
                   onClick={() => onItemClick(item)}
                   className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm transition-all duration-200 relative group"

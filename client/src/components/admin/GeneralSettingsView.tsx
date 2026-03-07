@@ -6,12 +6,14 @@ import { StyleSettingsView } from "./StyleSettingsView";
 import { EmailTemplatesView } from "./EmailTemplatesView";
 import { EmailProviderSettings } from "./EmailProviderSettings";
 import { StripeSettingsView } from "./StripeSettingsView";
-import { 
-  Building2, 
-  Calendar, 
-  Palette, 
-  Mail, 
-  ServerCog 
+import { AIConfigurationSettings } from "./AIConfigurationSettings";
+import {
+  Building2,
+  Calendar,
+  Palette,
+  Mail,
+  ServerCog,
+  Brain
 } from "lucide-react";
 
 export function GeneralSettingsView() {
@@ -43,6 +45,10 @@ export function GeneralSettingsView() {
                 <ServerCog className="h-4 w-4" />
                 <span>Email Provider</span>
               </TabsTrigger>
+              <TabsTrigger value="ai" className="flex items-center gap-1.5 rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:shadow-none py-3">
+                <Brain className="h-4 w-4" />
+                <span>AI</span>
+              </TabsTrigger>
             </TabsList>
 
             <div className="p-6">
@@ -72,6 +78,10 @@ export function GeneralSettingsView() {
 
               <TabsContent value="emailProvider" className="m-0">
                 <EmailProviderSettings />
+              </TabsContent>
+
+              <TabsContent value="ai" className="m-0">
+                <AIConfigurationSettings />
               </TabsContent>
             </div>
           </Tabs>

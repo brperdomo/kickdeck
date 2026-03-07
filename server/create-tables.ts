@@ -23,6 +23,7 @@ import { addSortOrderToBrackets } from "./migrations/add_sort_order_to_brackets"
 import { createPaymentTransactionsTable } from "../db/migrations/create_payment_transactions";
 import { addAdminLastLoginFields } from "./migrations/add_admin_last_login";
 import { addCustomDomainToOrganizationSettings } from "./migrations/add_custom_domain_to_organization_settings";
+import { addOpenaiApiKeyToOrganizationSettings } from "./migrations/add_openai_api_key_to_organization_settings";
 import { deduplicateAgeGroups } from "./migrations/deduplicate_age_groups";
 
 export async function createTables() {
@@ -190,6 +191,9 @@ export async function createTables() {
     console.log('Adding custom domain to organization settings...');
     await addCustomDomainToOrganizationSettings();
     
+    console.log('Adding OpenAI API key column to organization settings...');
+    await addOpenaiApiKeyToOrganizationSettings();
+
     console.log('Creating clubs table...');
     await createClubsTable();
 

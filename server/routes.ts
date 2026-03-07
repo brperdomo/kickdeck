@@ -56,6 +56,7 @@ import bracketSubdivisionRouter from "./routes/admin/bracket-subdivision";
 import conflictDetectionRouter from "./routes/admin/conflict-detection";
 import adminBracketsRouter from "./routes/admin/brackets-fixed";
 import aiAssistantRouter from "./routes/admin/ai-assistant";
+import helpCenterRouter from "./routes/admin/help-center";
 import gamecardsRouter from "./routes/admin/gamecards-simple";
 import csvImportRouter from "./routes/admin/csv-import-fixed";
 import fixFlightAssignmentsRouter from "./routes/admin/fix-flight-assignments";
@@ -1272,6 +1273,7 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/teams', isAdmin, playersRouter); // Player management router
     app.use('/api/admin', isAdmin, bracketsRouter); // Bracket management router
     app.use('/api/admin/ai-assistant', aiAssistantRouter); // AI Assistant API
+    app.use('/api/admin/help-center', helpCenterRouter); // Help Center AI chatbot
     // Tournament format validation is now built into brackets router
     app.use('/api/admin', isAdmin, fieldCapacityRouter); // Field capacity analysis router
     app.use('/api/admin', isAdmin, intelligentSchedulingRouter); // Intelligent scheduling system router
@@ -5587,6 +5589,138 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       }
     });
     
+    // ─── AI API Key Management ───────────────────────────────────
+    // Save encrypted OpenAI API key for the organization
+    app.post('/api/admin/organization-settings/ai-key', isAdmin, async (req, res) => {
+      try {
+        const { apiKey } = req.body;
+        if (!apiKey || typeof apiKey !== 'string' || apiKey.trim().length < 10) {
+          return res.status(400).json({ error: 'A valid API key is required' });
+        }
+
+        const { encrypt, maskApiKey } = await import('./services/encryption');
+        const { clearClientCache } = await import('./services/openai-client-factory');
+
+        const encryptedKey = encrypt(apiKey.trim());
+
+        // Upsert: update existing org settings or create new
+        const [existing] = await db
+          .select({ id: organizationSettings.id })
+          .from(organizationSettings)
+          .limit(1);
+
+        if (existing) {
+          await db
+            .update(organizationSettings)
+            .set({ openaiApiKey: encryptedKey, updatedAt: new Date().toISOString() })
+            .where(eq(organizationSettings.id, existing.id));
+          clearClientCache(existing.id);
+        } else {
+          await db.insert(organizationSettings).values({
+            name: 'Default Organization',
+            openaiApiKey: encryptedKey,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          });
+        }
+
+        res.json({ success: true, preview: maskApiKey(apiKey.trim()) });
+      } catch (error) {
+        console.error('[AI Key] Error saving API key:', error);
+        res.status(500).json({ error: 'Failed to save API key' });
+      }
+    });
+
+    // Remove the stored API key
+    app.delete('/api/admin/organization-settings/ai-key', isAdmin, async (req, res) => {
+      try {
+        const { clearClientCache } = await import('./services/openai-client-factory');
+
+        const [existing] = await db
+          .select({ id: organizationSettings.id })
+          .from(organizationSettings)
+          .limit(1);
+
+        if (existing) {
+          await db
+            .update(organizationSettings)
+            .set({ openaiApiKey: null, updatedAt: new Date().toISOString() })
+            .where(eq(organizationSettings.id, existing.id));
+          clearClientCache(existing.id);
+        }
+
+        res.json({ success: true });
+      } catch (error) {
+        console.error('[AI Key] Error removing API key:', error);
+        res.status(500).json({ error: 'Failed to remove API key' });
+      }
+    });
+
+    // Test the stored (or provided) API key with a lightweight call
+    app.post('/api/admin/organization-settings/ai-key/test', isAdmin, async (req, res) => {
+      try {
+        const { apiKey } = req.body; // Optional — if provided, test this key directly
+        let keyToTest: string | null = null;
+
+        if (apiKey && typeof apiKey === 'string') {
+          keyToTest = apiKey.trim();
+        } else {
+          // Use the stored key
+          const { decrypt } = await import('./services/encryption');
+          const [org] = await db
+            .select({ openaiApiKey: organizationSettings.openaiApiKey })
+            .from(organizationSettings)
+            .limit(1);
+
+          if (org?.openaiApiKey) {
+            keyToTest = decrypt(org.openaiApiKey);
+          }
+        }
+
+        if (!keyToTest) {
+          // Try env var fallback
+          keyToTest = process.env.OPENAI_API_KEY || null;
+        }
+
+        if (!keyToTest) {
+          return res.json({ success: false, error: 'No API key configured' });
+        }
+
+        // Lightweight test: list models (minimal token usage)
+        const OpenAI = (await import('openai')).default;
+        const testClient = new OpenAI({ apiKey: keyToTest });
+        await testClient.models.list();
+
+        res.json({ success: true, message: 'API key is valid and working' });
+      } catch (error: any) {
+        console.error('[AI Key] Test failed:', error?.message);
+        const msg = error?.status === 401
+          ? 'Invalid API key — authentication failed'
+          : error?.status === 429
+            ? 'API key is valid but rate-limited. Try again later.'
+            : `Connection test failed: ${error?.message || 'Unknown error'}`;
+        res.json({ success: false, error: msg });
+      }
+    });
+
+    // Get AI configuration status (never exposes the full key)
+    app.get('/api/admin/organization-settings/ai-status', isAdmin, async (req, res) => {
+      try {
+        const { getAIStatus } = await import('./services/openai-client-factory');
+
+        const [org] = await db
+          .select({ id: organizationSettings.id })
+          .from(organizationSettings)
+          .limit(1);
+
+        const status = await getAIStatus(org?.id);
+        res.json(status);
+      } catch (error) {
+        console.error('[AI Key] Error checking AI status:', error);
+        res.status(500).json({ error: 'Failed to check AI status' });
+      }
+    });
+
     // Add endpoints for organization domain management
     app.get('/api/admin/organizations', isAdmin, async (req, res) => {
       try {

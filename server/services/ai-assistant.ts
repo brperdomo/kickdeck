@@ -1,11 +1,7 @@
 import OpenAI from 'openai';
 import { db } from '@db';
 import { aiAuditLog } from '@db/schema';
-
-// the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
-const openai = process.env.OPENAI_API_KEY
-  ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
-  : null;
+import { getOpenAIClient } from './openai-client-factory';
 
 interface ChatMessage {
   role: 'user' | 'assistant' | 'system';
@@ -48,10 +44,12 @@ Respond concisely and suggest specific actions when possible. Always confirm act
     userMessage: string,
     userId: number,
     eventId?: string,
-    context?: any
+    context?: any,
+    orgId?: number
   ): Promise<AIResponse> {
+    const openai = await getOpenAIClient(orgId);
     if (!openai) {
-      return { success: false, message: 'AI assistant is not configured. Set OPENAI_API_KEY to enable.', error: 'OPENAI_API_KEY not set' };
+      return { success: false, message: 'AI assistant is not configured. Add an OpenAI API key in Settings → AI Configuration.', error: 'No API key configured' };
     }
     try {
       // Add user message to conversation
@@ -124,9 +122,14 @@ Respond concisely and suggest specific actions when possible. Always confirm act
 
   async generateSchedulingSuggestions(
     eventId: string,
-    constraints: any
+    constraints: any,
+    orgId?: number
   ): Promise<AIResponse> {
     try {
+      const openai = await getOpenAIClient(orgId);
+      if (!openai) {
+        return { success: false, message: 'AI not configured. Add an OpenAI API key in Settings → AI Configuration.', error: 'No API key' };
+      }
       const prompt = `Analyze the following tournament scheduling constraints and provide optimization suggestions:
 
 Event ID: ${eventId}
@@ -189,9 +192,14 @@ Respond in JSON format with:
   async analyzeConflicts(
     games: any[],
     fields: any[],
-    teams: any[]
+    teams: any[],
+    orgId?: number
   ): Promise<AIResponse> {
     try {
+      const openai = await getOpenAIClient(orgId);
+      if (!openai) {
+        return { success: false, message: 'AI not configured. Add an OpenAI API key in Settings → AI Configuration.', error: 'No API key' };
+      }
       const prompt = `Analyze the following tournament data for scheduling conflicts:
 
 Games: ${JSON.stringify(games.slice(0, 10), null, 2)}

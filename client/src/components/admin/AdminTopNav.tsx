@@ -81,11 +81,11 @@ export function AdminTopNav({
       <header
         className="sticky top-0 z-40 admin-top-nav"
         style={{
-          background: 'rgba(15, 15, 35, 0.85)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          borderBottom: '1px solid rgba(124, 58, 237, 0.1)',
-          boxShadow: '0 4px 30px rgba(0,0,0,0.3), 0 0 15px rgba(124,58,237,0.05)',
+          background: 'rgba(15, 15, 35, 0.88)',
+          backdropFilter: 'blur(24px)',
+          WebkitBackdropFilter: 'blur(24px)',
+          borderBottom: '1px solid rgba(124, 58, 237, 0.15)',
+          boxShadow: '0 4px 30px rgba(0,0,0,0.4), 0 0 20px rgba(124,58,237,0.08), 0 1px 0 rgba(124,58,237,0.1)',
         }}
       >
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
