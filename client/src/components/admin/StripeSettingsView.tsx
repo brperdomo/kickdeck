@@ -115,17 +115,25 @@ export function StripeSettingsView() {
         setWebhookSecret("");
         await fetchStatus();
       } else {
-        const err = await res.json();
+        let errMsg = `Server error (${res.status})`;
+        try {
+          const err = await res.json();
+          errMsg = err.error || err.details || errMsg;
+        } catch {
+          // Response wasn't JSON — use status text
+          errMsg = `${res.status} ${res.statusText}`;
+        }
         toast({
           title: "Failed to save",
-          description: err.error || "Could not save the Stripe keys.",
+          description: errMsg,
           variant: "destructive",
         });
       }
-    } catch (error) {
+    } catch (error: any) {
+      console.error("Stripe key save error:", error);
       toast({
         title: "Error",
-        description: "Network error saving Stripe keys.",
+        description: error?.message || "Network error saving Stripe keys.",
         variant: "destructive",
       });
     } finally {
