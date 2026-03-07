@@ -6,22 +6,11 @@ export async function addOpenaiApiKeyToOrganizationSettings() {
   try {
     log("Adding openai_api_key column to organization_settings table...");
 
-    // Check if the column already exists
-    const columnExists = await db.execute(sql`
-      SELECT column_name
-      FROM information_schema.columns
-      WHERE table_name = 'organization_settings' AND column_name = 'openai_api_key'
+    await db.execute(sql`
+      ALTER TABLE organization_settings
+      ADD COLUMN IF NOT EXISTS openai_api_key TEXT
     `);
-
-    if (columnExists.length === 0) {
-      await db.execute(sql`
-        ALTER TABLE organization_settings
-        ADD COLUMN openai_api_key TEXT
-      `);
-      log("openai_api_key column added successfully");
-    } else {
-      log("openai_api_key column already exists");
-    }
+    log("openai_api_key column ensured");
   } catch (error) {
     console.error("Error adding openai_api_key column:", error);
     throw error;
