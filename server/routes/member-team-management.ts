@@ -119,8 +119,8 @@ async function findOrCreateUser(email: string, name?: string): Promise<{ user: a
       dynamicTemplateData: {
         firstName: firstName,
         email: email,
-        resetPasswordUrl: `${process.env.FRONTEND_URL || 'https://app.kickdeck.io'}/reset-password?email=${encodeURIComponent(email)}`,
-        loginUrl: `${process.env.FRONTEND_URL || 'https://app.kickdeck.io'}/login`,
+        resetPasswordUrl: `${process.env.FRONTEND_URL || 'https://app.kickdeck.xyz'}/reset-password?email=${encodeURIComponent(email)}`,
+        loginUrl: `${process.env.FRONTEND_URL || 'https://app.kickdeck.xyz'}/login`,
       },
     });
   } catch (emailError) {

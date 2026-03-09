@@ -566,16 +566,19 @@ function createFallbackTemplate(
 function getAppUrl(
   isDevelopment: boolean = process.env.NODE_ENV !== "production",
 ): string {
+  // Always prefer FRONTEND_URL if set (Railway, production, staging, etc.)
+  if (process.env.FRONTEND_URL) {
+    return process.env.FRONTEND_URL;
+  }
+
   if (isDevelopment) {
-    // Development environment - use local domain
     return (
       process.env.APP_URL ||
       `https://${process.env.REPLIT_DOMAINS?.split(",")[0]}`
     );
-  } else {
-    // Production environment - use correct production domain
-    return "https://app.kickdeck.io";
   }
+
+  return "https://app.kickdeck.xyz";
 }
 
 /**

@@ -105,8 +105,8 @@ export async function createCheckoutSession(teamId: number): Promise<{
         },
       ],
       mode: 'payment',
-      success_url: `${process.env.FRONTEND_URL || 'https://app.kickdeck.io'}/payment/success?session_id={CHECKOUT_SESSION_ID}&team_id=${teamId}`,
-      cancel_url: `${process.env.FRONTEND_URL || 'https://app.kickdeck.io'}/payment/retry/${teamId}?cancelled=true`,
+      success_url: `${process.env.FRONTEND_URL || 'https://app.kickdeck.xyz'}/payment/success?session_id={CHECKOUT_SESSION_ID}&team_id=${teamId}`,
+      cancel_url: `${process.env.FRONTEND_URL || 'https://app.kickdeck.xyz'}/payment/retry/${teamId}?cancelled=true`,
       metadata: {
         teamId: teamId.toString(),
         originalAmount: teamData.totalAmount.toString(),

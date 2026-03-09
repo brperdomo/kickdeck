@@ -11515,7 +11515,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
               hasClub: !!team.clubName,
 
               // Branding placeholders
-              loginLink: `${process.env.FRONTEND_URL || 'https://app.kickdeck.io'}/dashboard`,
+              loginLink: `${process.env.FRONTEND_URL || 'https://app.kickdeck.xyz'}/dashboard`,
               supportEmail: 'no-reply@kickdeck.xyz',
               organizationName: 'KickDeck',
               currentYear: new Date().getFullYear().toString(),

@@ -233,7 +233,7 @@ export async function verifyWebhookStatus(): Promise<{
 
   return {
     webhookConfigured: !!webhookSecret,
-    endpointUrl: `${process.env.BACKEND_URL || 'https://app.kickdeck.io'}/api/payments/webhook`,
+    endpointUrl: `${process.env.BACKEND_URL || 'https://app.kickdeck.xyz'}/api/payments/webhook`,
     enabledEvents: [
       'payment_intent.succeeded',
       'payment_intent.payment_failed', 
