@@ -55,6 +55,7 @@ import PaymentSuccess from "@/pages/PaymentSuccess";
 import PaymentSetup from "@/pages/PaymentSetup";
 import ConnectOnboardingSuccess from "@/pages/connect-onboarding-success";
 import AdminBrevoSetup from "@/pages/admin-brevo-setup";
+import FileManagerPage from "@/pages/file-manager";
 import { AuthProvider } from "@/hooks/use-auth";
 // Account page import
 import AccountPage from "./pages/account";
@@ -413,7 +414,7 @@ function Router() {
             {user.isAdmin ? <TeamStatusTest /> : <NotFound />}
           </Route>
           <Route path="/admin/file-manager">
-            {user.isAdmin ? <AdminDashboard initialView="files" /> : <NotFound />}
+            {user.isAdmin ? <FileManagerPage /> : <NotFound />}
           </Route>
           <Route path="/admin/events">
             {user.isAdmin ? <AdminDashboard initialView="events" /> : <NotFound />}
