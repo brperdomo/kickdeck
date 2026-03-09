@@ -183,7 +183,7 @@ import retroactiveMetadataRoutes from "./routes/retroactiveMetadata.js";
 import transferMetadataRoutes from "./routes/transferMetadata.js";
 // Email service for registration emails - uses Brevo API
 import { sendEmail as brevoSendEmail } from './services/brevoService';
-import { getFromEmail } from './services/emailService';
+import { getFromEmail, sendTemplatedEmail } from './services/emailService';
 
 const REGISTRATION_CONFIRMATION_TEMPLATE_ID = process.env.BREVO_REGISTRATION_TEMPLATE_ID
   ? parseInt(process.env.BREVO_REGISTRATION_TEMPLATE_ID, 10)
@@ -977,9 +977,8 @@ export function registerRoutes(app: Express): Server {
             emailRecipients.push(team.managerEmail);
           }
           
-          // Import sendTemplatedEmail from email service
-          const { sendTemplatedEmail } = await import('./services/email-service');
-          
+          // sendTemplatedEmail is already imported at the top of the file
+
           // Send approval notification to all recipients
           for (const recipient of emailRecipients) {
             if (recipient) {
