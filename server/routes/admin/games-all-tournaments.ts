@@ -81,7 +81,7 @@ router.get('/all-tournaments', isAdmin, async (req, res) => {
             time: game.time || 'TBD',
             homeTeam: homeTeam?.name || 'TBD',
             awayTeam: awayTeam?.name || 'TBD',
-            ageGroup: ageGroup?.name || `Age Group ${game.ageGroupId}`,
+            ageGroup: ageGroup?.ageGroup || `Age Group ${game.ageGroupId}`,
             field: fieldName,
             complex: complexName,
             status: game.status || 'scheduled'

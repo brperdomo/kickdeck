@@ -193,7 +193,7 @@ const sendRegistrationConfirmationEmail = async (
   ageGroupInfo: any,
   _bracketInfo: any
 ) => {
-  const division = [ageGroupInfo?.name, ageGroupInfo?.gender].filter(Boolean).join(' ') || 'N/A';
+  const division = [ageGroupInfo?.ageGroup, ageGroupInfo?.gender].filter(Boolean).join(' ') || 'N/A';
   const submittedDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
   await sendTemplatedEmail(toEmail, 'registration_under_review', {
@@ -3750,7 +3750,7 @@ export function registerRoutes(app: Express): Server {
           if (result.team?.submitterEmail) {
             // Get event, age group, and bracket information for the email
             const [eventInfo] = await db
-              .select({ name: events.name })
+              .select({ name: events.name, adminEmail: events.adminEmail })
               .from(events)
               .where(eq(events.id, eventId));
 
@@ -11273,7 +11273,8 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
             team: teams,
             event: {
               id: events.id,
-              name: events.name
+              name: events.name,
+              adminEmail: events.adminEmail
             }
           })
           .from(teams)

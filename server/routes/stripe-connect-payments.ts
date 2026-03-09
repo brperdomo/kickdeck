@@ -155,7 +155,7 @@ export async function processDestinationCharge(
       });
 
       // Create meaningful description for Stripe dashboard
-      const description = `${event.name} - ${team.name}${teamInfo.ageGroup ? ` (${teamInfo.ageGroup.name})` : ""}`;
+      const description = `${event.name} - ${team.name}`;
 
       // For Link payments, use standard payment intent (no destination charge)
       const paymentIntentParams: any = {
