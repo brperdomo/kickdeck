@@ -19,6 +19,10 @@ import {
   LayoutList,
   TestTube,
   Send,
+  Eye,
+  EyeOff,
+  Info,
+  Mail,
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -45,9 +49,83 @@ interface EmailTemplate {
   name: string;
   type: string;
   subject: string;
+  description: string | null;
+  content: string | null;
+  senderEmail: string | null;
   isActive: boolean;
   brevoTemplateId: number | null;
 }
+
+/* ------------------------------------------------------------------ */
+/*  Template metadata: when it fires + what variables it receives      */
+/* ------------------------------------------------------------------ */
+
+const TEMPLATE_META: Record<string, { trigger: string; variables: string[] }> = {
+  welcome: {
+    trigger: 'User registers a new account',
+    variables: ['firstName', 'lastName', 'email', 'username', 'loginLink'],
+  },
+  admin_welcome: {
+    trigger: 'Admin creates a new administrator',
+    variables: ['firstName', 'lastName', 'email', 'loginUrl', 'role'],
+  },
+  password_reset: {
+    trigger: 'User requests "Forgot Password"',
+    variables: ['username', 'resetUrl', 'expiryHours'],
+  },
+  registration_confirmation: {
+    trigger: 'Team submits registration (setup intent / card-on-file flow)',
+    variables: ['firstName', 'teamName', 'eventName', 'ageGroup', 'registrationDate', 'EVENT_ADMIN_EMAIL', 'loginLink'],
+  },
+  registration_under_review: {
+    trigger: 'Team registration is pending admin review',
+    variables: ['firstName', 'teamName', 'eventName', 'ageGroup', 'registrationDate', 'EVENT_ADMIN_EMAIL', 'loginLink'],
+  },
+  registration_receipt: {
+    trigger: 'Team registers with immediate payment',
+    variables: ['firstName', 'teamName', 'eventName', 'totalAmount', 'paymentStatus', 'EVENT_ADMIN_EMAIL', 'loginLink'],
+  },
+  payment_confirmation: {
+    trigger: 'Admin manually confirms a payment',
+    variables: ['teamName', 'eventName', 'registrationDate', 'amount', 'ageGroup', 'paymentId', 'status', 'EVENT_ADMIN_EMAIL'],
+  },
+  payment_completion_notification: {
+    trigger: 'Admin sends payment completion link to team',
+    variables: ['teamName', 'eventName', 'ageGroup', 'totalAmount', 'paymentLink', 'EVENT_ADMIN_EMAIL'],
+  },
+  payment_refunded: {
+    trigger: 'Admin processes a refund for a team',
+    variables: ['firstName', 'teamName', 'eventName', 'totalAmount', 'EVENT_ADMIN_EMAIL', 'loginLink'],
+  },
+  team_approved: {
+    trigger: 'Admin approves a team registration',
+    variables: ['firstName', 'teamName', 'eventName', 'notes', 'EVENT_ADMIN_EMAIL', 'loginLink'],
+  },
+  team_approved_with_payment: {
+    trigger: 'Team auto-approved after successful Stripe payment',
+    variables: ['firstName', 'teamName', 'eventName', 'totalAmount', 'cardBrand', 'cardLastFour', 'EVENT_ADMIN_EMAIL', 'loginLink'],
+  },
+  team_rejected: {
+    trigger: 'Admin rejects a team registration',
+    variables: ['firstName', 'teamName', 'eventName', 'notes', 'EVENT_ADMIN_EMAIL'],
+  },
+  team_waitlisted: {
+    trigger: 'Admin waitlists a team registration',
+    variables: ['firstName', 'teamName', 'eventName', 'notes', 'EVENT_ADMIN_EMAIL'],
+  },
+  team_withdrawn: {
+    trigger: 'Admin withdraws a team',
+    variables: ['firstName', 'teamName', 'eventName', 'notes', 'EVENT_ADMIN_EMAIL'],
+  },
+  team_status_update: {
+    trigger: 'Generic team status change notification',
+    variables: ['firstName', 'teamName', 'eventName', 'status', 'notes', 'EVENT_ADMIN_EMAIL', 'loginLink'],
+  },
+  newsletter_confirmation: {
+    trigger: 'User subscribes to newsletter',
+    variables: ['firstName', 'email', 'appUrl', 'loginLink'],
+  },
+};
 
 interface BrevoSettings {
   apiKeySet: boolean;
@@ -76,6 +154,7 @@ export function BrevoSetupWizard() {
   const queryClient = useQueryClient();
   const [testEmail, setTestEmail] = useState('');
   const [selectedTemplateId, setSelectedTemplateId] = useState('');
+  const [previewType, setPreviewType] = useState<string | null>(null);
 
   /* ── Queries ─────────────────────────────────────────────────────── */
 
@@ -382,73 +461,144 @@ export function BrevoSetupWizard() {
               </div>
             ) : (
               <div className="space-y-4">
-                {emailTemplates?.map((tmpl) => (
-                  <div
-                    key={tmpl.id}
-                    className="rounded-lg border border-border/50 bg-card/50 p-4 transition-colors hover:bg-card/80"
-                  >
-                    <div className="flex items-start justify-between mb-3">
-                      <div>
-                        <h4 className="font-medium">{tmpl.name}</h4>
-                        <p className="text-xs text-muted-foreground mt-0.5">
-                          Type: <code className="px-1 py-0.5 rounded bg-muted text-xs">{tmpl.type}</code>
-                        </p>
-                      </div>
-                      {tmpl.brevoTemplateId ? (
-                        <Badge variant="outline" className="bg-green-500/10 text-green-400 border-green-500/30">
-                          <CheckCircle2 className="h-3.5 w-3.5 mr-1" />
-                          Mapped
-                        </Badge>
-                      ) : (
-                        <Badge variant="outline" className="bg-amber-500/10 text-amber-300 border-amber-500/30">
-                          <AlertCircle className="h-3.5 w-3.5 mr-1" />
-                          Not Mapped
-                        </Badge>
-                      )}
-                    </div>
+                {emailTemplates?.map((tmpl) => {
+                  const meta = TEMPLATE_META[tmpl.type];
+                  const isPreviewOpen = previewType === tmpl.type;
 
-                    <div className="flex items-end gap-3">
-                      <div className="flex-1">
-                        <Label htmlFor={`brevo-${tmpl.id}`} className="text-xs mb-1.5 block text-muted-foreground">
-                          Brevo Template
-                        </Label>
-                        <Select
-                          value={tmpl.brevoTemplateId ? String(tmpl.brevoTemplateId) : 'none'}
-                          onValueChange={(val) => handleMapTemplate(tmpl.type, val)}
+                  return (
+                    <div
+                      key={tmpl.id}
+                      className="rounded-lg border border-border/50 bg-card/50 p-4 transition-colors"
+                    >
+                      {/* Header row */}
+                      <div className="flex items-start justify-between mb-2">
+                        <div>
+                          <h4 className="font-medium">{tmpl.name}</h4>
+                          <p className="text-xs text-muted-foreground mt-0.5">
+                            Type: <code className="px-1 py-0.5 rounded bg-muted text-xs">{tmpl.type}</code>
+                            {tmpl.senderEmail && (
+                              <span className="ml-2">
+                                &middot; From: <code className="px-1 py-0.5 rounded bg-muted text-xs">{tmpl.senderEmail}</code>
+                              </span>
+                            )}
+                          </p>
+                        </div>
+                        {tmpl.brevoTemplateId ? (
+                          <Badge variant="outline" className="bg-green-500/10 text-green-400 border-green-500/30">
+                            <CheckCircle2 className="h-3.5 w-3.5 mr-1" />
+                            Mapped
+                          </Badge>
+                        ) : (
+                          <Badge variant="outline" className="bg-amber-500/10 text-amber-300 border-amber-500/30">
+                            <AlertCircle className="h-3.5 w-3.5 mr-1" />
+                            Not Mapped
+                          </Badge>
+                        )}
+                      </div>
+
+                      {/* Trigger + subject info */}
+                      {meta && (
+                        <div className="rounded-md bg-muted/50 border border-border/30 p-3 mb-3 space-y-1.5">
+                          <div className="flex items-start gap-2 text-xs">
+                            <Info className="h-3.5 w-3.5 mt-0.5 shrink-0 text-blue-400" />
+                            <span><strong className="text-blue-400">Trigger:</strong> {meta.trigger}</span>
+                          </div>
+                          <div className="flex items-start gap-2 text-xs">
+                            <Mail className="h-3.5 w-3.5 mt-0.5 shrink-0 text-muted-foreground" />
+                            <span><strong>Subject:</strong> <code className="text-xs">{tmpl.subject}</code></span>
+                          </div>
+                          <div className="flex items-start gap-2 text-xs flex-wrap">
+                            <span className="shrink-0 text-muted-foreground font-medium">Variables:</span>
+                            <span className="flex flex-wrap gap-1">
+                              {meta.variables.map((v) => (
+                                <code key={v} className="px-1.5 py-0.5 rounded bg-muted text-[11px] border border-border/50">
+                                  {'{{'}params.{v}{'}}'}
+                                </code>
+                              ))}
+                            </span>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Brevo mapping dropdown */}
+                      <div className="flex items-end gap-3">
+                        <div className="flex-1">
+                          <Label htmlFor={`brevo-${tmpl.id}`} className="text-xs mb-1.5 block text-muted-foreground">
+                            Brevo Template
+                          </Label>
+                          <Select
+                            value={tmpl.brevoTemplateId ? String(tmpl.brevoTemplateId) : 'none'}
+                            onValueChange={(val) => handleMapTemplate(tmpl.type, val)}
+                          >
+                            <SelectTrigger id={`brevo-${tmpl.id}`}>
+                              <SelectValue placeholder="Select a template" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="none">None (use fallback HTML)</SelectItem>
+                              {brevoTemplates.map((bt) => (
+                                <SelectItem key={bt.id} value={String(bt.id)}>
+                                  {bt.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        {tmpl.brevoTemplateId && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                            onClick={() => handleMapTemplate(tmpl.type, null)}
+                          >
+                            Remove
+                          </Button>
+                        )}
+
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setPreviewType(isPreviewOpen ? null : tmpl.type)}
                         >
-                          <SelectTrigger id={`brevo-${tmpl.id}`}>
-                            <SelectValue placeholder="Select a template" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="none">None (use HTML template)</SelectItem>
-                            {brevoTemplates.map((bt) => (
-                              <SelectItem key={bt.id} value={String(bt.id)}>
-                                {bt.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                          {isPreviewOpen ? (
+                            <><EyeOff className="h-4 w-4 mr-1" /> Hide Preview</>
+                          ) : (
+                            <><Eye className="h-4 w-4 mr-1" /> Preview Fallback</>
+                          )}
+                        </Button>
                       </div>
 
                       {tmpl.brevoTemplateId && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
-                          onClick={() => handleMapTemplate(tmpl.type, null)}
-                        >
-                          Remove
-                        </Button>
+                        <p className="mt-2 text-xs text-muted-foreground">
+                          Currently mapped to: <strong>{getTemplateNameById(tmpl.brevoTemplateId)}</strong>
+                        </p>
+                      )}
+
+                      {/* Expandable HTML preview */}
+                      {isPreviewOpen && (
+                        <div className="mt-3 rounded-lg border border-border/50 overflow-hidden">
+                          <div className="bg-muted/30 px-3 py-2 text-xs font-medium border-b border-border/50 flex items-center justify-between">
+                            <span>Fallback HTML Template (used when no Brevo template is mapped)</span>
+                          </div>
+                          {tmpl.content && tmpl.content !== '<p>{{content}}</p>' ? (
+                            <iframe
+                              srcDoc={tmpl.content}
+                              title={`Preview: ${tmpl.name}`}
+                              className="w-full bg-white"
+                              style={{ height: '450px', border: 'none' }}
+                              sandbox=""
+                            />
+                          ) : (
+                            <div className="p-6 text-center text-sm text-muted-foreground">
+                              <AlertCircle className="h-8 w-8 mx-auto mb-2 text-amber-400" />
+                              <p>No fallback HTML content. This template will use a generic placeholder if not mapped to Brevo.</p>
+                            </div>
+                          )}
+                        </div>
                       )}
                     </div>
-
-                    {tmpl.brevoTemplateId && (
-                      <p className="mt-2 text-xs text-muted-foreground">
-                        Currently mapped to: <strong>{getTemplateNameById(tmpl.brevoTemplateId)}</strong>
-                      </p>
-                    )}
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </CardContent>
