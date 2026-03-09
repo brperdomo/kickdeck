@@ -1,7 +1,7 @@
 /**
  * Email Configuration Update Route
- * 
- * Admin-only route that updates the email configuration to use SendGrid
+ *
+ * Admin-only route that updates the email configuration to use Brevo
  * and sets support@kickdeck.io as the sender for all templates.
  */
 
@@ -20,18 +20,18 @@ const SENDER_NAME = 'KickDeck';
 router.post('/', async (req: Request, res: Response) => {
   try {
     console.log('Starting email configuration update...');
-    
-    // Step 1: Set up SendGrid as the primary email provider
-    const sendGridId = await setupSendGridProvider();
-    
+
+    // Step 1: Set up Brevo as the primary email provider
+    const brevoId = await setupBrevoProvider();
+
     // Step 2: Update all email templates to use the standard sender
-    const updatedTemplates = await updateEmailTemplates(sendGridId);
-    
+    const updatedTemplates = await updateEmailTemplates(brevoId);
+
     res.json({
       success: true,
       message: 'Email configuration updated successfully',
       details: {
-        sendGridProviderConfigured: !!sendGridId,
+        brevoProviderConfigured: !!brevoId,
         templatesUpdated: updatedTemplates
       }
     });
@@ -46,27 +46,27 @@ router.post('/', async (req: Request, res: Response) => {
 });
 
 /**
- * Sets up SendGrid as the primary email provider
- * @returns The ID of the SendGrid provider
+ * Sets up Brevo as the primary email provider
+ * @returns The ID of the Brevo provider
  */
-async function setupSendGridProvider(): Promise<number | null> {
+async function setupBrevoProvider(): Promise<number | null> {
   try {
-    console.log('Setting up SendGrid as the primary email provider...');
-    
-    // First, check if we already have a SendGrid provider
+    console.log('Setting up Brevo as the primary email provider...');
+
+    // First, check if we already have a Brevo provider
     const existingProviders = await db
       .select()
       .from(emailProviderSettings);
-    
+
     console.log(`Found ${existingProviders.length} existing providers`);
-    
-    // Look for an existing SendGrid provider
-    const sendGridProvider = existingProviders.find(p => p.providerType === 'sendgrid');
-    
-    let sendGridId: number | null = null;
-    
-    if (sendGridProvider) {
-      console.log('Updating existing SendGrid provider...');
+
+    // Look for an existing Brevo provider
+    const brevoProvider = existingProviders.find(p => p.providerType === 'brevo');
+
+    let brevoId: number | null = null;
+
+    if (brevoProvider) {
+      console.log('Updating existing Brevo provider...');
       // Update it to be active and default
       const [updated] = await db
         .update(emailProviderSettings)
@@ -74,25 +74,25 @@ async function setupSendGridProvider(): Promise<number | null> {
           is_active: true,
           is_default: true,
           settings: {
-            apiKey: process.env.SENDGRID_API_KEY,
+            apiKey: process.env.BREVO_API_KEY,
             from: SENDER_EMAIL
           },
           updated_at: new Date().toISOString()
         })
-        .where(eq(emailProviderSettings.id, sendGridProvider.id))
+        .where(eq(emailProviderSettings.id, brevoProvider.id))
         .returning();
-      
-      sendGridId = updated.id;
+
+      brevoId = updated.id;
     } else {
-      console.log('Creating new SendGrid provider...');
-      // Create a new SendGrid provider
+      console.log('Creating new Brevo provider...');
+      // Create a new Brevo provider
       const [inserted] = await db
         .insert(emailProviderSettings)
         .values({
-          providerType: 'sendgrid',
-          providerName: 'SendGrid Email Service',
+          providerType: 'brevo',
+          providerName: 'Brevo Email Service',
           settings: {
-            apiKey: process.env.SENDGRID_API_KEY,
+            apiKey: process.env.BREVO_API_KEY,
             from: SENDER_EMAIL
           },
           is_active: true,
@@ -101,13 +101,13 @@ async function setupSendGridProvider(): Promise<number | null> {
           updated_at: new Date().toISOString()
         })
         .returning();
-      
-      sendGridId = inserted.id;
+
+      brevoId = inserted.id;
     }
-    
+
     // Deactivate all other providers
     for (const provider of existingProviders) {
-      if (!sendGridProvider || provider.id !== sendGridProvider.id) {
+      if (!brevoProvider || provider.id !== brevoProvider.id) {
         await db
           .update(emailProviderSettings)
           .set({
@@ -118,46 +118,46 @@ async function setupSendGridProvider(): Promise<number | null> {
           .where(eq(emailProviderSettings.id, provider.id));
       }
     }
-    
+
     // Verify the changes
     const updatedProviders = await db
       .select()
       .from(emailProviderSettings);
-      
+
     console.log('Updated providers:');
     for (const provider of updatedProviders) {
       console.log(`- ${provider.providerName} (${provider.providerType}): Active=${provider.isActive}, Default=${provider.isDefault}`);
     }
-    
-    console.log('SendGrid is now set as the primary email provider!');
-    return sendGridId;
+
+    console.log('Brevo is now set as the primary email provider!');
+    return brevoId;
   } catch (error) {
-    console.error('Error setting up SendGrid provider:', error);
+    console.error('Error setting up Brevo provider:', error);
     throw error;
   }
 }
 
 /**
  * Updates all email templates to use support@kickdeck.io as the sender
- * @param providerId The ID of the SendGrid provider
+ * @param providerId The ID of the Brevo provider
  * @returns The number of templates updated
  */
 async function updateEmailTemplates(providerId: number | null): Promise<number> {
   try {
     console.log('Updating all email templates to use standard sender...');
-    
+
     // Get all templates
     const templates = await db
       .select()
       .from(emailTemplates);
-    
+
     console.log(`Found ${templates.length} email templates to update`);
-    
+
     // Update each template
     let updatedCount = 0;
     for (const template of templates) {
       console.log(`Updating template: ${template.name} (${template.type})`);
-      
+
       await db
         .update(emailTemplates)
         .set({
@@ -167,10 +167,10 @@ async function updateEmailTemplates(providerId: number | null): Promise<number> 
           updated_at: new Date()
         })
         .where(eq(emailTemplates.id, template.id));
-        
+
       updatedCount++;
     }
-    
+
     console.log(`${updatedCount} email templates updated successfully!`);
     return updatedCount;
   } catch (error) {

@@ -27,7 +27,7 @@ const nodeEnv = process.env.NODE_ENV || "development";
 if (nodeEnv === "production") {
   dotenv.config({ path: ".env.production" });
   log(`Loaded production environment variables from .env.production`);
-  log("Applied exact development SendGrid configuration to production");
+  log("Applied exact development Brevo configuration to production");
 } else {
   dotenv.config();
   log(`Loaded development environment variables from .env`);
@@ -35,8 +35,9 @@ if (nodeEnv === "production") {
 
 // Use environment variables for production deployment
 // Only set defaults if not already configured
-if (!process.env.SENDGRID_API_KEY && nodeEnv === "development") {
-  process.env.SENDGRID_API_KEY = "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";
+if (!process.env.BREVO_API_KEY && nodeEnv === "development") {
+  // Set a development Brevo API key if not already configured
+  console.warn("BREVO_API_KEY not set for development - email sending will fail");
 }
 if (!process.env.DEFAULT_FROM_EMAIL) {
   process.env.DEFAULT_FROM_EMAIL = "support@kickdeck.io";
@@ -45,7 +46,7 @@ if (!process.env.DEFAULT_FROM_EMAIL) {
 // Log critical environment variables for debugging (without exposing secrets)
 log(`Environment: ${nodeEnv}`);
 log(
-  `SendGrid API Key: ${process.env.SENDGRID_API_KEY ? `Present (${process.env.SENDGRID_API_KEY.substring(0, 10)}...)` : "Missing"}`,
+  `Brevo API Key: ${process.env.BREVO_API_KEY ? `Present (${process.env.BREVO_API_KEY.substring(0, 10)}...)` : "Missing"}`,
 );
 log(`Database URL: ${process.env.DATABASE_URL ? "Present" : "Missing"}`);
 log(`Session Secret: ${process.env.SESSION_SECRET ? "Present" : "Missing"}`);

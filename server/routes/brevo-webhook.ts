@@ -4,38 +4,34 @@ import { sql } from "drizzle-orm";
 
 const router = Router();
 
-interface SendGridEvent {
+interface BrevoEvent {
   email: string;
-  timestamp: number;
-  "smtp-id": string;
   event: string;
-  category?: string[];
-  sg_event_id: string;
-  sg_message_id: string;
+  date: string;
+  ts?: number;
+  ts_event?: number;
+  "message-id"?: string;
+  tag?: string;
+  tags?: string[];
   reason?: string;
-  status?: string;
-  response?: string;
-  useragent?: string;
-  ip?: string;
-  url?: string;
-  url_offset?: {
-    index: number;
-    type: string;
-  };
-  template_id?: string;
-  custom_args?: Record<string, string>;
+  subject?: string;
+  template_id?: number;
+  link?: string;
+  sending_ip?: string;
 }
 
 /**
- * SendGrid webhook endpoint to receive email events
+ * Brevo webhook endpoint to receive email events
+ * Note: Brevo sends events as single objects (not arrays like SendGrid)
  */
-router.post("/webhooks/sendgrid", async (req, res) => {
+router.post("/webhooks/brevo", async (req, res) => {
   try {
-    const events: SendGridEvent[] = Array.isArray(req.body)
+    // Brevo sends single event objects, but handle arrays just in case
+    const events: BrevoEvent[] = Array.isArray(req.body)
       ? req.body
       : [req.body];
 
-    console.log(`📧 Received ${events.length} SendGrid webhook events`);
+    console.log(`📧 Received ${events.length} Brevo webhook events`);
 
     for (const event of events) {
       try {
@@ -49,51 +45,82 @@ router.post("/webhooks/sendgrid", async (req, res) => {
     // Always respond with 200 to acknowledge receipt
     res.status(200).json({ success: true, processed: events.length });
   } catch (error) {
-    console.error("Error processing SendGrid webhook:", error);
-    // Still return 200 to prevent SendGrid from retrying
+    console.error("Error processing Brevo webhook:", error);
+    // Still return 200 to prevent Brevo from retrying
     res.status(200).json({ success: false, error: "Processing failed" });
   }
 });
 
 /**
- * Process individual SendGrid webhook event and update database
+ * Process individual Brevo webhook event and update database
+ *
+ * Brevo event types:
+ * - request: Email has been received by Brevo for sending
+ * - delivered: Email successfully delivered
+ * - soft_bounce: Temporary delivery failure
+ * - hard_bounce: Permanent delivery failure
+ * - opened: Email was opened
+ * - click: A link was clicked
+ * - spam: Marked as spam
+ * - unsubscribed: Recipient unsubscribed
+ * - blocked: Email was blocked
+ * - invalid_email: Invalid email address
+ * - deferred: Delivery temporarily deferred
+ * - error: General error
  */
-async function processWebhookEvent(event: SendGridEvent) {
+async function processWebhookEvent(event: BrevoEvent) {
   const eventType = event.event;
-  const timestamp = new Date(event.timestamp * 1000).toISOString();
-  console.log("test");
+  const timestamp = event.date || new Date(
+    (event.ts_event || event.ts || Date.now() / 1000) * 1000
+  ).toISOString();
+  const messageId = event["message-id"] || "";
+
   console.log(
     `Processing ${eventType} event for ${event.email} at ${timestamp}`,
   );
 
   try {
-    // Try to find existing email tracking record by SendGrid message ID
+    // Try to find existing email tracking record by Brevo message ID
     const existingQuery = await db.execute(sql`
-      SELECT * FROM email_tracking 
-      WHERE sendgrid_message_id = ${event.sg_message_id}
+      SELECT * FROM email_tracking
+      WHERE brevo_message_id = ${messageId}
       LIMIT 1
     `);
 
     const trackingRecord = existingQuery.rows[0] || null;
 
+    // Map Brevo event types to our status values
+    const mapStatus = (brevoEvent: string): string => {
+      switch (brevoEvent) {
+        case "delivered":
+          return "delivered";
+        case "hard_bounce":
+        case "soft_bounce":
+        case "blocked":
+        case "invalid_email":
+        case "error":
+          return "failed";
+        case "request":
+        case "deferred":
+          return "sent";
+        default:
+          return "sent";
+      }
+    };
+
     // If no existing record found, create a new one
     if (!trackingRecord) {
-      const status =
-        eventType === "delivered"
-          ? "delivered"
-          : eventType === "bounce" || eventType === "dropped"
-            ? "failed"
-            : "sent";
+      const status = mapStatus(eventType);
 
       await db.execute(sql`
         INSERT INTO email_tracking (
-          recipient_email, email_type, template_id, sendgrid_message_id, 
+          recipient_email, email_type, template_id, brevo_message_id,
           status, sent_at, delivered_at, error_message, webhook_data
         ) VALUES (
           ${event.email},
           ${event.template_id ? "template" : "regular"},
-          ${event.template_id || null},
-          ${event.sg_message_id},
+          ${event.template_id ? String(event.template_id) : null},
+          ${messageId},
           ${status},
           ${timestamp}::timestamp,
           ${eventType === "delivered" ? timestamp : null}::timestamp,
@@ -103,14 +130,10 @@ async function processWebhookEvent(event: SendGridEvent) {
       `);
 
       console.log(`✅ Created new tracking record for ${event.email}`);
-      console.log(`✅ Created new tracking record for ${event.email}`);
     } else {
       // Update existing record with new event information
       let updateQuery = `UPDATE email_tracking SET webhook_data = $1, updated_at = $2`;
-      console.log("eventType");
-      console.log(eventType);
-
-      const params = [JSON.stringify(event), timestamp];
+      const params: any[] = [JSON.stringify(event), timestamp];
       let paramIndex = 3;
 
       // Update status based on event type
@@ -120,11 +143,17 @@ async function processWebhookEvent(event: SendGridEvent) {
         updateQuery += `, delivered_at = $${paramIndex}`;
         params.push("delivered", timestamp);
         paramIndex += 1;
-      } else if (eventType === "bounce" || eventType === "dropped") {
+      } else if (
+        eventType === "hard_bounce" ||
+        eventType === "soft_bounce" ||
+        eventType === "blocked" ||
+        eventType === "invalid_email" ||
+        eventType === "error"
+      ) {
         updateQuery += `, status = $${paramIndex}, error_message = $${paramIndex + 1}`;
-        params.push("failed", event.reason || "Email bounced or dropped");
+        params.push("failed", event.reason || `Email ${eventType}`);
         paramIndex += 2;
-      } else if (eventType === "open") {
+      } else if (eventType === "opened") {
         updateQuery += `, opened_at = $${paramIndex}`;
         params.push(timestamp);
         paramIndex += 1;
@@ -136,8 +165,8 @@ async function processWebhookEvent(event: SendGridEvent) {
 
       updateQuery += ` WHERE id = $${paramIndex}`;
       params.push(trackingRecord.id);
-      console.log(params);
-      //await db.execute(sql.raw(updateQuery, params));
+
+      await db.execute(sql.raw(updateQuery, params));
       console.log(
         `✅ Updated tracking record for ${event.email} with ${eventType} event`,
       );
@@ -145,11 +174,15 @@ async function processWebhookEvent(event: SendGridEvent) {
 
     // Log important events for immediate visibility
     if (eventType === "delivered") {
-      console.log(`🎉 EMAIL DELIVERED: ${event.email} via SendGrid`);
-    } else if (eventType === "bounce") {
-      console.log(`❌ EMAIL BOUNCED: ${event.email} - ${event.reason}`);
-    } else if (eventType === "dropped") {
-      console.log(`⚠️ EMAIL DROPPED: ${event.email} - ${event.reason}`);
+      console.log(`🎉 EMAIL DELIVERED: ${event.email} via Brevo`);
+    } else if (eventType === "hard_bounce") {
+      console.log(`❌ EMAIL HARD BOUNCED: ${event.email} - ${event.reason}`);
+    } else if (eventType === "soft_bounce") {
+      console.log(`⚠️ EMAIL SOFT BOUNCED: ${event.email} - ${event.reason}`);
+    } else if (eventType === "blocked") {
+      console.log(`🚫 EMAIL BLOCKED: ${event.email} - ${event.reason}`);
+    } else if (eventType === "spam") {
+      console.log(`🗑️ MARKED SPAM: ${event.email}`);
     }
   } catch (error) {
     console.error("Error processing webhook event:", error);
@@ -165,7 +198,7 @@ router.get("/admin/email-activity", async (req, res) => {
 
     // Build where clause
     let whereClause = "";
-    const params = [];
+    const params: any[] = [];
     let paramIndex = 1;
 
     if (status) {
@@ -197,7 +230,7 @@ router.get("/admin/email-activity", async (req, res) => {
 
     // Get summary statistics
     const statsQuery = await db.execute(sql`
-      SELECT 
+      SELECT
         COUNT(*) as total,
         COUNT(CASE WHEN status = 'delivered' THEN 1 END) as delivered,
         COUNT(CASE WHEN status = 'failed' THEN 1 END) as failed,

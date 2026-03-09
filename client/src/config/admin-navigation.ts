@@ -70,7 +70,7 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     icon: Settings,
     items: [
       { id: 'settings-general', view: 'settings', label: 'General', icon: Settings, route: '/admin/settings', permission: 'view_organization_settings' },
-      { id: 'settings-email', view: null, label: 'Email', icon: Mail, route: '/admin/sendgrid-setup' },
+      { id: 'settings-email', view: null, label: 'Email', icon: Mail, route: '/admin/brevo-setup' },
       { id: 'roles', view: 'roles', label: 'Permissions', icon: KeyRound, route: '/admin/roles', permission: 'view_role_permissions' },
     ],
   },

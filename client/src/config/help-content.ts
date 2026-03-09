@@ -364,7 +364,7 @@ export const HELP_CONTENT: Partial<Record<View, ViewHelpContent>> = {
       {
         id: 'settings-email',
         title: 'Email Configuration',
-        description: 'Configure email templates for registration confirmations, payment receipts, and tournament notifications. Set up your email provider (SendGrid) in the Email tab.',
+        description: 'Configure email templates for registration confirmations, payment receipts, and tournament notifications. Set up your email provider (Brevo) in the Email tab.',
         category: 'workflow',
       },
     ],

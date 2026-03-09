@@ -177,8 +177,8 @@ export default function EmailTemplatesPage() {
           </div>
           <div className="flex gap-3">
             <Button variant="outline" asChild>
-              <Link href="/sendgrid-settings">
-                SendGrid Integration
+              <Link href="/brevo-settings">
+                Brevo Integration
               </Link>
             </Button>
             <Button asChild>

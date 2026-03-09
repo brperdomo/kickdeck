@@ -1830,7 +1830,7 @@ export const emailProviderSettings = pgTable("email_provider_settings", {
 });
 
 export const insertEmailProviderSettingsSchema = createInsertSchema(emailProviderSettings, {
-  providerType: z.enum(["smtp", "sendgrid", "mailgun"]),
+  providerType: z.enum(["smtp", "brevo", "mailgun"]),
   providerName: z.string().min(1, "Provider name is required"),
   settings: z.record(z.unknown()),
   isActive: z.boolean().default(true),
@@ -1886,7 +1886,7 @@ export const emailTemplates = pgTable("email_templates", {
   sender_email: text("sender_email").notNull(),
   is_active: boolean("is_active").default(true),
   variables: jsonb("variables").default('["firstName", "lastName"]'),
-  sendgridTemplateId: text("sendgrid_template_id"), // SendGrid dynamic template ID mapping
+  brevoTemplateId: text("brevo_template_id"), // Brevo dynamic template ID mapping
   created_at: timestamp("created_at").notNull().defaultNow(),
   updated_at: timestamp("updated_at").notNull().defaultNow(),
 });
@@ -1925,13 +1925,13 @@ export const selectProductUpdateSchema = createSelectSchema(productUpdates);
 export type InsertProductUpdate = typeof productUpdates.$inferInsert;
 export type SelectProductUpdate = typeof productUpdates.$inferSelect;
 
-// Email tracking table for SendGrid webhook events
+// Email tracking table for Brevo webhook events
 export const emailTracking = pgTable("email_tracking", {
   id: serial("id").primaryKey(),
   recipientEmail: text("recipient_email").notNull(),
   emailType: text("email_type").notNull(), // 'template', 'regular', etc.
   templateId: text("template_id"),
-  sendgridMessageId: text("sendgrid_message_id"),
+  brevoMessageId: text("brevo_message_id"),
   status: text("status").notNull(), // 'sent', 'delivered', 'failed', 'opened', 'clicked'
   sentAt: timestamp("sent_at").notNull().defaultNow(),
   deliveredAt: timestamp("delivered_at"),

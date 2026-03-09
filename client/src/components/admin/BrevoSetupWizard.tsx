@@ -10,11 +10,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CheckCircle, AlertCircle, Mail, Settings, TestTube, Globe } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-interface SendGridTemplate {
-  id: string;
+interface BrevoTemplate {
+  id: number;
   name: string;
-  generation: string;
-  updated_at: string;
+  subject: string;
+  isActive: boolean;
+  createdAt: string;
 }
 
 interface EmailProvider {
@@ -32,11 +33,11 @@ interface EmailProvider {
 interface TestResult {
   success: boolean;
   message: string;
-  templates?: SendGridTemplate[];
+  templates?: BrevoTemplate[];
   error?: string;
 }
 
-export function SendGridSetupWizard() {
+export function BrevoSetupWizard() {
   const [apiKey, setApiKey] = useState('');
   const [fromEmail, setFromEmail] = useState('support@kickdeck.io');
   const [currentStep, setCurrentStep] = useState(1);
@@ -44,7 +45,7 @@ export function SendGridSetupWizard() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Fetch current SendGrid configuration
+  // Fetch current Brevo configuration
   const { data: currentConfig, isLoading } = useQuery({
     queryKey: ['/api/admin/email-providers'],
     queryFn: async () => {
@@ -54,10 +55,10 @@ export function SendGridSetupWizard() {
     }
   });
 
-  // Test SendGrid configuration
+  // Test Brevo configuration
   const testConfigMutation = useMutation({
     mutationFn: async (config: { apiKey: string; fromEmail: string }) => {
-      const response = await fetch('/api/admin/sendgrid/test-config', {
+      const response = await fetch('/api/admin/brevo/test-config', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(config)
@@ -69,7 +70,7 @@ export function SendGridSetupWizard() {
       if (data.success) {
         toast({
           title: "Configuration Valid",
-          description: `Found ${data.templates?.length || 0} SendGrid templates`
+          description: `Found ${data.templates?.length || 0} Brevo templates`
         });
         setCurrentStep(2);
       } else {
@@ -89,15 +90,15 @@ export function SendGridSetupWizard() {
     }
   });
 
-  // Save SendGrid configuration
+  // Save Brevo configuration
   const saveConfigMutation = useMutation({
     mutationFn: async (config: { apiKey: string; fromEmail: string }) => {
       const response = await fetch('/api/admin/email-providers', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          providerType: 'sendgrid',
-          providerName: 'SendGrid',
+          providerType: 'brevo',
+          providerName: 'Brevo',
           settings: {
             apiKey: config.apiKey,
             from: config.fromEmail
@@ -112,7 +113,7 @@ export function SendGridSetupWizard() {
     onSuccess: () => {
       toast({
         title: "Configuration Saved",
-        description: "SendGrid has been configured successfully"
+        description: "Brevo has been configured successfully"
       });
       queryClient.invalidateQueries({ queryKey: ['/api/admin/email-providers'] });
       setCurrentStep(3);
@@ -122,7 +123,7 @@ export function SendGridSetupWizard() {
   // Send test email
   const testEmailMutation = useMutation({
     mutationFn: async (email: string) => {
-      const response = await fetch('/api/admin/sendgrid/send-test-email', {
+      const response = await fetch('/api/admin/brevo/send-test-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email })
@@ -149,10 +150,10 @@ export function SendGridSetupWizard() {
   // Load existing configuration
   useEffect(() => {
     if (currentConfig && currentConfig.length > 0) {
-      const sendgridConfig = currentConfig.find(c => c.providerType === 'sendgrid');
-      if (sendgridConfig) {
-        setApiKey(sendgridConfig.settings.apiKey || '');
-        setFromEmail(sendgridConfig.settings.from || 'support@kickdeck.io');
+      const brevoConfig = currentConfig.find(c => c.providerType === 'brevo');
+      if (brevoConfig) {
+        setApiKey(brevoConfig.settings.apiKey || '');
+        setFromEmail(brevoConfig.settings.from || 'support@kickdeck.io');
       }
     }
   }, [currentConfig]);
@@ -161,7 +162,7 @@ export function SendGridSetupWizard() {
     if (!apiKey.trim()) {
       toast({
         title: "API Key Required",
-        description: "Please enter your SendGrid API key",
+        description: "Please enter your Brevo API key",
         variant: "destructive"
       });
       return;
@@ -187,17 +188,17 @@ export function SendGridSetupWizard() {
     testEmailMutation.mutate(testEmail);
   };
 
-  const isConfigured = currentConfig?.some(c => c.providerType === 'sendgrid' && c.isActive);
+  const isConfigured = currentConfig?.some(c => c.providerType === 'brevo' && c.isActive);
 
   return (
     <Card className="w-full max-w-4xl mx-auto">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Mail className="h-5 w-5" />
-          SendGrid Email Configuration
+          Brevo Email Configuration
         </CardTitle>
         <CardDescription>
-          Set up SendGrid for email delivery in your application
+          Set up Brevo for email delivery in your application
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -228,16 +229,16 @@ export function SendGridSetupWizard() {
           <TabsContent value="setup" className="space-y-6">
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="apiKey">SendGrid API Key</Label>
+                <Label htmlFor="apiKey">Brevo API Key</Label>
                 <Input
                   id="apiKey"
                   type="password"
-                  placeholder="SG.xxxxxxxxxxxxxxxxxx"
+                  placeholder="xkeysib-xxxxxxxxxx"
                   value={apiKey}
                   onChange={(e) => setApiKey(e.target.value)}
                 />
                 <p className="text-sm text-muted-foreground">
-                  Get your API key from the SendGrid dashboard under Settings → API Keys
+                  Get your API key from the Brevo dashboard under SMTP & API &rarr; API Keys
                 </p>
               </div>
 
@@ -251,7 +252,7 @@ export function SendGridSetupWizard() {
                   onChange={(e) => setFromEmail(e.target.value)}
                 />
                 <p className="text-sm text-muted-foreground">
-                  This email address must be verified in your SendGrid account
+                  This email address must be verified in your Brevo account
                 </p>
               </div>
 
@@ -263,7 +264,7 @@ export function SendGridSetupWizard() {
                 >
                   {testConfigMutation.isPending ? 'Testing...' : 'Test Configuration'}
                 </Button>
-                
+
                 <Button
                   onClick={handleSaveConfig}
                   disabled={saveConfigMutation.isPending || !apiKey.trim()}
@@ -296,7 +297,7 @@ export function SendGridSetupWizard() {
 
               {!isConfigured && (
                 <p className="text-sm text-muted-foreground">
-                  Please configure SendGrid first before sending test emails
+                  Please configure Brevo first before sending test emails
                 </p>
               )}
             </div>
@@ -317,11 +318,11 @@ export function SendGridSetupWizard() {
 
 function TemplatesList() {
   const { data: templates, isLoading } = useQuery({
-    queryKey: ['/api/admin/sendgrid/templates'],
+    queryKey: ['/api/admin/brevo/templates'],
     queryFn: async () => {
-      const response = await fetch('/api/admin/sendgrid/templates');
+      const response = await fetch('/api/admin/brevo/templates');
       if (!response.ok) throw new Error('Failed to fetch templates');
-      return response.json() as SendGridTemplate[];
+      return response.json() as BrevoTemplate[];
     }
   });
 
@@ -332,9 +333,9 @@ function TemplatesList() {
   if (!templates || templates.length === 0) {
     return (
       <div className="text-center py-8">
-        <p className="text-muted-foreground">No SendGrid templates found</p>
+        <p className="text-muted-foreground">No Brevo templates found</p>
         <p className="text-sm text-muted-foreground mt-2">
-          Make sure SendGrid is configured and you have dynamic templates in your account
+          Make sure Brevo is configured and you have templates in your account
         </p>
       </div>
     );
@@ -353,7 +354,7 @@ function TemplatesList() {
                   <p className="text-sm text-muted-foreground">ID: {template.id}</p>
                 </div>
                 <Badge variant="outline">
-                  {template.generation}
+                  {template.isActive ? 'Active' : 'Inactive'}
                 </Badge>
               </div>
             </CardContent>
@@ -365,7 +366,7 @@ function TemplatesList() {
 }
 
 function StatusOverview({ isConfigured, config }: { isConfigured: boolean; config?: EmailProvider[] }) {
-  const sendgridConfig = config?.find(c => c.providerType === 'sendgrid');
+  const brevoConfig = config?.find(c => c.providerType === 'brevo');
 
   return (
     <div className="space-y-4">
@@ -376,16 +377,16 @@ function StatusOverview({ isConfigured, config }: { isConfigured: boolean; confi
           <AlertCircle className="h-5 w-5 text-red-500" />
         )}
         <h3 className="text-lg font-semibold">
-          {isConfigured ? 'SendGrid Configured' : 'SendGrid Not Configured'}
+          {isConfigured ? 'Brevo Configured' : 'Brevo Not Configured'}
         </h3>
       </div>
 
-      {sendgridConfig && (
+      {brevoConfig && (
         <div className="space-y-2">
-          <p><strong>Provider:</strong> {sendgridConfig.providerName}</p>
-          <p><strong>From Email:</strong> {sendgridConfig.settings.from}</p>
-          <p><strong>Status:</strong> {sendgridConfig.isActive ? 'Active' : 'Inactive'}</p>
-          <p><strong>Default:</strong> {sendgridConfig.isDefault ? 'Yes' : 'No'}</p>
+          <p><strong>Provider:</strong> {brevoConfig.providerName}</p>
+          <p><strong>From Email:</strong> {brevoConfig.settings.from}</p>
+          <p><strong>Status:</strong> {brevoConfig.isActive ? 'Active' : 'Inactive'}</p>
+          <p><strong>Default:</strong> {brevoConfig.isDefault ? 'Yes' : 'No'}</p>
         </div>
       )}
 
@@ -393,7 +394,7 @@ function StatusOverview({ isConfigured, config }: { isConfigured: boolean; confi
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
           <h4 className="font-medium text-yellow-800">Configuration Required</h4>
           <p className="text-yellow-700 text-sm mt-1">
-            Please configure SendGrid in the Setup tab to enable email functionality
+            Please configure Brevo in the Setup tab to enable email functionality
           </p>
         </div>
       )}

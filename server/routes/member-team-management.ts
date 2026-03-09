@@ -11,7 +11,7 @@ import { teams, users } from '@db/schema';
 import { eq, or, sql } from 'drizzle-orm';
 import bcrypt from 'bcrypt';
 import * as z from 'zod';
-import { sendEmail } from '../services/sendgrid-service';
+import { sendEmail } from '../services/brevoService';
 
 const router = Router();
 

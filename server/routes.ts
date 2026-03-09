@@ -174,7 +174,7 @@ import {
   removeEventAdministrator
 } from "./routes/admin/event-administrators";
 import userRouter from "./routes/user";
-import sendgridWebhookRouter from "./routes/sendgrid-webhook";
+import brevoWebhookRouter from "./routes/brevo-webhook";
 import { fixCardDetails } from "./routes/fix-card-details";
 import gameTeamsRouter from "./routes/admin/game-teams";
 import { processDestinationCharge } from "./routes/stripe-connect-payments";
@@ -986,8 +986,8 @@ export function registerRoutes(app: Express): Server {
     // Add organization identification middleware
     app.use(identifyOrganization);
     
-    // Register SendGrid webhook route (no auth required for webhook)
-    app.use('/api', sendgridWebhookRouter);
+    // Register Brevo webhook route (no auth required for webhook)
+    app.use('/api', brevoWebhookRouter);
     
     // CSV Import routes - Register very early to avoid Vite catch-all interference
     app.use('/api/admin/csv-import', csvImportRouter);
@@ -2322,11 +2322,11 @@ export function registerRoutes(app: Express): Server {
 
     // Stripe Connect routes are registered dynamically at the end of this function
     
-    // Register direct SendGrid API routes
+    // Register direct Brevo API routes
     // Since we can't use the helper functions due to import issues, we'll implement the routes directly
-    
-    // Get all SendGrid templates endpoint
-    // SendGrid routes have been moved to use dynamic imports - they are defined at the end of the file
+
+    // Get all Brevo templates endpoint
+    // Brevo routes have been moved to use dynamic imports - they are defined at the end of the file
     
     // Role permissions management endpoints
     app.get('/api/admin/roles', isAdmin, getRolesWithPermissions);
@@ -12193,61 +12193,61 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       }
     });
     
-    // SendGrid settings routes with enhanced authentication debugging
-    app.get('/api/admin/sendgrid/settings', isAdmin, async (req, res) => {
+    // Brevo settings routes with enhanced authentication debugging
+    app.get('/api/admin/brevo/settings', isAdmin, async (req, res) => {
       try {
-        console.log('SendGrid settings request - Auth status:', req.isAuthenticated(), 'User:', !!req.user);
-        const { getSendGridSettings } = await import('./routes/sendgrid-settings');
-        await getSendGridSettings(req, res);
+        console.log('Brevo settings request - Auth status:', req.isAuthenticated(), 'User:', !!req.user);
+        const { getBrevoSettings } = await import('./routes/brevo-settings');
+        await getBrevoSettings(req, res);
       } catch (error) {
-        console.error('Error fetching SendGrid settings:', error);
-        res.status(500).json({ error: "Failed to fetch SendGrid settings", details: error.message });
+        console.error('Error fetching Brevo settings:', error);
+        res.status(500).json({ error: "Failed to fetch Brevo settings", details: error.message });
       }
     });
     
     // Production diagnostic endpoint - bypasses auth for testing
-    app.get('/api/admin/sendgrid/production-test', async (req, res) => {
+    app.get('/api/admin/brevo/production-test', async (req, res) => {
       try {
-        console.log('=== Production SendGrid Diagnostic ===');
+        console.log('=== Production Brevo Diagnostic ===');
         console.log('Environment check:');
         console.log('- NODE_ENV:', process.env.NODE_ENV);
-        console.log('- SENDGRID_API_KEY present:', !!process.env.SENDGRID_API_KEY);
-        
-        if (!process.env.SENDGRID_API_KEY) {
-          return res.status(500).json({ 
-            error: "SENDGRID_API_KEY missing",
+        console.log('- BREVO_API_KEY present:', !!process.env.BREVO_API_KEY);
+
+        if (!process.env.BREVO_API_KEY) {
+          return res.status(500).json({
+            error: "BREVO_API_KEY missing",
             environment: process.env.NODE_ENV
           });
         }
-        
+
         console.log('Testing node-fetch import...');
         const fetch = (await import('node-fetch')).default;
         console.log('node-fetch imported successfully');
-        
-        console.log('Testing SendGrid API call...');
-        const response = await fetch('https://api.sendgrid.com/v3/templates?generations=dynamic', {
+
+        console.log('Testing Brevo API call...');
+        const response = await fetch('https://api.brevo.com/v3/smtp/templates', {
           method: 'GET',
           headers: {
-            'Authorization': `Bearer ${process.env.SENDGRID_API_KEY}`,
+            'api-key': process.env.BREVO_API_KEY,
             'Content-Type': 'application/json'
           }
         });
-        
-        console.log('SendGrid response status:', response.status);
-        
+
+        console.log('Brevo response status:', response.status);
+
         if (!response.ok) {
           const errorText = await response.text();
-          console.error('SendGrid API error:', errorText);
+          console.error('Brevo API error:', errorText);
           return res.status(500).json({
-            error: "SendGrid API failed",
+            error: "Brevo API failed",
             status: response.status,
             details: errorText
           });
         }
-        
+
         const data = await response.json();
-        console.log('SendGrid API success - templates:', data.templates?.length || 0);
-        
+        console.log('Brevo API success - templates:', data.templates?.length || 0);
+
         res.json({
           success: true,
           environment: process.env.NODE_ENV,
@@ -12260,7 +12260,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           message: error.message,
           stack: error.stack?.split('\n').slice(0, 5).join('\n')
         });
-        res.status(500).json({ 
+        res.status(500).json({
           error: "Production test failed",
           errorName: error.name,
           errorMessage: error.message,
@@ -12269,93 +12269,93 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       }
     });
 
-    app.get('/api/admin/sendgrid/templates', isAdmin, async (req, res) => {
+    app.get('/api/admin/brevo/templates', isAdmin, async (req, res) => {
       try {
-        console.log('SendGrid templates request - Auth status:', req.isAuthenticated(), 'User:', !!req.user);
+        console.log('Brevo templates request - Auth status:', req.isAuthenticated(), 'User:', !!req.user);
         console.log('User roles:', req.user?.roles || 'No roles');
-        console.log('Environment check - SENDGRID_API_KEY present:', !!process.env.SENDGRID_API_KEY);
-        
+        console.log('Environment check - BREVO_API_KEY present:', !!process.env.BREVO_API_KEY);
+
         // Additional authentication debugging
         console.log('User authenticated successfully with roles:', req.user?.roles);
-        
+
         // Direct implementation to bypass import issues
-        if (!process.env.SENDGRID_API_KEY) {
-          console.error('SENDGRID_API_KEY not found in environment');
-          return res.status(500).json({ 
-            error: "SendGrid API key not configured",
-            details: "SENDGRID_API_KEY environment variable is missing"
+        if (!process.env.BREVO_API_KEY) {
+          console.error('BREVO_API_KEY not found in environment');
+          return res.status(500).json({
+            error: "Brevo API key not configured",
+            details: "BREVO_API_KEY environment variable is missing"
           });
         }
-        
-        console.log('Attempting to fetch SendGrid templates...');
+
+        console.log('Attempting to fetch Brevo templates...');
         const fetch = (await import('node-fetch')).default;
-        const response = await fetch('https://api.sendgrid.com/v3/templates?generations=dynamic', {
+        const response = await fetch('https://api.brevo.com/v3/smtp/templates', {
           method: 'GET',
           headers: {
-            'Authorization': `Bearer ${process.env.SENDGRID_API_KEY}`,
+            'api-key': process.env.BREVO_API_KEY,
             'Content-Type': 'application/json'
           }
         });
 
-        console.log('SendGrid API response status:', response.status);
+        console.log('Brevo API response status:', response.status);
 
         if (!response.ok) {
           const errorText = await response.text();
-          console.error('SendGrid API error response:', errorText);
-          console.error('SendGrid API error status:', response.status);
-          
+          console.error('Brevo API error response:', errorText);
+          console.error('Brevo API error status:', response.status);
+
           if (response.status === 401) {
-            return res.status(401).json({ 
-              error: "SendGrid authorization failed",
-              details: "The SendGrid API key is invalid or has expired. Please check your API key in the SendGrid dashboard.",
+            return res.status(401).json({
+              error: "Brevo authorization failed",
+              details: "The Brevo API key is invalid or has expired. Please check your API key in the Brevo dashboard.",
               suggestedActions: [
                 "Verify the API key is correct",
-                "Check if the API key has been revoked", 
-                "Ensure the API key has 'Full Access' or at least 'Templates' permissions"
+                "Check if the API key has been revoked",
+                "Ensure the API key has appropriate permissions"
               ]
             });
           }
-          
+
           if (response.status === 403) {
             return res.status(403).json({
-              error: "SendGrid access forbidden", 
+              error: "Brevo access forbidden",
               details: "The API key does not have permission to access templates. Please check the API key permissions.",
               suggestedActions: [
-                "Generate a new API key with 'Full Access' permissions",
-                "Or ensure the API key has at least 'Templates' read permissions"
+                "Generate a new API key with appropriate permissions",
+                "Or ensure the API key has at least template read permissions"
               ]
             });
           }
-          
-          return res.status(response.status).json({ 
-            error: "SendGrid API request failed",
-            details: `SendGrid API returned ${response.status}: ${errorText}`,
+
+          return res.status(response.status).json({
+            error: "Brevo API request failed",
+            details: `Brevo API returned ${response.status}: ${errorText}`,
             status: response.status
           });
         }
 
         const data = await response.json();
-        console.log(`Successfully fetched ${data.templates?.length || 0} SendGrid templates`);
+        console.log(`Successfully fetched ${data.templates?.length || 0} Brevo templates`);
         res.json(data.templates || []);
       } catch (error) {
-        console.error('Detailed SendGrid templates error:', {
+        console.error('Detailed Brevo templates error:', {
           message: error.message,
           stack: error.stack,
           name: error.name
         });
-        res.status(500).json({ 
-          error: "Failed to fetch SendGrid templates", 
+        res.status(500).json({
+          error: "Failed to fetch Brevo templates",
           details: error.message,
           errorType: error.name
         });
       }
     });
     
-    app.get('/api/admin/sendgrid/template-mappings', isAdmin, async (req, res) => {
+    app.get('/api/admin/brevo/template-mappings', isAdmin, async (req, res) => {
       try {
-        console.log('SendGrid template mappings request - Auth status:', req.isAuthenticated(), 'User:', !!req.user);
-        
-        // Direct implementation to fetch email templates with SendGrid mappings
+        console.log('Brevo template mappings request - Auth status:', req.isAuthenticated(), 'User:', !!req.user);
+
+        // Direct implementation to fetch email templates with Brevo mappings
         const templates = await db.select().from(emailTemplates);
         console.log(`Found ${templates.length} email templates`);
         res.json(templates);
@@ -12365,25 +12365,25 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       }
     });
     
-    app.post('/api/admin/sendgrid/template-mapping', isAdmin, async (req, res) => {
+    app.post('/api/admin/brevo/template-mapping', isAdmin, async (req, res) => {
       try {
-        console.log('SendGrid template mapping update - Auth status:', req.isAuthenticated(), 'User:', !!req.user);
-        const { templateType, sendgridTemplateId } = req.body;
-        
+        console.log('Brevo template mapping update - Auth status:', req.isAuthenticated(), 'User:', !!req.user);
+        const { templateType, brevoTemplateId } = req.body;
+
         if (!templateType) {
           return res.status(400).json({ error: 'Template type is required' });
         }
 
-        // Update the email template with the SendGrid template ID
+        // Update the email template with the Brevo template ID
         const { eq } = await import('drizzle-orm');
         await db.update(emailTemplates)
-          .set({ 
-            sendgridTemplateId: sendgridTemplateId || null,
+          .set({
+            brevoTemplateId: brevoTemplateId || null,
             updated_at: new Date()
           })
           .where(eq(emailTemplates.type, templateType));
 
-        console.log(`Updated template mapping: ${templateType} -> ${sendgridTemplateId || 'removed'}`);
+        console.log(`Updated template mapping: ${templateType} -> ${brevoTemplateId || 'removed'}`);
         res.json({ success: true, message: 'Template mapping updated successfully' });
       } catch (error) {
         console.error('Error updating template mapping:', error);
@@ -12391,14 +12391,14 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       }
     });
     
-    app.post('/api/admin/sendgrid/test-template', isAdmin, async (req, res) => {
+    app.post('/api/admin/brevo/test-template', isAdmin, async (req, res) => {
       try {
-        console.log('SendGrid template test - Auth status:', req.isAuthenticated(), 'User:', !!req.user);
-        const { testSendGridTemplate } = await import('./routes/sendgrid-settings');
-        await testSendGridTemplate(req, res);
+        console.log('Brevo template test - Auth status:', req.isAuthenticated(), 'User:', !!req.user);
+        const { testBrevoTemplate } = await import('./routes/brevo-settings');
+        await testBrevoTemplate(req, res);
       } catch (error) {
-        console.error('Error testing SendGrid template:', error);
-        res.status(500).json({ error: "Failed to test SendGrid template", details: error.message });
+        console.error('Error testing Brevo template:', error);
+        res.status(500).json({ error: "Failed to test Brevo template", details: error.message });
       }
     });
     
@@ -12772,7 +12772,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
     // Fix card details endpoint for teams with missing card information
     app.post('/api/admin/fix-card-details', isAdmin, fixCardDetails);
 
-    // SendGrid Configuration API endpoints
+    // Brevo Configuration API endpoints
     app.get('/api/admin/email-providers', isAdmin, async (req, res) => {
       try {
         const providers = await db
@@ -12819,7 +12819,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       }
     });
 
-    app.post('/api/admin/sendgrid/test-config', isAdmin, async (req, res) => {
+    app.post('/api/admin/brevo/test-config', isAdmin, async (req, res) => {
       try {
         const { apiKey, fromEmail } = req.body;
 
@@ -12827,80 +12827,80 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           return res.status(400).json({ success: false, message: 'API key is required' });
         }
 
-        // Test the SendGrid API key by fetching templates
-        const response = await fetch('https://api.sendgrid.com/v3/templates', {
+        // Test the Brevo API key by fetching templates
+        const response = await fetch('https://api.brevo.com/v3/smtp/templates', {
           headers: {
-            'Authorization': `Bearer ${apiKey}`,
+            'api-key': apiKey,
             'Content-Type': 'application/json'
           }
         });
 
         if (!response.ok) {
           const errorText = await response.text();
-          return res.json({ 
-            success: false, 
-            message: `SendGrid API error: ${response.status} ${response.statusText}`,
+          return res.json({
+            success: false,
+            message: `Brevo API error: ${response.status} ${response.statusText}`,
             error: errorText
           });
         }
 
         const data = await response.json();
-        res.json({ 
-          success: true, 
+        res.json({
+          success: true,
           message: 'Configuration is valid',
           templates: data.templates || []
         });
       } catch (error) {
-        console.error('Error testing SendGrid config:', error);
-        res.status(500).json({ 
-          success: false, 
+        console.error('Error testing Brevo config:', error);
+        res.status(500).json({
+          success: false,
           message: 'Failed to test configuration',
           error: error instanceof Error ? error.message : 'Unknown error'
         });
       }
     });
 
-    app.get('/api/admin/sendgrid/templates', isAdmin, async (req, res) => {
+    app.get('/api/admin/brevo/templates-from-provider', isAdmin, async (req, res) => {
       try {
-        // Get the active SendGrid provider
+        // Get the active Brevo provider
         const [provider] = await db
           .select()
           .from(emailProviderSettings)
           .where(and(
-            eq(emailProviderSettings.providerType, 'sendgrid'),
+            eq(emailProviderSettings.providerType, 'brevo'),
             eq(emailProviderSettings.isActive, true)
           ))
           .limit(1);
 
         if (!provider) {
-          return res.status(400).json({ error: 'SendGrid not configured' });
+          return res.status(400).json({ error: 'Brevo not configured' });
         }
 
         const apiKey = (provider.settings as any)?.apiKey;
         if (!apiKey) {
-          return res.status(400).json({ error: 'SendGrid API key not found' });
+          return res.status(400).json({ error: 'Brevo API key not found' });
         }
 
-        const response = await fetch('https://api.sendgrid.com/v3/templates', {
+        const response = await fetch('https://api.brevo.com/v3/smtp/templates', {
           headers: {
-            'Authorization': `Bearer ${apiKey}`,
+            'api-key': apiKey,
             'Content-Type': 'application/json'
           }
         });
 
         if (!response.ok) {
-          throw new Error(`SendGrid API error: ${response.status}`);
+          throw new Error(`Brevo API error: ${response.status}`);
         }
 
         const data = await response.json();
         res.json(data.templates || []);
       } catch (error) {
-        console.error('Error fetching SendGrid templates:', error);
+        console.error('Error fetching Brevo templates:', error);
         res.status(500).json({ error: 'Failed to fetch templates' });
       }
     });
 
-    app.post('/api/admin/sendgrid/send-test-email', isAdmin, async (req, res) => {
+    app.post('/api/admin/brevo/send-test-email', isAdmin, async (req, res) => {
       try {
         const { email, testEmail } = req.body;
         const targetEmail = email || testEmail;
@@ -12909,49 +12909,44 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           return res.status(400).json({ success: false, message: 'Email address is required' });
         }
 
-        // Get the active SendGrid provider
+        // Get the active Brevo provider
         const [provider] = await db
           .select()
           .from(emailProviderSettings)
           .where(and(
-            eq(emailProviderSettings.providerType, 'sendgrid'),
+            eq(emailProviderSettings.providerType, 'brevo'),
             eq(emailProviderSettings.isActive, true)
           ))
           .limit(1);
 
         if (!provider) {
-          return res.status(400).json({ success: false, message: 'SendGrid not configured' });
+          return res.status(400).json({ success: false, message: 'Brevo not configured' });
         }
 
         const apiKey = (provider.settings as any)?.apiKey;
         const fromEmail = (provider.settings as any)?.from || 'support@kickdeck.io';
 
         if (!apiKey) {
-          return res.status(400).json({ success: false, message: 'SendGrid API key not found' });
+          return res.status(400).json({ success: false, message: 'Brevo API key not found' });
         }
 
-        // Send a simple test email
+        // Send a simple test email via Brevo
         const emailData = {
-          personalizations: [{
-            to: [{ email: targetEmail }],
-            subject: 'SendGrid Test Email'
-          }],
-          from: { email: fromEmail, name: 'KickDeck Test' },
-          content: [{
-            type: 'text/html',
-            value: `
-              <h2>SendGrid Configuration Test</h2>
-              <p>This is a test email to verify your SendGrid configuration is working correctly.</p>
-              <p>If you received this email, your SendGrid setup is functioning properly!</p>
+          sender: { email: fromEmail, name: 'KickDeck Test' },
+          to: [{ email: targetEmail }],
+          subject: 'Brevo Test Email',
+          htmlContent: `
+              <h2>Brevo Configuration Test</h2>
+              <p>This is a test email to verify your Brevo configuration is working correctly.</p>
+              <p>If you received this email, your Brevo setup is functioning properly!</p>
               <p>Best regards,<br>KickDeck Team</p>
             `
-          }]
         };
 
-        const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
+        const response = await fetch('https://api.brevo.com/v3/smtp/email', {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${apiKey}`,
+            'api-key': apiKey,
             'Content-Type': 'application/json'
           },
           body: JSON.stringify(emailData)
@@ -12961,17 +12956,17 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           res.json({ success: true, message: 'Test email sent successfully' });
         } else {
           const errorText = await response.text();
-          console.error('SendGrid API error:', response.status, errorText);
-          res.status(400).json({ 
-            success: false, 
-            message: `SendGrid API error: ${response.status}`,
+          console.error('Brevo API error:', response.status, errorText);
+          res.status(400).json({
+            success: false,
+            message: `Brevo API error: ${response.status}`,
             error: errorText
           });
         }
       } catch (error) {
         console.error('Error sending test email:', error);
-        res.status(500).json({ 
-          success: false, 
+        res.status(500).json({
+          success: false,
           message: 'Failed to send test email',
           error: error instanceof Error ? error.message : 'Unknown error'
         });

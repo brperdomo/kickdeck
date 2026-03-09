@@ -45,7 +45,6 @@
     "@react-google-maps/api": "^2.20.6",
     "@replit/vite-plugin-runtime-error-modal": "^0.0.3",
     "@replit/vite-plugin-shadcn-theme-json": "^0.0.4",
-    "@sendgrid/mail": "^8.1.5",
     "@stripe/react-stripe-js": "^3.7.0",
     "@stripe/stripe-js": "^6.1.0",
     "@tailwindcss/typography": "^0.5.15",

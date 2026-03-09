@@ -14,15 +14,12 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
-interface SendGridTemplate {
-  id: string;
+interface BrevoTemplate {
+  id: number;
   name: string;
-  versions: {
-    id: string;
-    name: string;
-    subject: string;
-    active: number;
-  }[];
+  subject: string;
+  isActive: boolean;
+  createdAt: string;
 }
 
 interface EmailTemplate {
@@ -31,45 +28,45 @@ interface EmailTemplate {
   type: string;
   subject: string;
   isActive: boolean;
-  sendgridTemplateId: string | null;
+  brevoTemplateId: number | null;
 }
 
-export default function SendGridSettingsPage() {
+export default function BrevoSettingsPage() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [testEmail, setTestEmail] = useState("");
   const [selectedTemplateId, setSelectedTemplateId] = useState("");
   const [isTestDialogOpen, setIsTestDialogOpen] = useState(false);
 
-  // Fetch SendGrid settings
+  // Fetch Brevo settings
   const { data: settings, isLoading: isLoadingSettings } = useQuery({
-    queryKey: ["sendgrid-settings"],
+    queryKey: ["brevo-settings"],
     queryFn: async () => {
-      const response = await fetch("/api/admin/sendgrid/settings", {
+      const response = await fetch("/api/admin/brevo/settings", {
         credentials: 'include'
       });
-      if (!response.ok) throw new Error("Failed to fetch SendGrid settings");
+      if (!response.ok) throw new Error("Failed to fetch Brevo settings");
       return response.json();
     },
   });
 
-  // Fetch SendGrid templates
-  const { data: sendgridTemplates, isLoading: isLoadingTemplates, refetch: refetchTemplates, error: templatesError } = useQuery({
-    queryKey: ["sendgrid-templates"],
+  // Fetch Brevo templates
+  const { data: brevoTemplates, isLoading: isLoadingTemplates, refetch: refetchTemplates, error: templatesError } = useQuery({
+    queryKey: ["brevo-templates"],
     queryFn: async () => {
-      const response = await fetch("/api/admin/sendgrid/templates", {
+      const response = await fetch("/api/admin/brevo/templates", {
         credentials: 'include'
       });
-      
+
       if (response.status === 401) {
         throw new Error("Authentication required. Please log in as an admin.");
       }
-      
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || `HTTP ${response.status}: Failed to fetch SendGrid templates`);
+        throw new Error(errorData.error || `HTTP ${response.status}: Failed to fetch Brevo templates`);
       }
-      
+
       return response.json();
     },
     retry: false, // Don't retry auth failures
@@ -79,7 +76,7 @@ export default function SendGridSettingsPage() {
   const { data: emailTemplates, isLoading: isLoadingEmailTemplates } = useQuery({
     queryKey: ["email-templates-with-mappings"],
     queryFn: async () => {
-      const response = await fetch("/api/admin/sendgrid/template-mappings", {
+      const response = await fetch("/api/admin/brevo/template-mappings", {
         credentials: 'include'
       });
       if (!response.ok) throw new Error("Failed to fetch email template mappings");
@@ -89,12 +86,12 @@ export default function SendGridSettingsPage() {
 
   // Map template mutation
   const mapTemplateMutation = useMutation({
-    mutationFn: async ({ templateType, sendgridTemplateId }: { templateType: string; sendgridTemplateId: string | null }) => {
-      const response = await fetch("/api/admin/sendgrid/template-mapping", {
+    mutationFn: async ({ templateType, brevoTemplateId }: { templateType: string; brevoTemplateId: number | null }) => {
+      const response = await fetch("/api/admin/brevo/template-mapping", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: 'include',
-        body: JSON.stringify({ templateType, sendgridTemplateId }),
+        body: JSON.stringify({ templateType, brevoTemplateId }),
       });
       if (!response.ok) throw new Error("Failed to update template mapping");
       return response.json();
@@ -102,7 +99,7 @@ export default function SendGridSettingsPage() {
     onSuccess: () => {
       toast({
         title: "Template mapping updated",
-        description: "The SendGrid template has been successfully mapped to the email type.",
+        description: "The Brevo template has been successfully mapped to the email type.",
       });
       queryClient.invalidateQueries({ queryKey: ["email-templates-with-mappings"] });
     },
@@ -118,12 +115,12 @@ export default function SendGridSettingsPage() {
   // Test template mutation
   const testTemplateMutation = useMutation({
     mutationFn: async ({ templateId, recipientEmail }: { templateId: string; recipientEmail: string }) => {
-      const response = await fetch("/api/admin/sendgrid/test-template", {
+      const response = await fetch("/api/admin/brevo/test-template", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: 'include',
         body: JSON.stringify({
-          templateId,
+          templateId: Number(templateId),
           recipientEmail,
           testData: {
             firstName: "Test",
@@ -154,17 +151,17 @@ export default function SendGridSettingsPage() {
   });
 
   // Helper function to get template name by ID
-  const getTemplateNameById = (id: string) => {
-    if (!sendgridTemplates) return "Unknown Template";
-    const template = sendgridTemplates.find((t: SendGridTemplate) => t.id === id);
+  const getTemplateNameById = (id: number) => {
+    if (!brevoTemplates) return "Unknown Template";
+    const template = brevoTemplates.find((t: BrevoTemplate) => t.id === id);
     return template ? template.name : "Unknown Template";
   };
 
   // Handle mapping a template
-  const handleMapTemplate = (templateType: string, sendgridTemplateId: string | null) => {
+  const handleMapTemplate = (templateType: string, brevoTemplateId: string | null) => {
     // Convert "none" to null for API calls
-    const templateId = sendgridTemplateId === "none" ? null : sendgridTemplateId;
-    mapTemplateMutation.mutate({ templateType, sendgridTemplateId: templateId });
+    const templateId = brevoTemplateId === "none" || brevoTemplateId === null ? null : Number(brevoTemplateId);
+    mapTemplateMutation.mutate({ templateType, brevoTemplateId: templateId });
   };
 
   // Handle sending a test email
@@ -214,7 +211,7 @@ export default function SendGridSettingsPage() {
           </Link>
         </div>
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold">SendGrid Settings</h1>
+          <h1 className="text-3xl font-bold">Brevo Settings</h1>
           <Button
             variant="outline"
             onClick={() => refetchTemplates()}
@@ -232,16 +229,16 @@ export default function SendGridSettingsPage() {
         <Tabs defaultValue="templates">
           <TabsList className="mb-6">
             <TabsTrigger value="templates">Template Mappings</TabsTrigger>
-            <TabsTrigger value="settings">SendGrid Connection</TabsTrigger>
+            <TabsTrigger value="settings">Brevo Connection</TabsTrigger>
             <TabsTrigger value="test">Test Templates</TabsTrigger>
           </TabsList>
 
           <TabsContent value="templates">
             <Card>
               <CardHeader>
-                <CardTitle>SendGrid Template Mappings</CardTitle>
+                <CardTitle>Brevo Template Mappings</CardTitle>
                 <CardDescription>
-                  Map your email types to SendGrid dynamic templates. This allows you to use SendGrid's visual editor to design your email templates.
+                  Map your email types to Brevo templates. This allows you to use Brevo's visual editor to design your email templates.
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -250,18 +247,18 @@ export default function SendGridSettingsPage() {
                     <div className="flex items-start">
                       <AlertCircle className="h-5 w-5 mr-2 mt-0.5 flex-shrink-0" />
                       <div>
-                        <p className="font-medium">Error loading SendGrid templates</p>
+                        <p className="font-medium">Error loading Brevo templates</p>
                         <p className="text-sm mt-1">{templatesError.message}</p>
                         {templatesError.message.includes('Authentication') && (
                           <p className="text-sm mt-2">
-                            Please ensure you're logged in as an administrator to access SendGrid settings.
+                            Please ensure you're logged in as an administrator to access Brevo settings.
                           </p>
                         )}
                       </div>
                     </div>
                   </div>
                 )}
-                
+
                 {isLoadingTemplates ? (
                   <div className="flex justify-center py-8">
                     <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -277,9 +274,9 @@ export default function SendGridSettingsPage() {
                       Try Again
                     </Button>
                   </div>
-                ) : !sendgridTemplates || sendgridTemplates.length === 0 ? (
+                ) : !brevoTemplates || brevoTemplates.length === 0 ? (
                   <div className="bg-muted p-4 rounded-md text-center">
-                    <p className="text-muted-foreground">No SendGrid templates found. Please create templates in your SendGrid account first.</p>
+                    <p className="text-muted-foreground">No Brevo templates found. Please create templates in your Brevo account first.</p>
                   </div>
                 ) : (
                   <div className="space-y-6">
@@ -291,7 +288,7 @@ export default function SendGridSettingsPage() {
                             <p className="text-sm text-muted-foreground">Type: {template.type}</p>
                           </div>
                           <div>
-                            {template.sendgridTemplateId ? (
+                            {template.brevoTemplateId ? (
                               <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
                                 <CheckCircle2 className="h-3.5 w-3.5 mr-1" />
                                 Mapped
@@ -308,10 +305,10 @@ export default function SendGridSettingsPage() {
                         <div className="flex items-end gap-4">
                           <div className="flex-1">
                             <Label htmlFor={`template-${template.id}`} className="mb-2 block">
-                              SendGrid Template
+                              Brevo Template
                             </Label>
                             <Select
-                              value={template.sendgridTemplateId || "none"}
+                              value={template.brevoTemplateId ? String(template.brevoTemplateId) : "none"}
                               onValueChange={(value) => handleMapTemplate(template.type, value)}
                             >
                               <SelectTrigger id={`template-${template.id}`}>
@@ -319,15 +316,15 @@ export default function SendGridSettingsPage() {
                               </SelectTrigger>
                               <SelectContent>
                                 <SelectItem value="none">None (Use HTML template)</SelectItem>
-                                {sendgridTemplates.map((sgTemplate: SendGridTemplate) => (
-                                  <SelectItem key={sgTemplate.id} value={sgTemplate.id}>
-                                    {sgTemplate.name}
+                                {brevoTemplates.map((brevoTemplate: BrevoTemplate) => (
+                                  <SelectItem key={brevoTemplate.id} value={String(brevoTemplate.id)}>
+                                    {brevoTemplate.name}
                                   </SelectItem>
                                 ))}
                               </SelectContent>
                             </Select>
                           </div>
-                          {template.sendgridTemplateId && (
+                          {template.brevoTemplateId && (
                             <Button
                               variant="outline"
                               className="text-destructive"
@@ -338,9 +335,9 @@ export default function SendGridSettingsPage() {
                           )}
                         </div>
 
-                        {template.sendgridTemplateId && (
+                        {template.brevoTemplateId && (
                           <div className="mt-3 text-sm text-muted-foreground">
-                            Currently mapped to: {getTemplateNameById(template.sendgridTemplateId)}
+                            Currently mapped to: {getTemplateNameById(template.brevoTemplateId)}
                           </div>
                         )}
                       </div>
@@ -354,9 +351,9 @@ export default function SendGridSettingsPage() {
           <TabsContent value="settings">
             <Card>
               <CardHeader>
-                <CardTitle>SendGrid Connection Settings</CardTitle>
+                <CardTitle>Brevo Connection Settings</CardTitle>
                 <CardDescription>
-                  View your SendGrid connection settings. The API key is managed through environment variables for security.
+                  View your Brevo connection settings. The API key is managed through environment variables for security.
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -366,8 +363,7 @@ export default function SendGridSettingsPage() {
                   </div>
                 ) : !settings?.provider ? (
                   <div className="bg-muted p-4 rounded-md">
-                    <p className="text-muted-foreground">No SendGrid provider configured. Please run the setup script first.</p>
-                    <pre className="mt-2 p-2 bg-gray-100 rounded text-sm">node setup-sendgrid-provider.js</pre>
+                    <p className="text-muted-foreground">No Brevo provider configured. Please run the setup first.</p>
                   </div>
                 ) : (
                   <div className="space-y-4">
@@ -392,7 +388,7 @@ export default function SendGridSettingsPage() {
                     <div>
                       <Label className="mb-1 block">Mapped Templates</Label>
                       <div className="p-2 border rounded">
-                        {settings.templatesWithSendGrid?.length || 0} template(s) mapped to SendGrid
+                        {settings.templatesWithBrevo?.length || 0} template(s) mapped to Brevo
                       </div>
                     </div>
                   </div>
@@ -400,7 +396,7 @@ export default function SendGridSettingsPage() {
               </CardContent>
               <CardFooter className="flex justify-between">
                 <div className="text-sm text-muted-foreground">
-                  Need to update your API key? Set the SENDGRID_API_KEY environment variable.
+                  Need to update your API key? Set the BREVO_API_KEY environment variable.
                 </div>
               </CardFooter>
             </Card>
@@ -409,9 +405,9 @@ export default function SendGridSettingsPage() {
           <TabsContent value="test">
             <Card>
               <CardHeader>
-                <CardTitle>Test SendGrid Templates</CardTitle>
+                <CardTitle>Test Brevo Templates</CardTitle>
                 <CardDescription>
-                  Send a test email using a SendGrid dynamic template to verify it works correctly.
+                  Send a test email using a Brevo template to verify it works correctly.
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -419,9 +415,9 @@ export default function SendGridSettingsPage() {
                   <div className="flex justify-center py-8">
                     <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
                   </div>
-                ) : !sendgridTemplates || sendgridTemplates.length === 0 ? (
+                ) : !brevoTemplates || brevoTemplates.length === 0 ? (
                   <div className="bg-muted p-4 rounded-md">
-                    <p className="text-muted-foreground">No SendGrid templates found. Please create templates in your SendGrid account first.</p>
+                    <p className="text-muted-foreground">No Brevo templates found. Please create templates in your Brevo account first.</p>
                   </div>
                 ) : (
                   <div className="space-y-4">
@@ -437,8 +433,8 @@ export default function SendGridSettingsPage() {
                           <SelectValue placeholder="Select a template" />
                         </SelectTrigger>
                         <SelectContent>
-                          {sendgridTemplates.map((template: SendGridTemplate) => (
-                            <SelectItem key={template.id} value={template.id}>
+                          {brevoTemplates.map((template: BrevoTemplate) => (
+                            <SelectItem key={template.id} value={String(template.id)}>
                               {template.name}
                             </SelectItem>
                           ))}
@@ -484,17 +480,17 @@ export default function SendGridSettingsPage() {
         <Separator className="my-8" />
 
         <div className="text-sm text-muted-foreground">
-          <h3 className="font-medium mb-2">About SendGrid Templates</h3>
+          <h3 className="font-medium mb-2">About Brevo Templates</h3>
           <p>
-            SendGrid Dynamic Templates allow you to design visually rich, responsive emails using SendGrid's
+            Brevo templates allow you to design visually rich, responsive emails using Brevo's
             template editor. By mapping these templates to your application's email types, you can manage
-            designs in SendGrid while your application handles when and to whom emails are sent.
+            designs in Brevo while your application handles when and to whom emails are sent.
           </p>
           <p className="mt-2">
-            For detailed instructions on setting up and managing SendGrid templates, please refer to the
+            For detailed instructions on setting up and managing Brevo templates, please refer to the
             {" "}
-            <a href="https://docs.sendgrid.com/ui/sending-email/how-to-send-an-email-with-dynamic-templates" target="_blank" rel="noopener noreferrer" className="text-primary underline">
-              SendGrid documentation
+            <a href="https://developers.brevo.com/docs/send-a-transactional-email" target="_blank" rel="noopener noreferrer" className="text-primary underline">
+              Brevo documentation
             </a>.
           </p>
         </div>

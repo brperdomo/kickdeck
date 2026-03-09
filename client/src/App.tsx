@@ -54,8 +54,8 @@ import PaymentRetry from "@/pages/PaymentRetry";
 import PaymentSuccess from "@/pages/PaymentSuccess";
 import PaymentSetup from "@/pages/PaymentSetup";
 import ConnectOnboardingSuccess from "@/pages/connect-onboarding-success";
-import SendGridSettingsPage from "@/pages/sendgrid-settings";
-import AdminSendGridSetup from "@/pages/admin-sendgrid-setup";
+import BrevoSettingsPage from "@/pages/brevo-settings";
+import AdminBrevoSetup from "@/pages/admin-brevo-setup";
 import { AuthProvider } from "@/hooks/use-auth";
 // Account page import
 import AccountPage from "./pages/account";
@@ -392,11 +392,11 @@ function Router() {
           <Route path="/admin/email-templates">
             {user.isAdmin ? <EmailTemplatesPage /> : <NotFound />}
           </Route>
-          <Route path="/sendgrid-settings">
-            {user.isAdmin ? <SendGridSettingsPage /> : <NotFound />}
+          <Route path="/brevo-settings">
+            {user.isAdmin ? <BrevoSettingsPage /> : <NotFound />}
           </Route>
-          <Route path="/admin/sendgrid-setup">
-            {user.isAdmin ? <AdminSendGridSetup /> : <NotFound />}
+          <Route path="/admin/brevo-setup">
+            {user.isAdmin ? <AdminBrevoSetup /> : <NotFound />}
           </Route>
           <Route path="/admin/game-score-management">
             {user.isAdmin ? <GameScoreManagement /> : <NotFound />}

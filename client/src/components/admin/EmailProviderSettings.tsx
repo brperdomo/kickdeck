@@ -27,7 +27,7 @@ import { Loader2, Eye, Pencil } from "lucide-react";
 
 const providerSchema = z.object({
   id: z.number().optional(),
-  providerType: z.enum(["smtp", "sendgrid", "mailgun"]),
+  providerType: z.enum(["smtp", "brevo", "mailgun"]),
   providerName: z.string().min(1, "Provider name is required"),
   settings: z.object({
     host: z.string().optional(),
@@ -230,7 +230,7 @@ export function EmailProviderSettings() {
                       </FormControl>
                       <SelectContent>
                         <SelectItem value="smtp">SMTP</SelectItem>
-                        <SelectItem value="sendgrid">SendGrid</SelectItem>
+                        <SelectItem value="brevo">Brevo</SelectItem>
                         <SelectItem value="mailgun">Mailgun</SelectItem>
                       </SelectContent>
                     </Select>
@@ -317,15 +317,15 @@ export function EmailProviderSettings() {
                 </>
               )}
 
-              {form.watch("providerType") === "sendgrid" && (
+              {form.watch("providerType") === "brevo" && (
                 <FormField
                   control={form.control}
                   name="settings.apiKey"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>SendGrid API Key</FormLabel>
+                      <FormLabel>Brevo API Key</FormLabel>
                       <FormControl>
-                        <Input placeholder="SG..." {...field} />
+                        <Input placeholder="xkeysib-..." {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

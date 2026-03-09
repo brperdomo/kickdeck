@@ -3,7 +3,7 @@ import { db } from "@db/index";
 import { emailProviderSettings } from "@db/schema";
 import { emailTemplates } from "@db/schema/emailTemplates";
 import { eq, and } from "drizzle-orm";
-import * as sendgridService from "./sendgridService";
+import * as brevoService from "./brevoService";
 
 interface EmailOptions {
   to: string;
@@ -22,46 +22,46 @@ let emailTransporter: Transporter | null = null;
 let emailTransporterLastFetch: number = 0;
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
-// SendGrid specific types
-type EmailProvider = "smtp" | "sendgrid";
+// Brevo specific types
+type EmailProvider = "smtp" | "brevo";
 
 /**
- * Gets the configured email provider settings, prioritizing SendGrid as the primary provider
- * First checks the database, then falls back to SendGrid environment variables
+ * Gets the configured email provider settings, prioritizing Brevo as the primary provider
+ * First checks the database, then falls back to Brevo environment variables
  */
 async function getEmailProvider() {
   try {
-    // First, check if there's a SendGrid provider in the database
-    const sendGridProviders = await db
+    // First, check if there's a Brevo provider in the database
+    const brevoProviders = await db
       .select()
       .from(emailProviderSettings)
       .where(
         and(
-          eq(emailProviderSettings.providerType, "sendgrid"),
+          eq(emailProviderSettings.providerType, "brevo"),
           eq(emailProviderSettings.isActive, true),
         ),
       );
 
-    // If we have an active SendGrid provider, use it
-    if (sendGridProviders.length > 0) {
+    // If we have an active Brevo provider, use it
+    if (brevoProviders.length > 0) {
       // Prefer the default provider if there are multiple
-      const defaultProvider = sendGridProviders.find((p) => p.isDefault);
-      return defaultProvider || sendGridProviders[0];
+      const defaultProvider = brevoProviders.find((p) => p.isDefault);
+      return defaultProvider || brevoProviders[0];
     }
 
-    // If no SendGrid provider in database, use environment variables
-    const sendgridApiKey = process.env.SENDGRID_API_KEY;
-    if (sendgridApiKey) {
-      console.log("Using SendGrid API key from environment variables");
+    // If no Brevo provider in database, use environment variables
+    const brevoApiKey = process.env.BREVO_API_KEY;
+    if (brevoApiKey) {
+      console.log("Using Brevo API key from environment variables");
 
-      // Create a SendGrid provider from environment variables
+      // Create a Brevo provider from environment variables
       return {
         id: 0,
-        providerType: "sendgrid" as EmailProvider,
-        providerName: "SendGrid Provider",
+        providerType: "brevo" as EmailProvider,
+        providerName: "Brevo Provider",
         settings: {
-          apiKey: sendgridApiKey,
-          from: process.env.SENDGRID_FROM_EMAIL || "support@kickdeck.io",
+          apiKey: brevoApiKey,
+          from: process.env.DEFAULT_FROM_EMAIL || "support@kickdeck.io",
         },
         isActive: true,
         isDefault: true,
@@ -70,9 +70,9 @@ async function getEmailProvider() {
       };
     }
 
-    // SendGrid is not available - this is an error as we require SendGrid
+    // Brevo is not available - this is an error as we require Brevo
     throw new Error(
-      "SendGrid is not configured. Please set SENDGRID_API_KEY in environment variables.",
+      "Brevo is not configured. Please set BREVO_API_KEY in environment variables.",
     );
   } catch (error) {
     console.error("Error getting email provider:", error);
@@ -107,29 +107,29 @@ async function getEmailTransporter(): Promise<Transporter> {
           pass: password,
         },
       });
-    } else if (provider.providerType === "sendgrid") {
-      // For SendGrid, we return a dummy transporter that will be overridden
-      // by SendGrid-specific methods later
+    } else if (provider.providerType === "brevo") {
+      // For Brevo, we return a dummy transporter that will be overridden
+      // by Brevo-specific methods later
       const { apiKey } = provider.settings as any;
 
-      // Make sure the SendGrid API key is valid
+      // Make sure the Brevo API key is valid
       if (!apiKey) {
-        throw new Error("Missing SendGrid API key in provider settings");
+        throw new Error("Missing Brevo API key in provider settings");
       }
 
-      // Create a "dummy" nodemailer transport that isn't actually used
-      // We'll bypass this by using SendGrid's API directly in the sendEmail function
+      // Create a "dummy" nodemailer transport using Brevo's SMTP relay
+      // We'll bypass this by using Brevo's REST API directly in the sendEmail function
       emailTransporter = nodemailer.createTransport({
-        host: "smtp.sendgrid.net",
+        host: "smtp-relay.brevo.com",
         port: 587,
         secure: false,
         auth: {
-          user: "apikey",
+          user: process.env.BREVO_SMTP_LOGIN || "apikey",
           pass: apiKey,
         },
       });
 
-      // We don't need to explicitly set the API key here as it's handled in the sendgridService
+      // We don't need to explicitly set the API key here as it's handled in the brevoService
     } else {
       throw new Error(
         `Unsupported email provider type: ${provider.providerType}`,
@@ -232,7 +232,7 @@ support@kickdeck.io`;
 }
 
 /**
- * Sends an email using the SendGrid API
+ * Sends an email using the Brevo API
  */
 export async function sendEmail(options: EmailOptions): Promise<void> {
   const isDevelopment = process.env.NODE_ENV !== "production";
@@ -250,15 +250,15 @@ export async function sendEmail(options: EmailOptions): Promise<void> {
       // Still proceed to send the email - don't return early
     }
 
-    // Get the SendGrid provider
+    // Get the Brevo provider
     const provider = await getEmailProvider();
 
-    // Use SendGrid to send the email
+    // Use Brevo to send the email
     const from =
       options.from ||
       `${provider.providerName} <${(provider.settings as any).from || "support@kickdeck.io"}>`;
 
-    const result = await sendgridService.sendEmail({
+    const result = await brevoService.sendEmail({
       to: options.to,
       from: from,
       subject: options.subject,
@@ -272,7 +272,7 @@ export async function sendEmail(options: EmailOptions): Promise<void> {
     if (result) {
       console.log(`✅ EMAIL SENT: ${options.subject} → ${options.to}`);
     } else {
-      throw new Error("Failed to send email via SendGrid");
+      throw new Error("Failed to send email via Brevo");
     }
   } catch (error) {
     console.error("Error sending email:", error);
@@ -296,7 +296,7 @@ export async function sendEmail(options: EmailOptions): Promise<void> {
 
 /**
  * Sends a templated email using a specific template type
- * If the template has a SendGrid template ID, it will use SendGrid dynamic templates.
+ * If the template has a Brevo template ID, it will use Brevo dynamic templates.
  * Otherwise, it will render the template locally and send it as a regular email.
  */
 
@@ -323,39 +323,29 @@ export async function sendTemplatedEmail(
     }
 
     try {
-      // Check if we should use SendGrid Dynamic Templates
-      if (emailTemplate.sendgridTemplateId) {
+      // Check if we should use Brevo Dynamic Templates
+      if (emailTemplate.brevoTemplateId) {
         console.log(
-          `Using SendGrid dynamic template for ${templateType} (ID: ${emailTemplate.sendgridTemplateId})`,
+          `Using Brevo dynamic template for ${templateType} (ID: ${emailTemplate.brevoTemplateId})`,
         );
 
         const fromEmail = `${emailTemplate.senderName} <${emailTemplate.senderEmail}>`;
 
-        console.log(
-          "🚨 DEBUG2222222222222: Sending dynamic template email with:",
-          {
-            to,
-            from: fromEmail,
-            templateId: emailTemplate.sendgridTemplateId,
-            dynamicTemplateData: context,
-          },
-        );
-        // Use SendGrid dynamic template
-        const result = await sendgridService.sendDynamicTemplateEmail({
+        // Use Brevo dynamic template
+        const result = await brevoService.sendDynamicTemplateEmail({
           to,
           from: fromEmail,
-          templateId: emailTemplate.sendgridTemplateId,
-          dynamicTemplateData: context,
+          templateId: emailTemplate.brevoTemplateId,
+          params: context,
         });
 
         if (result) {
           console.log(
-            `the actual env is : ${isDevelopment}`,
-            `✅ TEMPLATE EMAIL SENT: ${templateType} → ${to} (SendGrid ID: ${emailTemplate.sendgridTemplateId})`,
+            `✅ TEMPLATE EMAIL SENT: ${templateType} → ${to} (Brevo ID: ${emailTemplate.brevoTemplateId})`,
           );
         } else {
           throw new Error(
-            `Failed to send SendGrid dynamic template email to ${to}`,
+            `Failed to send Brevo dynamic template email to ${to}`,
           );
         }
       } else {
@@ -412,11 +402,11 @@ export async function sendTemplatedEmail(
           typeof renderError === "object" &&
           "response" in renderError
         ) {
-          const sgError = renderError as {
+          const apiError = renderError as {
             response: { body: any; status?: number };
           };
-          console.error(`SendGrid Error Status:`, sgError.response?.status);
-          console.error(`SendGrid Error Body:`, sgError.response?.body);
+          console.error(`Brevo Error Status:`, apiError.response?.status);
+          console.error(`Brevo Error Body:`, apiError.response?.body);
         }
       }
 
@@ -477,7 +467,7 @@ function createFallbackTemplate(
       isActive: true,
       type: templateType,
       providerId: null,
-      sendgridTemplateId: null,
+      brevoTemplateId: null,
     };
   } else {
     // In production, use a generic professional template
@@ -499,7 +489,7 @@ function createFallbackTemplate(
       isActive: true,
       type: templateType,
       providerId: null,
-      sendgridTemplateId: null,
+      brevoTemplateId: null,
     };
   }
 }
@@ -744,13 +734,10 @@ export async function sendPasswordResetEmail(
 
     const resetUrl = `${appUrl}/reset-password?token=${resetToken}`;
 
-    if (process.env.SENDGRID_API_KEY) {
-      console.log("SendGrid API key found, configuring mail service");
-      console.log(process.env.SENDGRID_API_KEY);
-      //mailService.setApiKey(process.env.SENDGRID_API_KEY);
+    if (process.env.BREVO_API_KEY) {
+      console.log("Brevo API key found, configuring mail service");
     } else {
-      console.log("SendGrid API key not found");
-      console.log(process.env.SENDGRID_API_KEY);
+      console.log("Brevo API key not found");
     }
 
     await sendTemplatedEmail(to, "password_reset", {

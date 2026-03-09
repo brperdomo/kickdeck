@@ -41,7 +41,7 @@ The dashboard has 4 main sections accessible from the top navigation bar:
 
 4. SETTINGS
    - General: Organization profile (name, logo, contact info), seasonal scope configuration, UI styling/branding, email template customization.
-   - Email: Configure email delivery provider (SendGrid) with API credentials and sending domain.
+   - Email: Configure email delivery provider (Brevo) with API credentials and sending domain.
    - Permissions: Create custom roles with fine-grained permissions grouped by area (Events, Teams, Scheduling, Venues, Members, Finance, Forms, Reports, Files, Settings).
 
 KEY WORKFLOWS:

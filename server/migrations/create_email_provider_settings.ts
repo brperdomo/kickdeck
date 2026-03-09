@@ -8,7 +8,7 @@ export async function createEmailProviderSettingsTable() {
     await db.execute(sql`
       CREATE TABLE IF NOT EXISTS email_provider_settings (
         id SERIAL PRIMARY KEY,
-        provider_type TEXT NOT NULL, -- 'smtp', 'sendgrid', 'mailgun', etc.
+        provider_type TEXT NOT NULL, -- 'smtp', 'brevo', 'mailgun', etc.
         provider_name TEXT NOT NULL,
         settings JSONB NOT NULL, -- Store provider-specific settings
         is_active BOOLEAN DEFAULT true,
