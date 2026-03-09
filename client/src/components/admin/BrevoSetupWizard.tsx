@@ -1,14 +1,36 @@
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+/**
+ * BrevoSetupWizard — Consolidated Brevo admin UI
+ *
+ * Three tabs:
+ *   1. Connection  — API status, from email, test connection
+ *   2. Template Mapping — map KickDeck email types → Brevo templates
+ *   3. Test — send a test email via any Brevo template
+ */
+
+import { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useToast } from '@/hooks/use-toast';
+import {
+  Loader2,
+  RefreshCw,
+  CheckCircle2,
+  AlertCircle,
+  Plug,
+  LayoutList,
+  TestTube,
+  Send,
+} from 'lucide-react';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { useToast } from '@/hooks/use-toast';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { CheckCircle, AlertCircle, Mail, Settings, TestTube, Globe } from 'lucide-react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
+/* ------------------------------------------------------------------ */
+/*  Types                                                              */
+/* ------------------------------------------------------------------ */
 
 interface BrevoTemplate {
   id: number;
@@ -18,386 +40,481 @@ interface BrevoTemplate {
   createdAt: string;
 }
 
-interface EmailProvider {
+interface EmailTemplate {
   id: number;
-  providerType: string;
-  providerName: string;
-  settings: {
-    apiKey: string;
-    from: string;
-  };
+  name: string;
+  type: string;
+  subject: string;
   isActive: boolean;
-  isDefault: boolean;
+  brevoTemplateId: number | null;
 }
 
-interface TestResult {
-  success: boolean;
-  message: string;
-  templates?: BrevoTemplate[];
-  error?: string;
+interface BrevoSettings {
+  apiKeySet: boolean;
+  apiKeyValid: boolean;
+  provider: {
+    id: number;
+    name: string;
+    isDefault: boolean;
+    settings: Record<string, any>;
+  } | null;
+  templatesWithBrevo: {
+    id: number;
+    name: string;
+    type: string;
+    isActive: boolean;
+    brevoTemplateId: string | null;
+  }[];
 }
+
+/* ------------------------------------------------------------------ */
+/*  Main component                                                     */
+/* ------------------------------------------------------------------ */
 
 export function BrevoSetupWizard() {
-  const [apiKey, setApiKey] = useState('');
-  const [fromEmail, setFromEmail] = useState('support@kickdeck.io');
-  const [currentStep, setCurrentStep] = useState(1);
-  const [testEmail, setTestEmail] = useState('');
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [testEmail, setTestEmail] = useState('');
+  const [selectedTemplateId, setSelectedTemplateId] = useState('');
 
-  // Fetch current Brevo configuration
-  const { data: currentConfig, isLoading } = useQuery({
-    queryKey: ['/api/admin/email-providers'],
+  /* ── Queries ─────────────────────────────────────────────────────── */
+
+  // Brevo connection settings (API key status, provider info)
+  const {
+    data: settings,
+    isLoading: isLoadingSettings,
+  } = useQuery<BrevoSettings>({
+    queryKey: ['brevo-settings'],
     queryFn: async () => {
-      const response = await fetch('/api/admin/email-providers');
-      if (!response.ok) throw new Error('Failed to fetch email providers');
-      return response.json() as EmailProvider[];
-    }
+      const res = await fetch('/api/admin/brevo/settings', { credentials: 'include' });
+      if (!res.ok) throw new Error('Failed to fetch Brevo settings');
+      return res.json();
+    },
   });
 
-  // Test Brevo configuration
-  const testConfigMutation = useMutation({
-    mutationFn: async (config: { apiKey: string; fromEmail: string }) => {
-      const response = await fetch('/api/admin/brevo/test-config', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(config)
-      });
-      if (!response.ok) throw new Error('Test failed');
-      return response.json() as TestResult;
-    },
-    onSuccess: (data) => {
-      if (data.success) {
-        toast({
-          title: "Configuration Valid",
-          description: `Found ${data.templates?.length || 0} Brevo templates`
-        });
-        setCurrentStep(2);
-      } else {
-        toast({
-          title: "Configuration Invalid",
-          description: data.message,
-          variant: "destructive"
-        });
+  // All Brevo templates (fetched from Brevo API)
+  const {
+    data: brevoTemplates,
+    isLoading: isLoadingTemplates,
+    refetch: refetchTemplates,
+    error: templatesError,
+  } = useQuery<BrevoTemplate[]>({
+    queryKey: ['brevo-templates'],
+    queryFn: async () => {
+      const res = await fetch('/api/admin/brevo/templates', { credentials: 'include' });
+      if (res.status === 401) throw new Error('Authentication required. Please log in as an admin.');
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || `HTTP ${res.status}: Failed to fetch Brevo templates`);
       }
+      return res.json();
     },
-    onError: (error) => {
-      toast({
-        title: "Test Failed",
-        description: error instanceof Error ? error.message : "Unknown error",
-        variant: "destructive"
-      });
-    }
+    retry: false,
   });
 
-  // Save Brevo configuration
-  const saveConfigMutation = useMutation({
-    mutationFn: async (config: { apiKey: string; fromEmail: string }) => {
-      const response = await fetch('/api/admin/email-providers', {
+  // KickDeck email templates + their Brevo mapping
+  const {
+    data: emailTemplates,
+    isLoading: isLoadingEmailTemplates,
+  } = useQuery<EmailTemplate[]>({
+    queryKey: ['email-templates-with-mappings'],
+    queryFn: async () => {
+      const res = await fetch('/api/admin/brevo/template-mappings', { credentials: 'include' });
+      if (!res.ok) throw new Error('Failed to fetch email template mappings');
+      return res.json();
+    },
+  });
+
+  /* ── Mutations ───────────────────────────────────────────────────── */
+
+  // Map a Brevo template to a KickDeck email type
+  const mapTemplateMutation = useMutation({
+    mutationFn: async ({ templateType, brevoTemplateId }: { templateType: string; brevoTemplateId: number | null }) => {
+      const res = await fetch('/api/admin/brevo/template-mapping', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          providerType: 'brevo',
-          providerName: 'Brevo',
-          settings: {
-            apiKey: config.apiKey,
-            from: config.fromEmail
-          },
-          isActive: true,
-          isDefault: true
-        })
+        credentials: 'include',
+        body: JSON.stringify({ templateType, brevoTemplateId }),
       });
-      if (!response.ok) throw new Error('Failed to save configuration');
-      return response.json();
+      if (!res.ok) throw new Error('Failed to update template mapping');
+      return res.json();
     },
     onSuccess: () => {
-      toast({
-        title: "Configuration Saved",
-        description: "Brevo has been configured successfully"
-      });
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/email-providers'] });
-      setCurrentStep(3);
-    }
+      toast({ title: 'Mapping updated', description: 'Brevo template mapping saved.' });
+      queryClient.invalidateQueries({ queryKey: ['email-templates-with-mappings'] });
+      queryClient.invalidateQueries({ queryKey: ['brevo-settings'] });
+    },
+    onError: (err: Error) => {
+      toast({ title: 'Mapping failed', description: err.message, variant: 'destructive' });
+    },
   });
 
-  // Send test email
-  const testEmailMutation = useMutation({
-    mutationFn: async (email: string) => {
-      const response = await fetch('/api/admin/brevo/send-test-email', {
+  // Send test email via a Brevo template
+  const testTemplateMutation = useMutation({
+    mutationFn: async ({ templateId, recipientEmail }: { templateId: string; recipientEmail: string }) => {
+      const res = await fetch('/api/admin/brevo/test-template', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
+        credentials: 'include',
+        body: JSON.stringify({
+          templateId: Number(templateId),
+          recipientEmail,
+          testData: {
+            firstName: 'Test',
+            lastName: 'User',
+            email: recipientEmail,
+            loginLink: `${window.location.origin}/login`,
+            role: 'Test User',
+          },
+        }),
       });
-      if (!response.ok) throw new Error('Failed to send test email');
-      return response.json() as TestResult;
+      if (!res.ok) throw new Error('Failed to send test email');
+      return res.json();
     },
-    onSuccess: (data) => {
-      if (data.success) {
-        toast({
-          title: "Test Email Sent",
-          description: "Check your inbox for the test email"
-        });
-      } else {
-        toast({
-          title: "Test Email Failed",
-          description: data.message,
-          variant: "destructive"
-        });
-      }
-    }
+    onSuccess: () => {
+      toast({ title: 'Test email sent', description: `Check ${testEmail} for the test email.` });
+    },
+    onError: (err: Error) => {
+      toast({ title: 'Send failed', description: err.message, variant: 'destructive' });
+    },
   });
 
-  // Load existing configuration
-  useEffect(() => {
-    if (currentConfig && currentConfig.length > 0) {
-      const brevoConfig = currentConfig.find(c => c.providerType === 'brevo');
-      if (brevoConfig) {
-        setApiKey(brevoConfig.settings.apiKey || '');
-        setFromEmail(brevoConfig.settings.from || 'support@kickdeck.io');
-      }
-    }
-  }, [currentConfig]);
+  /* ── Helpers ─────────────────────────────────────────────────────── */
 
-  const handleTestConfig = () => {
-    if (!apiKey.trim()) {
-      toast({
-        title: "API Key Required",
-        description: "Please enter your Brevo API key",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    testConfigMutation.mutate({ apiKey: apiKey.trim(), fromEmail });
+  const handleMapTemplate = (templateType: string, brevoId: string | null) => {
+    const id = brevoId === 'none' || brevoId === null ? null : Number(brevoId);
+    mapTemplateMutation.mutate({ templateType, brevoTemplateId: id });
   };
 
-  const handleSaveConfig = () => {
-    saveConfigMutation.mutate({ apiKey: apiKey.trim(), fromEmail });
+  const getTemplateNameById = (id: number) => {
+    const t = brevoTemplates?.find((t) => t.id === id);
+    return t ? t.name : `Template #${id}`;
   };
 
   const handleSendTestEmail = () => {
-    if (!testEmail.trim()) {
-      toast({
-        title: "Email Required",
-        description: "Please enter an email address for testing",
-        variant: "destructive"
-      });
+    if (!testEmail) {
+      toast({ title: 'Email required', description: 'Enter a recipient email address.', variant: 'destructive' });
       return;
     }
-
-    testEmailMutation.mutate(testEmail);
+    if (!selectedTemplateId) {
+      toast({ title: 'Template required', description: 'Select a template to test.', variant: 'destructive' });
+      return;
+    }
+    testTemplateMutation.mutate({ templateId: selectedTemplateId, recipientEmail: testEmail });
   };
 
-  const isConfigured = currentConfig?.some(c => c.providerType === 'brevo' && c.isActive);
+  const mappedCount = emailTemplates?.filter((t) => t.brevoTemplateId !== null).length ?? 0;
+
+  /* ── Render ──────────────────────────────────────────────────────── */
 
   return (
-    <Card className="w-full max-w-4xl mx-auto">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Mail className="h-5 w-5" />
-          Brevo Email Configuration
-        </CardTitle>
-        <CardDescription>
-          Set up Brevo for email delivery in your application
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Tabs defaultValue="setup" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="setup" className="flex items-center gap-2">
-              <Settings className="h-4 w-4" />
-              Setup
-            </TabsTrigger>
-            <TabsTrigger value="test" className="flex items-center gap-2">
-              <TestTube className="h-4 w-4" />
-              Test
-            </TabsTrigger>
-            <TabsTrigger value="templates" className="flex items-center gap-2">
-              <Globe className="h-4 w-4" />
-              Templates
-            </TabsTrigger>
-            <TabsTrigger value="status" className="flex items-center gap-2">
-              {isConfigured ? (
-                <CheckCircle className="h-4 w-4 text-green-500" />
-              ) : (
-                <AlertCircle className="h-4 w-4 text-red-500" />
-              )}
-              Status
-            </TabsTrigger>
-          </TabsList>
+    <Tabs defaultValue="connection" className="w-full">
+      <TabsList className="grid w-full grid-cols-3 mb-6">
+        <TabsTrigger value="connection" className="flex items-center gap-2">
+          <Plug className="h-4 w-4" />
+          Connection
+        </TabsTrigger>
+        <TabsTrigger value="templates" className="flex items-center gap-2">
+          <LayoutList className="h-4 w-4" />
+          Template Mapping
+        </TabsTrigger>
+        <TabsTrigger value="test" className="flex items-center gap-2">
+          <TestTube className="h-4 w-4" />
+          Test
+        </TabsTrigger>
+      </TabsList>
 
-          <TabsContent value="setup" className="space-y-6">
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="apiKey">Brevo API Key</Label>
-                <Input
-                  id="apiKey"
-                  type="password"
-                  placeholder="xkeysib-xxxxxxxxxx"
-                  value={apiKey}
-                  onChange={(e) => setApiKey(e.target.value)}
-                />
-                <p className="text-sm text-muted-foreground">
-                  Get your API key from the Brevo dashboard under SMTP & API &rarr; API Keys
-                </p>
+      {/* ════════════════════════════════════════════════════════════ */}
+      {/* TAB 1: Connection                                          */}
+      {/* ════════════════════════════════════════════════════════════ */}
+      <TabsContent value="connection">
+        <Card>
+          <CardHeader>
+            <CardTitle>Brevo Connection</CardTitle>
+            <CardDescription>
+              View your Brevo integration status. The API key is managed through environment variables.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {isLoadingSettings ? (
+              <div className="flex justify-center py-8">
+                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
               </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="fromEmail">From Email Address</Label>
-                <Input
-                  id="fromEmail"
-                  type="email"
-                  placeholder="support@kickdeck.io"
-                  value={fromEmail}
-                  onChange={(e) => setFromEmail(e.target.value)}
-                />
-                <p className="text-sm text-muted-foreground">
-                  This email address must be verified in your Brevo account
-                </p>
-              </div>
-
-              <div className="flex gap-2">
-                <Button
-                  onClick={handleTestConfig}
-                  disabled={testConfigMutation.isPending}
-                  variant="outline"
-                >
-                  {testConfigMutation.isPending ? 'Testing...' : 'Test Configuration'}
-                </Button>
-
-                <Button
-                  onClick={handleSaveConfig}
-                  disabled={saveConfigMutation.isPending || !apiKey.trim()}
-                >
-                  {saveConfigMutation.isPending ? 'Saving...' : 'Save Configuration'}
-                </Button>
-              </div>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="test" className="space-y-6">
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="testEmail">Test Email Address</Label>
-                <Input
-                  id="testEmail"
-                  type="email"
-                  placeholder="your@email.com"
-                  value={testEmail}
-                  onChange={(e) => setTestEmail(e.target.value)}
-                />
-              </div>
-
-              <Button
-                onClick={handleSendTestEmail}
-                disabled={testEmailMutation.isPending || !isConfigured}
-              >
-                {testEmailMutation.isPending ? 'Sending...' : 'Send Test Email'}
-              </Button>
-
-              {!isConfigured && (
-                <p className="text-sm text-muted-foreground">
-                  Please configure Brevo first before sending test emails
-                </p>
-              )}
-            </div>
-          </TabsContent>
-
-          <TabsContent value="templates" className="space-y-4">
-            <TemplatesList />
-          </TabsContent>
-
-          <TabsContent value="status" className="space-y-4">
-            <StatusOverview isConfigured={isConfigured} config={currentConfig} />
-          </TabsContent>
-        </Tabs>
-      </CardContent>
-    </Card>
-  );
-}
-
-function TemplatesList() {
-  const { data: templates, isLoading } = useQuery({
-    queryKey: ['/api/admin/brevo/templates'],
-    queryFn: async () => {
-      const response = await fetch('/api/admin/brevo/templates');
-      if (!response.ok) throw new Error('Failed to fetch templates');
-      return response.json() as BrevoTemplate[];
-    }
-  });
-
-  if (isLoading) {
-    return <div>Loading templates...</div>;
-  }
-
-  if (!templates || templates.length === 0) {
-    return (
-      <div className="text-center py-8">
-        <p className="text-muted-foreground">No Brevo templates found</p>
-        <p className="text-sm text-muted-foreground mt-2">
-          Make sure Brevo is configured and you have templates in your account
-        </p>
-      </div>
-    );
-  }
-
-  return (
-    <div className="space-y-4">
-      <h3 className="text-lg font-semibold">Available Templates</h3>
-      <div className="grid gap-3">
-        {templates.map((template) => (
-          <Card key={template.id}>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h4 className="font-medium">{template.name}</h4>
-                  <p className="text-sm text-muted-foreground">ID: {template.id}</p>
+            ) : (
+              <div className="space-y-5">
+                {/* API key badge */}
+                <div className="flex items-center gap-3">
+                  <Label className="w-36 text-sm">API Key</Label>
+                  {settings?.apiKeySet ? (
+                    <Badge variant="outline" className="bg-green-500/10 text-green-400 border-green-500/30">
+                      <CheckCircle2 className="h-3.5 w-3.5 mr-1" />
+                      Configured
+                    </Badge>
+                  ) : (
+                    <Badge variant="outline" className="bg-red-500/10 text-red-400 border-red-500/30">
+                      <AlertCircle className="h-3.5 w-3.5 mr-1" />
+                      Not Set
+                    </Badge>
+                  )}
+                  <span className="text-xs text-muted-foreground ml-2">
+                    Managed via <code className="px-1 py-0.5 rounded bg-muted text-xs">BREVO_API_KEY</code> env variable
+                  </span>
                 </div>
-                <Badge variant="outline">
-                  {template.isActive ? 'Active' : 'Inactive'}
-                </Badge>
+
+                {/* Provider name */}
+                {settings?.provider && (
+                  <>
+                    <div className="flex items-center gap-3">
+                      <Label className="w-36 text-sm">Provider</Label>
+                      <span className="text-sm">{settings.provider.name}</span>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <Label className="w-36 text-sm">Default Provider</Label>
+                      <span className="text-sm">{settings.provider.isDefault ? 'Yes' : 'No'}</span>
+                    </div>
+                  </>
+                )}
+
+                {/* Mapped templates count */}
+                <div className="flex items-center gap-3">
+                  <Label className="w-36 text-sm">Mapped Templates</Label>
+                  <span className="text-sm">
+                    {mappedCount} of {emailTemplates?.length ?? '...'} email types mapped
+                  </span>
+                </div>
+
+                {!settings?.provider && (
+                  <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-200">
+                    <strong>No provider found.</strong> Make sure the BREVO_API_KEY environment variable is set
+                    and a Brevo provider record exists in the database.
+                  </div>
+                )}
               </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    </div>
-  );
-}
+            )}
+          </CardContent>
+          <CardFooter>
+            <p className="text-xs text-muted-foreground">
+              To update the API key, set <code className="px-1 py-0.5 rounded bg-muted text-xs">BREVO_API_KEY</code> in
+              your environment and redeploy.
+            </p>
+          </CardFooter>
+        </Card>
+      </TabsContent>
 
-function StatusOverview({ isConfigured, config }: { isConfigured: boolean; config?: EmailProvider[] }) {
-  const brevoConfig = config?.find(c => c.providerType === 'brevo');
+      {/* ════════════════════════════════════════════════════════════ */}
+      {/* TAB 2: Template Mapping                                    */}
+      {/* ════════════════════════════════════════════════════════════ */}
+      <TabsContent value="templates">
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>Template Mapping</CardTitle>
+                <CardDescription className="mt-1">
+                  Map each KickDeck email type to a Brevo template. Emails will be sent via Brevo's
+                  dynamic template engine when mapped.
+                </CardDescription>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => refetchTemplates()}
+                disabled={isLoadingTemplates}
+              >
+                {isLoadingTemplates ? (
+                  <Loader2 className="h-4 w-4 animate-spin mr-1" />
+                ) : (
+                  <RefreshCw className="h-4 w-4 mr-1" />
+                )}
+                Refresh
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {/* Error banner */}
+            {templatesError && (
+              <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-4 mb-6 text-sm">
+                <div className="flex items-start gap-2 text-red-300">
+                  <AlertCircle className="h-5 w-5 mt-0.5 shrink-0" />
+                  <div>
+                    <p className="font-medium">Error loading Brevo templates</p>
+                    <p className="mt-1 text-red-400">{(templatesError as Error).message}</p>
+                  </div>
+                </div>
+              </div>
+            )}
 
-  return (
-    <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        {isConfigured ? (
-          <CheckCircle className="h-5 w-5 text-green-500" />
-        ) : (
-          <AlertCircle className="h-5 w-5 text-red-500" />
-        )}
-        <h3 className="text-lg font-semibold">
-          {isConfigured ? 'Brevo Configured' : 'Brevo Not Configured'}
-        </h3>
-      </div>
+            {isLoadingTemplates || isLoadingEmailTemplates ? (
+              <div className="flex justify-center py-8">
+                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+              </div>
+            ) : !brevoTemplates || brevoTemplates.length === 0 ? (
+              <div className="rounded-lg border border-dashed border-muted-foreground/30 p-8 text-center">
+                <p className="text-muted-foreground">
+                  No Brevo templates found. Create templates in your Brevo account first.
+                </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="mt-4"
+                  onClick={() => refetchTemplates()}
+                >
+                  <RefreshCw className="h-4 w-4 mr-1" />
+                  Try Again
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {emailTemplates?.map((tmpl) => (
+                  <div
+                    key={tmpl.id}
+                    className="rounded-lg border border-border/50 bg-card/50 p-4 transition-colors hover:bg-card/80"
+                  >
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <h4 className="font-medium">{tmpl.name}</h4>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          Type: <code className="px-1 py-0.5 rounded bg-muted text-xs">{tmpl.type}</code>
+                        </p>
+                      </div>
+                      {tmpl.brevoTemplateId ? (
+                        <Badge variant="outline" className="bg-green-500/10 text-green-400 border-green-500/30">
+                          <CheckCircle2 className="h-3.5 w-3.5 mr-1" />
+                          Mapped
+                        </Badge>
+                      ) : (
+                        <Badge variant="outline" className="bg-amber-500/10 text-amber-300 border-amber-500/30">
+                          <AlertCircle className="h-3.5 w-3.5 mr-1" />
+                          Not Mapped
+                        </Badge>
+                      )}
+                    </div>
 
-      {brevoConfig && (
-        <div className="space-y-2">
-          <p><strong>Provider:</strong> {brevoConfig.providerName}</p>
-          <p><strong>From Email:</strong> {brevoConfig.settings.from}</p>
-          <p><strong>Status:</strong> {brevoConfig.isActive ? 'Active' : 'Inactive'}</p>
-          <p><strong>Default:</strong> {brevoConfig.isDefault ? 'Yes' : 'No'}</p>
-        </div>
-      )}
+                    <div className="flex items-end gap-3">
+                      <div className="flex-1">
+                        <Label htmlFor={`brevo-${tmpl.id}`} className="text-xs mb-1.5 block text-muted-foreground">
+                          Brevo Template
+                        </Label>
+                        <Select
+                          value={tmpl.brevoTemplateId ? String(tmpl.brevoTemplateId) : 'none'}
+                          onValueChange={(val) => handleMapTemplate(tmpl.type, val)}
+                        >
+                          <SelectTrigger id={`brevo-${tmpl.id}`}>
+                            <SelectValue placeholder="Select a template" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="none">None (use HTML template)</SelectItem>
+                            {brevoTemplates.map((bt) => (
+                              <SelectItem key={bt.id} value={String(bt.id)}>
+                                {bt.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
 
-      {!isConfigured && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <h4 className="font-medium text-yellow-800">Configuration Required</h4>
-          <p className="text-yellow-700 text-sm mt-1">
-            Please configure Brevo in the Setup tab to enable email functionality
-          </p>
-        </div>
-      )}
-    </div>
+                      {tmpl.brevoTemplateId && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                          onClick={() => handleMapTemplate(tmpl.type, null)}
+                        >
+                          Remove
+                        </Button>
+                      )}
+                    </div>
+
+                    {tmpl.brevoTemplateId && (
+                      <p className="mt-2 text-xs text-muted-foreground">
+                        Currently mapped to: <strong>{getTemplateNameById(tmpl.brevoTemplateId)}</strong>
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </TabsContent>
+
+      {/* ════════════════════════════════════════════════════════════ */}
+      {/* TAB 3: Test                                                */}
+      {/* ════════════════════════════════════════════════════════════ */}
+      <TabsContent value="test">
+        <Card>
+          <CardHeader>
+            <CardTitle>Test Brevo Templates</CardTitle>
+            <CardDescription>
+              Send a test email using any Brevo template to verify it renders correctly.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {isLoadingTemplates ? (
+              <div className="flex justify-center py-8">
+                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+              </div>
+            ) : !brevoTemplates || brevoTemplates.length === 0 ? (
+              <div className="rounded-lg border border-dashed border-muted-foreground/30 p-8 text-center">
+                <p className="text-muted-foreground">
+                  No Brevo templates available. Create templates in Brevo first.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-5 max-w-md">
+                <div>
+                  <Label htmlFor="test-template" className="mb-1.5 block">
+                    Template
+                  </Label>
+                  <Select value={selectedTemplateId} onValueChange={setSelectedTemplateId}>
+                    <SelectTrigger id="test-template">
+                      <SelectValue placeholder="Select a template" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {brevoTemplates.map((bt) => (
+                        <SelectItem key={bt.id} value={String(bt.id)}>
+                          {bt.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label htmlFor="test-email" className="mb-1.5 block">
+                    Recipient Email
+                  </Label>
+                  <Input
+                    id="test-email"
+                    type="email"
+                    placeholder="you@example.com"
+                    value={testEmail}
+                    onChange={(e) => setTestEmail(e.target.value)}
+                  />
+                </div>
+
+                <Button
+                  onClick={handleSendTestEmail}
+                  disabled={!selectedTemplateId || !testEmail || testTemplateMutation.isPending}
+                >
+                  {testTemplateMutation.isPending ? (
+                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  ) : (
+                    <Send className="h-4 w-4 mr-2" />
+                  )}
+                  Send Test Email
+                </Button>
+              </div>
+            )}
+          </CardContent>
+          <CardFooter>
+            <p className="text-xs text-muted-foreground">
+              Test emails include sample data (name, login link, etc.) so you can preview the template.
+            </p>
+          </CardFooter>
+        </Card>
+      </TabsContent>
+    </Tabs>
   );
 }

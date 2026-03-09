@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { Loader2, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
+import { AdminPageWrapper } from '@/components/admin/AdminPageWrapper';
 
 export default function TeamStatusTest() {
   const [teamId, setTeamId] = useState('');
@@ -137,9 +138,11 @@ export default function TeamStatusTest() {
   };
 
   return (
-    <div className="container mx-auto py-8">
-      <h1 className="text-2xl font-bold mb-6">Team Status Management Test</h1>
-      
+    <AdminPageWrapper
+      title="Team Status Management"
+      backUrl="/admin"
+      backLabel="Back to Dashboard"
+    >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Left column - Team Search & Details */}
         <div>
@@ -328,6 +331,6 @@ export default function TeamStatusTest() {
           )}
         </div>
       </div>
-    </div>
+    </AdminPageWrapper>
   );
 }

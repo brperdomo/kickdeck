@@ -1,9 +1,9 @@
-
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useLocation } from '@/hooks/use-location';
+import { AdminPageWrapper } from '@/components/admin/AdminPageWrapper';
 
 // Define the event interface
 interface Event {
@@ -29,14 +29,23 @@ export default function EventPreviewSelector() {
   };
 
   if (eventsQuery.isLoading) {
-    return <div>Loading events...</div>;
+    return (
+      <AdminPageWrapper title="Event Preview" backUrl="/admin" backLabel="Back to Dashboard">
+        <div className="text-muted-foreground">Loading events...</div>
+      </AdminPageWrapper>
+    );
   }
 
   // Get the events array from the response
   const events = eventsQuery.data?.events || [];
-  
+
   return (
-    <div className="container mx-auto p-6">
+    <AdminPageWrapper
+      title="Event Preview"
+      subtitle="Select an event to preview its registration form"
+      backUrl="/admin"
+      backLabel="Back to Dashboard"
+    >
       <Card>
         <CardHeader>
           <CardTitle>Select Event to Preview</CardTitle>
@@ -45,10 +54,10 @@ export default function EventPreviewSelector() {
           <div className="grid gap-4">
             {events.length > 0 ? (
               events.map((event) => (
-                <div key={event.id} className="flex items-center justify-between p-4 border rounded-lg">
+                <div key={event.id} className="flex items-center justify-between p-4 border border-border/50 rounded-lg hover:bg-muted/30 transition-colors">
                   <div>
                     <h3 className="font-medium">{event.name}</h3>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-muted-foreground">
                       {new Date(event.startDate).toLocaleDateString()} - {new Date(event.endDate).toLocaleDateString()}
                     </p>
                   </div>
@@ -59,12 +68,12 @@ export default function EventPreviewSelector() {
               ))
             ) : (
               <div className="text-center p-4">
-                <p className="text-gray-500">No events available to preview</p>
+                <p className="text-muted-foreground">No events available to preview</p>
               </div>
             )}
           </div>
         </CardContent>
       </Card>
-    </div>
+    </AdminPageWrapper>
   );
 }

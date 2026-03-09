@@ -177,7 +177,7 @@ export default function EmailTemplatesPage() {
           </div>
           <div className="flex gap-3">
             <Button variant="outline" asChild>
-              <Link href="/brevo-settings">
+              <Link href="/admin/brevo-setup">
                 Brevo Integration
               </Link>
             </Button>

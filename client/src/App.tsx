@@ -54,7 +54,6 @@ import PaymentRetry from "@/pages/PaymentRetry";
 import PaymentSuccess from "@/pages/PaymentSuccess";
 import PaymentSetup from "@/pages/PaymentSetup";
 import ConnectOnboardingSuccess from "@/pages/connect-onboarding-success";
-import BrevoSettingsPage from "@/pages/brevo-settings";
 import AdminBrevoSetup from "@/pages/admin-brevo-setup";
 import { AuthProvider } from "@/hooks/use-auth";
 // Account page import
@@ -391,9 +390,6 @@ function Router() {
           </Route>
           <Route path="/admin/email-templates">
             {user.isAdmin ? <EmailTemplatesPage /> : <NotFound />}
-          </Route>
-          <Route path="/brevo-settings">
-            {user.isAdmin ? <BrevoSettingsPage /> : <NotFound />}
           </Route>
           <Route path="/admin/brevo-setup">
             {user.isAdmin ? <AdminBrevoSetup /> : <NotFound />}

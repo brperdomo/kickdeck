@@ -1,6 +1,7 @@
 import { useParams } from 'wouter';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import PDFFormEditor from '@/components/admin/scheduling/PDFFormEditor';
+import { AdminPageWrapper } from '@/components/admin/AdminPageWrapper';
 
 export default function GameCardsDesigner() {
   const { eventId } = useParams<{ eventId: string }>();
@@ -16,15 +17,13 @@ export default function GameCardsDesigner() {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Game Card Designer</h1>
-        <p className="text-muted-foreground mt-2">
-          Create professional game cards with custom layouts and database integration
-        </p>
-      </div>
-      
+    <AdminPageWrapper
+      title="Game Card Designer"
+      subtitle="Create professional game cards with custom layouts and database integration"
+      backUrl={`/admin/events/${eventId}`}
+      backLabel="Back to Event"
+    >
       <PDFFormEditor eventId={eventId} />
-    </div>
+    </AdminPageWrapper>
   );
 }

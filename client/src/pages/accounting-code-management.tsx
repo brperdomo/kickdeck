@@ -13,6 +13,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { AccountingCodeModal } from "@/components/admin/AccountingCodeModal";
+import { AdminPageWrapper } from "@/components/admin/AdminPageWrapper";
 
 export default function AccountingCodeManagement() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -70,9 +71,13 @@ export default function AccountingCodeManagement() {
   };
 
   return (
-    <div className="container mx-auto py-6 space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Accounting Codes</h1>
+    <AdminPageWrapper
+      title="Accounting Codes"
+      backUrl="/admin"
+      backLabel="Back to Dashboard"
+    >
+      <div className="space-y-6">
+      <div className="flex justify-end">
         <Button onClick={() => setIsModalOpen(true)}>
           <Plus className="mr-2 h-4 w-4" />
           Add Accounting Code
@@ -140,6 +145,7 @@ export default function AccountingCodeManagement() {
         onOpenChange={setIsModalOpen}
         codeToEdit={selectedCode}
       />
-    </div>
+      </div>
+    </AdminPageWrapper>
   );
 }
