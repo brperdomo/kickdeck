@@ -380,20 +380,22 @@ export async function sendTemplatedEmail(
         : NaN;
       const useBrevoTemplate = emailTemplate.brevoTemplateId && !isNaN(numericTemplateId);
 
+      // Determine the correct sender: use the template's senderEmail (kept in sync by
+      // the seed migration) so account emails come from support@ and event emails from no-reply@.
+      // Fall back to getFromEmail() only if the template has no senderEmail stored.
+      const senderAddr = emailTemplate.senderEmail || await getFromEmail();
+      const senderName = emailTemplate.senderName || 'KickDeck';
+      const fromAddress = `${senderName} <${senderAddr}>`;
+
       if (useBrevoTemplate) {
         console.log(
-          `Using Brevo dynamic template for ${templateType} (ID: ${numericTemplateId})`,
+          `Using Brevo dynamic template for ${templateType} (ID: ${numericTemplateId}), from: ${fromAddress}`,
         );
-
-        // Use the configured from email (verified in Brevo) rather than the template's sender
-        const verifiedFrom = await getFromEmail();
-        const fromName = emailTemplate.senderName || 'KickDeck';
-        const fromEmail = `${fromName} <${verifiedFrom}>`;
 
         // Use Brevo dynamic template
         const result = await brevoService.sendDynamicTemplateEmail({
           to,
-          from: fromEmail,
+          from: fromAddress,
           templateId: numericTemplateId,
           params: context,
         });
@@ -436,12 +438,6 @@ export async function sendTemplatedEmail(
           // Auto-generate text from HTML if no text template exists
           text = generateTextFromHtml(html, context);
         }
-
-        // Use the configured from email (verified in Brevo) rather than the template's sender
-        // which may be an unverified address like noreply@kickdeck.xyz
-        const verifiedFromEmail = await getFromEmail();
-        const fromName = emailTemplate.senderName || 'KickDeck';
-        const fromAddress = `${fromName} <${verifiedFromEmail}>`;
 
         await sendEmail({
           to,
