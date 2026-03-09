@@ -280,7 +280,7 @@ export function EmailTemplateModal({ open, onOpenChange, template }: EmailTempla
                   <FormItem>
                     <FormLabel>Sender Email</FormLabel>
                     <FormControl>
-                      <Input placeholder="notifications@kickdeck.io" {...field} />
+                      <Input placeholder="no-reply@kickdeck.xyz" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

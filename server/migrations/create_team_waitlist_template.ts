@@ -27,7 +27,7 @@ export async function createTeamWaitlistTemplate() {
       description: 'Notification when a team is placed on the waitlist',
       subject: 'Your Team Has Been Placed on the Waitlist',
       senderName: 'KickDeck Registration',
-      senderEmail: 'support@kickdeck.io',
+      senderEmail: 'support@kickdeck.xyz',
       variables: [
         'teamName',
         'eventName',

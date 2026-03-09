@@ -102,7 +102,7 @@ export default function PaymentSuccess() {
           <CardContent className="space-y-4">
             <p className="text-red-700">{error}</p>
             <div className="bg-red-50 p-3 rounded text-sm text-red-800">
-              <strong>Important:</strong> Your payment was likely successful. Please contact support at support@kickdeck.io with your team ID ({teamId}) for assistance.
+              <strong>Important:</strong> Your payment was likely successful. Please contact support at support@kickdeck.xyz with your team ID ({teamId}) for assistance.
             </div>
             <Button 
               onClick={() => window.location.href = '/'}
@@ -212,7 +212,7 @@ export default function PaymentSuccess() {
 
         {/* Support Info */}
         <div className="text-center text-sm text-gray-600">
-          <p>Questions? Contact support at support@kickdeck.io</p>
+          <p>Questions? Contact support at support@kickdeck.xyz</p>
         </div>
       </div>
     </div>

@@ -411,7 +411,7 @@ export default function EmailTemplateEdit() {
                     <FormItem>
                       <FormLabel>Sender Email</FormLabel>
                       <FormControl>
-                        <Input placeholder="notifications@kickdeck.io" {...field} />
+                        <Input placeholder="no-reply@kickdeck.xyz" {...field} />
                       </FormControl>
                       <FormDescription>
                         The email address that will appear in the From field

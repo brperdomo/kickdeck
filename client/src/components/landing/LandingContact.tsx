@@ -106,8 +106,8 @@ const LandingContact = () => {
                 <Mail className="h-6 w-6 text-[#4d79ff]" />
                 <div>
                   <h4 className="font-medium text-white">Email</h4>
-                  <p className="text-sm text-gray-400">info@kickdeck.io</p>
-                  <p className="text-sm text-gray-400">support@kickdeck.io</p>
+                  <p className="text-sm text-gray-400">info@kickdeck.xyz</p>
+                  <p className="text-sm text-gray-400">support@kickdeck.xyz</p>
                 </div>
               </div>
               <div className="flex items-start space-x-4">

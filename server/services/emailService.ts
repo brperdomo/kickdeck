@@ -358,13 +358,26 @@ export async function sendTemplatedEmail(
 ): Promise<void> {
   const isDevelopment = process.env.NODE_ENV !== "production";
 
+  // Inject common defaults so every template can reference them safely.
+  // Callers can still override any of these by passing their own values.
+  const appUrl = getAppUrl(isDevelopment);
+  const enrichedContext: TemplateContext = {
+    currentYear: new Date().getFullYear().toString(),
+    loginLink: `${appUrl}/dashboard`,
+    loginUrl: `${appUrl}/login`,
+    appUrl,
+    supportEmail: 'support@kickdeck.xyz',
+    EVENT_ADMIN_EMAIL: 'support@kickdeck.xyz',
+    ...context, // caller values win
+  };
+
   try {
     // First get the email template using the updated non-throwing version
     const template = await getEmailTemplate(templateType, false);
 
     // If no template found, use a fallback
     const emailTemplate =
-      template || createFallbackTemplate(templateType, context, isDevelopment);
+      template || createFallbackTemplate(templateType, enrichedContext, isDevelopment);
 
     // At this point emailTemplate is guaranteed to exist because createFallbackTemplate always returns a value
     if (!emailTemplate || !emailTemplate.subject || !emailTemplate.content) {
@@ -392,12 +405,12 @@ export async function sendTemplatedEmail(
           `Using Brevo dynamic template for ${templateType} (ID: ${numericTemplateId}), from: ${fromAddress}`,
         );
 
-        // Use Brevo dynamic template
+        // Use Brevo dynamic template — pass enrichedContext so Brevo gets all params
         const result = await brevoService.sendDynamicTemplateEmail({
           to,
           from: fromAddress,
           templateId: numericTemplateId,
-          params: context,
+          params: enrichedContext,
         });
 
         if (result) {
@@ -417,8 +430,8 @@ export async function sendTemplatedEmail(
         console.log(`Sending ${templateType} email to ${to} via local render + Brevo transactional API`);
 
         const subject =
-          renderTemplate(emailTemplate.subject, context) || "Notification";
-        let html = renderTemplate(emailTemplate.content, context);
+          renderTemplate(emailTemplate.subject, enrichedContext) || "Notification";
+        let html = renderTemplate(emailTemplate.content, enrichedContext);
 
         // Ensure html is never empty or undefined
         if (!html || html.trim() === "") {
@@ -433,10 +446,10 @@ export async function sendTemplatedEmail(
           "textContent" in emailTemplate &&
           emailTemplate.textContent
         ) {
-          text = renderTemplate(emailTemplate.textContent, context);
+          text = renderTemplate(emailTemplate.textContent, enrichedContext);
         } else {
           // Auto-generate text from HTML if no text template exists
-          text = generateTextFromHtml(html, context);
+          text = generateTextFromHtml(html, enrichedContext);
         }
 
         await sendEmail({

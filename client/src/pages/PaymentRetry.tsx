@@ -269,7 +269,7 @@ export default function PaymentRetry() {
 
         {/* Help Text */}
         <div className="text-center text-sm text-gray-600">
-          <p>Having trouble? Contact support at support@kickdeck.io</p>
+          <p>Having trouble? Contact support at support@kickdeck.xyz</p>
         </div>
       </div>
     </div>

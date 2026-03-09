@@ -101,7 +101,7 @@ export async function createDefaultEmailTemplates() {
 </body>
 </html>`,
         senderName: 'KickDeck',
-        senderEmail: 'noreply@kickdeck.io',
+        senderEmail: 'no-reply@kickdeck.xyz',
         isActive: true,
         variables: ['username', 'resetUrl', 'token', 'expiryHours'],
         createdAt: new Date(),
@@ -200,7 +200,7 @@ export async function createDefaultEmailTemplates() {
 </body>
 </html>`,
         senderName: 'KickDeck',
-        senderEmail: 'noreply@kickdeck.io',
+        senderEmail: 'no-reply@kickdeck.xyz',
         isActive: true,
         variables: ['firstName', 'lastName', 'username', 'email'],
         createdAt: new Date(),

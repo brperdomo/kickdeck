@@ -17,7 +17,7 @@ export async function createTeamEmailTemplates() {
         description: 'Notification when a team status is updated',
         subject: 'Your Team Registration Status Has Been Updated',
         senderName: 'KickDeck Registration',
-        senderEmail: 'support@kickdeck.io',
+        senderEmail: 'support@kickdeck.xyz',
         variables: [
           'teamName',
           'eventName',
@@ -88,7 +88,7 @@ export async function createTeamEmailTemplates() {
         description: 'Notification when a team is approved',
         subject: 'Congratulations! Your Team Registration Has Been Approved',
         senderName: 'KickDeck Registration',
-        senderEmail: 'support@kickdeck.io',
+        senderEmail: 'support@kickdeck.xyz',
         variables: [
           'teamName',
           'eventName',
@@ -167,7 +167,7 @@ export async function createTeamEmailTemplates() {
         description: 'Notification when a team is rejected',
         subject: 'Important Information About Your Team Registration',
         senderName: 'KickDeck Registration',
-        senderEmail: 'support@kickdeck.io',
+        senderEmail: 'support@kickdeck.xyz',
         variables: [
           'teamName',
           'eventName',
@@ -241,7 +241,7 @@ export async function createTeamEmailTemplates() {
         description: 'Notification when a team is withdrawn',
         subject: 'Your Team Registration Status: Withdrawn',
         senderName: 'KickDeck Registration',
-        senderEmail: 'support@kickdeck.io',
+        senderEmail: 'support@kickdeck.xyz',
         variables: [
           'teamName',
           'eventName',
@@ -319,7 +319,7 @@ export async function createTeamEmailTemplates() {
         description: 'Confirmation after successful payment',
         subject: 'Payment Confirmation for {{teamName}}',
         senderName: 'KickDeck Payments',
-        senderEmail: 'payments@kickdeck.io',
+        senderEmail: 'no-reply@kickdeck.xyz',
         variables: [
           'teamName',
           'eventName',
@@ -444,7 +444,7 @@ export async function createTeamEmailTemplates() {
         description: 'Notification when a payment is refunded',
         subject: 'Refund Confirmation for {{teamName}}',
         senderName: 'KickDeck Payments',
-        senderEmail: 'payments@kickdeck.io',
+        senderEmail: 'no-reply@kickdeck.xyz',
         variables: [
           'teamName',
           'eventName',

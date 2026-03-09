@@ -144,7 +144,7 @@ function Router() {
   // Only fetch user data for non-public routes
   const { user, isLoading } = useUser(isPublicRoute);
   
-  // Check if we're on the main domain (kickdeck.io)
+  // Check if we're on the main domain (kickdeck.xyz)
   const showLandingPage = isMainDomain();
 
   if (isLoading) {

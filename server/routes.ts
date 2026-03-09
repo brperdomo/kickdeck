@@ -351,9 +351,9 @@ const identifyOrganization = async (req: Request, res: Response, next: NextFunct
   try {
     const hostname = req.hostname;
     
-    // First, check if this is a custom domain (not kickdeck.io)
+    // First, check if this is a custom domain (not kickdeck.xyz)
     // This handles clientbrand.com or other custom A-record domains
-    if (!hostname.includes('kickdeck.io')) {
+    if (!hostname.includes('kickdeck.xyz')) {
       // Skip localhost or IP addresses during development
       if (hostname === 'localhost' || /^\d+\.\d+\.\d+\.\d+$/.test(hostname)) {
         return next();
@@ -389,7 +389,7 @@ const identifyOrganization = async (req: Request, res: Response, next: NextFunct
       }
     }
     
-    // Check for subdomain (e.g., 'client' from 'client.kickdeck.io')
+    // Check for subdomain (e.g., 'client' from 'client.kickdeck.xyz')
     const parts = hostname.split('.');
     const isSubdomain = parts.length > 2;
     
@@ -4479,10 +4479,10 @@ export function registerRoutes(app: Express): Server {
           console.log('Sending admin welcome email to:', email);
           
           // Get base application URL for login link
-          const appUrl = process.env.APP_URL || 
-                         (process.env.REPLIT_DOMAINS ? 
-                          `https://${process.env.REPLIT_DOMAINS.split(',')[0]}` : 
-                          'https://kickdeck.io');
+          const appUrl = process.env.APP_URL ||
+                         (process.env.REPLIT_DOMAINS ?
+                          `https://${process.env.REPLIT_DOMAINS.split(',')[0]}` :
+                          'https://app.kickdeck.xyz');
 
           // Send the welcome email with login link and admin context
           await sendTemplatedEmail(email, 'admin_welcome', {
@@ -10046,10 +10046,10 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
             console.log('Sending admin welcome email to:', email);
             
             // Get base application URL for login link
-            const appUrl = process.env.APP_URL || 
-                         (process.env.REPLIT_DOMAINS ? 
-                          `https://${process.env.REPLIT_DOMAINS.split(',')[0]}` : 
-                          'https://kickdeck.io');
+            const appUrl = process.env.APP_URL ||
+                         (process.env.REPLIT_DOMAINS ?
+                          `https://${process.env.REPLIT_DOMAINS.split(',')[0]}` :
+                          'https://app.kickdeck.xyz');
 
             // Send the welcome email with login link and admin context
             await sendTemplatedEmail(email, 'admin_welcome', {

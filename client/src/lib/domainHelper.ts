@@ -3,7 +3,7 @@
  */
 
 /**
- * Checks if the current domain is the main KickDeck.io domain
+ * Checks if the current domain is the main KickDeck.xyz domain
  * This is used to determine whether to show the marketing site or the app
  */
 export function isMainDomain(): boolean {
@@ -13,15 +13,15 @@ export function isMainDomain(): boolean {
     if (window.location.search.includes('showLanding=true')) {
       return true;
     }
-    
+
     // Check actual domain in production
     const hostname = window.location.hostname;
 
     // Check if it's the main domain (not a subdomain)
     // localhost is NEVER the main domain — use ?showLanding=true to test the landing page
     return (
-      hostname === 'kickdeck.io' ||
-      hostname === 'www.kickdeck.io'
+      hostname === 'kickdeck.xyz' ||
+      hostname === 'www.kickdeck.xyz'
     );
   }
   
