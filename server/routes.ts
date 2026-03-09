@@ -334,6 +334,7 @@ import {
   eventAdministrators,
   emailProviderSettings,
   paymentTransactions,
+  clubs,
 } from "@db/schema";
 import fs from "fs/promises";
 import path from "path";
@@ -3456,6 +3457,34 @@ export function registerRoutes(app: Express): Server {
             // The main goal is to register the team
           }
           
+          // Resolve club: ensure clubName always has a matching clubs table row
+          let resolvedClubId = clubId || null;
+          if (clubName && !resolvedClubId) {
+            try {
+              // Look up existing club by name (case-insensitive)
+              const [existingClub] = await tx
+                .select()
+                .from(clubs)
+                .where(sql`LOWER(${clubs.name}) = LOWER(${clubName})`)
+                .limit(1);
+
+              if (existingClub) {
+                resolvedClubId = existingClub.id;
+              } else {
+                // Create new club entry
+                const [newClub] = await tx
+                  .insert(clubs)
+                  .values({ name: clubName })
+                  .returning();
+                resolvedClubId = newClub.id;
+                console.log(`Created new club "${clubName}" with id ${newClub.id}`);
+              }
+            } catch (clubError) {
+              console.error('Error resolving club:', clubError);
+              // Continue registration even if club resolution fails
+            }
+          }
+
           // Insert team with registration info - using proper property names that match the schema
           const insertedTeam = await tx
             .insert(teams)
@@ -3466,7 +3495,7 @@ export function registerRoutes(app: Express): Server {
               // Add bracket selection from registration
               bracketId: bracketId || null, // Add bracketId from request
               // Add club information
-              clubId: clubId || null, // Add clubId field from request
+              clubId: resolvedClubId, // Always resolved to a valid clubs table ID
               clubName: clubName || null, // Add clubName field for easier access
               // Combine coach data into a single JSON field to match the 'coach' column in DB
               coach: JSON.stringify({

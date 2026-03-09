@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { db } from '@db';
-import { clubs, teams } from '@db/schema';
-import { eq, sql } from 'drizzle-orm';
+import { clubs, teams, files, folders } from '@db/schema';
+import { eq, sql, and } from 'drizzle-orm';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs/promises';
@@ -15,10 +15,9 @@ const storage = multer.diskStorage({
   destination: async (req, file, cb) => {
     try {
       const uploadsDir = './uploads/club-logos';
-      // Ensure the uploads directory exists
       try {
         await fs.access(uploadsDir);
-      } catch (error) {
+      } catch {
         await fs.mkdir(uploadsDir, { recursive: true });
       }
       cb(null, uploadsDir);
@@ -27,7 +26,6 @@ const storage = multer.diskStorage({
     }
   },
   filename: (req, file, cb) => {
-    // Create a unique filename with the original extension
     const uniqueId = uuidv4();
     const extension = path.extname(file.originalname).toLowerCase();
     cb(null, `${uniqueId}${extension}`);
@@ -35,7 +33,6 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (req: any, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
-  // Accept image files only
   if (file.mimetype.startsWith('image/')) {
     cb(null, true);
   } else {
@@ -43,19 +40,82 @@ const fileFilter = (req: any, file: Express.Multer.File, cb: multer.FileFilterCa
   }
 };
 
-const upload = multer({ 
+const upload = multer({
   storage,
   fileFilter,
-  limits: {
-    fileSize: 5 * 1024 * 1024 // 5MB limit
-  }
+  limits: { fileSize: 5 * 1024 * 1024 }
 });
+
+/**
+ * Ensure the "Clubs" and "Clubs > Logos" folders exist in the file manager.
+ * Returns the Logos folder ID.
+ */
+async function ensureLogosFolder(): Promise<string> {
+  // Find or create "Clubs" folder (top-level)
+  let [clubsFolder] = await db
+    .select()
+    .from(folders)
+    .where(and(eq(folders.name, 'Clubs'), sql`${folders.parentId} IS NULL`))
+    .limit(1);
+
+  if (!clubsFolder) {
+    const clubsFolderId = uuidv4();
+    [clubsFolder] = await db
+      .insert(folders)
+      .values({ id: clubsFolderId, name: 'Clubs', parentId: null })
+      .returning();
+  }
+
+  // Find or create "Logos" subfolder under Clubs
+  let [logosFolder] = await db
+    .select()
+    .from(folders)
+    .where(and(eq(folders.name, 'Logos'), eq(folders.parentId, clubsFolder.id)))
+    .limit(1);
+
+  if (!logosFolder) {
+    const logosFolderId = uuidv4();
+    [logosFolder] = await db
+      .insert(folders)
+      .values({ id: logosFolderId, name: 'Logos', parentId: clubsFolder.id })
+      .returning();
+  }
+
+  return logosFolder.id;
+}
+
+/**
+ * Create a file manager entry for an uploaded logo.
+ */
+async function createFileManagerEntry(
+  logoUrl: string,
+  clubName: string,
+  fileSize: number,
+  mimeType: string,
+  logosFolderId: string
+) {
+  const fileId = uuidv4();
+  const extension = path.extname(logoUrl);
+  const fileName = `${clubName}${extension}`;
+
+  await db.insert(files).values({
+    id: fileId,
+    name: fileName,
+    url: logoUrl,
+    type: mimeType,
+    size: fileSize,
+    folderId: logosFolderId,
+    relatedEntityType: 'club_logo',
+    category: 'logo',
+  });
+
+  return fileId;
+}
 
 // GET /api/clubs - Get all clubs
 router.get('/', async (req, res) => {
   try {
     const clubsList = await db.select().from(clubs).orderBy(clubs.name);
-    
     res.json(clubsList);
   } catch (error) {
     console.error('Error fetching clubs:', error);
@@ -67,63 +127,56 @@ router.get('/', async (req, res) => {
 router.get('/event/:eventId', async (req, res) => {
   try {
     const { eventId } = req.params;
-    console.log(`Fetching clubs for event: ${eventId}`);
-    
+
     // Get unique club names from teams in this event
     const existingClubs = await db.execute(sql`
       SELECT DISTINCT club_name, club_id
-      FROM teams 
-      WHERE event_id = ${eventId} 
-      AND club_name IS NOT NULL 
+      FROM teams
+      WHERE event_id = ${eventId}
+      AND club_name IS NOT NULL
       AND club_name != ''
     `);
-    
-    // Get club records that match these names and IDs from this specific event
-    let clubsList = [];
+
+    let clubsList: any[] = [];
     if (existingClubs.rows.length > 0) {
-      console.log(`Found ${existingClubs.rows.length} club names in event ${eventId}`);
-      
-      // Extract club names and club IDs
       const clubNames = existingClubs.rows.map((row: any) => row.club_name);
       const clubIds = existingClubs.rows
         .filter((row: any) => row.club_id !== null)
         .map((row: any) => row.club_id);
-      
-      // First check clubs by IDs if available
+
+      // Check clubs by IDs
       if (clubIds.length > 0) {
         clubsList = await db
           .select()
           .from(clubs)
           .where(
-            clubIds.length === 1 
-              ? eq(clubs.id, clubIds[0]) 
-              : sql`${clubs.id} IN (${sql.join(clubIds.map(id => sql`${id}`), sql`, `)})`
+            clubIds.length === 1
+              ? eq(clubs.id, clubIds[0])
+              : sql`${clubs.id} IN (${sql.join(clubIds.map((id: any) => sql`${id}`), sql`, `)})`
           )
           .orderBy(clubs.name);
       }
-      
-      // Then check remaining club names
+
+      // Check remaining club names
       if (clubNames.length > 0 && (clubIds.length === 0 || clubsList.length < clubNames.length)) {
         const nameClubs = await db
           .select()
           .from(clubs)
           .where(
-            clubNames.length === 1 
-              ? eq(clubs.name, clubNames[0]) 
-              : sql`${clubs.name} IN (${sql.join(clubNames.map(name => sql`${name}`), sql`, `)})`
+            clubNames.length === 1
+              ? eq(clubs.name, clubNames[0])
+              : sql`${clubs.name} IN (${sql.join(clubNames.map((n: any) => sql`${n}`), sql`, `)})`
           )
           .orderBy(clubs.name);
-        
-        // Add clubs by name only if not already added by ID
+
         for (const club of nameClubs) {
-          if (!clubsList.some(c => c.id === club.id)) {
+          if (!clubsList.some((c: any) => c.id === club.id)) {
             clubsList.push(club);
           }
         }
       }
     }
-    
-    console.log(`Returning ${clubsList.length} clubs for event ${eventId}`);
+
     res.json(clubsList);
   } catch (error) {
     console.error('Error fetching clubs for event:', error);
@@ -131,57 +184,86 @@ router.get('/event/:eventId', async (req, res) => {
   }
 });
 
-// POST /api/clubs - Create a new club
+// POST /api/clubs - Create a new club (with or without logo)
 router.post('/', upload.single('logo'), async (req, res) => {
   try {
     const { name } = req.body;
-    
+
     if (!name) {
       return res.status(400).json({ error: 'Club name is required' });
     }
-    
-    // Check if club already exists
-    const existingClub = await db
+
+    // Check if club already exists (case-insensitive)
+    const [existingClub] = await db
       .select()
       .from(clubs)
-      .where(eq(clubs.name, name))
+      .where(sql`LOWER(${clubs.name}) = LOWER(${name})`)
       .limit(1);
-    
-    if (existingClub.length > 0) {
-      return res.status(400).json({ error: 'A club with this name already exists' });
+
+    if (existingClub) {
+      // If club exists and a new logo was uploaded, update it
+      if (req.file) {
+        const logoUrl = await processLogo(req.file);
+        await db.update(clubs).set({ logoUrl }).where(eq(clubs.id, existingClub.id));
+
+        // Also save to file manager
+        try {
+          const logosFolderId = await ensureLogosFolder();
+          const stat = await fs.stat(path.join('.', logoUrl));
+          await createFileManagerEntry(logoUrl, existingClub.name, stat.size, req.file.mimetype, logosFolderId);
+        } catch (fmErr) {
+          console.error('Error saving logo to file manager:', fmErr);
+        }
+
+        return res.status(200).json({ ...existingClub, logoUrl });
+      }
+      // Return existing club (not an error — frontend can use the ID)
+      return res.status(200).json(existingClub);
     }
-    
-    let logoUrl = null;
-    
-    // If a logo was uploaded, process and save it
+
+    let logoUrl: string | null = null;
+
     if (req.file) {
+      logoUrl = await processLogo(req.file);
+
+      // Save logo to file manager under Clubs > Logos
       try {
-        // Resize the image to a standard size
-        const outputPath = path.join('./uploads/club-logos', `resized-${req.file.filename}`);
-        await sharp(req.file.path)
-          .resize(200, 200, { fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 0 } })
-          .toFile(outputPath);
-        
-        // Update the logo URL to point to the resized image
-        logoUrl = `/uploads/club-logos/resized-${req.file.filename}`;
-      } catch (error) {
-        console.error('Error processing logo:', error);
-        // If image processing fails, use the original file
-        logoUrl = `/uploads/club-logos/${req.file.filename}`;
+        const logosFolderId = await ensureLogosFolder();
+        const stat = await fs.stat(path.join('.', logoUrl));
+        await createFileManagerEntry(logoUrl, name, stat.size, req.file.mimetype, logosFolderId);
+      } catch (fmErr) {
+        console.error('Error saving logo to file manager:', fmErr);
+        // Non-fatal — club still gets created
       }
     }
-    
+
     // Create the new club
-    const newClub = await db.insert(clubs).values({
+    const [newClub] = await db.insert(clubs).values({
       name,
       logoUrl,
     }).returning();
-    
-    res.status(201).json(newClub[0]);
+
+    res.status(201).json(newClub);
   } catch (error) {
     console.error('Error creating club:', error);
     res.status(500).json({ error: 'Failed to create club' });
   }
 });
+
+/**
+ * Process an uploaded logo file: resize and return the URL path.
+ */
+async function processLogo(file: Express.Multer.File): Promise<string> {
+  try {
+    const outputPath = path.join('./uploads/club-logos', `resized-${file.filename}`);
+    await sharp(file.path)
+      .resize(200, 200, { fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 0 } })
+      .toFile(outputPath);
+    return `/uploads/club-logos/resized-${file.filename}`;
+  } catch (error) {
+    console.error('Error processing logo:', error);
+    return `/uploads/club-logos/${file.filename}`;
+  }
+}
 
 export default router;

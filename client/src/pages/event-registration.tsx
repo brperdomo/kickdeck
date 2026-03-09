@@ -2662,31 +2662,41 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
         };
       }
       
-      // If creating a new club with a logo, upload it first
+      // If creating a new club, persist it to the clubs table (with or without logo)
       let clubId = data.clubId;
-      
-      if (data.newClub && data.clubName && clubLogo) {
+
+      if (data.newClub && data.clubName) {
         try {
           const formData = new FormData();
           formData.append('name', data.clubName);
-          formData.append('logo', clubLogo);
-          
+          if (clubLogo) {
+            formData.append('logo', clubLogo);
+          }
+
           const clubResponse = await fetch('/api/clubs', {
             method: 'POST',
             body: formData,
           });
-          
-          if (!clubResponse.ok) {
-            throw new Error('Failed to create club');
+
+          if (clubResponse.ok) {
+            const clubData = await clubResponse.json();
+            clubId = clubData.id;
+          } else {
+            // If club already exists (409/400), try to fetch the existing one
+            const existingResponse = await fetch('/api/clubs');
+            if (existingResponse.ok) {
+              const allClubs = await existingResponse.json();
+              const match = allClubs.find((c: any) => c.name.toLowerCase() === data.clubName!.toLowerCase());
+              if (match) {
+                clubId = match.id;
+              }
+            }
           }
-          
-          const clubData = await clubResponse.json();
-          clubId = clubData.id;
         } catch (error) {
           console.error('Error creating club:', error);
           toast({
-            title: 'Error',
-            description: 'Failed to create club. Team will be registered without club information.',
+            title: 'Warning',
+            description: 'Could not save club. Team will still be registered.',
             variant: 'destructive',
           });
         }
