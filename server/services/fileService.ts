@@ -111,8 +111,12 @@ export async function getFiles(options: {
   }
   
   const result = await db.execute(query);
-  
-  return result.rows;
+
+  // Normalize URLs: ensure leading slash for existing data
+  return result.rows.map((row: any) => ({
+    ...row,
+    url: row.url && !row.url.startsWith('/') ? `/${row.url}` : row.url,
+  }));
 }
 
 /**
@@ -129,8 +133,14 @@ export async function getFile(fileId: string) {
     .from(files)
     .leftJoin(folders, eq(files.folderId, folders.id))
     .where(eq(files.id, fileId));
-  
-  return file || null;
+
+  if (!file) return null;
+
+  // Normalize URL
+  return {
+    ...file,
+    url: file.url && !file.url.startsWith('/') ? `/${file.url}` : file.url,
+  };
 }
 
 /**
@@ -164,6 +174,9 @@ export async function createFile(fileData: {
   }
   
   // Create the file record
+  // Ensure URL has a leading slash so it resolves from the server root
+  const fileUrl = fileData.path.startsWith('/') ? fileData.path : `/${fileData.path}`;
+
   const [file] = await db
     .insert(files)
     .values({
@@ -171,8 +184,7 @@ export async function createFile(fileData: {
       name: fileData.name,
       type: fileData.type,
       size: fileData.size,
-      mimeType: fileData.mimeType,
-      url: fileData.path,
+      url: fileUrl,
       folderId: fileData.folderId || null,
       description: fileData.description || null,
       tags: fileData.tags || null,
@@ -335,8 +347,12 @@ export async function getFilesByFolder(folderId: string | null) {
   }
   
   const result = await db.execute(query);
-  
-  return result.rows;
+
+  // Normalize URLs: ensure leading slash for existing data
+  return result.rows.map((row: any) => ({
+    ...row,
+    url: row.url && !row.url.startsWith('/') ? `/${row.url}` : row.url,
+  }));
 }
 
 /**

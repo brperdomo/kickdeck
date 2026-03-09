@@ -117,8 +117,11 @@ router.get('/:id/download', async (req, res) => {
     }
     
     // Stream the file to the response
+    // file.url is stored with leading slash (e.g. /uploads/...) for browser use,
+    // but createReadStream needs a relative path from project root
     try {
-      const fileStream = createReadStream(file.url);
+      const filePath = file.url.startsWith('/') ? `.${file.url}` : file.url;
+      const fileStream = createReadStream(filePath);
       fileStream.pipe(res);
     } catch (error) {
       console.error(`Error streaming file ${id}:`, error);
