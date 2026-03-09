@@ -31,11 +31,11 @@
 
               <!-- Greeting -->
               <p style="font-size: 16px; color: #333333; margin: 0 0 20px 0; line-height: 1.6;">
-                Hi {{ params.CONTACT_NAME }},
+                Hi {{ params.firstName }},
               </p>
 
               <p style="font-size: 16px; color: #333333; margin: 0 0 25px 0; line-height: 1.6;">
-                Thank you for registering <strong>{{ params.TEAM_NAME }}</strong> for <strong>{{ params.EVENT_NAME }}</strong>. We've received your submission and it's now being reviewed by the event organizer.
+                Thank you for registering <strong>{{ params.teamName }}</strong> for <strong>{{ params.eventName }}</strong>. We've received your submission and it's now being reviewed by the event organizer.
               </p>
 
               <!-- Status card -->
@@ -52,19 +52,19 @@
                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                   <tr>
                     <td style="padding: 8px 0; color: #6b7280; font-size: 14px; border-bottom: 1px solid #e5e7eb;">Team</td>
-                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right; border-bottom: 1px solid #e5e7eb;">{{ params.TEAM_NAME }}</td>
+                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right; border-bottom: 1px solid #e5e7eb;">{{ params.teamName }}</td>
                   </tr>
                   <tr>
                     <td style="padding: 8px 0; color: #6b7280; font-size: 14px; border-bottom: 1px solid #e5e7eb;">Event</td>
-                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right; border-bottom: 1px solid #e5e7eb;">{{ params.EVENT_NAME }}</td>
+                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right; border-bottom: 1px solid #e5e7eb;">{{ params.eventName }}</td>
                   </tr>
                   <tr>
                     <td style="padding: 8px 0; color: #6b7280; font-size: 14px; border-bottom: 1px solid #e5e7eb;">Division</td>
-                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right; border-bottom: 1px solid #e5e7eb;">{{ params.DIVISION }}</td>
+                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right; border-bottom: 1px solid #e5e7eb;">{{ params.division }}</td>
                   </tr>
                   <tr>
                     <td style="padding: 8px 0; color: #6b7280; font-size: 14px;">Submitted</td>
-                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right;">{{ params.SUBMITTED_DATE }}</td>
+                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right;">{{ params.registrationDate }}</td>
                   </tr>
                 </table>
               </div>

@@ -30,18 +30,18 @@
             <td style="background-color: #ffffff; border: 1px solid #e0e0e0; border-top: none; padding: 35px 30px; border-radius: 0 0 10px 10px;">
 
               <p style="font-size: 16px; color: #333333; margin: 0 0 20px 0; line-height: 1.6;">
-                Hi {{ params.SUBMITTER_NAME }},
+                Hi {{ params.submitterName }},
               </p>
 
               <p style="font-size: 16px; color: #333333; margin: 0 0 25px 0; line-height: 1.6;">
-                Your payment for <strong>{{ params.TEAM_NAME }}</strong> in <strong>{{ params.EVENT_NAME }}</strong> has been processed successfully.
+                Your payment for <strong>{{ params.teamName }}</strong> in <strong>{{ params.eventName }}</strong> has been processed successfully.
               </p>
 
               <!-- Status card -->
               <div style="background-color: #e8f5e8; border: 1px solid #c8e6c9; border-radius: 8px; padding: 25px; margin-bottom: 25px; text-align: center;">
                 <div style="display: inline-block; background-color: #2e7d32; color: #ffffff; font-size: 13px; font-weight: 700; padding: 5px 16px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;">Payment Received</div>
                 <p style="font-size: 24px; color: #2e7d32; margin: 10px 0 0 0; font-weight: 700;">
-                  {{ params.AMOUNT }}
+                  {{ params.amount }}
                 </p>
               </div>
 
@@ -51,31 +51,31 @@
                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                   <tr>
                     <td style="padding: 8px 0; color: #6b7280; font-size: 14px; border-bottom: 1px solid #e5e7eb;">Team</td>
-                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right; border-bottom: 1px solid #e5e7eb;">{{ params.TEAM_NAME }}</td>
+                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right; border-bottom: 1px solid #e5e7eb;">{{ params.teamName }}</td>
                   </tr>
                   <tr>
                     <td style="padding: 8px 0; color: #6b7280; font-size: 14px; border-bottom: 1px solid #e5e7eb;">Event</td>
-                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right; border-bottom: 1px solid #e5e7eb;">{{ params.EVENT_NAME }}</td>
+                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right; border-bottom: 1px solid #e5e7eb;">{{ params.eventName }}</td>
                   </tr>
                   <tr>
                     <td style="padding: 8px 0; color: #6b7280; font-size: 14px; border-bottom: 1px solid #e5e7eb;">Division</td>
-                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right; border-bottom: 1px solid #e5e7eb;">{{ params.AGE_GROUP }}</td>
+                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right; border-bottom: 1px solid #e5e7eb;">{{ params.ageGroup }}</td>
                   </tr>
                   <tr>
                     <td style="padding: 8px 0; color: #6b7280; font-size: 14px; border-bottom: 1px solid #e5e7eb;">Amount</td>
-                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right; border-bottom: 1px solid #e5e7eb;">{{ params.AMOUNT }}</td>
+                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right; border-bottom: 1px solid #e5e7eb;">{{ params.amount }}</td>
                   </tr>
                   <tr>
                     <td style="padding: 8px 0; color: #6b7280; font-size: 14px; border-bottom: 1px solid #e5e7eb;">Payment Card</td>
-                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right; border-bottom: 1px solid #e5e7eb;">{{ params.CARD_BRAND }} ending {{ params.CARD_LAST_FOUR }}</td>
+                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right; border-bottom: 1px solid #e5e7eb;">{{ params.cardBrand }} ending {{ params.cardLastFour }}</td>
                   </tr>
                   <tr>
                     <td style="padding: 8px 0; color: #6b7280; font-size: 14px; border-bottom: 1px solid #e5e7eb;">Payment ID</td>
-                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right; border-bottom: 1px solid #e5e7eb;">{{ params.PAYMENT_ID }}</td>
+                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right; border-bottom: 1px solid #e5e7eb;">{{ params.paymentId }}</td>
                   </tr>
                   <tr>
                     <td style="padding: 8px 0; color: #6b7280; font-size: 14px;">Date</td>
-                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right;">{{ params.PAYMENT_DATE }}</td>
+                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right;">{{ params.paymentDate }}</td>
                   </tr>
                 </table>
               </div>
@@ -90,7 +90,7 @@
 
               <!-- CTA button -->
               <div style="text-align: center; margin-bottom: 25px;">
-                <a href="{{ params.LOGIN_LINK }}" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; font-size: 16px; font-weight: 700; padding: 14px 32px; border-radius: 8px; text-decoration: none;">View Your Dashboard</a>
+                <a href="{{ params.loginLink }}" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; font-size: 16px; font-weight: 700; padding: 14px 32px; border-radius: 8px; text-decoration: none;">View Your Dashboard</a>
               </div>
 
               <!-- Divider + footer info -->

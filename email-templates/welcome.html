@@ -30,7 +30,7 @@
             <td style="background-color: #ffffff; border: 1px solid #e0e0e0; border-top: none; padding: 35px 30px; border-radius: 0 0 10px 10px;">
 
               <p style="font-size: 16px; color: #333333; margin: 0 0 20px 0; line-height: 1.6;">
-                Hi {{ params.FIRST_NAME }},
+                Hi {{ params.firstName }},
               </p>
 
               <p style="font-size: 16px; color: #333333; margin: 0 0 25px 0; line-height: 1.6;">
@@ -43,18 +43,18 @@
                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                   <tr>
                     <td style="padding: 8px 0; color: #6b7280; font-size: 14px; border-bottom: 1px solid #e5e7eb;">Name</td>
-                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right; border-bottom: 1px solid #e5e7eb;">{{ params.FIRST_NAME }} {{ params.LAST_NAME }}</td>
+                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right; border-bottom: 1px solid #e5e7eb;">{{ params.firstName }} {{ params.lastName }}</td>
                   </tr>
                   <tr>
                     <td style="padding: 8px 0; color: #6b7280; font-size: 14px;">Email</td>
-                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right;">{{ params.EMAIL }}</td>
+                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right;">{{ params.email }}</td>
                   </tr>
                 </table>
               </div>
 
               <!-- CTA button -->
               <div style="text-align: center; margin-bottom: 25px;">
-                <a href="{{ params.LOGIN_LINK }}" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; font-size: 16px; font-weight: 700; padding: 14px 32px; border-radius: 8px; text-decoration: none;">Get Started</a>
+                <a href="{{ params.loginLink }}" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; font-size: 16px; font-weight: 700; padding: 14px 32px; border-radius: 8px; text-decoration: none;">Get Started</a>
               </div>
 
               <!-- Helpful tips -->

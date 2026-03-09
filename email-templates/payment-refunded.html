@@ -30,18 +30,18 @@
             <td style="background-color: #ffffff; border: 1px solid #e0e0e0; border-top: none; padding: 35px 30px; border-radius: 0 0 10px 10px;">
 
               <p style="font-size: 16px; color: #333333; margin: 0 0 20px 0; line-height: 1.6;">
-                Hi {{ params.SUBMITTER_NAME }},
+                Hi {{ params.submitterName }},
               </p>
 
               <p style="font-size: 16px; color: #333333; margin: 0 0 25px 0; line-height: 1.6;">
-                A refund has been processed for your registration of <strong>{{ params.TEAM_NAME }}</strong> in <strong>{{ params.EVENT_NAME }}</strong>.
+                A refund has been processed for your registration of <strong>{{ params.teamName }}</strong> in <strong>{{ params.eventName }}</strong>.
               </p>
 
               <!-- Refund amount card -->
               <div style="background: linear-gradient(135deg, rgba(102,126,234,0.08) 0%, rgba(118,75,162,0.08) 100%); border: 1px solid rgba(102,126,234,0.2); border-radius: 8px; padding: 25px; margin-bottom: 25px; text-align: center;">
                 <div style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; font-size: 13px; font-weight: 700; padding: 5px 16px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;">Refunded</div>
                 <p style="font-size: 24px; color: #333333; margin: 10px 0 0 0; font-weight: 700;">
-                  {{ params.AMOUNT }}
+                  {{ params.amount }}
                 </p>
               </div>
 
@@ -51,23 +51,23 @@
                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                   <tr>
                     <td style="padding: 8px 0; color: #6b7280; font-size: 14px; border-bottom: 1px solid #e5e7eb;">Team</td>
-                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right; border-bottom: 1px solid #e5e7eb;">{{ params.TEAM_NAME }}</td>
+                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right; border-bottom: 1px solid #e5e7eb;">{{ params.teamName }}</td>
                   </tr>
                   <tr>
                     <td style="padding: 8px 0; color: #6b7280; font-size: 14px; border-bottom: 1px solid #e5e7eb;">Event</td>
-                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right; border-bottom: 1px solid #e5e7eb;">{{ params.EVENT_NAME }}</td>
+                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right; border-bottom: 1px solid #e5e7eb;">{{ params.eventName }}</td>
                   </tr>
                   <tr>
                     <td style="padding: 8px 0; color: #6b7280; font-size: 14px; border-bottom: 1px solid #e5e7eb;">Refund Amount</td>
-                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right; border-bottom: 1px solid #e5e7eb;">{{ params.AMOUNT }}</td>
+                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right; border-bottom: 1px solid #e5e7eb;">{{ params.amount }}</td>
                   </tr>
                   <tr>
                     <td style="padding: 8px 0; color: #6b7280; font-size: 14px; border-bottom: 1px solid #e5e7eb;">Reason</td>
-                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right; border-bottom: 1px solid #e5e7eb;">{{ params.REASON }}</td>
+                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right; border-bottom: 1px solid #e5e7eb;">{{ params.reason }}</td>
                   </tr>
                   <tr>
                     <td style="padding: 8px 0; color: #6b7280; font-size: 14px;">Date</td>
-                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right;">{{ params.REFUND_DATE }}</td>
+                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right;">{{ params.refundDate }}</td>
                   </tr>
                 </table>
               </div>

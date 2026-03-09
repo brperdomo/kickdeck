@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Team Status Update</title>
+  <title>Team Approved — Payment Processed</title>
 </head>
 <body style="margin: 0; padding: 0; background-color: #f3f4f6; font-family: Arial, sans-serif;">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color: #f3f4f6; padding: 40px 20px;">
@@ -18,10 +18,10 @@
                 <img src="https://app.kickdeck.xyz/uploads/28f88aea-01c6-4c64-8e39-f050fbb7fc92.png" alt="KickDeck" width="180" style="display: inline-block; max-width: 180px; height: auto;" />
               </div>
               <div style="margin-bottom: 15px;">
-                <span style="display: inline-block; width: 56px; height: 56px; background: rgba(255,255,255,0.2); border-radius: 50%; line-height: 56px; font-size: 28px;">&#128276;</span>
+                <span style="display: inline-block; width: 56px; height: 56px; background: rgba(255,255,255,0.2); border-radius: 50%; line-height: 56px; font-size: 28px;">&#9989;</span>
               </div>
-              <h1 style="margin: 0; font-size: 26px; color: #ffffff; font-weight: 700; letter-spacing: -0.5px;">Status Update</h1>
-              <p style="margin: 10px 0 0 0; font-size: 16px; color: rgba(255,255,255,0.9);">Your team's registration status has changed</p>
+              <h1 style="margin: 0; font-size: 26px; color: #ffffff; font-weight: 700; letter-spacing: -0.5px;">Approved &amp; Payment Processed</h1>
+              <p style="margin: 10px 0 0 0; font-size: 16px; color: rgba(255,255,255,0.9);">Your team is officially registered</p>
             </td>
           </tr>
 
@@ -34,29 +34,20 @@
               </p>
 
               <p style="font-size: 16px; color: #333333; margin: 0 0 25px 0; line-height: 1.6;">
-                The registration status for <strong>{{ params.teamName }}</strong> in <strong>{{ params.eventName }}</strong> has been updated.
+                Great news! Your registration for <strong>{{ params.teamName }}</strong> in <strong>{{ params.eventName }}</strong> has been approved and your payment has been processed.
               </p>
 
-              <!-- Status change card -->
-              <div style="background: linear-gradient(135deg, rgba(102,126,234,0.08) 0%, rgba(118,75,162,0.08) 100%); border: 1px solid rgba(102,126,234,0.2); border-radius: 8px; padding: 25px; margin-bottom: 25px; text-align: center;">
-                <table role="presentation" cellpadding="0" cellspacing="0" style="margin: 0 auto;">
-                  <tr>
-                    <td style="text-align: center; padding: 0 15px;">
-                      <div style="font-size: 12px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Previous</div>
-                      <div style="display: inline-block; background-color: #6b7280; color: #ffffff; font-size: 13px; font-weight: 700; padding: 5px 14px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px;">{{ params.previousStatus }}</div>
-                    </td>
-                    <td style="padding: 0 10px; color: #9ca3af; font-size: 20px;">&#8594;</td>
-                    <td style="text-align: center; padding: 0 15px;">
-                      <div style="font-size: 12px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Current</div>
-                      <div style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; font-size: 13px; font-weight: 700; padding: 5px 14px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px;">{{ params.status }}</div>
-                    </td>
-                  </tr>
-                </table>
+              <!-- Status card -->
+              <div style="background-color: #e8f5e8; border: 1px solid #c8e6c9; border-radius: 8px; padding: 25px; margin-bottom: 25px; text-align: center;">
+                <div style="display: inline-block; background-color: #2e7d32; color: #ffffff; font-size: 13px; font-weight: 700; padding: 5px 16px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;">Approved</div>
+                <p style="font-size: 15px; color: #2e7d32; margin: 10px 0 0 0; line-height: 1.5;">
+                  Your team is confirmed and your registration is complete.
+                </p>
               </div>
 
-              <!-- Details -->
+              <!-- Registration details -->
               <div style="background-color: #f8f9fa; border-radius: 8px; padding: 20px; margin-bottom: 25px;">
-                <h3 style="margin: 0 0 15px 0; font-size: 16px; color: #333333;">Details</h3>
+                <h3 style="margin: 0 0 15px 0; font-size: 16px; color: #333333;">Registration Details</h3>
                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                   <tr>
                     <td style="padding: 8px 0; color: #6b7280; font-size: 14px; border-bottom: 1px solid #e5e7eb;">Team</td>
@@ -67,8 +58,23 @@
                     <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right; border-bottom: 1px solid #e5e7eb;">{{ params.eventName }}</td>
                   </tr>
                   <tr>
-                    <td style="padding: 8px 0; color: #6b7280; font-size: 14px;">Notes</td>
-                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right;">{{ params.notes }}</td>
+                    <td style="padding: 8px 0; color: #6b7280; font-size: 14px;">Approved On</td>
+                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right;">{{ params.approvalDate }}</td>
+                  </tr>
+                </table>
+              </div>
+
+              <!-- Payment summary -->
+              <div style="background: linear-gradient(135deg, rgba(102,126,234,0.08) 0%, rgba(118,75,162,0.08) 100%); border: 1px solid rgba(102,126,234,0.2); border-radius: 8px; padding: 20px; margin-bottom: 25px;">
+                <h3 style="margin: 0 0 15px 0; font-size: 16px; color: #333333;">Payment Summary</h3>
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td style="padding: 8px 0; color: #6b7280; font-size: 14px; border-bottom: 1px solid rgba(102,126,234,0.15);">Amount Charged</td>
+                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 700; text-align: right; border-bottom: 1px solid rgba(102,126,234,0.15);">{{ params.totalAmount }}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 8px 0; color: #6b7280; font-size: 14px;">Payment Card</td>
+                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right;">{{ params.cardBrand }} ending in {{ params.cardLastFour }}</td>
                   </tr>
                 </table>
               </div>
@@ -109,7 +115,7 @@
                 Powered by <a href="https://kickdeck.xyz" style="color: #667eea; text-decoration: none; font-weight: 600;">KickDeck</a>
               </p>
               <p style="margin: 0; font-size: 12px; color: #9ca3af;">
-                You're receiving this because a registration was submitted with this email address.
+                You're receiving this because your team registration was approved.
               </p>
             </td>
           </tr>

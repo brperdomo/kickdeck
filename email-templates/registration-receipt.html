@@ -30,11 +30,11 @@
             <td style="background-color: #ffffff; border: 1px solid #e0e0e0; border-top: none; padding: 35px 30px; border-radius: 0 0 10px 10px;">
 
               <p style="font-size: 16px; color: #333333; margin: 0 0 20px 0; line-height: 1.6;">
-                Hi {{ params.SUBMITTER_NAME }},
+                Hi {{ params.submitterName }},
               </p>
 
               <p style="font-size: 16px; color: #333333; margin: 0 0 25px 0; line-height: 1.6;">
-                Here is your registration receipt for <strong>{{ params.TEAM_NAME }}</strong> in <strong>{{ params.EVENT_NAME }}</strong>.
+                Here is your registration receipt for <strong>{{ params.teamName }}</strong> in <strong>{{ params.eventName }}</strong>.
               </p>
 
               <!-- Registration details -->
@@ -43,23 +43,23 @@
                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                   <tr>
                     <td style="padding: 8px 0; color: #6b7280; font-size: 14px; border-bottom: 1px solid #e5e7eb;">Team</td>
-                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right; border-bottom: 1px solid #e5e7eb;">{{ params.TEAM_NAME }}</td>
+                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right; border-bottom: 1px solid #e5e7eb;">{{ params.teamName }}</td>
                   </tr>
                   <tr>
                     <td style="padding: 8px 0; color: #6b7280; font-size: 14px; border-bottom: 1px solid #e5e7eb;">Event</td>
-                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right; border-bottom: 1px solid #e5e7eb;">{{ params.EVENT_NAME }}</td>
+                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right; border-bottom: 1px solid #e5e7eb;">{{ params.eventName }}</td>
                   </tr>
                   <tr>
                     <td style="padding: 8px 0; color: #6b7280; font-size: 14px; border-bottom: 1px solid #e5e7eb;">Club</td>
-                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right; border-bottom: 1px solid #e5e7eb;">{{ params.CLUB_NAME }}</td>
+                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right; border-bottom: 1px solid #e5e7eb;">{{ params.clubName }}</td>
                   </tr>
                   <tr>
                     <td style="padding: 8px 0; color: #6b7280; font-size: 14px; border-bottom: 1px solid #e5e7eb;">Contact</td>
-                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right; border-bottom: 1px solid #e5e7eb;">{{ params.SUBMITTER_NAME }} ({{ params.SUBMITTER_EMAIL }})</td>
+                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right; border-bottom: 1px solid #e5e7eb;">{{ params.submitterName }} ({{ params.submitterEmail }})</td>
                   </tr>
                   <tr>
                     <td style="padding: 8px 0; color: #6b7280; font-size: 14px;">Registered On</td>
-                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right;">{{ params.REGISTRATION_DATE }}</td>
+                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right;">{{ params.registrationDate }}</td>
                   </tr>
                 </table>
               </div>
@@ -70,19 +70,19 @@
                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                   <tr>
                     <td style="padding: 8px 0; color: #6b7280; font-size: 14px; border-bottom: 1px solid rgba(102,126,234,0.15);">Total Amount</td>
-                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right; border-bottom: 1px solid rgba(102,126,234,0.15);">{{ params.TOTAL_AMOUNT }}</td>
+                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right; border-bottom: 1px solid rgba(102,126,234,0.15);">{{ params.totalAmount }}</td>
                   </tr>
                   <tr>
                     <td style="padding: 8px 0; color: #6b7280; font-size: 14px; border-bottom: 1px solid rgba(102,126,234,0.15);">Payment Status</td>
-                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right; border-bottom: 1px solid rgba(102,126,234,0.15);">{{ params.PAYMENT_STATUS }}</td>
+                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right; border-bottom: 1px solid rgba(102,126,234,0.15);">{{ params.paymentStatus }}</td>
                   </tr>
                   <tr>
                     <td style="padding: 8px 0; color: #6b7280; font-size: 14px; border-bottom: 1px solid rgba(102,126,234,0.15);">Payment Card</td>
-                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right; border-bottom: 1px solid rgba(102,126,234,0.15);">{{ params.CARD_BRAND }} ending {{ params.CARD_LAST_FOUR }}</td>
+                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right; border-bottom: 1px solid rgba(102,126,234,0.15);">{{ params.cardBrand }} ending {{ params.cardLastFour }}</td>
                   </tr>
                   <tr>
                     <td style="padding: 8px 0; color: #6b7280; font-size: 14px;">Payment ID</td>
-                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right;">{{ params.PAYMENT_ID }}</td>
+                    <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: 600; text-align: right;">{{ params.paymentId }}</td>
                   </tr>
                 </table>
               </div>
@@ -97,7 +97,7 @@
 
               <!-- CTA button -->
               <div style="text-align: center; margin-bottom: 25px;">
-                <a href="{{ params.LOGIN_LINK }}" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; font-size: 16px; font-weight: 700; padding: 14px 32px; border-radius: 8px; text-decoration: none;">View Your Dashboard</a>
+                <a href="{{ params.loginLink }}" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; font-size: 16px; font-weight: 700; padding: 14px 32px; border-radius: 8px; text-decoration: none;">View Your Dashboard</a>
               </div>
 
               <!-- Divider + footer info -->
