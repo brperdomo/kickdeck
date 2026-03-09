@@ -12515,39 +12515,72 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
     
     app.get('/api/admin/brevo/template-mappings', isAdmin, async (req, res) => {
       try {
-        console.log('Brevo template mappings request - Auth status:', req.isAuthenticated(), 'User:', !!req.user);
+        let templates = await db.select().from(emailTemplates);
 
-        // Direct implementation to fetch email templates with Brevo mappings
-        const templates = await db.select().from(emailTemplates);
-        console.log(`Found ${templates.length} email templates`);
+        // Auto-seed if the table is empty
+        if (templates.length === 0) {
+          console.log('email_templates table is empty — seeding standard email types...');
+          const standardTemplates = [
+            { name: 'Welcome Email', type: 'welcome_email', subject: 'Welcome to KickDeck!', description: 'Sent when a new user registers' },
+            { name: 'Admin Welcome', type: 'admin_welcome', subject: 'Welcome to KickDeck Admin', description: 'Sent when a new admin is invited' },
+            { name: 'Password Reset', type: 'password_reset', subject: 'Reset Your Password', description: 'Sent when a user requests a password reset' },
+            { name: 'Registration Receipt', type: 'registration_receipt', subject: 'Registration Confirmation', description: 'Sent after a team registers for an event' },
+            { name: 'Registration Under Review', type: 'registration_under_review', subject: 'Registration Under Review', description: 'Sent when a registration is pending review' },
+            { name: 'Payment Confirmation', type: 'payment_confirmation', subject: 'Payment Received', description: 'Sent after a successful payment' },
+            { name: 'Payment Completion Notification', type: 'payment_completion_notification', subject: 'Payment Complete', description: 'Sent when full payment is completed' },
+            { name: 'Payment Refunded', type: 'payment_refunded', subject: 'Payment Refunded', description: 'Sent when a payment is refunded' },
+            { name: 'Team Approved', type: 'team_approved', subject: 'Team Approved', description: 'Sent when a team registration is approved' },
+            { name: 'Team Approved With Payment', type: 'team_approved_with_payment', subject: 'Team Approved — Payment Required', description: 'Sent when a team is approved and payment is needed' },
+            { name: 'Team Rejected', type: 'team_rejected', subject: 'Registration Update', description: 'Sent when a team registration is rejected' },
+            { name: 'Team Waitlisted', type: 'team_waitlisted', subject: 'Team Waitlisted', description: 'Sent when a team is placed on a waitlist' },
+            { name: 'Team Withdrawn', type: 'team_withdrawn', subject: 'Team Withdrawn', description: 'Sent when a team registration is withdrawn' },
+            { name: 'Team Status Update', type: 'team_status_update', subject: 'Team Status Update', description: 'General team status change notification' },
+            { name: 'Newsletter Confirmation', type: 'newsletter_confirmation', subject: 'Newsletter Subscription Confirmed', description: 'Sent when a user subscribes to the newsletter' },
+          ];
+
+          for (const tmpl of standardTemplates) {
+            await db.insert(emailTemplates).values({
+              name: tmpl.name,
+              type: tmpl.type,
+              subject: tmpl.subject,
+              description: tmpl.description,
+              content: `<p>{{content}}</p>`,
+              senderName: 'KickDeck',
+              senderEmail: process.env.DEFAULT_FROM_EMAIL || 'noreply@kickdeck.xyz',
+              isActive: true,
+            });
+          }
+
+          templates = await db.select().from(emailTemplates);
+          console.log(`Seeded ${templates.length} email template types`);
+        }
+
         res.json(templates);
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error fetching template mappings:', error);
         res.status(500).json({ error: "Failed to fetch template mappings", details: error.message });
       }
     });
-    
+
     app.post('/api/admin/brevo/template-mapping', isAdmin, async (req, res) => {
       try {
-        console.log('Brevo template mapping update - Auth status:', req.isAuthenticated(), 'User:', !!req.user);
         const { templateType, brevoTemplateId } = req.body;
 
         if (!templateType) {
           return res.status(400).json({ error: 'Template type is required' });
         }
 
-        // Update the email template with the Brevo template ID
         const { eq } = await import('drizzle-orm');
         await db.update(emailTemplates)
           .set({
             brevoTemplateId: brevoTemplateId || null,
-            updated_at: new Date()
+            updatedAt: new Date()
           })
           .where(eq(emailTemplates.type, templateType));
 
         console.log(`Updated template mapping: ${templateType} -> ${brevoTemplateId || 'removed'}`);
         res.json({ success: true, message: 'Template mapping updated successfully' });
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error updating template mapping:', error);
         res.status(500).json({ error: "Failed to update template mapping", details: error.message });
       }
