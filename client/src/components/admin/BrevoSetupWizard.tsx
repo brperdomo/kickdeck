@@ -116,13 +116,18 @@ export function BrevoSetupWizard() {
   const {
     data: emailTemplates,
     isLoading: isLoadingEmailTemplates,
+    error: emailTemplatesError,
   } = useQuery<EmailTemplate[]>({
     queryKey: ['email-templates-with-mappings'],
     queryFn: async () => {
       const res = await fetch('/api/admin/brevo/template-mappings', { credentials: 'include' });
-      if (!res.ok) throw new Error('Failed to fetch email template mappings');
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.details || err.error || `HTTP ${res.status}: Failed to fetch email template mappings`);
+      }
       return res.json();
     },
+    retry: false,
   });
 
   /* ── Mutations ───────────────────────────────────────────────────── */
@@ -332,7 +337,7 @@ export function BrevoSetupWizard() {
             </div>
           </CardHeader>
           <CardContent>
-            {/* Error banner */}
+            {/* Error banners */}
             {templatesError && (
               <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-4 mb-6 text-sm">
                 <div className="flex items-start gap-2 text-red-300">
@@ -340,6 +345,17 @@ export function BrevoSetupWizard() {
                   <div>
                     <p className="font-medium">Error loading Brevo templates</p>
                     <p className="mt-1 text-red-400">{(templatesError as Error).message}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+            {emailTemplatesError && (
+              <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-4 mb-6 text-sm">
+                <div className="flex items-start gap-2 text-red-300">
+                  <AlertCircle className="h-5 w-5 mt-0.5 shrink-0" />
+                  <div>
+                    <p className="font-medium">Error loading email template types</p>
+                    <p className="mt-1 text-red-400">{(emailTemplatesError as Error).message}</p>
                   </div>
                 </div>
               </div>

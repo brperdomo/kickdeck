@@ -12558,9 +12558,9 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
               subject: tmpl.subject,
               description: tmpl.description,
               content: `<p>{{content}}</p>`,
-              senderName: 'KickDeck',
-              senderEmail: process.env.DEFAULT_FROM_EMAIL || 'noreply@kickdeck.xyz',
-              isActive: true,
+              sender_name: 'KickDeck',
+              sender_email: process.env.DEFAULT_FROM_EMAIL || 'noreply@kickdeck.xyz',
+              is_active: true,
             });
           }
 
@@ -12587,7 +12587,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         await db.update(emailTemplates)
           .set({
             brevoTemplateId: brevoTemplateId || null,
-            updatedAt: new Date()
+            updated_at: new Date()
           })
           .where(eq(emailTemplates.type, templateType));
 
