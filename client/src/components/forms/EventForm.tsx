@@ -30,25 +30,7 @@ import { Editor } from "@tinymce/tinymce-react";
 import { AgeGroupEligibilityManager } from "@/components/admin/age-groups/AgeGroupEligibilityManager";
 import { StripeConnectBankingView } from "@/components/admin/StripeConnectBankingView";
 import ScoringRulesTab from "@/components/admin/scoring/ScoringRulesTab";
-
-// TinyMCE API key from environment variable
-const TINYMCE_API_KEY = import.meta.env.VITE_TINYMCE_API_KEY;
-
-// Enhanced TinyMCE configuration with HTML editing support
-const TINYMCE_HTML_CONFIG = {
-  height: 300,
-  menubar: 'file edit view insert format tools table help',
-  plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount code fullscreen preview',
-  toolbar: 'code | undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
-  base_url: 'https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.7.3',
-  suffix: '.min',
-  extended_valid_elements: '*[*]', // Allow all elements and attributes
-  valid_children: '+body[style]', // Allow style tag in body
-  schema: 'html5',
-  entity_encoding: 'raw',
-  verify_html: false, // Don't verify/filter HTML
-  valid_elements: '*[*]' // Allow all elements and attributes
-};
+import { TINYMCE_API_KEY, simpleEditorConfig } from "@/lib/tinymce";
 
 import {
   PREDEFINED_AGE_GROUPS,
@@ -1156,7 +1138,7 @@ export const EventForm = ({ mode, layout = 'tabs', defaultValues, onSubmit, isSu
                   apiKey={TINYMCE_API_KEY}
                   value={field.value}
                   onEditorChange={(content) => field.onChange(content)}
-                  init={TINYMCE_HTML_CONFIG}
+                  init={simpleEditorConfig}
                 />
               </FormControl>
               <FormMessage />
@@ -1175,7 +1157,7 @@ export const EventForm = ({ mode, layout = 'tabs', defaultValues, onSubmit, isSu
                   apiKey={TINYMCE_API_KEY}
                   value={field.value}
                   onEditorChange={(content) => field.onChange(content)}
-                  init={TINYMCE_HTML_CONFIG}
+                  init={simpleEditorConfig}
                 />
               </FormControl>
               <FormMessage />
@@ -1194,7 +1176,7 @@ export const EventForm = ({ mode, layout = 'tabs', defaultValues, onSubmit, isSu
                   apiKey={TINYMCE_API_KEY}
                   value={field.value}
                   onEditorChange={(content) => field.onChange(content)}
-                  init={TINYMCE_HTML_CONFIG}
+                  init={simpleEditorConfig}
                 />
               </FormControl>
               <FormMessage />

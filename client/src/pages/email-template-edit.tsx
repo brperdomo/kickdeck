@@ -29,6 +29,7 @@ import { Switch } from "@/components/ui/switch";
 import { Editor } from "@tinymce/tinymce-react";
 import { AdminBanner } from "@/components/admin/AdminBanner";
 import { insertEmailTemplateSchema, type EmailTemplate } from "@db/schema/emailTemplates";
+import { TINYMCE_API_KEY, emailEditorConfig } from "@/lib/tinymce";
 
 // Define template types
 const templateTypes = [
@@ -41,9 +42,6 @@ const templateTypes = [
 
 // Form values type
 type FormValues = z.infer<typeof insertEmailTemplateSchema>;
-
-// TinyMCE API key from environment variable
-const TINYMCE_API_KEY = import.meta.env.VITE_TINYMCE_API_KEY;
 
 export default function EmailTemplateEdit() {
   const { id } = useParams<{ id: string }>();
@@ -453,129 +451,7 @@ export default function EmailTemplateEdit() {
                           apiKey={TINYMCE_API_KEY}
                           value={field.value}
                           onEditorChange={(content) => field.onChange(content)}
-                          init={{
-                            height: 600, // Taller editor for dedicated page
-                            menubar: 'file edit view insert format tools table help',
-                            plugins: [
-                              'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-                              'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-                              'insertdatetime', 'media', 'table', 'help', 'wordcount',
-                              'codesample', 'wordcount'
-                            ],
-                            codesample_languages: [
-                              { text: 'HTML/XML', value: 'markup' },
-                              { text: 'JavaScript', value: 'javascript' },
-                              { text: 'CSS', value: 'css' }
-                            ],
-                            toolbar1: 'code fullscreen | undo redo | formatselect | bold italic backcolor forecolor | alignleft aligncenter alignright alignjustify',
-                            toolbar2: 'bullist numlist outdent indent | link image media | codesample removeformat | mergefields | help',
-                            extended_valid_elements: '*[*]', // Allow all elements and attributes
-                            valid_children: '+body[style]', // Allow style tag in body
-                            schema: 'html5',
-                            entity_encoding: 'raw',
-                            verify_html: false, // Don't verify/filter HTML
-                            valid_elements: '*[*]', // Allow all elements and attributes
-                            // Add custom file browser for images and media
-                            file_picker_callback: function (callback, value, meta) {
-                              // Use prompt to allow direct URL input
-                              let url = prompt('Enter URL', 'https://');
-                              if (url) callback(url);
-                            },
-                            setup: (editor) => {
-                              const openMergeFieldsDialog = () => {
-                                // Create a custom DOM element for the dialog
-                                const dialogElement = document.createElement('div');
-                                dialogElement.className = 'tinymce-custom-dialog';
-                                dialogElement.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; justify-content: center; align-items: center;';
-                                
-                                // Create the dialog content
-                                const dialogContent = document.createElement('div');
-                                dialogContent.style.cssText = 'background: white; padding: 20px; border-radius: 4px; width: 400px; max-width: 90%; box-shadow: 0 4px 10px rgba(0,0,0,0.2);';
-                                
-                                // Add dialog title
-                                const title = document.createElement('h3');
-                                title.textContent = 'Insert Merge Field';
-                                title.style.cssText = 'margin-top: 0; margin-bottom: 15px; font-size: 18px;';
-                                
-                                // Add select dropdown
-                                const select = document.createElement('select');
-                                select.style.cssText = 'width: 100%; padding: 8px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 4px;';
-                                
-                                // Add options to select
-                                const mergeFieldOptions = [
-                                  { text: 'Choose a field...', value: '' },
-                                  { text: 'First Name', value: '{{firstName}}' },
-                                  { text: 'Last Name', value: '{{lastName}}' },
-                                  { text: 'Username', value: '{{username}}' },
-                                  { text: 'Reset URL', value: '{{resetUrl}}' },
-                                  { text: 'Reset Token', value: '{{token}}' }
-                                ];
-                                
-                                mergeFieldOptions.forEach(option => {
-                                  const optionElement = document.createElement('option');
-                                  optionElement.textContent = option.text;
-                                  optionElement.value = option.value;
-                                  select.appendChild(optionElement);
-                                });
-                                
-                                // Add buttons container
-                                const buttonContainer = document.createElement('div');
-                                buttonContainer.style.cssText = 'display: flex; justify-content: flex-end; gap: 10px;';
-                                
-                                // Add cancel button
-                                const cancelButton = document.createElement('button');
-                                cancelButton.textContent = 'Cancel';
-                                cancelButton.style.cssText = 'padding: 8px 12px; background: #f1f1f1; border: none; border-radius: 4px; cursor: pointer;';
-                                cancelButton.onclick = () => {
-                                  document.body.removeChild(dialogElement);
-                                };
-                                
-                                // Add insert button
-                                const insertButton = document.createElement('button');
-                                insertButton.textContent = 'Insert Field';
-                                insertButton.style.cssText = 'padding: 8px 12px; background: #2563eb; color: white; border: none; border-radius: 4px; cursor: pointer;';
-                                insertButton.onclick = () => {
-                                  if (select.value) {
-                                    editor.insertContent(select.value);
-                                  }
-                                  document.body.removeChild(dialogElement);
-                                };
-                                
-                                // Assemble the dialog
-                                buttonContainer.appendChild(cancelButton);
-                                buttonContainer.appendChild(insertButton);
-                                
-                                dialogContent.appendChild(title);
-                                dialogContent.appendChild(select);
-                                dialogContent.appendChild(buttonContainer);
-                                
-                                dialogElement.appendChild(dialogContent);
-                                
-                                // Add click outside to close
-                                dialogElement.addEventListener('click', (e) => {
-                                  if (e.target === dialogElement) {
-                                    document.body.removeChild(dialogElement);
-                                  }
-                                });
-                                
-                                // Add to DOM
-                                document.body.appendChild(dialogElement);
-                              };
-                              
-                              // Add a button for merge fields
-                              editor.ui.registry.addButton('mergefields', {
-                                text: 'Merge Fields',
-                                tooltip: 'Insert merge field',
-                                onAction: openMergeFieldsDialog
-                              });
-                            },
-                            // Disable auto-formatting of HTML 
-                            indent: false,
-                            forced_root_block: '',
-                            force_br_newlines: false,
-                            force_p_newlines: false,
-                            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
-                          }}
+                          init={emailEditorConfig}
                         />
                       </div>
                     </FormControl>
