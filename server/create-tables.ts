@@ -28,6 +28,7 @@ import { addStripeKeysToOrganizationSettings } from "./migrations/add_stripe_key
 import { deduplicateAgeGroups } from "./migrations/deduplicate_age_groups";
 import { addAdminEmailToEvents } from "../db/migrations/add-admin-email";
 import { addBrevoFieldsToEmailTemplates } from "../db/migrations/add-brevo-template-id-to-email-templates";
+import { seedEmailTemplateTypes } from "../db/migrations/seed-email-template-types";
 
 export async function createTables() {
   try {
@@ -211,6 +212,9 @@ export async function createTables() {
 
     console.log('Adding admin_email column to events table...');
     await addAdminEmailToEvents();
+
+    console.log('Seeding standard email template types...');
+    await seedEmailTemplateTypes();
 
     console.log("All tables created successfully");
     return { success: true };
