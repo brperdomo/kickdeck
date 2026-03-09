@@ -1422,6 +1422,7 @@ async function sendApprovalEmailWithPaymentDetails(
       firstName: team.submitterName || team.managerName || "Team Manager",
       teamName: team.name,
       eventName: eventData.name,
+      clubName: team.clubName || '',
       managerName: team.managerName || team.submitterName || "Team Manager",
       registrationDate: team.createdAt ? new Date(team.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
       submittedDate: team.createdAt ? new Date(team.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),

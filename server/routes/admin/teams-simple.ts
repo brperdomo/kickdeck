@@ -12,49 +12,60 @@ const STATUS_EMAIL_MAP: Record<string, string> = {
   withdrawn: 'team_withdrawn',
 };
 
+/** Build common email context for a team (reused by status + receipt emails). */
+async function buildTeamEmailContext(teamId: number) {
+  const team = await db.query.teams.findFirst({ where: eq(teams.id, teamId) });
+  if (!team) return null;
+
+  const event = team.eventId
+    ? await db.query.events.findFirst({ where: eq(events.id, team.eventId) })
+    : null;
+
+  // Get age group info for division display
+  let ageGroupInfo = null;
+  if (team.ageGroupId) {
+    const [agResult] = await db
+      .select()
+      .from(eventAgeGroups)
+      .where(eq(eventAgeGroups.id, team.ageGroupId));
+    ageGroupInfo = agResult || null;
+  }
+
+  const division = [ageGroupInfo?.ageGroup, ageGroupInfo?.gender].filter(Boolean).join(' ') || 'N/A';
+  const registrationDate = team.createdAt
+    ? new Date(team.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+    : new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+  const recipients = [team.submitterEmail, team.managerEmail].filter(
+    (e): e is string => !!e,
+  );
+  const uniqueRecipients = [...new Set(recipients)];
+
+  return { team, event, division, registrationDate, uniqueRecipients };
+}
+
 /** Send a status-change email for a team (fire-and-forget). */
 async function sendTeamStatusEmail(teamId: number, newStatus: string) {
   try {
     const templateType = STATUS_EMAIL_MAP[newStatus];
     if (!templateType) return; // no email for this status
 
-    const team = await db.query.teams.findFirst({ where: eq(teams.id, teamId) });
-    if (!team) return;
-
-    const event = team.eventId
-      ? await db.query.events.findFirst({ where: eq(events.id, team.eventId) })
-      : null;
-
-    // Get age group info for division display
-    let ageGroupInfo = null;
-    if (team.ageGroupId) {
-      const [agResult] = await db
-        .select()
-        .from(eventAgeGroups)
-        .where(eq(eventAgeGroups.id, team.ageGroupId));
-      ageGroupInfo = agResult || null;
-    }
-
-    const division = [ageGroupInfo?.ageGroup, ageGroupInfo?.gender].filter(Boolean).join(' ') || 'N/A';
-    const registrationDate = team.createdAt
-      ? new Date(team.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
-      : new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-
-    const recipients = [team.submitterEmail, team.managerEmail].filter(
-      (e): e is string => !!e,
-    );
-    // Deduplicate
-    const uniqueRecipients = [...new Set(recipients)];
+    const ctx = await buildTeamEmailContext(teamId);
+    if (!ctx) return;
+    const { team, event, division, registrationDate, uniqueRecipients } = ctx;
 
     for (const email of uniqueRecipients) {
       await sendTemplatedEmail(email, templateType, {
         firstName: team.submitterName || team.managerName || 'Team Manager',
         teamName: team.name || 'your team',
         eventName: event?.name || 'the event',
+        clubName: team.clubName || '',
         ageGroup: division,
         division: division,
         registrationDate: registrationDate,
         submittedDate: registrationDate,
+        approvalDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+        totalAmount: team.totalAmount ? `$${(team.totalAmount / 100).toFixed(2)}` : '$0.00',
         notes: team.notes || '',
         EVENT_ADMIN_EMAIL: event?.adminEmail || 'support@kickdeck.xyz',
       });
@@ -64,6 +75,39 @@ async function sendTeamStatusEmail(teamId: number, newStatus: string) {
   } catch (err) {
     console.error(`Error sending status email for team ${teamId}:`, err);
     // Non-blocking — don't fail the status change
+  }
+}
+
+/** Send a registration receipt email after payment is processed (fire-and-forget). */
+async function sendRegistrationReceiptEmail(teamId: number) {
+  try {
+    const ctx = await buildTeamEmailContext(teamId);
+    if (!ctx) return;
+    const { team, event, division, registrationDate, uniqueRecipients } = ctx;
+
+    for (const email of uniqueRecipients) {
+      await sendTemplatedEmail(email, 'registration_receipt', {
+        firstName: team.submitterName || team.managerName || 'Team Manager',
+        teamName: team.name || 'your team',
+        eventName: event?.name || 'the event',
+        clubName: team.clubName || '',
+        ageGroup: division,
+        division: division,
+        registrationDate: registrationDate,
+        submittedDate: registrationDate,
+        totalAmount: team.totalAmount ? `$${(team.totalAmount / 100).toFixed(2)}` : '$0.00',
+        paymentStatus: team.paymentStatus || 'paid',
+        paymentDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+        cardBrand: team.cardBrand || 'Card',
+        cardLastFour: team.cardLast4 || '****',
+        paymentId: team.paymentIntentId || '',
+        EVENT_ADMIN_EMAIL: event?.adminEmail || 'support@kickdeck.xyz',
+      });
+    }
+
+    console.log(`📧 registration_receipt email sent to ${uniqueRecipients.join(', ')} for team ${team.name}`);
+  } catch (err) {
+    console.error(`Error sending registration receipt email for team ${teamId}:`, err);
   }
 }
 
@@ -352,10 +396,10 @@ export async function getTeamById(req: Request, res: Response) {
 export async function updateTeamStatus(req: Request, res: Response) {
   try {
     const teamId = parseInt(req.params.teamId);
-    const { status } = req.body;
+    const { status, skipPayment, skipEmail } = req.body;
 
     // If approving a team that has a saved payment method, process the charge
-    if (status === 'approved' || status === 'registered') {
+    if ((status === 'approved' || status === 'registered') && !skipPayment) {
       const existingTeam = await db.query.teams.findFirst({
         where: eq(teams.id, teamId),
       });
@@ -382,8 +426,14 @@ export async function updateTeamStatus(req: Request, res: Response) {
             .where(eq(teams.id, teamId))
             .returning();
 
-          // Fire-and-forget status email
-          sendTeamStatusEmail(teamId, status);
+          if (!skipEmail) {
+            // Fire-and-forget status email (team_approved)
+            sendTeamStatusEmail(teamId, status);
+            // Fire-and-forget registration receipt (payment confirmation)
+            if (mappedPaymentStatus === 'paid') {
+              sendRegistrationReceiptEmail(teamId);
+            }
+          }
 
           return res.json({
             success: true,
@@ -404,8 +454,10 @@ export async function updateTeamStatus(req: Request, res: Response) {
             .where(eq(teams.id, teamId))
             .returning();
 
-          // Still send status email even if payment failed
-          sendTeamStatusEmail(teamId, status);
+          // Still send status email even if payment failed (unless skipEmail)
+          if (!skipEmail) {
+            sendTeamStatusEmail(teamId, status);
+          }
 
           return res.json({
             success: true,
@@ -424,8 +476,10 @@ export async function updateTeamStatus(req: Request, res: Response) {
       .where(eq(teams.id, teamId))
       .returning();
 
-    // Fire-and-forget status email
-    sendTeamStatusEmail(teamId, status);
+    // Fire-and-forget status email (unless skipEmail)
+    if (!skipEmail) {
+      sendTeamStatusEmail(teamId, status);
+    }
 
     res.json({ success: true, team: updatedTeam });
   } catch (error) {

@@ -921,11 +921,12 @@ export function registerRoutes(app: Express): Server {
                   firstName: team.submitterName || team.managerName || 'Team Manager',
                   teamName: team.name || 'your team',
                   eventName: event?.name || 'the event',
+                  clubName: team.clubName || '',
                   registrationDate: team.createdAt ? new Date(team.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
                   submittedDate: team.createdAt ? new Date(team.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
                   approvalDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
-                  totalAmount: ((team.totalAmount || 0) / 100).toFixed(2),
-                  paymentAmount: ((team.totalAmount || 0) / 100).toFixed(2),
+                  totalAmount: `$${((team.totalAmount || 0) / 100).toFixed(2)}`,
+                  paymentAmount: `$${((team.totalAmount || 0) / 100).toFixed(2)}`,
                   paymentIntentId: paymentIntentId,
                   cardBrand: 'Card',
                   cardLastFour: '****',
@@ -11340,7 +11341,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
               notes: '',
 
               // Payment Information
-              totalAmount: team.totalAmount ? (team.totalAmount / 100) : 0,
+              totalAmount: team.totalAmount ? `$${(team.totalAmount / 100).toFixed(2)}` : '$0.00',
               paymentId: team.paymentIntentId || 'Completed',
               paymentDate: team.paymentDate ? new Date(team.paymentDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
               cardBrand: team.cardBrand || 'Card',

@@ -99,23 +99,23 @@ const TEMPLATE_META: Record<string, { trigger: string; variables: string[] }> = 
   },
   team_approved: {
     trigger: 'Admin approves a team registration',
-    variables: ['firstName', 'teamName', 'eventName', 'division', 'ageGroup', 'registrationDate', 'submittedDate', 'notes', 'EVENT_ADMIN_EMAIL', 'loginLink'],
+    variables: ['firstName', 'teamName', 'eventName', 'clubName', 'division', 'ageGroup', 'registrationDate', 'submittedDate', 'approvalDate', 'totalAmount', 'notes', 'EVENT_ADMIN_EMAIL', 'loginLink'],
   },
   team_approved_with_payment: {
     trigger: 'Team auto-approved after successful Stripe payment',
-    variables: ['firstName', 'teamName', 'eventName', 'registrationDate', 'submittedDate', 'totalAmount', 'cardBrand', 'cardLastFour', 'EVENT_ADMIN_EMAIL', 'loginLink'],
+    variables: ['firstName', 'teamName', 'eventName', 'clubName', 'registrationDate', 'submittedDate', 'approvalDate', 'totalAmount', 'cardBrand', 'cardLastFour', 'EVENT_ADMIN_EMAIL', 'loginLink'],
   },
   team_rejected: {
     trigger: 'Admin rejects a team registration',
-    variables: ['firstName', 'teamName', 'eventName', 'division', 'ageGroup', 'registrationDate', 'submittedDate', 'notes', 'EVENT_ADMIN_EMAIL'],
+    variables: ['firstName', 'teamName', 'eventName', 'clubName', 'division', 'ageGroup', 'registrationDate', 'submittedDate', 'notes', 'EVENT_ADMIN_EMAIL'],
   },
   team_waitlisted: {
     trigger: 'Admin waitlists a team registration',
-    variables: ['firstName', 'teamName', 'eventName', 'division', 'ageGroup', 'registrationDate', 'submittedDate', 'notes', 'EVENT_ADMIN_EMAIL'],
+    variables: ['firstName', 'teamName', 'eventName', 'clubName', 'division', 'ageGroup', 'registrationDate', 'submittedDate', 'notes', 'EVENT_ADMIN_EMAIL'],
   },
   team_withdrawn: {
     trigger: 'Admin withdraws a team',
-    variables: ['firstName', 'teamName', 'eventName', 'division', 'ageGroup', 'registrationDate', 'submittedDate', 'notes', 'EVENT_ADMIN_EMAIL'],
+    variables: ['firstName', 'teamName', 'eventName', 'clubName', 'division', 'ageGroup', 'registrationDate', 'submittedDate', 'notes', 'EVENT_ADMIN_EMAIL'],
   },
   team_status_update: {
     trigger: 'Generic team status change notification',
