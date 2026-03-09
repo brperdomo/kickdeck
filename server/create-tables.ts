@@ -27,6 +27,7 @@ import { addOpenaiApiKeyToOrganizationSettings } from "./migrations/add_openai_a
 import { addStripeKeysToOrganizationSettings } from "./migrations/add_stripe_keys_to_organization_settings";
 import { deduplicateAgeGroups } from "./migrations/deduplicate_age_groups";
 import { addAdminEmailToEvents } from "../db/migrations/add-admin-email";
+import { addBrevoFieldsToEmailTemplates } from "../db/migrations/add-brevo-template-id-to-email-templates";
 
 export async function createTables() {
   try {
@@ -204,6 +205,9 @@ export async function createTables() {
 
     console.log('Deduplicating age group records...');
     await deduplicateAgeGroups();
+
+    console.log('Adding brevo_template_id and text_content to email_templates...');
+    await addBrevoFieldsToEmailTemplates();
 
     console.log('Adding admin_email column to events table...');
     await addAdminEmailToEvents();
