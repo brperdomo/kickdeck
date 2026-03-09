@@ -181,82 +181,29 @@ import { processDestinationCharge } from "./routes/stripe-connect-payments";
 import aiAuditRoutes from "./routes/ai-audit-routes";
 import retroactiveMetadataRoutes from "./routes/retroactiveMetadata.js";
 import transferMetadataRoutes from "./routes/transferMetadata.js";
-// Email service for registration emails - uses Brevo API
-import { sendEmail as brevoSendEmail } from './services/brevoService';
+// Email service — all emails go through sendTemplatedEmail (DB templates + Brevo dynamic templates)
 import { getFromEmail, sendTemplatedEmail } from './services/emailService';
 
-const REGISTRATION_CONFIRMATION_TEMPLATE_ID = process.env.BREVO_REGISTRATION_TEMPLATE_ID
-  ? parseInt(process.env.BREVO_REGISTRATION_TEMPLATE_ID, 10)
-  : null;
-
+// Registration email helpers — delegate to sendTemplatedEmail so the DB/Brevo
+// template system is used instead of hardcoded inline HTML.
 const sendRegistrationConfirmationEmail = async (
   toEmail: string,
   team: any,
   eventInfo: any,
   ageGroupInfo: any,
-  bracketInfo: any
+  _bracketInfo: any
 ) => {
-  const fromEmail = await getFromEmail();
   const division = [ageGroupInfo?.name, ageGroupInfo?.gender].filter(Boolean).join(' ') || 'N/A';
   const submittedDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
-  const templateParams = {
-    CONTACT_NAME: team.submitterName || team.managerName || 'Team Manager',
-    TEAM_NAME: team.name,
-    EVENT_NAME: eventInfo?.name || 'Tournament',
-    DIVISION: division,
-    SUBMITTED_DATE: submittedDate,
+  await sendTemplatedEmail(toEmail, 'registration_under_review', {
+    firstName: team.submitterName || team.managerName || 'Team Manager',
+    teamName: team.name,
+    eventName: eventInfo?.name || 'Tournament',
+    ageGroup: division,
+    registrationDate: submittedDate,
     EVENT_ADMIN_EMAIL: eventInfo?.adminEmail || 'support@kickdeck.xyz',
-  };
-
-  if (REGISTRATION_CONFIRMATION_TEMPLATE_ID) {
-    // Use Brevo template
-    await brevoSendEmail({
-      to: toEmail,
-      from: `KickDeck <${fromEmail}>`,
-      subject: `Registration Received — ${team.name}`,
-      templateId: REGISTRATION_CONFIRMATION_TEMPLATE_ID,
-      params: templateParams,
-    });
-  } else {
-    // Fallback: send inline HTML if no Brevo template ID is configured
-    await brevoSendEmail({
-      to: toEmail,
-      from: `KickDeck <${fromEmail}>`,
-      subject: `Registration Received — ${team.name}`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
-            <h1 style="margin: 0; font-size: 26px;">Registration Received</h1>
-            <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">Your submission is under review</p>
-          </div>
-          <div style="background: white; border: 1px solid #e0e0e0; border-top: none; padding: 30px; border-radius: 0 0 10px 10px;">
-            <p style="font-size: 16px; color: #333;">Hi ${templateParams.CONTACT_NAME},</p>
-            <p style="font-size: 16px; color: #333;">Thank you for registering <strong>${templateParams.TEAM_NAME}</strong> for <strong>${templateParams.EVENT_NAME}</strong>. We've received your submission and it's now being reviewed by the event organizer.</p>
-            <div style="background: linear-gradient(135deg, rgba(102,126,234,0.08), rgba(118,75,162,0.08)); border: 1px solid rgba(102,126,234,0.2); border-radius: 8px; padding: 25px; margin: 25px 0; text-align: center;">
-              <span style="display: inline-block; background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; font-size: 13px; font-weight: 700; padding: 5px 16px; border-radius: 20px; text-transform: uppercase;">Under Review</span>
-              <p style="font-size: 15px; color: #4b5563; margin: 10px 0 0 0;">Your registration is being reviewed. You'll receive an email once a decision has been made.</p>
-            </div>
-            <div style="background: #f8f9fa; border-radius: 8px; padding: 20px; margin-bottom: 25px;">
-              <h3 style="margin: 0 0 15px 0; font-size: 16px; color: #333;">Registration Details</h3>
-              <p style="margin: 5px 0; color: #666;"><strong>Team:</strong> ${templateParams.TEAM_NAME}</p>
-              <p style="margin: 5px 0; color: #666;"><strong>Event:</strong> ${templateParams.EVENT_NAME}</p>
-              <p style="margin: 5px 0; color: #666;"><strong>Division:</strong> ${templateParams.DIVISION}</p>
-              <p style="margin: 5px 0; color: #666;"><strong>Submitted:</strong> ${templateParams.SUBMITTED_DATE}</p>
-            </div>
-            <div style="background: #e8f5e8; border: 1px solid #c8e6c9; border-radius: 8px; padding: 20px; margin-bottom: 25px;">
-              <h4 style="color: #2e7d32; margin: 0 0 8px 0;">👍 No further action needed</h4>
-              <p style="color: #2e7d32; margin: 0; font-size: 14px;">You don't need to do anything else right now. We'll notify you by email once your registration has been reviewed.</p>
-            </div>
-            <div style="border-top: 1px solid #e0e0e0; padding-top: 20px;">
-              <p style="color: #666; font-size: 14px;">Event inquiries: <a href="mailto:${eventInfo?.adminEmail || fromEmail}" style="color: #667eea;">${eventInfo?.adminEmail || fromEmail}</a></p>
-              <p style="color: #666; font-size: 14px;">Technical support: <a href="mailto:support@kickdeck.xyz" style="color: #667eea;">support@kickdeck.xyz</a></p>
-            </div>
-          </div>
-        </div>
-      `,
-    });
-  }
+  });
   console.log(`📧 Registration confirmation email sent to ${toEmail} for team ${team.name}`);
 };
 
@@ -267,35 +214,15 @@ const sendRegistrationReceiptEmail = async (
   eventName: string,
   eventAdminEmail?: string
 ) => {
-  const fromEmail = await getFromEmail();
   const amount = paymentData?.amount ? (paymentData.amount / 100).toFixed(2) : '0.00';
 
-  await brevoSendEmail({
-    to: toEmail,
-    from: `KickDeck <${fromEmail}>`,
-    subject: `Registration Receipt — ${team.name}`,
-    html: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
-          <h1 style="margin: 0; font-size: 26px;">Registration Receipt</h1>
-          <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">${eventName}</p>
-        </div>
-        <div style="background: white; border: 1px solid #e0e0e0; border-top: none; padding: 30px; border-radius: 0 0 10px 10px;">
-          <p style="font-size: 16px; color: #333;">Hi ${team.submitterName || team.managerName || 'Team Manager'},</p>
-          <p style="font-size: 16px; color: #333;">Your registration for <strong>${team.name}</strong> has been received. Here are your details:</p>
-          <div style="background: #f8f9fa; border-radius: 8px; padding: 20px; margin: 25px 0;">
-            <p style="margin: 5px 0; color: #666;"><strong>Team:</strong> ${team.name}</p>
-            <p style="margin: 5px 0; color: #666;"><strong>Event:</strong> ${eventName}</p>
-            <p style="margin: 5px 0; color: #666;"><strong>Amount:</strong> <span style="font-size: 18px; color: #2e7d32; font-weight: bold;">$${amount}</span></p>
-            <p style="margin: 5px 0; color: #666;"><strong>Payment Status:</strong> ${paymentData?.status || 'Processing'}</p>
-          </div>
-          <div style="border-top: 1px solid #e0e0e0; padding-top: 20px;">
-            <p style="color: #666; font-size: 14px;">Event inquiries: <a href="mailto:${eventAdminEmail || fromEmail}" style="color: #667eea;">${eventAdminEmail || fromEmail}</a></p>
-            <p style="color: #666; font-size: 14px;">Technical support: <a href="mailto:support@kickdeck.xyz" style="color: #667eea;">support@kickdeck.xyz</a></p>
-          </div>
-        </div>
-      </div>
-    `,
+  await sendTemplatedEmail(toEmail, 'registration_receipt', {
+    firstName: team.submitterName || team.managerName || 'Team Manager',
+    teamName: team.name,
+    eventName: eventName || 'Event Registration',
+    totalAmount: `$${amount}`,
+    paymentStatus: paymentData?.status || 'Processing',
+    EVENT_ADMIN_EMAIL: eventAdminEmail || 'support@kickdeck.xyz',
   });
   console.log(`📧 Registration receipt email sent to ${toEmail} for team ${team.name}`);
 };
