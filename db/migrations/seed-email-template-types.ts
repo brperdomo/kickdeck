@@ -40,7 +40,7 @@ export async function seedEmailTemplateTypes() {
       if (!existing.rowCount || existing.rowCount === 0) {
         await db.execute(sql`
           INSERT INTO email_templates (name, type, subject, description, content, sender_name, sender_email, is_active, created_at, updated_at)
-          VALUES (${tmpl.name}, ${tmpl.type}, ${tmpl.subject}, ${tmpl.description}, '<p>{{content}}</p>', 'KickDeck', 'noreply@kickdeck.xyz', true, NOW(), NOW())
+          VALUES (${tmpl.name}, ${tmpl.type}, ${tmpl.subject}, ${tmpl.description}, '<p>{{content}}</p>', 'KickDeck', 'support@kickdeck.io', true, NOW(), NOW())
         `);
         insertedCount++;
         console.log(`  Inserted email template type: ${tmpl.type}`);
@@ -51,6 +51,16 @@ export async function seedEmailTemplateTypes() {
       console.log(`Seeded ${insertedCount} new email template types`);
     } else {
       console.log('All standard email template types already exist');
+    }
+
+    // Fix any templates that have unverified sender emails
+    const fixResult = await db.execute(sql`
+      UPDATE email_templates
+      SET sender_email = 'support@kickdeck.io'
+      WHERE sender_email IN ('noreply@kickdeck.xyz', 'noreply@kickdeck.io')
+    `);
+    if (fixResult.rowCount && fixResult.rowCount > 0) {
+      console.log(`  Updated ${fixResult.rowCount} templates with incorrect sender_email to support@kickdeck.io`);
     }
   } catch (error) {
     console.error('Error seeding email template types:', error);

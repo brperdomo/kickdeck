@@ -66,11 +66,12 @@ export async function sendEmail(
 ): Promise<boolean> {
   try {
     if (!process.env.BREVO_API_KEY) {
-      console.error("Brevo API key not configured");
+      console.error("[Brevo] ❌ API key not configured — cannot send email");
       return false;
     }
 
     const sender = parseSender(params.from);
+    console.log(`[Brevo] Preparing email: to=${params.to}, sender=${JSON.stringify(sender)}, subject="${params.subject || '(template)'}"`);
 
     // Build the Brevo payload
     let payload: any;
@@ -107,21 +108,21 @@ export async function sendEmail(
     if (!response.ok) {
       const errorData = await response.text();
       console.error(
-        `Brevo API error (${response.status}):`,
-        errorData,
+        `[Brevo] ❌ API error (${response.status}): ${errorData}`,
       );
+      console.error(`[Brevo] Request payload sender: ${JSON.stringify(sender)}, to: ${params.to}`);
       return false;
     }
 
     const data = (await response.json()) as any;
     console.log(
-      `Brevo: Email sent to ${params.to}, messageId: ${data.messageId || "ok"}`,
+      `[Brevo] ✅ Email sent to ${params.to}, messageId: ${data.messageId || "ok"}`,
     );
     return true;
   } catch (error: unknown) {
-    console.error("Brevo: Error sending email:", error);
+    console.error("[Brevo] ❌ Error sending email:", error);
     if (error && typeof error === "object" && "message" in error) {
-      console.error("Brevo error details:", (error as Error).message);
+      console.error("[Brevo] Error details:", (error as Error).message);
     }
     return false;
   }

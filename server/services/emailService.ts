@@ -300,11 +300,14 @@ export async function sendEmail(options: EmailOptions): Promise<void> {
 
     // Get the Brevo provider
     const provider = await getEmailProvider();
+    console.log(`[Email] Provider resolved: ${provider.providerType || 'unknown'}, API key present: ${!!process.env.BREVO_API_KEY}`);
 
     // Use Brevo to send the email
     const from =
       options.from ||
       `KickDeck <${(provider.settings as any).from || await getFromEmail()}>`;
+
+    console.log(`[Email] Sending via Brevo: to=${options.to}, from=${from}, subject="${options.subject}"`);
 
     const result = await brevoService.sendEmail({
       to: options.to,
@@ -320,7 +323,7 @@ export async function sendEmail(options: EmailOptions): Promise<void> {
     if (result) {
       console.log(`✅ EMAIL SENT: ${options.subject} → ${options.to}`);
     } else {
-      throw new Error("Failed to send email via Brevo");
+      throw new Error("Failed to send email via Brevo — brevoService.sendEmail() returned false");
     }
   } catch (error) {
     console.error("Error sending email:", error);
@@ -372,24 +375,32 @@ export async function sendTemplatedEmail(
 
     try {
       // Check if we should use Brevo Dynamic Templates
-      if (emailTemplate.brevoTemplateId) {
+      const numericTemplateId = emailTemplate.brevoTemplateId
+        ? parseInt(String(emailTemplate.brevoTemplateId), 10)
+        : NaN;
+      const useBrevoTemplate = emailTemplate.brevoTemplateId && !isNaN(numericTemplateId);
+
+      if (useBrevoTemplate) {
         console.log(
-          `Using Brevo dynamic template for ${templateType} (ID: ${emailTemplate.brevoTemplateId})`,
+          `Using Brevo dynamic template for ${templateType} (ID: ${numericTemplateId})`,
         );
 
-        const fromEmail = `${emailTemplate.senderName} <${emailTemplate.senderEmail}>`;
+        // Use the configured from email (verified in Brevo) rather than the template's sender
+        const verifiedFrom = await getFromEmail();
+        const fromName = emailTemplate.senderName || 'KickDeck';
+        const fromEmail = `${fromName} <${verifiedFrom}>`;
 
         // Use Brevo dynamic template
         const result = await brevoService.sendDynamicTemplateEmail({
           to,
           from: fromEmail,
-          templateId: emailTemplate.brevoTemplateId,
+          templateId: numericTemplateId,
           params: context,
         });
 
         if (result) {
           console.log(
-            `✅ TEMPLATE EMAIL SENT: ${templateType} → ${to} (Brevo ID: ${emailTemplate.brevoTemplateId})`,
+            `✅ TEMPLATE EMAIL SENT: ${templateType} → ${to} (Brevo ID: ${numericTemplateId})`,
           );
         } else {
           throw new Error(
@@ -397,7 +408,12 @@ export async function sendTemplatedEmail(
           );
         }
       } else {
-        // Use regular template rendering
+        // Use regular template rendering (local HTML + Brevo transactional API)
+        if (emailTemplate.brevoTemplateId && isNaN(numericTemplateId)) {
+          console.warn(`Invalid Brevo template ID "${emailTemplate.brevoTemplateId}" for ${templateType} — falling back to local render.`);
+        }
+        console.log(`Sending ${templateType} email to ${to} via local render + Brevo transactional API`);
+
         const subject =
           renderTemplate(emailTemplate.subject, context) || "Notification";
         let html = renderTemplate(emailTemplate.content, context);
@@ -421,15 +437,21 @@ export async function sendTemplatedEmail(
           text = generateTextFromHtml(html, context);
         }
 
+        // Use the configured from email (verified in Brevo) rather than the template's sender
+        // which may be an unverified address like noreply@kickdeck.xyz
+        const verifiedFromEmail = await getFromEmail();
+        const fromName = emailTemplate.senderName || 'KickDeck';
+        const fromAddress = `${fromName} <${verifiedFromEmail}>`;
+
         await sendEmail({
           to,
           subject,
           html,
           text,
-          from: `${emailTemplate.senderName} <${emailTemplate.senderEmail}>`,
+          from: fromAddress,
         });
 
-        console.log(`Templated email (${templateType}) sent to ${to}`);
+        console.log(`✅ TEMPLATE EMAIL SENT: ${templateType} → ${to} (local render)`);
       }
     } catch (renderError) {
       console.error(
