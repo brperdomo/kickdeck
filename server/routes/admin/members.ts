@@ -357,11 +357,16 @@ export async function resendPaymentConfirmation(req: Request, res: Response) {
         submitterEmail,
         'payment_confirmation',
         {
+        firstName: registration.team.submitterName || registration.team.managerName || 'Team Manager',
         teamName: registration.team.name,
         eventName: registration.event?.name || 'Unknown Event',
-        registrationDate: new Date(registration.team.createdAt).toLocaleDateString(),
+        registrationDate: new Date(registration.team.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+        submittedDate: new Date(registration.team.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
         amount: feeAmount,
         ageGroup: registration.ageGroup?.ageGroup || 'Unknown Age Group',
+        division: registration.ageGroup?.ageGroup && registration.ageGroup?.gender
+          ? `${registration.ageGroup.ageGroup} ${registration.ageGroup.gender}`.trim()
+          : registration.ageGroup?.ageGroup || 'Unknown Age Group',
         paymentId: `TEAM-${registration.team.id}`,
         receiptNumber: `R-${registration.team.id}-${Date.now().toString().substr(-6)}`,
         status: registration.team.status || 'pending',

@@ -647,11 +647,13 @@ export async function sendRegistrationReceiptEmail(
 
     // Prepare template context data
     const context = {
+      firstName: teamData.submitterName || teamData.managerName || "Team Manager",
       teamName: teamData.name || "Team Registration",
       eventName: eventName || "Event Registration",
       submitterName: teamData.submitterName || teamData.managerName || "",
       submitterEmail: teamData.submitterEmail || teamData.managerEmail || "",
       registrationDate: formatDate(teamData.createdAt),
+      submittedDate: formatDate(teamData.createdAt),
       totalAmount: formatCurrency(
         teamData.totalAmount || teamData.registrationFee || 0,
       ),
@@ -758,6 +760,7 @@ export async function sendRegistrationConfirmationEmail(
       teamName: teamData.name || "Team Registration",
       eventName: eventData?.name || "Event Registration",
       ageGroup: ageGroupData?.ageGroup || ageGroupData?.name || "Age Group",
+      division: [ageGroupData?.ageGroup, ageGroupData?.gender].filter(Boolean).join(' ') || ageGroupData?.name || "Age Group",
       bracket: bracketData?.name || "",
       clubName: teamData.clubName || "",
       submitterName: teamData.submitterName || teamData.managerName || "",
@@ -767,6 +770,7 @@ export async function sendRegistrationConfirmationEmail(
       managerEmail: teamData.managerEmail || "",
       managerPhone: teamData.managerPhone || "",
       registrationDate: formatDate(teamData.createdAt),
+      submittedDate: formatDate(teamData.createdAt),
       totalAmount: formatCurrency(
         teamData.totalAmount || teamData.registrationFee || 0,
       ),

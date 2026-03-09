@@ -25,6 +25,21 @@ async function sendTeamStatusEmail(teamId: number, newStatus: string) {
       ? await db.query.events.findFirst({ where: eq(events.id, team.eventId) })
       : null;
 
+    // Get age group info for division display
+    let ageGroupInfo = null;
+    if (team.ageGroupId) {
+      const [agResult] = await db
+        .select()
+        .from(eventAgeGroups)
+        .where(eq(eventAgeGroups.id, team.ageGroupId));
+      ageGroupInfo = agResult || null;
+    }
+
+    const division = [ageGroupInfo?.ageGroup, ageGroupInfo?.gender].filter(Boolean).join(' ') || 'N/A';
+    const registrationDate = team.createdAt
+      ? new Date(team.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+      : new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
     const recipients = [team.submitterEmail, team.managerEmail].filter(
       (e): e is string => !!e,
     );
@@ -36,6 +51,10 @@ async function sendTeamStatusEmail(teamId: number, newStatus: string) {
         firstName: team.submitterName || team.managerName || 'Team Manager',
         teamName: team.name || 'your team',
         eventName: event?.name || 'the event',
+        ageGroup: division,
+        division: division,
+        registrationDate: registrationDate,
+        submittedDate: registrationDate,
         notes: team.notes || '',
         EVENT_ADMIN_EMAIL: event?.adminEmail || 'support@kickdeck.xyz',
       });

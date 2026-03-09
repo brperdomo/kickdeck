@@ -240,6 +240,7 @@ router.post('/send-notifications', async (req, res) => {
           teamName: team.name,
           eventName: team.eventName || 'Tournament',
           ageGroup,
+          division: ageGroup,
           totalAmount: `$${(team.totalAmount / 100).toFixed(2)}`,
           paymentLink: completionUrl,
           EVENT_ADMIN_EMAIL: team.eventAdminEmail || 'support@kickdeck.xyz',

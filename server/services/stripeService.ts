@@ -1419,10 +1419,13 @@ async function sendApprovalEmailWithPaymentDetails(
     );
 
     const emailData = {
+      firstName: team.submitterName || team.managerName || "Team Manager",
       teamName: team.name,
       eventName: eventData.name,
       managerName: team.managerName || team.submitterName || "Team Manager",
-      approvalDate: new Date().toLocaleDateString(),
+      registrationDate: team.createdAt ? new Date(team.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+      submittedDate: team.createdAt ? new Date(team.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+      approvalDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
       paymentAmount: (paymentIntent.amount / 100).toFixed(2),
       tournamentCost: (
         (paymentIntent.amount - (paymentIntent.application_fee_amount || 0)) /

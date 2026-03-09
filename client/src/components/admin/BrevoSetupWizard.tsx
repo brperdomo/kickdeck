@@ -75,23 +75,23 @@ const TEMPLATE_META: Record<string, { trigger: string; variables: string[] }> = 
   },
   registration_confirmation: {
     trigger: 'Team submits registration (setup intent / card-on-file flow)',
-    variables: ['firstName', 'teamName', 'eventName', 'ageGroup', 'registrationDate', 'EVENT_ADMIN_EMAIL', 'loginLink'],
+    variables: ['firstName', 'teamName', 'eventName', 'division', 'ageGroup', 'registrationDate', 'submittedDate', 'EVENT_ADMIN_EMAIL', 'loginLink'],
   },
   registration_under_review: {
     trigger: 'Team registration is pending admin review',
-    variables: ['firstName', 'teamName', 'eventName', 'ageGroup', 'registrationDate', 'EVENT_ADMIN_EMAIL', 'loginLink'],
+    variables: ['firstName', 'teamName', 'eventName', 'division', 'ageGroup', 'registrationDate', 'submittedDate', 'EVENT_ADMIN_EMAIL', 'loginLink'],
   },
   registration_receipt: {
     trigger: 'Team registers with immediate payment',
-    variables: ['firstName', 'teamName', 'eventName', 'totalAmount', 'paymentStatus', 'EVENT_ADMIN_EMAIL', 'loginLink'],
+    variables: ['firstName', 'teamName', 'eventName', 'totalAmount', 'paymentStatus', 'registrationDate', 'submittedDate', 'EVENT_ADMIN_EMAIL', 'loginLink'],
   },
   payment_confirmation: {
     trigger: 'Admin manually confirms a payment',
-    variables: ['teamName', 'eventName', 'registrationDate', 'amount', 'ageGroup', 'paymentId', 'status', 'EVENT_ADMIN_EMAIL'],
+    variables: ['firstName', 'teamName', 'eventName', 'registrationDate', 'submittedDate', 'amount', 'division', 'ageGroup', 'paymentId', 'status', 'EVENT_ADMIN_EMAIL'],
   },
   payment_completion_notification: {
     trigger: 'Admin sends payment completion link to team',
-    variables: ['teamName', 'eventName', 'ageGroup', 'totalAmount', 'paymentLink', 'EVENT_ADMIN_EMAIL'],
+    variables: ['teamName', 'eventName', 'division', 'ageGroup', 'totalAmount', 'paymentLink', 'EVENT_ADMIN_EMAIL'],
   },
   payment_refunded: {
     trigger: 'Admin processes a refund for a team',
@@ -99,23 +99,23 @@ const TEMPLATE_META: Record<string, { trigger: string; variables: string[] }> = 
   },
   team_approved: {
     trigger: 'Admin approves a team registration',
-    variables: ['firstName', 'teamName', 'eventName', 'notes', 'EVENT_ADMIN_EMAIL', 'loginLink'],
+    variables: ['firstName', 'teamName', 'eventName', 'division', 'ageGroup', 'registrationDate', 'submittedDate', 'notes', 'EVENT_ADMIN_EMAIL', 'loginLink'],
   },
   team_approved_with_payment: {
     trigger: 'Team auto-approved after successful Stripe payment',
-    variables: ['firstName', 'teamName', 'eventName', 'totalAmount', 'cardBrand', 'cardLastFour', 'EVENT_ADMIN_EMAIL', 'loginLink'],
+    variables: ['firstName', 'teamName', 'eventName', 'registrationDate', 'submittedDate', 'totalAmount', 'cardBrand', 'cardLastFour', 'EVENT_ADMIN_EMAIL', 'loginLink'],
   },
   team_rejected: {
     trigger: 'Admin rejects a team registration',
-    variables: ['firstName', 'teamName', 'eventName', 'notes', 'EVENT_ADMIN_EMAIL'],
+    variables: ['firstName', 'teamName', 'eventName', 'division', 'ageGroup', 'registrationDate', 'submittedDate', 'notes', 'EVENT_ADMIN_EMAIL'],
   },
   team_waitlisted: {
     trigger: 'Admin waitlists a team registration',
-    variables: ['firstName', 'teamName', 'eventName', 'notes', 'EVENT_ADMIN_EMAIL'],
+    variables: ['firstName', 'teamName', 'eventName', 'division', 'ageGroup', 'registrationDate', 'submittedDate', 'notes', 'EVENT_ADMIN_EMAIL'],
   },
   team_withdrawn: {
     trigger: 'Admin withdraws a team',
-    variables: ['firstName', 'teamName', 'eventName', 'notes', 'EVENT_ADMIN_EMAIL'],
+    variables: ['firstName', 'teamName', 'eventName', 'division', 'ageGroup', 'registrationDate', 'submittedDate', 'notes', 'EVENT_ADMIN_EMAIL'],
   },
   team_status_update: {
     trigger: 'Generic team status change notification',

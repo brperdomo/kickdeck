@@ -201,7 +201,9 @@ const sendRegistrationConfirmationEmail = async (
     teamName: team.name,
     eventName: eventInfo?.name || 'Tournament',
     ageGroup: division,
+    division: division,
     registrationDate: submittedDate,
+    submittedDate: submittedDate,
     EVENT_ADMIN_EMAIL: eventInfo?.adminEmail || 'support@kickdeck.xyz',
   });
   console.log(`📧 Registration confirmation email sent to ${toEmail} for team ${team.name}`);
@@ -216,12 +218,15 @@ const sendRegistrationReceiptEmail = async (
 ) => {
   const amount = paymentData?.amount ? (paymentData.amount / 100).toFixed(2) : '0.00';
 
+  const receiptDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
   await sendTemplatedEmail(toEmail, 'registration_receipt', {
     firstName: team.submitterName || team.managerName || 'Team Manager',
     teamName: team.name,
     eventName: eventName || 'Event Registration',
     totalAmount: `$${amount}`,
     paymentStatus: paymentData?.status || 'Processing',
+    registrationDate: receiptDate,
+    submittedDate: receiptDate,
     EVENT_ADMIN_EMAIL: eventAdminEmail || 'support@kickdeck.xyz',
   });
   console.log(`📧 Registration receipt email sent to ${toEmail} for team ${team.name}`);
@@ -913,13 +918,18 @@ export function registerRoutes(app: Express): Server {
                 recipient,
                 'team_approved',
                 {
+                  firstName: team.submitterName || team.managerName || 'Team Manager',
                   teamName: team.name || 'your team',
                   eventName: event?.name || 'the event',
-                  approvalDate: new Date().toLocaleDateString(),
+                  registrationDate: team.createdAt ? new Date(team.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+                  submittedDate: team.createdAt ? new Date(team.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+                  approvalDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+                  totalAmount: ((team.totalAmount || 0) / 100).toFixed(2),
                   paymentAmount: ((team.totalAmount || 0) / 100).toFixed(2),
                   paymentIntentId: paymentIntentId,
                   cardBrand: 'Card',
                   cardLastFour: '****',
+                  notes: '',
                   EVENT_ADMIN_EMAIL: event?.adminEmail || 'support@kickdeck.xyz'
                 }
               );
@@ -11316,6 +11326,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
             'team_approved',
             {
               // Team Information
+              firstName: team.submitterName || team.managerName || 'Team Manager',
               teamName: team.name || 'your team',
               eventName: event?.name || 'the event',
               submitterName: team.submitterName || team.managerName || 'Team Manager',
@@ -11323,13 +11334,15 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
               clubName: team.clubName || '',
 
               // Registration Details
-              registrationDate: team.createdAt ? new Date(team.createdAt).toLocaleDateString() : new Date().toLocaleDateString(),
-              approvalDate: new Date().toLocaleDateString(),
+              registrationDate: team.createdAt ? new Date(team.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+              submittedDate: team.createdAt ? new Date(team.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+              approvalDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+              notes: '',
 
               // Payment Information
               totalAmount: team.totalAmount ? (team.totalAmount / 100) : 0,
               paymentId: team.paymentIntentId || 'Completed',
-              paymentDate: team.paymentDate ? new Date(team.paymentDate).toLocaleDateString() : new Date().toLocaleDateString(),
+              paymentDate: team.paymentDate ? new Date(team.paymentDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
               cardBrand: team.cardBrand || 'Card',
               cardLastFour: team.cardLast4 || '****',
               transactionId: team.paymentIntentId || 'Completed',
@@ -11337,11 +11350,6 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
               // Additional context
               hasPayment: !!team.paymentIntentId,
               hasClub: !!team.clubName,
-
-              // Branding placeholders
-              loginLink: `${process.env.FRONTEND_URL || 'https://app.kickdeck.xyz'}/dashboard`,
-              supportEmail: 'no-reply@kickdeck.xyz',
-              organizationName: 'KickDeck',
               currentYear: new Date().getFullYear().toString(),
               EVENT_ADMIN_EMAIL: event?.adminEmail || 'support@kickdeck.xyz'
             }
@@ -11423,7 +11431,11 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
               teamName: team.name || 'your team',
               eventName: event?.name || 'Tournament',
               ageGroup: division,
+              division: division,
               registrationDate: team.createdAt
+                ? new Date(team.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+                : new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+              submittedDate: team.createdAt
                 ? new Date(team.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
                 : new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
               EVENT_ADMIN_EMAIL: event?.adminEmail || 'support@kickdeck.xyz',
