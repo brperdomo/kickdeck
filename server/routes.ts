@@ -4422,57 +4422,76 @@ export function registerRoutes(app: Express): Server {
           });
         }
 
-        // Create new user
+        // Create new user inside a transaction (household + user + roles)
         const hashedPassword = await crypto.hash(password);
-        const timestamp = new Date(); // Use Date object directly
+        const timestamp = new Date();
 
-        const [newUser] = await db
-          .insert(users)
-          .values({
-            email,
-            username: email,
-            password: hashedPassword,
-            firstName,
-            lastName,
-            isAdmin: true,
-            isParent: false,
-            createdAt: timestamp
-          })
-          .returning();
+        const result = await db.transaction(async (tx) => {
+          // Admin users still need a household row to satisfy the FK constraint
+          const [household] = await tx
+            .insert(households)
+            .values({
+              lastName,
+              address: 'N/A',
+              city: 'N/A',
+              state: 'NA',
+              zipCode: '00000',
+              primaryEmail: email,
+              createdAt: new Date().toISOString(),
+            })
+            .returning();
 
-        console.log('Created user:', newUser.id);
+          const [newUser] = await tx
+            .insert(users)
+            .values({
+              email,
+              username: email,
+              password: hashedPassword,
+              firstName,
+              lastName,
+              isAdmin: true,
+              isParent: false,
+              householdId: household.id,
+              createdAt: timestamp,
+            })
+            .returning();
 
-        // Process roles one by one
-        for (const roleName of roleNames) {
-          // Get or create role
-          let [existingRole] = await db
-            .select()
-            .from(roles)
-            .where(eq(roles.name, roleName))
-            .limit(1);
+          console.log('Created user:', newUser.id, 'with household:', household.id);
 
-          if (!existingRole) {
-            [existingRole] = await db
-              .insert(roles)
+          // Process roles one by one
+          for (const roleName of roleNames) {
+            let [existingRole] = await tx
+              .select()
+              .from(roles)
+              .where(eq(roles.name, roleName))
+              .limit(1);
+
+            if (!existingRole) {
+              [existingRole] = await tx
+                .insert(roles)
+                .values({
+                  name: roleName,
+                  description: `${roleName} role`,
+                  createdAt: new Date(),
+                })
+                .returning();
+            }
+
+            await tx
+              .insert(adminRoles)
               .values({
-                name: roleName,
-                description: `${roleName} role`,
-                createdAt: new Date() // Use Date object directly
-              })
-              .returning();
+                userId: newUser.id,
+                roleId: existingRole.id,
+                createdAt: new Date(),
+              });
+
+            console.log(`Assigned role ${roleName} to user ${newUser.id}`);
           }
 
-          // Create role assignment
-          await db
-            .insert(adminRoles)
-            .values({
-              userId: newUser.id,
-              roleId: existingRole.id,
-              createdAt: new Date() // Use Date object directly
-            });
+          return newUser;
+        });
 
-          console.log(`Assigned role ${roleName} to user ${newUser.id}`);
-        }
+        const newUser = result;
 
         // Send admin welcome email
         try {
@@ -9952,130 +9971,8 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
     // REMOVED: Duplicate endpoint that was causing incorrect age group sorting
     // The main age groups endpoint with proper sorting is at line 5961
 
-    // Add administrators endpoint
-    // IMPORTANT: This is a duplicate administrator creation endpoint
-    // It should be removed in a future update to avoid conflicts
-    // Kept for now with welcome email implementation to ensure backwards compatibility
-    app.post('/api/admin/administrators', isAdmin, async (req, res) => {
-      try {
-        const { firstName, lastName, email, password, roles } = req.body;
-
-        if (!firstName || !lastName || !email || !password || !roles || !Array.isArray(roles)) {
-          return res.status(400).json({ error: "Missing required fields" });
-        }
-
-        // Check if user exists
-        const [existingUser] = await db
-          .select()
-          .from(users)
-          .where(eq(users.email, email))
-          .limit(1);
-
-        if (existingUser) {
-          return res.status(400).json({ 
-            error: "Email already registered",
-            code: "EMAIL_EXISTS"
-          });
-        }
-
-        // Hash the password
-        const hashedPassword = await crypto.hash(password);
-
-        // Start a transaction
-        await db.transaction(async (tx) => {
-          // Create the administrator
-          const [newAdmin] = await tx
-            .insert(users)
-            .values({
-              email,
-              username: email,
-              password: hashedPassword,
-              firstName,
-              lastName,
-              isAdmin: true,
-              isParent: false,
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString()
-            })
-            .returning();
-
-          // Process each role
-          for (const roleName of roles) {
-            // Get or create the role
-            const existingRole = await tx
-              .select()
-              .from(roles)
-              .where(eq(roles.name, roleName))
-              .limit(1);
-
-            let roleId;
-            if (existingRole.length === 0) {
-              const [newRole] = await tx
-                .insert(roles)
-                .values({
-                  name: roleName,
-                  description: `${roleName.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')} role`
-                })
-                .returning();
-              roleId = newRole.id;
-            } else {
-              roleId = existingRole[0].id;
-            }
-
-            // Assign role to admin
-            await tx
-              .insert(adminRoles)
-              .values({
-                userId: newAdmin.id,
-                roleId: roleId,
-                createdAt: new Date()
-              });
-          }
-
-          // Return the created admin with roles
-          res.status(201).json({
-            id: newAdmin.id,
-            email: newAdmin.email,
-            firstName: newAdmin.firstName,
-            lastName: newAdmin.lastName,
-            roles
-          });
-
-          // After successful transaction, send admin welcome email
-          try {
-            console.log('Sending admin welcome email to:', email);
-            
-            // Get base application URL for login link
-            const appUrl = process.env.APP_URL ||
-                         (process.env.REPLIT_DOMAINS ?
-                          `https://${process.env.REPLIT_DOMAINS.split(',')[0]}` :
-                          'https://app.kickdeck.xyz');
-
-            // Send the welcome email with login link and admin context
-            await sendTemplatedEmail(email, 'admin_welcome', {
-              firstName,
-              lastName,
-              email,
-              loginUrl: `${appUrl}/login`,
-              appUrl,
-              role: 'Administrator',
-              isAdmin: true
-            });
-            
-            console.log('Admin welcome email sent successfully');
-          } catch (emailError) {
-            // Log but don't fail the request if email sending fails
-            console.error('Error sending admin welcome email:', emailError);
-          }
-        });
-      } catch (error) {
-        console.error('Error creating administrator:', error);
-        res.status(500).json({ 
-          error: "Failed to create administrator",
-          details: error instanceof Error ? error.message : "Unknown error"
-        });
-      }
-    });
+    // REMOVED: Duplicate POST /api/admin/administrators endpoint
+    // The primary handler is defined earlier in the file (around line 4400)
 
     app.get('/api/admin/administrators', isAdmin, async (req, res) => {
       try {
