@@ -12410,82 +12410,105 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
 
     app.get('/api/admin/brevo/templates', isAdmin, async (req, res) => {
       try {
-        console.log('Brevo templates request - Auth status:', req.isAuthenticated(), 'User:', !!req.user);
-        console.log('User roles:', req.user?.roles || 'No roles');
-        console.log('Environment check - BREVO_API_KEY present:', !!process.env.BREVO_API_KEY);
+        console.log('Brevo templates request - Auth:', req.isAuthenticated());
 
-        // Additional authentication debugging
-        console.log('User authenticated successfully with roles:', req.user?.roles);
-
-        // Direct implementation to bypass import issues
         if (!process.env.BREVO_API_KEY) {
-          console.error('BREVO_API_KEY not found in environment');
           return res.status(500).json({
             error: "Brevo API key not configured",
             details: "BREVO_API_KEY environment variable is missing"
           });
         }
 
-        console.log('Attempting to fetch Brevo templates...');
         const fetch = (await import('node-fetch')).default;
-        const response = await fetch('https://api.brevo.com/v3/smtp/templates', {
-          method: 'GET',
-          headers: {
-            'api-key': process.env.BREVO_API_KEY,
-            'Content-Type': 'application/json'
+        const brevoHeaders = {
+          'api-key': process.env.BREVO_API_KEY!,
+          'Accept': 'application/json',
+        };
+
+        // Fetch transactional templates (created under Transactional > Templates)
+        const transactionalRes = await fetch(
+          'https://api.brevo.com/v3/smtp/templates?limit=100&offset=0',
+          { method: 'GET', headers: brevoHeaders }
+        );
+
+        let allTemplates: any[] = [];
+
+        if (transactionalRes.ok) {
+          const transData = await transactionalRes.json() as any;
+          console.log(`Brevo transactional templates: ${transData.count || 0}`);
+          if (transData.templates && transData.templates.length > 0) {
+            allTemplates.push(...transData.templates.map((t: any) => ({ ...t, source: 'transactional' })));
           }
-        });
+        } else {
+          const errText = await transactionalRes.text();
+          console.error('Brevo transactional API error:', transactionalRes.status, errText);
 
-        console.log('Brevo API response status:', response.status);
-
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error('Brevo API error response:', errorText);
-          console.error('Brevo API error status:', response.status);
-
-          if (response.status === 401) {
+          if (transactionalRes.status === 401) {
             return res.status(401).json({
               error: "Brevo authorization failed",
-              details: "The Brevo API key is invalid or has expired. Please check your API key in the Brevo dashboard.",
-              suggestedActions: [
-                "Verify the API key is correct",
-                "Check if the API key has been revoked",
-                "Ensure the API key has appropriate permissions"
-              ]
+              details: "The Brevo API key is invalid or expired."
             });
           }
-
-          if (response.status === 403) {
-            return res.status(403).json({
-              error: "Brevo access forbidden",
-              details: "The API key does not have permission to access templates. Please check the API key permissions.",
-              suggestedActions: [
-                "Generate a new API key with appropriate permissions",
-                "Or ensure the API key has at least template read permissions"
-              ]
-            });
-          }
-
-          return res.status(response.status).json({
-            error: "Brevo API request failed",
-            details: `Brevo API returned ${response.status}: ${errorText}`,
-            status: response.status
-          });
         }
 
-        const data = await response.json();
-        console.log(`Successfully fetched ${data.templates?.length || 0} Brevo templates`);
-        res.json(data.templates || []);
-      } catch (error) {
-        console.error('Detailed Brevo templates error:', {
-          message: error.message,
-          stack: error.stack,
-          name: error.name
-        });
+        // Also fetch campaign/marketing templates (created under Campaigns > Templates)
+        try {
+          const campaignRes = await fetch(
+            'https://api.brevo.com/v3/smtp/templates?limit=100&offset=0&templateStatus=true',
+            { method: 'GET', headers: brevoHeaders }
+          );
+
+          if (campaignRes.ok) {
+            const campData = await campaignRes.json() as any;
+            console.log(`Brevo active templates: ${campData.count || 0}`);
+            // Merge any templates not already in the list
+            const existingIds = new Set(allTemplates.map((t: any) => t.id));
+            if (campData.templates) {
+              for (const t of campData.templates) {
+                if (!existingIds.has(t.id)) {
+                  allTemplates.push({ ...t, source: 'active' });
+                }
+              }
+            }
+          }
+        } catch (campErr) {
+          console.error('Error fetching active templates:', campErr);
+        }
+
+        // Also try inactive templates in case they exist but aren't active yet
+        try {
+          const inactiveRes = await fetch(
+            'https://api.brevo.com/v3/smtp/templates?limit=100&offset=0&templateStatus=false',
+            { method: 'GET', headers: brevoHeaders }
+          );
+
+          if (inactiveRes.ok) {
+            const inactiveData = await inactiveRes.json() as any;
+            console.log(`Brevo inactive templates: ${inactiveData.count || 0}`);
+            const existingIds = new Set(allTemplates.map((t: any) => t.id));
+            if (inactiveData.templates) {
+              for (const t of inactiveData.templates) {
+                if (!existingIds.has(t.id)) {
+                  allTemplates.push({ ...t, source: 'inactive', isActive: false });
+                }
+              }
+            }
+          }
+        } catch (inactiveErr) {
+          console.error('Error fetching inactive templates:', inactiveErr);
+        }
+
+        console.log(`Total Brevo templates found: ${allTemplates.length}`);
+        if (allTemplates.length > 0) {
+          console.log('Template names:', allTemplates.map((t: any) => `${t.name} (id:${t.id}, ${t.source})`).join(', '));
+        }
+
+        res.json(allTemplates);
+      } catch (error: any) {
+        console.error('Brevo templates error:', error.message);
         res.status(500).json({
           error: "Failed to fetch Brevo templates",
-          details: error.message,
-          errorType: error.name
+          details: error.message
         });
       }
     });
