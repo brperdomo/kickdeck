@@ -11516,7 +11516,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
 
               // Branding placeholders
               loginLink: `${process.env.FRONTEND_URL || 'https://app.kickdeck.io'}/dashboard`,
-              supportEmail: 'support@kickdeck.io',
+              supportEmail: 'no-reply@kickdeck.xyz',
               organizationName: 'KickDeck',
               currentYear: new Date().getFullYear().toString(),
               EVENT_ADMIN_EMAIL: event?.adminEmail || 'support@kickdeck.xyz'
@@ -13090,7 +13090,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         }
 
         const apiKey = (provider.settings as any)?.apiKey;
-        const fromEmail = (provider.settings as any)?.from || 'support@kickdeck.io';
+        const fromEmail = (provider.settings as any)?.from || 'no-reply@kickdeck.xyz';
 
         if (!apiKey) {
           return res.status(400).json({ success: false, message: 'Brevo API key not found' });

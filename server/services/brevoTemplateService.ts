@@ -185,7 +185,7 @@ export async function testBrevoTemplate(
     }
 
     const senderEmail =
-      process.env.DEFAULT_FROM_EMAIL || "support@kickdeck.io";
+      process.env.DEFAULT_FROM_EMAIL || "no-reply@kickdeck.xyz";
     const numericTemplateId =
       typeof templateId === "string" ? parseInt(templateId, 10) : templateId;
 

@@ -40,7 +40,7 @@ export async function seedEmailTemplateTypes() {
       if (!existing.rowCount || existing.rowCount === 0) {
         await db.execute(sql`
           INSERT INTO email_templates (name, type, subject, description, content, sender_name, sender_email, is_active, created_at, updated_at)
-          VALUES (${tmpl.name}, ${tmpl.type}, ${tmpl.subject}, ${tmpl.description}, '<p>{{content}}</p>', 'KickDeck', 'support@kickdeck.io', true, NOW(), NOW())
+          VALUES (${tmpl.name}, ${tmpl.type}, ${tmpl.subject}, ${tmpl.description}, '<p>{{content}}</p>', 'KickDeck', 'no-reply@kickdeck.xyz', true, NOW(), NOW())
         `);
         insertedCount++;
         console.log(`  Inserted email template type: ${tmpl.type}`);
@@ -53,14 +53,14 @@ export async function seedEmailTemplateTypes() {
       console.log('All standard email template types already exist');
     }
 
-    // Fix any templates that have unverified sender emails
+    // Fix any templates that have unverified sender emails — the verified sender in Brevo is no-reply@kickdeck.xyz
     const fixResult = await db.execute(sql`
       UPDATE email_templates
-      SET sender_email = 'support@kickdeck.io'
-      WHERE sender_email IN ('noreply@kickdeck.xyz', 'noreply@kickdeck.io')
+      SET sender_email = 'no-reply@kickdeck.xyz'
+      WHERE sender_email NOT IN ('no-reply@kickdeck.xyz')
     `);
     if (fixResult.rowCount && fixResult.rowCount > 0) {
-      console.log(`  Updated ${fixResult.rowCount} templates with incorrect sender_email to support@kickdeck.io`);
+      console.log(`  Updated ${fixResult.rowCount} templates sender_email to verified address no-reply@kickdeck.xyz`);
     }
   } catch (error) {
     console.error('Error seeding email template types:', error);

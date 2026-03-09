@@ -52,7 +52,7 @@ export async function getFromEmail(): Promise<string> {
     // Provider not configured yet — fall through
   }
 
-  const fallback = process.env.DEFAULT_FROM_EMAIL || "support@kickdeck.io";
+  const fallback = process.env.DEFAULT_FROM_EMAIL || "no-reply@kickdeck.xyz";
   cachedFromEmail = fallback;
   fromEmailLastFetch = now;
   return fallback;
@@ -102,7 +102,7 @@ async function getEmailProvider() {
         providerName: "Brevo Provider",
         settings: {
           apiKey: brevoApiKey,
-          from: process.env.DEFAULT_FROM_EMAIL || "support@kickdeck.io",
+          from: process.env.DEFAULT_FROM_EMAIL || "no-reply@kickdeck.xyz",
         },
         isActive: true,
         isDefault: true,
@@ -256,7 +256,7 @@ If you didn't request this password reset, you can safely ignore this email.
 
 Best regards,
 KickDeck Support Team
-support@kickdeck.io`;
+no-reply@kickdeck.xyz`;
   }
 
   // General HTML to text conversion (basic)
@@ -533,7 +533,7 @@ function createFallbackTemplate(
         </div>
       `,
       senderName: "KickDeck",
-      senderEmail: cachedFromEmail || process.env.DEFAULT_FROM_EMAIL || "support@kickdeck.io",
+      senderEmail: cachedFromEmail || process.env.DEFAULT_FROM_EMAIL || "no-reply@kickdeck.xyz",
       isActive: true,
       type: templateType,
       providerId: null,
@@ -555,7 +555,7 @@ function createFallbackTemplate(
         </div>
       `,
       senderName: "KickDeck",
-      senderEmail: cachedFromEmail || process.env.DEFAULT_FROM_EMAIL || "support@kickdeck.io",
+      senderEmail: cachedFromEmail || process.env.DEFAULT_FROM_EMAIL || "no-reply@kickdeck.xyz",
       isActive: true,
       type: templateType,
       providerId: null,
@@ -764,7 +764,7 @@ export async function sendRegistrationConfirmationEmail(
       setupIntentId: teamData.setupIntentId || "",
       addRosterLater: teamData.addRosterLater || false,
       loginLink: loginLink,
-      supportEmail: cachedFromEmail || process.env.DEFAULT_FROM_EMAIL || "support@kickdeck.io",
+      supportEmail: cachedFromEmail || process.env.DEFAULT_FROM_EMAIL || "no-reply@kickdeck.xyz",
       organizationName: "KickDeck",
       currentYear: new Date().getFullYear(),
       EVENT_ADMIN_EMAIL: eventData?.adminEmail || 'support@kickdeck.xyz',

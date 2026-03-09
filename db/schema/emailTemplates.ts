@@ -101,7 +101,7 @@ export const defaultPasswordResetTemplate = {
 </body>
 </html>`,
   senderName: 'KickDeck Support',
-  senderEmail: 'support@kickdeck.io',
+  senderEmail: 'no-reply@kickdeck.xyz',
   variables: ['username', 'resetUrl', 'expiryHours']
 };
 

@@ -214,7 +214,7 @@ export async function verifyConfiguration(
 
     const result = await sendEmail({
       to: testEmail,
-      from: `KickDeck <${process.env.DEFAULT_FROM_EMAIL || "support@kickdeck.io"}>`,
+      from: `KickDeck <${process.env.DEFAULT_FROM_EMAIL || "no-reply@kickdeck.xyz"}>`,
       subject: "Brevo Configuration Test",
       text: "This is a test email to verify your Brevo configuration is working correctly.",
       html: `
@@ -270,7 +270,7 @@ export async function testDynamicTemplate(
 
     return await sendDynamicTemplateEmail({
       to: testEmail,
-      from: `KickDeck <${process.env.DEFAULT_FROM_EMAIL || "support@kickdeck.io"}>`,
+      from: `KickDeck <${process.env.DEFAULT_FROM_EMAIL || "no-reply@kickdeck.xyz"}>`,
       templateId: numericTemplateId,
       params: sampleData,
     });
