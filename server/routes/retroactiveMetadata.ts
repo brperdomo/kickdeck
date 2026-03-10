@@ -14,6 +14,11 @@ import {
   checkTeamMetadataStatus,
   type RetroactiveUpdateResult,
 } from "../services/retroactiveMetadataService.js";
+import {
+  deduplicatePlatformCustomers,
+  deduplicateConnectedCustomers,
+  deduplicateAllCustomers,
+} from "../services/stripe-customer-cleanup.js";
 
 const router = Router();
 
@@ -168,6 +173,100 @@ router.get("/summary", isAdmin, async (req, res) => {
       error: "Failed to get metadata summary",
       details: error.message,
     });
+  }
+});
+
+// ─── Customer Deduplication Routes ──────────────────────────────────────────
+
+/**
+ * DRY RUN: Preview duplicate customers on the platform account
+ * GET /api/admin/metadata/cleanup-customers/platform/preview
+ */
+router.get("/cleanup-customers/platform/preview", isAdmin, async (req, res) => {
+  try {
+    console.log(`🔍 Admin ${req.user?.email} previewing platform customer deduplication`);
+    const result = await deduplicatePlatformCustomers(true);
+    res.json({ success: true, ...result });
+  } catch (error: any) {
+    console.error("Error previewing platform customer cleanup:", error);
+    res.status(500).json({ error: "Failed to preview platform customer cleanup", details: error.message });
+  }
+});
+
+/**
+ * EXECUTE: Deduplicate customers on the platform account
+ * POST /api/admin/metadata/cleanup-customers/platform/execute
+ */
+router.post("/cleanup-customers/platform/execute", isAdmin, async (req, res) => {
+  try {
+    console.log(`🚀 Admin ${req.user?.email} executing platform customer deduplication`);
+    const result = await deduplicatePlatformCustomers(false);
+    res.json({ success: true, ...result });
+  } catch (error: any) {
+    console.error("Error executing platform customer cleanup:", error);
+    res.status(500).json({ error: "Failed to execute platform customer cleanup", details: error.message });
+  }
+});
+
+/**
+ * DRY RUN: Preview duplicate customers on a specific connected account
+ * GET /api/admin/metadata/cleanup-customers/connected/:accountId/preview
+ */
+router.get("/cleanup-customers/connected/:accountId/preview", isAdmin, async (req, res) => {
+  try {
+    const { accountId } = req.params;
+    console.log(`🔍 Admin ${req.user?.email} previewing connected account ${accountId} customer deduplication`);
+    const result = await deduplicateConnectedCustomers(accountId, true);
+    res.json({ success: true, ...result });
+  } catch (error: any) {
+    console.error("Error previewing connected customer cleanup:", error);
+    res.status(500).json({ error: "Failed to preview connected customer cleanup", details: error.message });
+  }
+});
+
+/**
+ * EXECUTE: Deduplicate customers on a specific connected account
+ * POST /api/admin/metadata/cleanup-customers/connected/:accountId/execute
+ */
+router.post("/cleanup-customers/connected/:accountId/execute", isAdmin, async (req, res) => {
+  try {
+    const { accountId } = req.params;
+    console.log(`🚀 Admin ${req.user?.email} executing connected account ${accountId} customer deduplication`);
+    const result = await deduplicateConnectedCustomers(accountId, false);
+    res.json({ success: true, ...result });
+  } catch (error: any) {
+    console.error("Error executing connected customer cleanup:", error);
+    res.status(500).json({ error: "Failed to execute connected customer cleanup", details: error.message });
+  }
+});
+
+/**
+ * DRY RUN: Preview ALL duplicate customers (platform + all connected accounts)
+ * GET /api/admin/metadata/cleanup-customers/all/preview
+ */
+router.get("/cleanup-customers/all/preview", isAdmin, async (req, res) => {
+  try {
+    console.log(`🔍 Admin ${req.user?.email} previewing full customer deduplication`);
+    const result = await deduplicateAllCustomers(true);
+    res.json({ success: true, ...result });
+  } catch (error: any) {
+    console.error("Error previewing full customer cleanup:", error);
+    res.status(500).json({ error: "Failed to preview full customer cleanup", details: error.message });
+  }
+});
+
+/**
+ * EXECUTE: Deduplicate ALL customers (platform + all connected accounts)
+ * POST /api/admin/metadata/cleanup-customers/all/execute
+ */
+router.post("/cleanup-customers/all/execute", isAdmin, async (req, res) => {
+  try {
+    console.log(`🚀 Admin ${req.user?.email} executing full customer deduplication`);
+    const result = await deduplicateAllCustomers(false);
+    res.json({ success: true, ...result });
+  } catch (error: any) {
+    console.error("Error executing full customer cleanup:", error);
+    res.status(500).json({ error: "Failed to execute full customer cleanup", details: error.message });
   }
 });
 

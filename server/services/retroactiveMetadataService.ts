@@ -1,8 +1,13 @@
 /**
  * RETROACTIVE METADATA SERVICE
- * 
- * Service for updating existing Stripe Connect payments with comprehensive metadata
- * Solves the payment identification crisis for legacy transactions
+ *
+ * Updates existing Stripe objects with comprehensive metadata for payment
+ * identification and Connect account visibility.
+ *
+ * IMPORTANT: KickDeck uses DESTINATION CHARGES. This means:
+ *   - Payment intents, charges, customers live on the PLATFORM account (no stripeAccount header)
+ *   - Transfers live on the PLATFORM account but are visible on the connected account
+ *   - To give tournament organizers customer visibility, we find-or-create on the connected account
  */
 
 import { db } from "../../db/index.js";
@@ -10,23 +15,19 @@ import { teams, events } from "../../db/schema.js";
 import { eq, and, isNotNull, or } from "drizzle-orm";
 import Stripe from "stripe";
 import { getStripeClient } from "./stripe-client-factory";
+import { updateConnectVisibility } from "./stripe-connect-visibility";
 
 export interface RetroactiveUpdateResult {
   teamId: number;
   teamName: string;
-  paymentObjects: {
-    paymentIntent?: string;
-    setupIntent?: string;
-    customer?: string;
-    charges?: string[];
-  };
+  updatedObjects: string[];
   success: boolean;
   errors: string[];
   metadata: Record<string, string>;
 }
 
 /**
- * Update metadata for a specific team's Stripe objects
+ * Update metadata for a specific team's Stripe objects (destination charge model)
  */
 export async function updateTeamPaymentMetadata(teamId: number): Promise<RetroactiveUpdateResult> {
   const stripe = await getStripeClient();
@@ -42,7 +43,9 @@ export async function updateTeamPaymentMetadata(teamId: number): Promise<Retroac
       eventId: teams.eventId,
       eventName: events.name,
       managerEmail: teams.managerEmail,
-      managerName: teams.submitterName,
+      submitterEmail: teams.submitterEmail,
+      managerName: teams.managerName,
+      submitterName: teams.submitterName,
       paymentIntentId: teams.paymentIntentId,
       setupIntentId: teams.setupIntentId,
       stripeCustomerId: teams.stripeCustomerId,
@@ -71,9 +74,9 @@ export async function updateTeamPaymentMetadata(teamId: number): Promise<Retroac
     teamName: team.teamName || "Unknown Team",
     eventId: team.eventId?.toString() || "",
     eventName: team.eventName || "",
-    managerEmail: team.managerEmail || "",
-    managerName: team.managerName || "Team Manager",
-    registrationDate: team.createdAt?.toISOString() || "",
+    managerEmail: team.managerEmail || team.submitterEmail || "",
+    managerName: team.submitterName || team.managerName || "Team Manager",
+    registrationDate: team.createdAt ? (typeof team.createdAt === 'string' ? team.createdAt : team.createdAt.toISOString()) : "",
     internalReference: `TEAM-${team.teamId}-${team.eventId}`,
     systemSource: "KickDeck",
     updateType: "RetroactiveMetadata",
@@ -83,47 +86,67 @@ export async function updateTeamPaymentMetadata(teamId: number): Promise<Retroac
   const result: RetroactiveUpdateResult = {
     teamId: team.teamId,
     teamName: team.teamName || "Unknown Team",
-    paymentObjects: {},
+    updatedObjects: [],
     success: true,
     errors: [],
     metadata,
   };
 
-  // Update Payment Intent
+  // ──────────────────────────────────────────────
+  // 1. Update Payment Intent on PLATFORM account
+  //    (destination charges: PI lives on platform)
+  // ──────────────────────────────────────────────
   if (team.paymentIntentId) {
     try {
-      await stripe.paymentIntents.update(
-        team.paymentIntentId,
-        { metadata },
-        { stripeAccount: team.connectAccountId }
-      );
-      result.paymentObjects.paymentIntent = team.paymentIntentId;
-      console.log(`✅ Updated Payment Intent: ${team.paymentIntentId}`);
+      await stripe.paymentIntents.update(team.paymentIntentId, { metadata });
+      result.updatedObjects.push(`PaymentIntent: ${team.paymentIntentId}`);
+      console.log(`  ✅ Updated Payment Intent: ${team.paymentIntentId} (platform)`);
 
-      // Update related charges
+      // Update related charges on PLATFORM account
       try {
-        const charges = await stripe.charges.list(
-          { payment_intent: team.paymentIntentId },
-          { stripeAccount: team.connectAccountId }
-        );
-
-        const updatedCharges: string[] = [];
+        const charges = await stripe.charges.list({ payment_intent: team.paymentIntentId });
         for (const charge of charges.data) {
           try {
-            await stripe.charges.update(
-              charge.id,
-              { metadata },
-              { stripeAccount: team.connectAccountId }
-            );
-            updatedCharges.push(charge.id);
+            await stripe.charges.update(charge.id, { metadata });
+            result.updatedObjects.push(`Charge: ${charge.id}`);
           } catch (chargeError: any) {
             result.errors.push(`Charge ${charge.id}: ${chargeError.message}`);
           }
         }
-        result.paymentObjects.charges = updatedCharges;
-        console.log(`✅ Updated ${updatedCharges.length} charges for Payment Intent`);
+        if (charges.data.length > 0) {
+          console.log(`  ✅ Updated ${charges.data.length} charge(s) (platform)`);
+        }
       } catch (chargesError: any) {
         result.errors.push(`Charges lookup: ${chargesError.message}`);
+      }
+
+      // ──────────────────────────────────────────────
+      // 2. Update TRANSFER + DESTINATION PAYMENT + CONNECTED CUSTOMER
+      //    Uses the centralised visibility helper which handles all three
+      // ──────────────────────────────────────────────
+      try {
+        const customerEmail = team.submitterEmail || team.managerEmail;
+        const connectResult = await updateConnectVisibility({
+          connectAccountId: team.connectAccountId!,
+          paymentIntentId: team.paymentIntentId,
+          description: `${team.eventName || 'Tournament'} - ${team.teamName || 'Team'} Registration`,
+          metadata,
+          customerEmail: customerEmail || undefined,
+          customerName: team.submitterName || team.managerName || 'Team Manager',
+        });
+
+        if (connectResult.transferId) {
+          result.updatedObjects.push(`Transfer: ${connectResult.transferId}`);
+        }
+        if (connectResult.destinationPaymentId) {
+          result.updatedObjects.push(`DestinationPayment: ${connectResult.destinationPaymentId}`);
+        }
+        if (connectResult.connectedCustomerId) {
+          result.updatedObjects.push(`ConnectedCustomer: ${connectResult.connectedCustomerId}`);
+        }
+        result.errors.push(...connectResult.errors);
+      } catch (connectError: any) {
+        result.errors.push(`Connect visibility: ${connectError.message}`);
       }
     } catch (piError: any) {
       result.errors.push(`Payment Intent: ${piError.message}`);
@@ -131,44 +154,43 @@ export async function updateTeamPaymentMetadata(teamId: number): Promise<Retroac
     }
   }
 
-  // Update Setup Intent
+  // ──────────────────────────────────────────────
+  // 3. Update Setup Intent on PLATFORM account
+  // ──────────────────────────────────────────────
   if (team.setupIntentId) {
     try {
-      await stripe.setupIntents.update(
-        team.setupIntentId,
-        { metadata },
-        { stripeAccount: team.connectAccountId }
-      );
-      result.paymentObjects.setupIntent = team.setupIntentId;
-      console.log(`✅ Updated Setup Intent: ${team.setupIntentId}`);
+      await stripe.setupIntents.update(team.setupIntentId, { metadata });
+      result.updatedObjects.push(`SetupIntent: ${team.setupIntentId}`);
+      console.log(`  ✅ Updated Setup Intent: ${team.setupIntentId} (platform)`);
     } catch (siError: any) {
       result.errors.push(`Setup Intent: ${siError.message}`);
-      result.success = false;
+      // Non-fatal — setup intent might have expired
     }
   }
 
-  // Update Customer
+  // ──────────────────────────────────────────────
+  // 4. Update platform Customer
+  // ──────────────────────────────────────────────
   if (team.stripeCustomerId) {
     try {
-      await stripe.customers.update(
-        team.stripeCustomerId,
-        {
-          name: `${team.teamName} - ${team.managerName || "Team Manager"}`,
-          description: `Team: ${team.teamName} | Event: ${team.eventName} | TeamID: ${team.teamId}`,
-          metadata,
-        },
-        { stripeAccount: team.connectAccountId }
-      );
-      result.paymentObjects.customer = team.stripeCustomerId;
-      console.log(`✅ Updated Customer: ${team.stripeCustomerId}`);
+      await stripe.customers.update(team.stripeCustomerId, {
+        name: team.submitterName || team.managerName || 'Team Manager',
+        description: `Team: ${team.teamName} | Event: ${team.eventName} | TeamID: ${team.teamId}`,
+        metadata,
+      });
+      result.updatedObjects.push(`PlatformCustomer: ${team.stripeCustomerId}`);
+      console.log(`  ✅ Updated Platform Customer: ${team.stripeCustomerId}`);
     } catch (custError: any) {
-      result.errors.push(`Customer: ${custError.message}`);
-      result.success = false;
+      result.errors.push(`Platform Customer: ${custError.message}`);
     }
   }
 
-  console.log(`${result.success ? "✅" : "❌"} RETROACTIVE UPDATE: Team ${teamId} ${result.success ? "completed" : "failed"}`);
-  
+  const hasErrors = result.errors.length > 0;
+  // success = true if we updated at least something, even with partial errors
+  result.success = result.updatedObjects.length > 0;
+
+  console.log(`${result.success ? "✅" : "❌"} RETROACTIVE UPDATE: Team ${teamId} — ${result.updatedObjects.length} objects updated${hasErrors ? `, ${result.errors.length} errors` : ''}`);
+
   return result;
 }
 
@@ -200,28 +222,38 @@ export async function updateEventPaymentMetadata(eventId: number): Promise<Retro
   console.log(`📊 Found ${teamsWithPayments.length} teams with payment data for Event ${eventId}`);
 
   const results: RetroactiveUpdateResult[] = [];
-  
+
   // Process teams in batches to respect rate limits
-  const batchSize = 5;
+  const batchSize = 3;
   for (let i = 0; i < teamsWithPayments.length; i += batchSize) {
     const batch = teamsWithPayments.slice(i, i + batchSize);
-    
-    const batchPromises = batch.map(team => updateTeamPaymentMetadata(team.teamId));
+    console.log(`📦 Processing batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(teamsWithPayments.length / batchSize)}`);
+
+    const batchPromises = batch.map(team =>
+      updateTeamPaymentMetadata(team.teamId).catch(err => ({
+        teamId: team.teamId,
+        teamName: 'Unknown',
+        updatedObjects: [] as string[],
+        success: false,
+        errors: [err.message],
+        metadata: {},
+      } as RetroactiveUpdateResult))
+    );
     const batchResults = await Promise.all(batchPromises);
     results.push(...batchResults);
-    
+
     // Rate limiting delay
     if (i + batchSize < teamsWithPayments.length) {
-      console.log("⏱️ Rate limit delay: 1 second...");
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      console.log("⏱️ Rate limit delay: 2 seconds...");
+      await new Promise(resolve => setTimeout(resolve, 2000));
     }
   }
 
   const successful = results.filter(r => r.success).length;
   const failed = results.filter(r => !r.success).length;
-  
+
   console.log(`📈 Event ${eventId} Summary: ${successful} successful, ${failed} failed`);
-  
+
   return results;
 }
 
@@ -258,30 +290,38 @@ export async function updateAllPaymentMetadata(): Promise<{
   console.log(`📊 Found ${teamsWithPayments.length} total teams with payment data`);
 
   const results: RetroactiveUpdateResult[] = [];
-  
-  // Process teams in smaller batches for global update
-  const batchSize = 3;
+
+  // Process teams in smaller batches for global update (more conservative rate limiting)
+  const batchSize = 2;
   for (let i = 0; i < teamsWithPayments.length; i += batchSize) {
     const batch = teamsWithPayments.slice(i, i + batchSize);
     console.log(`📦 Processing batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(teamsWithPayments.length / batchSize)}`);
-    
-    const batchPromises = batch.map(team => updateTeamPaymentMetadata(team.teamId));
+
+    const batchPromises = batch.map(team =>
+      updateTeamPaymentMetadata(team.teamId).catch(err => ({
+        teamId: team.teamId,
+        teamName: 'Unknown',
+        updatedObjects: [] as string[],
+        success: false,
+        errors: [err.message],
+        metadata: {},
+      } as RetroactiveUpdateResult))
+    );
     const batchResults = await Promise.all(batchPromises);
     results.push(...batchResults);
-    
+
     // Conservative rate limiting for global update
     if (i + batchSize < teamsWithPayments.length) {
-      console.log("⏱️ Rate limit delay: 2 seconds...");
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, 2500));
     }
   }
 
   const successful = results.filter(r => r.success).length;
   const failed = results.filter(r => !r.success).length;
-  
+
   console.log("🎉 GLOBAL RETROACTIVE UPDATE COMPLETE");
-  console.log(`📈 Final Summary: ${successful}/${teamsWithPayments.length} teams successful`);
-  
+  console.log(`📈 Final Summary: ${successful}/${teamsWithPayments.length} teams successful, ${failed} failed`);
+
   return {
     totalTeams: teamsWithPayments.length,
     successful,
@@ -325,7 +365,7 @@ export async function checkTeamMetadataStatus(teamId: number): Promise<{
 
   const team = teamData[0];
   const paymentObjects: any = {};
-  
+
   if (team.paymentIntentId) paymentObjects.paymentIntent = team.paymentIntentId;
   if (team.setupIntentId) paymentObjects.setupIntent = team.setupIntentId;
   if (team.stripeCustomerId) paymentObjects.customer = team.stripeCustomerId;

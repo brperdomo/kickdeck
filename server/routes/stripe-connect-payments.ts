@@ -22,6 +22,8 @@ import {
   calculateEventFees,
   formatFeeCalculation,
 } from "../services/fee-calculator";
+import { scheduleConnectVisibilityUpdate } from "../services/stripe-connect-visibility";
+import { findOrCreatePlatformCustomer } from "../services/stripe-connect-customer";
 
 // Note: Fee calculation is now handled by the fee-calculator service
 // This supports configurable platform fees and volume discounts
@@ -439,10 +441,10 @@ export async function processDestinationCharge(
               }
             }
 
-            // Create customer on PLATFORM account (destination charges require platform customers)
-            const newCustomer = await stripe.customers.create({
+            // Find or create customer on PLATFORM account (destination charges require platform customers)
+            const { customerId: newPlatformCustomerId } = await findOrCreatePlatformCustomer({
               email: team.submitterEmail || "noemail@example.com",
-              name: team.submitterName || team.name,
+              name: team.submitterName || team.managerName || 'Team Manager',
               metadata: {
                 teamId: teamId.toString(),
                 teamName: team.name || "Unknown Team",
@@ -453,12 +455,13 @@ export async function processDestinationCharge(
                 connectAccountId: connectAccountId || "",
               },
             });
+            const newCustomer = { id: newPlatformCustomerId };
 
             console.log(
-              `Created new customer ${newCustomer.id} on platform account for team ${teamId}`,
+              `Using platform customer ${newCustomer.id} for team ${teamId}`,
             );
 
-            // Update team record with new customer ID
+            // Update team record with customer ID
             await db
               .update(teams)
               .set({ stripeCustomerId: newCustomer.id })
@@ -515,47 +518,27 @@ export async function processDestinationCharge(
     }
 
     // Update the auto-created transfer with team/event description for Connect account visibility
-    // This ensures tournament directors see meaningful info in their Stripe dashboard
-    if (paymentIntent.status === "succeeded" && paymentIntent.latest_charge) {
-      try {
-        const chargeForTransfer = await stripe.charges.retrieve(
-          paymentIntent.latest_charge as string,
-          { expand: ["transfer"] }
-        );
-
-        if (chargeForTransfer.transfer) {
-          const transferId =
-            typeof chargeForTransfer.transfer === "string"
-              ? chargeForTransfer.transfer
-              : chargeForTransfer.transfer.id;
-
-          await stripe.transfers.update(transferId, {
-            description: `${event.name} - ${team.name} Registration`,
-            metadata: {
-              teamId: teamId.toString(),
-              teamName: team.name || "",
-              eventName: event.name || "",
-              eventId: eventId,
-              registrationDate: new Date().toISOString(),
-              totalCharged: chargeAmount.toString(),
-              tournamentReceives: feeCalculation.tournamentReceives.toString(),
-              platformFee: feeCalculation.platformFeeAmount.toString(),
-              paymentIntentId: paymentIntent.id,
-              systemSource: "KickDeck",
-            },
-          });
-
-          console.log(
-            `✅ Updated transfer ${transferId} with team/event metadata for Connect account visibility`,
-          );
-        }
-      } catch (transferUpdateError) {
-        console.warn(
-          "Could not update transfer metadata (non-fatal):",
-          transferUpdateError,
-        );
-        // Non-fatal: payment succeeded, metadata update is best-effort
-      }
+    // NOTE: With automatic_async capture, the transfer may not exist immediately.
+    // Update transfer + destination payment + connected customer for visibility
+    if (paymentIntent.status === "succeeded" && connectAccountId) {
+      scheduleConnectVisibilityUpdate({
+        connectAccountId,
+        paymentIntentId: paymentIntent.id,
+        description: `${event.name} - ${team.name} Registration`,
+        metadata: {
+          teamId: teamId.toString(),
+          teamName: team.name || "",
+          eventName: event.name || "",
+          eventId: eventId.toString(),
+          registrationDate: new Date().toISOString(),
+          totalCharged: chargeAmount.toString(),
+          tournamentReceives: feeCalculation.tournamentReceives.toString(),
+          platformFee: feeCalculation.platformFeeAmount.toString(),
+          systemSource: "KickDeck",
+        },
+        customerEmail: team.submitterEmail || team.managerEmail || undefined,
+        customerName: team.submitterName || team.managerName || 'Team Manager',
+      });
     }
 
     // CRITICAL DATABASE VALIDATION - Ensure platform fees are recorded

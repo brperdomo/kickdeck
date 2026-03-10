@@ -118,7 +118,7 @@ router.post('/create-setup-intent', async (req, res) => {
     let enhancedMetadata = { ...metadata };
     if (teamId.toString().startsWith('temp-') && req.user) {
       enhancedMetadata.userEmail = req.user.email;
-      enhancedMetadata.userName = req.user.name || req.user.email;
+      enhancedMetadata.userName = [req.user.firstName, req.user.lastName].filter(Boolean).join(' ') || req.user.email;
       console.log(`Adding user info to Setup Intent metadata: ${req.user.email}`);
     }
     

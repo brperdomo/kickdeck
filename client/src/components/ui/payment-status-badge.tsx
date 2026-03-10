@@ -1,24 +1,37 @@
-import { CheckCircle, Clock, XCircle, CreditCard, AlertCircle } from "lucide-react";
+import { CheckCircle, Clock, XCircle, CreditCard, AlertCircle, RotateCcw } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 type PaymentStatusBadgeProps = {
   status: string | undefined | null;
+  hasPaymentInfo?: boolean;
+  payLater?: boolean;
 };
 
 /**
  * A consistent badge component for displaying payment status
  * This ensures payment status display is uniform across all views
  */
-export function PaymentStatusBadge({ status }: PaymentStatusBadgeProps) {
+export function PaymentStatusBadge({ status, hasPaymentInfo, payLater }: PaymentStatusBadgeProps) {
   switch (status) {
     case 'paid':
       return <Badge className="bg-green-500"><CheckCircle className="w-3 h-3 mr-1" /> Paid</Badge>;
     case 'refunded':
-      return <Badge className="bg-purple-500"><CreditCard className="w-3 h-3 mr-1" /> Refunded</Badge>;
+      return <Badge className="bg-purple-500"><RotateCcw className="w-3 h-3 mr-1" /> Refunded</Badge>;
+    case 'partially_refunded':
+      return <Badge className="bg-purple-400"><RotateCcw className="w-3 h-3 mr-1" /> Partially Refunded</Badge>;
     case 'failed':
       return <Badge className="bg-red-500"><XCircle className="w-3 h-3 mr-1" /> Payment Failed</Badge>;
+    case 'payment_info_provided':
+      return <Badge variant="outline" className="text-blue-600 border-blue-400 whitespace-nowrap font-medium">
+        <CreditCard className="w-3 h-3 mr-1" /> Card on File
+      </Badge>;
     case 'pending':
     default:
+      if (hasPaymentInfo) {
+        return <Badge variant="outline" className="text-blue-600 border-blue-400 whitespace-nowrap font-medium">
+          <CreditCard className="w-3 h-3 mr-1" /> Card on File
+        </Badge>;
+      }
       return <Badge className="bg-amber-500"><Clock className="w-3 h-3 mr-1" /> Payment Pending</Badge>;
   }
 }
@@ -51,18 +64,10 @@ export function TeamStatusBadge({
       return <Badge className="bg-amber-500"><Clock className="w-3 h-3 mr-1" /> Waitlisted</Badge>;
     case 'registered':
     case 'pending_payment':
-      if (setupIntentId) {
-        return <Badge variant="outline" className="text-blue-600 border-blue-400 whitespace-nowrap font-medium">
-          <CreditCard className="w-3 h-3 mr-1" /> Card Info Provided
-        </Badge>;
-      } else if (payLater) {
-        return <Badge variant="outline" className="text-amber-600 border-amber-400 whitespace-nowrap font-medium">
-          <AlertCircle className="w-3 h-3 mr-1" /> Pay Later Selected
-        </Badge>;
-      } else {
-        return <Badge className="bg-yellow-500"><Clock className="w-3 h-3 mr-1" /> Pending Approval</Badge>;
-      }
+      return <Badge className="bg-yellow-500"><Clock className="w-3 h-3 mr-1" /> Pending Review</Badge>;
+    case 'refunded':
+      return <Badge className="bg-purple-500"><RotateCcw className="w-3 h-3 mr-1" /> Refunded</Badge>;
     default:
-      return <Badge className="bg-yellow-500"><Clock className="w-3 h-3 mr-1" /> Pending Approval</Badge>;
+      return <Badge className="bg-yellow-500"><Clock className="w-3 h-3 mr-1" /> Pending Review</Badge>;
   }
 }

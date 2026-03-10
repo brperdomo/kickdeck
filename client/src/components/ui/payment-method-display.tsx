@@ -21,18 +21,25 @@ type PaymentMethodDisplayProps = {
 export function PaymentMethodDisplay({ team, showCardDetails = true }: PaymentMethodDisplayProps) {
   const teamData = team.team || team;
   
+  // Helper: format card info
+  const cardInfo = (teamData.cardBrand && teamData.cardLast4 && showCardDetails)
+    ? { brand: teamData.cardBrand.charAt(0).toUpperCase() + teamData.cardBrand.slice(1), last4: teamData.cardLast4 }
+    : null;
+
   // If we have successful payment with card details
-  if (teamData.paymentStatus === 'paid' && teamData.cardBrand && teamData.cardLast4 && showCardDetails) {
-    const brandName = teamData.cardBrand.charAt(0).toUpperCase() + teamData.cardBrand.slice(1);
+  if ((teamData.paymentStatus === 'paid' || teamData.paymentStatus === 'partially_refunded') && cardInfo) {
+    const statusLabel = teamData.paymentStatus === 'partially_refunded' ? 'Partially Refunded' : 'Paid';
+    const badgeClass = teamData.paymentStatus === 'partially_refunded' ? 'bg-purple-500/90 text-white' : 'bg-green-500/90 text-white';
+    const Icon = teamData.paymentStatus === 'partially_refunded' ? RefreshCw : CheckCircle;
     return (
       <div className="flex items-center gap-2">
-        <Badge className="bg-green-500/90 text-white">
-          <CheckCircle className="w-3 h-3 mr-1" />
-          Paid
+        <Badge className={badgeClass}>
+          <Icon className="w-3 h-3 mr-1" />
+          {statusLabel}
         </Badge>
         <div className="flex items-center gap-1 text-sm text-muted-foreground">
           <CreditCard className="w-3 h-3" />
-          <span>{brandName} ••••{teamData.cardLast4}</span>
+          <span>{cardInfo.brand} ••••{cardInfo.last4}</span>
         </div>
       </div>
     );
@@ -44,7 +51,15 @@ export function PaymentMethodDisplay({ team, showCardDetails = true }: PaymentMe
       return (
         <Badge className="bg-green-500/90 text-white">
           <CheckCircle className="w-3 h-3 mr-1" />
-          Payment Complete
+          Paid
+        </Badge>
+      );
+
+    case 'partially_refunded':
+      return (
+        <Badge className="bg-purple-500/90 text-white">
+          <RefreshCw className="w-3 h-3 mr-1" />
+          Partially Refunded
         </Badge>
       );
 
@@ -67,6 +82,7 @@ export function PaymentMethodDisplay({ team, showCardDetails = true }: PaymentMe
       );
 
     case 'payment_failed':
+    case 'failed':
       return (
         <Badge variant="destructive">
           <XCircle className="w-3 h-3 mr-1" />
@@ -116,8 +132,8 @@ export function PaymentMethodDisplay({ team, showCardDetails = true }: PaymentMe
       );
 
     default:
-      // Handle "pay later" option
-      if (teamData.addRosterLater) {
+      // Only show "Pay Later" when the team explicitly chose pay-later checkout
+      if (teamData.payLater === true) {
         return (
           <Badge variant="outline" className="text-orange-500 border-orange-500">
             <DollarSign className="w-3 h-3 mr-1" />
@@ -125,12 +141,24 @@ export function PaymentMethodDisplay({ team, showCardDetails = true }: PaymentMe
           </Badge>
         );
       }
-      
+
+      // If team has card on file (setupIntentId), show that
+      if (teamData.setupIntentId) {
+        return (
+          <Badge variant="outline" className="text-blue-600 border-blue-400">
+            <CreditCard className="w-3 h-3 mr-1" />
+            Card on File
+          </Badge>
+        );
+      }
+
       // Default fallback
       return (
         <Badge variant="outline" className="text-gray-600 border-gray-400">
           <AlertCircle className="w-3 h-3 mr-1" />
-          {teamData.paymentStatus || 'Unknown'}
+          {teamData.paymentStatus
+            ? teamData.paymentStatus.replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase())
+            : 'Pending'}
         </Badge>
       );
   }

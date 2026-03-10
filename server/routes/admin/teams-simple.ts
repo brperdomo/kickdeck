@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { db } from 'db';
-import { teams, games, events, eventBrackets, eventAgeGroups } from 'db/schema';
+import { teams, games, events, eventBrackets, eventAgeGroups, refunds, users } from 'db/schema';
 import { eq, and, sql, desc, asc, inArray } from 'drizzle-orm';
 import { sendTemplatedEmail } from '../../services/emailService';
 
@@ -109,6 +109,43 @@ async function sendRegistrationReceiptEmail(teamId: number) {
   } catch (err) {
     console.error(`Error sending registration receipt email for team ${teamId}:`, err);
   }
+}
+
+/** Send a payment_failed email with retry link (fire-and-forget). */
+async function sendPaymentFailedEmail(teamId: number) {
+  try {
+    const ctx = await buildTeamEmailContext(teamId);
+    if (!ctx) return;
+    const { team, event, division, registrationDate, uniqueRecipients } = ctx;
+
+    const retryUrl = `${process.env.FRONTEND_URL || 'https://app.kickdeck.xyz'}/payment/retry/${teamId}`;
+
+    for (const email of uniqueRecipients) {
+      await sendTemplatedEmail(email, 'payment_failed', {
+        firstName: team.submitterName || team.managerName || 'Team Manager',
+        teamName: team.name || 'your team',
+        eventName: event?.name || 'the event',
+        division,
+        ageGroup: division,
+        registrationDate,
+        submittedDate: registrationDate,
+        totalAmount: team.totalAmount ? `$${(team.totalAmount / 100).toFixed(2)}` : '$0.00',
+        paymentError: team.paymentErrorMessage || 'Your card was declined',
+        retryUrl,
+        retryLink: retryUrl,
+        EVENT_ADMIN_EMAIL: event?.adminEmail || 'support@kickdeck.xyz',
+      });
+    }
+    console.log(`📧 payment_failed email sent to ${uniqueRecipients.join(', ')} for team ${team.name}`);
+  } catch (err) {
+    console.error(`Error sending payment_failed email for team ${teamId}:`, err);
+  }
+}
+
+/** Send both approval + receipt emails (used by auto-approve on retry payment). */
+export async function sendTeamApprovalEmails(teamId: number) {
+  sendTeamStatusEmail(teamId, 'approved');
+  sendRegistrationReceiptEmail(teamId);
 }
 
 // Update game score
@@ -346,9 +383,57 @@ export async function getTeams(req: Request, res: Response) {
           .where(eq(players.teamId, team.id));
         
         const playerCount = playerCountResult[0]?.count || 0;
-        
+
+        // Compute actual paymentStatus from refund data (DB value may be stale)
+        let computedPaymentStatus = team.paymentStatus;
+        let refundHistory: any[] = [];
+        let totalRefundedAmount = 0;
+        try {
+          const teamRefunds = await db
+            .select({
+              id: refunds.id,
+              refundAmount: refunds.refundAmount,
+              refundReason: refunds.refundReason,
+              adminNotes: refunds.adminNotes,
+              status: refunds.status,
+              processedAt: refunds.processedAt,
+              createdAt: refunds.createdAt,
+              processedByUserId: refunds.processedByUserId,
+              processedByFirstName: users.firstName,
+              processedByLastName: users.lastName,
+            })
+            .from(refunds)
+            .leftJoin(users, eq(refunds.processedByUserId, users.id))
+            .where(eq(refunds.teamId, team.id))
+            .orderBy(desc(refunds.createdAt));
+
+          if (teamRefunds.length > 0) {
+            totalRefundedAmount = teamRefunds
+              .filter(r => r.status !== 'failed')
+              .reduce((sum, r) => sum + r.refundAmount, 0);
+            if (totalRefundedAmount > 0) {
+              const chargedAmount = team.totalAmount || team.registrationFee || 0;
+              computedPaymentStatus = totalRefundedAmount >= chargedAmount ? 'refunded' : 'partially_refunded';
+            }
+            refundHistory = teamRefunds.map(r => ({
+              id: r.id,
+              amount: r.refundAmount,
+              reason: r.refundReason,
+              adminNotes: r.adminNotes,
+              status: r.status,
+              processedAt: r.processedAt?.toISOString() || r.createdAt.toISOString(),
+              processedBy: r.processedByFirstName && r.processedByLastName
+                ? `${r.processedByFirstName} ${r.processedByLastName}`
+                : 'Admin',
+            }));
+          }
+        } catch (e) { /* ignore - use DB value */ }
+
         return {
           ...team,
+          paymentStatus: computedPaymentStatus, // Override with computed value
+          refundHistory,
+          totalRefunded: totalRefundedAmount,
           eventId: team.eventId ? String(team.eventId) : null, // Ensure eventId is available as string for TeamModal
           ageGroupId: team.ageGroupId, // Ensure ageGroupId is available for TeamModal
           ageGroup: ageGroup ? {
@@ -404,7 +489,17 @@ export async function updateTeamStatus(req: Request, res: Response) {
         where: eq(teams.id, teamId),
       });
 
-      if (existingTeam?.paymentMethodId && existingTeam?.totalAmount && existingTeam.totalAmount > 0) {
+      // SAFEGUARD: Skip charging if team has already been successfully charged
+      const alreadyPaid = existingTeam?.paymentStatus === 'paid'
+        || existingTeam?.paymentStatus === 'succeeded'
+        || existingTeam?.paymentStatus === 'partially_refunded'
+        || existingTeam?.paymentStatus === 'refunded';
+
+      if (alreadyPaid) {
+        console.log(`⚠️ DOUBLE-CHARGE PREVENTED: Team ${teamId} already has paymentStatus="${existingTeam?.paymentStatus}" — skipping charge`);
+      }
+
+      if (existingTeam?.paymentMethodId && existingTeam?.totalAmount && existingTeam.totalAmount > 0 && !alreadyPaid) {
         try {
           const { processPaymentForApprovedTeam } = await import('../../services/stripeService');
           // totalAmount is stored in cents; processPaymentForApprovedTeam expects cents
@@ -443,26 +538,25 @@ export async function updateTeamStatus(req: Request, res: Response) {
           });
         } catch (paymentError: any) {
           console.error(`❌ Payment failed for team ${teamId}:`, paymentError.message);
-          // Still update status but note the payment failure
+          // Keep team in Pending Review — don't promote to 'approved'
           const [updatedTeam] = await db
             .update(teams)
             .set({
-              status,
+              status: 'registered',
               paymentStatus: 'failed',
               paymentErrorMessage: paymentError.message,
             })
             .where(eq(teams.id, teamId))
             .returning();
 
-          // Still send status email even if payment failed (unless skipEmail)
-          if (!skipEmail) {
-            sendTeamStatusEmail(teamId, status);
-          }
+          // Send payment_failed email with retry link (NOT team_approved)
+          sendPaymentFailedEmail(teamId);
 
           return res.json({
             success: true,
             team: updatedTeam,
             paymentProcessed: false,
+            paymentFailed: true,
             paymentError: paymentError.message,
           });
         }
@@ -538,12 +632,14 @@ export async function bulkApproveTeams(req: Request, res: Response) {
             results.push({ teamId, success: true, paymentStatus: mappedStatus });
           } catch (paymentError: any) {
             console.error(`Bulk approve payment failed for team ${teamId}:`, paymentError.message);
+            // Keep team in Pending Review — don't promote to 'approved'
             await db.update(teams).set({
-              status: 'approved',
+              status: 'registered',
               paymentStatus: 'failed',
               paymentErrorMessage: paymentError.message,
               notes: notes || undefined,
             }).where(eq(teams.id, teamId));
+            sendPaymentFailedEmail(teamId);
             results.push({ teamId, success: true, paymentStatus: 'failed', error: paymentError.message });
           }
         } else {
@@ -559,9 +655,10 @@ export async function bulkApproveTeams(req: Request, res: Response) {
       }
     }
 
-    // Fire-and-forget approval emails for all successfully updated teams
+    // Fire-and-forget approval emails for successfully updated teams
+    // (skip teams with failed payments — they already received payment_failed email)
     for (const r of results) {
-      if (r.success) {
+      if (r.success && r.paymentStatus !== 'failed') {
         sendTeamStatusEmail(r.teamId, 'approved');
       }
     }

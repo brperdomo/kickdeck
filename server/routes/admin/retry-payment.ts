@@ -7,6 +7,7 @@ import { teams, events, paymentTransactions } from '@db/schema';
 import { eq, and } from 'drizzle-orm';
 import { chargeApprovedTeam } from '../stripe-connect-payments';
 import { parseStripeError, formatErrorForDatabase } from '../../utils/stripeErrorHandler';
+import { findOrCreatePlatformCustomer } from '../../services/stripe-connect-customer';
 
 const router = express.Router();
 
@@ -49,29 +50,34 @@ async function fixPaymentMethodAttachment(teamId: number, paymentMethodId: strin
     // If payment method is not attached to any customer, create one
     if (!paymentMethod.customer) {
       if (!customerId) {
-        console.log(`RETRY PAYMENT: Creating new customer for team ${teamId} on platform account`);
-        const customer = await stripe.customers.create({
-          email: team.managerEmail || team.submitterEmail || undefined,
-          name: team.managerName || team.name || undefined,
-          metadata: {
-            teamId: teamId.toString(),
-            teamName: team.name || "Unknown Team",
-            eventId: team.eventId?.toString() || "",
-            eventName: event.name || "Unknown Event",
-            systemSource: "KickDeck",
-            createdFor: "payment_retry_admin",
-            connectAccountId: event.stripeConnectAccountId || "",
-          }
-        });
-        customerId = customer.id;
-        
-        // Update team with new customer ID
-        await db
-          .update(teams)
-          .set({ stripeCustomerId: customerId })
-          .where(eq(teams.id, teamId));
-        
-        console.log(`RETRY PAYMENT: Created customer ${customerId} for team ${teamId}`);
+        console.log(`RETRY PAYMENT: Finding or creating customer for team ${teamId} on platform account`);
+        const customerEmail = team.managerEmail || team.submitterEmail;
+        if (customerEmail) {
+          const { customerId: foundCustomerId } = await findOrCreatePlatformCustomer({
+            email: customerEmail,
+            name: team.managerName || team.submitterName || 'Team Manager',
+            metadata: {
+              teamId: teamId.toString(),
+              teamName: team.name || "Unknown Team",
+              eventId: team.eventId?.toString() || "",
+              eventName: event.name || "Unknown Event",
+              systemSource: "KickDeck",
+              createdFor: "payment_retry_admin",
+              connectAccountId: event.stripeConnectAccountId || "",
+            }
+          });
+          customerId = foundCustomerId;
+        }
+
+        if (customerId) {
+          // Update team with customer ID
+          await db
+            .update(teams)
+            .set({ stripeCustomerId: customerId })
+            .where(eq(teams.id, teamId));
+
+          console.log(`RETRY PAYMENT: Using platform customer ${customerId} for team ${teamId}`);
+        }
       }
       
       // Attach payment method to customer
@@ -294,8 +300,9 @@ router.get('/eligibility/:teamId', async (req: Request, res: Response) => {
       f.errorMessage?.includes('attach it to a Customer first')
     );
     
+    const isPaymentFailed = team.paymentStatus === 'failed';
     const eligibility = {
-      eligible: hasPaymentMethod && !isPaid,
+      eligible: hasPaymentMethod && !isPaid && isPaymentFailed,
       reasons: [] as string[],
       hasPaymentMethod,
       isPaid,
@@ -310,6 +317,9 @@ router.get('/eligibility/:teamId', async (req: Request, res: Response) => {
     }
     if (isPaid) {
       eligibility.reasons.push('Payment already completed');
+    }
+    if (!isPaymentFailed) {
+      eligibility.reasons.push('Payment has not failed — no retry needed');
     }
     if (recentAttachmentErrors.length > 0) {
       eligibility.reasons.push(`${recentAttachmentErrors.length} PaymentMethod attachment errors detected - can be fixed`);

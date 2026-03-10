@@ -178,6 +178,8 @@ import brevoWebhookRouter from "./routes/brevo-webhook";
 import { fixCardDetails } from "./routes/fix-card-details";
 import gameTeamsRouter from "./routes/admin/game-teams";
 import { processDestinationCharge } from "./routes/stripe-connect-payments";
+import { scheduleConnectVisibilityUpdate } from "./services/stripe-connect-visibility";
+import { findOrCreatePlatformCustomer } from "./services/stripe-connect-customer";
 import aiAuditRoutes from "./routes/ai-audit-routes";
 import retroactiveMetadataRoutes from "./routes/retroactiveMetadata.js";
 import transferMetadataRoutes from "./routes/transferMetadata.js";
@@ -207,6 +209,30 @@ const sendRegistrationConfirmationEmail = async (
     EVENT_ADMIN_EMAIL: eventInfo?.adminEmail || 'support@kickdeck.xyz',
   });
   console.log(`📧 Registration confirmation email sent to ${toEmail} for team ${team.name}`);
+};
+
+const sendPayLaterRegistrationEmail = async (
+  toEmail: string,
+  team: any,
+  eventInfo: any,
+  ageGroupInfo: any,
+) => {
+  const division = [ageGroupInfo?.ageGroup, ageGroupInfo?.gender].filter(Boolean).join(' ') || 'N/A';
+  const submittedDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  const amount = team.totalAmount ? `$${(team.totalAmount / 100).toFixed(2)}` : '$0.00';
+
+  await sendTemplatedEmail(toEmail, 'registration_pay_later', {
+    firstName: team.submitterName || team.managerName || 'Team Manager',
+    teamName: team.name,
+    eventName: eventInfo?.name || 'Tournament',
+    ageGroup: division,
+    division: division,
+    totalAmount: amount,
+    registrationDate: submittedDate,
+    submittedDate: submittedDate,
+    EVENT_ADMIN_EMAIL: eventInfo?.adminEmail || 'support@kickdeck.xyz',
+  });
+  console.log(`📧 Pay Later registration email sent to ${toEmail} for team ${team.name}`);
 };
 
 const sendRegistrationReceiptEmail = async (
@@ -271,6 +297,7 @@ import {
   emailProviderSettings,
   paymentTransactions,
   clubs,
+  refunds,
 } from "@db/schema";
 import fs from "fs/promises";
 import path from "path";
@@ -443,6 +470,7 @@ export function registerRoutes(app: Express): Server {
             setupIntentId: teams.setupIntentId,
             paymentStatus: teams.paymentStatus,
             paymentIntentId: teams.paymentIntentId,
+            paymentErrorMessage: teams.paymentErrorMessage,
             eventId: teams.eventId
           })
           .from(teams)
@@ -519,6 +547,7 @@ export function registerRoutes(app: Express): Server {
           setupIntentId: team.setupIntentId,
           paymentStatus: team.paymentStatus,
           paymentIntentId: team.paymentIntentId,
+          paymentErrorMessage: team.paymentErrorMessage,
           paidAt: paidAt,
           feeBreakdown: feeBreakdown
         });
@@ -585,16 +614,17 @@ export function registerRoutes(app: Express): Server {
         
         console.log('Setup Intent customer field:', customerId, 'Type:', typeof customerId);
 
-        // If no customer exists, create one and attach the payment method (unless it's Link)
+        // If no customer exists, find or create one on PLATFORM and attach the payment method (unless it's Link)
         if (!customerId || customerId === '') {
-          console.log('No customer associated with Setup Intent, creating customer...');
-          
+          console.log('No customer associated with Setup Intent, finding or creating platform customer...');
+
           // Check payment method type first
           const paymentMethod = await stripe.paymentMethods.retrieve(paymentMethodId);
-          
-          const customer = await stripe.customers.create({
-            email: team.managerEmail,
-            name: team.managerName,
+
+          // Destination charges require customers on the PLATFORM account (not connected account)
+          const { customerId: foundCustomerId } = await findOrCreatePlatformCustomer({
+            email: team.managerEmail || `team-${team.id}@tournament.local`,
+            name: team.managerName || team.submitterName || 'Team Manager',
             metadata: {
               teamId: team.id.toString(),
               teamName: team.name,
@@ -602,7 +632,7 @@ export function registerRoutes(app: Express): Server {
               systemSource: 'KickDeck',
               createdFor: 'manual_payment_completion'
             }
-          }, team.event?.stripeConnectAccountId ? { stripeAccount: team.event.stripeConnectAccountId } : {});
+          });
 
           // Only attach if it's not a Link payment method
           if (paymentMethod.type === 'link') {
@@ -610,13 +640,13 @@ export function registerRoutes(app: Express): Server {
           } else {
             console.log('Attaching regular payment method to customer...');
             await stripe.paymentMethods.attach(paymentMethodId, {
-              customer: customer.id,
+              customer: foundCustomerId,
             });
             console.log('Payment method attached successfully');
           }
 
-          customerId = customer.id;
-          console.log(`Created customer ${customer.id} for team ${teamId}`);
+          customerId = foundCustomerId;
+          console.log(`Using platform customer ${foundCustomerId} for team ${teamId}`);
         } else {
           // Customer exists, but payment method might not be attached
           console.log(`Using existing customer ${customerId}, checking payment method attachment...`);
@@ -862,18 +892,18 @@ export function registerRoutes(app: Express): Server {
           });
         }
         
-        // Update team status to paid and approved
+        // Update team payment status to paid, move to registered (pending admin approval)
         const now = new Date().toISOString();
         await db.update(teams)
           .set({
             paymentStatus: 'paid',
-            status: 'approved',
-            approvedAt: sql`${now}`,
-            notes: `${team.notes || ''} | Payment completed via completion URL - automatically approved`.trim()
+            status: 'registered',
+            paymentDate: sql`${now}`,
+            notes: `${team.notes || ''} | Payment completed via completion URL - awaiting admin approval`.trim()
           })
           .where(eq(teams.id, parseInt(teamId, 10)));
-        
-        console.log(`Team ${teamId} payment completed and automatically approved`);
+
+        console.log(`Team ${teamId} payment completed, status set to registered (awaiting admin approval)`);
         
         // Send approval notification email
         let emailStatus = 'not_sent';
@@ -911,31 +941,30 @@ export function registerRoutes(app: Express): Server {
           
           // sendTemplatedEmail is already imported at the top of the file
 
-          // Send approval notification to all recipients
+          // Send payment confirmation (registration_receipt) to all recipients
           for (const recipient of emailRecipients) {
             if (recipient) {
+              const receiptDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
               await sendTemplatedEmail(
                 recipient,
-                'team_approved',
+                'registration_receipt',
                 {
                   firstName: team.submitterName || team.managerName || 'Team Manager',
                   teamName: team.name || 'your team',
                   eventName: event?.name || 'the event',
-                  clubName: team.clubName || '',
-                  registrationDate: team.createdAt ? new Date(team.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
-                  submittedDate: team.createdAt ? new Date(team.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
-                  approvalDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
                   totalAmount: `$${((team.totalAmount || 0) / 100).toFixed(2)}`,
-                  paymentAmount: `$${((team.totalAmount || 0) / 100).toFixed(2)}`,
-                  paymentIntentId: paymentIntentId,
+                  paymentStatus: 'Paid',
+                  registrationDate: team.createdAt ? new Date(team.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : receiptDate,
+                  submittedDate: team.createdAt ? new Date(team.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : receiptDate,
+                  paymentDate: receiptDate,
+                  paymentId: paymentIntentId,
                   cardBrand: 'Card',
                   cardLastFour: '****',
-                  notes: '',
                   EVENT_ADMIN_EMAIL: event?.adminEmail || 'support@kickdeck.xyz'
                 }
               );
-              
-              console.log(`Team approval email sent to ${recipient} after payment intent completion`);
+
+              console.log(`Payment confirmation (registration_receipt) email sent to ${recipient} after payment completion`);
             }
           }
           
@@ -944,11 +973,33 @@ export function registerRoutes(app: Express): Server {
           console.log(`Failed to send approval notification email after payment intent completion: ${emailError}`);
           emailStatus = 'failed';
         }
-        
+
+        // Update transfer + destination payment + connected customer for visibility
+        {
+          const connectAccountId = event?.stripeConnectAccountId;
+          if (connectAccountId) {
+            scheduleConnectVisibilityUpdate({
+              connectAccountId,
+              paymentIntentId: paymentIntentId,
+              description: `${event?.name || 'Tournament'} - ${team.name || 'Team'} Registration`,
+              metadata: {
+                teamId: teamId,
+                teamName: team.name || '',
+                eventName: event?.name || '',
+                eventId: team.eventId?.toString() || '',
+                registrationDate: new Date().toISOString(),
+                systemSource: 'KickDeck',
+              },
+              customerEmail: team.submitterEmail || team.managerEmail || undefined,
+              customerName: team.submitterName || team.managerName || 'Team Manager',
+            });
+          }
+        }
+
         return res.json({
           success: true,
-          message: 'Payment completed and team approved',
-          teamStatus: 'approved',
+          message: 'Payment completed successfully',
+          teamStatus: 'registered',
           paymentStatus: 'paid',
           emailStatus,
           emailRecipients
@@ -1251,31 +1302,33 @@ export function registerRoutes(app: Express): Server {
         
         // Get team information with event details
         const teamResults = await db.execute(sql`
-          SELECT 
+          SELECT
             t.id,
             t.name,
             t.payment_status,
             t.total_amount,
             t.manager_email,
+            t.payment_error_message,
             e.name as event_name
           FROM teams t
           LEFT JOIN events e ON CAST(t.event_id AS INTEGER) = e.id
           WHERE t.id = ${teamId}
           LIMIT 1
         `);
-        
+
         if (!teamResults.rows || teamResults.rows.length === 0) {
           return res.status(404).json({ error: 'Team not found' });
         }
-        
+
         const team = teamResults.rows[0] as any;
-        
+
         res.json({
           id: team.id,
           name: team.name,
           paymentStatus: team.payment_status,
           totalAmount: team.total_amount,
           managerEmail: team.manager_email,
+          paymentErrorMessage: team.payment_error_message,
           eventName: team.event_name
         });
         
@@ -1301,31 +1354,70 @@ export function registerRoutes(app: Express): Server {
         
         console.log(`PAYMENT COMPLETE: Processing payment completion for team ${teamId}, paymentIntent: ${paymentIntentId}`);
         
-        // Update team status to approved and set payment info
+        // Update team payment status to paid, move to registered (awaiting admin approval)
         const updateResult = await db.execute(sql`
-          UPDATE teams 
-          SET 
+          UPDATE teams
+          SET
             payment_status = 'paid',
-            status = 'Approved',
+            status = 'registered',
             payment_intent_id = ${paymentIntentId},
+            payment_date = CURRENT_TIMESTAMP,
             updated_at = CURRENT_TIMESTAMP
           WHERE id = ${teamId}
         `);
-        
+
         if (updateResult.rowCount === 0) {
           return res.status(404).json({ error: 'Team not found' });
         }
-        
-        console.log(`PAYMENT COMPLETE: Successfully updated team ${teamId} status to Approved`);
-        
-        // TODO: Send confirmation email to team
-        // This could be added later to notify the team of successful payment
-        
-        res.json({ 
-          success: true, 
-          message: 'Payment completed and team approved successfully' 
+
+        console.log(`PAYMENT COMPLETE: Successfully updated team ${teamId} - payment paid, awaiting admin approval`);
+
+        // Update transfer metadata + create customer on connected account for visibility
+        // NOTE: With automatic_async capture, transfer may not exist immediately — use delayed approach
+        {
+          const teamEventResult = await db
+            .select({
+              teamName: teams.name,
+              submitterEmail: teams.submitterEmail,
+              submitterName: teams.submitterName,
+              managerEmail: teams.managerEmail,
+              managerName: teams.managerName,
+              eventId: teams.eventId,
+              eventName: events.name,
+              connectAccountId: events.stripeConnectAccountId,
+            })
+            .from(teams)
+            .leftJoin(events, eq(teams.eventId, events.id))
+            .where(eq(teams.id, teamId))
+            .limit(1);
+
+          const teamInfo = teamEventResult[0];
+          const connectAccountId = teamInfo?.connectAccountId;
+
+          if (connectAccountId) {
+            scheduleConnectVisibilityUpdate({
+              connectAccountId,
+              paymentIntentId,
+              description: `${teamInfo.eventName || 'Tournament'} - ${teamInfo.teamName || 'Team'} Registration`,
+              metadata: {
+                teamId: teamId.toString(),
+                teamName: teamInfo.teamName || '',
+                eventName: teamInfo.eventName || '',
+                eventId: teamInfo.eventId?.toString() || '',
+                registrationDate: new Date().toISOString(),
+                systemSource: 'KickDeck',
+              },
+              customerEmail: teamInfo.submitterEmail || teamInfo.managerEmail || undefined,
+              customerName: teamInfo.submitterName || teamInfo.managerName || 'Team Manager',
+            });
+          }
+        }
+
+        res.json({
+          success: true,
+          message: 'Payment completed successfully. Your registration is now under review.'
         });
-        
+
       } catch (error) {
         console.error('Error completing payment:', error);
         res.status(500).json({ error: 'Failed to complete payment' });
@@ -3801,18 +3893,31 @@ export function registerRoutes(app: Express): Server {
                 console.error('   Team:', result.team.name);
                 console.error('   Email:', result.team.submitterEmail);
               });
+            } else if (paymentMethod === 'pay_later') {
+              // Pay Later: send dedicated pay_later template
+              console.log(`📧 TRIGGERING pay later registration email to ${result.team.submitterEmail} (pay later workflow)`);
+
+              sendPayLaterRegistrationEmail(
+                result.team.submitterEmail,
+                result.team,
+                eventInfo,
+                ageGroupInfo
+              ).catch(emailError => {
+                console.error('❌ ERROR sending pay later registration email:', emailError);
+                console.error('   Team:', result.team.name);
+                console.error('   Email:', result.team.submitterEmail);
+              });
             } else {
-              // For traditional immediate payment flow, send registration receipt email
+              // Free / $0 or other: send registration receipt
               console.log(`📧 TRIGGERING registration receipt email to ${result.team.submitterEmail} (traditional payment workflow)`);
-              
-              // Create a mock payment data object for the initial receipt
+
               const initialPaymentData = {
-                status: paymentMethod === 'pay_later' ? 'pending' : 'processing',
+                status: 'processing',
                 amount: result.team.totalAmount || result.team.registrationFee,
                 paymentIntentId: result.team.paymentIntentId,
                 paymentMethodType: paymentMethod || 'card'
               };
-              
+
               sendRegistrationReceiptEmail(
                 result.team.submitterEmail,
                 result.team,
@@ -3820,7 +3925,6 @@ export function registerRoutes(app: Express): Server {
                 eventInfo?.name || 'Event Registration',
                 eventInfo?.adminEmail
               ).catch(emailError => {
-                // Log email errors but don't fail the registration process
                 console.error('❌ ERROR sending registration receipt email:', emailError);
                 console.error('   Team:', result.team.name);
                 console.error('   Email:', result.team.submitterEmail);
@@ -3879,6 +3983,70 @@ export function registerRoutes(app: Express): Server {
     app.post('/api/teams/:teamId/terms-acknowledgment/generate', isAdmin, generateTermsAcknowledgmentDocument);
     app.get('/api/teams/:teamId/terms-acknowledgment/download', downloadTermsAcknowledgmentDocument);
     app.get('/api/download/terms-acknowledgment/:filename', isAdmin, downloadTermsAcknowledgmentByFilename);
+
+    // Member-facing terms acknowledgment: generate-if-needed + download
+    // Verifies the requesting user is associated with the team before serving
+    app.get('/api/member/teams/:teamId/terms-acknowledgment', async (req: Request, res: Response) => {
+      try {
+        const teamId = parseInt(req.params.teamId);
+        const userId = req.user?.id;
+        if (!userId) return res.status(401).json({ error: 'Not authenticated' });
+
+        // Look up user email
+        const [user] = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+        if (!user?.email) return res.status(401).json({ error: 'User not found' });
+
+        // Verify team exists and user is associated
+        const [team] = await db.select().from(teams).where(eq(teams.id, teamId)).limit(1);
+        if (!team) return res.status(404).json({ error: 'Team not found' });
+
+        const userEmail = user.email.toLowerCase();
+        const isAssociated =
+          team.submitterEmail?.toLowerCase() === userEmail ||
+          team.managerEmail?.toLowerCase() === userEmail ||
+          (team.coach && team.coach.toLowerCase().includes(userEmail));
+        if (!isAssociated) return res.status(403).json({ error: 'Not authorized to access this team' });
+
+        if (!team.termsAcknowledged) return res.status(400).json({ error: 'No terms were acknowledged for this team' });
+
+        // Generate PDF if it doesn't exist yet
+        const fs = await import('fs');
+        if (!team.termsAcknowledgementRecord || !fs.existsSync(team.termsAcknowledgementRecord)) {
+          // Delegate to the generate function via internal call
+          const event = await db.query.events.findFirst({ where: eq(events.id, parseInt(team.eventId)) });
+          if (event) {
+            const { generateTermsAcknowledgmentPDF } = await import('./services/pdfService');
+            const pdfPath = await generateTermsAcknowledgmentPDF({
+              teamId: team.id,
+              teamName: team.name,
+              eventId: team.eventId,
+              eventName: event.name,
+              managerName: team.managerName || 'Team Manager',
+              managerEmail: team.managerEmail || user.email,
+              submitterName: team.submitterName || [user.firstName, user.lastName].filter(Boolean).join(' ') || 'Member',
+              submitterEmail: team.submitterEmail || user.email,
+              timestamp: team.termsAcknowledgedAt ? new Date(team.termsAcknowledgedAt) : new Date(),
+              agreementText: event.agreement || 'No terms and conditions provided',
+              refundPolicyText: event.refundPolicy || 'No refund policy provided',
+            });
+            await db.update(teams).set({ termsAcknowledgementRecord: pdfPath }).where(eq(teams.id, teamId));
+            // Now serve the new file
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', `attachment; filename="terms-acknowledgment-team-${teamId}.pdf"`);
+            return fs.createReadStream(pdfPath).pipe(res);
+          }
+          return res.status(500).json({ error: 'Could not generate terms document' });
+        }
+
+        // Serve existing file
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename="terms-acknowledgment-team-${teamId}.pdf"`);
+        fs.createReadStream(team.termsAcknowledgementRecord).pipe(res);
+      } catch (error) {
+        console.error('Error serving member terms acknowledgment:', error);
+        res.status(500).json({ error: 'Failed to download terms document' });
+      }
+    });
     
     // TinyMCE configuration endpoint
     app.get('/api/config/tinymce', getTinyMCEConfig);
@@ -7374,25 +7542,22 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         // and just return 0 for now. This can be fixed in a future update.
         const playerCount = { count: 0 };
         
-        // Enhanced version of formattedRegistrations with payment details
-        const formattedRegistrations = await Promise.all(teamRegistrations.map(async reg => {
-          // Get the actual payment amount from payment_transactions table for approved teams
+        // Enhanced version of formattedRegistrations with payment, refund, and terms details
+        const formattedRegistrations = await Promise.all(teamRegistrations.map(async (reg: any) => {
+          // Get the actual payment amount from payment_transactions table
           let actualAmountCharged = reg.team.registrationFee || reg.team.totalAmount || 0;
-          let transactionData = null;
-          
-          if ((reg.team.status === 'approved' || reg.team.status === 'refunded') && reg.team.paymentIntentId) {
-            console.log(`Looking up payment for team ${reg.team.id} with payment intent: ${reg.team.paymentIntentId}`);
+          let transactionData: any = null;
+
+          // Look up payment transaction for any team that has a paymentIntentId
+          if (reg.team.paymentIntentId) {
             try {
               const [paymentTransaction] = await db
                 .select()
                 .from(paymentTransactions)
                 .where(eq(paymentTransactions.paymentIntentId, reg.team.paymentIntentId))
                 .limit(1);
-              
-              console.log(`Payment transaction found for team ${reg.team.id}:`, paymentTransaction ? paymentTransaction.amount : 'none');
-              
+
               if (paymentTransaction && paymentTransaction.amount) {
-                console.log(`Updated amount for team ${reg.team.id}: ${actualAmountCharged} -> ${paymentTransaction.amount}`);
                 actualAmountCharged = paymentTransaction.amount;
                 transactionData = paymentTransaction;
               }
@@ -7400,9 +7565,70 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
               console.log('Could not fetch payment transaction for team', reg.team.id, error);
             }
           }
-          
-          // Default registration object with ENHANCED payment info
-          const registration = {
+
+          // Always look up refund data — paymentStatus may be incorrectly set
+          let refundData: any = null;
+          let allRefundRecords: any[] = [];
+          try {
+            allRefundRecords = await db
+              .select()
+              .from(refunds)
+              .where(eq(refunds.teamId, reg.team.id))
+              .orderBy(desc(refunds.processedAt));
+            if (allRefundRecords.length > 0) {
+              refundData = allRefundRecords[0]; // Most recent refund
+            }
+          } catch (error) {
+            console.log('Could not fetch refund data for team', reg.team.id, error);
+          }
+
+          // Fetch transaction history (payments + refunds from paymentTransactions table)
+          let transactionHistory: any[] = [];
+          try {
+            const txns = await db
+              .select()
+              .from(paymentTransactions)
+              .where(eq(paymentTransactions.teamId, reg.team.id))
+              .orderBy(desc(paymentTransactions.createdAt));
+            transactionHistory = txns.map(t => ({
+              id: t.id,
+              type: t.transactionType,
+              amount: t.amount,
+              status: t.status,
+              date: t.createdAt,
+              cardBrand: t.cardBrand,
+              cardLast4: t.cardLastFour,
+              notes: t.notes,
+            }));
+          } catch (error) {
+            console.log('Could not fetch transaction history for team', reg.team.id, error);
+          }
+
+          // Compute total refunded across all refund records (include all non-failed)
+          const totalRefunded = allRefundRecords
+            .filter(r => r.status !== 'failed')
+            .reduce((sum: number, r: any) => sum + (r.refundAmount || 0), 0);
+
+          // Log refund data for debugging
+          if (allRefundRecords.length > 0) {
+            console.log(`[REFUND DEBUG] Team ${reg.team.id} (${reg.team.name}): ${allRefundRecords.length} refund records, totalRefunded=${totalRefunded}, amount=${actualAmountCharged}, DB paymentStatus=${reg.team.paymentStatus}, refund statuses=${allRefundRecords.map(r => r.status).join(',')}`);
+          }
+
+          // Compute the ACTUAL paymentStatus based on real refund data
+          // The stored paymentStatus may be stale (e.g. still 'paid' after a refund)
+          let computedPaymentStatus = reg.team.paymentStatus || undefined;
+          if (totalRefunded > 0) {
+            computedPaymentStatus = totalRefunded >= actualAmountCharged ? 'refunded' : 'partially_refunded';
+          }
+
+          // Parse coach data once
+          let coachData: any = {};
+          try {
+            if (reg.team.coach) coachData = JSON.parse(reg.team.coach);
+          } catch {}
+
+          // Build the registration object
+          const registration: any = {
             id: reg.team.id,
             teamName: reg.team.name,
             eventName: reg.event?.name || 'Unknown Event',
@@ -7412,60 +7638,69 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
             status: reg.team.status || 'registered',
             amount: actualAmountCharged,
             paymentId: reg.team.paymentIntentId || undefined,
-            
-            // Additional payment details
-            paymentDate: transactionData?.createdAt || reg.team.paidAt || undefined,
-            cardLastFour: transactionData?.cardLastFour || reg.team.cardLastFour || undefined,
-            paymentStatus: reg.team.paymentStatus || undefined,
+
+            // Payment details — use computed status (accounts for refunds) not raw DB value
+            paymentDate: transactionData?.createdAt || reg.team.paymentDate || undefined,
+            paymentStatus: computedPaymentStatus,
             errorCode: reg.team.paymentErrorCode || undefined,
             errorMessage: reg.team.paymentErrorMessage || undefined,
-            
-            // Improved payment method tracking
+
+            // Payment method tracking
             payLater: reg.team.payLater || false,
             setupIntentId: reg.team.setupIntentId || undefined,
             paymentMethodId: reg.team.paymentMethodId || undefined,
             stripeCustomerId: reg.team.stripeCustomerId || undefined,
-            
-            // Card details from database if available
+
+            // Card details — use correct field names (cardLast4, cardBrand)
             cardDetails: {
               brand: reg.team.cardBrand || undefined,
-              last4: reg.team.cardLastFour || undefined,
-              expMonth: reg.team.cardExpMonth || undefined,
-              expYear: reg.team.cardExpYear || undefined
-            }
+              last4: reg.team.cardLast4 || undefined,
+            },
+
+            // Refund details — use actual data to determine partial vs full
+            refundAmount: refundData?.refundAmount || undefined,
+            totalRefunded: totalRefunded || undefined,
+            refundDate: refundData?.processedAt || undefined,
+            refundReason: refundData?.refundReason || undefined,
+            isFullRefund: totalRefunded > 0 ? totalRefunded >= actualAmountCharged : undefined,
+
+            // Transaction history
+            transactions: transactionHistory,
+
+            // Terms acknowledgment
+            termsAcknowledged: reg.team.termsAcknowledged || false,
+            termsAcknowledgedAt: reg.team.termsAcknowledgedAt || undefined,
+
+            // Team contacts
+            headCoachName: coachData.headCoachName || coachData.name || undefined,
+            headCoachEmail: coachData.headCoachEmail || coachData.email || undefined,
+            headCoachPhone: coachData.headCoachPhone || coachData.phone || undefined,
+            managerName: reg.team.managerName || undefined,
+            managerEmail: reg.team.managerEmail || undefined,
+            managerPhone: reg.team.managerPhone || undefined,
+
+            // Roster info
+            playerCount: 0,
+            initialRosterComplete: reg.team.initialRosterComplete || false,
+            rosterUploadedAt: reg.team.rosterUploadedAt || undefined,
+
+            // Event date
+            eventStartDate: reg.event?.startDate || undefined,
           };
-    
-          // Try to extract submitter information
-          try {
-            if (reg.team.coach) {
-              let coachData = {};
-              try {
-                coachData = JSON.parse(reg.team.coach);
-              } catch (e) {
-                console.log('Could not parse coach data');
-              }
-              
-              if (coachData && typeof coachData === 'object') {
-                registration.submitter = {
-                  name: coachData.headCoachName || 'Unknown',
-                  email: coachData.headCoachEmail || reg.team.managerEmail || reg.team.submitterEmail || 'Unknown'
-                };
-              }
-            } else if (reg.team.managerEmail) {
-              registration.submitter = {
-                name: reg.team.managerName || 'Team Manager',
-                email: reg.team.managerEmail
-              };
-            } else if (reg.team.submitterEmail) {
-              registration.submitter = {
-                name: reg.team.submitterName || 'Submitter',
-                email: reg.team.submitterEmail
-              };
-            }
-          } catch (e) {
-            console.log('Error extracting submitter info', e);
+
+          // Set submitter
+          if (reg.team.submitterEmail) {
+            registration.submitter = {
+              name: reg.team.submitterName || reg.team.managerName || 'Submitter',
+              email: reg.team.submitterEmail
+            };
+          } else if (reg.team.managerEmail) {
+            registration.submitter = {
+              name: reg.team.managerName || 'Team Manager',
+              email: reg.team.managerEmail
+            };
           }
-    
+
           return registration;
         }));
         
@@ -8808,30 +9043,49 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           });
         }
 
-        // Create or verify Stripe Customer
-        let customer;
+        // Create or verify Stripe Customer on PLATFORM account
+        // Destination charges require customers to live on the platform (not connected account)
+        let customer: { id: string } | null = null;
         if (team.stripeCustomerId) {
           try {
             customer = await stripe.customers.retrieve(team.stripeCustomerId);
           } catch (error) {
-            console.log(`Customer ${team.stripeCustomerId} not found, creating new one`);
+            console.log(`Customer ${team.stripeCustomerId} not found, will find or create`);
             customer = null;
           }
         }
 
         if (!customer) {
-          customer = await stripe.customers.create({
-            email: team.managerEmail || team.submitterEmail,
-            name: team.managerName,
-            metadata: {
-              teamId: team.id.toString(),
-              teamName: team.name,
-              eventName: team.event?.name || '',
-              systemSource: 'KickDeck',
-              createdFor: 'legacy_processing'
-            }
-          }, team.event?.stripeConnectAccountId ? { stripeAccount: team.event.stripeConnectAccountId } : {});
-          console.log(`Created customer: ${customer.id}`);
+          const customerEmail = team.managerEmail || team.submitterEmail;
+          if (customerEmail) {
+            const { customerId: foundCustomerId } = await findOrCreatePlatformCustomer({
+              email: customerEmail,
+              name: team.managerName || team.submitterName || 'Team Manager',
+              metadata: {
+                teamId: team.id.toString(),
+                teamName: team.name,
+                eventName: team.event?.name || '',
+                systemSource: 'KickDeck',
+                createdFor: 'legacy_processing'
+              }
+            });
+            customer = { id: foundCustomerId };
+          } else {
+            // Fallback: create with placeholder email if no email available
+            const { customerId: foundCustomerId } = await findOrCreatePlatformCustomer({
+              email: `team-${team.id}@tournament.local`,
+              name: team.managerName || team.submitterName || 'Team Manager',
+              metadata: {
+                teamId: team.id.toString(),
+                teamName: team.name,
+                eventName: team.event?.name || '',
+                systemSource: 'KickDeck',
+                createdFor: 'legacy_processing'
+              }
+            });
+            customer = { id: foundCustomerId };
+          }
+          console.log(`Using platform customer: ${customer.id}`);
         }
 
         // Attach payment method to customer

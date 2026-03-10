@@ -614,16 +614,23 @@ function AdministratorsView() {
 
   // Helper function for payment status badges
   const getPaymentStatusBadge = (status: string | null | undefined) => {
-    const variant = 
+    const variant =
       status === 'paid' ? 'success' :
-      status === 'refunded' ? 'outline' :
+      status === 'refunded' || status === 'partially_refunded' ? 'outline' :
       status === 'failed' ? 'destructive' :
       'secondary';
-      
-    const label = status 
-      ? status.charAt(0).toUpperCase() + status.slice(1)
-      : 'Pending';
-      
+
+    const labelMap: Record<string, string> = {
+      paid: 'Paid',
+      refunded: 'Refunded',
+      partially_refunded: 'Partially Refunded',
+      failed: 'Failed',
+      pending: 'Pending',
+      payment_info_provided: 'Card on File',
+    };
+
+    const label = status ? (labelMap[status] || status.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())) : 'Pending';
+
     return <Badge variant={variant}>{label}</Badge>;
   };
 
@@ -3210,7 +3217,7 @@ function SchedulingView() {
 function TeamsView() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedEvent, setSelectedEvent] = useState("all");
-  const [selectedStatus, setSelectedStatus] = useState("all");
+  const [activeTab, setActiveTab] = useState<string>("registered");
   const [isApprovalDialogOpen, setIsApprovalDialogOpen] = useState(false);
   const [isRefundDialogOpen, setIsRefundDialogOpen] = useState(false);
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
@@ -3266,13 +3273,12 @@ function TeamsView() {
 
   // Fetch teams with event and age group data
   const teamsQuery = useQuery({
-    queryKey: ['admin', 'teams', selectedEvent, selectedStatus],
+    queryKey: ['admin', 'teams', selectedEvent],
     queryFn: async () => {
       let url = '/api/admin/teams';
       const params = new URLSearchParams();
-      
+
       if (selectedEvent !== 'all') params.append('eventId', selectedEvent);
-      if (selectedStatus !== 'all') params.append('status', selectedStatus);
       
       if (params.toString()) url += `?${params.toString()}`;
       
@@ -3982,15 +3988,31 @@ function TeamsView() {
   const confirmRefund = () => {
     if (!selectedTeam) return;
 
+    // Calculate remaining refundable balance
+    const totalCharged = selectedTeam.totalAmount || selectedTeam.registrationFee || 0;
+    const previouslyRefunded = selectedTeam.totalRefunded || 0;
+    const remainingBalance = totalCharged - previouslyRefunded;
+
     // Calculate the refund amount in cents
     const amount = isPartialRefund
       ? Math.round(parseFloat(refundAmount) * 100)
-      : (selectedTeam.totalAmount || selectedTeam.registrationFee || 0);
+      : remainingBalance; // "Full refund" = refund whatever remains
 
     if (!amount || amount <= 0) {
       toast({
         title: "Invalid refund amount",
-        description: "Could not determine the refund amount. The team may not have a recorded payment.",
+        description: previouslyRefunded > 0
+          ? "This team has already been fully refunded. No remaining balance to refund."
+          : "Could not determine the refund amount. The team may not have a recorded payment.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (amount > remainingBalance && remainingBalance > 0) {
+      toast({
+        title: "Refund amount exceeds remaining balance",
+        description: `Only ${formatCurrency(remainingBalance)} is available to refund.`,
         variant: "destructive"
       });
       return;
@@ -4089,19 +4111,14 @@ function TeamsView() {
   // Calculate team counts by status (always show real counts, not filtered)
   const teamCounts = useMemo(() => {
     if (!normalizedTeams.length) return {
-      registered: 0,
-      approved: 0,
-      waitlisted: 0,
-      rejected: 0
+      registered: 0, approved: 0, waitlisted: 0, rejected: 0, refunded: 0,
     };
-    
-    // If "all" events is selected, these are the real totals
-    // If a specific event is selected, these are the totals for that event
     return {
       registered: normalizedTeams.filter(team => team?.status === 'registered').length,
       approved: normalizedTeams.filter(team => team?.status === 'approved').length,
       waitlisted: normalizedTeams.filter(team => team?.status === 'waitlisted').length,
-      rejected: normalizedTeams.filter(team => team?.status === 'rejected').length
+      rejected: normalizedTeams.filter(team => team?.status === 'rejected').length,
+      refunded: normalizedTeams.filter(team => team?.status === 'refunded').length,
     };
   }, [normalizedTeams]);
 
@@ -4214,782 +4231,378 @@ function TeamsView() {
         <Card>
           <CardContent className="p-6">
             <div className="space-y-4 team-list">
-              <motion.div 
-                className="flex flex-wrap gap-4 items-center"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4 }}
-              >
-                <motion.div whileHover={{ scale: 1.02 }} transition={{ type: "spring", stiffness: 400 }}>
-                  <div className="relative w-[220px]">
-                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-primary" />
-                    <Input
-                      placeholder="Search teams..."
-                      className="pl-9 bg-background h-10"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                    {searchTerm && (
-                      <button 
-                        onClick={() => setSearchTerm('')}
-                        className="absolute right-2.5 top-2.5 h-4 w-4 text-muted-foreground hover:text-primary transition-colors"
+              {/* Filter Bar */}
+              <div className="flex items-center gap-3 flex-wrap">
+                <div className="relative w-[240px]">
+                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search teams..."
+                    className="pl-9 bg-background h-9"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                  {searchTerm && (
+                    <button
+                      onClick={() => setSearchTerm('')}
+                      className="absolute right-2.5 top-2.5 h-4 w-4 text-muted-foreground hover:text-foreground transition-colors"
                       >
                         <X className="h-4 w-4" />
                       </button>
                     )}
                   </div>
-                </motion.div>
-                
-                <motion.div whileHover={{ scale: 1.02 }} transition={{ type: "spring", stiffness: 400 }}>
-                  <Select 
-                    value={selectedEvent} 
-                    onValueChange={setSelectedEvent}
-                  >
-                    <SelectTrigger className="w-[220px] bg-background">
-                      <Calendar className="h-4 w-4 mr-2 text-primary" />
-                      <SelectValue placeholder="Select Event" />
-                    </SelectTrigger>
-                    <SelectContent className="max-h-[250px]">
-                      <SelectGroup>
-                        <SelectLabel className="flex items-center font-semibold text-primary">
-                          <ListFilter className="h-4 w-4 mr-2" />
-                          Filter Options
-                        </SelectLabel>
-                        <SelectItem value="all" className="flex items-center rounded-md mb-1 bg-muted/40 font-medium">
-                          <Eye className="h-4 w-4 mr-2 text-primary" />
-                          All Events
-                        </SelectItem>
-                      </SelectGroup>
-                      
-                      <SelectSeparator />
-                      
-                      <SelectGroup>
-                        <SelectLabel className="flex items-center font-semibold text-primary">
-                          <CalendarDays className="h-4 w-4 mr-2" />
-                          Available Events
-                        </SelectLabel>
-                        {importEligibleEventsQuery.isLoading ? (
-                          <div className="flex items-center justify-center py-2 text-sm text-muted-foreground">
-                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                            Loading events...
-                          </div>
-                        ) : Array.isArray(importEligibleEventsQuery.data) && importEligibleEventsQuery.data.length > 0 ? (
-                          importEligibleEventsQuery.data.map((event: any) => (
-                            <SelectItem 
-                              key={event.id} 
-                              value={event.id.toString()} 
-                              className="flex items-center mb-0.5 hover:bg-muted/60 transition-colors"
-                            >
-                              <Badge variant="outline" className="mr-2 px-1 py-0 h-5 text-xs">
-                                {new Date(event.startDate).toLocaleDateString(undefined, { month: 'short' })}
-                              </Badge>
-                              {event.name}
-                            </SelectItem>
-                          ))
-                        ) : Array.isArray(importEligibleEventsQuery.data?.events) && importEligibleEventsQuery.data.events.length > 0 ? (
-                          importEligibleEventsQuery.data.events.map((event: any) => (
-                            <SelectItem 
-                              key={event.id} 
-                              value={event.id.toString()} 
-                              className="flex items-center mb-0.5 hover:bg-muted/60 transition-colors"
-                            >
-                              <Badge variant="outline" className="mr-2 px-1 py-0 h-5 text-xs">
-                                {new Date(event.startDate).toLocaleDateString(undefined, { month: 'short' })}
-                              </Badge>
-                              {event.name}
-                            </SelectItem>
-                          ))
-                        ) : (
-                          <div className="flex items-center justify-center py-2 text-sm text-muted-foreground">
-                            <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
-                            No events available
-                          </div>
-                        )}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </motion.div>
-                
-                <motion.div whileHover={{ scale: 1.02 }} transition={{ type: "spring", stiffness: 400 }}>
-                  <Select 
-                    value={selectedStatus} 
-                    onValueChange={setSelectedStatus}
-                  >
-                    <SelectTrigger className="w-[220px] bg-background">
-                      <ClipboardList className="h-4 w-4 mr-2 text-primary" />
-                      <SelectValue placeholder="Registration Status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectLabel className="flex items-center font-semibold text-primary">
-                          <Filter className="h-4 w-4 mr-2" />
-                          Status Filters
-                        </SelectLabel>
-                        <SelectItem value="all" className="flex items-center rounded-md mb-1 bg-muted/40 font-medium">
-                          <ListChecks className="h-4 w-4 mr-2 text-primary" />
-                          All Statuses
-                        </SelectItem>
-                      </SelectGroup>
-                      
-                      <SelectSeparator />
-                      
-                      <SelectGroup>
-                        <SelectItem value="registered" className="flex items-center mb-0.5">
-                          <Badge variant="outline" className="mr-2 border-yellow-400/30 bg-yellow-50/40 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-400">
-                            <Clock className="h-3 w-3 mr-1" />
-                            Pending
-                          </Badge>
-                          Registered (Pending)
-                        </SelectItem>
-                        <SelectItem value="approved" className="flex items-center mb-0.5">
-                          <Badge variant="outline" className="mr-2 border-green-400/30 bg-green-50/40 text-green-700 dark:bg-green-900/20 dark:text-green-400">
-                            <Check className="h-3 w-3 mr-1" />
-                            OK
-                          </Badge>
-                          Approved
-                        </SelectItem>
-                        <SelectItem value="rejected" className="flex items-center mb-0.5">
-                          <Badge variant="outline" className="mr-2 border-red-400/30 bg-red-50/40 text-red-700 dark:bg-red-900/20 dark:text-red-400">
-                            <X className="h-3 w-3 mr-1" />
-                            No
-                          </Badge>
-                          Rejected
-                        </SelectItem>
-                        <SelectItem value="paid" className="flex items-center mb-0.5">
-                          <Badge variant="outline" className="mr-2 border-blue-400/30 bg-blue-50/40 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400">
-                            <CreditCard className="h-3 w-3 mr-1" />
-                            $
-                          </Badge>
-                          Paid
-                        </SelectItem>
-                        <SelectItem value="refunded" className="flex items-center mb-0.5">
-                          <Badge variant="outline" className="mr-2 border-purple-400/30 bg-purple-50/40 text-purple-700 dark:bg-purple-900/20 dark:text-purple-400">
-                            <RefreshCcw className="h-3 w-3 mr-1" />
-                            ↩
-                          </Badge>
-                          Refunded
-                        </SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </motion.div>
-              </motion.div>
 
-              <Tabs defaultValue="registered">
-                <TabsList className="mb-4 bg-slate-100 p-2 rounded-lg border border-slate-200 gap-1">
-                  <TabsTrigger 
-                    value="registered" 
-                    className="data-[state=active]:bg-blue-500 data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:shadow-md transition-all duration-200 px-4 py-2 rounded-md"
-                  >
-                    <span className="flex items-center gap-2">
-                      <ListFilter className="h-4 w-4" />
-                      Pending Review
-                      <Badge variant="secondary" className="ml-1 text-xs">
-                        {teamCounts.registered}
-                      </Badge>
-                    </span>
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="approved" 
-                    className="data-[state=active]:bg-green-500 data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:shadow-md transition-all duration-200 px-4 py-2 rounded-md"
-                  >
-                    <span className="flex items-center gap-2">
-                      <Check className="h-4 w-4" />
-                      Approved
-                      <Badge variant="secondary" className="ml-1 text-xs">
-                        {teamCounts.approved}
-                      </Badge>
-                    </span>
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="waitlisted" 
-                    className="data-[state=active]:bg-amber-500 data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:shadow-md transition-all duration-200 px-4 py-2 rounded-md"
-                  >
-                    <span className="flex items-center gap-2">
-                      <Clock className="h-4 w-4" />
-                      Waitlisted
-                      <Badge variant="secondary" className="ml-1 text-xs">
-                        {teamCounts.waitlisted}
-                      </Badge>
-                    </span>
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="rejected" 
-                    className="data-[state=active]:bg-red-500 data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:shadow-md transition-all duration-200 px-4 py-2 rounded-md"
-                  >
-                    <span className="flex items-center gap-2">
-                      <X className="h-4 w-4" />
-                      Rejected
-                      <Badge variant="secondary" className="ml-1 text-xs">
-                        {teamCounts.rejected}
-                      </Badge>
-                    </span>
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="refunded" 
-                    className="data-[state=active]:bg-purple-500 data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:shadow-md transition-all duration-200 px-4 py-2 rounded-md"
-                  >
-                    <span className="flex items-center gap-2">
-                      <RefreshCcw className="h-4 w-4" />
-                      Refunded
-                      <Badge variant="secondary" className="ml-1 text-xs">
-                        {teamCounts.refunded || 0}
-                      </Badge>
-                    </span>
-                  </TabsTrigger>
+                <Select value={selectedEvent} onValueChange={setSelectedEvent}>
+                  <SelectTrigger className="w-[220px] bg-background h-9">
+                    <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
+                    <SelectValue placeholder="All Events" />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-[250px]">
+                    <SelectGroup>
+                      <SelectItem value="all" className="font-medium">All Events</SelectItem>
+                    </SelectGroup>
+                    <SelectSeparator />
+                    <SelectGroup>
+                      <SelectLabel className="text-xs text-muted-foreground font-medium">Events</SelectLabel>
+                      {importEligibleEventsQuery.isLoading ? (
+                        <div className="flex items-center justify-center py-2 text-sm text-muted-foreground">
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          Loading...
+                        </div>
+                      ) : Array.isArray(importEligibleEventsQuery.data) && importEligibleEventsQuery.data.length > 0 ? (
+                        importEligibleEventsQuery.data.map((event: any) => (
+                          <SelectItem key={event.id} value={event.id.toString()}>
+                            {event.name}
+                          </SelectItem>
+                        ))
+                      ) : Array.isArray(importEligibleEventsQuery.data?.events) && importEligibleEventsQuery.data.events.length > 0 ? (
+                        importEligibleEventsQuery.data.events.map((event: any) => (
+                          <SelectItem key={event.id} value={event.id.toString()}>
+                            {event.name}
+                          </SelectItem>
+                        ))
+                      ) : (
+                        <div className="py-2 text-sm text-muted-foreground text-center">No events</div>
+                      )}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+
+                <div className="flex-1" />
+
+                <Button variant="outline" size="sm" className="h-9" onClick={handleFinancialExport}>
+                  <Download className="h-4 w-4 mr-1.5" />
+                  Financial Report
+                </Button>
+                <Button variant="outline" size="sm" className="h-9" onClick={() => setIsTeamCsvImportDialogOpen(true)}>
+                  <FileText className="h-4 w-4 mr-1.5" />
+                  Import
+                </Button>
+                <Button variant="outline" size="sm" className="h-9" onClick={handleExportTeamData} disabled={selectedEvent === 'all' || !selectedEvent}>
+                  <Download className="h-4 w-4 mr-1.5" />
+                  Export
+                </Button>
+              </div>
+                
+              {/* Status dropdown removed — tabs below handle filtering */}
+
+              <Tabs value={activeTab} onValueChange={setActiveTab}>
+                <TabsList className="mb-4 bg-muted/50 p-1 rounded-lg h-auto gap-0.5">
+                  {([
+                    { value: 'registered', icon: ListFilter, label: 'Pending Review', count: teamCounts.registered },
+                    { value: 'approved', icon: Check, label: 'Approved', count: teamCounts.approved },
+                    { value: 'waitlisted', icon: Clock, label: 'Waitlisted', count: teamCounts.waitlisted },
+                    { value: 'rejected', icon: X, label: 'Rejected', count: teamCounts.rejected },
+                    { value: 'refunded', icon: RefreshCcw, label: 'Refunded', count: teamCounts.refunded },
+                  ] as const).map((tab) => (
+                    <TabsTrigger
+                      key={tab.value}
+                      value={tab.value}
+                      className="px-3 py-1.5 rounded-md text-sm data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-all"
+                    >
+                      <tab.icon className="h-3.5 w-3.5 mr-1.5" />
+                      {tab.label}
+                      <span className="ml-1.5 text-xs opacity-60">{tab.count}</span>
+                    </TabsTrigger>
+                  ))}
                 </TabsList>
                 
-                <TabsContent value="registered">
-                  {/* Payment Status Legend */}
-                  <Collapsible className="mb-4">
+                {/* === UNIFIED TABLE — renders dynamically per active tab === */}
+                {(() => {
+                  const tabConfig: Record<string, { dateHeader: string; emptyMsg: string; showCheckbox: boolean; showApprove: boolean }> = {
+                    registered: { dateHeader: 'Registered', emptyMsg: 'No pending teams', showCheckbox: true, showApprove: true },
+                    approved: { dateHeader: 'Approved', emptyMsg: 'No approved teams', showCheckbox: false, showApprove: false },
+                    waitlisted: { dateHeader: 'Waitlisted', emptyMsg: 'No waitlisted teams', showCheckbox: false, showApprove: true },
+                    rejected: { dateHeader: 'Rejected', emptyMsg: 'No rejected teams', showCheckbox: false, showApprove: false },
+                    refunded: { dateHeader: 'Refunded', emptyMsg: 'No refunded teams', showCheckbox: false, showApprove: false },
+                  };
+                  const cfg = tabConfig[activeTab] || tabConfig.registered;
+                  const tabTeams = filteredTeams.filter((team: any) => team && team.status === activeTab);
+                  const colSpan = cfg.showCheckbox ? 10 : 9;
+
+                  return (
+                    <TabsContent value={activeTab} forceMount>
+                      {/* Payment Status Legend — Pending tab only */}
+                      {activeTab === 'registered' && (
+                        <Collapsible className="mb-4">
                     <CollapsibleTrigger asChild>
-                      <Button variant="outline" className="flex items-center gap-2 mb-3">
-                        <HelpCircle className="h-4 w-4" />
-                        Payment Status Guide
-                        <ChevronDown className="h-4 w-4" />
-                      </Button>
-                    </CollapsibleTrigger>
-                    <CollapsibleContent className="mb-4">
-                      <Card>
-                        <CardContent className="p-4">
-                          <PaymentStatusLegend />
-                        </CardContent>
-                      </Card>
-                    </CollapsibleContent>
-                  </Collapsible>
+                          <Button variant="ghost" size="sm" className="flex items-center gap-2 text-muted-foreground hover:text-foreground">
+                            <HelpCircle className="h-3.5 w-3.5" />
+                            Payment Status Guide
+                            <ChevronDown className="h-3.5 w-3.5" />
+                          </Button>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent className="mb-4">
+                          <Card className="border-border/50">
+                            <CardContent className="p-4">
+                              <PaymentStatusLegend />
+                            </CardContent>
+                          </Card>
+                        </CollapsibleContent>
+                      </Collapsible>
+                      )}
 
-                  {/* Bulk Actions Toolbar */}
-                  {selectedTeamIds.length > 0 && (
-                    <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                          <span className="font-medium text-blue-900">
-                            {selectedTeamIds.length} team{selectedTeamIds.length !== 1 ? 's' : ''} selected
-                          </span>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setSelectedTeamIds([])}
-                          >
-                            Clear Selection
-                          </Button>
+                      {/* Bulk Actions Toolbar — Pending tab only */}
+                      {activeTab === 'registered' && selectedTeamIds.length > 0 && (
+                        <div className="mb-4 p-3 bg-muted/50 border border-border rounded-lg">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <span className="text-sm font-medium">
+                                {selectedTeamIds.length} team{selectedTeamIds.length !== 1 ? 's' : ''} selected
+                              </span>
+                              <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => setSelectedTeamIds([])}>
+                                Clear
+                              </Button>
+                            </div>
+                            <div className="flex gap-2">
+                              <Button size="sm" className="h-7" onClick={handleBulkApproval} disabled={bulkApproveTeamsMutation.isPending}>
+                                {bulkApproveTeamsMutation.isPending && <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" />}
+                                <Check className="h-3.5 w-3.5 mr-1" />
+                                Bulk Approve
+                              </Button>
+                              <Button size="sm" variant="destructive" className="h-7" onClick={handleBulkRejection} disabled={bulkRejectTeamsMutation.isPending}>
+                                {bulkRejectTeamsMutation.isPending && <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" />}
+                                <X className="h-3.5 w-3.5 mr-1" />
+                                Bulk Reject
+                              </Button>
+                            </div>
+                          </div>
                         </div>
-                        <div className="flex gap-2">
-                          <Button
-                            onClick={handleBulkApproval}
-                            className="bg-green-600 hover:bg-green-700 text-white"
-                            disabled={bulkApproveTeamsMutation.isPending}
-                          >
-                            {bulkApproveTeamsMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                            <Check className="h-4 w-4 mr-2" />
-                            Approve Selected Teams
-                          </Button>
-                          <Button
-                            onClick={handleBulkRejection}
-                            className="bg-red-600 hover:bg-red-700 text-white"
-                            disabled={bulkRejectTeamsMutation.isPending}
-                          >
-                            {bulkRejectTeamsMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                            <X className="h-4 w-4 mr-2" />
-                            Reject Selected Teams
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  )}
+                      )}
                   
-                  <div className="shadow-md rounded-xl overflow-hidden border border-gray-200">
-                    <Table className="team-list">
+                  {/* Unified Table */}
+                  <div className="rounded-lg overflow-hidden border border-border/50">
+                    <Table>
                       <TableHeader>
-                        <TableRow className="bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-gray-800 dark:to-gray-700">
-                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100 w-12">
-                            <Checkbox
-                              checked={selectedTeamIds.length > 0 && selectedTeamIds.length === filteredTeams.filter(team => team.status === 'registered').length}
-                              onCheckedChange={(checked) => {
-                                const registeredTeams = filteredTeams.filter(team => team.status === 'registered');
-                                handleSelectAll(registeredTeams, checked === true);
-                              }}
-                              aria-label="Select all teams"
-                            />
-                          </TableHead>
-                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Team Name</TableHead>
-                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Event</TableHead>
-                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Age Group</TableHead>
-                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Submitter</TableHead>
-                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Registered Date</TableHead>
-                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Roster Count</TableHead>
-                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Final Total</TableHead>
-                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Payment Method</TableHead>
-                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100 text-right">Actions</TableHead>
+                        <TableRow className="bg-muted/30 border-b border-border/50">
+                          {cfg.showCheckbox && (
+                            <TableHead className="w-10 py-3">
+                              <Checkbox
+                                checked={selectedTeamIds.length > 0 && selectedTeamIds.length === tabTeams.length}
+                                onCheckedChange={(checked) => handleSelectAll(tabTeams, checked === true)}
+                                aria-label="Select all teams"
+                              />
+                            </TableHead>
+                          )}
+                          <TableHead className="text-xs uppercase tracking-wider text-muted-foreground font-medium py-3">Team</TableHead>
+                          <TableHead className="text-xs uppercase tracking-wider text-muted-foreground font-medium py-3">Event</TableHead>
+                          <TableHead className="text-xs uppercase tracking-wider text-muted-foreground font-medium py-3">Age Group</TableHead>
+                          <TableHead className="text-xs uppercase tracking-wider text-muted-foreground font-medium py-3">Submitter</TableHead>
+                          <TableHead className="text-xs uppercase tracking-wider text-muted-foreground font-medium py-3">{cfg.dateHeader} Date</TableHead>
+                          <TableHead className="text-xs uppercase tracking-wider text-muted-foreground font-medium py-3">Roster</TableHead>
+                          {activeTab === 'rejected' ? (
+                            <TableHead className="text-xs uppercase tracking-wider text-muted-foreground font-medium py-3">Reason</TableHead>
+                          ) : (
+                            <>
+                              <TableHead className="text-xs uppercase tracking-wider text-muted-foreground font-medium py-3">Total</TableHead>
+                              <TableHead className="text-xs uppercase tracking-wider text-muted-foreground font-medium py-3">Payment</TableHead>
+                            </>
+                          )}
+                          <TableHead className="text-xs uppercase tracking-wider text-muted-foreground font-medium py-3 text-right w-[100px]">Actions</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
                         {teamsQuery.isLoading ? (
                           <TableRow>
-                            <TableCell colSpan={10} className="text-center py-4">
-                              <div className="flex justify-center">
-                                <Loader2 className="h-6 w-6 animate-spin" />
+                            <TableCell colSpan={colSpan} className="text-center py-8 text-muted-foreground">
+                              <div className="flex flex-col items-center gap-2">
+                                <Loader2 className="h-5 w-5 animate-spin" />
+                                <span className="text-sm">Loading teams...</span>
                               </div>
                             </TableCell>
                           </TableRow>
-                        ) : filteredTeams.length === 0 ? (
+                        ) : tabTeams.length === 0 ? (
                           <TableRow>
-                            <TableCell colSpan={10} className="text-center py-4">
-                              No teams found
+                            <TableCell colSpan={colSpan} className="text-center py-8 text-muted-foreground">
+                              <span className="text-sm">{cfg.emptyMsg}</span>
                             </TableCell>
                           </TableRow>
                         ) : (
-                          filteredTeams
-                            .filter((team: any) => team && team.status === 'registered')
-                            .map((team: any, index) => (
-                              <TableRow key={team.id} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
-                                <TableCell className="w-12">
-                                  <Checkbox
-                                    checked={selectedTeamIds.includes(team.id)}
-                                    onCheckedChange={(checked) => {
-                                      handleTeamSelection(team.id, checked === true);
-                                    }}
-                                    aria-label={`Select team ${team.name}`}
-                                  />
-                                </TableCell>
-                                <TableCell className="font-medium">
-                                  <div className="flex flex-col">
-                                    <span className="text-sm font-medium">{team.name}</span>
-                                    {team.clubName && (
-                                      <span className="text-xs text-muted-foreground">({team.clubName})</span>
-                                    )}
-                                  </div>
-                                </TableCell>
-                                <TableCell>{team.event?.name || "N/A"}</TableCell>
-                                <TableCell>{team.ageGroup?.ageGroup || "N/A"}</TableCell>
-                                <TableCell>{team.submitterEmail || team.managerEmail}</TableCell>
-                                <TableCell>{formatDate(team.createdAt)}</TableCell>
-                                <TableCell>{getRosterCount(team)}</TableCell>
-                                <TableCell>{formatCurrency(team.totalAmount || team.registrationFee || 0)}</TableCell>
-                                <TableCell>
-                                  <PaymentMethodDisplay team={team} showCardDetails={false} />
-                                </TableCell>
-                                <TableCell className="text-right">
-                                  <div className="flex justify-end gap-2">
-                                    {/* Payment Retry Button - Shows for failed payments */}
-                                    <PaymentRetryButton
-                                      teamId={team.id}
-                                      teamName={team.name}
-                                      paymentStatus={team.paymentStatus}
-                                      onSuccess={() => teamsQuery.refetch()}
-                                    />
-                                    
-                                    <Button 
-                                      variant="outline" 
-                                      size="sm"
-                                      onClick={() => handleViewTeamDetails(team)}
-                                    >
-                                      <Eye className="h-4 w-4 mr-1" />
-                                      Details
-                                    </Button>
-                                    <Button 
-                                      variant="outline" 
-                                      size="sm"
-                                      className="team-edit-button team-status-button"
-                                      onClick={() => handleStatusUpdate(team, 'approved')}
-                                    >
-                                      <Check className="h-4 w-4 mr-1" />
-                                      Approve
-                                    </Button>
-                                    <Button 
-                                      variant="outline" 
-                                      size="sm"
-                                      className="team-status-button"
-                                      onClick={() => handleStatusUpdate(team, 'waitlisted')}
-                                    >
-                                      <Clock className="h-4 w-4 mr-1" />
-                                      Waitlist
-                                    </Button>
-                                    <Button 
-                                      variant="outline" 
-                                      size="sm" 
-                                      className="text-destructive team-edit-button team-status-button"
-                                      onClick={() => handleStatusUpdate(team, 'rejected')}
-                                    >
-                                      <X className="h-4 w-4 mr-1" />
-                                      Reject
-                                    </Button>
-                                  </div>
-                                </TableCell>
-                              </TableRow>
-                            ))
-                        )}
-                      </TableBody>
-                    </Table>
-                  </div>
-                </TabsContent>
-                
-                <TabsContent value="waitlisted">
-                  <div className="shadow-md rounded-xl overflow-hidden border border-gray-200">
-                    <Table className="team-list">
-                      <TableHeader>
-                        <TableRow className="bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-gray-800 dark:to-gray-700">
-                          <TableHead className="font-semibold py-4 text-amber-900 dark:text-amber-100">Team Name</TableHead>
-                          <TableHead className="font-semibold py-4 text-amber-900 dark:text-amber-100">Event</TableHead>
-                          <TableHead className="font-semibold py-4 text-amber-900 dark:text-amber-100">Age Group</TableHead>
-                          <TableHead className="font-semibold py-4 text-amber-900 dark:text-amber-100">Submitter</TableHead>
-                          <TableHead className="font-semibold py-4 text-amber-900 dark:text-amber-100">Registered Date</TableHead>
-                          <TableHead className="font-semibold py-4 text-amber-900 dark:text-amber-100">Roster Count</TableHead>
-                          <TableHead className="font-semibold py-4 text-amber-900 dark:text-amber-100">Final Total</TableHead>
-                          <TableHead className="font-semibold py-4 text-amber-900 dark:text-amber-100">Payment Method</TableHead>
-                          <TableHead className="font-semibold py-4 text-amber-900 dark:text-amber-100 text-right">Actions</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {teamsQuery.isLoading ? (
-                          <TableRow>
-                            <TableCell colSpan={9} className="text-center py-4">
-                              <div className="flex justify-center">
-                                <Loader2 className="h-6 w-6 animate-spin" />
-                              </div>
-                            </TableCell>
-                          </TableRow>
-                        ) : filteredTeams.filter((team: any) => team && team.status === 'waitlisted').length === 0 ? (
-                          <TableRow>
-                            <TableCell colSpan={9} className="text-center py-4">
-                              No waitlisted teams found
-                            </TableCell>
-                          </TableRow>
-                        ) : (
-                          filteredTeams
-                            .filter((team: any) => team && team.status === 'waitlisted')
-                            .map((team: any, index) => (
-                              <TableRow key={team.id} className={index % 2 === 0 ? "bg-white" : "bg-amber-50"}>
-                                <TableCell className="font-medium">
-                                  <div className="flex flex-col">
-                                    <span className="text-sm font-medium">{team.name}</span>
-                                    {team.clubName && (
-                                      <span className="text-xs text-muted-foreground">({team.clubName})</span>
-                                    )}
-                                  </div>
-                                </TableCell>
-                                <TableCell>{team.event?.name || "N/A"}</TableCell>
-                                <TableCell>{team.ageGroup?.ageGroup || "N/A"}</TableCell>
-                                <TableCell>{team.submitterEmail || team.managerEmail}</TableCell>
-                                <TableCell>{formatDate(team.createdAt)}</TableCell>
-                                <TableCell>{getRosterCount(team)}</TableCell>
-                                <TableCell>{formatCurrency(team.totalAmount || team.registrationFee || 0)}</TableCell>
-                                <TableCell>
-                                  <PaymentMethodDisplay team={team} showCardDetails={false} />
-                                </TableCell>
-                                <TableCell className="text-right">
-                                  <div className="flex justify-end gap-2">
-                                    <Button 
-                                      variant="outline" 
-                                      size="sm"
-                                      onClick={() => handleViewTeamDetails(team)}
-                                    >
-                                      <Eye className="h-4 w-4 mr-1" />
-                                      Details
-                                    </Button>
-                                    <Button 
-                                      variant="outline" 
-                                      size="sm"
-                                      className="team-edit-button team-status-button"
-                                      onClick={() => handleStatusUpdate(team, 'approved')}
-                                    >
-                                      <Check className="h-4 w-4 mr-1" />
-                                      Approve
-                                    </Button>
-                                    <Button
-                                      variant="outline"
-                                      size="sm"
-                                      className="text-destructive team-edit-button team-status-button"
-                                      onClick={() => handleStatusUpdate(team, 'rejected')}
-                                    >
-                                      <X className="h-4 w-4 mr-1" />
-                                      Reject
-                                    </Button>
-                                    <Button
-                                      variant="outline"
-                                      size="sm"
-                                      className="team-status-button"
-                                      onClick={() => handleStatusUpdate(team, 'registered')}
-                                    >
-                                      <ArrowLeft className="h-4 w-4 mr-1" />
-                                      Reset
-                                    </Button>
-                                  </div>
-                                </TableCell>
-                              </TableRow>
-                            ))
-                        )}
-                      </TableBody>
-                    </Table>
-                  </div>
-                </TabsContent>
+                          tabTeams.map((team: any, index: number) => {
+                            // Determine date value per tab
+                            const dateValue = activeTab === 'approved'
+                              ? (team.approvedAt ? formatDate(team.approvedAt) : 'N/A')
+                              : activeTab === 'refunded'
+                              ? (team.refundDate ? formatDate(team.refundDate) : 'N/A')
+                              : formatDate(team.createdAt);
 
-                <TabsContent value="approved">
-                  <div className="mb-4 flex justify-between items-center">
-                    <h4 className="font-semibold text-lg">Approved Teams</h4>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={handleFinancialExport}
-                      className="flex items-center gap-2"
-                    >
-                      <Download className="h-4 w-4" />
-                      Export Financial Report
-                    </Button>
-                  </div>
-                  <div className="shadow-md rounded-xl overflow-hidden border border-gray-200">
-                    <Table className="team-list">
-                      <TableHeader>
-                        <TableRow className="bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-gray-800 dark:to-gray-700">
-                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Team Name</TableHead>
-                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Event</TableHead>
-                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Age Group</TableHead>
-                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Submitter</TableHead>
-                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Date Approved</TableHead>
-                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Roster Count</TableHead>
-                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Final Total</TableHead>
-                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Payment Method</TableHead>
-                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100 text-right">Actions</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {teamsQuery.isLoading ? (
-                          <TableRow>
-                            <TableCell colSpan={9} className="text-center py-4">
-                              <div className="flex justify-center">
-                                <Loader2 className="h-6 w-6 animate-spin" />
-                              </div>
-                            </TableCell>
-                          </TableRow>
-                        ) : filteredTeams.filter((team: any) => team && team.status === 'approved').length === 0 ? (
-                          <TableRow>
-                            <TableCell colSpan={9} className="text-center py-4">
-                              No approved teams found
-                            </TableCell>
-                          </TableRow>
-                        ) : (
-                          filteredTeams
-                            .filter((team: any) => team && team.status === 'approved')
-                            .map((team: any, index) => (
-                              <TableRow key={team.id} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
-                                <TableCell className="font-medium">
+                            return (
+                              <TableRow
+                                key={team.id}
+                                className={`border-b border-border/50 transition-colors hover:bg-muted/40 ${index % 2 !== 0 ? 'bg-muted/20' : ''}`}
+                              >
+                                {cfg.showCheckbox && (
+                                  <TableCell className="w-10">
+                                    <Checkbox
+                                      checked={selectedTeamIds.includes(team.id)}
+                                      onCheckedChange={(checked) => handleTeamSelection(team.id, checked === true)}
+                                      aria-label={`Select ${team.name}`}
+                                    />
+                                  </TableCell>
+                                )}
+                                <TableCell>
                                   <div className="flex flex-col">
-                                    <span className="text-sm font-medium">{team.name}</span>
+                                    <div className="flex items-center gap-1.5">
+                                      <span className="text-sm font-medium">{team.name}</span>
+                                      {team.paymentStatus === 'failed' && (
+                                        <Badge variant="destructive" className="text-[10px] px-1 py-0 leading-tight">Failed</Badge>
+                                      )}
+                                      {team.paymentStatus === 'partially_refunded' && (
+                                        <Badge variant="outline" className="text-[10px] px-1 py-0 leading-tight border-amber-400 text-amber-600">Partial Refund</Badge>
+                                      )}
+                                    </div>
                                     {team.clubName && (
                                       <span className="text-xs text-muted-foreground">({team.clubName})</span>
                                     )}
                                   </div>
                                 </TableCell>
-                                <TableCell>{team.event?.name || "N/A"}</TableCell>
-                                <TableCell>{team.ageGroup?.ageGroup || "N/A"}</TableCell>
-                                <TableCell>{team.submitterEmail || team.managerEmail}</TableCell>
-                                <TableCell>{team.approvedAt ? formatDate(team.approvedAt) : "N/A"}</TableCell>
-                                <TableCell>{getRosterCount(team)}</TableCell>
-                                <TableCell>{formatCurrency(team.totalAmount || team.registrationFee || 0)}</TableCell>
-                                <TableCell>
-                                  <PaymentMethodDisplay team={team} showCardDetails={false} />
-                                </TableCell>
+                                <TableCell className="text-sm">{team.event?.name || 'N/A'}</TableCell>
+                                <TableCell className="text-sm">{team.ageGroup?.ageGroup || 'N/A'}</TableCell>
+                                <TableCell className="text-sm truncate max-w-[160px]">{team.submitterEmail || team.managerEmail}</TableCell>
+                                <TableCell className="text-sm">{dateValue}</TableCell>
+                                <TableCell className="text-sm">{getRosterCount(team)}</TableCell>
+                                {activeTab === 'rejected' ? (
+                                  <TableCell className="text-sm text-muted-foreground max-w-[200px] truncate">
+                                    {team.notes || 'No reason provided'}
+                                  </TableCell>
+                                ) : (
+                                  <>
+                                    <TableCell className="text-sm">{formatCurrency(team.totalAmount || team.registrationFee || 0)}</TableCell>
+                                    <TableCell className="text-sm">
+                                      <PaymentMethodDisplay team={team} showCardDetails={false} />
+                                    </TableCell>
+                                  </>
+                                )}
                                 <TableCell className="text-right">
-                                  <div className="flex justify-end gap-2">
-                                    <Button 
-                                      variant="outline" 
-                                      size="sm"
-                                      onClick={() => handleViewTeamDetails(team)}
-                                    >
-                                      <Eye className="h-4 w-4 mr-1" />
-                                      Details
-                                    </Button>
-                                    {(team.paymentStatus === 'paid' || team.paymentStatus === 'succeeded') && (
+                                  <div className="flex items-center justify-end gap-1">
+                                    {/* Payment Retry — failed payments only */}
+                                    {team.paymentStatus === 'failed' && (
+                                      <PaymentRetryButton
+                                        teamId={team.id}
+                                        teamName={team.name}
+                                        paymentStatus={team.paymentStatus}
+                                        onSuccess={() => teamsQuery.refetch()}
+                                      />
+                                    )}
+                                    {/* Primary action button */}
+                                    {cfg.showApprove && (
                                       <Button
-                                        variant="outline"
                                         size="sm"
-                                        className="team-status-button team-edit-button"
-                                        onClick={() => handleRefundRequest(team)}
+                                        className="h-7 px-2.5 text-xs"
+                                        onClick={() => handleStatusUpdate(team, 'approved')}
                                       >
-                                        <RefreshCcw className="h-4 w-4 mr-1" />
-                                        Refund
+                                        <Check className="h-3 w-3 mr-1" />
+                                        Approve
                                       </Button>
                                     )}
-                                    <Button 
-                                      variant="outline" 
-                                      size="sm"
-                                      className="team-status-button" onClick={() => handleStatusUpdate(team, 'registered')}
-                                    >
-                                      <ArrowLeft className="h-4 w-4 mr-1" />
-                                      Reset
-                                    </Button>
+                                    {/* Overflow menu */}
+                                    <DropdownMenu>
+                                      <DropdownMenuTrigger asChild>
+                                        <Button variant="ghost" size="sm" className="h-7 w-7 p-0">
+                                          <MoreHorizontal className="h-4 w-4" />
+                                        </Button>
+                                      </DropdownMenuTrigger>
+                                      <DropdownMenuContent align="end" className="w-44">
+                                        <DropdownMenuItem onClick={() => handleViewTeamDetails(team)}>
+                                          <Eye className="h-3.5 w-3.5 mr-2" />
+                                          View Details
+                                        </DropdownMenuItem>
+                                        {/* Tab-specific actions */}
+                                        {activeTab === 'registered' && (
+                                          <>
+                                            <DropdownMenuItem onClick={() => handleStatusUpdate(team, 'waitlisted')}>
+                                              <Clock className="h-3.5 w-3.5 mr-2" />
+                                              Waitlist
+                                            </DropdownMenuItem>
+                                            <DropdownMenuSeparator />
+                                            <DropdownMenuItem className="text-destructive" onClick={() => handleStatusUpdate(team, 'rejected')}>
+                                              <X className="h-3.5 w-3.5 mr-2" />
+                                              Reject
+                                            </DropdownMenuItem>
+                                          </>
+                                        )}
+                                        {activeTab === 'waitlisted' && (
+                                          <>
+                                            <DropdownMenuSeparator />
+                                            <DropdownMenuItem className="text-destructive" onClick={() => handleStatusUpdate(team, 'rejected')}>
+                                              <X className="h-3.5 w-3.5 mr-2" />
+                                              Reject
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem onClick={() => handleStatusUpdate(team, 'registered')}>
+                                              <ArrowLeft className="h-3.5 w-3.5 mr-2" />
+                                              Reset to Pending
+                                            </DropdownMenuItem>
+                                          </>
+                                        )}
+                                        {activeTab === 'approved' && (
+                                          <>
+                                            {(team.paymentStatus === 'paid' || team.paymentStatus === 'succeeded' || team.paymentStatus === 'partially_refunded') && (
+                                              <>
+                                                <DropdownMenuSeparator />
+                                                <DropdownMenuItem onClick={() => handleRefundRequest(team)}>
+                                                  <RefreshCcw className="h-3.5 w-3.5 mr-2" />
+                                                  Issue Refund
+                                                </DropdownMenuItem>
+                                              </>
+                                            )}
+                                            <DropdownMenuSeparator />
+                                            <DropdownMenuItem onClick={() => handleStatusUpdate(team, 'registered')}>
+                                              <ArrowLeft className="h-3.5 w-3.5 mr-2" />
+                                              Reset to Pending
+                                            </DropdownMenuItem>
+                                          </>
+                                        )}
+                                        {activeTab === 'rejected' && (
+                                          <>
+                                            <DropdownMenuSeparator />
+                                            <DropdownMenuItem onClick={() => handleStatusUpdate(team, 'registered')}>
+                                              <ArrowLeft className="h-3.5 w-3.5 mr-2" />
+                                              Reset to Pending
+                                            </DropdownMenuItem>
+                                          </>
+                                        )}
+                                        {activeTab === 'refunded' && (
+                                          <>
+                                            <DropdownMenuSeparator />
+                                            <DropdownMenuItem onClick={() => handleStatusUpdate(team, 'registered')}>
+                                              <ArrowLeft className="h-3.5 w-3.5 mr-2" />
+                                              Reset to Pending
+                                            </DropdownMenuItem>
+                                          </>
+                                        )}
+                                      </DropdownMenuContent>
+                                    </DropdownMenu>
                                   </div>
                                 </TableCell>
                               </TableRow>
-                            ))
+                            );
+                          })
                         )}
                       </TableBody>
                     </Table>
                   </div>
                 </TabsContent>
-                
-                <TabsContent value="rejected">
-                  <div className="shadow-md rounded-xl overflow-hidden border border-gray-200">
-                    <Table className="team-list">
-                      <TableHeader>
-                        <TableRow className="bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-gray-800 dark:to-gray-700">
-                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Team Name</TableHead>
-                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Event</TableHead>
-                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Age Group</TableHead>
-                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Submitter</TableHead>
-                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Registered Date</TableHead>
-                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Roster Count</TableHead>
-                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Rejection Reason</TableHead>
-                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100 text-right">Actions</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {teamsQuery.isLoading ? (
-                          <TableRow>
-                            <TableCell colSpan={8} className="text-center py-4">
-                              <div className="flex justify-center">
-                                <Loader2 className="h-6 w-6 animate-spin" />
-                              </div>
-                            </TableCell>
-                          </TableRow>
-                        ) : filteredTeams.filter((team: any) => team && team.status === 'rejected').length === 0 ? (
-                          <TableRow>
-                            <TableCell colSpan={8} className="text-center py-4">
-                              No rejected teams found
-                            </TableCell>
-                          </TableRow>
-                        ) : (
-                          filteredTeams
-                            .filter((team: any) => team && team.status === 'rejected')
-                            .map((team: any, index) => (
-                              <TableRow key={team.id} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
-                                <TableCell className="font-medium">
-                                  <div className="flex flex-col">
-                                    <span className="text-sm font-medium">{team.name}</span>
-                                    {team.clubName && (
-                                      <span className="text-xs text-muted-foreground">({team.clubName})</span>
-                                    )}
-                                  </div>
-                                </TableCell>
-                                <TableCell>{team.event?.name || "N/A"}</TableCell>
-                                <TableCell>{team.ageGroup?.ageGroup || "N/A"}</TableCell>
-                                <TableCell>{team.submitterEmail || team.managerEmail}</TableCell>
-                                <TableCell>{formatDate(team.createdAt)}</TableCell>
-                                <TableCell>{getRosterCount(team)}</TableCell>
-                                <TableCell>
-                                  <span className="text-muted-foreground">
-                                    {team.notes || 'No reason provided'}
-                                  </span>
-                                </TableCell>
-                                <TableCell className="text-right">
-                                  <div className="flex justify-end gap-2">
-                                    <Button 
-                                      variant="outline" 
-                                      size="sm"
-                                      onClick={() => handleViewTeamDetails(team)}
-                                    >
-                                      <Eye className="h-4 w-4 mr-1" />
-                                      Details
-                                    </Button>
-                                    <Button 
-                                      variant="outline" 
-                                      size="sm"
-                                      className="team-status-button" onClick={() => handleStatusUpdate(team, 'registered')}
-                                    >
-                                      <ArrowLeft className="h-4 w-4 mr-1" />
-                                      Reset
-                                    </Button>
-                                  </div>
-                                </TableCell>
-                              </TableRow>
-                            ))
-                        )}
-                      </TableBody>
-                    </Table>
-                  </div>
-                </TabsContent>
-                
-                <TabsContent value="refunded">
-                  <div className="shadow-md rounded-xl overflow-hidden border border-gray-200">
-                    <Table className="team-list">
-                      <TableHeader>
-                        <TableRow className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-gray-800 dark:to-gray-700">
-                          <TableHead className="font-semibold py-4 text-purple-900 dark:text-purple-100">Team Name</TableHead>
-                          <TableHead className="font-semibold py-4 text-purple-900 dark:text-purple-100">Event</TableHead>
-                          <TableHead className="font-semibold py-4 text-purple-900 dark:text-purple-100">Age Group</TableHead>
-                          <TableHead className="font-semibold py-4 text-purple-900 dark:text-purple-100">Submitter</TableHead>
-                          <TableHead className="font-semibold py-4 text-purple-900 dark:text-purple-100">Registered Date</TableHead>
-                          <TableHead className="font-semibold py-4 text-purple-900 dark:text-purple-100">Refund Date</TableHead>
-                          <TableHead className="font-semibold py-4 text-purple-900 dark:text-purple-100">Amount</TableHead>
-                          <TableHead className="font-semibold py-4 text-purple-900 dark:text-purple-100 text-right">Actions</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {teamsQuery.isLoading ? (
-                          <TableRow>
-                            <TableCell colSpan={8} className="text-center py-4">
-                              <div className="flex justify-center">
-                                <Loader2 className="h-6 w-6 animate-spin" />
-                              </div>
-                            </TableCell>
-                          </TableRow>
-                        ) : filteredTeams.filter((team: any) => team && team.status === 'refunded').length === 0 ? (
-                          <TableRow>
-                            <TableCell colSpan={8} className="text-center py-4">
-                              No refunded teams found
-                            </TableCell>
-                          </TableRow>
-                        ) : (
-                          filteredTeams
-                            .filter((team: any) => team && team.status === 'refunded')
-                            .map((team: any, index) => (
-                              <TableRow key={team.id} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
-                                <TableCell className="font-medium">
-                                  <div className="flex flex-col">
-                                    <span className="text-sm font-medium">{team.name}</span>
-                                    {team.clubName && (
-                                      <span className="text-xs text-muted-foreground">({team.clubName})</span>
-                                    )}
-                                  </div>
-                                </TableCell>
-                                <TableCell>{team.event?.name || "N/A"}</TableCell>
-                                <TableCell>{team.ageGroup?.ageGroup || "N/A"}</TableCell>
-                                <TableCell>{team.submitterEmail || team.managerEmail}</TableCell>
-                                <TableCell>{formatDate(team.createdAt)}</TableCell>
-                                <TableCell>
-                                  <Badge variant="outline" className="text-purple-700 border-purple-400">
-                                    {team.refundDate ? formatDate(team.refundDate) : 'N/A'}
-                                  </Badge>
-                                </TableCell>
-                                <TableCell>{formatCurrency(team.totalAmount || team.registrationFee || 0)}</TableCell>
-                                <TableCell className="text-right">
-                                  <div className="flex justify-end gap-2">
-                                    <Button
-                                      variant="outline"
-                                      size="sm"
-                                      onClick={() => handleViewTeamDetails(team)}
-                                    >
-                                      <Eye className="h-4 w-4 mr-1" />
-                                      Details
-                                    </Button>
-                                    <Button
-                                      variant="outline"
-                                      size="sm"
-                                      className="team-status-button"
-                                      onClick={() => handleStatusUpdate(team, 'registered')}
-                                    >
-                                      <ArrowLeft className="h-4 w-4 mr-1" />
-                                      Reset
-                                    </Button>
-                                  </div>
-                                </TableCell>
-                              </TableRow>
-                            ))
-                        )}
-                      </TableBody>
-                    </Table>
-                  </div>
-                </TabsContent>
+                  );
+                })()}
               </Tabs>
             </div>
           </CardContent>
@@ -5062,14 +4675,41 @@ function TeamsView() {
           <DialogHeader>
             <DialogTitle>Process Refund</DialogTitle>
             <DialogDescription>
-              This will process a refund for {selectedTeam?.name}'s registration payment of {selectedTeam ? formatCurrency(selectedTeam.totalAmount || selectedTeam.registrationFee || 0) : '$0.00'}.
+              {(() => {
+                const totalCharged = selectedTeam?.totalAmount || selectedTeam?.registrationFee || 0;
+                const previouslyRefunded = selectedTeam?.totalRefunded || 0;
+                const remaining = totalCharged - previouslyRefunded;
+                if (previouslyRefunded > 0) {
+                  return <>
+                    Refund for {selectedTeam?.name}. Originally charged {formatCurrency(totalCharged)},
+                    previously refunded {formatCurrency(previouslyRefunded)}.
+                    <strong className="text-foreground"> Remaining refundable: {formatCurrency(remaining)}</strong>
+                  </>;
+                }
+                return <>This will process a refund for {selectedTeam?.name}'s registration payment of {formatCurrency(totalCharged)}.</>;
+              })()}
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="space-y-4">
+            {/* Show previous refunds summary if any */}
+            {selectedTeam?.totalRefunded > 0 && (
+              <div className="bg-purple-500/10 border border-purple-500/20 rounded-md p-3 text-sm space-y-1">
+                <div className="font-medium text-purple-400 flex items-center gap-1.5">
+                  <RotateCcw className="h-3.5 w-3.5" />
+                  Previous Refunds: {formatCurrency(selectedTeam.totalRefunded)}
+                </div>
+                {selectedTeam.refundHistory?.map((r: any, i: number) => (
+                  <div key={i} className="text-muted-foreground text-xs pl-5">
+                    • {formatCurrency(r.amount)} — {r.reason} ({formatDate(r.processedAt)})
+                  </div>
+                ))}
+              </div>
+            )}
+
             <div className="flex items-center space-x-2">
-              <Checkbox 
-                id="partial-refund" 
+              <Checkbox
+                id="partial-refund"
                 checked={isPartialRefund}
                 onCheckedChange={(checked) => {
                   setIsPartialRefund(!!checked);
@@ -5082,7 +4722,7 @@ function TeamsView() {
                 Process partial refund
               </Label>
             </div>
-            
+
             {isPartialRefund && (
               <div className="space-y-2">
                 <Label htmlFor="refund-amount">Refund Amount ($)</Label>
@@ -5097,18 +4737,20 @@ function TeamsView() {
                     className="pl-7"
                     value={refundAmount}
                     onChange={(e) => {
-                      // Ensure the value is positive and not greater than the registration fee
                       const value = e.target.value;
                       const numValue = parseFloat(value);
-                      
+
                       if (!value) {
                         setRefundAmount("");
                       } else if (!isNaN(numValue) && numValue > 0) {
-                        const maxAmount = selectedTeam ? (selectedTeam.totalAmount || selectedTeam.registrationFee || 0) / 100 : 0;
+                        // Cap at remaining refundable amount (total charged minus already refunded)
+                        const totalCharged = selectedTeam ? (selectedTeam.totalAmount || selectedTeam.registrationFee || 0) : 0;
+                        const previouslyRefunded = selectedTeam?.totalRefunded || 0;
+                        const maxAmount = (totalCharged - previouslyRefunded) / 100;
                         if (numValue <= maxAmount) {
                           setRefundAmount(value);
                         } else {
-                          setRefundAmount(maxAmount.toString());
+                          setRefundAmount(maxAmount.toFixed(2));
                         }
                       }
                     }}
@@ -5117,10 +4759,10 @@ function TeamsView() {
                 <div className="text-sm text-muted-foreground">
                   {isPartialRefund && refundAmount && !isNaN(parseFloat(refundAmount)) ? (
                     <span>
-                      Refunding <strong>${parseFloat(refundAmount).toFixed(2)}</strong> of {selectedTeam ? formatCurrency(selectedTeam.totalAmount || selectedTeam.registrationFee || 0) : '$0.00'}
+                      Refunding <strong>${parseFloat(refundAmount).toFixed(2)}</strong> of {formatCurrency((selectedTeam?.totalAmount || selectedTeam?.registrationFee || 0) - (selectedTeam?.totalRefunded || 0))} remaining
                     </span>
                   ) : (
-                    <span>Enter an amount to refund</span>
+                    <span>Max refundable: {formatCurrency((selectedTeam?.totalAmount || selectedTeam?.registrationFee || 0) - (selectedTeam?.totalRefunded || 0))}</span>
                   )}
                 </div>
               </div>
@@ -5139,6 +4781,7 @@ function TeamsView() {
                   <SelectValue placeholder="Select status" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="approved">Approved</SelectItem>
                   <SelectItem value="refunded">Refunded</SelectItem>
                   <SelectItem value="withdrawn">Withdrawn</SelectItem>
                   <SelectItem value="rejected">Rejected</SelectItem>
@@ -5167,6 +4810,8 @@ function TeamsView() {
                 </>
               ) : isPartialRefund ? (
                 'Process Partial Refund'
+              ) : selectedTeam?.totalRefunded > 0 ? (
+                `Refund Remaining ${formatCurrency((selectedTeam?.totalAmount || selectedTeam?.registrationFee || 0) - (selectedTeam?.totalRefunded || 0))}`
               ) : (
                 'Process Full Refund'
               )}
@@ -5226,17 +4871,29 @@ function TeamsView() {
                       <div className="col-span-2">{formatDate(selectedTeam.createdAt)}</div>
                     </div>
                     <div className="grid grid-cols-3 gap-1">
-                      <div className="font-medium">Payment Method:</div>
+                      <div className="font-medium">Payment Status:</div>
                       <div className="col-span-2">
                         <Badge variant={
-                          selectedTeam.paymentStatus === 'paid' ? 'default' : 
-                          selectedTeam.paymentStatus === 'refunded' ? 'outline' : 
+                          selectedTeam.paymentStatus === 'paid' ? 'default' :
+                          selectedTeam.paymentStatus === 'failed' ? 'destructive' :
+                          selectedTeam.paymentStatus === 'refunded' ? 'outline' :
                           'outline'
                         }>
-                          {selectedTeam.paymentStatus || 'Unpaid'}
+                          {selectedTeam.paymentStatus === 'failed' ? 'PAYMENT FAILED' : (selectedTeam.paymentStatus || 'Unpaid')}
                         </Badge>
                       </div>
                     </div>
+                    {selectedTeam.paymentStatus === 'failed' && selectedTeam.paymentErrorMessage && (
+                      <div className="grid grid-cols-3 gap-1">
+                        <div className="font-medium text-red-600">Error:</div>
+                        <div className="col-span-2 text-sm text-red-600">{selectedTeam.paymentErrorMessage}</div>
+                      </div>
+                    )}
+                    {selectedTeam.paymentStatus === 'failed' && (
+                      <div className="col-span-3 bg-red-50 border border-red-200 rounded-md p-3 text-sm text-red-800">
+                        <strong>Payment failed</strong> — Admin attempted to approve this team but the card charge was declined. A retry payment link has been emailed to the registrant.
+                      </div>
+                    )}
                     <div className="grid grid-cols-3 gap-1">
                       <div className="font-medium">Final Total:</div>
                       <div className="col-span-2">{formatCurrency(selectedTeam.totalAmount || selectedTeam.registrationFee || 0)}</div>
@@ -5600,13 +5257,66 @@ function TeamsView() {
                       </div>
                     )}
                     
-                    {selectedTeam.refundDate && (
+                    {/* Refund History Section */}
+                    {selectedTeam.refundHistory && selectedTeam.refundHistory.length > 0 && (
+                      <div className="mt-4 border-t border-border pt-4 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <h4 className="font-semibold text-sm flex items-center gap-1.5">
+                            <RotateCcw className="h-4 w-4 text-purple-500" />
+                            Refund History
+                          </h4>
+                          <span className="text-sm font-medium text-purple-600">
+                            Total Refunded: {formatCurrency(selectedTeam.totalRefunded || 0)}
+                          </span>
+                        </div>
+                        {selectedTeam.totalRefunded > 0 && selectedTeam.totalRefunded < (selectedTeam.totalAmount || selectedTeam.registrationFee || 0) && (
+                          <div className="text-sm text-muted-foreground">
+                            Remaining Balance: {formatCurrency((selectedTeam.totalAmount || selectedTeam.registrationFee || 0) - selectedTeam.totalRefunded)}
+                          </div>
+                        )}
+                        <div className="space-y-2">
+                          {selectedTeam.refundHistory.map((refund: any, idx: number) => (
+                            <div key={refund.id || idx} className="bg-muted/50 rounded-lg p-3 text-sm space-y-1.5">
+                              <div className="flex items-center justify-between">
+                                <span className="font-semibold text-purple-600">
+                                  -{formatCurrency(refund.amount)}
+                                </span>
+                                <Badge variant="outline" className={
+                                  refund.status === 'completed' || refund.status === 'succeeded'
+                                    ? 'text-green-600 border-green-400'
+                                    : refund.status === 'failed'
+                                    ? 'text-red-600 border-red-400'
+                                    : 'text-amber-600 border-amber-400'
+                                }>
+                                  {refund.status === 'completed' || refund.status === 'succeeded' ? 'Completed' : refund.status === 'failed' ? 'Failed' : 'Pending'}
+                                </Badge>
+                              </div>
+                              <div className="text-muted-foreground">
+                                <strong>Reason:</strong> {refund.reason}
+                              </div>
+                              {refund.adminNotes && (
+                                <div className="text-muted-foreground">
+                                  <strong>Notes:</strong> {refund.adminNotes}
+                                </div>
+                              )}
+                              <div className="flex items-center justify-between text-xs text-muted-foreground pt-1">
+                                <span>Processed by: {refund.processedBy}</span>
+                                <span>{formatDate(refund.processedAt)}</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Legacy refund date fallback (no refundHistory data) */}
+                    {(!selectedTeam.refundHistory || selectedTeam.refundHistory.length === 0) && selectedTeam.refundDate && (
                       <div className="grid grid-cols-3 gap-1">
                         <div className="font-medium">Refunded On:</div>
                         <div className="col-span-2">{formatDate(selectedTeam.refundDate)}</div>
                       </div>
                     )}
-                    
+
                     {/* Fee breakdown section */}
                     {selectedTeam.selectedFeeIds && (
                       <div className="mt-4 border-t border-border pt-4">
@@ -5824,7 +5534,7 @@ function TeamsView() {
                     </Button>
                   )}
 
-                  {(selectedTeam.paymentStatus === 'paid' || selectedTeam.paymentStatus === 'succeeded') && (
+                  {(selectedTeam.paymentStatus === 'paid' || selectedTeam.paymentStatus === 'succeeded' || selectedTeam.paymentStatus === 'partially_refunded') && (
                     <Button
                       size="sm"
                       variant="outline"

@@ -81,6 +81,10 @@ const TEMPLATE_META: Record<string, { trigger: string; variables: string[] }> = 
     trigger: 'Team registration is pending admin review',
     variables: ['firstName', 'teamName', 'eventName', 'division', 'ageGroup', 'registrationDate', 'submittedDate', 'EVENT_ADMIN_EMAIL', 'loginLink'],
   },
+  registration_pay_later: {
+    trigger: 'Team submits registration with Pay Later payment option',
+    variables: ['firstName', 'teamName', 'eventName', 'division', 'ageGroup', 'totalAmount', 'registrationDate', 'submittedDate', 'EVENT_ADMIN_EMAIL', 'loginLink'],
+  },
   registration_receipt: {
     trigger: 'Team registers with immediate payment',
     variables: ['firstName', 'teamName', 'eventName', 'totalAmount', 'paymentStatus', 'registrationDate', 'submittedDate', 'EVENT_ADMIN_EMAIL', 'loginLink'],
@@ -92,6 +96,10 @@ const TEMPLATE_META: Record<string, { trigger: string; variables: string[] }> = 
   payment_completion_notification: {
     trigger: 'Admin sends payment completion link to team',
     variables: ['teamName', 'eventName', 'division', 'ageGroup', 'totalAmount', 'paymentLink', 'EVENT_ADMIN_EMAIL'],
+  },
+  payment_failed: {
+    trigger: 'Payment charge fails when admin approves a team',
+    variables: ['firstName', 'teamName', 'eventName', 'division', 'ageGroup', 'totalAmount', 'paymentError', 'retryUrl', 'retryLink', 'registrationDate', 'submittedDate', 'EVENT_ADMIN_EMAIL'],
   },
   payment_refunded: {
     trigger: 'Admin processes a refund for a team',

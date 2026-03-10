@@ -3,7 +3,7 @@ import { Link } from 'wouter';
 import { formatDate } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { AlertCircle, CreditCard, X, ChevronDown, Calendar, Filter } from 'lucide-react';
+import { AlertCircle, CreditCard, X, ChevronDown, Calendar, Filter, RotateCcw, FileCheck, Receipt, CheckCircle, ArrowUpCircle, ArrowDownCircle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { PaymentStatusBadge, TeamStatusBadge } from '@/components/ui/payment-status-badge';
 import { Button } from '@/components/ui/button';
@@ -33,22 +33,39 @@ interface Registration {
   eventId: string;
   ageGroup: string;
   registeredAt: string;
-  status: 'registered' | 'approved' | 'rejected' | 'withdrawn';
+  status: 'registered' | 'approved' | 'rejected' | 'withdrawn' | 'waitlisted' | 'pending_payment' | 'refunded';
   amount: number;
   paymentId?: string;
-  paymentStatus?: 'paid' | 'pending' | 'failed' | 'refunded';
+  paymentStatus?: 'paid' | 'pending' | 'failed' | 'refunded' | 'partially_refunded' | 'payment_info_provided';
   paymentDate?: string;
-  cardLastFour?: string;
   errorCode?: string;
   errorMessage?: string;
   payLater?: boolean;
-  setupIntentId?: string; // If this exists, the user has provided payment info
+  setupIntentId?: string;
   cardDetails?: {
     brand?: string;
     last4?: string;
-    expMonth?: number;
-    expYear?: number;
   };
+  // Refund details
+  refundAmount?: number;
+  totalRefunded?: number;
+  refundDate?: string;
+  refundReason?: string;
+  isFullRefund?: boolean;
+  // Transaction history
+  transactions?: {
+    id: number;
+    type: string;
+    amount: number;
+    status: string;
+    date: string;
+    cardBrand?: string;
+    cardLast4?: string;
+    notes?: string;
+  }[];
+  // Terms acknowledgment
+  termsAcknowledged?: boolean;
+  termsAcknowledgedAt?: string;
   // Enhanced team information
   headCoachName?: string;
   headCoachEmail?: string;
@@ -61,6 +78,7 @@ interface Registration {
   playerCount?: number;
   initialRosterComplete?: boolean;
   rosterUploadedAt?: string;
+  eventStartDate?: string;
   submitter?: {
     name: string;
     email: string;
@@ -99,6 +117,26 @@ export default function UserRegistrationsView() {
         description: "Failed to send receipt. Please try again.",
         variant: "destructive",
       });
+    }
+  };
+
+  // Download terms acknowledgment PDF
+  const downloadTermsAcknowledgment = async (teamId: number, teamName: string) => {
+    try {
+      const response = await fetch(`/api/member/teams/${teamId}/terms-acknowledgment`);
+      if (!response.ok) throw new Error('Document not available');
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `terms-acknowledgment-${teamName.replace(/\s+/g, '-')}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      toast({ title: 'Downloaded', description: 'Terms acknowledgment document has been downloaded.' });
+    } catch {
+      toast({ title: 'Error', description: 'Could not download terms document. Please contact support.', variant: 'destructive' });
     }
   };
 
@@ -309,8 +347,8 @@ export default function UserRegistrationsView() {
                   <div className="flex items-center gap-3">
                     <h4 className="font-semibold">{registration.teamName}</h4>
                     <TeamStatusBadge status={registration.status} />
-                    <PaymentStatusBadge 
-                      paymentStatus={registration.paymentStatus} 
+                    <PaymentStatusBadge
+                      status={registration.paymentStatus}
                       hasPaymentInfo={!!registration.setupIntentId}
                       payLater={registration.payLater}
                     />
@@ -330,8 +368,8 @@ export default function UserRegistrationsView() {
 
       {/* Registration Details Dialog */}
       <Dialog open={detailsDialogOpen} onOpenChange={setDetailsDialogOpen}>
-        <DialogContent className="max-w-md sm:max-w-lg md:max-w-2xl">
-          <DialogHeader>
+        <DialogContent className="max-w-md sm:max-w-lg md:max-w-2xl max-h-[90vh] flex flex-col">
+          <DialogHeader className="shrink-0">
             <DialogTitle className="flex items-center justify-between">
               <span>Registration Details</span>
               <Button variant="ghost" size="icon" onClick={() => setDetailsDialogOpen(false)}>
@@ -342,9 +380,9 @@ export default function UserRegistrationsView() {
               Registration details for {selectedRegistration?.teamName}
             </DialogDescription>
           </DialogHeader>
-          
+
           {selectedRegistration && (
-            <div className="space-y-6">
+            <div className="space-y-6 overflow-y-auto pr-1 flex-1 min-h-0">
               {/* Team & Event Info */}
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
@@ -461,9 +499,9 @@ export default function UserRegistrationsView() {
                     <span>Total Charged:</span>
                     <span className="font-semibold">${(selectedRegistration.amount / 100).toFixed(2)}</span>
                   </div>
-                  
+
                   {/* Fee Breakdown for paid registrations */}
-                  {selectedRegistration.paymentStatus === 'paid' && selectedRegistration.amount > 0 && (
+                  {(selectedRegistration.paymentStatus === 'paid' || selectedRegistration.paymentStatus === 'partially_refunded') && selectedRegistration.amount > 0 && (
                     <div className="border-t pt-2 mt-2 space-y-1 text-sm">
                       <div className="font-medium text-muted-foreground mb-1">Fee Breakdown:</div>
                       <div className="flex justify-between">
@@ -476,39 +514,80 @@ export default function UserRegistrationsView() {
                       </div>
                     </div>
                   )}
-                  
+
+                  {/* Refund summary — show whenever status indicates a refund */}
+                  {(selectedRegistration.paymentStatus === 'partially_refunded' || selectedRegistration.paymentStatus === 'refunded') && (() => {
+                    // Compute refund amount from multiple possible sources
+                    const refundAmt = selectedRegistration.totalRefunded
+                      || selectedRegistration.refundAmount
+                      || (selectedRegistration.transactions
+                        ?.filter(t => t.type === 'refund')
+                        .reduce((sum, t) => sum + Math.abs(t.amount), 0))
+                      || 0;
+                    const isFull = selectedRegistration.isFullRefund === true
+                      || (refundAmt > 0 && refundAmt >= selectedRegistration.amount);
+                    return (
+                      <div className="border-t border-purple-500/30 pt-2 mt-2 space-y-1.5">
+                        <div className="flex justify-between items-center">
+                          <span className="flex items-center gap-1.5 text-purple-300 font-medium">
+                            <RotateCcw className="h-3.5 w-3.5" />
+                            {isFull ? 'Full Refund' : 'Partial Refund'}
+                          </span>
+                          {refundAmt > 0 && (
+                            <span className="font-bold text-purple-300">-${(refundAmt / 100).toFixed(2)}</span>
+                          )}
+                        </div>
+                        {refundAmt > 0 && !isFull && (
+                          <div className="flex justify-between text-sm">
+                            <span className="text-muted-foreground pl-5">Remaining Balance:</span>
+                            <span className="font-semibold">${((selectedRegistration.amount - refundAmt) / 100).toFixed(2)}</span>
+                          </div>
+                        )}
+                        {selectedRegistration.refundDate && (
+                          <div className="flex justify-between text-sm">
+                            <span className="text-muted-foreground pl-5">Refund Date:</span>
+                            <span>{formatDate(selectedRegistration.refundDate)}</span>
+                          </div>
+                        )}
+                        {selectedRegistration.refundReason && (
+                          <div className="flex justify-between text-sm">
+                            <span className="text-muted-foreground pl-5">Reason:</span>
+                            <span>{selectedRegistration.refundReason}</span>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
+
                   {selectedRegistration.paymentStatus && (
-                    <div className="flex justify-between">
+                    <div className="flex justify-between items-center">
                       <span>Payment Status:</span>
-                      <PaymentStatusBadge status={selectedRegistration.paymentStatus} />
+                      <PaymentStatusBadge status={selectedRegistration.paymentStatus} hasPaymentInfo={!!selectedRegistration.setupIntentId} />
                     </div>
                   )}
-                  
+
                   {selectedRegistration.paymentDate && (
                     <div className="flex justify-between">
                       <span>Payment Date:</span>
                       <span>{formatDate(selectedRegistration.paymentDate)}</span>
                     </div>
                   )}
-                  
+
                   {selectedRegistration.cardDetails?.last4 && (
                     <div className="flex justify-between items-center">
                       <span>Payment Method:</span>
                       <div className="flex items-center gap-1">
                         <CreditCard className="h-4 w-4" />
                         <span>
-                          {selectedRegistration.cardDetails.brand 
+                          {selectedRegistration.cardDetails.brand
                             ? `${selectedRegistration.cardDetails.brand.charAt(0).toUpperCase() + selectedRegistration.cardDetails.brand.slice(1)} ending in ${selectedRegistration.cardDetails.last4}`
                             : `Card ending in ${selectedRegistration.cardDetails.last4}`
-                          }
-                          {selectedRegistration.cardDetails.expMonth && selectedRegistration.cardDetails.expYear && 
-                            ` (exp. ${selectedRegistration.cardDetails.expMonth}/${selectedRegistration.cardDetails.expYear.toString().slice(-2)})`
                           }
                         </span>
                       </div>
                     </div>
                   )}
-                  
+
                   {selectedRegistration.errorMessage && (
                     <div className="mt-2 p-2 border border-destructive/50 bg-destructive/10 rounded-md text-sm text-destructive">
                       <div className="font-semibold">Payment Error:</div>
@@ -516,30 +595,100 @@ export default function UserRegistrationsView() {
                     </div>
                   )}
 
-                  {selectedRegistration.setupIntentId && (
+                  {selectedRegistration.setupIntentId && selectedRegistration.paymentStatus !== 'paid' && selectedRegistration.paymentStatus !== 'refunded' && selectedRegistration.paymentStatus !== 'partially_refunded' && (
                     <div className="mt-2 p-2 border border-primary/20 bg-primary/5 rounded-md text-sm">
                       <p className="font-medium text-primary">Payment Method Saved</p>
                       <p className="text-muted-foreground">Your card will be charged after your registration is approved by the event organizer.</p>
                     </div>
                   )}
-                  
-                  {/* Email Receipt Button for paid registrations */}
-                  {selectedRegistration.paymentStatus === 'paid' && selectedRegistration.paymentId && (
-                    <div className="mt-2 pt-2 border-t">
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className="w-full"
-                        onClick={() => requestEmailReceipt(selectedRegistration.paymentId!)}
-                      >
-                        <CreditCard className="h-4 w-4 mr-2" />
-                        Email Payment Receipt
-                      </Button>
-                    </div>
-                  )}
                 </div>
               </div>
-              
+
+              {/* Terms Acknowledgment */}
+              {selectedRegistration.termsAcknowledged && (
+                <div className="space-y-2">
+                  <h3 className="text-sm font-medium text-muted-foreground">Terms &amp; Conditions</h3>
+                  <div className="bg-muted rounded-md p-3 space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span>Terms Accepted:</span>
+                      <span className="flex items-center gap-1 text-green-500 font-medium text-sm">
+                        <CheckCircle className="h-3.5 w-3.5" />
+                        {selectedRegistration.termsAcknowledgedAt ? formatDate(selectedRegistration.termsAcknowledgedAt) : 'Yes'}
+                      </span>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-full"
+                      onClick={() => downloadTermsAcknowledgment(selectedRegistration.id, selectedRegistration.teamName)}
+                    >
+                      <FileCheck className="h-4 w-4 mr-2" />
+                      Download Terms &amp; Refund Policy
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {/* Transaction History */}
+              {selectedRegistration.transactions && selectedRegistration.transactions.length > 0 && (
+                <div className="space-y-2">
+                  <h3 className="text-sm font-medium text-muted-foreground">Transaction History</h3>
+                  <div className="bg-muted rounded-md overflow-hidden">
+                    <div className="divide-y divide-border">
+                      {selectedRegistration.transactions.map((txn) => {
+                        const isPayment = txn.type === 'payment' || txn.type === 'charge';
+                        const isRefundTxn = txn.type === 'refund';
+                        const absAmount = Math.abs(txn.amount);
+                        return (
+                          <div key={txn.id} className="flex items-center justify-between px-3 py-2.5">
+                            <div className="flex items-center gap-2.5">
+                              {isPayment ? (
+                                <ArrowUpCircle className="h-4 w-4 text-green-500 shrink-0" />
+                              ) : isRefundTxn ? (
+                                <ArrowDownCircle className="h-4 w-4 text-purple-400 shrink-0" />
+                              ) : (
+                                <CreditCard className="h-4 w-4 text-muted-foreground shrink-0" />
+                              )}
+                              <div>
+                                <p className="text-sm font-medium">
+                                  {isPayment ? 'Payment' : isRefundTxn ? 'Refund' : txn.type.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
+                                </p>
+                                <p className="text-xs text-muted-foreground">
+                                  {txn.date ? formatDate(txn.date) : '—'}
+                                  {txn.cardBrand && txn.cardLast4 && ` · ${txn.cardBrand} ····${txn.cardLast4}`}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <p className={`text-sm font-semibold ${isRefundTxn ? 'text-purple-400' : isPayment ? 'text-green-500' : ''}`}>
+                                {isRefundTxn ? '-' : '+'}${(absAmount / 100).toFixed(2)}
+                              </p>
+                              <p className="text-[10px] text-muted-foreground capitalize">{txn.status}</p>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="space-y-2">
+                {/* Email Receipt for paid or refunded */}
+                {(selectedRegistration.paymentStatus === 'paid' || selectedRegistration.paymentStatus === 'refunded' || selectedRegistration.paymentStatus === 'partially_refunded') && selectedRegistration.paymentId && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full"
+                    onClick={() => requestEmailReceipt(selectedRegistration.paymentId!)}
+                  >
+                    <Receipt className="h-4 w-4 mr-2" />
+                    Email Payment Receipt
+                  </Button>
+                )}
+              </div>
+
               <DialogFooter>
                 <Button onClick={() => setDetailsDialogOpen(false)}>Close</Button>
               </DialogFooter>
@@ -552,19 +701,22 @@ export default function UserRegistrationsView() {
 }
 
 // Extracted Registration Card component for reusability
-function RegistrationCard({ registration, onShowDetails }: { 
-  registration: Registration; 
+function RegistrationCard({ registration, onShowDetails }: {
+  registration: Registration;
   onShowDetails: (reg: Registration) => void;
 }) {
+  const hasRefund = registration.paymentStatus === 'refunded' || registration.paymentStatus === 'partially_refunded' || (registration.totalRefunded && registration.totalRefunded > 0);
+  // Use server-computed isFullRefund (compares total refunded to amount charged) instead of relying on paymentStatus
+  const isFullRefund = registration.isFullRefund === true;
+  const isPaid = registration.paymentStatus === 'paid' || hasRefund;
+
   return (
-    <Card 
-      className="member-card w-full h-full overflow-hidden relative group"
-    >
+    <Card className="member-card w-full h-full overflow-hidden relative group">
       <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-      
+
       <CardHeader className="pb-2 member-card-header">
-        <div className="flex justify-between items-start">
-          <div>
+        <div className="flex justify-between items-start gap-2">
+          <div className="min-w-0 flex-1">
             <CardTitle className="text-lg font-bold group-hover:text-primary transition-colors">
               {registration.teamName}
             </CardTitle>
@@ -572,79 +724,89 @@ function RegistrationCard({ registration, onShowDetails }: {
               {registration.eventName} | {registration.ageGroup}
             </CardDescription>
           </div>
-          <div className="flex flex-col gap-1">
-            <TeamStatusBadge 
-              status={registration.status} 
-              payLater={registration.payLater} 
-              setupIntentId={registration.setupIntentId} 
+          <div className="flex flex-col gap-1 shrink-0">
+            <TeamStatusBadge
+              status={registration.status}
+              payLater={registration.payLater}
+              setupIntentId={registration.setupIntentId}
             />
-            <PaymentStatusBadge status={registration.paymentStatus} />
+            <PaymentStatusBadge
+              status={registration.paymentStatus}
+              hasPaymentInfo={!!registration.setupIntentId}
+            />
           </div>
         </div>
       </CardHeader>
-      
+
       <CardContent className="pb-2">
         <div className="space-y-2 text-sm">
-          <div className="flex justify-between items-center bg-primary/5 px-2 py-1 rounded">
+          <div className="flex justify-between items-center bg-primary/5 px-2 py-1.5 rounded">
             <span className="text-muted-foreground">Registered:</span>
             <span className="font-medium">{formatDate(registration.registeredAt)}</span>
           </div>
-          
-          {/* Show payment details when available */}
-          {registration.paymentStatus === 'paid' && (
-            <>
-              <div className="flex justify-between items-center px-2 py-1">
-                <span className="text-muted-foreground">Payment ID:</span>
-                <span className="font-medium text-primary/90">{registration.paymentId || 'N/A'}</span>
+
+          <div className="flex justify-between items-center bg-primary/5 px-2 py-1.5 rounded">
+            <span className="text-muted-foreground">Amount:</span>
+            <span className="font-bold text-primary">${(registration.amount / 100).toFixed(2)}</span>
+          </div>
+
+          {/* Refund banner */}
+          {hasRefund && (
+            <div className="p-2.5 rounded-md bg-purple-500/10 border border-purple-500/20">
+              <div className="flex items-center gap-2">
+                <RotateCcw className="h-3.5 w-3.5 text-purple-400 shrink-0" />
+                <span className="font-medium text-purple-300 text-xs">
+                  {isFullRefund ? 'Full Refund' : 'Partial Refund'}
+                </span>
+                {registration.refundAmount && (
+                  <span className="text-purple-400 font-bold ml-auto text-xs">
+                    ${(registration.refundAmount / 100).toFixed(2)}
+                  </span>
+                )}
               </div>
-              {registration.paymentDate && (
-                <div className="flex justify-between items-center px-2 py-1">
-                  <span className="text-muted-foreground">Payment Date:</span>
-                  <span>{formatDate(registration.paymentDate)}</span>
-                </div>
+              {registration.refundReason && (
+                <p className="text-[11px] text-purple-400/80 mt-1 ml-5">{registration.refundReason}</p>
               )}
-              {registration.cardLastFour && (
-                <div className="flex justify-between items-center px-2 py-1">
-                  <span className="text-muted-foreground">Card:</span>
-                  <span>••••{registration.cardLastFour}</span>
-                </div>
-              )}
-            </>
+            </div>
           )}
-          
-          {/* Show error message if payment failed */}
+
+          {/* Card on file info */}
+          {registration.cardDetails?.last4 && (
+            <div className="flex justify-between items-center px-2 py-1">
+              <span className="text-muted-foreground">Card:</span>
+              <span className="flex items-center gap-1">
+                <CreditCard className="h-3 w-3" />
+                {registration.cardDetails.brand
+                  ? `${registration.cardDetails.brand.charAt(0).toUpperCase() + registration.cardDetails.brand.slice(1)} ····${registration.cardDetails.last4}`
+                  : `····${registration.cardDetails.last4}`
+                }
+              </span>
+            </div>
+          )}
+
+          {/* Payment error */}
           {registration.paymentStatus === 'failed' && registration.errorMessage && (
-            <div className="mt-2 p-2 bg-destructive/10 border border-destructive/20 rounded text-destructive text-sm">
+            <div className="p-2 bg-destructive/10 border border-destructive/20 rounded text-destructive text-xs">
               <p className="font-medium">Payment Error:</p>
               <p>{registration.errorMessage}</p>
             </div>
           )}
-          
-          <div className="flex justify-between items-center bg-primary/5 px-2 py-1 rounded">
-            <span className="text-muted-foreground">Amount:</span>
-            <span className="font-bold text-primary">${(registration.amount / 100).toFixed(2)}</span>
-          </div>
         </div>
       </CardContent>
-      
+
       <CardFooter className="pt-2 relative z-10">
-        <div className="flex flex-col w-full gap-2">
-          <div className="flex justify-between gap-2">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="w-full relative z-20 pointer-events-auto" 
-              onClick={(e) => {
-                console.log('Button clicked!', registration.teamName);
-                e.preventDefault();
-                e.stopPropagation();
-                onShowDetails(registration);
-              }}
-            >
-              View Registration Details
-            </Button>
-          </div>
-        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          className="w-full relative z-20 pointer-events-auto"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onShowDetails(registration);
+          }}
+        >
+          View Registration Details
+        </Button>
       </CardFooter>
     </Card>
   );

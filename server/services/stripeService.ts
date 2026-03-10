@@ -6,6 +6,8 @@ import { log } from "../vite";
 import { sendRegistrationReceiptEmail, sendTemplatedEmail } from "./emailService";
 import { getStripeClient } from "./stripe-client-factory";
 import { calculateEventFees, calculateFeeBreakdown, DEFAULT_PLATFORM_FEE_RATE, STRIPE_FIXED_FEE } from "./fee-calculator";
+import { scheduleConnectVisibilityUpdate } from "./stripe-connect-visibility";
+import { findOrCreatePlatformCustomer } from "./stripe-connect-customer";
 
 // In production, we can add a version check to ensure our API version stays current
 const STRIPE_API_VERSION = "2023-10-16" as any;
@@ -545,9 +547,9 @@ export async function createSetupIntent(
           customerId = team.stripeCustomerId;
           log(`Using existing customer ID: ${customerId} for team ${teamId}`);
         } else if (team.submitterEmail) {
-          const customer = await stripe.customers.create({
+          const { customerId: foundCustomerId } = await findOrCreatePlatformCustomer({
             email: team.submitterEmail,
-            name: `${team.name} - ${team.submitterName || "Team Manager"}`,
+            name: team.submitterName || team.managerName || 'Team Manager',
             description: `Team: ${team.name} | Event: ${event?.name} | TeamID: ${teamId}`,
             metadata: {
               teamId: teamId.toString(),
@@ -562,7 +564,7 @@ export async function createSetupIntent(
               connectAccountId: connectAccountId || "",
             },
           });
-          customerId = customer.id;
+          customerId = foundCustomerId;
 
           // Store customer ID in database for future use
           await db
@@ -570,7 +572,7 @@ export async function createSetupIntent(
             .set({ stripeCustomerId: customerId })
             .where(eq(teams.id, numericTeamId));
 
-          log(`Created new customer: ${customerId} on platform account for team ${teamId}`);
+          log(`Using platform customer: ${customerId} for team ${teamId}`);
         }
       } catch (customerError: any) {
         log(
@@ -597,9 +599,9 @@ export async function createSetupIntent(
             log(`⚠️ No Connect account for event ${metadata.eventId} — using platform account for temp team ${teamId}`);
           }
 
-          // Create customer on PLATFORM account (destination charges require platform customers)
+          // Find or create customer on PLATFORM account (destination charges require platform customers)
           if (metadata?.userEmail) {
-            const customer = await stripe.customers.create({
+            const { customerId: foundCustomerId } = await findOrCreatePlatformCustomer({
               email: metadata.userEmail,
               name: metadata.userName || "Team Manager",
               metadata: {
@@ -610,8 +612,8 @@ export async function createSetupIntent(
                 connectAccountId: connectAccountId || "",
               },
             });
-            customerId = customer.id;
-            log(`Created customer ${customerId} on platform account for temp team ${teamId}`);
+            customerId = foundCustomerId;
+            log(`Using platform customer ${customerId} for temp team ${teamId}`);
           }
         } catch (tempError: any) {
           log(`Error setting up Connect account for temp team: ${tempError.message}`);
@@ -619,9 +621,9 @@ export async function createSetupIntent(
         }
       } else {
         log(`⚠️ Temp team ${teamId} has no eventId in metadata — using platform account`);
-        // Still create a customer on the platform account so payment can be charged later
+        // Find or create a customer on the platform account so payment can be charged later
         if (metadata?.userEmail) {
-          const customer = await stripe.customers.create({
+          const { customerId: foundCustomerId } = await findOrCreatePlatformCustomer({
             email: metadata.userEmail,
             name: metadata.userName || "Team Manager",
             metadata: {
@@ -630,8 +632,8 @@ export async function createSetupIntent(
               createdFor: "temp_team_registration_no_event",
             },
           });
-          customerId = customer.id;
-          log(`Created customer ${customerId} on platform account for temp team ${teamId}`);
+          customerId = foundCustomerId;
+          log(`Using platform customer ${customerId} for temp team ${teamId}`);
         }
       }
     }
@@ -738,6 +740,19 @@ export async function processPaymentForApprovedTeam(
       throw new Error(`Team ${teamId} has no saved payment method`);
     }
 
+    // SAFEGUARD: Prevent double-charging teams that already have a successful payment
+    const alreadyPaid = team.paymentStatus === 'paid'
+      || team.paymentStatus === 'succeeded'
+      || team.paymentStatus === 'partially_refunded'
+      || team.paymentStatus === 'refunded';
+    if (alreadyPaid) {
+      log(`⚠️ DOUBLE-CHARGE PREVENTED: Team ${teamId} already has paymentStatus="${team.paymentStatus}". Skipping charge.`);
+      return {
+        status: team.paymentStatus === 'succeeded' ? 'succeeded' : 'paid',
+        paymentIntentId: team.paymentIntentId || 'already_paid',
+      };
+    }
+
     // Check if this is a Link payment method first
     const paymentMethod = await stripe.paymentMethods.retrieve(
       team.paymentMethodId,
@@ -789,10 +804,10 @@ export async function processPaymentForApprovedTeam(
             log(`Failed to detach payment method: ${detachError}`);
           }
 
-          // Create new platform customer
-          const customer = await stripe.customers.create({
-            name: team.name || `Team ${teamId}`,
+          // Find or create platform customer
+          const { customerId: foundCustomerId } = await findOrCreatePlatformCustomer({
             email: team.submitterEmail || `team-${teamId}@example.com`,
+            name: team.submitterName || team.managerName || 'Team Manager',
             metadata: {
               teamId: teamId.toString(),
               eventId: team.eventId?.toString() || "",
@@ -802,7 +817,7 @@ export async function processPaymentForApprovedTeam(
               migratedFrom: existingPmCustomer,
             },
           });
-          customerId = customer.id;
+          customerId = foundCustomerId;
 
           await db
             .update(teams)
@@ -817,10 +832,10 @@ export async function processPaymentForApprovedTeam(
       } else {
         // PM not attached to any customer — create platform customer and attach
         if (!customerId) {
-          log(`Creating Stripe customer for team: ${teamId} on platform account`);
-          const customer = await stripe.customers.create({
-            name: team.name || `Team ${teamId}`,
+          log(`Finding or creating Stripe customer for team: ${teamId} on platform account`);
+          const { customerId: foundCustomerId } = await findOrCreatePlatformCustomer({
             email: team.submitterEmail || `team-${teamId}@example.com`,
+            name: team.submitterName || team.managerName || 'Team Manager',
             metadata: {
               teamId: teamId.toString(),
               eventId: team.eventId?.toString() || "",
@@ -829,7 +844,7 @@ export async function processPaymentForApprovedTeam(
               createdFor: "payment_approved"
             },
           });
-          customerId = customer.id;
+          customerId = foundCustomerId;
 
           await db
             .update(teams)
@@ -850,16 +865,18 @@ export async function processPaymentForApprovedTeam(
     const platformFeeAmount = Math.round(tournamentCost * DEFAULT_PLATFORM_FEE_RATE + STRIPE_FIXED_FEE); // 4% + $0.30
     const totalChargeAmount = tournamentCost + platformFeeAmount;
 
-    // STEP: Get Connect account for this team's event (for destination charges)
+    // STEP: Get Connect account and event name for this team's event (for destination charges)
     let connectAccountId: string | undefined;
+    let eventName: string | undefined;
     if (team.eventId) {
       try {
         const eventInfo = await db
-          .select({ stripeConnectAccountId: events.stripeConnectAccountId, name: events.name })
+          .select({ stripeConnectAccountId: events.stripeConnectAccountId, name: events.name, adminEmail: events.adminEmail })
           .from(events)
           .where(eq(events.id, team.eventId))
           .limit(1);
         connectAccountId = eventInfo[0]?.stripeConnectAccountId || undefined;
+        eventName = eventInfo[0]?.name || undefined;
       } catch (e) {
         log(`⚠️ Could not look up Connect account for event ${team.eventId}: ${e}`);
       }
@@ -870,26 +887,33 @@ export async function processPaymentForApprovedTeam(
     );
 
     // Create a payment intent with the saved payment method
+    const description = eventName ? `${eventName} - ${team.name}` : `Team registration payment for ${team.name}`;
     const paymentIntentParams: any = {
       amount: totalChargeAmount, // Tournament cost + platform fee (4% + $0.30)
       currency: "usd",
+      description,
+      statement_descriptor_suffix: (team.name || 'Tournament').substring(0, 22),
       payment_method: team.paymentMethodId,
       confirm: true, // Immediately attempt to confirm the payment
       off_session: true, // Since the customer is not present
-      receipt_email: team.submitterEmail, // Enable Stripe's automatic receipt email
+      // NOTE: Removed receipt_email so Connect account handles receipts (not KickDeck platform)
       metadata: {
         teamId: teamId.toString(),
         eventId: team.eventId?.toString() || "",
         teamName: team.name || "Unknown Team",
-        description: `Team registration payment for ${team.name}`,
+        eventName: eventName || "",
+        description,
         tournamentAmount: tournamentCost.toString(),
         platformFee: platformFeeAmount.toString(),
         connectAccountId: connectAccountId || "",
+        type: "team_registration",
+        systemSource: "KickDeck",
       },
       // Route payment to Connect account if available (destination charge)
       // KickDeck keeps the application_fee_amount (platform fee)
       // The tournament organizer receives the rest via their Connect account
       ...(connectAccountId && {
+        on_behalf_of: connectAccountId,
         application_fee_amount: platformFeeAmount,
         transfer_data: {
           destination: connectAccountId,
@@ -939,6 +963,28 @@ export async function processPaymentForApprovedTeam(
       cardBrand: team.cardBrand,
       cardLastFour: team.cardLast4,
     });
+
+    // Update transfer + destination payment + connected customer for visibility
+    if (connectAccountId && paymentIntent.status === 'succeeded') {
+      scheduleConnectVisibilityUpdate({
+        connectAccountId: connectAccountId!,
+        paymentIntentId: paymentIntent.id,
+        description: `${eventName || 'Tournament'} - ${team.name || 'Team'} Registration`,
+        metadata: {
+          teamId: teamId.toString(),
+          teamName: team.name || '',
+          eventName: eventName || '',
+          eventId: team.eventId?.toString() || '',
+          registrationDate: new Date().toISOString(),
+          totalCharged: totalChargeAmount.toString(),
+          tournamentReceives: tournamentCost.toString(),
+          platformFee: platformFeeAmount.toString(),
+          systemSource: 'KickDeck',
+        },
+        customerEmail: team.submitterEmail || team.managerEmail || undefined,
+        customerName: team.submitterName || team.managerName || 'Team Manager',
+      });
+    }
 
     return {
       success: true,
@@ -1127,10 +1173,10 @@ export async function handleSetupIntentSuccess(
     let customerId = existingTeam.stripeCustomerId;
 
     if (!customerId) {
-      // Create customer on PLATFORM account (destination charges require platform customers)
-      const customer = await stripe.customers.create({
-        name: existingTeam.name || `Team ${teamId}`,
+      // Find or create customer on PLATFORM account (destination charges require platform customers)
+      const { customerId: foundCustomerId } = await findOrCreatePlatformCustomer({
         email: existingTeam.submitterEmail || `team-${teamId}@example.com`,
+        name: existingTeam.submitterName || existingTeam.managerName || 'Team Manager',
         metadata: {
           teamId: teamId.toString(),
           eventId: existingTeam.eventId?.toString() || "",
@@ -1139,7 +1185,7 @@ export async function handleSetupIntentSuccess(
           createdFor: "setup_intent_success"
         },
       });
-      customerId = customer.id;
+      customerId = foundCustomerId;
 
       // Attach the payment method to the customer
       await stripe.paymentMethods.attach(paymentMethodId, {
@@ -1577,9 +1623,10 @@ export async function processConnectRefund({
       })
       .returning();
 
-    // Update team status
+    // Update team status — determine partial vs full refund
+    const isFullRefund = refundAmount >= (teamData.totalAmount || 0);
     const teamUpdate: any = {
-      paymentStatus: 'refunded',
+      paymentStatus: isFullRefund ? 'refunded' : 'partially_refunded',
       refundDate: new Date(),
       notes: adminNotes ? `REFUND: ${refundReason}. ${adminNotes}` : `REFUND: ${refundReason}`
     };

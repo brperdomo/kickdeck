@@ -108,7 +108,7 @@ router.get('/my-teams', requireAuth, async (req: Request, res: Response) => {
     );
 
     return res.status(200).json({
-      teams: teamsWithPlayerCounts.filter(team => team.needsRoster)
+      teams: teamsWithPlayerCounts
     });
   } catch (error: any) {
     console.error('Error fetching user teams:', error);

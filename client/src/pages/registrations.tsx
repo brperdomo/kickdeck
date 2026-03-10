@@ -106,7 +106,9 @@ function TeamStatusBadge({ status, payLater, setupIntentId }: {
     case 'withdrawn':
       return <Badge variant="secondary" className="whitespace-nowrap">Team Withdrawn</Badge>;
     case 'refunded':
-      return <Badge className="bg-purple-500/90 whitespace-nowrap">Payment Refunded</Badge>;
+      return <Badge className="bg-purple-500/90 whitespace-nowrap">Refunded</Badge>;
+    case 'partially_refunded':
+      return <Badge className="bg-purple-400/90 whitespace-nowrap">Partially Refunded</Badge>;
     default:
       return <Badge variant="outline" className="whitespace-nowrap">Team Status Unknown</Badge>;
   }
@@ -115,24 +117,26 @@ function TeamStatusBadge({ status, payLater, setupIntentId }: {
 // Component to display the payment status
 function PaymentStatusBadge({ status }: { status?: string }) {
   if (!status) return null;
-  
+
   switch (status.toLowerCase()) {
     case 'paid':
     case 'succeeded':
     case 'success':
-      return <Badge className="bg-green-500/90 whitespace-nowrap">Payment Complete</Badge>;
+      return <Badge className="bg-green-500/90 whitespace-nowrap">Paid</Badge>;
     case 'pending':
       return <Badge variant="outline" className="text-amber-500 border-amber-500 whitespace-nowrap">Payment Pending</Badge>;
     case 'processing':
-      return <Badge variant="outline" className="text-blue-500 border-blue-500 whitespace-nowrap">Payment Processing</Badge>;
+      return <Badge variant="outline" className="text-blue-500 border-blue-500 whitespace-nowrap">Processing</Badge>;
     case 'failed':
     case 'error':
       return <Badge variant="destructive" className="whitespace-nowrap">Payment Failed</Badge>;
     case 'refunded':
-      return <Badge className="bg-purple-500/90 whitespace-nowrap">Payment Refunded</Badge>;
+      return <Badge className="bg-purple-500/90 whitespace-nowrap">Refunded</Badge>;
+    case 'partially_refunded':
+      return <Badge className="bg-purple-400/90 whitespace-nowrap">Partially Refunded</Badge>;
     default:
       return <Badge variant="outline" className="whitespace-nowrap">
-        Payment {status.charAt(0).toUpperCase() + status.slice(1)}
+        {status.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
       </Badge>;
   }
 }

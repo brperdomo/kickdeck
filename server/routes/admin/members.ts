@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { db } from '@db/index';
-import { users, teams, events, eventAgeGroups, players, paymentTransactions } from '@db/schema';
+import { users, teams, events, eventAgeGroups, players, paymentTransactions, refunds } from '@db/schema';
 import { passwordResetTokens } from '@db/schema/passwordReset';
 import { eq, like, and, or, desc, asc, inArray } from 'drizzle-orm';
 import { sendTemplatedEmail } from '../../services/emailService';
@@ -466,19 +466,20 @@ export async function getCurrentUserRegistrations(req: Request, res: Response) {
     
     // Enhanced version of formattedRegistrations with payment details
     const formattedRegistrations = await Promise.all(teamRegistrations.map(async reg => {
-      // Get the actual payment amount from payment_transactions table for approved teams
+      // Get the actual payment amount from payment_transactions table for teams with payments
       // Return amounts in CENTS (not dollars) to match what formatCurrency expects
       let actualAmountCharged = reg.team.totalAmount || reg.team.registrationFee || 0;
       let transactionData = null;
-      
-      if (reg.team.status === 'approved' && reg.team.paymentIntentId) {
+
+      // Look up payment transaction for any team with a paymentIntentId (approved, refunded, partially_refunded)
+      if (reg.team.paymentIntentId) {
         try {
           const [paymentTransaction] = await db
             .select()
             .from(paymentTransactions)
             .where(eq(paymentTransactions.paymentIntentId, reg.team.paymentIntentId))
             .limit(1);
-          
+
           if (paymentTransaction) {
             // Use the actual charged amount from the transaction (already in cents)
             actualAmountCharged = paymentTransaction.amount;
@@ -488,9 +489,47 @@ export async function getCurrentUserRegistrations(req: Request, res: Response) {
           console.error(`Error looking up payment transaction for team ${reg.team.id}:`, error);
         }
       }
-      
+
+      // Always look up refund data — paymentStatus in DB may be stale
+      let refundData: { refundAmount: number; refundDate: string | null; refundReason: string; refundStatus: string } | null = null;
+      let totalRefundedAmount = 0;
+      try {
+        const teamRefunds = await db
+          .select()
+          .from(refunds)
+          .where(eq(refunds.teamId, reg.team.id))
+          .orderBy(desc(refunds.createdAt));
+
+        if (teamRefunds.length > 0) {
+          totalRefundedAmount = teamRefunds
+            .filter(r => r.status !== 'failed')
+            .reduce((sum, r) => sum + r.refundAmount, 0);
+          const latestRefund = teamRefunds[0];
+          refundData = {
+            refundAmount: totalRefundedAmount,
+            refundDate: latestRefund.processedAt?.toISOString() || latestRefund.createdAt.toISOString(),
+            refundReason: latestRefund.refundReason || 'Refund processed',
+            refundStatus: latestRefund.status,
+          };
+        }
+      } catch (error) {
+        console.error(`Error looking up refunds for team ${reg.team.id}:`, error);
+      }
+
+      // Compute the ACTUAL paymentStatus based on real refund data
+      let computedPaymentStatus = reg.team.paymentStatus || undefined;
+      if (totalRefundedAmount > 0) {
+        computedPaymentStatus = totalRefundedAmount >= actualAmountCharged ? 'refunded' : 'partially_refunded';
+      }
+
+      // Parse coach data once
+      let coachData: any = null;
+      if (reg.team.coach) {
+        try { coachData = JSON.parse(reg.team.coach); } catch (e) { /* ignore */ }
+      }
+
       // Default registration object
-      const registration = {
+      const registration: any = {
         id: reg.team.id,
         teamName: reg.team.name,
         eventName: reg.event?.name || 'Unknown Event',
@@ -503,54 +542,32 @@ export async function getCurrentUserRegistrations(req: Request, res: Response) {
         amountPaid: actualAmountCharged,
         paymentId: reg.team.paymentIntentId || undefined,
         submitterEmail: reg.team.submitterEmail || undefined,
-        
-        // Additional payment details
-        paymentDate: reg.team.paidAt || undefined,
-        cardLastFour: reg.team.cardLastFour || undefined,
-        paymentStatus: reg.team.paymentStatus || undefined,
+
+        // Payment details — use computed status (accounts for refunds) not raw DB value
+        paymentDate: reg.team.paymentDate || (transactionData?.createdAt) || undefined,
+        paymentStatus: computedPaymentStatus,
         errorCode: reg.team.paymentErrorCode || undefined,
         errorMessage: reg.team.paymentErrorMessage || undefined,
-        
-        // Improved payment method tracking
+
+        // Payment method tracking
         payLater: reg.team.payLater || false,
         setupIntentId: reg.team.setupIntentId || undefined,
         paymentMethodId: reg.team.paymentMethodId || undefined,
         stripeCustomerId: reg.team.stripeCustomerId || undefined,
-        
+
+        // Refund details
+        refundDate: reg.team.refundDate || (refundData?.refundDate) || undefined,
+        refundAmount: refundData?.refundAmount || reg.team.refundAmount || undefined,
+        refundReason: refundData?.refundReason || reg.team.refundReason || undefined,
+
+        // Terms acknowledgment
+        termsAcknowledged: reg.team.termsAcknowledged || false,
+        termsAcknowledgedAt: reg.team.termsAcknowledgedAt || undefined,
+
         // Enhanced team information - parse coach JSON data
-        headCoachName: (() => {
-          if (reg.team.coach) {
-            try {
-              const coachData = JSON.parse(reg.team.coach);
-              return coachData.headCoachName || undefined;
-            } catch (e) {
-              return undefined;
-            }
-          }
-          return undefined;
-        })(),
-        headCoachEmail: (() => {
-          if (reg.team.coach) {
-            try {
-              const coachData = JSON.parse(reg.team.coach);
-              return coachData.headCoachEmail || undefined;
-            } catch (e) {
-              return undefined;
-            }
-          }
-          return undefined;
-        })(),
-        headCoachPhone: (() => {
-          if (reg.team.coach) {
-            try {
-              const coachData = JSON.parse(reg.team.coach);
-              return coachData.headCoachPhone || undefined;
-            } catch (e) {
-              return undefined;
-            }
-          }
-          return undefined;
-        })(),
+        headCoachName: coachData?.headCoachName || undefined,
+        headCoachEmail: coachData?.headCoachEmail || undefined,
+        headCoachPhone: coachData?.headCoachPhone || undefined,
         managerName: reg.team.managerName || undefined,
         managerEmail: reg.team.managerEmail || undefined,
         managerPhone: reg.team.managerPhone || undefined,
@@ -559,13 +576,11 @@ export async function getCurrentUserRegistrations(req: Request, res: Response) {
         playerCount: reg.team.playerCount || undefined,
         initialRosterComplete: reg.team.initialRosterComplete || false,
         rosterUploadedAt: reg.team.rosterUploadedAt || undefined,
-        
-        // Card details from database if available
+
+        // Card details from database — use correct schema field names
         cardDetails: {
-          brand: reg.team.cardBrand || undefined,
-          last4: reg.team.cardLastFour || undefined,
-          expMonth: reg.team.cardExpMonth || undefined,
-          expYear: reg.team.cardExpYear || undefined
+          brand: reg.team.cardBrand || (transactionData as any)?.cardBrand || undefined,
+          last4: reg.team.cardLast4 || (transactionData as any)?.cardLastFour || undefined,
         }
       };
 
@@ -580,10 +595,10 @@ export async function getCurrentUserRegistrations(req: Request, res: Response) {
           name: reg.team.managerName || 'Team Manager',
           email: reg.team.managerEmail || 'Unknown'
         };
-      } else if (reg.team.headCoachEmail || reg.team.headCoachName) {
+      } else if (coachData?.headCoachEmail || coachData?.headCoachName) {
         registration.submitter = {
-          name: reg.team.headCoachName || 'Head Coach',
-          email: reg.team.headCoachEmail || 'Unknown'
+          name: coachData.headCoachName || 'Head Coach',
+          email: coachData.headCoachEmail || 'Unknown'
         };
       }
 

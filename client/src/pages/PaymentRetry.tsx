@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import { useRoute } from 'wouter';
+import { useRoute, useLocation } from 'wouter';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, AlertTriangle, Loader2, CreditCard, Shield } from 'lucide-react';
+import { CheckCircle, AlertTriangle, Loader2, CreditCard, Shield, Info, XCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface TeamInfo {
@@ -14,6 +14,7 @@ interface TeamInfo {
   paymentStatus: string;
   managerEmail: string;
   eventName?: string;
+  paymentErrorMessage?: string;
 }
 
 interface FeeBreakdown {
@@ -26,6 +27,7 @@ interface FeeBreakdown {
 
 export default function PaymentRetry() {
   const [match, params] = useRoute('/payment/retry/:teamId');
+  const [location] = useLocation();
   const [teamInfo, setTeamInfo] = useState<TeamInfo | null>(null);
   const [feeBreakdown, setFeeBreakdown] = useState<FeeBreakdown | null>(null);
   const [loading, setLoading] = useState(true);
@@ -36,35 +38,39 @@ export default function PaymentRetry() {
 
   const teamId = params?.teamId ? parseInt(params.teamId) : null;
 
+  // Check for ?cancelled=true query param
+  const urlParams = new URLSearchParams(location.split('?')[1] || '');
+  const wasCancelled = urlParams.get('cancelled') === 'true';
+
   const fetchTeamInfo = async () => {
     if (!teamId) {
       setError('Invalid team ID');
       setLoading(false);
       return;
     }
-    
+
     try {
       setLoading(true);
-      
+
       // Fetch team info and fee breakdown simultaneously
       const [teamResponse, feeResponse] = await Promise.all([
         fetch(`/api/teams/${teamId}/payment-info`),
         fetch(`/api/payments/fees/${teamId}`)
       ]);
-      
+
       if (!teamResponse.ok) {
         throw new Error('Failed to fetch team information');
       }
-      
+
       const teamData = await teamResponse.json();
       setTeamInfo(teamData);
-      
+
       // Fee breakdown is optional
       if (feeResponse.ok) {
         const feeData = await feeResponse.json();
         setFeeBreakdown(feeData);
       }
-      
+
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load team information');
     } finally {
@@ -78,10 +84,10 @@ export default function PaymentRetry() {
 
   const handleStripeCheckout = async () => {
     if (!teamId) return;
-    
+
     try {
       setIsProcessing(true);
-      
+
       // Create Stripe Checkout session
       const response = await fetch(`/api/payments/create-checkout/${teamId}`, {
         method: 'POST',
@@ -95,14 +101,14 @@ export default function PaymentRetry() {
       }
 
       const { checkoutUrl } = await response.json();
-      
+
       if (checkoutUrl) {
         // Redirect to Stripe Checkout
         window.location.href = checkoutUrl;
       } else {
         throw new Error('No checkout URL received');
       }
-      
+
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to start payment process');
       toast({
@@ -152,7 +158,8 @@ export default function PaymentRetry() {
     );
   }
 
-  if (paymentComplete) {
+  // Already paid — show success state
+  if (paymentComplete || teamInfo.paymentStatus === 'paid') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center p-4">
         <Card className="w-full max-w-md border-green-200">
@@ -162,10 +169,13 @@ export default function PaymentRetry() {
               <span>Payment Successful</span>
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-3">
             <p className="text-green-700">
               Your payment has been processed successfully. Your team is now approved for the tournament.
             </p>
+            <div className="bg-green-50 p-3 rounded-lg text-sm text-green-800">
+              <strong>{teamInfo.name}</strong> — {teamInfo.eventName || 'Tournament Registration'}
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -183,6 +193,26 @@ export default function PaymentRetry() {
           <h1 className="text-2xl font-bold text-gray-900">Complete Your Payment</h1>
           <p className="text-gray-600 mt-2">Secure tournament registration payment</p>
         </div>
+
+        {/* Cancelled notice */}
+        {wasCancelled && (
+          <Alert className="border-yellow-300 bg-yellow-50">
+            <XCircle className="h-4 w-4 text-yellow-600" />
+            <AlertDescription className="text-yellow-800">
+              Your previous payment was cancelled. You can try again below.
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {/* Previous payment error notice */}
+        {teamInfo.paymentStatus === 'failed' && teamInfo.paymentErrorMessage && (
+          <Alert variant="destructive">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertDescription>
+              <strong>Previous payment failed:</strong> {teamInfo.paymentErrorMessage}. Please try again with a different card.
+            </AlertDescription>
+          </Alert>
+        )}
 
         {/* Payment Card */}
         <Card className="border-blue-200 shadow-lg">
@@ -209,10 +239,18 @@ export default function PaymentRetry() {
                 )}
                 <div className="flex justify-between">
                   <span className="text-blue-700">Status:</span>
-                  <Badge variant={teamInfo.paymentStatus === 'payment_failed' ? 'destructive' : 'secondary'}>
-                    {teamInfo.paymentStatus.replace('_', ' ').toUpperCase()}
+                  <Badge variant={teamInfo.paymentStatus === 'failed' ? 'destructive' : 'secondary'}>
+                    {teamInfo.paymentStatus === 'failed' ? 'PAYMENT FAILED' : teamInfo.paymentStatus.replace('_', ' ').toUpperCase()}
                   </Badge>
                 </div>
+              </div>
+            </div>
+
+            {/* Auto-approve notice */}
+            <div className="bg-green-50 border border-green-200 p-4 rounded-lg flex items-start gap-3">
+              <Info className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+              <div className="text-sm text-green-800">
+                <strong>Good news!</strong> Your team has been pre-approved by the event organizer. Once your payment is processed successfully, your registration will be automatically confirmed — no further action needed.
               </div>
             </div>
 
@@ -240,7 +278,7 @@ export default function PaymentRetry() {
 
             {/* Payment Button */}
             <div className="pt-4">
-              <Button 
+              <Button
                 onClick={handleStripeCheckout}
                 disabled={isProcessing}
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 text-lg"
@@ -258,7 +296,7 @@ export default function PaymentRetry() {
                   </>
                 )}
               </Button>
-              
+
               <div className="flex items-center justify-center mt-4 text-xs text-gray-500">
                 <Shield className="w-3 h-3 mr-1" />
                 Secure payment powered by Stripe

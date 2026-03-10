@@ -108,8 +108,8 @@ export function PaymentRetryButton({
     }
   };
 
-  // Don't show button if payment is already successful
-  if (paymentStatus === 'paid') {
+  // Only show button if payment explicitly failed (e.g., insufficient funds after admin approval attempt)
+  if (paymentStatus !== 'failed') {
     return null;
   }
 

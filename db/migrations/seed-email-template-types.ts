@@ -164,6 +164,29 @@ const REGISTRATION_UNDER_REVIEW_HTML = wrap('#805AD5', 'Registration Under Revie
       </p>
       <p>Thank you for your patience,<br>The KickDeck Team</p>`, { dualContact: true });
 
+// ── REGISTRATION PAY LATER ──────────────────────────────────────────────────
+const REGISTRATION_PAY_LATER_HTML = wrap('#B7791F', 'Registration Received — Payment Pending', `
+      <p>Hello {{firstName}},</p>
+      <p>We've received your team registration. You selected <strong>Pay Later</strong> as your payment option.</p>
+      <div class="info-box">
+        <table width="100%" cellpadding="4" cellspacing="0" style="font-size:14px;">
+          <tr><td style="color:#555;">Team:</td><td style="font-weight:600;">{{teamName}}</td></tr>
+          <tr><td style="color:#555;">Event:</td><td style="font-weight:600;">{{eventName}}</td></tr>
+          <tr><td style="color:#555;">Division:</td><td style="font-weight:600;">{{division}}</td></tr>
+          <tr><td style="color:#555;">Submitted:</td><td style="font-weight:600;">{{registrationDate}}</td></tr>
+        </table>
+      </div>
+      <div class="notice notice-warning">
+        <strong>Payment of {{totalAmount}} is still due.</strong> The event organizer will send you a payment link. Please complete payment before the event to secure your spot.
+      </div>
+      <div class="notice notice-info">
+        <strong>What happens next?</strong> Once your payment is received, the event organizer will review and approve your registration. You'll receive a confirmation email at each step.
+      </div>
+      <p style="text-align: center;">
+        <a href="{{loginLink}}" class="button" style="background-color: #B7791F;">View Your Dashboard</a>
+      </p>
+      <p>Thank you for registering,<br>The KickDeck Team</p>`, { dualContact: true });
+
 // ── PAYMENT CONFIRMATION ─────────────────────────────────────────────────────
 const PAYMENT_CONFIRMATION_HTML = wrap('#276749', 'Payment Received', `
       <p>We've received your payment. Here are the details:</p>
@@ -312,6 +335,32 @@ const TEAM_STATUS_UPDATE_HTML = wrap('#2B6CB0', 'Team Status Update', `
       </p>
       <p>Thank you,<br>The KickDeck Team</p>`, { dualContact: true });
 
+// ── PAYMENT FAILED ──────────────────────────────────────────────────────────
+const PAYMENT_FAILED_HTML = wrap('#E53E3E', 'Payment Failed', `
+      <p>Hello {{firstName}},</p>
+      <p>We attempted to process payment for your team registration, but the charge was unsuccessful.</p>
+      <div class="info-box">
+        <table width="100%" cellpadding="4" cellspacing="0" style="font-size:14px;">
+          <tr><td style="color:#555;">Team:</td><td style="font-weight:600;">{{teamName}}</td></tr>
+          <tr><td style="color:#555;">Event:</td><td style="font-weight:600;">{{eventName}}</td></tr>
+          <tr><td style="color:#555;">Amount Due:</td><td style="font-weight:700; color: #E53E3E;">{{totalAmount}}</td></tr>
+        </table>
+      </div>
+      <div class="notice notice-warning">
+        <strong>Why did this happen?</strong> The card on file could not be charged. This can happen if the card has expired, has insufficient funds, or was flagged by your bank.
+      </div>
+      <p>To complete your registration, please click the button below to submit a new payment method:</p>
+      <p style="text-align: center;">
+        <a href="{{retryUrl}}" class="button" style="background-color: #E53E3E;">Retry Payment</a>
+      </p>
+      <p style="font-size: 13px; color: #666; margin-top: 16px;">Or copy and paste this link into your browser:</p>
+      <div style="background-color: #eee; padding: 10px; border-radius: 4px; margin: 8px 0; word-break: break-all; font-family: monospace; font-size: 13px;">{{retryUrl}}</div>
+      <div class="notice notice-info">
+        <strong>What happens next?</strong> Once your payment is processed successfully, your team will be automatically approved for the tournament. No further action from the event organizer is needed.
+      </div>
+      <p>If you continue to experience issues, please contact the event organizer.</p>
+      <p>Thank you,<br>The KickDeck Team</p>`, { dualContact: true });
+
 // ── NEWSLETTER CONFIRMATION ──────────────────────────────────────────────────
 const NEWSLETTER_CONFIRMATION_HTML = wrap('#2C5282', 'Subscription Confirmed', `
       <p>Hello,</p>
@@ -334,8 +383,10 @@ const TEMPLATES_WITH_REAL_CONTENT: Record<string, string> = {
   registration_confirmation: REGISTRATION_CONFIRMATION_HTML,
   registration_receipt: REGISTRATION_RECEIPT_HTML,
   registration_under_review: REGISTRATION_UNDER_REVIEW_HTML,
+  registration_pay_later: REGISTRATION_PAY_LATER_HTML,
   payment_confirmation: PAYMENT_CONFIRMATION_HTML,
   payment_completion_notification: PAYMENT_COMPLETION_NOTIFICATION_HTML,
+  payment_failed: PAYMENT_FAILED_HTML,
   payment_refunded: PAYMENT_REFUNDED_HTML,
   team_approved: TEAM_APPROVED_HTML,
   team_approved_with_payment: TEAM_APPROVED_WITH_PAYMENT_HTML,
@@ -367,8 +418,10 @@ export async function seedEmailTemplateTypes() {
     { name: 'Registration Confirmation', type: 'registration_confirmation', subject: 'Registration Received — {{eventName}}', description: 'Sent when a team submits registration (setup intent flow)', senderEmail: NOREPLY_EMAIL, content: REGISTRATION_CONFIRMATION_HTML },
     { name: 'Registration Receipt', type: 'registration_receipt', subject: 'Registration Confirmation — {{eventName}}', description: 'Sent after a team registers for an event', senderEmail: NOREPLY_EMAIL, content: REGISTRATION_RECEIPT_HTML },
     { name: 'Registration Under Review', type: 'registration_under_review', subject: 'Registration Under Review — {{eventName}}', description: 'Sent when a registration is pending review', senderEmail: NOREPLY_EMAIL, content: REGISTRATION_UNDER_REVIEW_HTML },
+    { name: 'Registration Pay Later', type: 'registration_pay_later', subject: 'Registration Received — Payment Pending — {{eventName}}', description: 'Sent when a team registers with Pay Later option', senderEmail: NOREPLY_EMAIL, content: REGISTRATION_PAY_LATER_HTML },
     { name: 'Payment Confirmation', type: 'payment_confirmation', subject: 'Payment Received — {{eventName}}', description: 'Sent after a successful payment', senderEmail: NOREPLY_EMAIL, content: PAYMENT_CONFIRMATION_HTML },
     { name: 'Payment Completion Notification', type: 'payment_completion_notification', subject: 'Payment Complete — {{eventName}}', description: 'Sent when full payment is completed', senderEmail: NOREPLY_EMAIL, content: PAYMENT_COMPLETION_NOTIFICATION_HTML },
+    { name: 'Payment Failed', type: 'payment_failed', subject: 'Payment Failed — {{eventName}}', description: 'Sent when payment charge fails during approval', senderEmail: NOREPLY_EMAIL, content: PAYMENT_FAILED_HTML },
     { name: 'Payment Refunded', type: 'payment_refunded', subject: 'Payment Refunded — {{eventName}}', description: 'Sent when a payment is refunded', senderEmail: NOREPLY_EMAIL, content: PAYMENT_REFUNDED_HTML },
     { name: 'Team Approved', type: 'team_approved', subject: 'Team Approved — {{eventName}}', description: 'Sent when a team registration is approved', senderEmail: NOREPLY_EMAIL, content: TEAM_APPROVED_HTML },
     { name: 'Team Approved With Payment', type: 'team_approved_with_payment', subject: 'Team Approved — Payment Processed — {{eventName}}', description: 'Sent when a team is approved and payment is needed', senderEmail: NOREPLY_EMAIL, content: TEAM_APPROVED_WITH_PAYMENT_HTML },

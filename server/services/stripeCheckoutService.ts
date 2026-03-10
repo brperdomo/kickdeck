@@ -4,6 +4,8 @@ import { teams, events } from '@db/schema';
 import { eq } from 'drizzle-orm';
 import { getStripeClient } from './stripe-client-factory';
 import { DEFAULT_PLATFORM_FEE_RATE, STRIPE_FIXED_FEE } from './fee-calculator';
+import { scheduleConnectVisibilityUpdate } from './stripe-connect-visibility';
+import { findOrCreatePlatformCustomer } from './stripe-connect-customer';
 
 /**
  * Calculate total charge including platform fee (4% + $0.30)
@@ -33,7 +35,9 @@ export async function createCheckoutSession(teamId: number): Promise<{
         name: teams.name,
         totalAmount: teams.totalAmount,
         managerEmail: teams.managerEmail,
+        managerName: teams.managerName,
         submitterEmail: teams.submitterEmail,
+        submitterName: teams.submitterName,
         eventName: events.name,
         eventId: events.id,
         stripeConnectAccountId: events.stripeConnectAccountId,
@@ -61,10 +65,11 @@ export async function createCheckoutSession(teamId: number): Promise<{
     // Calculate total amount including platform fees
     const { total: totalAmountWithFees, platformFee } = calculateWithPlatformFees(teamData.totalAmount);
 
-    // Create customer on PLATFORM account (destination charges require platform-owned customers)
-    const customer = await stripe.customers.create({
-      email: teamData.managerEmail || teamData.submitterEmail || `team-${teamId}@tournament.local`,
-      name: `${teamData.name} - Team Manager`,
+    // Find or create customer on PLATFORM account (destination charges require platform-owned customers)
+    const customerEmail = teamData.managerEmail || teamData.submitterEmail || `team-${teamId}@tournament.local`;
+    const { customerId: platformCustomerId } = await findOrCreatePlatformCustomer({
+      email: customerEmail,
+      name: teamData.submitterName || teamData.managerName || 'Team Manager',
       description: `Team: ${teamData.name} | Event: ${teamData.eventName} | TeamID: ${teamId}`,
       metadata: {
         teamId: teamId.toString(),
@@ -78,8 +83,9 @@ export async function createCheckoutSession(teamId: number): Promise<{
         createdFor: "checkout_session",
       },
     });
+    const customer = { id: platformCustomerId };
 
-    console.log(`Created customer ${customer.id} on platform account for team ${teamId}`);
+    console.log(`Using platform customer ${customer.id} for team ${teamId} checkout`);
 
     // Create checkout session on PLATFORM account with destination charge
     // Funds are routed to Connect account via transfer_data, KickDeck keeps application_fee
@@ -117,6 +123,7 @@ export async function createCheckoutSession(teamId: number): Promise<{
       },
       payment_intent_data: {
         application_fee_amount: platformFee,
+        on_behalf_of: connectAccountId,
         transfer_data: {
           destination: connectAccountId,
         },
@@ -182,17 +189,69 @@ export async function handleCheckoutSuccess(sessionId: string): Promise<{
     const paymentIntent = session.payment_intent as Stripe.PaymentIntent;
 
     if (session.payment_status === 'paid' && paymentIntent) {
-      // Update team status to paid
+      const isRetryPayment = session.metadata?.retryPayment === 'true';
+
+      // Build update fields
+      const updateFields: Record<string, any> = {
+        paymentStatus: 'paid',
+        paymentDate: new Date().toISOString(),
+        paymentIntentId: paymentIntent.id,
+        paymentErrorMessage: null, // clear previous error
+      };
+
+      if (isRetryPayment) {
+        updateFields.status = 'approved'; // auto-approve on successful retry
+      }
+
       await db
         .update(teams)
-        .set({
-          paymentStatus: 'paid',
-          paymentDate: new Date().toISOString(),
-          paymentIntentId: paymentIntent.id,
-        })
+        .set(updateFields)
         .where(eq(teams.id, teamId));
 
-      console.log(`✅ Team ${teamId} payment completed via Stripe Checkout (destination charge)`);
+      console.log(`✅ Team ${teamId} payment completed via Stripe Checkout (destination charge)${isRetryPayment ? ' — auto-approved' : ''}`);
+
+      // Send approval + receipt emails for retry payments (auto-approve flow)
+      if (isRetryPayment) {
+        try {
+          const { sendTeamApprovalEmails } = await import('../routes/admin/teams-simple');
+          sendTeamApprovalEmails(teamId);
+        } catch (e) {
+          console.error('Failed to send auto-approval emails:', e);
+        }
+      }
+
+      // Update transfer + destination payment + connected customer for visibility
+      {
+        const connectAcctId = session.metadata?.connectAccountId;
+        const tName = session.metadata?.teamName || paymentIntent.metadata?.teamName || '';
+        const eName = session.metadata?.eventName || paymentIntent.metadata?.eventName || '';
+        const eId = session.metadata?.eventId || paymentIntent.metadata?.eventId || '';
+        const pFees = session.metadata?.platformFees || '';
+
+        if (connectAcctId) {
+          // Fetch team email for customer creation
+          const teamRow = await db
+            .select({ managerEmail: teams.managerEmail, submitterEmail: teams.submitterEmail, name: teams.name })
+            .from(teams)
+            .where(eq(teams.id, teamId))
+            .limit(1);
+          const teamData = teamRow[0];
+
+          scheduleConnectVisibilityUpdate({
+            connectAccountId: connectAcctId,
+            paymentIntentId: paymentIntent.id,
+            description: `${eName} - ${tName} Registration`,
+            metadata: {
+              teamId: teamId.toString(), teamName: tName, eventName: eName, eventId: eId,
+              registrationDate: new Date().toISOString(),
+              totalCharged: paymentIntent.amount.toString(), platformFee: pFees,
+              systemSource: 'KickDeck',
+            },
+            customerEmail: teamData?.managerEmail || teamData?.submitterEmail || undefined,
+            customerName: teamData?.submitterName || teamData?.managerName || 'Team Manager',
+          });
+        }
+      }
 
       return {
         teamId,
